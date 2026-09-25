@@ -1,0 +1,65 @@
+\section{Applications, human benefit, and a concrete research agenda}\label{sec:applications}
+\subsection{The most immediate use: making reasoning and software more reliable}
+The investigation repeatedly encountered errors caused by conflating a truth table, an amplitude array, and a gate matrix. A typed implementation that makes those distinctions explicit can prevent such errors mechanically. A small verified reference interpreter could be valuable for teaching and testing: a user can see a logical predicate, its CM, its reversible embedding, the phase counts accumulated by paths, and the final quotient amplitude in one trace.
+
+This is a plausible near-term benefit even without a speed advantage. Correct explanations reduce conceptual barriers; exact arithmetic avoids numerical ambiguity in small examples; independently checkable certificates make compiler transformations easier to audit. Existing path-sum verification work demonstrates that exact semantics is a substantive engineering problem, not only a pedagogical concern \cite{amy2019,amy2023}. The present prototype supplies an arithmetic and testing core, not a production verifier.
+
+\subsection{A candidate useful result: certified local phase rewrites}
+The compiler law
+\begin{equation}
+ D_{A\oplus B}^{(k)}=D_A^{(k)}D_B^{(k)}D_{A\land B}^{(-2k)}
+\end{equation}
+provides a small, exact rule whose correctness can be certified by four input evaluations. A research implementation could enumerate two- and three-input predicate rewrites, attach the necessary phase corrections, and send the resulting alternatives to a gate-cost optimizer. At half-turn phases the correction disappears; at eighth-root phases it carries the extra information that naive XOR translation loses.
+
+The rule is not claimed as a new Boolean identity. The untested proposition is that \emph{packaging local identities as CM certificates} may make a synthesis or verification workflow smaller, easier to check, or easier to explain. A certificate should contain the two predicate tables, the phase modulus, the correction table, and the resource accounting for the synthesized circuit. That would separate semantic correctness from optimizer heuristics.
+
+\subsection{Safe compression: quotient late, or quotient with a proof}
+Because $Q$ is a ring homomorphism for \emph{integer convolution}, quotienting each factor before contracting a purely convolutional expression gives the same quotient as contracting first. This may reduce four raw phase bins to two signed coordinates, or eight bins to four. It is a constant-factor representation improvement, not an asymptotic simulation result.
+
+The same move is unsafe across Boolean XOR without the carry correction, or across an operation whose type is not respected. A compiler pass should therefore prove that a subexpression is in the integer phase algebra before reducing its bins. This supplies a concrete correctness criterion for a future CM-based simplifier. Whether it lowers end-to-end cost beyond existing exact cyclotomic arithmetic remains to be measured.
+
+\subsection{Benchmarkable questions rather than unbounded promises}
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\textwidth}{@{}L{0.20\textwidth}Y Y@{}}
+\toprule
+Direction & Experiment & Evidence that would count as progress\\
+\midrule
+Typed CM compiler & Implement separate predicate, phase-count, and operator types; compile $O_A$ and $D_A^{(k)}$. & All translations checked against an independent exact backend; invalid cross-type rewrites rejected.\\
+Local rewrite library & Enumerate bounded-input CM decompositions and translate phase corrections. & Smaller circuits or smaller verification expressions than a stated baseline, including correction-gate costs.\\
+Structure-aware paths & Use CM factorization to expose shared predicates and low-width interaction graphs. & Reduced intermediate counts, tensor width, or model-counting instance size on specified circuit families.\\
+Proof certificates & Encode the quotient, gate intertwiners, and compiler rules in a proof assistant. & Machine-checked statements with explicit domains; no reliance on informal array-shape equivalence.\\
+Phase-count arithmetic & Compare raw-bin accumulation, early quotienting, and existing cyclotomic backends. & Lower memory or bit-operation cost at identical exact outputs, measured over reproducible instances.\\
+Education & Build a traceable CM-to-oracle-to-phase visual notebook. & Independent learners correctly distinguish XOR cancellation, signed interference, and measurement assumptions.\\
+\bottomrule
+\end{tabularx}
+\caption{Proposed investigations with a falsifiable success criterion. None is reported as a completed benchmark.}\label{tab:agenda}
+\end{table}
+
+The benchmark suite should include Clifford circuits, nonlinear Boolean oracles, phase-polynomial circuits, low-width tensor networks, and deliberately difficult instances. Appropriate baselines include stabilizer tableaux, established path-sum reductions, ZH methods, tensor/decision-diagram engines, and model counters \cite{aaronson,amy2019,zh,markov,tdd,mei}. Report gate count, logical ancillas, exact coefficient bit lengths, peak memory, and wall time; report failures and unfavorable instances as well as successes. A compiler comparison must include the overhead of converting to and from CM form.
+
+\subsection{Further mathematical questions worth investigating}
+\paragraph{Classifying quotient-compatible maps.}
+Rather than asking which raw maps preserve an unnecessarily strong Hamming norm, classify integer block operators $U$ satisfying
+\begin{equation}
+ U(\ker Q)\subseteq\ker Q,
+\end{equation}
+then determine which induced maps preserve the quotient quadratic form. This separates well-definedness from unitarity and may yield useful normal forms for implementations. The basic $H$ and conditional rotations here are examples. It is a problem in representation and module theory, not an assertion that every such map is physically implementable with low cost.
+
+\paragraph{Comparing cyclic sectors.}
+The real regular $C_4$ representation decomposes into a trivial sector, a sign sector, and a two-dimensional quarter-turn sector. Our quotient selects the last. Other sector choices give different toy theories or signal representations. Studying their norms and operational assumptions could clarify precisely which ingredients are responsible for the observed interference pattern. This is an explanatory classification question; selecting a sector alone does not derive nature's choice.
+
+\paragraph{Exact measurement and conditioning.}
+Unitary closure is simpler than normalized postselection. A rigorous extension should define outcome effects, unnormalized state updates, conditioning, and mixed states while stating the scalar domain required at each stage. This would prevent accidental claims that all measurements remain within a fixed power-of-two numerator format.
+
+\paragraph{A resource-sensitive oracle theory.}
+The map $A\mapsto O_A$ proves semantic implementability, but useful algorithms require efficient oracles. Extending CM decomposition to many variables should track Boolean circuit size, phase-polynomial degree, interaction width, and ancilla reuse. The aim would be to identify a family where CM decomposition provably improves a resource bound, not to infer tractability from the existence of a binary encoding.
+
+\subsection{What ``useful to humanity'' can responsibly mean here}
+The strongest immediate possibilities are accessible mathematical education, more reliable quantum-software validation, and reproducible exact small-circuit computation. A later compiler improvement could reduce wasted computation or help researchers check designs before running expensive experiments. These are plausible pathways, not measured societal impacts of this prototype.
+
+Applications to chemistry, materials, sensing, or other scientific domains would require a chain of additional evidence: a useful compiler improvement, integration into a relevant algorithm, and a demonstrated practical gain under realistic hardware or simulation constraints. The present work does not solve those scientific problems, establish a new energy-efficient device, or provide a shortcut around known simulation complexity. Framing the contribution honestly makes its potential benefits more credible and helps avoid diverting effort on the basis of an attractive but incorrect analogy.
+
+\section{Conclusion}
+The original question has a precise two-part answer. Strict Boolean CMs do support a faithful fourfold rotation action and useful XOR-cancellation experiments, but the tested Hamming and correlation-preserving operator models do not supply a quantum Hadamard. The successful phase construction changes the coefficient arithmetic: an integral CM-count algebra is quotiented so that opposite positions represent additive negatives. The equation $QP=JQ$ then makes the role of CM rotation exact. Standard quantum amplitudes, gates, and circuit probabilities follow as an encoding in Gaussian or cyclotomic coordinates, with the usual quantum measurement interpretation stated rather than derived from truth values.
+
+A second bridge is more directly computational: original CM truth predicates specify reversible oracles and phase gates, with exact correction rules relating XOR decomposition to phase composition. This avoids confusing truth-table equivalence with amplitude equivalence. Extensive prior work already covers matrix logic, finite-field models, Boolean path sums, graphical calculi, and exact quantum rings. The next credible contribution is therefore a verified, resource-aware CM interface to those methods, supported by public code, explicit assumptions, and comparative benchmarks.

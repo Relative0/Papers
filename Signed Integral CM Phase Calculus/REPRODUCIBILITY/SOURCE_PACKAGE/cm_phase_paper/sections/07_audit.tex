@@ -1,0 +1,73 @@
+\section{Correction ledger: claims that needed qualification or replacement}\label{app:audit}
+This appendix records material changes to the exploratory discussion. Keeping the corrections visible is part of the scientific result; a polished consolidation should not quietly preserve the exciting claims and omit their failed premises.
+
+\begingroup\small
+\begin{longtable}{@{}L{0.31\textwidth}L{0.62\textwidth}@{}}
+\caption{Audit of the main conceptual and computational shortcuts.}\\
+\toprule
+Earlier claim or ambiguity & Verified replacement\\
+\midrule\endfirsthead
+\toprule Earlier claim or ambiguity & Verified replacement\\\midrule\endhead
+The symbol $m$ is a separate operator. & It was a text-extraction rendering of the manuscript's rotated-biconditional XOR glyph. This paper consistently uses $\oplus$ for that operation.\\
+The right column is $Y=1$. & Under the supplied convention, $Y=1$ selects the first/left column. The column entries are whatever the CM contains there, not the ket $\ket1$ itself.\\
+A masked rotation gives an order-four controlled phase. & The proposed map is $\cm abcd\mapsto\cm cbdd$. It destroys information; $F(E_0)=0$. See \cref{eq:badmask}.\\
+A half-turn is Boolean negation. & Rotation permutes positions. Complement flips values. They agree on some arrays, but not in general. In the signed quotient a half-turn induces additive negation by an added relation.\\
+$J$ is one of the original sixteen CMs. & $J$ has a negative entry and is not a binary CM. It is the induced operator satisfying $QP=JQ$.\\
+The four CM phases are complex scalars inside $\F_2$. & They are group elements or operators. The scalar identities of $\C$ do not hold in characteristic two.\\
+CM multiplication is unambiguous. & Pointwise AND, AND/XOR matrix multiplication, and convolution have different units and meanings.\\
+XOR reinforcement happens when equal paths meet. & Equal Boolean contributions cancel. Signed amplitude reinforcement requires keeping multiplicities.\\
+Truth uncertainty is already quantum superposition. & An unvaluated predicate is not automatically a coherent quantum state. A state space, amplitude rules, and measurement interpretation must be specified.\\
+The four sampled weights prove a sinusoidal phase law. & They agree with four samples for a particular carrier. No continuous phase law or general Born behavior follows.\\
+$w/4$ is derived from logic alone as a physical probability. & It is unique given disjoint additivity, normalization, and equal rotational weighting. Those statistical assumptions are additional.\\
+An integer correlation is an $\F_2$ inner product. & Integer counting of binary coefficients is not additive for XOR; ordinary polarization arguments cannot be used without checking the coefficient domain.\\
+A richer preserved form may enlarge the global isometry group. & Preserving a form that contains the old norm adds constraints. The full correlation preserves the zero-lag Hamming norm and gives the same $32$ global maps.\\
+The toy splitter is a normalized reversible analogue of $H$. & It has $B^4=0$. Its special initial carrier has $W/4=1/2$, and matching final weights do not prove stepwise normalization.\\
+The finite search covers every possible Boolean quantum theory. & It covers all $2\times2$ operators over one specified sixteen-element convolution ring and specified measurement conditions.\\
+The lift embeds the entire Boolean algebra into complex amplitudes. & The two algebras share an integral source. The quotient is not XOR-additive and loses truth-table information; \cref{eq:carry} gives the defect.\\
+Hamming norm is the same norm after the signed lift. & The lifted quotient norm is $C_0-C_2$, not $C_0$. Some nonzero binary CMs become null under $Q$.\\
+Keeping four phases means computation is only Clifford. & That is true only with the Clifford gate restriction. Nonlinear reversible oracles such as Toffoli change the available gate set.\\
+Adding $C_8$ necessarily introduces a new ambient scalar field. & Normalized Hadamards already adjoin $1/\sqrt2$, so $\zeta_8=(1+i)/\sqrt2$ is present. $T$ is a new local gate; the four-coordinate format supports it conveniently.\\
+The optimal CHSH measurement requires $C_{16}$. & Clifford+$T$ implements it exactly up to the relevant global phases. A real eigenvector gauge created the apparent extra requirement.\\
+Algorithm agreement demonstrates a physical quantum device or a speedup. & It verifies a classical exact encoding of standard quantum amplitudes. No physical nonlocal device or new complexity advantage was tested.\\
+Every normalised post-measurement state stays in the same integer format. & Conditioning can require division by $\sqrt p$ outside the original domain. Use unnormalised states or enlarge the domain explicitly.\\
+The matrix/Boolean-to-quantum idea is new. & The literature contains direct predecessors. Novelty of specific CM-based software or identities requires comparison beyond a naming distinction.\\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{Reproducibility, verification boundaries, and data encoding}\label{app:repro}
+\subsection{Files and commands}
+The source package contains the LaTeX manuscript, bibliography, two main verification scripts, a supplementary bridge-check script, generated JSON results, and finite-set membership data. No third-party paper or font files are redistributed. The supplied original manuscript is cited rather than bundled.
+
+From the project directory, run:
+\begin{verbatim}
+python code/verify_finite.py
+python code/verify_quantum.py
+python code/verify_bridges.py
+python code/make_tables.py
+latexmk -pdf -interaction=nonstopmode paper.tex
+\end{verbatim}
+The exact amplitude backend in \code{phase_calculus.py} uses Python integers and rational pairs. NumPy is needed for the finite search and independent numerical comparisons. LaTeX compilation uses standard mathematical packages and BibLaTeX with Biber. The README records the tested environment. Elapsed times in the JSON files are diagnostics, not comparative performance benchmarks.
+
+\paragraph{Finite search details.}
+An element is encoded by the integer $\sum_{j=0}^3a_j2^j$; its displayed CM is $\cm{a_0}{a_1}{a_3}{a_2}$. A matrix is a tuple $(a,b,c,d)$ in row-major \emph{operator} order. A two-branch state is ordered $(\ket1,\ket0)$ in this finite model. The code builds the full $16\times16$ multiplication table directly from circular convolution. Every candidate is applied to all $256$ states; the full pair forms are checked on all state pairs for every surviving candidate. Pre-filters only discard candidates that already fail necessary conditions. Invertibility is tested by whether the determinant is a unit; in $\F_2[g]/((g+1)^4)$, this is equivalent to odd coefficient parity.
+
+\paragraph{Exact quantum tests.}
+The quantum backend uses ascending bitstrings, with qubit zero the leftmost bit. Amplitudes are polynomials modulo $z^4+1$ divided by $2^s$. A fixed seed, $20260917$, generates the random tests. Exact integer state propagation is cross-checked against an independently structured exhaustive path sum on $120$ bounded-Hadamard circuits. The complex-double comparison is separately labelled; its small numerical discrepancy is not substituted for exact equality.
+
+\paragraph{What was not verified.}
+No formal proof-assistant certification was performed. The original manuscript was not audited in its entirety. No optimizer, hardware implementation, practical speedup, or physical experiment was benchmarked. The small-circuit tests do not by themselves prove arbitrary-size closure; that conclusion follows from the algebraic gate-intertwining proof. The literature review does not establish priority or exhaust all related work.
+
+\subsection{Notation and normalization checks}
+The zero object is $0$; $\ones$ is the all-ones truth table; $I_2$ is the ordinary two-dimensional identity; $E_0$ is the convolution identity. A coefficient ``$1$'' inside $\alg_2$ denotes $E_0$, not $\ones$. This distinction is essential in the finite search tables.
+
+A phase-count state in the common Gaussian format has denominator $2^{h/2}$. The exact $C_8$ backend instead uses denominator $2^s$. Thus its squared probabilities have denominator $2^{2s}$. These are equivalent representations when applicable; the exponent variables must not be interchanged. The code canonically removes common factors of two from all numerator coefficients.
+
+\subsection{Additional verified bridge facts}
+The supplementary checks verify $QP=JQ$, $Q^TQ=I-P^2$, integral convolution compatibility, the XOR carry correction, the four-element shell-action kernel, and the raw CM Hadamard's quotient action. They also verify the truth-coordinate permutation under rotation and that the reversible CM oracle embeddings are permutations and satisfy \cref{eq:oraclehom}. These checks are small, exact regressions for identities that also have direct proofs.
+
+One useful corollary of the lift is worth emphasizing. Reducing the Gaussian quotient modulo two produces
+\begin{equation}
+ \Z[i]/2\Z[i]\cong\F_2[g]/((g+1)^2).
+\end{equation}
+It does not retain four distinct complex scalar phases: $g^2=1$ there. Moving back to parity arithmetic after imposing the signed relation cannot restore the lost amplitude multiplicities.

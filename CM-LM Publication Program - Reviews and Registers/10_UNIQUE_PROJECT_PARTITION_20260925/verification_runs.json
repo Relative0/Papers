@@ -1,0 +1,24 @@
+[
+  {
+    "name": "seven_state",
+    "source": "ProLT-Homology/01_CURRENT_MANUSCRIPT_REVIEW_AND_REPRODUCIBILITY_20260924/reproducibility/verify_two_bit_height_two_counterexample.py",
+    "source_sha256": "40bd6869657efd11ec98f8b740305550c66506c2fa129050cb1d5d9c4a8528db",
+    "exit_code": 0,
+    "adaptation": null,
+    "stdout": "P = [(0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (1, 2), (1, 4), (1, 5), (1, 6), (2, 5), (2, 6), (3, 5), (3, 6), (4, 5)]\nlabels = ['10', '01', '01', '00', '11', '00', '01']\nQ = [(0, 4), (1, 2), (1, 4), (1, 6), (2, 6), (3, 5), (3, 6)]\ndeleted edges = [(0, 2), (0, 3), (0, 5), (0, 6), (1, 5), (2, 5), (4, 5)]\ndeleted triangles = [(0, 2, 5), (0, 2, 6), (0, 3, 5), (0, 3, 6), (0, 4, 5), (1, 2, 5), (1, 4, 5)]\nrelative matrix:\n[1, 1, 0, 0, 0, 0, 0]\n[0, 0, 1, 1, 0, 0, 0]\n[-1, 0, -1, 0, -1, 0, 0]\n[0, -1, 0, -1, 0, 0, 0]\n[0, 0, 0, 0, 0, -1, -1]\n[1, 0, 0, 0, 0, 1, 0]\n[0, 0, 0, 0, 1, 0, 1]\ndet(B) = -1\nrank_F2(B) = 7\nperfect matchings = 3\n  (0, 3, 2, 1, 6, 5, 4)\n  (1, 2, 0, 3, 6, 5, 4)\n  (1, 2, 4, 3, 5, 0, 6)\ndeleted-edge triangle-degrees = [2, 2, 3, 2, 2, 2, 2]\nP beat reduction = ([(3, 'down', 0), (4, 'up', 5), (0, 'up', 2), (1, 'up', 2), (5, 'down', 2), (2, 'up', 6)], {6})\nQ beat reduction = ([(0, 'up', 4), (2, 'down', 1), (4, 'down', 1), (1, 'up', 6), (5, 'down', 3), (3, 'up', 6)], {6})\nVERIFIED\n",
+    "stderr": ""
+  },
+  {
+    "name": "nonlinear_guard",
+    "source": "Certified CM-LM Guard Synthesis (Research Direction)/01_REFERENCE_CURRENT_GUARDED_PAPER/restricted_guard_probe_case_study.py",
+    "source_sha256": "b1f6d60edeb4b7f8d098e3aa4786bc817bfdcc0d0a5867b7690b426c5df1f32f",
+    "exit_code": 0,
+    "adaptation": {
+      "old": "/mnt/data/Restricted_Guard_CM_LM_Research_2026-09-24/nonlinear_case_study_results.json",
+      "new": "isolated verification/nonlinear_guard/nonlinear_case_study_results.json",
+      "scope": "output path only, temporary copy; retained source untouched"
+    },
+    "stdout": "{\n  \"scores\": {\n    \"11\": \"a*b + a + b\",\n    \"10\": \"-a*b + a - b\",\n    \"01\": \"-a*b - a + b\",\n    \"00\": \"a*b - a - b\"\n  },\n  \"certificate_identities\": {\n    \"g10+g01\": \"-2*a*b\",\n    \"g10+g00\": \"-2*b\",\n    \"g01+g00\": \"-2*a\"\n  },\n  \"curves\": {\n    \"g10=0\": \"a/(a + 1)\",\n    \"g01=0\": \"b/(b + 1)\",\n    \"g00=0\": \"a/(a - 1)\"\n  },\n  \"x_boundary_second_derivative\": \"-2/(a + 1)**3\",\n  \"operators_true_first_11_10_01_00\": {\n    \"AND\": [\n      1,\n      0,\n      0,\n      0\n    ],\n    \"X\": [\n      1,\n      1,\n      0,\n      0\n    ],\n    \"Y\": [\n      1,\n      0,\n      1,\n      0\n    ],\n    \"XNOR\": [\n      1,\n      0,\n      0,\n      1\n    ]\n  },\n  \"minimum_probe_size\": 3,\n  \"minimum_probe_sets\": [\n    [\n      \"10\",\n      \"01\",\n      \"00\"\n    ]\n  ],\n  \"sample_classifications\": {\n    \"AND\": [\n      \"1/2\",\n      \"1/2\"\n    ],\n    \"X\": [\n      \"2\",\n      \"1/2\"\n    ],\n    \"Y\": [\n      \"1/2\",\n      \"2\"\n    ],\n    \"XNOR\": [\n      \"3\",\n      \"3\"\n    ]\n  },\n  \"grid_counts\": {\n    \"AND\": 99,\n    \"X\": 43,\n    \"Y\": 43,\n    \"XNOR\": 206,\n    \"BOUNDARY\": 9\n  },\n  \"transition_edges\": [\n    [\n      \"AND\",\n      \"X\",\n      \"g10=0\"\n    ],\n    [\n      \"AND\",\n      \"Y\",\n      \"g01=0\"\n    ],\n    [\n      \"AND\",\n      \"XNOR\",\n      \"g00=0\"\n    ]\n  ],\n  \"status\": \"PASS\"\n}\n",
+    "stderr": ""
+  }
+]

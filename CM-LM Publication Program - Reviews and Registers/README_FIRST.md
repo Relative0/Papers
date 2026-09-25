@@ -1,11 +1,24 @@
-# CM–LM Publication Program: Reviews and Registers
+# CM-LM Publication Program: Reviews, Registers and Shared Evidence
 
-This is the program-wide index created on 2026-09-25; it is not an additional paper.
+**Status:** reference. **Disposition:** KEEP — program register, not a publication.
 
-- 01_THEOREM_BANK: versioned theorem/evidence register.
-- 02_HISTORICAL_PUBLICATION_MAP: earlier planned splits.
-- 03_CONSOLIDATED_FINDINGS: consolidated findings report.
-- 04_MASTER_TOPIC_INVENTORY: source inventory used for coverage review.
-- 05_CURRENT_AUDIT_AND_RECOMMENDATIONS: preservation audit, evidence, publication assessment and recommendations.
+Program register, not a publication. Low uniqueness but useful as a companion within this portfolio; external priority remains separate.
 
-Each paper or research-direction folder has a 00_PUBLICATION_CONTEXT_2026-09-25.md stating its status and next work.
+Current entry point: [PROJECT_REGISTER.md](PROJECT_REGISTER.md).
+
+- RG1: Canonical ownership index, theorem-bank crosswalk, immutable release provenance and shared evidence locations.
+- RG2: This partition records preservation, version lineage, semantic boundaries, exact duplicates and every relocation.
+
+Read [CLAIMS_AND_UNIQUENESS.md](CLAIMS_AND_UNIQUENESS.md) for boundaries, corrections and evidence.
+
+**Remaining work:** Update ownership and manifests when a future substantive revision is authorized; do not count this directory as a paper.
+
+**Main risk:** Cross-paper archives intentionally repeat manuscript/evidence bytes to preserve historical releases. They are labelled archival packages.
+
+- [Reviews and recommendations](REVIEWS_AND_RECOMMENDATIONS/README.md)
+- [Reproducibility and duplicate policy](REPRODUCIBILITY/README.md)
+- [Version history](HISTORY/README.md)
+- [Current source manifest](SOURCE_MANIFEST_SHA256.csv)
+- [Program project register](../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/PROJECT_REGISTER.md)
+
+This navigation was added on 2026-09-25. Historical manuscript, review, code, data and archive bytes were preserved.

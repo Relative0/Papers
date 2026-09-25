@@ -1,0 +1,88 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=26mm,headheight=15pt]{geometry}
+\usepackage{amsmath,amsthm,mathtools}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs,longtable,tabularx,array,multirow}
+\usepackage{graphicx,tikz-cd}
+\usepackage{microtype}
+\usepackage{xcolor}
+\definecolor{ink}{HTML}{15344A}
+\usepackage{enumitem}
+\setlist{itemsep=3pt,topsep=5pt,leftmargin=1.6em}
+\usepackage{fancyhdr}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small Correspondence matrices and cyclic phase}\fancyhead[R]{\small Verified research draft}\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\usepackage[colorlinks=true,linkcolor=ink,citecolor=ink,urlcolor=ink,pdftitle={Correspondence Matrices, Cyclic Phase, and Exact Quantum Encodings},pdfauthor={Research draft prepared for Brian Droncheff}]{hyperref}
+\usepackage[backend=biber,style=numeric-comp,sorting=none,maxbibnames=99,giveninits=true,doi=true,isbn=false,url=true,eprint=true]{biblatex}
+\addbibresource{references.bib}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\F}{\mathbb F}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\rot}{\mathcal R}
+\newcommand{\alg}{\mathcal A}
+\newcommand{\ones}{\mathsf T}
+\newcommand{\wt}{\operatorname{wt}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\newcommand{\cm}[4]{\begin{pmatrix}#1&#2\\#3&#4\end{pmatrix}}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{3pt}
+\setcounter{tocdepth}{2}
+\numberwithin{equation}{section}
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{11mm}
+{\small\scshape Mathematical synthesis\quad /\quad reproducible computational audit\par}
+\vspace{12mm}
+{\LARGE\bfseries Correspondence Matrices, Cyclic Phase,\\[5pt] and Exact Quantum Encodings\par}
+\vspace{6mm}
+{\large What survives in Boolean arithmetic,\\what requires a signed lift, and where the framework may be useful\par}
+\vspace{12mm}
+{\large Prepared for Brian Droncheff\par}
+\vspace{3mm}
+{17 September 2026\quad $\cdot$\quad Version 1.0\par}
+\vspace{12mm}
+\begin{minipage}{0.91\textwidth}
+\begin{abstract}
+This paper consolidates and audits an exploration beginning with Droncheff's correspondence matrices (CMs), which encode two-input Boolean predicates as binary $2\times2$ arrays. Clockwise rotation supplies a faithful $C_4$ action on the four atomic CM features. With an explicitly added cyclic-convolution product, these arrays form $\F_2[C_4]$. XOR cancellation, rotational correlations, and a conditional uniqueness theorem for normalized Hamming measure are established. Fresh exhaustive checks of all $65{,}536$ two-branch operators confirm that global Hamming and full integer-correlation preservation leave only $32$ phase-permutation operators. Thus these particular Boolean metrics do not provide a Hadamard-like mixer.
+
+An integral lift and the quotient identifying opposite phase directions produce $\Z[i]$, with the explicit intertwiner $QP=JQ$ connecting CM rotation to the real quarter-turn matrix. The resulting phase-count representation reproduces conventional quantum gates and extends to exact Clifford+$T$ arithmetic. A separate, faithful compilation maps original CM predicates to reversible oracles and diagonal phase gates. Proofs and new computations distinguish this semantic bridge from a claim that ordinary CM truth-table operations already constitute quantum mechanics. Related matrix logics, finite-field models, path-sum calculi, cyclotomic synthesis, and model-counting methods substantially precede the general ideas. Plausible contributions lie in typed CM-based explanation, certified local rewrites, and structure-aware compilation; neither physical novelty nor a new simulation speedup is established.
+\end{abstract}
+\end{minipage}
+\vfill
+\begin{minipage}{0.91\textwidth}\small
+\textbf{Status and provenance.} An AI-assisted research draft prepared from the supplied manuscript and this investigation, with independently rerun computational checks. It is not peer reviewed and is not a claim of new physical laws. The original manuscript is attributed to its author; the present text is a proposed extension and audit, not a silent revision of that manuscript. All numerical search summaries are generated by the accompanying code. Literature review cutoff: 17 September 2026.
+\end{minipage}
+\end{titlepage}
+\tableofcontents
+\clearpage
+\input{sections/01_foundations}
+\input{sections/02_boolean}
+\input{sections/03_lift}
+\input{sections/04_quantum}
+\input{sections/05_literature}
+\input{sections/06_applications}
+\appendix
+\input{sections/07_audit}
+\input{sections/08_tables}
+\clearpage
+\printbibliography[heading=bibintoc,title={References}]
+\end{document}
