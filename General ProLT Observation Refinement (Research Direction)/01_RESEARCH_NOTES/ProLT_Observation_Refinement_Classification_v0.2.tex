@@ -1,0 +1,966 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,tabularx,array,longtable}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{tikz-cd}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{newtxtext,newtxmath}
+
+\definecolor{navy}{RGB}{35,55,85}
+\definecolor{softblue}{RGB}{235,242,250}
+\definecolor{softgray}{RGB}{246,246,246}
+\definecolor{softgreen}{RGB}{237,247,240}
+\definecolor{softgold}{RGB}{251,246,232}
+\definecolor{softred}{RGB}{251,238,238}
+\hypersetup{colorlinks=true,linkcolor=navy,citecolor=navy,urlcolor=navy}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{navy}}{\thesubsection}{0.7em}{}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\lhead{ProLT Observation Refinement}
+\rhead{Classification note v0.2}
+\cfoot{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\Om}{\Omega_P}
+\newcommand{\truth}{\varsigma}
+\newcommand{\OX}{\mathcal O}
+\newcommand{\Cone}{\operatorname{Cone}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\xor}{\mathbin{\Updownarrow}}
+\newcommand{\redhom}{\widetilde H}
+\newcommand{\statusS}{\textbf{[S]}}
+\newcommand{\statusA}{\textbf{[A]}}
+\newcommand{\statusC}{\textbf{[C]}}
+\newcommand{\down}{\mathord\downarrow}
+\newcommand{\up}{\mathord\uparrow}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries\color{navy} Observation Refinement in Propositional Logical Topologies}\par
+\vspace{0.3em}
+{\large Fiber profiles, adjoint criteria, Quillen fibers, refinement defects, and the limits of complete classification}\par
+\vspace{0.65em}
+{\normalsize Working research note v0.2 --- 23 September 2026}\par
+\vspace{0.3em}
+{\small Follow-up to \emph{Homological Foundations for Propositional Logical Topologies}, built on the ProLT core manuscript v0.8.}
+\end{center}
+
+\vspace{0.7em}
+\noindent\colorbox{softgold}{\parbox{0.96\textwidth}{
+\textbf{Status convention.} \statusS\ denotes standard finite-poset/algebraic-topological mathematics. \statusA\ denotes a direct ProLT specialization or elementary theorem derived from the v0.8 signature framework. \statusC\ denotes a potentially publishable ProLT-specific formulation, invariant, or algorithmic consequence whose novelty should be subjected to a dedicated literature audit before any priority claim.
+}}
+
+\section{Question and answer in one page}
+
+Let \(\Phi=(\phi_i)_{i\in I}\) be an observation family and let \(\Psi\) extend \(\Phi\) by new observations. The v0.8 ProLT theory gives the realized-signature posets
+\[
+P_\Phi=o_\Phi(\Om),\qquad P_\Psi=o_\Psi(\Om),
+\]
+ordered by inclusion, and a canonical forgetful refinement map
+\[
+r_{\Psi\Phi}:P_\Psi\longrightarrow P_\Phi
+\]
+obtained by deleting the new coordinates. The corresponding order complexes are
+\[
+\OX_\Phi=\Delta(P_\Phi),\qquad \OX_\Psi=\Delta(P_\Psi).
+\]
+The central problem is:
+
+\begin{center}
+\emph{When does adding observations change only the resolution of the presentation, and when does it change the homotopy or homology of the observable-state space?}
+\end{center}
+
+The main results of this note give a hierarchy of answers.
+
+\begin{enumerate}[label=\textbf{R\arabic*.},leftmargin=2.7em]
+\item Every refinement admits an exact \emph{fiber-profile normal form}: over each coarse signature \(p\), record exactly which new-coordinate signatures occur. This completely reconstructs \(P_\Psi\) and the map \(r_{\Psi\Phi}\).
+\item The refinement is \emph{topologically redundant} exactly when every coarse state has one new profile and those profiles are monotone. Equivalently, \(r_{\Psi\Phi}\) is an order isomorphism.
+\item If the refinement does not split coarse states, then \(\OX_\Psi\) is literally a subcomplex of \(\OX_\Phi\). A coarse chain survives exactly when its new-coordinate profiles increase along the chain. For one new Boolean observation, the deleted chains are precisely those containing a \(1\to0\) descent.
+\item There are simple signature-level sufficient criteria for homotopy invariance. If every lower refinement fiber has a greatest element, or every upper refinement fiber has a least element, then \(r_{\Psi\Phi}\) has an order adjoint and is a homotopy equivalence. For one observation \(\psi\), this says: \emph{possibility of \(\psi\)} or \emph{forced truth of \(\psi\)} must be monotone in the coarse information order.
+\item More generally, Quillen--McCord/Barmak fiber criteria apply. Contractible principal fibers imply a simple homotopy equivalence; acyclic principal fibers imply homology equivalence.
+\item Homology equivalence has an exact finite test: the refinement mapping cone is acyclic. In the non-splitting case it reduces to ordinary relative homology \(H_*(\OX_\Phi,\OX_\Psi)\).
+\item There is no unrestricted algorithmic classification of homotopy-neutral refinements: arbitrary finite posets can be realized as refined signature posets above a one-point coarse space, so the problem contains finite-complex contractibility, which is undecidable. Homology neutrality, by contrast, remains decidable by finite boundary-matrix computation.
+\end{enumerate}
+
+\section{Base ProLT data and refinement map}
+
+Let \(P=\{p_1,\dots,p_n\}\) be a finite propositional variable set and \(\Om=\{0,1\}^P\) its valuation space. For a formula \(L\), write
+\[
+\truth(L)=\{v\in\Om:v\models L\}.
+\]
+For an indexed observation family \(\Phi=(\phi_i)_{i\in I}\), define
+\[
+o_\Phi(v)=\{i\in I:v\models\phi_i\}\subseteq I.
+\]
+The v0.8 ProLT results identify topological indistinguishability with equality of signatures and the specialization preorder with inclusion:
+\[
+v\sim_\Phi w\iff o_\Phi(v)=o_\Phi(w),
+\qquad
+v\preceq_\Phi w\iff o_\Phi(v)\subseteq o_\Phi(w).
+\]
+Hence the Kolmogorov quotient is the finite poset
+\[
+P_\Phi=o_\Phi(\Om)\subseteq 2^I
+\]
+with inclusion order.
+
+Suppose now that
+\[
+\Psi=(\Phi,\Theta)
+\]
+extends \(\Phi\) by a disjointly indexed family \(\Theta=(\theta_a)_{a\in A}\). Then
+\[
+o_\Psi(v)=\bigl(o_\Phi(v),o_\Theta(v)\bigr)
+\in 2^I\times 2^A,
+\]
+and the coordinate-forgetting map
+\[
+r=r_{\Psi\Phi}:P_\Psi\to P_\Phi,
+\qquad
+r(s)=s\cap I,
+\]
+is surjective and monotone.
+
+\section{The fiber-profile normal form}
+
+\begin{definition}[Coarse state and refinement profile]\label{def:profile}
+For \(p\in P_\Phi\), let
+\[
+C_p:=o_\Phi^{-1}(p)
+\]
+be the coarse observational state represented by \(p\). Define its \emph{new-coordinate fiber profile}
+\[
+\mathcal B_p:=o_\Theta(C_p)
+=\{o_\Theta(v):v\in C_p\}\subseteq 2^A.
+\]
+Each \(\mathcal B_p\) is nonempty.
+\end{definition}
+
+\begin{theorem}[Fiber-profile normal form]\label{thm:normalform}
+\statusA/\statusC\;
+Let
+\[
+Q_{\mathcal B}
+:=\{(p,a):p\in P_\Phi,\ a\in\mathcal B_p\}
+\subseteq P_\Phi\times2^A
+\]
+with product order
+\[
+(p,a)\le(q,b)
+\iff p\le q\text{ in }P_\Phi\text{ and }a\subseteq b.
+\]
+Then
+\[
+P_\Psi\cong Q_{\mathcal B}
+\]
+as posets, under separation of old and new coordinates. Under this isomorphism the refinement map is exactly the first-coordinate projection
+\[
+r(p,a)=p.
+\]
+Consequently the family \((\mathcal B_p)_{p\in P_\Phi}\) determines the refined signature poset and the refinement projection completely.
+\end{theorem}
+
+\begin{proof}
+Every realized \(\Psi\)-signature comes from a valuation \(v\) and splits uniquely as
+\[
+(o_\Phi(v),o_\Theta(v))=(p,a)
+\]
+with \(a\in\mathcal B_p\). Conversely, every pair in \(Q_{\mathcal B}\) is realized by the definition of \(\mathcal B_p\). Inclusion of the combined signatures is coordinatewise inclusion because the old and new index sets are disjoint. The projection statement is immediate.
+\end{proof}
+
+\begin{remark}[Point fibers are not Quillen fibers]\label{rem:pointfiber}
+The direct point fiber
+\[
+r^{-1}(p)=\{p\}\times\mathcal B_p
+\]
+records only how the coarse state \(p\) splits. Quillen-type theorems use instead the preimages of principal ideals or filters,
+\[
+r^{-1}(\down p),\qquad r^{-1}(\up p),
+\]
+which also remember how the split pieces compare with states below or above \(p\). This distinction is essential: every point fiber can be contractible while the refinement still changes homotopy type.
+\end{remark}
+
+\section{Exact classification of topological redundancy}
+
+The v0.8 manuscript calls a new observation topologically redundant when its truth region is already open in the old ProLT. The fiber normal form turns this into an exact signature-level theorem for an arbitrary finite block of added observations.
+
+\begin{theorem}[Redundancy/order-isomorphism theorem]\label{thm:redundancy}
+\statusA/\statusC\;
+For a refinement \(\Psi=(\Phi,\Theta)\), the following are equivalent.
+\begin{enumerate}[label=(\roman*)]
+\item \(\tau_\Psi=\tau_\Phi\) on the fixed valuation carrier \(\Om\).
+\item Every new truth region \(\truth(\theta_a)\), \(a\in A\), is already \(\tau_\Phi\)-open.
+\item Every fiber profile is a singleton,
+\[
+\mathcal B_p=\{\alpha(p)\},
+\]
+and the resulting map
+\[
+\alpha:P_\Phi\to2^A
+\]
+is isotone:
+\[
+p\le q\Longrightarrow\alpha(p)\subseteq\alpha(q).
+\]
+\item The refinement projection \(r:P_\Psi\to P_\Phi\) is an order isomorphism.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+The equivalence of (i) and (ii) is the definition of equality of the generated topologies: \(\tau_\Phi\subseteq\tau_\Psi\) automatically, and equality holds exactly when each new subbasic truth region is old-open.
+
+Assume (i). If two valuations lie in the same old signature class \(C_p\), they are topologically indistinguishable in \(\tau_\Phi\); equality of topologies makes them indistinguishable in \(\tau_\Psi\) as well. Thus the new signature is constant on \(C_p\), giving \(\mathcal B_p=\{\alpha(p)\}\). If \(p\le q\), choose \(v\in C_p\), \(w\in C_q\). The old specialization relation gives \(v\preceq_\Phi w\). Equality of topologies gives \(v\preceq_\Psi w\), hence \(\alpha(p)\subseteq\alpha(q)\). Therefore (iii) holds.
+
+Assume (iii). For each new coordinate \(a\in A\), the set
+\[
+U_a:=\{p\in P_\Phi:a\in\alpha(p)\}
+\]
+is upward closed. By the signature representation of the ProLT topology,
+\[
+\truth(\theta_a)=o_\Phi^{-1}(U_a)
+\]
+is \(\tau_\Phi\)-open. Hence (ii).
+
+Under (iii), Theorem~\ref{thm:normalform} identifies \(P_\Psi\) with the graph \(\{(p,\alpha(p))\}\). Monotonicity of \(\alpha\) says
+\[
+p\le q\iff(p,\alpha(p))\le(q,\alpha(q)),
+\]
+so projection is an order isomorphism. Conversely, if projection is an order isomorphism then every fiber has one point and its inverse is necessarily isotone, giving (iii).
+\end{proof}
+
+\begin{remark}
+This theorem separates three notions which should not be conflated:
+\begin{enumerate}[label=(\alph*)]
+\item \emph{no splitting}: each \(\mathcal B_p\) is a singleton;
+\item \emph{no order deletion}: the singleton profile map is isotone;
+\item \emph{full redundancy}: both hold, equivalently the topology is unchanged.
+\end{enumerate}
+A refinement can leave every coarse equivalence class intact while still deleting one-way specialization comparisons.
+\end{remark}
+
+\section{Non-splitting refinements and chain deletion}
+
+\begin{definition}[Non-splitting refinement]
+A refinement is \emph{non-splitting} if every \(\mathcal B_p\) is a singleton. Write
+\[
+\mathcal B_p=\{\alpha(p)\}.
+\]
+No monotonicity of \(\alpha\) is assumed.
+\end{definition}
+
+\begin{theorem}[Order deletion theorem]\label{thm:orderdelete}
+\statusA/\statusC\;
+For a non-splitting refinement, identify the fine and coarse vertex sets through the bijection \(r\). Then
+\[
+p\le_\Psi q
+\iff
+p\le_\Phi q\ \text{and}\ \alpha(p)\subseteq\alpha(q).
+\]
+Consequently
+\[
+\le_\Psi\ \subseteq\ \le_\Phi
+\]
+and
+\[
+\OX_\Psi\subseteq\OX_\Phi
+\]
+as a simplicial subcomplex on the same vertex set. A coarse chain
+\[
+p_0<p_1<\cdots<p_k
+\]
+survives the refinement exactly when
+\[
+\alpha(p_0)\subseteq\alpha(p_1)\subseteq\cdots\subseteq\alpha(p_k).
+\]
+\end{theorem}
+
+\begin{proof}
+In the fiber-profile normal form the unique fine point over \(p\) is \((p,\alpha(p))\). Product order gives the displayed criterion. Every fine chain is therefore a coarse chain; conversely, a coarse chain is fine exactly when its new profiles are coordinatewise nondecreasing.
+\end{proof}
+
+\begin{corollary}[One-bit descent criterion]\label{cor:descent}
+Suppose one new Boolean observation \(\psi\) is constant on each coarse class, and write
+\[
+b(p)\in\{0,1\}
+\]
+for its value on \(C_p\). Then a coarse chain \(p_0<\cdots<p_k\) survives exactly when
+\[
+b(p_0)\le b(p_1)\le\cdots\le b(p_k).
+\]
+Equivalently, it is deleted exactly when it contains a \(1\to0\) inversion.
+\end{corollary}
+
+\begin{corollary}[Post-\(T_0\) refinement filtration]\label{cor:T0filtration}
+\statusA/\statusC\;
+If \(X_\Phi\) is already \(T_0\) on the valuation carrier, then \(o_\Phi\) is injective, so every later observation refinement is automatically non-splitting. Thus a sequence
+\[
+\Phi_0\subseteq\Phi_1\subseteq\cdots\subseteq\Phi_T
+\]
+with \(X_{\Phi_0}\) \(T_0\) yields, after identifying vertices with valuations,
+\[
+\OX_{\Phi_T}\subseteq\cdots\subseteq\OX_{\Phi_1}\subseteq\OX_{\Phi_0}.
+\]
+Hence ordinary persistence can be applied after reversing the refinement index; zigzag persistence is not required while observations are only added.
+\end{corollary}
+
+\begin{proof}
+A coarse signature class contains a single valuation when \(o_\Phi\) is injective, so it cannot split further as a set. Theorem~\ref{thm:orderdelete} then applies at every later stage.
+\end{proof}
+
+\section{Relative defect chains in the non-splitting case}
+
+The preceding inclusion lets the mapping-cone defect from the foundation note be sharpened.
+
+\begin{theorem}[Refinement defect becomes relative homology]\label{thm:relativecone}
+\statusS/\statusA\;
+For a non-splitting refinement, under the vertex identification of Theorem~\ref{thm:orderdelete}, the induced simplicial map is the inclusion
+\[
+\OX_\Psi\hookrightarrow\OX_\Phi.
+\]
+Therefore the mapping-cone refinement defect satisfies
+\[
+D_k(\Psi/\Phi;R)
+\cong
+H_k(\OX_\Phi,\OX_\Psi;R).
+\]
+\end{theorem}
+
+\begin{definition}[Refinement-descent chain complex]\label{def:descentcomplex}
+For a non-splitting refinement define \(C_k^{\mathrm{desc}}(\Psi/\Phi;R)\) to be the free \(R\)-module generated by the coarse \(k\)-chains that fail the survival condition
+\[
+\alpha(p_0)\subseteq\cdots\subseteq\alpha(p_k).
+\]
+Its boundary is the ordinary simplicial boundary followed by deletion of every face that does survive the refinement.
+\end{definition}
+
+\begin{proposition}[Exact descent-chain computation]\label{prop:descentcomplex}
+\statusA/\statusC\;
+There is a natural chain isomorphism
+\[
+C_*^{\mathrm{desc}}(\Psi/\Phi;R)
+\cong
+C_*(\OX_\Phi,\OX_\Psi;R).
+\]
+Hence
+\[
+D_k(\Psi/\Phi;R)
+\cong
+H_k(C_*^{\mathrm{desc}}(\Psi/\Phi;R)).
+\]
+For one added Boolean observation, the generators are exactly coarse chains containing a \(1\to0\) descent.
+\end{proposition}
+
+\begin{proof}
+The simplicial chain group of \(\OX_\Phi\) is free on its simplices, and the subcomplex \(\OX_\Psi\) is spanned by exactly the surviving simplices. The quotient chain group therefore has the nonsurviving simplices as a basis. Its differential is the coarse simplicial differential modulo the surviving submodule, which is precisely the stated rule.
+\end{proof}
+
+\section{Adjoint criteria: an elementary homotopy-neutral class}
+
+For \(p\in P_\Phi\), define the principal refinement fibers
+\[
+L_p:=r^{-1}(\down p),
+\qquad
+U_p:=r^{-1}(\up p).
+\]
+The following test is much easier than computing arbitrary homotopy types.
+
+\begin{theorem}[Greatest-lower-fiber / least-upper-fiber criterion]\label{thm:adjoint}
+\statusS/\statusA/\statusC\;
+Let
+\[
+\mathsf U(p)
+:=\bigcup_{\substack{q\le p\\a\in\mathcal B_q}}a,
+\qquad
+\mathsf L(p)
+:=\bigcap_{\substack{q\ge p\\a\in\mathcal B_q}}a.
+\]
+Then:
+\begin{enumerate}[label=(\roman*)]
+\item \(L_p\) has a greatest element if and only if
+\[
+\mathsf U(p)\in\mathcal B_p.
+\]
+When this holds, the greatest element is \((p,\mathsf U(p))\).
+\item \(U_p\) has a least element if and only if
+\[
+\mathsf L(p)\in\mathcal B_p.
+\]
+When this holds, the least element is \((p,\mathsf L(p))\).
+\end{enumerate}
+If (i) holds for every \(p\), then \(r\) has a right adjoint. If (ii) holds for every \(p\), then \(r\) has a left adjoint. Either global condition implies that
+\[
+\Delta(r):\OX_\Psi\to\OX_\Phi
+\]
+is a homotopy equivalence.
+\end{theorem}
+
+\begin{proof}
+Suppose \(L_p\) has greatest element \((q,a_*)\). Since \(r\) is surjective, choose some \((p,b)\in r^{-1}(p)\subseteq L_p\). Greatness gives \((p,b)\le(q,a_*)\), so \(p\le q\le p\) and therefore \(q=p\). The second coordinate \(a_*\) contains every new signature occurring over every \(q\le p\), hence contains \(\mathsf U(p)\). Since \(a_*\) itself occurs in the union, equality follows. Conversely, if \(\mathsf U(p)\in\mathcal B_p\), then every \((q,a)\in L_p\) satisfies
+\[
+q\le p,\qquad a\subseteq\mathsf U(p),
+\]
+so \((p,\mathsf U(p))\) is greatest. This proves (i). The proof of (ii) is dual.
+
+If every lower fiber has a greatest element, define
+\[
+s_R(p):=(p,\mathsf U(p)).
+\]
+Then
+\[
+r(x)\le p\iff x\le s_R(p),
+\]
+so \(r\dashv s_R\). In particular \(r s_R=\mathrm{id}\) and
+\[
+\mathrm{id}\le s_Rr.
+\]
+Order-preserving maps that are pointwise comparable induce homotopic maps on order complexes, so \(\Delta(s_R)\) is a homotopy inverse to \(\Delta(r)\). The left-adjoint case is dual.
+\end{proof}
+
+\subsection{A sharp one-observation interpretation}
+
+Let \(\psi\) be one newly added observation. For each coarse state \(C_p\), define
+\[
+M_\psi(p)=
+\begin{cases}
+1,&\text{some }v\in C_p\text{ satisfies }\psi,\\
+0,&\text{otherwise},
+\end{cases}
+\]
+and
+\[
+m_\psi(p)=
+\begin{cases}
+1,&\text{every }v\in C_p\text{ satisfies }\psi,\\
+0,&\text{otherwise}.
+\end{cases}
+\]
+Thus \(M_\psi\) records \emph{possibility} of the new observation inside a coarse state, while \(m_\psi\) records \emph{forced truth}. The possible fiber profiles are
+\[
+\{0\},\qquad\{1\},\qquad\{0,1\},
+\]
+with
+\[
+m_\psi(p)=\min\mathcal B_p,
+\qquad
+M_\psi(p)=\max\mathcal B_p.
+\]
+
+\begin{corollary}[Possible/forced monotonicity criterion]\label{cor:possibleforced}
+\statusA/\statusC\;
+For a one-observation refinement:
+\begin{enumerate}[label=(\roman*)]
+\item \(r\) has a right adjoint if and only if \(M_\psi:P_\Phi\to\{0,1\}\) is isotone.
+\item \(r\) has a left adjoint if and only if \(m_\psi:P_\Phi\to\{0,1\}\) is isotone.
+\end{enumerate}
+Equivalently, either of the following is sufficient for homotopy invariance:
+\begin{itemize}
+\item the coarse states in which \(\psi\) is \emph{possible} form an upset;
+\item the coarse states in which \(\psi\) is \emph{forced} form an upset.
+\end{itemize}
+Topological redundancy is the stronger special case
+\[
+m_\psi=M_\psi=b
+\]
+with \(b\) isotone.
+\end{corollary}
+
+\begin{proof}
+For one bit,
+\[
+\mathsf U(p)=\max_{q\le p}M_\psi(q).
+\]
+The membership condition \(\mathsf U(p)\in\mathcal B_p\) is equivalent to \(\mathsf U(p)=M_\psi(p)\), which for every \(p\) is exactly isotonicity of \(M_\psi\). Dually,
+\[
+\mathsf L(p)=\min_{q\ge p}m_\psi(q)
+\]
+and \(\mathsf L(p)\in\mathcal B_p\) for every \(p\) is exactly isotonicity of \(m_\psi\).
+\end{proof}
+
+\section{Quillen--McCord/Barmak fiber criteria}
+
+The adjoint criterion forces a cone point in every principal fiber. Quillen's fiber theorem permits much more general contractible fibers.
+
+\begin{theorem}[Contractible-fiber criterion]\label{thm:quillen}
+\statusS/\statusA\;
+If for every \(p\in P_\Phi\), the order complex
+\[
+\Delta\bigl(r^{-1}(\down p)\bigr)
+\]
+is contractible, then
+\[
+\Delta(r):\OX_\Psi\longrightarrow\OX_\Phi
+\]
+is a simple homotopy equivalence, hence a homotopy equivalence. Dually, the same conclusion follows if every
+\[
+\Delta\bigl(r^{-1}(\up p)\bigr)
+\]
+is contractible.
+\end{theorem}
+
+\begin{proof}
+The lower-fiber statement is the finite-poset McCord--Quillen theorem together with Barmak's strengthening to simple homotopy equivalence. The upper-fiber statement follows by applying the theorem to opposite posets.
+\end{proof}
+
+\begin{theorem}[Acyclic-fiber homology criterion]\label{thm:acyclicfiber}
+\statusS/\statusA\;
+Fix coefficients \(R\). If
+\[
+\redhom_i\!\left(\Delta(r^{-1}(\down p));R\right)=0
+\]
+for every \(p\in P_\Phi\) and every \(i\ge0\), then
+\[
+r_*:H_i(\OX_\Psi;R)\longrightarrow H_i(\OX_\Phi;R)
+\]
+is an isomorphism for every \(i\). The dual upper-fiber statement also holds.
+\end{theorem}
+
+\begin{remark}[Sufficient, not necessary]\label{rem:notnecessary}
+The principal-fiber conditions are powerful but not necessary. Section~\ref{sec:examples} gives a concrete ProLT refinement for which \(r\) is a homotopy equivalence even though one lower principal fiber and one upper principal fiber are each two disconnected points. Thus neither orientation of the Quillen test succeeds, despite homotopy neutrality.
+\end{remark}
+
+\section{Exact homology classification by the refinement cone}
+
+The homotopy problem is difficult in full generality, but the homology problem has an exact algebraic answer.
+
+\begin{definition}[Refinement mapping cone]
+Let
+\[
+r_\#:C_*(\OX_\Psi;R)\longrightarrow C_*(\OX_\Phi;R)
+\]
+be the induced chain map. Define
+\[
+\mathsf D_*(\Psi/\Phi;R)=\Cone(r_\#)
+\]
+and
+\[
+D_k(\Psi/\Phi;R)=H_k(\mathsf D_*(\Psi/\Phi;R)).
+\]
+\end{definition}
+
+\begin{theorem}[Exact homology-equivalence criterion]\label{thm:coneexact}
+\statusS/\statusA/\statusC\;
+The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item \(r_*:H_k(\OX_\Psi;R)\to H_k(\OX_\Phi;R)\) is an isomorphism for every \(k\);
+\item
+\[
+D_k(\Psi/\Phi;R)=0
+\qquad\text{for every }k.
+\]
+\end{enumerate}
+Thus the refinement cone gives an exact, finite homological classification of whether the refinement is homology-neutral.
+\end{theorem}
+
+\begin{proof}
+The standard mapping-cone long exact sequence is
+\[
+\cdots\to H_k(\OX_\Psi)
+\overset{r_*}{\longrightarrow}H_k(\OX_\Phi)
+\to D_k(\Psi/\Phi)
+\to H_{k-1}(\OX_\Psi)\to\cdots.
+\]
+Exactness gives the equivalence.
+\end{proof}
+
+\begin{corollary}[Quick obstructions]
+If any of the following differs between \(\OX_\Psi\) and \(\OX_\Phi\), the refinement is not homology-neutral:
+\begin{enumerate}[label=(\alph*)]
+\item a Betti number over the chosen field;
+\item the number of connected components;
+\item the Euler characteristic.
+\end{enumerate}
+The converses are false in general.
+\end{corollary}
+
+\subsection{An exact \(H_0\) criterion}
+
+\begin{proposition}[Connected-component criterion]\label{prop:H0}
+\statusA\;
+Let \(\pi_0(P)\) denote connected components of the undirected comparability graph of a finite poset \(P\). Since \(r\) is surjective, the induced map
+\[
+r_*:H_0(\OX_\Psi;R)\to H_0(\OX_\Phi;R)
+\]
+is always surjective. It is an isomorphism if and only if, for every connected component \(C\subseteq P_\Phi\), the inverse image
+\[
+r^{-1}(C)
+\]
+is connected.
+\end{proposition}
+
+\begin{proof}
+A connected component of \(P_\Psi\) maps into one component of \(P_\Phi\) because comparability paths map to comparability-or-equality paths. Surjectivity of \(r\) ensures every coarse component receives at least one fine component. On \(H_0\), each fine component generator maps to the generator of its coarse component. The map is injective exactly when no coarse component receives more than one fine component.
+\end{proof}
+
+\section{A strict hierarchy of refinement-neutrality tests}\label{sec:hierarchy}
+
+It is useful to distinguish five levels.
+
+\begin{center}
+\begin{tabular}{cl}
+\toprule
+Class & Condition \\
+\midrule
+\(\mathsf R\) & \(r\) is an order isomorphism (topological redundancy) \\
+\(\mathsf A\) & \(r\) has a left or right order adjoint \\
+\(\mathsf Q\) & all lower or all upper principal refinement fibers are contractible \\
+\(\mathsf H\) & \(\Delta(r)\) is a homotopy equivalence \\
+\(\mathsf M\) & \(r_*\) is a homology isomorphism \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Standard implications and the preceding theorems give
+\[
+\boxed{
+\mathsf R\subseteq\mathsf A\subseteq\mathsf Q\subseteq\mathsf H\subseteq\mathsf M.
+}
+\]
+The examples below show that the first three inclusions are already strict in very small Boolean ProLTs. The universality result of Section~\ref{sec:universality} shows that \(\mathsf H\subsetneq\mathsf M\) also occurs in unrestricted ProLT refinements by importing any finite acyclic noncontractible complex.
+
+\section{Worked Boolean examples}\label{sec:examples}
+
+Throughout, signatures are ordered by inclusion and coefficients for displayed homology groups are \(\F\).
+
+\subsection{Redundant: adding \(X\wedge Y\) to \((X,Y)\)}
+
+Let
+\[
+\Phi=(X,Y),\qquad \psi=X\wedge Y.
+\]
+The coarse signatures are
+\[
+D=\varnothing,
+\quad A=\{X\},
+\quad C=\{Y\},
+\quad B=\{X,Y\},
+\]
+forming the Boolean diamond. The new bit is
+\[
+b(D)=b(A)=b(C)=0,
+\qquad b(B)=1.
+\]
+It is isotone, so Theorem~\ref{thm:redundancy} applies. The refinement is in \(\mathsf R\): the ProLT topology and canonical order complex are unchanged, although a weighted signature metric may change if the redundant coordinate is assigned positive weight.
+
+\subsection{Adjoint-neutral but nonredundant: adding \(X\) to no observations}
+
+Take one propositional variable \(X\), let \(\Phi\) be the empty observation family, and refine by \(\Psi=(X)\). The coarse poset is a point; the fine poset is the two-element chain
+\[
+0<1.
+\]
+The projection to a point has both a left adjoint (choose the minimum) and a right adjoint (choose the maximum), so it is a homotopy equivalence. The topology nevertheless changes from indiscrete to Sierpi\'nski. Thus this refinement lies in \(\mathsf A\setminus\mathsf R\).
+
+\subsection{Quillen-neutral but no adjoint: adding XOR to \((X,Y)\)}
+
+Let
+\[
+\Phi=(X,Y),\qquad \psi=X\xor Y.
+\]
+The new-bit profile on \((D,A,C,B)\) is
+\[
+(0,1,1,0).
+\]
+No coarse class splits, but the old comparisons \(A<B\) and \(C<B\) are deleted. The fine poset has \(D\) as a minimum and three elements \(A,C,B\) above it. Hence its order complex is a cone and is contractible.
+
+The bit is not isotone, so neither the possible nor forced map is isotone; no adjoint criterion applies. However every lower Quillen fiber is contractible: over \(D,A,C\) it is a point or edge, and over \(B\) it is the entire fine poset, again a cone. Therefore the refinement lies in
+\[
+\mathsf Q\setminus\mathsf A.
+\]
+
+\subsection{Homotopy-neutral while both Quillen orientations fail}\label{ex:alternating}
+
+Take
+\[
+\Phi=(X\wedge Y,\ X,\ X\vee Y).
+\]
+On the four valuations \(00,01,10,11\), the realized signatures form a four-element chain
+\[
+p_0<p_1<p_2<p_3
+\]
+with
+\[
+\begin{array}{c|c}
+00&\varnothing\\
+01&\{X\vee Y\}\\
+10&\{X,X\vee Y\}\\
+11&\{X\wedge Y,X,X\vee Y\}.
+\end{array}
+\]
+Add
+\[
+\psi=\neg Y.
+\]
+Its profile along the chain is
+\[
+1,0,1,0.
+\]
+No coarse class splits. The surviving strict comparisons are
+\[
+p_0<p_2,
+\qquad
+p_1<p_2,
+\qquad
+p_1<p_3.
+\]
+Thus \(\OX_\Psi\) is a three-edge tree, while \(\OX_\Phi\) is a \(3\)-simplex. Both are nonempty and contractible, so the refinement projection is a homotopy equivalence.
+
+Nevertheless,
+\[
+r^{-1}(\down p_1)=\{p_0,p_1\}
+\]
+is a two-point antichain, and
+\[
+r^{-1}(\up p_2)=\{p_2,p_3\}
+\]
+is also a two-point antichain. Hence the lower-fiber Quillen criterion fails and the dual upper-fiber criterion fails. This gives a concrete refinement in
+\[
+\mathsf H\setminus\mathsf Q.
+\]
+
+\subsection{Homology-active: adding negation to \((X)\)}
+
+Let
+\[
+\Phi=(X),\qquad \Psi=(X,\neg X).
+\]
+The coarse signature poset is a two-element chain, so \(\OX_\Phi\) is an edge. The fine signatures \(\{X\}\) and \(\{\neg X\}\) are incomparable, so \(\OX_\Psi\) is two isolated points. Hence
+\[
+H_0(\OX_\Phi)\cong\F,
+\qquad
+H_0(\OX_\Psi)\cong\F^2.
+\]
+The refinement is not homology-neutral. The mapping cone gives
+\[
+D_1(\Psi/\Phi;\F)\cong\F,
+\qquad D_0(\Psi/\Phi;\F)=0.
+\]
+This is the smallest example in which adding an observation splits a connected coarse information structure into disconnected fine states.
+
+\subsection{Splitting can still be homotopy-neutral}
+
+Let \(\Phi=(X)\) on two variables \(X,Y\), and add \(Y\). Each coarse \(X\)-state splits into the two possible \(Y\)-values, so
+\[
+\mathcal B_{\varnothing}=\mathcal B_{\{X\}}=\{0,1\}.
+\]
+The coarse poset is an edge and the fine poset is the Boolean diamond. Both are contractible. In fact both the possible map \(M_Y\equiv1\) and the forced map \(m_Y\equiv0\) are isotone, so the projection has both adjoints. This shows that state splitting by itself does not imply a topological defect.
+
+\section{Small exhaustive verification}
+
+To test the logical hierarchy independently of the proofs, the accompanying script exhaustively enumerates every one-bit refinement profile over every nonempty subposet of the Boolean square \(B_2\). A coarse point may have new-bit fiber \(\{0\}\), \(\{1\}\), or \(\{0,1\}\). There are \(255\) such refinement instances in total.
+
+The verifier checks redundancy, left/right section-adjoint criteria, lower-fiber contractibility by finite beat-point reduction, lower-fiber acyclicity over \(\F\), the Betti numbers of the coarse and fine order complexes, and the mapping-cone Betti numbers. It finds exactly five logical pattern types under those tests:
+\[
+\begin{array}{c|r}
+(\mathsf R,\mathsf A,\mathsf Q_{\downarrow},\mathsf{Acyc}_{\downarrow},\mathsf M)&\text{count}\\\hline
+(0,0,0,0,0)&24\\
+(0,0,0,0,1)&16\\
+(0,0,1,1,1)&20\\
+(0,1,1,1,1)&144\\
+(1,1,1,1,1)&51
+\end{array}
+\]
+These finite checks are not substitutes for the theorems, but they verify the example calculations and demonstrate that the sufficient conditions are genuinely non-equivalent even at very small size.
+
+\section{Universality of refinement and the limit of complete homotopy classification}\label{sec:universality}
+
+The preceding criteria invite the question whether one could push further to a complete effective homotopy classification. In unrestricted dimension the answer is negative.
+
+\begin{theorem}[Universality of refined signature posets]\label{thm:universality}
+\statusA/\statusC\;
+Every finite poset \(Q\) is isomorphic to the realized-signature poset of some finite propositional observation family. More strongly, \(Q\) can occur as \(P_\Psi\) in a refinement
+\[
+\Phi\subseteq\Psi
+\]
+for which \(P_\Phi\) is a single point.
+\end{theorem}
+
+\begin{proof}
+Take enough propositional variables that \(|\Om|\ge|Q|\), and choose a surjection
+\[
+h:\Om\twoheadrightarrow Q.
+\]
+Let the coarse observation family \(\Phi\) be empty, so \(P_\Phi\) is one point. Index new observations by the elements \(q\in Q\). For each \(q\), prescribe the truth set
+\[
+T_q:=\{v\in\Om:q\le h(v)\}.
+\]
+Every subset of a finite valuation space is definable by a propositional formula, for example by the disjunction of the complete minterms of its members. Choose \(\theta_q\) with \(\truth(\theta_q)=T_q\).
+
+If \(h(v)=x\), then the new observation signature is
+\[
+o_\Psi(v)=\{q\in Q:q\le x\}=\down x.
+\]
+The map \(x\mapsto\down x\) is an order embedding of \(Q\) into \(2^Q\), because
+\[
+x\le y\iff\down x\subseteq\down y.
+\]
+Surjectivity of \(h\) realizes every such signature and no others. Hence \(P_\Psi\cong Q\).
+\end{proof}
+
+\begin{corollary}[Every finite simplicial homotopy type occurs]\label{cor:alltypes}
+For every finite simplicial complex \(K\), choose its face poset \(Q=\mathcal X(K)\). Then
+\[
+\Delta(Q)=\operatorname{sd}(K),
+\]
+the barycentric subdivision of \(K\). Therefore a refinement above a one-point coarse ProLT can realize the homotopy type of any finite simplicial complex.
+\end{corollary}
+
+\begin{theorem}[Undecidability of unrestricted homotopy-neutral refinement]\label{thm:undecidable}
+\statusS/\statusA/\statusC\;
+There is no algorithm that, for arbitrary finite ProLT observation refinements in unrestricted dimension, always decides whether
+\[
+\Delta(r_{\Psi\Phi})
+\]
+is a homotopy equivalence.
+\end{theorem}
+
+\begin{proof}
+Given a finite simplicial complex \(K\), apply Corollary~\ref{cor:alltypes} to construct a refinement whose coarse signature poset is a point and whose fine order complex has the homotopy type of \(K\). The refinement projection to the point is a homotopy equivalence exactly when \(K\) is contractible. Algorithmic recognition of contractibility for arbitrary finite simplicial complexes is undecidable. Thus a universal decision algorithm for homotopy-neutral ProLT refinements would decide an undecidable problem.
+\end{proof}
+
+\begin{corollary}[Homology remains effectively computable]\label{cor:decidablehomology}
+For any fixed computable coefficient field, homology-neutrality of a given finite refinement is decidable: construct the finite mapping-cone boundary matrices and compute their ranks. Thus the homotopy and homology classification problems diverge sharply in unrestricted generality.
+\end{corollary}
+
+\begin{remark}[Strictness of \(\mathsf H\subsetneq\mathsf M\)]
+The universality theorem also imports standard acyclic noncontractible finite complexes. For example, a finite triangulation of a punctured Poincar\'e homology sphere is acyclic but has nontrivial fundamental group. Refining a point to its face poset gives a homology equivalence to the point which is not a homotopy equivalence.
+\end{remark}
+
+\section{A practical classification algorithm}
+
+The theory suggests the following release-quality workflow for a concrete observation refinement.
+
+\begin{enumerate}[label=\textbf{Step \arabic*.},leftmargin=4em]
+\item \textbf{Build the coarse poset.} Compute the realized old signatures \(P_\Phi\) and their inclusion order.
+\item \textbf{Build fiber profiles.} For each \(p\in P_\Phi\), compute
+\[
+\mathcal B_p=o_\Theta(C_p).
+\]
+No fine-poset construction is conceptually necessary beyond these profiles.
+\item \textbf{Check exact redundancy.} If every \(\mathcal B_p\) is singleton and the profile map is isotone, the refinement is an order isomorphism and the classification stops.
+\item \textbf{Check adjoints.} Compute \(\mathsf U(p)\) and \(\mathsf L(p)\). If all \(\mathsf U(p)\in\mathcal B_p\), or all \(\mathsf L(p)\in\mathcal B_p\), the refinement is homotopy-neutral.
+\item \textbf{Check principal fibers.} Apply beat-point/collapse tests or another contractibility certificate to \(r^{-1}(\down p)\) and \(r^{-1}(\up p)\). Uniform contractibility certifies simple homotopy equivalence. Uniform acyclicity certifies homology equivalence.
+\item \textbf{Compute the exact homology defect.} Build \(\Cone(r_\#)\). Nonzero \(D_k\) proves that the refinement changes homology. Vanishing of all \(D_k\) proves homology equivalence.
+\item \textbf{For non-splitting refinements, use descent chains.} Replace the general mapping cone by the relative/descent chain complex of Proposition~\ref{prop:descentcomplex}.
+\item \textbf{Do not treat an inconclusive homotopy test as failure.} The Quillen and adjoint criteria are sufficient, not necessary. In unrestricted dimension no complete decision algorithm exists. For a research theorem, restrict to a structurally controlled subclass.
+\end{enumerate}
+
+\section{Promising theorem targets after this classification}
+
+The classification above narrows the next research questions substantially.
+
+\begin{enumerate}[label=\textbf{T\arabic*.},leftmargin=2.8em]
+\item \textbf{Logical criteria for contractible Quillen fibers.} Find syntactic or semantic conditions on newly added formulas that force every \(r^{-1}(\down p)\) to have a cone point, beat-point reduction, or nerve decomposition.
+\item \textbf{Minimal homology-changing observations.} Given \(\Phi\), characterize or optimize observations \(\psi\) for which \(D_k((\Phi,\psi)/\Phi)\neq0\), possibly with a cost on formulas or observations.
+\item \textbf{Post-\(T_0\) persistence.} Study the reverse filtration of Corollary~\ref{cor:T0filtration}. Determine whether logical properties of the added observations constrain barcode births/deaths in the relative descent complexes.
+\item \textbf{Refinement/update interaction.} Combine the contravariant-looking refinement deletion \(\OX_\Psi\subseteq\OX_\Phi\) after \(T_0\) with premise restriction subcomplexes. This should yield a two-parameter family indexed by observational resolution and admissible-state restriction.
+\item \textbf{Cross-layer comparison.} Relate refinement defects in canonical order-complex homology to changes in the presentation-sensitive Dowker compatibility complex and to changes in metric/Rips persistence. A nontrivial comparison theorem would be substantially stronger than defining the layers independently.
+\item \textbf{Restricted decidable classes.} Because unrestricted homotopy neutrality is undecidable, identify meaningful ProLT classes where the problem becomes decidable or efficiently certifiable: bounded poset height, bounded number of observations, distributive-lattice images, monotone formula fragments, or bounded treewidth of the comparability/Hasse graph.
+\end{enumerate}
+
+\section{Preliminary novelty positioning}
+
+The finite-poset fiber theorems, adjunction-homotopy principle, mapping cones, and undecidability of arbitrary finite-complex contractibility are standard mathematics. They should not be claimed as new. The current contribution candidates are instead the \emph{ProLT-specific synthesis and sharpenings}: the refinement fiber-profile normal form; the exact redundancy theorem in signature terms; the possible/forced monotonicity criterion; the descent-chain description after \(T_0\); the refinement-defect hierarchy; and the universality reduction formulated for propositional observation refinement.
+
+A preliminary literature check found adjacent but distinct areas. Formal concept analysis and information-system theory study binary object--attribute data and attribute reduction. Separately, Gaucher used the phrase ``refinement of observation'' in directed homotopy theory for flows and finite bounded posets, with preservation results for branching/merging homology and underlying homotopy type. That is not the same object as the ProLT signature-projection refinement studied here, but the terminology overlap should be acknowledged in any publication. A dedicated adversarial novelty audit remains necessary before promoting any \statusC\ item to a novelty claim.
+
+\section{Conclusion}
+
+Observation refinement in a ProLT is not a single phenomenon. It may:
+\begin{itemize}
+\item add a coordinate without changing the topology at all;
+\item split observational states while preserving homotopy type;
+\item leave all states unsplit but delete specialization comparisons;
+\item change homotopy while preserving homology;
+\item or change homology itself.
+\end{itemize}
+
+The fiber-profile normal form makes these possibilities explicit. It reduces every refinement to a structured surjective poset map
+\[
+Q_{\mathcal B}\longrightarrow P_\Phi.
+\]
+Topological redundancy is exactly order isomorphism. Adjoint and Quillen-fiber tests give progressively broader homotopy-neutral classes. Mapping-cone homology gives an exact finite test for homology neutrality. Once the old ProLT is \(T_0\), refinement becomes especially transparent: it can no longer split vertices, so it acts only by deleting chains from the canonical order complex, and the defect is ordinary relative homology generated by the deleted descent chains.
+
+The universality theorem also tells us where to stop looking for an all-purpose homotopy decision rule: unrestricted refinement already contains the full contractibility problem for finite complexes. The productive research direction is therefore not a mythical universal criterion, but a theory of \emph{logically natural subclasses} in which the fiber geometry can be controlled and related back to observations, premises, and eventually time-evolving logical state spaces.
+
+\appendix
+\section{Computational verification summary}
+
+The accompanying verifier constructs order complexes and normalized simplicial chain maps explicitly over \(\F\). It verifies:
+\begin{enumerate}[label=(\roman*)]
+\item the redundant \(X\wedge Y\) example has identical coarse/fine Betti vector \((1,0,0)\) and zero cone homology;
+\item the XOR refinement has coarse Betti \((1,0,0)\), fine Betti \((1,0)\), and zero cone homology;
+\item the negation split has coarse Betti \((1,0)\), fine Betti \((2)\), and cone Betti \((0,1)\);
+\item the splitting-but-neutral \(Y\) refinement of \((X)\) has zero cone homology;
+\item the four-chain alternating profile \((1,0,1,0)\) yields contractible coarse and fine complexes while failing both lower and upper Quillen-fiber tests;
+\item all \(255\) one-bit profiles over nonempty subposets of \(B_2\) agree with the logical hierarchy reported in Section~\ref{sec:hierarchy}.
+\end{enumerate}
+
+\begin{thebibliography}{99}
+\bibitem{Theory2026}
+B. Theory,
+\emph{Propositional Logical Topology: Observation, Distinguishability, and Inference},
+core manuscript v0.8, September 2026, unpublished.
+
+\bibitem{TheoryHomology2026}
+B. Theory,
+\emph{Homological Foundations for Propositional Logical Topologies},
+working research note v0.1, September 2026, unpublished.
+
+\bibitem{McCord1966}
+M. C. McCord,
+``Singular homology groups and homotopy groups of finite topological spaces,''
+\emph{Duke Mathematical Journal} 33 (1966), 465--474.
+
+\bibitem{Quillen1978}
+D. Quillen,
+``Homotopy properties of the poset of nontrivial \(p\)-subgroups of a group,''
+\emph{Advances in Mathematics} 28 (1978), 101--128.
+
+\bibitem{Barmak2011}
+J. A. Barmak,
+``On Quillen's Theorem A for posets,''
+\emph{Journal of Combinatorial Theory, Series A} 118 (2011), 2445--2453.
+
+\bibitem{BarmakBook2011}
+J. A. Barmak,
+\emph{Algebraic Topology of Finite Topological Spaces and Applications},
+Lecture Notes in Mathematics 2032, Springer, 2011.
+
+\bibitem{Tancer2016}
+M. Tancer,
+``Recognition of collapsible complexes is NP-complete,''
+\emph{Discrete \& Computational Geometry} 55 (2016), 21--38.
+The appendix discusses undecidability of contractibility for finite simplicial complexes.
+
+\bibitem{Gaucher2006}
+P. Gaucher,
+``T-homotopy and refinement of observation. III. Invariance of the branching and merging homologies,''
+\emph{New York Journal of Mathematics} 12 (2006), 319--348.
+
+\bibitem{Gaucher2005}
+P. Gaucher,
+``T-homotopy and refinement of observation. IV. Invariance of the underlying homotopy type,''
+arXiv:math/0505331 (2005).
+
+\end{thebibliography}
+
+\end{document}

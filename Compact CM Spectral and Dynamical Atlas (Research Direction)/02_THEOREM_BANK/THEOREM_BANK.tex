@@ -1,0 +1,795 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,booktabs,longtable,array}
+\usepackage{microtype,xurl,hyperref}
+\hypersetup{hidelinks,pdftitle={CM/LM canonical theorem bank}}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{3em}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\input{notation}
+\title{CM/LM Research Consolidation\\Canonical Theorem Bank and Evidence Boundaries}
+\author{Research consolidation for Brian Theory}
+\date{18 September 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+This bank separates the existing Boolean operator calculus from a chosen
+rotation algebra, explicit modal resource contracts, exact query models and
+symbolic support interfaces. It consolidates proofs rather than treating
+historical computation as authority. The main candidate contributions are a
+finite-chain-ring contextuality classification, its leading-layer codebook
+synthesis, and exact characteristic-two query bounds. Priority is not certified.
+Background imports, finite-only observations and missing empirical evidence are
+identified explicitly. Companion registries carry source locations, test scope
+and one-primary-paper ownership for 71 claims.
+\end{abstract}
+\tableofcontents
+\newpage
+\input{definitions}
+\input{model_contracts}
+
+\section{Imported Paper B foundations}
+\label{sec:paperb}
+\claimid{CM-B-001--007}
+\begin{proposition}[Imported CM selection and aligned fusion]
+Let $s(x)=(x,1+x)^T$ and let $C_f$ have entries $f(r,t)$ in true-first order.
+Then $s(x)^T C_f s(y)=f(x,y)$. If two occurrences have the same declared
+ordered operand frame, for every binary Boolean connective $g$,
+\[
+ g(f_1(x,y),f_2(x,y))=s(x)^T\bigl(g(C_{f_1},C_{f_2})\bigr)s(y),
+\]
+where $g$ acts entrywise. Operand exchange transposes the CM; input negations
+permute the corresponding axis.
+\end{proposition}
+\prov{S-B sections 2--4 and appendix A.1--A.4. Imported, not re-proved as later
+novelty. One-hot selection is the reason arbitrary $g$ is valid; no distributive
+law of $g$ over XOR is needed. Structural frame admission, retabulation and
+fallback remain different compiler paths.}
+
+\begin{proposition}[Imported symbolic pairing]
+The formula-valued LM is
+\[
+ M_f(X,Y)=\begin{pmatrix}f(X,Y)&f(X,\neg Y)\\
+ f(\neg X,Y)&f(\neg X,\neg Y)\end{pmatrix}.
+\]
+For any formulas $P,Q$, its logical pairing is
+\[
+ s(P)^T M_f(X,Y)s(Q)\equiv f(P\leftrightarrow X,Y\leftrightarrow Q).
+\]
+Boolean valuations commute with this pairing. Positive valuation $X=Y=1$
+recovers $C_f$.
+\end{proposition}
+\prov{S-B section 8, Proposition 2 and Theorem 3; appendix A.5. These are
+Boolean formulas, not an already selected modal measurement theory. A four-bit
+token and an explicit $2^n$-entry truth relation have different cost contracts.}
+
+\section{Rotation lift: classical algebra and its semantic boundary}
+\label{sec:rotation}
+\claimid{ROT-001, ROT-002, ROT-007}
+\begin{theorem}[Cyclic commutant and chain ring]
+For the regular $N$-cycle on $\F_2^N$, the centralizer is
+$\F_2[R]\cong\F_2[x]/(x^N-1)$. If $N=2^n$ and $u=I+R$, this is
+$\F_2[u]/(u^N)$. Multiplication by $u^a v$, for a unit $v$, has binary rank
+$N-a$, $0\leq a\leq N$. A coefficient polynomial is a unit iff its coefficient
+parity is one. Consequently
+\[
+ \operatorname{End}_{C_N}((\F_2^N)^m)=\Mat_m(\F_2[R]),\quad
+ \operatorname{Aut}_{C_N}((\F_2^N)^m)=\GL_m(\F_2[R]).
+\]
+\end{theorem}
+\begin{proof}
+A commuting operator is determined by its first column $v$: its $j$th column
+must be $R^jv$. The $N$ powers of $R$ are independent by application to $e_0$,
+so the only defining relation is $R^N=I$. Frobenius gives
+$(1+x)^N=1+x^N$. In the $u$ basis, multiplication by $u^a$ shifts $N-a$ basis
+vectors to independent nonzero vectors and kills the remaining $a$.
+Invertibility is equivalent to a nonzero constant $u$ coefficient, namely the
+original polynomial evaluated at one. The block commutant statement applies
+the same condition to every block.
+\end{proof}
+\prov{S-ADV D1 and D3. Standard group-algebra/commutant facts, not new CM
+algebra. The maximal equivariant gate group is derived; support, tensors and
+preparation rules are not.}
+
+\claimid{ROT-003, ROT-005}
+\begin{corollary}[Full-degree criterion and distinct filtrations]
+For an $n$-variable Boolean function $f$, $n\geq1$, its cyclic coefficient lift
+of length $2^n$ is invertible iff $\bigoplus_x f(x)=1$, equivalently the ANF
+coefficient of $x_1\cdots x_n$ is one, equivalently $\deg f=n$.
+This does not identify the whole cyclic valuation filtration with ANF degree.
+\end{corollary}
+\begin{proof}
+Summing a proper-support monomial over all assignments gives zero in $\F_2$;
+the full monomial contributes one. Apply the unit criterion.
+For binary-indexed coefficients $a_j$,
+\[
+ \sum_j a_j(1+u)^j=\sum_k b_k u^k,\qquad
+ b_k=\bigoplus_{j\supseteq k}a_j.
+\]
+The cyclic valuation uses the least \emph{numeric} $k$ with $b_k\ne0$.
+By contrast the elementary-abelian group algebra
+$\F_2[u_1,\ldots,u_n]/(u_i^2)$ uses total degree, the Hamming weight of $k$.
+For an ANF monomial with support $S$, its truth coefficient polynomial there is
+$\prod_{i\in S}(1+u_i)\prod_{i\notin S}u_i$; the least degree is $n-|S|$.
+Distinct highest-degree ANF monomials give distinct least-degree terms. Thus
+its radical order is $n-\deg f$. For a four-cycle the affine coefficient
+vectors $(1,1,0,0)$ and $(1,0,1,0)$ have cyclic orders one and two, respectively.
+\end{proof}
+\prov{S-ADV D1--D2. The Reed--Muller/radical identification is classical
+Berman--Charpin theory, not a new finding \cite{Andriatahiny2016}. Cyclic order
+also encodes the standard periodic linear-complexity invariant
+$N-\deg\gcd(a(x),x^N-1)$. Original Games--Chan priority details remain an
+inherited bibliographic lead, not a newly read source.}
+
+\claimid{ROT-004, ROT-006, ROT-009}
+\begin{proposition}[Reversal, complement and XOR interferometer]
+For $Ke_j=e_{-j}$, $KRK=R^{-1}$ and
+$K\Lambda(c)K=\Lambda(c)^T$. In the specified CM cyclic order this reflection
+exchanges the two Boolean arguments. Complementing a length-$N=2^n$ truth
+vector adds $u^{N-1}$. With
+\[
+ W=\begin{pmatrix}I&0\\ I&I\end{pmatrix},\qquad
+ D_k=\diag(I,R^k),
+\]
+we have $W^2=I$ and $WD_kW(v,0)^T=(v,v+R^kv)^T$.
+\end{proposition}
+\begin{proof}
+Reflection sends each power $R^j$ to $R^{-j}= (R^j)^T$. Complement adds the
+sum of all powers; at length $2^n$ this is $(1+R)^{N-1}$. The displayed
+interferometer identity follows by three block multiplications.
+\end{proof}
+\scope{Complement is translation, not multiplication by the socle. Reversal
+is not generally operator inversion, though they coincide on the eight units
+of $\A$ at length four. $R$ is unipotent, not multiplication by the complex
+number $i$. Its eigenvalues in field extensions are all one; a three-dimensional
+unipotent block can already have order four. The ordinary identity CM lifts to
+$I+R^2=u^2$, whose square is zero, so this lift cannot preserve the original CM
+matrix product or entrywise AND.}
+\prov{S-ADV D1--D3; S-CAP F1. Standard identities used as typed motivation.}
+
+\section{Complete-basis contextuality over chain rings}
+\label{sec:context}
+\claimid{MOD-003}
+\begin{lemma}[Residue-hyperplane criterion]
+For the complete primitive projective basis support model over a finite
+commutative local ring, a global assignment exists iff there are hyperplanes
+$H_A\subset k^m$, $H_B\subset k^n$ such that $rMt^T\ne0$ for every primitive
+lift $r,t$ of vectors outside $H_A,H_B$, respectively.
+\end{lemma}
+\begin{proof}
+Given a global assignment, let $U_A$ be the rays selected at least once among
+Alice's settings. The complement of $U_A$ contains no basis: such a setting
+would have to select a ray in its own complement. If the reductions of the
+complement spanned $k^m$, choose a residue basis from them; its lifts would be
+an invertible local-ring basis, a contradiction. Put their span in a hyperplane
+$H_A$. Every lift of a residue ray outside $H_A$ belongs to $U_A$.
+Do the same for Bob. Every cross pair from $U_A,U_B$ is selected in some
+pair of settings and must have nonzero contraction. Conversely, each invertible
+basis has a row reducing outside any fixed hyperplane. Selecting one such row
+in each setting on each side gives a compatible assignment by hypothesis.
+\end{proof}
+\prov{S-ADV D4 Lemma 8. Candidate formulation; priority unresolved. This lemma
+uses locality but not the chain condition. The independent dual-number check
+uses explicit support and 2-SAT rather than this criterion.}
+
+\claimid{MOD-005}
+\begin{lemma}[Valuation-uniform Hardy event]
+For $D=\diag(p,q_0)$ with $p=\pi^a$, $q_0=\pi^b\ne0$, $a\leq b$, put
+$c=\pi^{b-a}$, so $pc=q_0$. The reversible basis matrices
+\[
+ F=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+ X=\begin{pmatrix}1&0\\1&1\end{pmatrix},\quad
+ C_c=\begin{pmatrix}1&0\\-c&1\end{pmatrix}
+\]
+give, for Alice settings $F,C_c$ and Bob settings $F,X$,
+\begin{align*}
+ FDF^T&=\begin{pmatrix}q_0&0\\0&p\end{pmatrix},&
+ FDX^T&=\begin{pmatrix}0&q_0\\p&p\end{pmatrix},\\
+ C_cDX^T&=\begin{pmatrix}p&p\\-q_0&0\end{pmatrix},&
+ C_cDF^T&=\begin{pmatrix}0&p\\q_0&-q_0\end{pmatrix}.
+\end{align*}
+The supported event $(F_A=0,F_B=0)$ has no global extension.
+\end{lemma}
+\begin{proof}
+The determinants are units and direct multiplication gives the matrices.
+The seed forces $X_B=1$, then $C_A=0$, then $F_B=1$, contradicting the seed.
+The support strings are $1001,0111,1110,0111$.
+\end{proof}
+\prov{S-ADV D5. The Hardy implication pattern is known; the uniform
+valuation-dependent implementation is part of the candidate chain-ring
+classification. The minus sign is essential outside characteristic two.}
+
+\claimid{MOD-004}
+\begin{theorem}[Smith contextuality trichotomy]
+For a nonzero $m\times n$ matrix over $K$, the complete-basis support type is
+\[
+\begin{array}{c|c}
+ r=1 & \text{local}\\
+ r\geq2,\ h=1 & \text{logical but not strong}\\
+ h\geq2 & \text{strong}.
+\end{array}
+\]
+\end{theorem}
+\begin{proof}
+Invertible left and right transformations relabel the complete basis families,
+so take Smith form. If $r=1$, write $M=\diag(p,0,\ldots)$ and retain the
+outcomes of any supported seed event. In all other settings choose a row whose
+first coordinate is a unit. New-new pairs are nonzero multiples of $p$.
+A seed-new pair is also nonzero: if $pr_1t_1\ne0$, then neither $pr_1$ nor
+$pt_1$ is zero, and multiplication by a unit preserves nonzeroness. Thus every
+supported seed extends.
+
+If $h=1$, in every basis select a first-coordinate-unit row. Write
+$M=\pi^{a_1}\diag(1,\pi^{a_2-a_1},\ldots)$. The contraction in parentheses
+is a unit plus radical terms, so the selected cross pair is nonzero. Hence a
+global assignment exists.
+
+If $h\geq2$, suppose the hyperplanes in the preceding criterion existed and
+write $M=\pi^a M_0$ with $\rank_k\overline M_0=h$. Let $H_B=\ker\beta$.
+The vectors outside $H_A$ span $k^m$. Therefore some $x$ outside $H_A$ has
+$w=x\overline M_0$ not in the one-dimensional span of $\beta$. There is
+$y\in\ker w$ outside $\ker\beta$. Lift $x,y$ to $r,t$. The row $rM_0$ has a
+unit coordinate; $rM_0t^T$ lies in the radical. Adjust the corresponding
+coordinate of $t$ by a radical element to cancel that dot product exactly.
+The residues remain $x,y$, but $rMt^T=0$, contradicting the hyperplane
+criterion. Thus no global assignment exists.
+
+Finally, if $r\geq2$, embed the preceding two-coordinate Hardy construction
+in the first two nonzero Smith coordinates and extend the settings with
+standard rows. The seed and each forcing step remain in those coordinates;
+extra outcomes have zero cross entries with the forced rows and cannot evade
+the contradiction. Thus some event never extends. The three cases follow.
+\end{proof}
+\prov{S-ADV D4 Theorem 9; imported and independently checked in S-CAP R1.
+Candidate novelty, not certified priority. The proof applies to mixed-characteristic
+chain rings as well as polynomial quotients; the symbolic $\F_2$ enrichment later
+has a narrower scalar scope.}
+
+\claimid{MOD-006}
+\begin{corollary}[Basis counts]
+The numbers of primitive projective rows and unordered projective bases in
+$K^m$ are
+\[
+ q^{(s-1)(m-1)}\frac{q^m-1}{q-1},\qquad
+ \frac{q^{m^2(s-1)}|\GL_m(q)|}{|K^\times|^m m!},
+\]
+respectively. For $\A^2$ they are 24 and 192; $|\GL_2(\A)|=24576$.
+\end{corollary}
+\begin{proof}
+There are $q^{sm}-q^{(s-1)m}$ primitive vectors. The unit action is free on
+them and $|K^\times|=q^{s-1}(q-1)$. An invertible residue matrix has
+$q^{m^2(s-1)}$ lifts, each invertible. Quotient ordered invertible rows by their
+independent unit scales and by the free row-permutation action.
+\end{proof}
+\prov{Standard finite local-ring counting; S-ADV D4.}
+
+\section{Tensor choice, resources and exact protocols}
+\label{sec:resources}
+\claimid{MOD-001, MOD-002, MOD-009, MOD-010}
+\begin{proposition}[Tensor and orbit boundaries]
+In $\A\otimes_\A\A$, $u^3\otimes u=0$; in
+$\A\otimes_{\F_2}\A$ it is nonzero. Primitive preparations remain primitive
+under a balanced tensor, but conditioning the primitive resource
+$\diag(1,u)$ by the second standard effect gives the nonprimitive nonzero
+vector $(0,u)$. For Smith exponents $(a_i)$,
+\[
+ \rank_{\F_2}\lambda_d(M)=\sum_i\max(4-a_i,0).
+\]
+Unrestricted local binary matrix equivalence is classified only by this rank.
+\end{proposition}
+\begin{proof}
+Balanced tensor multiplication identifies the first scalar tensor with
+$u^4=0$. A nonzero simple tensor over a field is nonzero, as witnessed by two
+nonvanishing dual functionals. A primitive vector has a unit coordinate;
+the tensor of two such coordinates is a unit. The stated conditional vector
+is obtained by selecting the second matrix row. Regular expansion of Smith
+form is block diagonal; each $u^{a_i}$ block has rank $4-a_i$, and invertible
+Smith changes remain invertible after expansion. Field matrix equivalence by
+independent invertible left/right changes has ordinary rank normal form.
+\end{proof}
+\scope{$D(0,2)$ and $D(1,1)$ both have binary rank six but different restricted
+contextuality. The latter is nonprimitive. Primitive dimension-three examples
+$\diag(1,1,u^3)$ and $\diag(1,u,u^2)$ both have binary rank nine but different
+leading multiplicities. The particular audited restricted shared/literal
+\emph{bipartite support tables} are nevertheless isomorphic: literal Choi
+contraction transposes Bob's blocks, and $R\mapsto R^{-1}$ permutes the admitted
+basis family. This does not make the tensor theories equivalent.}
+\prov{S-ADV D6; S-AUD section 7.4; S-CAP F2. Standard algebra plus a
+model-specific restriction comparison.}
+
+\claimid{ALG-001}
+\begin{lemma}[Exact linear discrimination]
+Let $S_i$ be nonzero state sets in a vector space over a field and
+$U_i=\Span(S_i)$. A complete injective linear readout can distinguish the labels
+with every possible outcome correct iff $\sum_i U_i$ is a direct sum.
+\end{lemma}
+\begin{proof}
+The coordinates assigned to different labels must be disjoint. The image of
+$U_i$ therefore lies in its own coordinate subspace. Injectivity of the collected
+readout forbids a nontrivial dependence between these subspaces. Conversely,
+concatenate bases of the independent $U_i$ and extend to a basis of the entire
+space; the resulting dual-basis readout distinguishes the labels.
+\end{proof}
+\prov{S-CAP Q1. The single-state independence criterion is modal/linear-algebra
+background; see also \cite{DiamondSchumacher2023}. Its uncertainty-set and
+recorded-branch form is a useful supporting formulation, not the P02 headline.}
+
+\claimid{RES-001, RES-002}
+\begin{theorem}[Leading-layer exact codebook]
+Under contract DC, the largest exactly distinguishable invertible-orbit
+codebook for $M\in\Mat_d(K)\setminus\{0\}$, $d\geq2$, has $d h$ messages.
+Consequently advantage over the $d$-message baseline is equivalent to strong
+contextuality under the same complete chain-ring basis contract.
+\end{theorem}
+\begin{proof}
+Write $M=\pi^a N$ with $\rank_k\overline N=h$. The reduction of a divided
+codeword $UN$ lies in
+$\{X\overline N:X\in\Mat_d(k)\}$, a vector space of dimension $dh$.
+Every encoded resource retains a nonzero leading layer. After any invertible
+joint decoder, exactly distinguishable codewords have disjoint nonzero supports;
+their leading residue vectors are therefore independent. This proves the upper
+bound $dh$.
+
+Invertible $d\times d$ matrices over a field span the full matrix algebra.
+Off-diagonal units are differences of $I+E_{ij}$ and $I$. For a diagonal unit,
+choose a permutation $P$ sending some $j\ne i$ to $i$; the difference of
+$P(I+E_{ji})$ and $P$ is $E_{ii}$. Both matrices are invertible.
+Thus one can choose $dh$ invertible residue encoders for which
+$\overline U_m\overline N$ are independent. Lift them to invertible matrices
+over $K$. The columns $\operatorname{vec}(U_mN)$ are independent modulo the
+radical, so extend to a basis modulo the radical and lift the remaining columns.
+The full lifted matrix is invertible. Its inverse decodes the actual codeword
+$\pi^a\operatorname{vec}(U_mN)$ to $\pi^a e_m$, with exactly one possible
+outcome. This attains $dh$. The contextuality equivalence follows from the
+trichotomy, since $dh>d$ iff $h\geq2$.
+\end{proof}
+\prov{S-CAP R2 and S-ADV D4. Candidate theorem/synthesis pending priority
+clearance. All 14 nonzero $\A$ Smith representatives have explicit independently
+checked decoder matrices. This counts messages in a fixed orbit, not entropy.}
+
+\claimid{RES-003, RES-004, RES-007}
+\begin{theorem}[Universal exact teleportation and its separation]
+Under TP, every nonzero universally correct branch must have invertible
+transfer $T_m=M^T E_m^T$. Hence $M$ must be invertible. Conversely, if $M$ is
+invertible and a complete basis of invertible reshaped effects is admitted,
+correction by $T_m^{-1}$ is exact, including reference correlations.
+For $0<a<s$, $\pi^a I_d$ has $d^2$ DC messages and strong contextuality, but
+cannot satisfy this teleportation contract.
+\end{theorem}
+\begin{proof}
+If a nonzero branch has nonzero kernel vector $k$, choose $x$ with $T_mx\ne0$.
+Then $x$ and $x+k$ are distinct nonzero inputs with the same possible branch
+output. No fixed correction can recover both exactly. Thus a nonzero universal
+branch is injective. On a finite equal-rank free module an injective square map
+is bijective and has a linear inverse. Since $T_m$ factors through $M^T$, its
+invertibility implies that of $M$. Completeness and a nonzero resource forbid
+all branches being identically zero. In the sufficient case the identity
+$T_m^{-1}T_m=I$ proves the claim; tensoring it with a reference identity
+preserves correlations. Finally $\pi^a I_d$ has leading multiplicity $d$ but
+annihilates nonzero vectors, so apply the codebook theorem and necessity.
+\end{proof}
+\scope{Exact raw-vector recovery is the stated task, not an unspecified
+projective equivalence relation. A singular resource is not rescued by selecting
+one purported nonzero universally correct branch. The nilpotent separator is
+nonprimitive and depends on allowing that preparation.}
+\prov{S-CAP R3; S-ADV D9. The general transfer identity is established modal
+background. Its chain-ring resource comparison is the P01 synthesis.}
+
+\begin{proposition}[Explicit admitted analyzers in the supplied carriers]
+The four matrices
+\[
+ \begin{pmatrix}0&1\\1&1\end{pmatrix},\quad
+ \begin{pmatrix}1&0\\1&1\end{pmatrix},\quad
+ \begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+ \begin{pmatrix}1&0\\0&1\end{pmatrix}
+\]
+are invertible and their flattened rows form a basis. They give a complete
+four-outcome analyzer over $\A$. Their triple field tensor products give a
+complete 64-outcome analyzer for a literal eight-dimensional carrier.
+\end{proposition}
+\begin{proof}
+Each determinant is one. If the coefficients of a linear relation are
+$\alpha,\beta,\gamma,\delta$, the four entries successively give
+$\delta=\beta$, $\gamma=\alpha$, $\beta=0$, $\alpha=0$.
+A tensor product of bases is a basis and a tensor product of invertible
+matrices is invertible. The correction follows from the preceding theorem.
+\end{proof}
+\scope{Do not identify a four-outcome logical analyzer with a complete analyzer
+for the literal phase register. General-dimensional analyzer sufficiency can
+be developed using the invertible-matrix spanning lemma, but the canonical
+supplied protocol claim here retains its explicitly admitted carriers.}
+
+\claimid{RES-005, RES-006, RES-008}
+\begin{proposition}[Field codebooks and literal extraction]
+For a rank-$r$ matrix in $\Mat_d(F)$, $d\geq2$, unrestricted invertible-orbit
+encoding and complete field-linear joint readout give exactly $dr$ codewords.
+A rank-$r$ resource admits local rectangular filters extracting $I_t$ from $k$
+field-tensor copies iff $r^k\geq t$.
+\end{proposition}
+\begin{proof}
+The image of $X\mapsto XM$ has dimension $dr$. Invertible matrices span
+$\Mat_d(F)$ by the preceding argument; select a basis from their images and
+apply the discrimination lemma. For extraction, reduce $M$ to rank normal
+form. Its $k$th tensor has rank $r^k$; select $t$ nonzero coordinate directions
+when possible. Conversely rectangular multiplication cannot increase rank.
+\end{proof}
+\scope{For a regular $2\times2$ $\A$ resource, restricting encoders to
+$\GL_2(\A)$ but allowing a fine unrestricted binary decoder gives $2r_{\rm bin}$
+codewords (S-CAP R4). This uses the binary span of $\Mat_2(\A)M$ and is an
+asymmetric restriction. It can lie below the ordinary eight-letter baseline;
+allowing discard/reprepare gives at least $\max(8,2r_{\rm bin})$. Extraction is
+an algebraic filter statement, not a distillation probability.}
+
+\section{Setting and form restrictions}
+\label{sec:settings}
+\claimid{MOD-007}
+\begin{theorem}[Two complete binary settings are not strongly contextual]
+For any number of parties, a nonzero $\F_2$ tensor with at most two complete
+binary basis settings per site has a global assignment. The same holds for
+two-dimensional local modules over any finite commutative local ring with
+residue field $\F_2$, using nonzero-amplitude support.
+\end{theorem}
+\begin{proof}
+Two distinct binary dual bases share a row $a$; write the other rows as $b$
+and $a+b$. Expand the tensor in coordinates dual to each pair $(a,b)$.
+Choose an inclusion-minimal set $S$ of $b$ coordinates having nonzero coefficient.
+Outside $S$, select $a$ in both settings. Inside $S$, select $b$ in the first
+and $a+b$ in the second. Each joint choice evaluates to the coefficient for
+$S$ plus coefficients of proper subsets of $S$. By minimality the latter are
+zero and the former is one. Every chosen event is therefore supported.
+Coincident settings can be duplicated and require no additional choice.
+
+For a finite local ring with radical $J$, take a nonzero leading layer of the
+tensor in $J^a/J^{a+1}$. Apply an $\F_2$-linear functional on that layer which
+makes the resulting coefficient tensor nonzero. Reduce the local bases modulo
+$J$ and apply the field construction. Each selected contraction then has a
+nonzero leading-layer functional, so its original ring coefficient is nonzero.
+\end{proof}
+\scope{Literal independent phase blocks can be organized in the local algebra
+$\F_2[u_1,\ldots,u_n]/(u_i^4)$; the same leading-layer proof applies to the
+specified coarse measurements without identifying it with shared $\A$.
+This theorem permits two-setting Hardy logical contextuality and does not cover
+three settings, higher outcomes or arbitrary residue fields.}
+\prov{S-CAP R1b. Candidate general theorem. The source algorithm checked
+65,808 nonzero states for one through four mobits and 1,050,666 supported-context
+checks; the proof, not that enumeration, handles arbitrary party count.}
+
+\claimid{RES-009, ROT-008}
+\begin{proposition}[Transpose-orthogonal span and a separate form obstruction]
+For $d\geq2$,
+\[
+ \Span_{\F_2}O_d(\F_2)=
+ \{M:M\mathbf1=c\mathbf1,\ \mathbf1^TM=c\mathbf1^T
+ \text{ for some }c\in\F_2\},
+\]
+of dimension $(d-1)^2+1$. Therefore the stated complete rank-one teleportation
+analyzer with transpose-orthogonal corrections cannot exist. Separately, the
+native $W$ and $\diag(I,R)$, $R\ne I$, preserve no common nondegenerate
+bilinear form on the same doubled space.
+\end{proposition}
+\begin{proof}
+Every column of an orthogonal binary matrix has odd weight; therefore both its
+row and column sums are one. Linear combinations lie in the displayed space.
+Permutation matrices are orthogonal. Differences of permutations produce each
+four-corner rectangle involving a fixed last row and column; these span the
+$(d-1)^2$-dimensional zero-row/column-sum space. Adjoining $I$ adds the common-sum
+direction. For a fixed invertible teleportation resource, reshaped effects with
+orthogonal corrections lie in an invertible translate of this span, too small
+to span the $d^2$-dimensional dual space.
+
+For the second statement write a form matrix as
+$\begin{pmatrix}A&C\\E&F\end{pmatrix}$. Invariance under $W$ gives $F=0,E=C$.
+Nondegeneracy forces $C$ invertible, since $(0,x)$ is a null vector when
+$Cx=0$. Invariance under $\diag(I,R)$ gives $CR=C$, hence $R=I$, a contradiction.
+\end{proof}
+\prov{S-ADV D7--D8 and S-CAP E1--E2. The permutation-span ingredient is
+classical \cite{Lueneburg1988}; the dimension-eight span is 50, not merely
+bounded by 63. These are scoped model obstructions, not universal claims about
+all symplectic or finite-field theories. $R$ itself preserves the alternating
+form $R^2$; different admissible gate families remain possible.}
+
+\section{Characteristic-two exact query theory}
+\label{sec:query}
+\claimid{ALG-002}
+\begin{theorem}[Deutsch: a lower bound and its properly typed upper bound]
+With any fixed invertible pointwise $G_0,G_1$ over a characteristic-two field,
+no exact one-query linear modal procedure computes $f(0)+f(1)$. For the standard
+XOR oracle QXOR the exact query complexity is two.
+\end{theorem}
+\begin{proof}
+Write the prepared state by address sectors $(a_0,a_1)$, allowing all target and
+ancillary degrees of freedom. The four postquery states satisfy
+\[
+ v_{00}+v_{11}=v_{01}+v_{10}
+ =((G_0+G_1)a_0,(G_0+G_1)a_1)=w.
+\]
+If $w\ne0$, the constant and balanced spans intersect nontrivially, contrary
+to exact discrimination. If $w=0$, both sector differences vanish and all four
+states are identical. Complete subsequent linear readout cannot remove either
+obstruction. Under QXOR, query both addresses on basis labels, retain the two
+answers and compute their XOR; this attains two.
+\end{proof}
+\scope{The upper bound is not valid for arbitrary $G_0,G_1$ without an
+informative interface. If $G_0=G_1$, every oracle is identical at every query
+count. This explicit qualification is a consolidation correction to the broad
+wording of S-CAP Q2.}
+\prov{S-CAP Q2, read with the QXOR contract; ALG-002; correction C17. Candidate
+exact-query result after dedicated but nonexhaustive prior-art search.}
+
+\claimid{ALG-003}
+\begin{theorem}[Deutsch--Jozsa one-query obstruction]
+For $n\geq2$ and the constant-or-balanced promise on $N=2^n$ addresses, the
+same pointwise characteristic-two contract has no exact one-query solution.
+For QXOR the established bounds are $2\leq Q_{\rm exact}\leq N/2+1$.
+\end{theorem}
+\begin{proof}
+Partition the addresses into four equal blocks $A,B,C,D$. The balanced
+functions with supports $A\cup B$, $A\cup C$, $B\cup C$ have pointwise XOR
+zero. The pointwise oracle is affine in its control bit, so their three oracle
+operators sum to $O_0$ in characteristic two. The nonzero constant-zero
+postquery state is therefore in the balanced-state span, violating exact
+discrimination. The QXOR upper bound queries $N/2+1$ distinct addresses: agreement
+forces constancy, and any difference proves balance. The $n=1$ case is Deutsch.
+\end{proof}
+\scope{No claim is made that the classical upper bound is optimal for all
+multi-query modal procedures. One-query failure is stronger than failure of
+a particular Hadamard circuit, but is not an all-algorithm lower bound of
+$N/2+1$.}
+\prov{S-CAP Q3. Candidate query result; source checks cover 56 operator
+coordinates, not every ancillary state. The proof supplies ancillary generality.}
+
+\claimid{ALG-004}
+\begin{theorem}[Exact Bernstein--Vazirani lower bound]
+For $f_s(x)=s\cdot x$, $s\in\F_2^n$, a $q$-query exact characteristic-two
+linear modal algorithm under the fixed pointwise oracle requires $q\geq n$.
+Under QXOR, $n$ basis-label queries attain the bound.
+\end{theorem}
+\begin{proof}
+The oracle is affine in the secret:
+$O_s=O_0+\sum_j s_j A_j$. After $q$ queries, every state component is a
+multilinear polynomial of degree at most $q$ in the bits of $s$ (replace
+$s_j^2$ by $s_j$). Thus all $2^n$ final states lie in the span of at most
+\[
+ \sum_{j=0}^{\min(q,n)}\binom nj
+\]
+coefficient vectors. For $q<n$ this is strictly less than $2^n$, while exact
+separation of the $2^n$ singleton labels requires independent final states.
+Ancillas enlarge coefficient vectors, not their number. Recording all complete
+adaptive branches in a direct sum preserves both the degree bound and the
+injectivity requirement. QXOR queries at $e_j$ directly return $s_j$.
+\end{proof}
+\prov{S-CAP Q4. Polynomial-method architecture is established
+\cite{Beals2001}; the specific modal exact bound needs priority clearance.
+In complex-amplitude computation, XOR of secret bits is not represented by this
+same degree-one scalar polynomial, so there is no contradiction with ordinary
+one-query BV.}
+
+\claimid{ALG-005, ALG-006, ALG-007}
+\begin{proposition}[Kickback and the missing character basis]
+In $\A$, set $z=R^2=1+u^2$. For the standard target flip $X$ and
+$\chi=(1,z)^T$, $X\chi=z\chi$. But
+\[
+ H_z=\begin{pmatrix}1&1\\1&z\end{pmatrix}\sim\diag(1,u^2)
+\]
+is not invertible. Its $n$th tensor over $\A$ has binary rank $4+2n$.
+Multiplicative characters of $C_2^n$ into a characteristic-two field are all
+trivial; an $\A$-valued character matrix reduces modulo $u$ to all ones.
+\end{proposition}
+\begin{proof}
+Use $z^2=1$. Row and column elimination give the Smith diagonal displayed.
+Tensoring the Smith forms yields $u^{2j}$ with multiplicity $\binom nj$;
+only $j=0,1$ survive, with binary ranks four and two. In a characteristic-two
+field $a^2=1$ implies $(a+1)^2=0$ and therefore $a=1$. Every group element
+in $C_2^n$ has order at most two, proving character triviality. Every unit of
+$\A$ reduces to one, proving singular reduction for the ring character matrix.
+\end{proof}
+\scope{The bit-flip target cannot have a primitive eigenvector of eigenvalue
+$R$, because applying the flip twice would give $u^2\chi=0$. A four-level cyclic
+target has eigenvector entries $R^{-j}$ and can kick back $R$, but its oracle is
+a distinct interface. Compute-control-uncompute generally costs two ordinary
+bit queries. Literal independent registers do not move an $\A$ scalar between
+factors automatically. The no-go is not about all finite-field transforms or
+odd-order groups.}
+\prov{S-CAP Q5. Standard modular-character obstruction plus model-specific
+rank/algorithm comparison.}
+
+\claimid{ALG-008, ALG-009, ALG-010, ALG-011, ALG-012}
+\paragraph{Finite and supporting algorithm records.}
+The Simon record exhausts 65,535 nonzero preparations in dimension 16 for a
+specified one-query, no-ancilla, $n=2$ contract with 36 standard oracles and
+three shifts. It is not an arbitrary-size/adaptive Simon theorem. The
+conventional Grover sign and diffusion construction collapses in characteristic
+two, and support alone supplies no probability to amplify; this is not an
+all-search impossibility proof. The known Willcock--Sabry UNIQUE-SAT protocol
+\cite{WillcockSabry2011} is a one-query positive control on the none-or-one-marked
+promise with $O(n)$ other gates; 132 promised instances for $n=1,\ldots,6$ were
+reproduced. Nonlinear Boolean $f$ still embeds as a reversible basis permutation
+$\lvert x,y\rangle\mapsto\lvert x,y+f(x)\rangle$; linear amplitude evolution
+does not force $f$ to be linear. Compute-copy-uncompute is standard reversible
+programming \cite{Bennett1973,James2011}. Printing a full state description or
+support table is not an allowed cost-free operational readout in QXOR.
+
+\section{The enriched LM interface}
+\label{sec:bridge}
+\claimid{LMB-001, LMB-002}
+\begin{proposition}[Two obstructions to a bare identification]
+The fixed polarity-orbit LM family is not closed under ordinary Boolean matrix
+composition. A unital Boolean-ring homomorphism to a local ring has image
+contained in $\{0,1\}$ and cannot produce nontrivial nilpotent amplitudes.
+\end{proposition}
+\begin{proof}
+Take $M=\lvert X\rangle\langle Y\rvert$. Then
+\[
+ M^2=\begin{pmatrix}XY&0\\0&\neg X\neg Y\end{pmatrix},
+\]
+which is not the polarity orbit of its upper-left entry. The finite checker
+finds 144 of 256 products outside the fixed family. For the second statement,
+the image of every Boolean element is an idempotent. In a local ring, if
+$e^2=e$, one of $e,1-e$ is a unit; $e(1-e)=0$ then forces $e=1$ or $e=0$.
+\end{proof}
+\prov{S-LMB, independently checked here. Local-ring idempotents are standard;
+the conclusion rules out a particular canonical identification, not useful
+coefficient encodings.}
+
+\claimid{LMB-003, LMB-004, LMB-005, LMB-007, LMB-008}
+\begin{theorem}[Sufficient symbolic support bridge]
+After choosing the $\F_2$-algebra $\A$, let
+$\Bool_\A=\Bool\otimes_{\F_2}\A\cong\Bool[u]/(u^4)$.
+Every valuation $v:\Bool\to\F_2$ extends as
+\[
+ v_\A\left(\sum_{j=0}^3 f_j u^j\right)
+ =\sum_{j=0}^3v(f_j)u^j.
+\]
+It commutes with enriched matrix and tensor contractions. For
+$q=\sum_j f_j u^j$ put $\Supp(q)=\bigvee_j f_j$. Then for any chosen
+compatible enriched effect $e$ and state $\psi$,
+\[
+ v\bigl(\Supp(e\psi)\bigr)=1
+ \quad\Longleftrightarrow\quad v_\A(e)v_\A(\psi)\ne0.
+\]
+\end{theorem}
+\begin{proof}
+The $\F_2$ basis $1,u,u^2,u^3$ gives unique enriched coefficients. Base change
+extends $v$ uniquely as an $\A$-algebra map and preserves finite products and
+sums, hence contractions. A valued $\A$ coefficient is nonzero exactly when at
+least one of its four binary coefficients is one. A Boolean valuation preserves
+OR, giving the equivalence.
+\end{proof}
+\scope{The theorem is conditional on choosing the scalar algebra and effects;
+``nonzero means possible'' is an added interpretation. Bare valued logical bras
+yield only the two one-hot rows, not the complete $\A$ effect family. The
+nonzero map is not additive ($a+a=0$) and not multiplicative in the presence of
+zero divisors. For a finite valuation set $\Omega$, this enrichment is the
+extensional power $\A^\Omega$, not an efficient compression theorem. General
+mixed-characteristic $K$ need not admit this $\F_2$ tensor construction.}
+\prov{S-LMB; S-CAP F8; ordinary base change and homomorphism preservation.
+Useful semantic interface, not a derivation of all measurement postulates.}
+
+\claimid{LMB-006, NEG-002}
+\begin{proposition}[Division-free basis branches]
+For an invertible coordinate readout $B_0$ over $\Bool_\A$ and coordinate
+projectors $P_i$, define $J_i=B_0^{-1}P_iB_0$. Then
+\[
+ J_i^2=J_i,\quad J_iJ_j=0\ (i\ne j),\quad\sum_iJ_i=I.
+\]
+The branch $J_i\psi$ is nonzero iff the $i$th readout coordinate is nonzero;
+row-unit rescaling leaves $J_i$ unchanged. Valuation commutes with the branch
+formula whenever $B_0$ is symbolically invertible.
+\end{proposition}
+\begin{proof}
+Conjugate the coordinate-projector identities. A column of $B_0^{-1}$ is
+unimodular, since some row of $B_0$ pairs with it to one. Multiplying that column
+by a nonzero scalar cannot give zero, proving branch/nonzero equivalence.
+Diagonal row-unit scaling commutes with $P_i$ and cancels in the conjugation.
+Valuation preserves the inverse identity and therefore the full expression.
+\end{proof}
+\scope{No division by an outcome amplitude is used. No probability,
+normalization or closure of primitive preparations under conditioning follows.
+A category of instruments or effectus requires additional axioms and proofs.}
+
+\section{Further supporting no-go and finite evidence records}
+\label{sec:diagnostics}
+\claimid{RES-010, RES-011, RES-012}
+\begin{proposition}[Cloning, qualified deletion and exact syndromes]
+For $V=\F_2^d$, $d\geq2$, no linear map clones every nonzero vector as
+$v\mapsto v\otimes v$. No injective deterministic linear map deletes a copy
+as $v\otimes v\mapsto v\otimes b$ with fixed nonzero blank $b$ and no
+input-dependent environment. For an injective code map $E$ and errors $F_a$,
+an exact decoder retaining distinct syndromes exists on their joint image iff
+each $F_aE$ is injective and their images form a direct sum.
+\end{proposition}
+\begin{proof}
+Cloning $e_i+e_j$ requires cross terms absent from the linear sum of the two
+clones. Duplicated vectors span the subspace generated by $e_i\otimes e_i$
+and $e_i\otimes e_j+e_j\otimes e_i$, of dimension $d(d+1)/2>d$; their proposed
+deleted outputs span at most $d$ dimensions, contradicting injectivity.
+For syndromes, distinct retained labels occupy independent subspaces and must
+preserve each input, proving necessity. Conversely use the inverse of each
+$F_aE$ on its own independent image and append its label; these maps combine
+to an isomorphism on the direct sum.
+\end{proof}
+\scope{Linearity alone does not forbid deletion: the noninjective map
+$D(e_i\otimes e_j)=\delta_{ij}e_i\otimes b$ deletes all duplicated $\F_2$
+vectors. It is not automatically a complete deterministic allowed process.
+The syndrome criterion is not the general degenerate quantum error-correction
+criterion. Remote preparation and swapping are the standard contraction
+identities $\im M^T$ and $MEN$ in compatible conventions; over rings,
+primitive preimage conditions still matter.}
+\prov{S-CAP F3--F6. Generic modal no-go results are prior art
+\cite{Schumacher2010,DiamondSchumacher2023}; syndrome distinctions are
+supporting algebra, not a fault-tolerance threshold claim.}
+
+\claimid{MOD-008, RES-013, NEG-001, NEG-003, NEG-004}
+\paragraph{Finite GHZ and probability records.}
+The tested three-setting GHZ support has 27 contexts, 112 possible events and
+no compatible assignment among 512 assignments. Within that family, 101,583
+subsets of at most five contexts were checked without contradiction; a
+six-context witness is $ZZZ,ZXX,XZY,XXX,YYZ,YYY$. This is a finite diagnostic,
+not a theorem that every GHZ scenario requires six contexts. The restricted
+orthogonal-basis version has global assignments.
+
+For the specified nine-context Bell support, 24 events are possible, but
+normalized nonnegative real no-signalling constraints force six of them to
+zero. The supplied exact affine constraints are the certificate; the LP is a
+check. A weak completion with 18 positive events and a CHSH value of four is
+not a faithful probability model of all original events, still less a Born
+rule. Schumacher--Westmoreland already discuss weak versus strong probability
+resolutions \cite{Schumacher2012}; this is retained as background validation,
+not new foundational priority. Historical signed $C_8/C_{16}$ claims are not
+silently imported into the Boolean core.
+
+\section{Compiler evidence is not an algebraic performance theorem}
+\label{sec:compiler}
+\claimid{CMP-001--006, NEG-005, NEG-006}
+The supplied raw file has 10,500 rows, with 10,389 fully admitted four-arm
+comparisons and 111 other status rows. Every fully admitted case ties CM and
+generic two-support optimization on final degree, final monomials,
+multiplications, output unique nodes, pair terms, peak monomials and serialized
+bytes. The independent recount found no differences. S1's SC-A symbolic-work
+mechanism gate passes; the corrected S2 construction verifies requested support
+rather than retaining the superseded generator's 55.161 percent rate.
+
+These observations show that avoiding early ANF expansion can save work, but
+not that the final simplification is uniquely accessible to CM. Equal reductions
+do not imply equal recognition overhead. The source package does not supply a
+completed natural-workload SC-B/C/D campaign, a confirmatory SC-E abstention
+result, or Paper B's separate frozen Gate P evaluation. No fresh timing campaign
+was run in this consolidation. The 12 benchmark tests are distinct from Paper
+B's reported focused 105-test implementation suite, which was not rerun here.
+
+\section{Reproducibility and remaining proof/priority boundaries}
+An independent standard-library checker authored for this consolidation
+reconstructs all 65,536 $\A$ resource ranks and Smith classes, classifies all
+255 nonzero dual-number resources by explicit support plus SCC 2-SAT, checks
+14 actual dense decoders and enumerates all 256 fixed-LM products. The dual-number
+counts are 81 local, 72 logical-not-strong and 102 strong, using 62,463 SAT calls.
+This is a different-method finite check of the generalized theorem.
+
+Fresh named pytest totals are 31 audit, 59 across four historical Boolean suites,
+and 12 benchmark tests, hence 102. Other source scripts perform exact scans and
+are recorded separately. An interrupted aggregate driver is retained as such;
+individual successful stages, not the interrupted driver, support the reported
+results. Original input hashes, stage logs and explicit source locations are
+provided in the companion repository. Presence of a file copied from a rerun
+working directory alone does not certify that its producing stage was rerun.
+
+No novel theorem is claimed merely because targeted web searches found no exact
+match. The finite-chain-ring classification and codebook synthesis, two-setting
+obstruction and exact characteristic-two query bounds remain the principal
+candidates for specialist priority review. Drafts can be built from these
+proofs now, but submission-strength priority and compiler performance language
+must respect the remaining gaps.
+
+% Static fallback is generated from the same records as references.bib.
+% For a journal BibTeX build, replace this conditional with the two fallback lines.
+\IfFileExists{../literature/references_static.tex}{\input{../literature/references_static}}{
+\bibliographystyle{plain}
+\bibliography{../literature/references}}
+\end{document}

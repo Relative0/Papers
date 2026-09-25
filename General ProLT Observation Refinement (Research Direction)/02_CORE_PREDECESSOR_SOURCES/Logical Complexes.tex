@@ -1,0 +1,126 @@
+\title{Logical Complexes}
+\author{
+       Brian Droncheff
+}
+
+\documentclass[12pt]{report}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz-cd}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{scalerel}
+\usepackage{stackengine}
+\usepackage{mathrsfs}
+\usepackage[all]{xy}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{titlesec}     
+\usepackage{changepage}
+\usepackage{parallel,enumitem}
+\usepackage[all]{xy}
+\usepackage{floatrow}
+\usepackage{glossaries}
+\usepackage [autostyle, english = american]{csquotes}
+
+\usetikzlibrary{calc,intersections}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric,calc,through}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{postulate}[theorem]{Postulate}
+\newtheorem{diagram}[theorem]{Diagram}
+
+
+\newenvironment{proof}[1][Proof]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{question}[1][Question]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{note}[1][Note]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+
+\newcommand{\qed}{\nobreak \ifvmode \relax \else
+      \ifdim\lastskip<1.5em \hskip-\lastskip
+      \hskip1.5em plus0em minus0.5em \fi \nobreak
+      \vrule height0.75em width0.5em depth0.25em\fi}
+\newcommand{\noteend}{\nobreak \ifvmode \relax \else
+      \ifdim\lastskip<1.5em \hskip-\lastskip
+      \fi \nobreak
+      \vrule height0.3em width0.3em depth0.25em\fi}
+\newcommand{\defend}{$\spadesuit$}
+\newcommand{\exend}{$\blacklozenge$}
+\newcommand{\tb}{$\hspace*{.5cm}$}
+\newcommand{\ltb}{$\hspace*{1cm}$}
+\newcommand{\smsp}{$\hspace*{.1cm}$}
+\newcommand{\smnl}{$\\[.25cm]$}
+\newcommand{\dnl}{$\\[.5cm]$}
+\newcommand{\Lim}[1]{\raisebox{0.5ex}{\scalebox{0.8}{$\displaystyle \lim_{#1}\;$}}}
+\newcommand*{\inbk}[1]{$\langle {#1}|{#1} \rangle $}
+\newcommand*{\otbk}[1]{$|{#1} \rangle \langle {#1}|$}
+\newcommand*{\inbktwo}[2]{$\langle {#1}|{#2} \rangle $}
+\newcommand*{\otbktwo}[2]{$|{#1} \rangle \langle {#2}|$}
+\newcommand*{\otbkthree}[3]{${#1}|[#2]\rangle \langle [#2]|{#3} $}
+\newcommand*{\inbkthree}[3]{$\langle {#1}|[#2]|{#3} \rangle $}
+\newcommand{\rowtens}[2]{$|{#1} \rangle \otimes |{#2} \rangle$}
+\newcommand{\coltens}[2]{$ \langle{#1}| \otimes  \langle{#2}|$}
+\newcommand{\ket}[1]{$|{#1}\rangle$}
+\newcommand{\bra}[1]{$\langle{#1}|$}
+\newcommand{\tit}[1]{$\textit{#1}$}
+\newcommand{\tbf}[1]{$\textbf{#1}$}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=-.35pt] (char) {#1};}}
+\newcommand{\ketrep}[1]{$[|{#1}\rangle]$}
+\newcommand{\brarep}[1]{$[\langle{#1}|]$}
+\newcommand{\ketreparg}[2]{${#1}[|\rangle]{#2}$}
+\newcommand{\brareparg}[2]{${#1}[\langle|]{#2}$}
+\newcommand{\comm}[2]{$ \left[{#1},{#2}\right]={#1}{#2}-{#2}{#1}$}
+\newcommand{\tensormult}[4]{$\begin{bmatrix} #1#3 & #1#4 \\ #2#3 & #2#4 \end{bmatrix}$}
+\newcommand{\tens}[2]{${#1} \otimes {#2}$}
+          
+
+%\def\subcap{\mathrel{\ThisStyle{\kern.7pt\stackinset{c}{-.3\LMpt}{b}{.8\LMpt}%
+ % {\scalebox{1.5}[1]{$\SavedStyle\subset$}}%
+ % {\scalebox{1}[1.5]{$\SavedStyle\cap$}}}\kern .3pt}}
+\def\impax{\mathrel{\ThisStyle{\kern 0pt\stackinset{c}{0\LMpt}{b}{3\LMpt}%
+  {\scalebox{1}[1]{$\SavedStyle\Leftrightarrow$}}%
+  {\scalebox{1}[1]{$\SavedStyle\Updownarrow$}}}\kern 0pt}}
+\makeatletter
+\newcommand{\superimpose}[2]{%
+  {\ooalign{$#1\@firstoftwo#2$\cr\hfil$#1\@secondoftwo#2$\hfil\cr}}}
+\makeatother
+\newcommand{\subsetintersection}{\mathpalette\superimpose{{\subset}{\cap}}}
+\newenvironment{pindent}{\begin{adjustwidth}{1cm}{1cm}}{\end{adjustwidth}}
+
+\MakeOuterQuote{"}
+\begin{document}
+
+Also note that for the logical metric defined on $\Updownarrow$, $(X \Updownarrow Y) \Updownarrow (Y \Updownarrow Z) = \partial (XYZ) \vee \partial^2(XYZ)$ or $\partial(XYZ) \Updownarrow \partial^2(XYZ)$. \smnl
+\tb Consider the partitioned expression $D \vee G \vee B \vee C = (X \wedge Y \wedge \neg Z) \vee (X \wedge Y \wedge Z) \vee (Y \wedge \neg X \wedge \neg Z) \vee (Z \wedge \neg X \wedge \neg Y) = \mathcal{L}$. We will let the logical point for each $D,G,B,$ and $C$ be $\mathcal{V}^T(-)$ i.e. $\mathcal{V}^T(D)$ etc. as the logical points are those points which make the expression such as $D$ true. now for $\mathcal{V}^T(\mathcal{L})$ we have the points $\{(1,1,0),(1,1,1),(0,1,0),(0,0,1)\}$ corresponding to $\{\mathcal{V}^T(D),\mathcal{V}^T(G),\mathcal{V}^T(B),\mathcal{V}^T(C)\}$ which is a logical 3-simplex. Each of the logical points of the disjunctive terms of the form $(\mathcal{V}(X), \mathcal{V}(Y), \mathcal{V}(Z))$ in $\mathcal{L}$, for example the expression $(X \wedge Y \wedge \neg Z)$ has a logical point of $(\mathcal{V}(X), \mathcal{V}(Y), \mathcal{V}(Z)) = (1,1,0)$. The four possible 2-simplices are $R = \{(0,0,1),(1,1,1),(1,1,0)\}$, $S = \{(1,1,1),(1,1,0),(0,1,0)\}$, $T = \{(1,1,0),(0,1,0),(0,0,1)\}$, and $U = \{(0,0,1),(1,1,0),(0,1,0)\}$. Now as in simplical decomposition we verify the distance metric for elements of $R$:
+\begin{center}
+$((0,0,1) \Updownarrow (1,1,1)) \Updownarrow ((1,1,1) \Updownarrow (1,1,0)) = (1,1,1) = ((0,0,1) \Updownarrow (1,1,0))$ 
+\end{center}
+which is correct. \smnl
+for $S$:
+\begin{center}
+$((1,1,1) \Updownarrow (1,1,0)) \Updownarrow ((1,1,0) \Updownarrow (0,1,0)) = (1,0,1) = ((1,1,1) \Updownarrow (0,1,0))$
+\end{center}
+likewise for $T$ and $U$. \smnl
+\tb So we can create vectors for XOR of points (where XOR is the distance metric) and the XOR of two vectors give the third vector! What about planes then? \smnl
+\tb Similar to the simplical decomposition in which $\partial(HIJ) = IJ - HJ + HI$ and $\partial^2(HIJ) = (J - I) - (J - H) + (I - H) = 0$, again we let the logial points be $\mathcal{V}^T(B) = (0,1,0)$, $\mathcal{V}^T(C) = (0,0,1)$, $\mathcal{V}^T(D) = (1,1,1)$, and $\mathcal{V}^T(G) = (1,1,1)$, just using $B,C,D,$ and $G$ for short; we have $\partial^2(CGD) = (GD) - (CD) + (CG) = ((1,1,0) \Updownarrow ((1,1,1))) \Updownarrow ((1,1,0) \Updownarrow (0,0,1)) \Updownarrow ((1,1,1) \Updownarrow (0,0,1)) = (0,0,1) \Updownarrow (1,1,1) \Updownarrow (1,1,0) = (0,0,0)$ \smnl
+\tb Now note that for any points $R$ and $S$ that, logically if negation between points is $XOR$ as due to difference then as $\partial(RS) = S - R \equiv S \Updownarrow R$ then one interpretation of $-(RS)$ is $-(S - R) = R - S \equiv R \Updownarrow S$. Hence we can see that $RS = -(RS)$ hence we need not worry about negative signs. Another interpretation however might be that $-(RS) \equiv \neg(R \Updownarrow S) = R \Leftrightarrow S)$. We would then have that $\partial^2(CGD) = (GD) - (CD) + (CG) = (D \Updownarrow G) \Updownarrow (C \Leftrightarrow D) \Updownarrow (C \Updownarrow G) = ?$ However if we had that $-(C \Updownarrow D) = (D \Updownarrow C)$ for the interpretation that $-(CD) = (DC)$ then we have $\partial^2(CGD) = (D \Updownarrow G) \Updownarrow (D \Updownarrow C) \Updownarrow (C \Updownarrow G) = (D \Updownarrow D) \Updownarrow (C \Updownarrow C) \Updownarrow (G \Updownarrow G) = 0$ by commutativity of XOR. This would prove the general case of $\partial^2()$ under this interpretation. \smnl
+\tb Now it might be meaningful to look at the points during the decomposition in that for example $CD = C \wedge D$ explicitly. We would then have that $GD = (1,1,0)$, $CD = (0,0,0)$, $CG = (0,0,1)$. Now if $-(CG) = (1,1,1)$ then we have our $(1,1,0) \Updownarrow (1,1,1) \Updownarrow (0,0,1) = (0,0,0)$ \smnl
+\tb For completeness $\partial(CGDB) = (GDB) - (CDB) + (CGB) - (CGD)$ Now $(GDB) = (0,1,0)$, $- (CDB) = -(0,0,0) = (1,1,1)$, $ (CGB) = (0,0,0)$, and $ - (CGD) = -(0,0,0) = (1,1,1)$. Now as there is a single $\partial$ and we note that there is not a symmetry as no matter whether $-(CDB)$ and $-(CGD)$ = $(0,0,0)$ or $(1,1,1)$ we have that $(GDB) = (0,1,0)$ So the overall XOR terms for $\partial(CGDB) = (0,1,0)$. So there is an asymmetry in the index that corresponds to $Y$ in $(X,Y,Z)$. Note that this could also be found in $C \Updownarrow G \Updownarrow D \Updownarrow B$. It might be useful to see if the components with negative signs always cancel out no matter if they are $-$ or $+$, thus it wouldn't matter if we take $\Updownarrow$ or $\Leftrightarrow$. \smnl
+\tb Now we investigate points and their relationships on an n-dimensional plane! What about then for something such as $D \vee E \vee F \vee G = \mathcal{L}$ so for $\mathcal{V}^T{L}$ we have the points $\{(1,1,0),(1,0,1),(0,1,1),(1,1,1)\}$ associated to the above logical variables in $\mathcal{L}$. Note however that each of the logical points is in terms of $(\mathcal{V}^T(X),\mathcal{V}^T(Y),\mathcal{V}^T(Z))$. Now we might have too many points (for the number of distinct variables) i.e. 4 points for a 3-D object and as each of the points seem to be basis points as no 3 points are co planar i.e. $D\begin{matrix}
+1 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 1  \end{matrix} = 1(-1) = 1 (1) = -2 \neq 0$ and for $\alpha(1,1,0) + \beta(1,0,1) + \gamma(0,1,1) = (1,1,1) \Rightarrow \alpha + \beta = 1, \alpha + \gamma = 1, \beta + \gamma = 1 \Rightarrow \beta = 1 - \alpha$ so $1 = \alpha + \gamma = 1$ then $- \alpha + \gamma = 0 \Rightarrow \alpha = \gamma$ so $2\gamma = 1 \Rightarrow \gamma = \frac{1}{2}$, $2 \alpha = \frac{1}{2}$ and $\beta = \frac{1}{2}$ so $\alpha,\beta,\gamma =\neq 0$ and we don't need to have all four points to make the simplex. In fact, my algorithm decomposes $X \wedge Y \wedge Z = (1,1,1)$ to $\neg XYZ \Updownarrow X\neg YZ \Updownarrow XY\neg Z$! This is why we can use the 3 non co-planar points (any 3) to give the other! For example with $G = (1,1,1)$, $F = (0,1,1)$, $E = (1,0,1)$, and $D = (1,1,0)$ that for $\{(1,1,1), (0,1,1),(1,0,1)\}$ we have that $F \Updownarrow E = D$. However with 3 points we can calculate each of the other points. So we may have a redundency in points if we take each $n + 1$ in an n-simplex what if then we had 3 co-planar points? say $\{0,1,0), (0,1,1),(0,0,1)\}$? This is then from the logical expression $\neg X \wedge Y \wedge \neg Z \vee \neg  \wedge Y \wedge Z \vee \neg X \wedge \neg Y \vee Z = \neg X \wedge Y \vee \neg X \wedge Z $ which are two points in a 3-D space. Also, what about $\partial(\neg X \wedge Y \wedge Z)$ this is also $= \neg X \wedge Y \vee \neg X \wedge Z $. Now just taking $\neg X \wedge Y \wedge \neg Z \vee \neg X \wedge \neg Y \wedge Z = \neg X \wedge (Y \Updownarrow Z)$ but I shouldn't have said $\vee$ as the points in the set are XOR-ed. So $\partial(0,1,1) = \partial(\neg X \wedge Y \wedge Z) = \neg X \wedge Y \wedge Z \Updownarrow \neg X \wedge \neg Y \wedge Z \Updownarrow \neg X \wedge Y \wedge \neg Z =$ ? Should work. So if we have a logical expression $\neg X \neg Y Z \Updownarrow \neg X Y \neg Z$ this is homologous to $\neg X \wedge (Y \Updownarrow Z)$?? So we can create a "line" of possibilities or perhaps its a plane with points $(0,1,1),(0,0,1)$ and $(0,1,0)$ and if have 3 non co-linear points we can create a plane - or perhaps a 3-simplex tetrahedron of possible positive valuations or "truths".
+
+
+\end{document}

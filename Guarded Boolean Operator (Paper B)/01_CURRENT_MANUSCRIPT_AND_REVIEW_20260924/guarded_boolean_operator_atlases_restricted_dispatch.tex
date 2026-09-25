@@ -1,0 +1,832 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{geometry}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\geometry{margin=1.05in}
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0.15em}
+\setlist{nosep}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\B}{\{0,1\}}
+\newcommand{\sgnzero}{\operatorname{sgn}_0}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Deltaop}{\Delta}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cG}{\mathcal{G}}
+
+\title{\vspace{-1.2cm}\textbf{From Continuous Scores to Guarded Boolean Operators:\\Exact Sign Quotients, Minimal Dispatch, and Fixed-Frame CM/LM Lifts}}
+\author{Brian Theory}
+\date{24 September 2026\\\small Restricted-dispatch revision}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A real-valued model may induce different Boolean operators in different regions of parameter space. Parameter-region decompositions carrying logical or Boolean data are already central in DSGRN, logical bifurcation diagrams, abstract interpretation, and real-algebraic sign decomposition; we therefore treat those ideas as established prior art. This paper isolates an exact, model-agnostic interface for finitely many continuous real scores indexed by Boolean assignments.
+
+On an open Euclidean parameter domain, the joint score-zero set is a discriminant and the zero-free complement carries a finite operator quotient. Its nonempty fibers are the unique coarsest unrestricted guards on which the induced Boolean operator is exact; their connected components are open geometric chambers. For predicate abstraction of a concrete state space, collecting sign sets in $\{-1,0,+1\}$ separate unreachable cells, strict signs, zero/tie behavior, genuine ambiguity, and solver uncertainty. A guarded operator is emitted only after its strict score signs are certified.
+
+We then study \emph{restricted dispatch}: how much certified information is actually needed to identify the active operator, correspondence tensor, or fixed-frame logical-matrix lift. Injectivity of the Boolean-to-CM and fixed-frame LM maps makes exact dispatch representation-invariant. With a finite predicate library, minimum exact dispatch is a classical minimum-test-set/hitting-set problem; with truth-table coordinates as tests, the resulting \emph{CM signature size} is the smallest set of polarity probes that identifies every operator realizable by the atlas.
+
+A nonlinear polynomial case study, $F(x,y)=x+y+xy$ on signed magnitude representatives, realizes exactly AND, the two projections, and XNOR. Its three curved switching arcs give exact quadratic guards, cannot be represented by any finite Boolean combination of affine-linear guards, and require exactly three CM probes. A centered Walsh construction is retained only as a classical calibration appendix connecting the interface to Cover-style dichotomy counts and oriented-matroid tope graphs.
+\end{abstract}
+
+\section{Introduction}
+
+Continuous models and Boolean descriptions are routinely related by thresholds, signs, predicates, or guards. The difficulty is not the elementary operation ``take a sign.'' The difficulty is to state exactly when a finite Boolean operator is determined, how zero boundaries and unreachable inputs are represented, what a computational certificate must prove, and which finite object is transported into a symbolic operator calculus.
+
+Suppose, for example, that a two-input score is
+\[
+ F(x,y)=x+y.
+\]
+At positive magnitudes $a,b$, evaluate $F$ on the four signed representatives $(\pm a,\pm b)$. If $a>b$, thresholding gives the first projection $X$; if $b>a$, it gives the second projection $Y$; at $a=b$, two entries are exactly zero. There is therefore no single global Boolean connective attached to addition under this polarity frame. There is a parameter-indexed family of exact operators separated by a zero discriminant.
+
+The broad continuous-parameter-to-discrete-region idea is established. DSGRN computes finite decompositions of parameter spaces for switching regulatory-network models so that a common discrete description is attached to each parameter region; in important single-target cases parameter nodes correspond directly to monotone Boolean functions, and later work organizes adjacency by a change of one Boolean value on one input~\cite{CumminsEtAl2018,Gedeon2020,CrawfordKahrlEtAl2022}. Logical bifurcation diagrams likewise relate continuous bifurcation parameters in piecewise differential models to sequences of logical-parameter valuations and associated attractors~\cite{AbouJaoudeMonteiro2019}. Recent DSGRN work further emphasizes the embedding of Boolean models into richer continuous-parameter combinatorial models~\cite{CumminsEtAl2026}. These results are not reproved or claimed here.
+
+Our narrower goal is an exact, model-agnostic interface for a finite family of real scores. The Boolean input frame is $\B^n$; a concrete model may live on a state space $D$; and the continuously varying coefficients, magnitudes, operating conditions, or other parameters live in an open Euclidean domain $\Lambda\subseteq\R^p$. From the scores we form an exact operator quotient, make the zero/reachability contract explicit, state what a verifier must certify, and then map a total Boolean operator to a correspondence tensor and fixed-frame LM.
+
+\paragraph{Contribution boundary.}
+Sign abstraction is classical in abstract interpretation~\cite{CousotCousot1977}; predicate abstraction and predicate minimization have a substantial verification literature~\cite{ChakiEtAl2003}; minimum discrimination/test-set problems are classical and NP-hard~\cite{MoretShapiro1985,BermanDasGuptaKao2005}; semialgebraic sign decomposition is standard real algebraic geometry~\cite{BasuPollackRoy2006}; DSGRN and logical bifurcation diagrams already provide structured parameter-to-logical decompositions~\cite{CumminsEtAl2018,Gedeon2020,AbouJaoudeMonteiro2019}; and threshold-function chamber geometry is established~\cite{Anthony2026}. Accordingly, neither parameter chambers nor minimum test-set complexity is presented as new. The independent emphasis here is the exact score-sign interface to CM/LM objects: representation-invariant dispatch, a zero-aware certification contract, the CM signature/minimum-polarity-probe formulation for a realized operator family, and an exact nonlinear example showing a strict gap between finite affine-linear and quadratic guard languages. The centered Walsh construction is retained only as a classical calibration of the interface.
+
+\paragraph{Relation to the companion regularity paper.}
+Questions about which Boolean sign laws can be realized throughout whole orthants under smooth, quasianalytic, or Denjoy--Carleman regularity are mathematically distinct from the guarded-atlas problem. They are treated separately in the companion manuscript on finite-jet rigidity. Here the scores are given; the problem is exact extraction, parameter organization, certification, and symbolic transport.
+
+\section{Typed setup}\label{sec:setup}
+
+Throughout this paper the parameter space $\Lambda$ is a nonempty open subset of some Euclidean space $\R^p$. This restriction is deliberate. The sign-fiber statements below need only continuity, but Euclidean parameter domains are locally path-connected; consequently the connected components of an open zero-free set are themselves open and can legitimately be treated as geometric chambers. The same chamber-openness conclusion extends to locally connected parameter spaces. An arbitrary subspace of Euclidean space need not be locally connected, so merely writing $\Lambda\subseteq\R^p$ would not be enough.
+
+Let $\B=\{0,1\}$. Define the partial threshold
+\[
+ q(t)=\begin{cases}1,&t>0,\\0,&t<0,\end{cases}
+\]
+leaving $q(0)$ undefined. For zero-aware collecting semantics we use instead
+\[
+ \sgnzero(t)=\begin{cases}+1,&t>0,\\0,&t=0,\\-1,&t<0.\end{cases}
+\]
+
+For $\alpha=(\alpha_1,\ldots,\alpha_n)\in\B^n$, let
+\[
+ \eps_i(\alpha)=2\alpha_i-1\in\{-1,+1\}.
+\]
+A Boolean function $\Theta:\B^n\to\B$ has numeric truth tensor
+\[
+ C_\Theta[\alpha]=\Theta(\alpha),
+\]
+with true-first ordering on each axis. Following the companion CM/LM terminology, we call $C_\Theta$ the \emph{correspondence tensor}; for $n=2$ it is displayed as a $2\times2$ correspondence matrix (CM).
+
+\begin{definition}[Continuous score family]\label{def:scorefamily}
+Let $\Lambda\subseteq\R^p$ be the declared open parameter domain. A finite continuous score family of arity $n$ is a collection
+\[
+ g_\alpha:\Lambda\to\R,
+ \qquad \alpha\in\B^n,
+\]
+of continuous scalar functions. Its discriminant is
+\begin{equation}\label{eq:discriminant}
+ \Deltaop=\bigcup_{\alpha\in\B^n}g_\alpha^{-1}(0).
+\end{equation}
+For $\lambda\in\Lambda\setminus\Deltaop$, define
+\begin{equation}\label{eq:tensorlambda}
+ C(\lambda)[\alpha]=q(g_\alpha(\lambda))
+\end{equation}
+and let $\Theta_\lambda$ be the unique Boolean function with truth tensor $C(\lambda)$.
+\end{definition}
+
+The definition deliberately begins with the indexed scores, not with a particular source of those scores. Several common constructions fit it.
+
+\begin{example}[Polarity-frame scores from a model]\label{ex:polarity}
+Let $F:\Lambda\times\R^n\to\R$ be continuous and let $x_\alpha:\Lambda\to\R^n$ be continuous representatives. Then
+\[
+ g_\alpha(\lambda)=F(\lambda,x_\alpha(\lambda))
+\]
+is a continuous score family. Magnitude variation is the special case $\Lambda=\R_{>0}^n$ and
+\[
+ x_\alpha(r)=\eps(\alpha)\odot r.
+\]
+Ordinary model-parameter variation is obtained by keeping the input representatives fixed and placing the model parameters in $\lambda$. Joint variation uses both.
+\end{example}
+
+\begin{remark}[Strictly increasing links]
+If a continuous score $g$ is passed through a strictly increasing link $L$ and thresholded at $L(0)$, then the Boolean value is unchanged because
+\[
+ g>0\iff L(g)>L(0).
+\]
+A decreasing link reverses the orientation and must be accounted for explicitly. We therefore use raw scores in the formal development and treat increasing links as optional display transformations.
+\end{remark}
+
+\section{Exact sign quotients and geometric chambers}\label{sec:atlas}
+
+Write
+\[
+ \Lambda^\circ=\Lambda\setminus\Deltaop
+\]
+for the zero-free parameter domain and let $\mathfrak B_n$ denote the finite set of Boolean functions $\B^n\to\B$. Definition~\ref{def:scorefamily} gives a map
+\[
+ \Phi:\Lambda^\circ\longrightarrow\mathfrak B_n,
+ \qquad \Phi(\lambda)=\Theta_\lambda.
+\]
+For $\Theta\in\mathfrak B_n$, define its \emph{operator fiber}
+\begin{equation}\label{eq:operatorfiber}
+ \Omega_\Theta
+ =\Phi^{-1}(\Theta)
+ =\bigcap_{\alpha:\Theta(\alpha)=1}\{g_\alpha>0\}
+  \cap
+  \bigcap_{\alpha:\Theta(\alpha)=0}\{g_\alpha<0\}.
+\end{equation}
+
+\begin{theorem}[Exact operator quotient]\label{thm:atlas}
+The nonempty fibers $\Omega_\Theta$ form a finite partition of $\Lambda^\circ$ with the following properties.
+\begin{enumerate}[label=(\roman*),leftmargin=2.2em]
+\item Each $\Omega_\Theta$ is open in $\Lambda$ and clopen relative to $\Lambda^\circ$.
+\item The family of nonempty fibers is the unique coarsest partition of $\Lambda^\circ$ by guards on which the induced Boolean operator is constant: every exact guard carrying the operator $\Theta$ is contained in $\Omega_\Theta$.
+\item Every connected component of a nonempty $\Omega_\Theta$ is an open connected subset of $\Lambda$. We call these components \emph{operator chambers}. Equivalently, they are the connected components of $\Lambda^\circ$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Formula~\eqref{eq:operatorfiber} is a finite intersection of strict-sign preimages of continuous functions, hence is open. Its complement inside $\Lambda^\circ$ is the union of the other operator fibers and is therefore open, proving relative closedness. If a guard $G\subseteq\Lambda^\circ$ carries the exact constant operator $\Theta$, then by definition every point of $G$ has truth tensor $C_\Theta$, hence $G\subseteq\Omega_\Theta$; this is precisely the coarsest-partition property.
+
+Because $\Lambda$ is open in $\R^p$, so is $\Lambda^\circ$. Open Euclidean sets are locally path-connected, and connected components of locally connected open sets are open. Since a connected subset cannot meet two distinct clopen operator fibers, the connected components of $\Lambda^\circ$ are exactly the connected components of the nonempty fibers.
+\end{proof}
+
+\begin{corollary}[Polynomial/semialgebraic finiteness]\label{cor:semialg}
+Suppose $\Lambda\subseteq\R^p$ is open semialgebraic and every $g_\alpha$ is polynomial. Then each operator fiber is an open semialgebraic set and has finitely many connected components. Hence the geometric chamber atlas is finite and can, in principle, be computed by standard real-algebraic component/sign-condition methods.
+\end{corollary}
+
+\begin{proof}
+Each fiber is defined by finitely many strict polynomial inequalities. Semialgebraic sets have finitely many connected components, each semialgebraic; see~\cite{BasuPollackRoy2006}.
+\end{proof}
+
+\begin{remark}[Relationship to parameter graphs]
+Theorem~\ref{thm:atlas} is an elementary sign-map quotient, not a replacement for structured parameter-graph theories. DSGRN parameter nodes carry substantially more model-specific information, including network logic and state-transition/Morse summaries~\cite{CumminsEtAl2018,Gedeon2020}. At the Boolean-label layer, however, its parameter-region construction is a close structured antecedent: Paper B uses the same broad region-to-discrete-object idea but applies it to arbitrary finite score families and then adds the zero-aware and CM/LM interface contracts below.
+\end{remark}
+
+\begin{proposition}[Isolated single-entry crossing]\label{prop:oneentry}
+Let $\gamma:(-\eta,\eta)\to\Lambda$ be continuous. Suppose there is $0<\delta<\eta$ and one index $\alpha_0$ such that $g_{\alpha_0}\circ\gamma$ has one strict sign on $(-\delta,0)$ and the opposite strict sign on $(0,\delta)$, while every $g_\alpha\circ\gamma$ with $\alpha\ne\alpha_0$ is nonzero on $(-\delta,\delta)$ and therefore keeps one sign there. Then the Boolean operators on the two punctured side intervals differ in exactly the truth-table entry $\alpha_0$.
+\end{proposition}
+
+\begin{proof}
+All noncrossing scores keep their signs by continuity. The distinguished score has opposite fixed signs on the two sides by hypothesis, so exactly one Boolean entry changes.
+\end{proof}
+
+\begin{corollary}[Transverse form]
+If the scores and $\gamma$ are differentiable near $0$, $g_{\alpha_0}(\gamma(0))=0$, $(g_{\alpha_0}\circ\gamma)'(0)\ne0$, and all other scores are nonzero at $\gamma(0)$, then the hypotheses of Proposition~\ref{prop:oneentry} hold after shrinking $\delta$.
+\end{corollary}
+
+\begin{remark}
+Single-input logical adjacency is already explicit in DSGRN parameter graphs for monotone Boolean functions~\cite{CrawfordKahrlEtAl2022}; threshold-function chambers have the analogous one-entry facet geometry~\cite{Anthony2026}. Proposition~\ref{prop:oneentry} records only the minimal model-agnostic score-family statement.
+\end{remark}
+
+\begin{proposition}[One-parameter polynomial event bound]\label{prop:polybound}
+Let $I\subseteq\R$ be an interval and suppose every score $g_\alpha(t)$ is a nonzero polynomial of degree at most $d$. Then the discriminant contains at most $2^n d$ parameter values in $I$. Consequently the induced operator is constant on at most $2^n d+1$ relatively open interval components of $I\setminus\Deltaop$. The number of actual sign-switching values is no larger than the number of discriminant values.
+\end{proposition}
+
+\begin{proof}
+Each of the $2^n$ nonzero polynomials has at most $d$ distinct real roots. Removing at most $2^n d$ points from an interval leaves at most $2^n d+1$ components. Roots of even multiplicity may touch zero without changing sign, so the root count bounds candidate events rather than asserting that every root is an actual switch.
+\end{proof}
+
+\section{Zero-aware exact abstraction}\label{sec:collecting}
+
+The score-family construction above synthetically supplies one score for every Boolean assignment. Predicate abstraction is different: some abstract cells may be unreachable, and the score may vanish inside a reachable cell. These cases must not be collapsed.
+
+\begin{definition}[Collecting sign semantics]\label{def:collecting}
+Let $D$ be a concrete state space, let
+\[
+ P:D\to\B^n
+\]
+be a total predicate map, and let $F:D\to\R$ be a total score. For $\alpha\in\B^n$ define the collecting sign set
+\begin{equation}\label{eq:collecting}
+ S_\alpha
+ =\{\sgnzero F(x):x\in D,\ P(x)=\alpha\}
+ \subseteq\{-1,0,+1\}.
+\end{equation}
+\end{definition}
+
+The set $S_\alpha$ has a direct semantic reading:
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Collecting set & Meaning \\
+\midrule
+$\varnothing$ & unreachable abstract cell \\
+$\{-1\}$ & exact false output \\
+$\{+1\}$ & exact true output \\
+contains $0$ & reachable tie/boundary behavior occurs \\
+contains both $-1$ and $+1$ & genuine two-sided sign ambiguity occurs \\
+\bottomrule
+\end{tabular}
+\end{center}
+The last two properties can occur simultaneously.
+
+\begin{theorem}[Zero-aware exact abstraction criterion]\label{thm:collecting}
+For a reachable cell $P^{-1}(\alpha)$, a two-valued output under the partial threshold $q$ is well-defined exactly when
+\[
+ S_\alpha=\{-1\}
+ \qquad\text{or}\qquad
+ S_\alpha=\{+1\}.
+\]
+A full Boolean operator $\Theta:\B^n\to\B$ is canonically induced exactly when every assignment is reachable and every $S_\alpha$ is one of these two singleton sets. If some cells are unreachable but every reachable cell is sign-definite, the result is a partial truth tensor together with a reachability mask, not a canonical full Boolean operator.
+\end{theorem}
+
+\begin{proof}
+If $S_\alpha=\{+1\}$, every concrete point in the cell has positive score, so $q\circ F$ is constantly $1$ there; the negative case is identical. Conversely, if $q\circ F$ is well-defined and constant on the entire reachable cell, the score can neither vanish nor take both signs, leaving exactly one of the two singleton sets. A full function on $\B^n$ additionally requires every input assignment to denote a reachable cell. Otherwise assigning values to unreachable inputs is a completion choice rather than information forced by the concrete model.
+\end{proof}
+
+\begin{remark}[Total-function convention]
+The requirement that every assignment be reachable is a typing convention for a \emph{canonically induced total Boolean function on the declared full cube}. Other abstraction frameworks legitimately keep unreachable inputs as bottom/masked states, or complete them by a separate convention. We use the reachability mask unless an explicit completion policy is declared; no semantic claim is made that this is the only possible abstraction convention.
+\end{remark}
+
+\begin{remark}[Why two feasibility tests are insufficient]
+Testing only whether positive values exist and whether negative values exist cannot distinguish an unreachable cell from a reachable cell on which $F=0$ everywhere: both tests return false in both situations. Reachability and zero/tie behavior therefore require separate treatment. Likewise, an algorithmic result \texttt{UNKNOWN} from a solver is epistemic uncertainty about the analysis and must not be encoded as the semantic state ``both signs occur.''
+\end{remark}
+
+\begin{definition}[Certified cell status]
+A verification procedure may return one of the semantic statuses above only when the corresponding set relation for $S_\alpha$ has been proved. If the procedure cannot establish the required relation, the cell is marked \emph{uncertified}; this is deliberately not an additional truth value.
+\end{definition}
+
+\section{Certified guarded extraction}\label{sec:certification}
+
+The operator-atlas theorem is semantic. A computational pipeline needs a separate certification contract.
+
+\begin{definition}[Sign certificate on a guard]
+Let $G\subseteq\Lambda$. A sign certificate for score $g_\alpha$ on $G$ is any checkable proof of one of the strict inequalities
+\[
+ g_\alpha(\lambda)>0\quad\forall\lambda\in G,
+ \qquad\text{or}\qquad
+ g_\alpha(\lambda)<0\quad\forall\lambda\in G.
+\]
+The framework does not prescribe the proof technology.
+\end{definition}
+
+\begin{proposition}[Guard-certificate soundness]\label{thm:certified}
+Let $\Lambda_0\subseteq\Lambda$ be a declared parameter domain and let $\{G_k\}_{k=1}^N$ be candidate guards. Suppose that for every $k$ and every $\alpha\in\B^n$, a sign certificate proves one fixed \emph{strict} sign of $g_\alpha$ throughout $G_k$. Then automatically $G_k\subseteq\Lambda^\circ$, and each guard has a unique exact Boolean operator $\Theta_k$ and correspondence tensor $C_k$ satisfying
+\[
+ C_k[\alpha]=q(g_\alpha(\lambda))
+ \qquad(\lambda\in G_k).
+\]
+If the guards cover $\Lambda_0\cap\Lambda^\circ$, the emitted guarded atlas is semantically exact on that declared zero-free domain. Guards carrying the same operator may be merged by replacing them with their union while retaining the union guard explicitly.
+\end{proposition}
+
+\begin{proof}
+Strict sign certificates exclude zeros, so every certified guard lies in $\Lambda^\circ$. The certificates determine one sign bit for every indexed score throughout each guard, hence one unique truth tensor and Boolean function. Coverage gives an operator at every zero-free point of the declared domain. Merging equal operators changes only the guard representation, not the pointwise operator semantics.
+\end{proof}
+
+\begin{remark}[Certification technologies]
+For polynomial or rational score families, quantifier elimination, cylindrical algebraic decomposition, and other real-algebraic sign methods give exact routes in principle; see~\cite{BasuPollackRoy2006}. Other model classes may use interval arithmetic, SMT solving, abstract interpretation, verified optimization, or proof-producing analytic estimates. Numerical zero-set approximation and one sample per guessed region are useful exploratory tools, but without a sign proof they do not satisfy Theorem~\ref{thm:certified}.
+\end{remark}
+
+\paragraph{Sound extraction workflow.}
+A sound implementation should keep the following states distinct:
+\begin{enumerate}[leftmargin=2em]
+\item generate or propose candidate guards;
+\item for every guard and every score, prove a strict sign or mark the guard uncertified;
+\item emit an operator only when all indexed signs are certified;
+\item retain the guard together with the operator;
+\item merge equal operators only by an explicit guard union;
+\item treat discriminant points by a declared boundary policy, not by silent thresholding.
+\end{enumerate}
+
+For predicate abstraction, the analogous workflow computes or proves reachability and the collecting sign set of each abstract cell. A full CM is emitted only when Theorem~\ref{thm:collecting} supplies a full Boolean function.
+
+\section{Correspondence tensors and the fixed-frame LM lift}\label{sec:lmlift}
+
+Once a full Boolean operator has been certified, the CM step is type-preserving rather than inferential.
+
+\begin{proposition}[Guard-to-CM map]\label{prop:guardcm}
+For a certified guard $G$ with exact Boolean operator $\Theta_G$, the unique correspondence tensor is
+\[
+ C_G=C_{\Theta_G},
+ \qquad C_G[\alpha]=\Theta_G(\alpha).
+\]
+For $n=2$, true-first display gives the ordinary $2\times2$ CM.
+\end{proposition}
+
+\begin{proof}
+A Boolean function on the declared finite frame is determined uniquely by its truth tensor. The proposition is therefore the typed identification of the certified operator with its numeric truth representation.
+\end{proof}
+
+Let $X=(X_1,\ldots,X_n)$ be a declared logical reference frame. For a formula $A$, write $A^{\langle1\rangle}=A$ and $A^{\langle0\rangle}=\neg A$. If $f:\B^n\to\B$, let its disjoint-minterm extension be
+\[
+ \widetilde f(A_1,\ldots,A_n)
+ =\bigoplus_{\beta\in\B^n}
+   f(\beta)\wedge\bigwedge_{i=1}^n A_i^{\langle\beta_i\rangle},
+\]
+where the minterms are disjoint, so Boolean OR could replace $\oplus$ without changing the represented function. The fixed-frame LM lift used here is the formula-valued tensor
+\begin{equation}\label{eq:LMdef}
+ L_X(f)[\alpha]
+ =\widetilde f\!\left(
+ X_1^{\langle\alpha_1\rangle},\ldots,
+ X_n^{\langle\alpha_n\rangle}
+ \right).
+\end{equation}
+The companion CM/LM calculus proves that all-true valuation $X_i=1$ recovers the correspondence tensor $C_f$, that $L_X$ is injective, and that it preserves arbitrary pointwise Boolean superposition~\cite{TheoryCMLM2026}. These are the only companion results used below.
+
+\begin{theorem}[Fixed-frame CM/LM lift]\label{thm:lmlift}
+Every certified guard carrying a full Boolean operator determines the typed chain
+\[
+ \boxed{
+ G
+ \longmapsto
+ \Theta_G
+ \longmapsto
+ C_{\Theta_G}
+ \longmapsto
+ L_X(\Theta_G)
+ }
+\]
+after the reference frame $X$ is fixed. The last map is faithful and preserves pointwise Boolean superposition by the companion theory. A partial predicate abstraction with unreachable or nonexact cells does not canonically determine a full $L_X(\Theta)$ unless an explicit completion policy first produces a total Boolean function.
+\end{theorem}
+
+\begin{proof}
+The first two arrows are supplied by Theorem~\ref{thm:certified} and Proposition~\ref{prop:guardcm}. The final arrow and its injectivity/superposition properties are exactly the fixed-frame arbitrary-arity results of the companion CM/LM calculus. If a truth tensor is partial, no unique total Boolean function exists on the full input frame, so applying a full-function lift would add information not determined by the abstraction.
+\end{proof}
+
+\begin{remark}[Typed separation]
+The following objects should not be identified:
+\[
+ \{g_\alpha\},
+ \qquad
+ \Theta_G,
+ \qquad
+ C_{\Theta_G},
+ \qquad
+ L_X(\Theta_G).
+\]
+They are, respectively, continuous scores, a finite Boolean function, a numeric truth tensor, and a formula-valued symbolic tensor in a declared reference frame.
+\end{remark}
+
+
+\section{Restricted exact dispatch and minimal CM probes}\label{sec:minimaldispatch}
+
+The operator fibers in Theorem~\ref{thm:atlas} are the coarsest \emph{unrestricted} exact guards: if arbitrary subsets of parameter space may be named as guards, no further minimization question remains. A nontrivial synthesis problem appears only after the admissible observations or guard predicates are restricted. This section makes that restriction explicit and records its CM/LM consequences.
+
+\begin{proposition}[Representation-invariant exact dispatch]\label{prop:reprdispatch}
+Fix a logical reference frame $X$. For any two zero-free parameter points $\lambda,\mu\in\Lambda^\circ$,
+\[
+ \Theta_\lambda=\Theta_\mu
+ \quad\Longleftrightarrow\quad
+ C_{\Theta_\lambda}=C_{\Theta_\mu}
+ \quad\Longleftrightarrow\quad
+ L_X(\Theta_\lambda)=L_X(\Theta_\mu).
+\]
+Consequently a guard partition is exact for the Boolean operators if and only if it is exact for the corresponding CMs, and if and only if it is exact for the corresponding fixed-frame LMs. Any guard cost that depends only on the parameter-side partition therefore has the same optimum at all three representation levels.
+\end{proposition}
+
+\begin{proof}
+The first equivalence holds because a Boolean function is determined by its truth tensor. The second holds because the fixed-frame lift $L_X$ is injective. Thus all three representations induce the same equality relation on parameter space and hence the same exact guard partitions.
+\end{proof}
+
+\subsection{Minimum predicate bases}
+
+Suppose a sound analysis has produced a finite certified base partition
+\[
+ \mathcal A=\{A_1,\ldots,A_m\}
+\]
+of a declared zero-free parameter domain, with each atom $A_i$ carrying a known operator $\Theta_i$. Let
+\[
+ \mathcal P=\{p_1,\ldots,p_r\},\qquad p_j:\Lambda\to\{0,1\},
+\]
+be a finite library of admissible guard predicates, and assume each $p_j$ is constant on every base atom. A subfamily $J\subseteq\{1,\ldots,r\}$ is \emph{dispatch-sufficient} if every pair of atoms with different operators is distinguished by at least one selected predicate.
+
+For $i<k$ with $\Theta_i\ne\Theta_k$, define the discernibility set
+\[
+ D_{ik}=\{j:p_j(A_i)\ne p_j(A_k)\}.
+\]
+
+\begin{proposition}[Finite predicate-basis reduction]\label{prop:predicateILP}
+Let $w_j>0$ be predicate costs. A minimum-cost exact predicate basis is exactly the $0$--$1$ program
+\[
+ \min \sum_{j=1}^r w_j z_j
+\]
+subject to
+\[
+ \sum_{j\in D_{ik}}z_j\ge1
+ \qquad
+ \text{for every }i<k\text{ with }\Theta_i\ne\Theta_k,
+ \qquad z_j\in\{0,1\}.
+\]
+If some $D_{ik}$ is empty, no exact dispatcher exists in the declared predicate library.
+\end{proposition}
+
+\begin{proof}
+A selected predicate family is exact precisely when it separates every pair of differently labelled atoms. Each such pair contributes one hitting constraint, and every hitting solution gives a separating predicate family. The weighted objective records the chosen guard-language cost.
+\end{proof}
+
+This is a direct instance of the classical minimum-test-set/discernibility problem, not a new hardness result; compare~\cite{MoretShapiro1985,BermanDasGuptaKao2005}. Predicate minimization in verification gives a closely related formal-methods precedent~\cite{ChakiEtAl2003}. Proposition~\ref{prop:reprdispatch} explains the CM/LM-specific consequence: the same selected parameter predicates dispatch all three representations without loss.
+
+\subsection{Minimum polarity probes and CM signature size}
+
+Let $\mathcal O$ be the finite family of Boolean operators known to be realizable by an atlas. A set of input assignments $S\subseteq\B^n$ is a \emph{polarity-probe set} for $\mathcal O$ if the restriction map
+\[
+ \Theta\longmapsto \Theta|_S
+\]
+is injective on $\mathcal O$. Equivalently, the selected entries of the correspondence tensor identify the operator uniquely inside $\mathcal O$.
+
+\begin{definition}[CM signature size]\label{def:cmsignature}
+The CM signature size of $\mathcal O$ is
+\[
+ \sigma_{\rm CM}(\mathcal O)
+ =\min\{|S|:S\subseteq\B^n,\ \Theta\mapsto\Theta|_S\text{ is injective on }\mathcal O\}.
+\]
+For $|\mathcal O|=1$ we set $\sigma_{\rm CM}(\mathcal O)=0$.
+\end{definition}
+
+\begin{proposition}[Probe-set formulation]\label{prop:probeILP}
+For $|\mathcal O|>1$, the CM signature size is the optimum of
+\[
+ \min\sum_{\alpha\in\B^n} z_\alpha
+\]
+subject to
+\[
+ \sum_{\alpha:\Theta(\alpha)\ne\Psi(\alpha)}z_\alpha\ge1
+ \qquad(\Theta\ne\Psi\in\mathcal O),
+ \qquad z_\alpha\in\{0,1\}.
+\]
+In particular,
+\[
+ \left\lceil\log_2|\mathcal O|\right\rceil
+ \le \sigma_{\rm CM}(\mathcal O)\le 2^n.
+\]
+Once the selected probe values identify $\Theta$, the full CM and the fixed-frame LM $L_X(\Theta)$ are determined without certifying the unselected score signs individually.
+\end{proposition}
+
+\begin{proof}
+Two operators are distinguished by the selected probes exactly when at least one selected assignment lies in their truth-table difference set, giving the displayed hitting constraints. The information lower bound follows because $|S|$ binary probes admit at most $2^{|S|}$ signatures; the upper bound uses the full truth table. The last statement follows from the operator dictionary and Proposition~\ref{prop:reprdispatch}.
+\end{proof}
+
+Thus the natural continuous observations live at the score/CM-coordinate level, while the LM is the symbolic object retrieved after the operator has been identified. This distinction avoids treating one numeric CM entry as though it were a symbolic LM entry.
+
+\section{Trajectories and switching times}\label{sec:trajectories}
+
+\begin{theorem}[Guarded operator trajectories]\label{thm:trajectory}
+Let $\gamma:[0,T]\to\Lambda$ be continuous and let
+\[
+ S=\gamma^{-1}(\Deltaop).
+\]
+Then $S$ is closed, and the induced Boolean operator, correspondence tensor, and fixed-frame LM are constant on every connected component of $[0,T]\setminus S$. If every point of $S$ is isolated in $[0,T]$, then $S$ is finite and the trajectory is piecewise constant on finitely many open time intervals. At times in $S$, the binary operator is undefined unless a separate boundary/tie policy is declared.
+\end{theorem}
+
+\begin{proof}
+The discriminant is closed because it is a finite union of zero sets of continuous functions; hence $S$ is closed. Each connected component of the complement maps into one connected subset of $\Lambda\setminus\Deltaop$, on which Theorem~\ref{thm:atlas} gives one operator. If $S$ were infinite and every point isolated, compactness of $[0,T]$ would give an accumulation point of $S$; closedness would put that point in $S$, contradicting isolation. Thus $S$ is finite.
+\end{proof}
+
+\section{A certified nonlinear dispatch case study}\label{sec:nonlinearcase}
+
+Consider
+\[
+ F(x,y)=x+y+xy,
+ \qquad x=\eps_1(\alpha)a,\quad y=\eps_2(\alpha)b,
+ \qquad a,b>0.
+\]
+In true-first order $(11,10,01,00)$ the indexed scores are
+\begin{align*}
+ g_{11}&=a+b+ab,\\
+ g_{10}&=a-b-ab,\\
+ g_{01}&=-a+b-ab,\\
+ g_{00}&=-a-b+ab.
+\end{align*}
+The first score is always positive, while
+\begin{equation}\label{eq:negpairsums}
+ g_{10}+g_{01}=-2ab<0,\qquad
+ g_{10}+g_{00}=-2b<0,\qquad
+ g_{01}+g_{00}=-2a<0.
+\end{equation}
+Hence at most one of $g_{10},g_{01},g_{00}$ can be positive.
+
+\begin{theorem}[Exact four-operator nonlinear atlas]\label{thm:nonlinearatlas}
+On the positive magnitude domain $\Lambda=\R_{>0}^2$, the zero-free atlas of $F(x,y)=x+y+xy$ realizes exactly four Boolean operators:
+\[
+ \mathrm{AND},\qquad X,\qquad Y,\qquad \mathrm{XNOR}.
+\]
+More precisely,
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Exact region & Truth vector $(11,10,01,00)$ & Operator \\
+\midrule
+$g_{10},g_{01},g_{00}<0$ & $(1,0,0,0)$ & AND \\
+$g_{10}>0$ & $(1,1,0,0)$ & $X$ \\
+$g_{01}>0$ & $(1,0,1,0)$ & $Y$ \\
+$g_{00}>0$ & $(1,0,0,1)$ & XNOR \\
+\bottomrule
+\end{tabular}
+\end{center}
+The three switching curves are
+\begin{align}
+ g_{10}=0&\iff b=\frac{a}{1+a},\label{eq:c10}\\
+ g_{01}=0&\iff a=\frac{b}{1+b},\label{eq:c01}\\
+ g_{00}=0&\iff b=\frac{a}{a-1},\quad a>1.\label{eq:c00}
+\end{align}
+They are pairwise disjoint inside $\R_{>0}^2$. Each of the four operator fibers is connected, so each is one operator chamber. The chamber-transition graph is a three-leaf star with AND at the center; crossing the $g_{10}$, $g_{01}$, or $g_{00}$ boundary flips exactly the CM entry $10$, $01$, or $00$, respectively.
+\end{theorem}
+
+\begin{proof}
+Equation~\eqref{eq:negpairsums} shows that at most one of the three nonconstant scores can be positive; if none is positive the truth vector is AND, and if exactly one is positive the three remaining displayed operators result. Solving each zero equation gives~\eqref{eq:c10}--\eqref{eq:c00}. Two switching curves cannot intersect in the positive quadrant, since simultaneous vanishing of any corresponding pair would contradict one of the strict negative sums in~\eqref{eq:negpairsums}.
+
+The $X$ region is $0<b<a/(1+a)$ and is connected; the $Y$ region is its coordinate-swapped analogue; the XNOR region is $a>1$ and $b>a/(a-1)$ and is connected. For the AND fiber, $g_{10}<0$ always gives the lower bound $b>a/(1+a)$. If $0<a<1$, the additional condition $g_{01}<0$ is exactly $b<a/(1-a)$ while $g_{00}<0$ is automatic; if $a>1$, the additional condition $g_{00}<0$ is exactly $b<a/(a-1)$ while $g_{01}<0$ is automatic. At $a=1$, AND is the connected half-line $b>1/2$. These pieces join through that half-line, so the AND fiber is path-connected. Thus each fiber is one chamber. Since the three boundary curves are disjoint and each is a single-score zero set, every regular crossing changes exactly the corresponding truth-table coordinate.
+\end{proof}
+
+The associated correspondence matrices are
+\[
+ [\land]=\begin{bmatrix}1&0\\0&0\end{bmatrix},\qquad
+ [X]=\begin{bmatrix}1&1\\0&0\end{bmatrix},\qquad
+ [Y]=\begin{bmatrix}1&0\\1&0\end{bmatrix},\qquad
+ [\Leftrightarrow]=\begin{bmatrix}1&0\\0&1\end{bmatrix}.
+\]
+After fixing a logical frame, the same four regions dispatch the four corresponding lifts
+$L_X(\land)$, $L_X(X)$, $L_X(Y)$, and $L_X(\Leftrightarrow)$ by Proposition~\ref{prop:reprdispatch}.
+
+\subsection{Restricted guard language: affine guards fail, quadratic guards suffice}
+
+The nonlinear atlas makes guard-language restrictions mathematically visible.
+
+\begin{proposition}[Strict affine/quadratic guard separation]\label{prop:guarddegreegap}
+No exact description of the complete four-operator atlas on $\R_{>0}^2$ can be built from a finite Boolean combination of affine-linear inequalities in $(a,b)$. In contrast, the three quadratic predicates
+\[
+ g_{10}>0,\qquad g_{01}>0,\qquad g_{00}>0
+\]
+form an exact predicate basis.
+\end{proposition}
+
+\begin{proof}
+For any finite family of affine-linear predicates, membership in every Boolean combination is locally constant away from the finite union of their boundary lines. Hence the relative boundary of every definable guard lies in a finite union of affine lines.
+
+But the $X$/AND boundary contains the entire curve $g_{10}=0$, namely $b=a/(1+a)$ for $a>0$. Any nonvertical affine line $b=ma+c$ meets this curve only at roots of
+\[
+ (ma+c)(1+a)-a=0,
+\]
+a polynomial of degree at most two that cannot vanish identically (its coefficients would require simultaneously $m=0$, $c=0$, and $m+c-1=0$). A vertical line meets the graph in at most one point. Hence no finite union of affine lines can contain the whole switching curve. Therefore no finite affine-linear guard language can represent the atlas exactly. The three displayed quadratic sign predicates are sufficient by Theorem~\ref{thm:nonlinearatlas}. They are also all necessary within this three-predicate library, since omitting the predicate for one outer operator makes that operator indistinguishable from AND on the remaining predicate signature.
+\end{proof}
+
+\subsection{Minimum CM probes for the nonlinear atlas}
+
+Let
+\[
+ \mathcal O_\star=\{\mathrm{AND},X,Y,\mathrm{XNOR}\}.
+\]
+The $11$ entry is constantly $1$ throughout this family, while the remaining three entries form
+\[
+\begin{array}{c|ccc}
+ &10&01&00\\\hline
+\mathrm{AND}&0&0&0\\
+X&1&0&0\\
+Y&0&1&0\\
+\mathrm{XNOR}&0&0&1
+\end{array}
+\]
+
+\begin{corollary}[Exact CM signature of the nonlinear atlas]\label{cor:starprobe}
+The CM signature size of $\mathcal O_\star$ is
+\[
+ \sigma_{\rm CM}(\mathcal O_\star)=3,
+\]
+and the unique minimum probe set is
+\[
+ S=\{10,01,00\}.
+\]
+Thus certifying the three scores $g_{10},g_{01},g_{00}$ is both sufficient and necessary to identify the active operator within this known atlas; $g_{11}$ need not be probed because its positivity is an invariant of the model family.
+\end{corollary}
+
+\begin{proof}
+The three displayed probes separate all four rows. If any one of them is omitted, the corresponding outer operator has the same remaining signature as AND. Hence no two-probe set suffices, and the stated three-probe set is uniquely minimal.
+\end{proof}
+
+The identities~\eqref{eq:negpairsums}, the explicit switching equations, and the exact probe argument provide checkable symbolic certificates for the entire case study. A small exact rational verifier accompanying this draft independently reproduces these claims and checks representative points and a rational grid; the proof above is independent of that computation.
+
+\section{Classical calibration examples}\label{sec:examples}
+
+\subsection{Addition}
+For $F(x,y)=x+y$ with positive magnitudes $(a,b)$, the four true-first scores are
+\[
+ a+b,\quad a-b,\quad -a+b,\quad -a-b.
+\]
+The unique discriminant inside $\R_{>0}^2$ is $a=b$: the guard $a>b$ gives projection $X$, the guard $b>a$ gives projection $Y$, and the equality line is an explicit zero boundary. This is the simplest exact example of the paper's zero-aware contract.
+
+\subsection{Affine threshold families}
+For
+\[
+ F_{a,b,c}(x,y)=ax+by+c
+\]
+on fixed signed input representatives, the four scores are
+\[
+ a+b+c,\quad a-b+c,\quad -a+b+c,\quad -a-b+c.
+\]
+The discriminant is a four-hyperplane arrangement in coefficient space. This is ordinary threshold-function chamber geometry and is included only as a calibration point; compare~\cite{Anthony2026}.
+
+\section{Relationship to established parameter-logic frameworks}\label{sec:prior}
+
+The closest antecedents are not merely generic threshold chambers. They include mature frameworks that already turn continuous parameter regions into logical or Boolean data.
+
+\paragraph{DSGRN parameter graphs.}
+DSGRN constructs finite parameter-space decompositions for switching regulatory-network models and associates a discrete dynamical description to every parameter region~\cite{CumminsEtAl2018}. The 2020 synthesis makes the relation to Boolean functions explicit: for suitable single-target network nodes, parameter-graph nodes correspond to monotone Boolean functions, and the graph records the geometry of the underlying parameter regions~\cite{Gedeon2020}. Crawford-Kahrl, Cummins, and Gedeon formulate parameter-graph adjacency so that a logical adjacency can be exactly one monotone Boolean function changing on one input~\cite{CrawfordKahrlEtAl2022}. Recent work continues to embed Boolean models into the richer DSGRN continuous-parameter framework~\cite{CumminsEtAl2026}. These are established results and supply the closest structured precedent for Sections~\ref{sec:atlas} and~\ref{sec:trajectories}.
+
+\paragraph{Logical bifurcation diagrams.}
+Abou-Jaoud\'e and Monteiro map piecewise differential models with continuously varying bifurcation parameters to logical models and characterize sequences of logical-parameter valuations in the Boolean case~\cite{AbouJaoudeMonteiro2019}. This is directly antecedent to the idea of a logical trajectory across parameter changes. Our trajectory theorem is therefore only the elementary score-sign statement needed for the present exactness contract.
+
+\paragraph{Abstract interpretation and predicate abstraction.}
+Cousot and Cousot use the rule of signs as an archetypal abstraction example~\cite{CousotCousot1977}; predicate abstraction and refinement are established verification techniques~\cite{ChakiEtAl2003}. The collecting sets in Section~\ref{sec:collecting} are a CM/LM-facing contract that insists on distinguishing unreachable cells, zeros, two-sided ambiguity, and solver uncertainty; they are not proposed as a new abstract domain.
+
+\paragraph{Minimum test sets and predicate minimization.}
+The restricted-dispatch problems of Section~\ref{sec:minimaldispatch} are deliberately formulated as instances of established discrimination problems. Moret and Shapiro study the minimum test-set problem of retaining full discrimination power with the smallest or cheapest collection of tests~\cite{MoretShapiro1985}; later work gives tight approximation results and minimum-cost probe formulations~\cite{BermanDasGuptaKao2005}. Chaki, Clarke, Groce, and Strichman apply closely related minimization ideas to predicate abstraction~\cite{ChakiEtAl2003}. Our use is representational: truth-table coordinates become CM probes, and injectivity transports the resulting operator identity to the fixed-frame LM.
+
+\paragraph{Real algebraic certification and threshold geometry.}
+Polynomial sign conditions, semialgebraic connected components, CAD, and roadmaps are standard real algebraic geometry~\cite{BasuPollackRoy2006}. Threshold-function parameter chambers and one-entry facets are likewise established~\cite{Anthony2026}. We import those tools when applicable rather than relabeling them as new algorithms.
+
+\paragraph{CM/LM endpoint.}
+The companion correspondence/logical-matrix theory defines correspondence tensors and the fixed-frame lift~\eqref{eq:LMdef}, and proves valuation, injectivity, and pointwise Boolean-superposition laws~\cite{TheoryCMLM2026}. This paper's responsibility is the preceding exactness contract: the lift is invoked only after a total Boolean function is semantically or computationally certified.
+
+\begin{table}[t]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+Framework & Established object/result & Relation to the present interface \\
+\midrule
+This paper & Exact sign fibers and zero-aware predicate cells; certified Boolean operator, CM, and fixed-frame LM & Model-agnostic score layer; zeros and unreachable inputs remain explicit; strict-sign proof is required before emission \\
+DSGRN & Inequality-defined parameter graph for switching ODEs; monotone/multilevel Boolean data with STG/Morse summaries & Closest structured precedent for parameter-to-logical regions and adjacency; richer dynamical content, narrower regulatory-network setting \\
+Logical bifurcation diagrams & Parameter-dependent logical valuations and attractors for PWLD models & Closest precedent for logical trajectories under continuous parameter variation \\
+Predicate abstraction & Finite abstract states/relations derived from concrete predicates, with refinement and reachability analysis & Source of the abstraction viewpoint; the present contract specializes the output to zero-aware sign semantics and a CM/LM endpoint \\
+\bottomrule
+\end{tabularx}
+\caption{The present construction is complementary to, not a replacement for, established parameter-to-logic frameworks.}
+\label{tab:comparison}
+\end{table}
+
+\section{Discussion and research status}
+
+The restricted-dispatch layer changes the role of minimization in the framework. The unrestricted operator fibers are canonical but tautologically optimal if arbitrary guards may be named. Once the allowed observations are restricted, however, exact dispatch becomes a genuine synthesis problem. A finite predicate library produces the classical discernibility/hitting-set program of Proposition~\ref{prop:predicateILP}; a finite realized operator family produces the minimum polarity-probe program of Proposition~\ref{prop:probeILP}. The computational hardness belongs to the established minimum-test-set literature. The CM/LM-specific content is the representation invariance: no additional guard distinctions are created or lost by passing from Boolean operators to correspondence tensors or to a fixed-frame faithful LM lift.
+
+The nonlinear family $x+y+xy$ shows why the restriction matters geometrically. Three quadratic score predicates describe the exact atlas, while no finite affine-linear guard language can do so. At the same time only three CM entries are needed to identify the active operator, and those same three score signs are the exact continuous probes that must be certified. The example therefore links guard expressivity, certification, CM compression, and LM dispatch in one model.
+
+The paper remains intentionally modest about generic algorithmic novelty. It does not propose a new solver for minimum test collection, predicate abstraction, CAD, or DSGRN parameter graphs. A larger computational project could build on the present contract by synthesizing restricted guard bases, decision trees, BDDs, or proof-producing nonlinear certificates across benchmark families. That would be a natural separate algorithms/tool paper rather than additional machinery required for the mathematical interface developed here.
+
+The centered Walsh construction is moved to Appendix~\ref{app:walsh} precisely because its chamber count and adjacency are classical consequences of homogeneous linear separation and oriented-matroid tope geometry. It remains useful as a stress-test family in which essentially all nonconstant Boolean operators, CMs, and fixed-frame LMs occur in one exact coefficient atlas.
+
+\section{Conclusion}
+
+For finitely many continuous real scores, the zero-free parameter domain carries a canonical finite operator quotient, while general predicate abstraction requires zero-aware collecting semantics to keep unreachability, ties, opposite signs, and solver uncertainty distinct. Strict sign proofs, not samples, are the semantic certificate needed before an operator is emitted.
+
+The additional restricted-dispatch layer answers a different question: how much of that certified information is actually needed to select the active finite operator? Because Boolean functions, correspondence tensors, and fixed-frame LMs are linked by injective representations, exact parameter dispatch is representation-invariant. With a finite predicate library, minimum exact dispatch is a classical minimum-test-set problem; with truth-table coordinates as tests, the CM signature size measures the minimum number of polarity probes needed to identify the realized operator family.
+
+The nonlinear example $F=x+y+xy$ demonstrates the full chain. Its exact magnitude atlas contains AND, $X$, $Y$, and XNOR; three curved polynomial boundaries give a strict affine-versus-quadratic guard-language separation; three and only three CM probes identify the active operator; and the resulting identity dispatches the corresponding fixed-frame LM. This positions the paper as an exact interface between continuous score geometry, verified and compressed Boolean observation, and CM/LM symbolic representation, while leaving general-purpose guard optimization and nonlinear compiler engineering to a natural computational continuation.
+
+\appendix
+\section{Centered Walsh calibration and classical arrangement geometry}\label{app:walsh}
+
+Let $\mathcal X_n=\{-1,+1\}^n$, $N=2^n$, and for every nonempty $S\subseteq[n]$ define the Walsh character
+\[
+ \chi_S(x)=\prod_{i\in S}x_i.
+\]
+With coefficient space $\R^{N-1}$, set
+\[
+ F_c(x)=\sum_{\varnothing\ne S\subseteq[n]}c_S\chi_S(x),
+ \qquad
+ \phi(x)=\bigl(\chi_S(x)\bigr)_{\varnothing\ne S\subseteq[n]}.
+\]
+The Walsh identity gives
+\[
+ \phi(x)\cdot\phi(y)=
+ \begin{cases}N-1,&x=y,\\-1,&x\ne y,\end{cases}
+\]
+so the feature vectors are the vertices of a centered regular simplex. Equivalently, deleting the constant Walsh coordinate identifies coefficient space with the zero-sum subspace of $\R^N$, and the score hyperplanes become the coordinate hyperplanes restricted to that subspace. The resulting chamber count is therefore a classical homogeneous-dichotomy/hyperplane-arrangement count in the sense of Cover~\cite{Cover1965}, while the chamber graph is the corresponding oriented-matroid tope graph~\cite{BjornerEtAl1999}.
+
+\begin{proposition}[Walsh calibration atlas]\label{prop:walshcalibration}
+For every $n\ge1$, the nonempty score-sign fibers are in bijection with all nonconstant Boolean sign labelings on $\mathcal X_n$, and every fiber is an open convex cone. Hence there are
+\[
+ 2^N-2=2^{2^n}-2
+\]
+operator chambers. For $n\ge2$, two chambers share a regular codimension-one facet exactly when their truth tables differ at one input; the regular-facet adjacency graph is the $N$-cube with the two constant vertices deleted. For $n=1$, the two indexed score hyperplanes coincide at the origin, so the ordinary geometric adjacency is degenerate and the regular-facet formulation is not used.
+\end{proposition}
+
+\begin{proof}
+For a nonconstant sign labeling $h$ with positive set $P$ of size $k$, choose
+\[
+ c=\sum_{y\in P}\phi(y).
+\]
+Then
+\[
+ c\cdot\phi(x)=
+ \begin{cases}N-k,&x\in P,\\-k,&x\notin P,
+ \end{cases}
+\]
+so every nonconstant labeling is realized. The sum of the simplex vertices is zero, hence the two constant strict sign patterns are impossible. Every fixed sign fiber is an intersection of homogeneous open halfspaces and is therefore convex.
+
+For $n\ge2$, the arrangement is simple at a generic facet of a single indexed hyperplane; the standard tope-graph criterion then gives one-coordinate regular adjacency. The unary case has two antiparallel score normals and one coincident geometric hyperplane, giving the stated degeneracy.
+\end{proof}
+
+After fixing a logical frame, the calibration contains every nonconstant correspondence tensor and its fixed-frame LM lift. Its purpose here is not a novelty claim for Walsh or arrangement geometry, but a complete classical stress-test of the interface.
+
+\begin{thebibliography}{99}
+
+\bibitem{Anthony2026}
+M. Anthony,
+\newblock Chamber geometry and specification numbers of Boolean threshold functions,
+\newblock arXiv:2606.29477, 2026.
+\newblock \url{https://arxiv.org/abs/2606.29477}.
+
+
+\bibitem{AbouJaoudeMonteiro2019}
+W. Abou-Jaoud\'e and P. T. Monteiro,
+\newblock On logical bifurcation diagrams,
+\newblock \emph{Journal of Theoretical Biology} 466 (2019), 39--63.
+\newblock DOI: \href{https://doi.org/10.1016/j.jtbi.2019.01.008}{10.1016/j.jtbi.2019.01.008}.
+
+\bibitem{BjornerEtAl1999}
+A. Bj\"orner, M. Las Vergnas, B. Sturmfels, N. White, and G. M. Ziegler,
+\newblock \emph{Oriented Matroids}, 2nd ed.,
+\newblock Cambridge University Press, 1999.
+
+\bibitem{CrawfordKahrlEtAl2022}
+P. Crawford-Kahrl, B. Cummins, and T. Gedeon,
+\newblock Joint realizability of monotone Boolean functions,
+\newblock \emph{Theoretical Computer Science} 922 (2022), 447--474.
+\newblock DOI: \href{https://doi.org/10.1016/j.tcs.2022.04.045}{10.1016/j.tcs.2022.04.045}.
+
+\bibitem{CumminsEtAl2018}
+B. Cummins, T. Gedeon, S. Harker, and K. Mischaikow,
+\newblock DSGRN: Examining the dynamics of families of logical models,
+\newblock \emph{Frontiers in Physiology} 9 (2018), 549.
+\newblock DOI: \href{https://doi.org/10.3389/fphys.2018.00549}{10.3389/fphys.2018.00549}.
+
+\bibitem{CumminsEtAl2026}
+B. Cummins, M. Gameiro, T. Gedeon, K. Mischaikow, and B. Rivas,
+\newblock Boolean models coarsely sample continuous dynamics of regulatory networks,
+\newblock arXiv:2606.14925, 2026.
+\newblock \url{https://arxiv.org/abs/2606.14925}.
+
+\bibitem{Gedeon2020}
+T. Gedeon,
+\newblock Multi-parameter exploration of dynamics of regulatory networks,
+\newblock \emph{BioSystems} 190 (2020), 104113.
+\newblock DOI: \href{https://doi.org/10.1016/j.biosystems.2020.104113}{10.1016/j.biosystems.2020.104113}.
+
+\bibitem{ODonnell2014}
+R. O'Donnell,
+\newblock \emph{Analysis of Boolean Functions},
+\newblock Cambridge University Press, 2014.
+
+\bibitem{BasuPollackRoy2006}
+S. Basu, R. Pollack, and M.-F. Roy,
+\newblock \emph{Algorithms in Real Algebraic Geometry}, 2nd ed.,
+\newblock Springer, 2006.
+
+\bibitem{ChakiEtAl2003}
+S. Chaki, E. Clarke, A. Groce, and O. Strichman,
+\newblock Predicate abstraction with minimum predicates,
+\newblock in \emph{Correct Hardware Design and Verification Methods (CHARME 2003)}, LNCS 2860, pp. 19--34, Springer, 2003.
+\newblock DOI: \href{https://doi.org/10.1007/978-3-540-39724-3_5}{10.1007/978-3-540-39724-3\_5}.
+
+\bibitem{CousotCousot1977}
+P. Cousot and R. Cousot,
+\newblock Abstract interpretation: a unified lattice model for static analysis of programs by construction or approximation of fixpoints,
+\newblock in \emph{Conference Record of the Sixth Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages}, pp. 238--252, 1977.
+\newblock DOI: \href{https://doi.org/10.1145/512950.512973}{10.1145/512950.512973}.
+
+\bibitem{MoretShapiro1985}
+B. M. E. Moret and H. D. Shapiro,
+\newblock On minimizing a set of tests,
+\newblock \emph{SIAM Journal on Scientific and Statistical Computing} 6(4) (1985), 983--1003.
+\newblock DOI: \href{https://doi.org/10.1137/0906067}{10.1137/0906067}.
+
+\bibitem{BermanDasGuptaKao2005}
+P. Berman, B. DasGupta, and M.-Y. Kao,
+\newblock Tight approximability results for test set problems in bioinformatics,
+\newblock \emph{Journal of Computer and System Sciences} 71(2) (2005), 145--162.
+\newblock DOI: \href{https://doi.org/10.1016/j.jcss.2005.02.001}{10.1016/j.jcss.2005.02.001}.
+
+\bibitem{Cover1965}
+T. M. Cover,
+\newblock Geometrical and statistical properties of systems of linear inequalities with applications in pattern recognition,
+\newblock \emph{IEEE Transactions on Electronic Computers} EC-14(3) (1965), 326--334.
+\newblock DOI: \href{https://doi.org/10.1109/PGEC.1965.264137}{10.1109/PGEC.1965.264137}.
+
+\bibitem{TheoryCMLM2026}
+B. Theory,
+\newblock Correspondence and Logical Matrices: A Boolean Operator Calculus,
+\newblock unpublished manuscript, 2026.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,237 @@
+--- before/main.tex
++++ after/main.tex
+@@ -68,15 +68,16 @@
+ LMs from algebraic-normal-form coefficients and from semi-tensor-product
+ logical structure matrices. Together, these results provide the typed
+ foundation for a compiler method that normalizes compatible operand frames
+-and performs verified operator-level fusion. The empirical part of the study
+-is specified by a protocol that must be frozen before execution; it asks when
+-this rewrite saves total work after compilation, memory, and interface costs
+-are included. No performance result is claimed before that campaign is
+-completed.
++and performs verified operator-level fusion. Exploratory symbolic checks show
++pre-expansion savings but exact ties against an equally capable generic local
++optimizer. A separately frozen ANF-dispatch campaign supplies a negative
++boundary: its exact dispatcher is slower than direct lowering overall on the
++recorded synthetic and natural corpora. The broader token/packed evaluation
++protocol remains unexecuted. These evidence levels are kept separate.
+ \end{abstract}
+ 
+-% Draft status: the formal and expository core is being drafted before the
+-% frozen empirical campaign. No quantitative performance claim is made here.
++% Revision 2026-09-19: canonical mechanism evidence and completed P14 negative
++% dispatcher results are separate from the unexecuted Paper B protocol v3.
+ 
+ \section{Introduction}
+ \label{sec:introduction}
+@@ -570,6 +571,28 @@
+ Its candidate contribution is narrower: an explicitly typed two-operand frame
+ used as an admission certificate for local operator fusion, with a measured
+ fallback boundary.
++
++\subsection{Symbolic representations and rewrite search}
++Reduced ordered binary decision diagrams provide a canonical function
++representation for a fixed variable order \citep{bryant1986}; their graph
++size and apply-operation cost must be measured under that order. Boolean
++polynomial systems such as PolyBoRi instead exploit zero-suppressed decision
++diagrams and shared recursive arithmetic \citep{brickenstein2008}. An expanded
++list-of-monomials ANF baseline therefore does not stand in for every symbolic
++polynomial method. For an ANF-output task, a fair comparison charges conversion
++and any required monomial enumeration; for a function-evaluation task, it
++should preserve the comparator's compact representation where permitted.
++
++Equality saturation retains equivalent expressions and extracts a result
++under a chosen cost model \citep{willsey2021}. Synthesis-based superoptimizers
++such as Souper search for equivalent replacements in a compiler IR
++\citep{sasnauskas2017}. These are broader searches than the present fixed
++two-operand rule. Giving both methods the same local truth-function operation
++is necessary before interpreting a difference as CM-specific. Recognition,
++search, extraction and conversion costs then belong to the measured endpoint.
++Similarly, partial evaluation under fixed inputs and memoization of shared
++nodes are engineering baselines, not effects uniquely supplied by CM notation.
++
+ 
+ \begin{table}[H]
+   \centering
+@@ -940,7 +963,9 @@
+ substitutions in the direct packed comparator, true-first constants, 250 seeded
+ random two-variable formulas, public token-only behavior, and input
+ nonmutation. The focused pair, optimization, output-budget, and packed-backend
+-suites contain 116 passing tests.
++suites passed all 116 tests in a fresh isolated source-copy run on 19 September
++2026 using the project's Python environment. The corresponding input hashes,
++command and full output are retained in the publication supplement.
+ Independent exhaustive checks also cover 1,048,576 signed-alignment/fusion
+ cases. These checks strengthen implementation assurance; they do not replace
+ the soundness proof, prove unbounded complexity claims, or establish a speed
+@@ -971,6 +996,12 @@
+ 
+ \section{Experimental method}
+ \label{sec:experiments}
++
++This section specifies the broader Paper B protocol v3. It has not yet been
++executed as a frozen complete campaign. The completed P14-PY0 dispatcher
++study reported in \cref{sec:p14} has a different ANF-production endpoint and
++does not satisfy this protocol by substitution.
++
+ 
+ The confirmatory evaluation is designed around a conditional question: where,
+ if anywhere, does operand-aligned token compilation reduce user-visible cost?
+@@ -1102,14 +1133,116 @@
+ results support correctness of the tested
+ implementation surface; they do not establish a runtime or memory advantage.
+ 
+-No confirmatory performance table or Figure~5 appears in this working draft.
+-The corpus and run manifest have not yet been frozen and the campaign has not
+-been executed. Quantitative speed, memory, break-even, prevalence, and failure-
+-region claims therefore remain open. Kernel-only timings and previously
+-superseded headline speedups will not be reused as end-to-end results. This is
+-an explicit evidence boundary rather than a missing positive result: the final
+-section will report every frozen arm and stratum, including ties, losses,
+-timeouts, and cases in which pair recognition falls back.
++The complete token/packed campaign of protocol v3 remains unexecuted. Two
++other evidence records are available: exploratory S1/S2 symbolic mechanism
++checks and the separately frozen P14-PY0 ANF-dispatch study. Neither is
++relabeled as protocol-v3 evidence. Kernel-only timings and superseded headline
++speedups are not reused as end-to-end results.
++
++\subsection{Exploratory mechanism and generic ties}
++\label{sec:mechanism-evidence}
++
++The canonical S1/S2 record contains 10,500 generated cases, of which 10,389
++completed in all four arms: direct ANF, sharing-aware common-subexpression
++evaluation, generic local truth-function optimization, and CM folding. The
++all-arm population consists of 3,750 S1 and 6,639 S2 cases. The remaining 111
++cases are retained with their budget patterns: 108 fail in all arms, two
++complete only in the generic and CM arms, and one completes only in the
++sharing arm. No completed correctness disagreement was recorded.
++
++CM and generic optimization agree on seven metrics in every all-arm admitted
++case: final degree, final monomial count, multiplication count, output unique
++nodes, pair terms, peak monomials and serialized bytes. The generic arm records
++more folds on 6,010 cases and CM more on none; fold counts are not timings.
++For corrected S2, median direct/CM multiplication counts at requested sharing
++fractions $0$, $0.25$ and $0.5$ are respectively $35/35$, $17/12$ and $9/0$.
++These strata exhibit both nonhelp and pre-expansion savings. The generic arm
++achieves the same reductions. An earlier generator's support defect is
++excluded from this corrected population.
++
++This evidence supports the mechanism of simplifying a small live function
++before polynomial expansion. It does not establish a CM-specific semantic
++reduction or confirmatory performance advantage. A fresh independent recount
++of the raw records reproduced the admission counts and all seven ties; the
++supplement records the raw-file hash and the recount output.
++
++\subsection{A completed negative dispatcher study: P14-PY0}
++\label{sec:p14}
++
++Newer local records, completed after the consolidation snapshot, provide a
++frozen comparison of recipe-to-owned-ANF compilation. Direct lowering (D)
++builds an ordinary source DAG and lowers it. The minimal P13 observer (F)
++records dispatch information during source construction. Exact dispatch (E)
++uses a bounded exact decision and either lowers the original DAG directly or
++constructs folding metadata for a selected case. Always-fold (A) and a generic
++signature optimizer (G) are diagnostic comparators. The production timer ends
++before output equality checks and reporting; preparation needed by each arm
++is included. The separate compiler-IR endpoint starts with an existing root
++and charges any observer clone. D here is a symbolic ANF lowerer, not the
++packed truth-function arm of protocol v3.
++
++The frozen local campaign used 384 synthetic cases from 12 families and 107
++natural cones from 14 previously uninspected EPFL design families. It retained
++three fresh sequential workers, each with three measured blocks after one
++warm-up, for 51,102 measured rows including secondary and canonicalization
++arms. Equality checks passed across all 491 frozen cases and 512 targeted
++correctness cases. E selected folding on five synthetic cases and no natural
++cone. These counts describe this acquired corpus, not prevalence in general
++software or circuits.
++
++\begin{table}[ht]\centering\small
++\begin{tabular}{llrr}\toprule
++Corpus & Ratio & Geometric mean & Simultaneous interval\\\midrule
++Synthetic & E/F & 0.9606 & [0.9455, 0.9811]\\
++Synthetic & E/D & 1.0508 & [0.9683, 1.1075]\\
++Natural & E/F & 0.9610 & [0.9411, 1.0001]\\
++Natural & E/D & 1.0607 & [1.0176, 1.0927]\\
++
++\bottomrule\end{tabular}
++\caption{P14-PY0 recipe endpoint. Ratios below one favor the numerator.
++Each case contributes a ratio of median times. Intervals are the frozen
++98.75\% hierarchical-bootstrap bounds for the four primary comparisons;
++reduced local sampling makes close effects inconclusive. E is exact dispatch,
++F the minimal observer, and D direct ANF lowering.}\label{tab:p14}
++\end{table}
++
++The frozen primary rule required E/F geometric mean at most $0.99$, E/D at
++most $0.95$, and the relevant simultaneous upper bound below one on both
++corpora. It did not pass. At the recipe endpoint E was about 5.1\% slower
++than D on synthetic cases and 6.1\% slower on natural cones. E improved on F,
++but the natural E/F simultaneous interval included parity. The five selected
++synthetic cases had E/D ratios between $0.075$ and $0.389$; their local benefit
++did not offset the aggregate policy boundary. The synthetic ratio of summed
++case medians was $0.9899$, whereas the preregistered case-balanced geometric
++mean was $1.0508$. We retain the latter decision rule rather than selecting
++the favorable aggregation after seeing the data.
++
++The local freeze reduced the draft design to three workers and 10 ms target
++batches with a predicted 40 ms slow-arm cap; 14 eligible natural families
++replaced the draft target of 16. The host ran Python 3.10.11 on Windows with
++Balanced power and uncontrolled affinity. The freeze treats close effects as
++inconclusive. Disclosed amendments corrected a per-arm correctness timeout,
++extended wall-time caps, and accelerated analysis by indexing rows without
++changing the resampling order or statistic. Original and amended freezes
++are retained. A separate 2,455-observation memory pass used
++\texttt{tracemalloc}; it measures traced allocation peaks, not process RSS.
++Its E/D geometric-mean peak ratios were $1.0931$ synthetic and $1.0065$ natural,
++and are descriptive rather than confirmatory intervals.
++
++For this revision, read-only reconciliation verified all 15 entries of the
++run's artifact manifest, all case ratios in 17 recorded comparisons, and the
++four primary 10,000-draw bootstrap intervals directly from the raw timing
++rows. This is fresh verification of an inherited completed run, not a new
++timing campaign. The decision remains negative for the unchanged dispatcher.
++The subsequent P15 late-scan prototype has exposed-case correctness records
++but no performance timings or fresh holdout; it does not replace this result.
++
++The supplemental evidence index supplies the freeze, amendments, code and
++data hashes, endpoint definitions, raw-row locations and verification script.
++The full protocol-v3 comparison still requires equally capable packed/DAG,
++retabulation, prepared, CM-IR, generic-cut and applicable external synthesis
++arms with all requested outputs, reuse counts and memory costs charged.
++
+ 
+ \section{Discussion and limitations}
+ \label{sec:discussion}
+@@ -1123,9 +1256,11 @@
+ Operator fusion also depends on repeated, alignable operands. When compatible
+ pairs are rare, when normalization dominates, or when another representation
+ preserves substantially more sharing, the CM path may tie or lose. These are
+-expected boundary cases, not failures to be hidden. The final discussion will
+-interpret them together with preparation cost, memory traffic, reuse count,
+-variable ordering, and fallback frequency.
++expected boundary cases, not failures to be hidden. P14-PY0 supplies one such
++negative region: profitable selected folds coexist with a losing dispatch
++policy on the acquired corpus. The broader role of preparation cost, memory
++traffic, reuse count, variable ordering and fallback frequency remains the
++purpose of the unexecuted protocol-v3 campaign.
+ 
+ \section{Conclusion}
+ \label{sec:conclusion}
+--- before/references.bib
++++ after/references.bib
+@@ -148,3 +148,15 @@
+   pages   = {2573--2586},
+   doi     = {10.1109/TCAD.2021.3108704}
+ }
++
++@misc{brickenstein2008,
++ author={Michael Brickenstein and Alexander Dreyer and Gert-Martin Greuel and Markus Wedler and Oliver Wienand},
++ title={New developments in the theory of {Gr\"obner} bases and applications to formal verification},
++ year={2008}, note={arXiv:0801.1177, sections 3.2--3.3}, url={https://arxiv.org/abs/0801.1177}}
++@misc{willsey2021,
++ author={Max Willsey and Chandrakana Nandi and Yisu Remy Wang and Oliver Flatt and Zachary Tatlock and Pavel Panchekha},
++ title={egg: Fast and Extensible Equality Saturation}, year={2021},
++ note={POPL 2021; arXiv:2004.03082}, doi={10.1145/3434304}, url={https://arxiv.org/abs/2004.03082}}
++@misc{sasnauskas2017, author={Raimondas Sasnauskas and others},
++ title={Souper: A Synthesizing Superoptimizer}, year={2017},
++ note={arXiv:1711.04422}, url={https://arxiv.org/abs/1711.04422}}

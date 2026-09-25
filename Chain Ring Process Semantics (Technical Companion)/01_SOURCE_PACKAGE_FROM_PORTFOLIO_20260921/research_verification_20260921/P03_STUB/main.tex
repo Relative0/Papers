@@ -1,0 +1,215 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\setlength{\emergencystretch}{3em}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\A}{\F[u]/(u^4)}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\diag}{diag}
+\title{Verification Note on Process Closure\\and Restricted Chain-Ring Resources}
+\author{Internal CM/LM research record}
+\date{21 September 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+This note records a fresh verification of the process-semantics comparison already
+developed in the project's 20 September technical companion. The unchanged
+nonzero-support interpretation over $A=\A$ cannot respect independent scalar
+composition. A closed binary-modal completion realizes the original bipartite
+support tables through coarse effects, but changes tensor products and conditioning.
+We state the precise interface, the selected-filter order and the operation-dependent
+multi-copy boundary. The algebraic ingredients have substantial prior art, and no
+new historical priority or separate fourth-paper contribution is asserted.
+\end{abstract}
+
+\section{Scope and inherited results}
+The literal field theory is an instance of modal quantum theory
+\cite{SW10,SW12}. Primitivity over rings is an established state-space choice
+\cite{DB14}; support contextuality uses the established global-section language
+\cite{AB11}. The earlier local companion and restricted-conversion review already
+contain the principal propositions below. This note accompanies an independent
+finite checker, a primary-source ledger and a reconciliation report. It is not a
+replacement for P01, P02 or Paper B.
+
+\begin{proposition}[Independent-success obstruction]
+There is no multiplicative predicate $p:A\to\{0,1\}$ with $p(0)=0$ and
+$p(a)=1$ for every nonzero $a$.
+\end{proposition}
+\begin{proof}
+$u^3$ and $u$ are nonzero and $u^3u=0$. Multiplicativity gives $0=1$.
+\end{proof}
+Primitive vectors are closed under invertible $A$ maps and balanced tensors:
+coordinate ideals are preserved and a pair of unit coordinates has a unit product.
+But the second Alice coordinate of the primitive resource $\diag(1,u)$ leaves
+$(0,u)$ on Bob. The selected nonzero state is not primitive. Furthermore the
+abstract tensor $(u^3)\otimes_A(u)$ is isomorphic to $A/(u)$, while the tensor of
+its inclusions into $A\otimes_A A$ is zero. Merely retaining a quotient or ideal
+type does not justify treating the embeddings as monoidal equivalences.
+
+\section{A closed operational contract}
+Systems are finite binary vector spaces $V$, with tensor unit $\F$ and ordinary
+field tensor. States are nonzero subspaces $S\leq V$; a pure state is a nonzero
+vector. Zero is an impossible branch. Mixture means span, not coherent addition.
+A branch is a finite subspace $K\leq\operatorname{Hom}_{\F}(V,W)$, acting by
+$S\mapsto\Span\{Ts:T\in K,s\in S\}$. A labelled family $(K_i)$ is complete iff
+the common kernel of all its maps is zero. Output spaces may depend on the label.
+
+Terminal effects are subspaces of $V^*$; they are possible if some contraction
+is nonzero. A complete terminal measurement spans $V^*$. Selecting an outcome
+retains its nonzero image subspace. Forgetting labels takes their span. Discarding
+a tensor factor contracts by its entire dual. Classical labels may be copied,
+communicated and used to control later instruments. Equivalence in the full
+theory is equality of state subspaces. Multiplication by an $A$ unit is generally
+detectable: the binary $u$-coefficient effect distinguishes $1$ from $1+u$.
+
+\begin{theorem}[Closure]
+These operations close under finite sequential and parallel composition,
+adaptive conditioning, mixtures and discard, including with an untouched reference.
+\end{theorem}
+\begin{proof}
+Choose finite bases for each process subspace. Completeness says their stacked
+map is injective. Field tensor preserves injectivity; sequential complete stacks
+also preserve it. Thus every nonzero correlated input has some nonzero outcome.
+Composition takes spans of products of maps, and parallel composition spans of
+their tensors; associativity and interchange follow from linear algebra. The
+rows of an injective stack span the original input dual. Contracting all output
+duals therefore gives the same remote marginal as discarding the original local
+system. This also establishes possibilistic no-signalling. Classical erasure is
+a span, so cannot cancel two alternatives into zero.
+\end{proof}
+This is a concrete formulation of established field-modal machinery
+\cite{SW12}, not a probability rule. A selected filter $T$ can be completed by an
+identity-labelled alternative. No real success probability follows.
+
+\section{Exactly what the ring interface preserves}
+Restriction of scalars sends $A$ modules and maps faithfully to binary spaces
+and maps. It preserves composition and direct sums. Its lax tensor comparison
+is the balanced quotient
+\[
+ U(M)\otimes_{\F}U(N)\longrightarrow U(M\otimes_A N).
+\]
+Its unit map is $\F\to U(A)$, $1\mapsto1$. It is not strong monoidal: the unit
+dimensions differ, as do the free tensor dimensions $16mn$ and $4mn$. The
+comparison kills $u^3\otimes_{\F}u$. An $A$ preparation has source $A$, so after
+restriction of scalars it still has source $U(A)$, not the binary tensor unit.
+
+Set $\tau(a)=[u^3]a$ and
+\[
+ \Omega=\sum_{r=0}^3u^r\otimes_{\F}u^{3-r},\qquad
+ \Delta(a)=(a\otimes1)\Omega.
+\]
+For $C\in\operatorname{Mat}_{m,n}(A)$ define
+\[
+ E(C)=\sum_{i,j,r}(e_i u^r)\otimes_{\F}(e_j C_{ij}u^{3-r}).
+\]
+For an $A$ row $x$, let $L_x:U(A^m)\to U(A)$ be its binary block map.
+
+\begin{proposition}[Coarse support realization]
+$E$ is injective, intertwines the local $A$-linear actions, and
+\[
+ (L_x\otimes L_y)E(C)=\Delta(xCy^T).
+\]
+Consequently coarse measurements made of the block rows of invertible $A$
+bases give exactly the original nonzero-$A$ bipartite support tables.
+\end{proposition}
+\begin{proof}
+Multiplication by $u$ on either leg of $\Omega$ yields the same sum. By linearity
+this holds for every scalar. Also $(\operatorname{id}\otimes\tau)\Delta(a)=a$,
+so $\Delta$ is injective. The formula follows blockwise. An invertible $A$ basis
+expands to an invertible binary map, so its block-row instrument is complete.
+\end{proof}
+The coefficient matrix is $\rho(C)J$, with $J$ the invertible block reversal.
+For Smith exponents $a_i$, including $a_i=4$ for zeros, its binary rank is
+$R=\sum_i(4-a_i)$. In particular $E(1)=\Omega$ has rank four although $1$ is a
+balanced product. Discarding one leg of $\Omega$ yields all of $U(A)$ as a mixed
+state. Thus neither separability nor the raw shared-ring update is preserved.
+Moreover $\mu\Delta=0$, so this Frobenius construction is not a separable
+inverse to balancing; separable preservation hypotheses cannot be imported
+\cite{MS10}.
+
+\section{Restricted conversion and information tasks}
+Fix encoded resources and local selected $A$-linear filters, with no additional
+entangled resource or coefficient-resolving disposal. Every successful finite
+transcript is a pair of local products $F,G$.
+
+\begin{theorem}[One-copy order]
+Pad the ascending source and target Smith lists with exponent four to compatible
+sizes. A nonzero target $D$ is obtainable as $FCG^T$ iff $b_i\geq a_i$ for every $i$.
+\end{theorem}
+\begin{proof}
+The image of $FCG^T$ is a quotient of a submodule of the image of $C$.
+For a finite $A$ module with cyclic lengths $\ell_i$, the number of lengths at
+least $t$ is the dimension of $\operatorname{soc}(M)\cap u^{t-1}M$. These
+subspaces inject under submodule inclusion. For a quotient the layers
+$u^{t-1}M/u^tM$ surject; their dimensions give the same counts. Thus cyclic
+lengths cannot increase componentwise, which says $b_i\geq a_i$. Conversely
+Smith-reduce, select the desired coordinates, multiply them by the required
+powers of $u$, and undo target basis changes.
+\end{proof}
+The underlying factorization comparison is established
+\cite{APGPS,Antoine}. It must be distinguished from the larger Malcolmson
+order, which admits an additional triangular-block erasure \cite{HungLi}.
+Normalized quotient-regular ranks are established Sylvester ranks \cite{JL}.
+They need not be a complete family of monotone inequalities for pure filtering.
+
+The local binary algebra normalizer and the coarse measurement stabilizer are
+both $\GL_2(A)\rtimes\operatorname{Aut}_{\F}(A)$, of order $98,304$; their
+action on the 24 projective points has order $12,288$. The complete center,
+pointwise-stabilizer and dual-action proofs are in the accompanying theorem
+ledger and the earlier local review. This is a proved inherited result, not an
+open claim in this note.
+
+Leading multiplicity $h$ is not a filter monotone:
+\[
+ \diag(u,1)\diag(1,u)=\diag(u,u).
+\]
+Here $h$ increases from one to two and P01's fixed-family contextuality becomes
+strong, while binary rank falls from seven to six. For local dimension $d\geq2$,
+the exact message counts are $dh$ for the matched P01 decoder, $dR$ for the
+same encoders with arbitrary binary decoding, and $4dR$ with full binary local
+encoding. These are different access contracts, not three capacities of one task.
+
+\section{Independent copies and disposal}
+Independent copies carry distinct scalar variables,
+$B_k=\F[u_1,\ldots,u_k]/(u_i^4)$. Let $r_0$ be the number of unit Smith factors.
+With all phase registers retained and $B_k$-linear selected filters, extraction
+of $E_{B_k}(I_d)$ is possible iff $d\leq r_0^k$. Indeed reduction to the residue
+field gives the necessary rank bound; selecting a unit minor and multiplying
+by its inverse proves sufficiency. This is elementary local-ring algebra,
+not a new activation principle.
+
+Resolved disposal changes the result. With $v=u_2$, take
+\[
+ N=\diag(1,v^2,u_1^2,u_1^2v^2),\quad
+ L=\begin{pmatrix}1&0&0&0\\v&0&0&0\end{pmatrix},\quad
+ Q=\begin{pmatrix}v^3&0&0&0\\v^2&0&0&0\end{pmatrix}.
+\]
+Then $LNQ^T=\left(\begin{smallmatrix}v^3&v^2\\0&v^3\end{smallmatrix}\right)$.
+Selecting $[v^3]$ on each phase leg gives $E_A(I_2)$. Forgetting those labels
+instead yields the two-dimensional span of $E_A(I_2)$ and $E_A(E_{12})$.
+This inherited witness was rerun exactly. It uses only the unit sector, so
+does not isolate a resource unique to nilpotent amplitudes.
+
+\section{Evidence and disposition}
+The new checker covers all $65,536$ two-by-two $A$ matrices, $1,966,080$
+single-sided filter cases, $8,640$ representative coarse-effect pairs and
+$98,304$ distinct constructed normalizer elements. Ten new regression tests
+and 31 canonical audit tests pass. None of these is an exhaustive scan of
+$\GL(8,2)$ or a proof of historical priority. The old audit manifest has nine
+pre-existing mismatches; they are recorded without altering its data.
+
+The principal results already occur in the local technical companion, and the
+fresh literature check reinforces their classical antecedents. The correct
+disposition is a verification supplement, not a separate fourth full paper.
+General pure-target conversion with unobserved phase disposal remains open
+only after a precise operation class is motivated. There is no claimed Born
+rule, physical implementation, speedup or undeclared communication advantage.
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

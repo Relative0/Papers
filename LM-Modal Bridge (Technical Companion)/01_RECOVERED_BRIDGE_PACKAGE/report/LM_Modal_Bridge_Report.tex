@@ -1,0 +1,1141 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,longtable,array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue,
+  pdftitle={Does the Symbolic LM Calculus Canonically Induce the Modal Measurement Theory?},
+  pdfauthor={Research synthesis prepared 18 September 2026}
+}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Sring}{\mathcal{S}_A}
+\newcommand{\Poss}{\mathsf{Poss}}
+\newcommand{\Supp}{\operatorname{Supp}_A}
+\newcommand{\GL}{\operatorname{GL}}
+\newcommand{\Id}{\operatorname{Id}}
+\newcommand{\vecop}{\operatorname{vec}}
+\newcommand{\LM}{\operatorname{LM}}
+\newcommand{\Bool}{\mathbf{2}}
+
+\title{\textbf{Does the Symbolic LM Calculus Canonically Induce the Modal Measurement Theory?}\\
+\large Adversarial bridge analysis between formula-valued Logical Matrices and the later chain-ring modal/effect framework}
+\author{Research synthesis and independent finite verification}
+\date{18 September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report asks whether the formula-valued Logical Matrix (LM) calculus developed in
+\emph{Operator-Level Boolean Computation with Correspondence Matrices} can be regarded as the
+canonical symbolic source of the later modal measurement theory over the finite chain ring
+\(A\cong \F_2[u]/(u^4)\). The answer is mixed but mathematically useful. Paper B already proves
+that Boolean valuation commutes with LM pairing. That fact extends naturally to arbitrary matrix,
+module, and tensor expressions after an explicit scalar enrichment. However, direct Boolean
+valuation cannot produce the nilpotent and unit amplitudes of the chain ring: every Boolean-ring
+homomorphism into the local ring \(A\) lands in its idempotents \(\{0,1\}\). The correct positive
+bridge is therefore not direct valuation but scalar enrichment
+\(\B\otimes_{\F_2} A\), followed by valuation specialization
+\(v\otimes \Id_A\). In this enriched calculus, each symbolic amplitude has a canonical Boolean
+support predicate whose satisfying valuations are exactly those for which the corresponding concrete
+ring-valued modal amplitude is nonzero. This yields a precise symbolic-support theorem connecting
+formula semantics to modal possibility.
+
+The report also proves negative boundaries. The later rules that effects are rows of reversible
+\(A\)-bases and that a nonzero contraction denotes a possible event are additional measurement
+structure, not consequences of the Paper-B LM semantics. The original LM state encoding generates
+only coordinate effects under valuation and therefore does not generate the complete 192 reversible
+projective two-outcome basis family. A division-free branch update
+\(J_i^B=B^{-1}P_iB\) is nevertheless available for every reversible modal basis and is compatible
+with projective unit rescaling and valuation. Zero divisors still obstruct a closed unrestricted
+process theory: nonzero states need not be tensor-closed, and conditioning can take unimodular
+preparations to nonunimodular conditional states.
+
+Independent exhaustive checks reproduce the 16-element chain ring, its 8 units and 2 idempotents,
+\(|\GL_2(A)|=24576\), the 192 unordered projective reversible bases, 98,304 branch-support checks,
+262,144 symbolic-support fiber checks, and the failure of 144 out of 256 ordinary Boolean-ring
+matrix products to remain inside the restricted 16-element Paper-B LM family.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Research question and verdict}
+
+The central question is whether the schematic chain
+\[
+\text{formula-valued LM}
+\longrightarrow
+\text{Boolean valuation}
+\longrightarrow
+\text{CM/coefficient representation}
+\longrightarrow
+\text{state/resource}
+\longrightarrow
+\text{effect/measurement}
+\longrightarrow
+\text{logical or modal outcome}
+\]
+is a genuine mathematical semantics, rather than a collection of later constructions sharing matrix
+notation.
+
+\subsection{Executive verdict}
+
+There is a genuine bridge, but the later modal measurement theory is \emph{not} canonically derivable
+from Paper B as it currently stands.
+
+The strongest defensible formulation is:
+
+\begin{quote}
+Paper B canonically supplies a symbolic Boolean layer and a valuation-natural contraction calculus.
+After independently choosing the chain-ring amplitude algebra \(A\), there is a natural scalar-enriched
+symbolic extension in which valuation continues to commute with states, effects, contractions, matrix
+operations, and tensor products. In that extension, every ring-valued amplitude has a canonical Boolean
+support predicate describing exactly the valuations for which the corresponding modal event is nonzero.
+However, the rules that effects are rows of reversible \(A\)-bases and that nonzero means possible are
+extra measurement structure. They are not consequences of the original formula-valued LM calculus.
+\end{quote}
+
+Thus the clean architecture is
+\[
+\boxed{
+\text{Boolean symbolic LM calculus}
+\longrightarrow
+\text{\(A\)-enriched symbolic calculus}
+\overset{\text{valuation}}{\longrightarrow}
+\text{\(A\)-valued states/effects}
+\overset{\text{support contract}}{\longrightarrow}
+\text{modal outcomes}.}
+\]
+
+The missing structure consists of at least three independent ingredients:
+\begin{enumerate}[label=(\arabic*)]
+\item a chosen cyclic/chain-ring multiplication on the four CM coefficients;
+\item a chosen admissible measurement family, such as rows of matrices in \(\GL_n(A)\);
+\item the support interpretation \(a\neq 0\Longleftrightarrow\) ``possible.''
+\end{enumerate}
+
+\section{Primary sources and methodological boundary}
+
+The analysis treated the manuscript \emph{Operator-Level Boolean Computation with Correspondence
+Matrices} (``Paper B'') as background rather than rediscovering its results. The primary Paper-B text
+read for this investigation includes Section 8.1--8.2 and its proof appendix. In the parsed copy used
+for the review, lines 560--669 define the Boolean algebra of formulas modulo equivalence, the
+formula-valued LM, positive and general valuation, logical pairing, Proposition 2, and Theorem 3.
+Lines 780--874 contain the appendix proof and finite verification scope.
+
+The later modal source read was \texttt{PURE\_BOOLEAN\_MODAL\_CM\_ADDENDUM.tex}. In the
+parsed copy used for the review, lines 45--118 explicitly state that the modal nonzero-support
+readout is an ``additional contract,'' introduce the chain ring, define states and separability, and
+specify reversible effect bases. Lines 440--539 contain the complete 192-basis support classification,
+and lines 620--643 identify the remaining multi-round measurement/update problem.
+
+The supplied adversarial-review archive is included verbatim and unpacked in this research package.
+It contains the earlier novelty dossier, theorem candidates, search logs, source-audit files, and a large
+set of reproduced computational outputs. The current report adds a separate bridge analysis and
+fresh independent checks.
+
+\section{Strict type map}
+
+The investigation keeps the following object types separate.
+
+\begin{longtable}{p{0.18\textwidth}p{0.29\textwidth}p{0.23\textwidth}p{0.23\textwidth}}
+\toprule
+\textbf{Layer} & \textbf{Object} & \textbf{Map} & \textbf{Status / preserved structure} \\
+\midrule
+\endhead
+Binary truth function & \(C\in M_2(\F_2)\) & \(C\mapsto \LM_{X,Y}(C)\) & Injective for freely assignable \(X,Y\); preserves XOR and entrywise Boolean operations; not ordinary matrix multiplication.\\
+\addlinespace
+Formula-valued LM & \(\LM_{X,Y}(C)\in M_2(\B)\) & entrywise Boolean valuation \(v\) & Canonical for each valuation; preserves Boolean-ring operations.\\
+\addlinespace
+Valued CM & \(v(\LM)\in M_2(\F_2)\) & vectorization & Linear bijection after cell-order choice; basis/order dependent.\\
+\addlinespace
+Four coefficients & \(c\in\F_2^4\) & cyclic-basis identification & Vector-space bijection to \(A\); does not inherit ordinary \(2\times2\) matrix multiplication.\\
+\addlinespace
+Chain-ring scalar & \(a\in A\cong\F_2[u]/(u^4)\) & regular representation \(\Lambda\) & Injective algebra representation into \(M_4(\F_2)\) after multiplication on \(A\) is chosen.\\
+\addlinespace
+One-system state & \(\psi\in A^n\) & effect application & Free \(A\)-module object; one CM is only one scalar of \(A\), not a whole state.\\
+\addlinespace
+Bipartite resource & \(M\in M_{m,n}(A)\) & \(M\mapsto UMV^T\) & Local \(A\)-linear action; distinct type from original Boolean CMs.\\
+\addlinespace
+Effect & \(e\in (A^n)^*\cong A^{1\times n}\) & \(e(\psi)=e\psi\) & \(A\)-linear functional; row identification uses a free-module basis.\\
+\addlinespace
+Measurement & rows of \(B\in\GL_n(A)\) & \(B\psi\) & Reversible coordinate change; additional modal choice.\\
+\addlinespace
+Outcome scalar & \(e\psi\in A\) or \(eMf^T\in A\) & \(a\mapsto[a\neq0]\) & Support zero-test; not a ring/semiring homomorphism in general.\\
+\addlinespace
+Symbolic enriched layer & \(\Sring=\B\otimes_{\F_2}A\) & \(v_A=v\otimes\Id_A\) & Canonical once \(A\) is chosen; preserves ring, module, matrix, and tensor operations.\\
+\addlinespace
+Symbolic modal outcome & \(q\in\Sring\) & \(\Supp(q)\in\B\) & Exact valuation-wise zero/nonzero semantics; support itself is not an algebra homomorphism.\\
+\bottomrule
+\end{longtable}
+
+A key typing correction is
+\[
+\boxed{\text{one }2\times2\text{ Boolean CM}\neq\text{one modal state}.}
+\]
+After a four-feature basis is chosen, one CM becomes one scalar of \(A\). A one-bit modal state needs
+two such scalars:
+\[
+\psi=a_0\lvert0\rangle+a_1\lvert1\rangle\in A^2.
+\]
+A two-party resource requires four such scalars.
+
+\section{Q1: What is a formula-valued LM mathematically?}
+
+Let \(\B\) be the Lindenbaum Boolean algebra of propositional formulas modulo logical equivalence.
+Write it as a Boolean ring using
+\[
+f+g=f\oplus g,\qquad fg=f\land g,\qquad \neg f=1+f.
+\]
+For freely assignable symbols \(X,Y\), define
+\[
+X_1=X,\quad X_2=\neg X,\qquad
+Y_1=Y,\quad Y_2=\neg Y.
+\]
+For a binary truth table \(C=(c_{ij})\in M_2(\F_2)\), Paper B defines
+\[
+\LM_{X,Y}(C)
+=
+\bigoplus_{i,j}c_{ij}\lvert X_i\rangle\langle Y_j\rvert
+\in M_2(\B).
+\]
+Equivalently, after expansion,
+\[
+\LM_{X,Y}(\Theta)
+=
+\begin{pmatrix}
+X\,\Theta\,Y & X\,\Theta\,\neg Y\\
+\neg X\,\Theta\,Y & \neg X\,\Theta\,\neg Y
+\end{pmatrix}.
+\]
+
+\begin{theorem}[Algebraic status of the Paper-B LM family]
+For fixed freely assignable \(X,Y\), the map
+\[
+\ell_{X,Y}:M_2(\F_2)_{\mathrm{coeff}}\longrightarrow M_2(\B),
+\qquad C\longmapsto\LM_{X,Y}(C),
+\]
+is injective and \(\F_2\)-linear. It preserves entrywise Boolean operations. It is not, in general,
+a homomorphism from ordinary Boolean-ring matrix multiplication on \(M_2(\F_2)\) to matrix
+multiplication in \(M_2(\B)\).
+\end{theorem}
+
+\begin{proof}
+Linearity follows from the XOR sum defining the LM. Positive valuation sends the LM back to its
+coefficient CM, so equality of two LMs implies equality of their coefficient matrices. Therefore the
+map is injective. Entrywise Boolean operations commute with the substitution producing the four
+polarity positions. Ordinary matrix product is different: multiplication mixes row/column positions
+by XOR--AND contraction. Exhaustive evaluation of all \(16^2=256\) products of the 16 Paper-B
+LMs shows that 144 products leave the restricted 16-element LM family, so the family is not closed
+under this multiplication.
+\end{proof}
+
+\begin{remark}
+The most economical description is therefore: a Paper-B LM is a special predicate-valued matrix
+over a free/Lindenbaum Boolean ring. The ambient space \(M_2(\B)\) is natural; the 16 matrices
+generated by binary truth functions are a distinguished subset/subalgebra only for the entrywise
+Boolean operations. Calling the construction merely a relation would lose the XOR--AND scalar
+algebra used by Paper B.
+\end{remark}
+
+\section{Q2: What is LM pairing mathematically?}
+
+For a formula \(F\in\B\), Paper B defines
+\[
+s(F)=
+\begin{pmatrix}F\\ \neg F\end{pmatrix},
+\qquad
+s(F)^T=(F,\neg F).
+\]
+The symbolic pairing is
+\[
+P_C(L_1,L_2)
+=
+s(L_1)^T\LM_{X,Y}(C)s(L_2),
+\]
+where scalar multiplication is conjunction and scalar addition is XOR.
+
+\begin{proposition}[LM pairing is Boolean-ring matrix contraction]
+For the special LM associated with a binary connective \(\Theta\),
+\[
+\langle L_1\vert\LM_{X,Y}(\Theta)\vert L_2\rangle
+\equiv
+(L_1\leftrightarrow X)\;\Theta\;(Y\leftrightarrow L_2).
+\]
+Thus the Paper-B ``logical pairing'' is ordinary matrix contraction over the Boolean ring \(\B\),
+with a non-linear special state embedding \(F\mapsto(F,\neg F)\).
+\end{proposition}
+
+The roles of the connectives are exact:
+\begin{itemize}
+\item AND is scalar multiplication;
+\item XOR is scalar addition and reduction;
+\item negation appears in the complement-paired state encoding;
+\item OR is not the matrix-addition operation used by the pairing.
+\end{itemize}
+
+The pairing may be described semantically as predicate evaluation or relationship extraction, but
+those descriptions do not add algebraic structure beyond the Boolean-ring contraction.
+
+\section{Q3: Valuation naturality}
+
+Let
+\[
+v:\B\longrightarrow\F_2
+\]
+be a Boolean valuation. Extend \(v\) entrywise to matrices and vectors.
+
+\begin{theorem}[Valuation naturality]
+For compatible Boolean-ring matrices and vectors,
+\[
+v(MN)=v(M)v(N),
+\]
+and
+\[
+v(x^TMy)=v(x)^T\,v(M)\,v(y).
+\]
+The same statement holds for finite Kronecker tensor products.
+\end{theorem}
+
+\begin{proof}
+Every output entry is a finite expression built from Boolean-ring addition and multiplication. A
+Boolean valuation is a homomorphism for those operations, so it may be moved through each finite
+sum and product.
+\end{proof}
+
+This theorem is already present in Paper B for the LM pairing case. Its broader matrix/tensor version
+is a routine homomorphism-extension fact. It is useful for organizing the bridge, but it should not be
+presented as deep novelty.
+
+\section{A decisive negative theorem: direct valuation cannot produce chain-ring amplitudes}
+
+The strongest possible bridge would send Boolean formulas directly into the later amplitude ring
+\[
+A=\F_2[u]/(u^4).
+\]
+That is impossible except for the embedded Boolean scalars.
+
+\begin{theorem}[Idempotent obstruction]
+Let \(\B\) be a Boolean ring and let \(h:\B\to A\) be a unital ring homomorphism. Then every
+\(h(b)\) is idempotent. In the local chain ring \(A=\F_2[u]/(u^4)\), the only idempotents are
+\(0\) and \(1\). Therefore
+\[
+\operatorname{im}h\subseteq\{0,1\}\cong\F_2,
+\]
+and \(h\) factors through an ordinary Boolean valuation
+\[
+\B\longrightarrow\F_2\hookrightarrow A.
+\]
+\end{theorem}
+
+\begin{proof}
+Every element of a Boolean ring satisfies \(b^2=b\). Hence
+\[
+h(b)^2=h(b^2)=h(b).
+\]
+A local ring has no idempotents other than \(0\) and \(1\). The stated chain ring is local, so the
+image is Boolean.
+\end{proof}
+
+\begin{corollary}
+Nilpotent and nontrivial unit amplitudes such as
+\[
+u,\quad u^2,\quad u^3,\quad 1+u
+\]
+can never arise as direct values of Paper-B Boolean formulas under a ring-homomorphic valuation.
+\end{corollary}
+
+This rules out the claim that the chain-ring amplitude theory is obtained by simply changing the
+codomain of Paper-B valuation.
+
+\section{The CM-to-chain-ring identification is linear before it is multiplicative}
+
+There is a natural-looking sequence
+\[
+M_2(\F_2)
+\xrightarrow{\vecop_{\kappa}}
+\F_2^4
+\xrightarrow{\alpha_{\beta}}
+A,
+\]
+where \(\kappa\) fixes a cell order and \(\beta\) fixes an ordered \(\F_2\)-basis of \(A\).
+Both arrows are vector-space bijections.
+
+They are not an identification of ordinary \(2\times2\) matrix multiplication with the chain-ring
+multiplication. Two immediate invariants separate the algebras:
+\begin{itemize}
+\item \(M_2(\F_2)\) is noncommutative, while \(A\) is commutative;
+\item \(|\GL_2(\F_2)|=6\), while \(A\) has 8 units.
+\end{itemize}
+
+Therefore the later cyclic product
+\[
+E_r\star E_s=E_{r+s\bmod4}
+\]
+is additional algebraic structure placed on the four-component coefficient space. Once supplied,
+\[
+A\cong\F_2[C_4]\cong\F_2[u]/(u^4),
+\]
+and its regular representation
+\[
+\Lambda:A\hookrightarrow M_4(\F_2)
+\]
+is an injective algebra homomorphism. The multiplication itself, however, is not forced by the
+original LM valuation theorem.
+
+\section{The correct positive bridge: scalar enrichment}
+
+The direct-valuation obstruction suggests the right construction.
+
+\begin{definition}[Enriched symbolic scalar algebra]
+Let
+\[
+\Sring=\B\otimes_{\F_2}A.
+\]
+For the current chain ring,
+\[
+\Sring\cong \B[u]/(u^4).
+\]
+\end{definition}
+
+\begin{theorem}[Canonical specialization after choosing \(A\)]
+For every Boolean valuation \(v:\B\to\F_2\), there is a canonical \(A\)-algebra specialization
+\[
+v_A=v\otimes\Id_A:\Sring\to A,
+\]
+defined on pure tensors by
+\[
+v_A(f\otimes a)=v(f)a.
+\]
+It preserves addition and multiplication and therefore extends entrywise to matrices, vectors,
+contractions, and tensor products. In particular,
+\[
+v_A(e\psi)=v_A(e)v_A(\psi),
+\]
+and
+\[
+v_A(E M F^T)=v_A(E)v_A(M)v_A(F)^T.
+\]
+\end{theorem}
+
+\begin{remark}[Universal property]
+The tensor product is the coproduct of the commutative \(\F_2\)-algebras \(\B\) and \(A\).
+Therefore this is a genuine universal property, but it is a universal property \emph{after} the amplitude
+algebra \(A\) has been independently selected. It does not derive \(A\) from the formula calculus.
+\end{remark}
+
+For finitely many Boolean generators, if
+\[
+\Omega=\operatorname{Hom}_{\mathrm{Bool}}(\B,\Bool)
+\]
+is the valuation set, then extensionally
+\[
+\B\cong\F_2^{\Omega}
+\quad\text{and hence}\quad
+\boxed{\Sring\cong A^{\Omega}.}
+\]
+So an enriched symbolic scalar may be read simply as an \(A\)-valued function of the Boolean
+valuation. This is the finite Boolean-power viewpoint.
+
+\section{The strongest bridge theorem: symbolic support realizes modal possibility}
+
+Let
+\[
+q\in\Sring\cong A^{\Omega}.
+\]
+Define the symbolic support predicate \(\Supp(q)\in\B\) to have exactly the valuation set
+\[
+\{v\in\Omega: v_A(q)\neq0\}.
+\]
+For
+\[
+q=f_0+f_1u+f_2u^2+f_3u^3,
+\qquad f_i\in\B,
+\]
+one may write
+\[
+\Supp(q)=f_0\lor f_1\lor f_2\lor f_3.
+\]
+Although this coordinate formula uses the displayed basis, the resulting Boolean predicate is
+basis-independent up to logical equivalence because it is defined by the intrinsic condition
+\(v_A(q)\neq0\).
+
+\begin{theorem}[Symbolic-support bridge]
+Let
+\[
+e\in\Sring^{1\times n},\qquad \psi\in\Sring^n.
+\]
+Define
+\[
+\Poss(e,\psi)=\Supp(e\psi)\in\B.
+\]
+Then for every Boolean valuation \(v\),
+\[
+\boxed{
+v\bigl(\Poss(e,\psi)\bigr)=1
+\iff
+v_A(e)\,v_A(\psi)\neq0.}
+\]
+For a bipartite symbolic resource \(M\),
+\[
+\boxed{
+v\left(\Supp(eMf^T)\right)=1
+\iff
+v_A(e)v_A(M)v_A(f)^T\neq0.}
+\]
+\end{theorem}
+
+\begin{proof}
+Choose an \(\F_2\)-basis \(\{\beta_k\}\) of \(A\) and write the symbolic scalar contraction as
+\[
+q=\sum_k f_k\beta_k.
+\]
+At valuation \(v\),
+\[
+v_A(q)=\sum_k v(f_k)\beta_k.
+\]
+Linear independence of the basis gives
+\[
+v_A(q)=0\iff v(f_k)=0\ \text{for all }k.
+\]
+Therefore
+\[
+v_A(q)\neq0
+\iff
+\bigvee_kv(f_k)=1
+\iff
+v\left(\bigvee_k f_k\right)=1.
+\]
+\end{proof}
+
+\begin{corollary}[Satisfiability/possibility bridge]
+\[
+\Supp(e\psi)\text{ is satisfiable}
+\iff
+\exists v:\;v_A(e)v_A(\psi)\neq0.
+\]
+The same holds for bipartite contractions \(eMf^T\).
+\end{corollary}
+
+This is the strongest bridge found in the investigation. It says that a single symbolic contraction can
+compute an ordinary Boolean formula describing exactly the parameter valuations under which the
+corresponding concrete ring-modal event is possible.
+
+\section{Q4: Can formula-valued LMs represent modal effects?}
+
+Two meanings of ``represent'' must be distinguished.
+
+\subsection{As measurement semantics: only a restricted subset}
+
+The Paper-B logical state map is
+\[
+s(L)=\begin{pmatrix}L\\\neg L\end{pmatrix}.
+\]
+For every valuation,
+\[
+v(s(L))\in
+\left\{
+\begin{pmatrix}1\\0\end{pmatrix},
+\begin{pmatrix}0\\1\end{pmatrix}
+\right\}.
+\]
+So the bare Paper-B bra/ket construction yields only coordinate rows after valuation. It does not
+directly yield the embedded-\(\F_2\) effect \((1,1)\), which already occurs in a standard modal
+\(X\)-type basis.
+
+\begin{proposition}[Negative measurement-family characterization]
+The original Paper-B LM pairing semantics does not generate the complete 192 reversible projective
+modal bases over \(A\). It does not even generate every reversible basis in the embedded
+\(\F_2\) subtheory.
+\end{proposition}
+
+This is a negative version of the requested measurement-family characterization.
+
+\subsection{As coefficient data: every effect can be encoded after choices}
+
+Fix a CM cell ordering and the cyclic \(\F_2\)-basis of \(A\). Every \(a\in A\) has a unique four-bit
+coefficient representation, hence a unique Boolean CM in that basis, and therefore a Paper-B LM
+representative in a chosen operand frame. An effect
+\[
+e=(a,b)\in A^2
+\]
+can consequently be encoded by two such LMs, and a \(2\times2\) reversible basis by four.
+
+Thus every modal effect is LM-encodable as coefficient data, but this encoding is:
+\begin{itemize}
+\item dependent on the chosen four-feature basis;
+\item dependent on CM cell order;
+\item dependent on the chosen LM operand frame/positive-valuation convention;
+\item not a derivation of effect semantics;
+\item not an identification of LM matrix multiplication with \(A\)-multiplication.
+\end{itemize}
+
+The correct statement is therefore:
+\begin{quote}
+Every modal effect is LM-encodable after the chain-ring coefficient basis is fixed, but not every modal
+effect is an LM effect in the original Paper-B pairing sense.
+\end{quote}
+
+\section{Q5: ``nonzero = possible'' is extra structure}
+
+The later modal source explicitly introduces nonzero readout as an additional contract. The algebra
+shows why it cannot be hidden inside ordinary Boolean valuation semantics.
+
+Define
+\[
+\sigma:A\to\{0,1\},\qquad
+\sigma(a)=\begin{cases}0,&a=0,\\1,&a\neq0.\end{cases}
+\]
+This map is neither additive in the \(\F_2\) sense nor multiplicative to Boolean support.
+For example,
+\[
+\sigma(u)=\sigma(u^2)=1,
+\]
+but
+\[
+\sigma(u+u^2)=1\neq1\oplus1=0.
+\]
+More importantly, zero divisors give
+\[
+u\neq0,\qquad u^3\neq0,\qquad uu^3=u^4=0,
+\]
+so
+\[
+\sigma(u)\land\sigma(u^3)=1
+\quad\text{while}\quad
+\sigma(uu^3)=0.
+\]
+
+\begin{proposition}[Support is not a semiring homomorphism]
+The nonzero map \(\sigma:A\to\Bool\) cannot be a homomorphism from the chain ring to either the
+Boolean ring \((\Bool,\oplus,\land)\) or the ordinary Boolean semiring \((\Bool,\lor,\land)\).
+Consequently, the support semantics is an independently selected zero-test rather than a functorial
+quotient of the amplitude algebra.
+\end{proposition}
+
+The symbolic-support theorem does not contradict this. It says that, \emph{once the zero-test is chosen},
+its valuation fibers can be represented exactly by Boolean formulas.
+
+\section{Q6: Symbolic observables/effects}
+
+The most useful symbolic generalization is not a new Boolean algebra of observables but a module of
+symbolic effects:
+\[
+\mathcal E_n=(\Sring^n)^*\cong\Sring^{1\times n}.
+\]
+An effect may carry genuine formulas in its coefficients, for example
+\[
+e=
+\bigl(
+(x\land\neg y)+u(x\oplus z),\;
+ u^2(f\leftrightarrow g)+u^3z
+\bigr).
+\]
+For a symbolic state \(\psi\), the contraction
+\[
+e\psi\in\Sring
+\]
+retains the complete symbolic \(A\)-valued amplitude. Applying support gives
+\[
+\Supp(e\psi)\in\B,
+\]
+a Boolean formula describing exactly when the effect is modally possible after specialization.
+
+Thus the framework naturally exposes two levels of output:
+\[
+\boxed{e\psi\ \text{(symbolic amplitude)}}
+\qquad\text{and}\qquad
+\boxed{\Supp(e\psi)\ \text{(symbolic possibility condition)}}.
+\]
+
+Calling this an ``effect algebra'' would currently be premature because no partial sum, orthosupplement,
+or effect-algebra order has been shown to satisfy the standard axioms. ``Symbolic effect module'' or
+``predicate-parametrized effect calculus'' is more accurate.
+
+\section{Q7: Sequential measurement and update}
+
+The chain ring creates a normalization problem because possible amplitudes can be nonunits. However,
+reversible-basis measurements admit a clean branch update that requires no division by the observed
+amplitude.
+
+Let
+\[
+B\in\GL_n(A)
+\]
+be a reversible measurement basis, with rows interpreted as effects. Let \(P_i\) be the diagonal
+coordinate projector having a single \(1\) in coordinate \(i\). Define
+\[
+\boxed{J_i^B=B^{-1}P_iB.}
+\]
+
+\begin{theorem}[Division-free reversible-basis update]
+For every commutative ring \(A\) and every \(B\in\GL_n(A)\), the maps
+\(J_i^B\) satisfy
+\[
+(J_i^B)^2=J_i^B,
+\]
+\[
+J_i^BJ_j^B=0\quad(i\neq j),
+\]
+and
+\[
+\sum_iJ_i^B=I.
+\]
+If
+\[
+c_i=(B\psi)_i,
+\]
+then
+\[
+\boxed{J_i^B\psi\neq0\iff c_i\neq0.}
+\]
+Moreover,
+\[
+B(J_i^B\psi)=P_iB\psi,
+\]
+so a repeat of the same measurement has support only on outcome \(i\).
+\end{theorem}
+
+\begin{proof}
+Idempotence, orthogonality, and resolution of the identity follow by conjugating the coordinate
+projectors. Let
+\[
+b_i=B^{-1}e_i.
+\]
+Then
+\[
+J_i^B\psi=c_i b_i.
+\]
+The column \(b_i\) is unimodular because it is a column of an invertible matrix. Hence its entries
+generate the unit ideal, so there exist \(r_j\) with
+\[
+\sum_j r_j(b_i)_j=1.
+\]
+If \(c_i b_i=0\), multiplying by the \(r_j\) combination yields \(c_i=0\). The converse is
+immediate. Finally,
+\[
+B J_i^B\psi=P_iB\psi.
+\]
+\end{proof}
+
+\subsection{Projective well-definedness}
+
+If the effect rows are independently rescaled by units,
+\[
+B'=DB
+\]
+with \(D\) diagonal and invertible, then
+\[
+(B')^{-1}P_iB'
+=B^{-1}D^{-1}P_iDB
+=B^{-1}P_iB.
+\]
+Therefore the branch projector is invariant under the same row-unit projectivization already used by
+the modal support theory. Outcome permutations only relabel \(i\).
+
+\subsection{Symbolic update}
+
+For
+\[
+\widetilde B\in\GL_n(\Sring)
+\]
+define
+\[
+\widetilde J_i=\widetilde B^{-1}P_i\widetilde B.
+\]
+Then every specialization satisfies
+\[
+v_A(\widetilde J_i)=J_i^{v_A(\widetilde B)}.
+\]
+So valuation commutes with the branch-update construction as long as the symbolic basis remains
+invertible under the relevant specialization.
+
+\section{Why this is not yet a closed process theory}
+
+The projector update is algebraically clean, but the zero divisors prevent the set of all nonzero
+states from being a well-behaved monoidal state class.
+
+\subsection{Nonzero states are not tensor-closed}
+
+Take
+\[
+\psi=(u,0),\qquad \phi=(u^3,0).
+\]
+Both are nonzero, but over \(A\)
+\[
+\psi\otimes_A\phi=0
+\]
+because \(uu^3=u^4=0\).
+
+\subsection{Unimodular preparation is not conditioning-closed}
+
+Restricting preparations to unimodular vectors repairs the elementary tensor-annihilation problem for
+simple tensors, but conditioning can leave that class. Consider the bipartite coefficient matrix
+\[
+M=\begin{pmatrix}1&0\\0&u\end{pmatrix}.
+\]
+As a four-component vector it is unimodular because one entry is a unit. Applying Alice's second
+standard effect leaves Bob in
+\[
+(0,u),
+\]
+which is nonzero but nonunimodular.
+
+Therefore a satisfactory closed sequential theory still needs an explicit decision about admissible
+states, branch objects, quotients, ideals, or a richer process semantics. The symbolic predicate layer
+can describe when a branch exists, but it does not turn a nonunit branch amplitude into an invertible
+one.
+
+\section{Failure results and exact boundaries}
+
+\begin{longtable}{p{0.34\textwidth}p{0.58\textwidth}}
+\toprule
+\textbf{Proposed identification} & \textbf{Result} \\
+\midrule
+\endhead
+``An LM is a modal effect.'' & False as stated. Paper-B bras evaluate only to coordinate effects.\\
+\addlinespace
+``Boolean valuation directly gives \(A\)-amplitudes.'' & False. Every Boolean-ring homomorphism into the local chain ring lands in \(\{0,1\}\).\\
+\addlinespace
+``The ordinary \(2\times2\) CM algebra is the phase ring.'' & False. The four-component identification is linear; the cyclic product is additional structure.\\
+\addlinespace
+``Valuation naturality derives modal possibility.'' & False. It derives concrete amplitudes. The zero/nonzero interpretation is a separate support contract.\\
+\addlinespace
+``Nonzero support is ordinary relational semantics.'' & False compositionally. XOR cancellation and zero divisors prevent support from being a semiring homomorphism.\\
+\addlinespace
+``Existing LM semantics generates all 192 measurements.'' & False. The full family is LM-encodable as coefficient data after adding the \(A\)-structure, but not generated by the original complement-paired effect semantics.\\
+\addlinespace
+``Symbolic formulas solve normalization.'' & False. They can describe branch conditions but do not invert nonunits.\\
+\addlinespace
+``All nonzero ring states form a monoidal state theory.'' & False: \(u\otimes_Au^3=0\).\\
+\addlinespace
+``Unimodular preparations solve closure.'' & False: conditioning can yield nonunimodular nonzero states.\\
+\addlinespace
+``The bridge extends unchanged to arbitrary finite rings.'' & False as stated. The clean \(\B\otimes_{\F_2}A\) enrichment requires an \(\F_2\)-algebra such as a characteristic-two ring; other scalar systems require a modified control/Boolean-power construction.\\
+\bottomrule
+\end{longtable}
+
+\section{Prior-art matrix}
+
+The novelty search translated each candidate theorem into conventional mathematics rather than
+searching only CM terminology.
+
+\begin{longtable}{p{0.31\textwidth}p{0.62\textwidth}}
+\toprule
+\textbf{Construction/result} & \textbf{Prior-art assessment} \\
+\midrule
+\endhead
+\(2\times2\) matrices for the 16 binary truth functions & Known. Bricken's 1997 notes explicitly discuss XOR as binary addition, AND as multiplication, all 16 binary logic matrices, truth-value vectors, and expressions of the form \(\langle x\vert B\vert y\rangle\). Edwards, Stern, and matrix-logic traditions are older.\\
+\addlinespace
+Truth vectors and matrix logical gates & Known. Mizraji's vector logic represents classical logical connectives by matrices acting on Kronecker products of truth vectors.\\
+\addlinespace
+Quantum-flavored logical observables & Known adjacent work. Eigenlogic treats logical observables in a genuine vector/Hilbert-space style distinct from Paper-B formula-valued LMs.\\
+\addlinespace
+Formula/Lindenbaum algebra modulo logical equivalence & Standard algebraic logic.\\
+\addlinespace
+Valuation commuting with matrix expressions & Standard homomorphism preservation and already proved in Paper B for LM pairing.\\
+\addlinespace
+\(\B\otimes A\) enrichment and \(A^\Omega\) interpretation & Standard base-change / Boolean-power mathematics. The contribution is its application as the exact typed bridge between the two CM layers.\\
+\addlinespace
+Boolean-to-local-ring idempotent obstruction & Elementary ring theory; not a novelty target.\\
+\addlinespace
+Modal effects with possible iff nonzero & Established in modal quantum theory over finite fields, especially Schumacher--Westmoreland.\\
+\addlinespace
+Finite-field/XOR quantum-like programming & Established adjacent work in James--Ortiz--Sabry.\\
+\addlinespace
+Semiring-valued quantum-like process theories & Established broad area; Gogioso's framework is a direct comparison point.\\
+\addlinespace
+Possibilistic contextuality as support/global-section obstruction & Established by Abramsky--Brandenburger and follow-on sheaf-theoretic work.\\
+\addlinespace
+States/effects and categorical measurement/update & Established broader categorical foundations, including effectus theory.\\
+\addlinespace
+Exact symbolic-support theorem for the CM-derived chain-ring enrichment & No exact prior formulation located in this search. Best characterized as a potentially useful new synthesis theorem rather than a new base algebraic construction.\\
+\addlinespace
+Negative theorem that original LM pairing does not generate the 192-basis family & Appears to be a useful internal comparison theorem; mathematically elementary once the types are separated.\\
+\addlinespace
+\(B^{-1}P_iB\) update & Standard conjugated-projector/change-of-basis algebra; useful as the natural division-free update for the current modal model.\\
+\bottomrule
+\end{longtable}
+
+\section{Adversarial interpretation}
+
+The project survives an adversarial reading, but in a narrower form than a claim of derivation.
+
+\subsection{What is routine}
+\begin{itemize}
+\item valuation naturality is homomorphism preservation;
+\item matrix semantics for logic has substantial prior art;
+\item semiring/ring-valued process models and modal nonzero semantics have prior art;
+\item conjugated coordinate projectors are standard algebra.
+\end{itemize}
+
+\subsection{What is genuinely informative in the synthesis}
+\begin{itemize}
+\item the idempotent obstruction proves that the strongest direct-valuation bridge is impossible;
+\item the tensor-product scalar enrichment gives the correct universal replacement;
+\item the support predicate gives an exact formula-level representation of concrete modal possibility;
+\item the effect-family comparison identifies which sense of ``LM measurement'' does and does not extend to the 192 modal bases;
+\item the update construction shows that nonunit amplitudes do not by themselves block a division-free branch map;
+\item the zero-divisor closure counterexamples locate the remaining process-theoretic weakness precisely.
+\end{itemize}
+
+\section{Computational verification}
+
+A fresh independent checker is included as
+\begin{center}
+\texttt{tests/lm\_modal\_bridge\_checks.py}.
+\end{center}
+It uses only the Python standard library. The exact machine-readable output is included as
+\begin{center}
+\texttt{tests/lm\_modal\_bridge\_checks\_output.json}.
+\end{center}
+
+The expanded run verified:
+
+\begin{longtable}{p{0.59\textwidth}r}
+\toprule
+\textbf{Check} & \textbf{Count/result} \\
+\midrule
+\endhead
+Elements of \(A=\F_2[u]/(u^4)\) & 16\\
+Units & 8\\
+Idempotents & exactly \(0,1\)\\
+\(|\GL_2(A)|\) & 24,576\\
+Unordered reversible projective two-outcome bases & 192\\
+Projector idempotence checks & 384\\
+Projector orthogonality checks & 384\\
+Resolution-of-identity checks & 192\\
+Branch nonzero iff effect coefficient nonzero & 98,304\\
+Same-basis repeatability checks & 98,304\\
+Unit row-scaling invariance checks & 24,576\\
+Symbolic support fiber checks & 262,144\\
+Paper-B LM matrix products tested & 256\\
+Products remaining in restricted 16-LM family & 112\\
+Products leaving restricted 16-LM family & 144\\
+Nonzero-state tensor annihilation example & confirmed\\
+Unimodular preparation to nonunimodular conditional example & confirmed\\
+\bottomrule
+\end{longtable}
+
+The 262,144 symbolic-support checks exhaust all
+\[
+16^4=65,536
+\]
+symbolic \(A\)-valued scalars whose four coefficient formulas are Boolean functions of two variables,
+and all four valuations of those variables.
+
+The package also preserves the original checker and output generated during the first pass, plus
+rerun logs showing that both the original and expanded scripts execute successfully in the current
+environment.
+
+\section{Paper implications}
+
+The bridge is strong enough to deserve a substantial theory section, but the present evidence does
+not support a standalone paper whose headline claim is that Paper-B LMs derive modal quantum
+measurement.
+
+The best placement is a central section of the broader Boolean--modal synthesis paper. A strong
+narrative is:
+\[
+\text{formula LM}
+\to
+\text{Boolean-ring contraction}
+\to
+\text{valuation naturality}
+\to
+\boxed{\text{idempotent obstruction}}
+\to
+\text{\(A\)-enrichment}
+\to
+\boxed{\text{symbolic-support theorem}}
+\to
+\text{modal effects/bases}
+\to
+\boxed{\text{extra support contract}}
+\to
+\text{division-free branch update}
+\to
+\boxed{\text{tensor/update closure obstruction}}.
+\]
+
+This structure has three advantages:
+\begin{enumerate}
+\item it answers the skeptical question of why the original logical pairing has anything to do with the
+later modal measurement rule;
+\item it clearly separates generic prior art from CM-specific typing and synthesis;
+\item it uses negative theorems as part of the contribution rather than forcing an overstated positive
+unification.
+\end{enumerate}
+
+\section{Strongest defensible theorem and final answer}
+
+The single best theorem to carry forward is the support-bridge statement
+\[
+\boxed{
+v\!\left(
+\Supp\bigl(\langle E,S\rangle_{\B\otimes A}\bigr)
+\right)=1
+\iff
+\left\langle
+v_A(E),v_A(S)
+\right\rangle_A\neq0.}
+\]
+Together with its existential form,
+\[
+\boxed{
+\Supp(\langle E,S\rangle)
+\text{ satisfiable}
+\iff
+\exists v:\langle v_A(E),v_A(S)\rangle_A\neq0.}
+\]
+
+It should be stated beside the negative companion theorem
+\[
+\boxed{
+\text{No direct Boolean-ring valuation }
+\B\to\F_2[u]/(u^4)
+\text{ can generate non-Boolean amplitudes.}}
+\]
+
+The pair identifies the bridge almost exactly:
+\begin{quote}
+The formula-valued LM calculus and the later modal theory do more than merely coexist, but the modal
+theory is an enriched realization of the symbolic Boolean semantics, not a theorem forced by the
+original LM semantics alone. The correct bridge is scalar enrichment plus specialization, followed by
+an independently declared support interpretation and measurement-family choice.
+\end{quote}
+
+\appendix
+\section{Reproducibility notes}
+
+Run the expanded checker from the root of this package with
+\begin{lstlisting}[language=bash]
+python tests/lm_modal_bridge_checks.py
+\end{lstlisting}
+The output should match \texttt{tests/lm\_modal\_bridge\_checks\_output.json} modulo the environment
+string. The script contains no network calls and depends only on the Python standard library.
+
+The prior adversarial-review archive is preserved under \texttt{inputs/} and unpacked under
+\texttt{prior\_adversarial\_review/}. The package manifest records SHA-256 hashes for every included
+file.
+
+\section{Search strategy}
+
+The prior-art search used conventional mathematical translations rather than CM-specific vocabulary.
+Queries included Boolean matrix logic, matrix logic and vector logic, formula/Lindenbaum algebra,
+matrices over semirings, Boolean powers, modal quantum theory, finite-field quantum computation,
+possibilistic contextuality, effectus theory, categorical quantum mechanics, and semiring-valued
+quantum-like theories. The machine-readable search ledger is included separately in
+\texttt{research/SEARCH\_LOG.csv}.
+
+\begin{thebibliography}{99}
+
+\bibitem{Bricken1997}
+William Bricken.
+\newblock \emph{Notes on Matrix Techniques for Logic}.
+\newblock March 1997.
+\newblock \url{https://wbricken.com/pdfs/01bm/01math/03math-supporting/math-tangential/04matrix-tech.pdf}.
+
+\bibitem{Edwards1972}
+C. R. Edwards.
+\newblock The logic of Boolean matrices.
+\newblock \emph{The Computer Journal}, 15(3):247--253, 1972.
+\newblock doi:10.1093/comjnl/15.3.247.
+
+\bibitem{Stern1988}
+August Stern.
+\newblock \emph{Matrix Logic: Theory and Applications}.
+\newblock North-Holland, 1988.
+\newblock doi:10.1016/C2009-0-14445-8.
+
+\bibitem{Mizraji1992}
+Eduardo Mizraji.
+\newblock Vector logics: The matrix-vector representation of logical calculus.
+\newblock \emph{Fuzzy Sets and Systems}, 50(2):179--185, 1992.
+\newblock doi:10.1016/0165-0114(92)90216-Q.
+
+\bibitem{Mizraji2008}
+Eduardo Mizraji.
+\newblock Vector logic: A natural algebraic representation of the fundamental logical gates.
+\newblock \emph{Journal of Logic and Computation}, 18(1):97--121, 2008.
+\newblock doi:10.1093/logcom/exm057.
+
+\bibitem{ChengQi2010}
+Daizhan Cheng and Hongsheng Qi.
+\newblock A linear representation of dynamics of Boolean networks.
+\newblock \emph{IEEE Transactions on Automatic Control}, 55(10):2251--2258, 2010.
+\newblock doi:10.1109/TAC.2010.2043294.
+
+\bibitem{Cheng2011}
+Daizhan Cheng, Yin Zhao, and Xiangru Xu.
+\newblock Matrix approach to Boolean calculus.
+\newblock In \emph{Proceedings of the 50th IEEE CDC-ECC}, pages 6950--6955, 2011.
+\newblock doi:10.1109/CDC.2011.6160289.
+
+\bibitem{DuboisToffano2016}
+Francois Dubois and Zeno Toffano.
+\newblock Eigenlogic: A quantum view for multiple-valued and fuzzy systems.
+\newblock arXiv:1607.03509, 2016.
+
+\bibitem{SchumacherWestmoreland2012}
+Benjamin Schumacher and Michael D. Westmoreland.
+\newblock Modal quantum theory.
+\newblock \emph{Foundations of Physics}, 42:918--925, 2012.
+\newblock doi:10.1007/s10701-012-9650-z; arXiv:1010.2929.
+
+\bibitem{JamesOrtizSabry2011}
+Roshan P. James, Gerardo Ortiz, and Amr Sabry.
+\newblock Quantum computing over finite fields: Reversible relational programming with exclusive disjunctions.
+\newblock arXiv:1101.3764, 2011.
+
+\bibitem{AbramskyBrandenburger2011}
+Samson Abramsky and Adam Brandenburger.
+\newblock The sheaf-theoretic structure of non-locality and contextuality.
+\newblock \emph{New Journal of Physics}, 13(11):113036, 2011.
+\newblock doi:10.1088/1367-2630/13/11/113036; arXiv:1102.0264.
+
+\bibitem{ChoEtAl2015}
+Kenta Cho, Bart Jacobs, Bas Westerbaan, and Abraham Westerbaan.
+\newblock An introduction to effectus theory.
+\newblock arXiv:1512.05813, 2015.
+
+\bibitem{Gogioso2017}
+Stefano Gogioso.
+\newblock Fantastic quantum theories and where to find them.
+\newblock arXiv:1703.10576, 2017.
+
+\bibitem{PaperB}
+Brian Theory.
+\newblock \emph{Operator-Level Boolean Computation with Correspondence Matrices}.
+\newblock Unpublished manuscript supplied in the ChatGPT File Library, accessed 18 September 2026.
+
+\bibitem{ModalAddendum}
+Brian Theory.
+\newblock \emph{Pure Boolean Modal CM Addendum}.
+\newblock Research manuscript/source file \texttt{PURE\_BOOLEAN\_MODAL\_CM\_ADDENDUM.tex}, accessed 18 September 2026.
+
+\end{thebibliography}
+
+\end{document}

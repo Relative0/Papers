@@ -1,0 +1,643 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,longtable,array}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem{corollary}{Corollary}
+\newcommand{\A}{\mathcal A}
+\newcommand{\F}{\mathbb F}
+\newcommand{\xorp}{\mathbin{\oplus}}
+\newcommand{\starp}{\mathbin{\star}}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+
+\title{Pure-Boolean Modal Structures over the Correspondence-Matrix Phase Ring\\
+\large Working Addendum: Bell/GHZ Possibility, Teleportation, and Smith-Class Resources}
+\author{Research continuation based on Brian Droncheff's Correspondence Matrices}
+\date{17 September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We investigate a pure-Boolean modal state calculus over the 16-element
+Correspondence-Matrix (CM) phase ring
+$\A=\F_2[C_4]\cong\F_2[u]/(u^4)$, using XOR addition and cyclic CM
+convolution as multiplication.  No signed or complex amplitudes, square-root
+normalizations, or Born probabilities are used in the core construction.
+We give a strong possibilistic Bell contradiction and a modal GHZ
+contradiction in an embedded $\F_2$ subtheory, construct an exact
+teleportation analogue for all $16^2$ one-bit ring-valued states, and show
+that the natural nilpotent $B_\star$ Bell-like resource fails the corresponding
+universal-correction test.  We classify all two-party states under local
+$\mathrm{GL}_2(\A)$ actions by 15 Smith classes and prove that exactly five are
+separable.  Across the complete family of 192 reversible projective local
+bases, the ten nonseparable Smith classes split further: equal-valuation
+classes are strongly contextual, whereas unequal-valuation classes are
+Hardy/logically contextual but not strongly contextual; every nonzero
+separable class is possibilistically local.  Thus chain-ring valuation controls
+both nonseparability type and contextuality strength.  All positive
+quantum-like interpretations are modal and algebraic; no claim about physical
+quantum mechanics or probability is made.
+\end{abstract}
+
+\section{Scope and relation to the original CM formalism}
+
+The original CM manuscript represents Boolean operators by binary matrices,
+uses XOR-linear decomposition, rotations/transposes, the support quotient
+$A\backslash B=A\wedge\neg B$, logical measurement matrices (LMs), and tensor
+constructions.  It explicitly discusses logical measurement without
+incorporating probability densities.  The cyclic multiplication used here is
+a later extension and should not be attributed retroactively to the original
+paper.
+
+The present modal readout is an explicit additional contract: after a
+reversible local basis change, a joint outcome is called \emph{possible} iff
+its coefficient is nonzero in $\A$.  This is a support rule, not a probability
+rule and not a complete physical collapse law.
+
+\section{The CM phase ring}
+
+Let the cyclic one-feature CM basis be
+\[
+E_0=[\mathrm{AND}],\quad E_1=[\mathrm{UP}],\quad
+E_2=[\neg\mathrm{OR}],\quad E_3=[\mathrm{DOWN}],
+\]
+and define
+\[
+E_r\starp E_s=E_{r+s\bmod 4},
+\]
+extended by XOR-linearity.  Put $t=E_1$, $z=t^2=E_2$,
+$u=E_0\xorp E_1$, and
+\[
+\delta=E_0\xorp E_2=u^2,\qquad
+\Omega=E_0\xorp E_1\xorp E_2\xorp E_3=u^3.
+\]
+Then
+\[
+\A\cong\F_2[C_4]\cong\F_2[u]/(u^4),\qquad
+\delta^2=\Omega^2=0.
+\]
+Transpose induces the involution $\overline{E_1}=E_3$,
+$\overline{E_3}=E_1$, fixing $E_0,E_2$.  Matrix dagger is transpose followed
+by this involution entrywise.
+
+The ring is a finite chain ring with ideal chain
+\[
+0<(\Omega)<(\delta)<(u)<\A.
+\]
+There are eight units, precisely the odd-feature-parity elements.
+
+\section{States, separability, and measurement bases}
+
+A one-bit state is $\psi=A\ket0\xorp B\ket1$ with $A,B\in\A$.
+A two-party state is represented by a coefficient matrix
+\[
+M_\psi=\begin{pmatrix}a_{00}&a_{01}\\a_{10}&a_{11}\end{pmatrix}.
+\]
+
+\begin{definition}
+A two-party state is \emph{CM-separable} if it is a simple tensor
+$x\otimes y$ with $x,y\in\A^2$.  Otherwise it is
+\emph{CM-nonseparable}.
+\end{definition}
+
+Under local gates $U,V$ the matrix transforms as
+$M\mapsto UMV^T$.
+
+A local two-outcome modal measurement basis is represented by the two effect
+rows of an invertible matrix in $\mathrm{GL}_2(\A)$.  Since multiplication by
+a unit cannot turn a nonzero coefficient into zero or vice versa, effect rows
+may be projectivized by unit scaling for support-only readout.
+
+\begin{proposition}
+There are 192 unordered reversible projective two-outcome local bases and four
+unordered projective bases represented by intrinsic-unitary matrices.
+\end{proposition}
+
+\begin{proof}
+Reduction modulo the maximal ideal $(u)$ gives
+$\mathrm{GL}_2(\A)\to\mathrm{GL}_2(\F_2)$ with kernel of size $8^4$.
+Hence
+\[
+|\mathrm{GL}_2(\A)|=6\cdot 8^4=24576.
+\]
+Independent scaling of the two effect rows by units has size $8^2$ and
+outcome swap contributes a factor two; both actions are free on invertible
+bases.  Thus $24576/(64\cdot2)=192$.  Exhaustive enumeration gives 512
+intrinsic-unitary matrices.  Every unit $g$ satisfies
+$\bar g\starp g=E_0$, so row-unit scaling preserves unitarity, yielding
+$512/(64\cdot2)=4$ projective classes.
+\end{proof}
+
+\section{A modal Bell contradiction}
+
+Consider
+\[
+\Phi=E_0\ket{00}\xorp E_0\ket{11}.
+\]
+Use three reversible local effect bases inside the embedded $\F_2$ subtheory:
+\[
+Z=\{(1,0),(0,1)\},\quad
+X=\{(1,1),(1,0)\},\quad
+Y=\{(0,1),(1,1)\},
+\]
+where $1$ means $E_0$.  In outcome order $00,01,10,11$, the support tables
+are
+\[
+\begin{array}{c|ccc}
+ &Z&X&Y\\\hline
+Z&1001&1110&0111\\
+X&1110&0111&1001\\
+Y&0111&1001&1110
+\end{array}.
+\]
+
+\begin{theorem}
+These supports have no deterministic local hidden-variable assignment.
+\end{theorem}
+
+\begin{proof}
+Let Alice's predetermined outcomes for $Z,X,Y$ be $z,x,y$.  Contexts
+$ZZ,XY,YX$ force Bob's corresponding variables to be
+$b_Z=z$, $b_Y=x$, $b_X=y$.  Contexts $ZX,XZ,YY$ forbid outcome $11$, so
+no pair among $(z,y)$, $(x,z)$, $(y,x)$ can both be one.  Contexts
+$ZY,XX,YZ$ forbid $00$, so each of $(z,x)$, $(x,y)$, $(y,z)$ contains at
+least one one.  Thus $z,x,y$ would have to be pairwise unequal, impossible for
+three Boolean variables.
+\end{proof}
+
+All $2^6=64$ deterministic assignments were also enumerated and none is
+compatible.  This witness uses only the embedded $\F_2$ subtheory and should
+be understood as an embedding of known modal nonlocality, not as a
+nilpotent-specific effect.
+
+\section{Exact pure-CM teleportation}
+
+Let
+\[
+I=\begin{pmatrix}1&0\\0&1\end{pmatrix},\quad
+X=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+K=\begin{pmatrix}1&1\\0&1\end{pmatrix},
+\]
+with entries in $\{0,E_0\}$.  Share the support Bell resource
+$R=\ket{00}\xorp\ket{11}=\mathrm{vec}(I)$ and use the four nonseparable
+basis states
+\[
+\mathrm{vec}(I),\quad\mathrm{vec}(X),\quad
+\mathrm{vec}(K),\quad\mathrm{vec}(KX).
+\]
+The matrix $Q$ whose columns are these vectors is
+\[
+Q=\begin{pmatrix}
+1&0&1&1\\
+0&1&1&1\\
+0&1&0&1\\
+1&0&1&0
+\end{pmatrix},\qquad
+Q^{-1}=\begin{pmatrix}
+0&1&1&1\\
+1&0&1&1\\
+0&1&1&0\\
+1&0&0&1
+\end{pmatrix}.
+\]
+
+After applying $Q^{-1}$ to the sender's unknown bit and the sender's half of
+$R$, the receiver's four conditional maps are
+\[
+T_{00}=XK,\qquad T_{01}=K,\qquad T_{10}=X,\qquad T_{11}=I.
+\]
+Their corrections are respectively $KX,K,X,I$.
+
+\begin{theorem}
+For every $A,B\in\A$, every possible analyzer branch recovers
+$\psi=A\ket0\xorp B\ket1$ exactly after the corresponding local correction.
+\end{theorem}
+
+\begin{proof}
+Each $T_m$ is invertible and the receiver applies $T_m^{-1}$, hence
+$T_m^{-1}T_m\psi=\psi$.  Because an invertible linear map sends no nonzero
+vector to zero, every branch remains nonzero for nonzero input.  Exhaustive
+regression over all $16^2$ inputs and four outcomes gives 1024 exact checks.
+\end{proof}
+
+No quotient by a global unit is needed.
+
+\section{A nilpotent obstruction to the natural $B_\star$ resource}
+
+For
+\[
+H_\star=\begin{pmatrix}1&\delta\\\delta&1\end{pmatrix},\qquad
+B_\star=\mathrm{CNOT}(H_\star\otimes I),
+\]
+the natural Bell-like resource is
+\[
+\beta_\delta=\ket{00}\xorp\delta\ket{11}.
+\]
+Using $B_\star^{-1}$ as analyzer yields receiver maps
+\[
+\begin{split}
+T_{00}&=\begin{pmatrix}1&0\\0&0\end{pmatrix},\qquad
+T_{01}=\begin{pmatrix}0&\delta\\\delta&0\end{pmatrix},\\
+T_{10}&=\delta I,\qquad
+T_{11}=\begin{pmatrix}0&1\\0&0\end{pmatrix}.
+\end{split}
+\]
+All have determinant zero.
+
+\begin{proposition}
+No branch admits an $\A$-linear universal inverse correction.
+\end{proposition}
+
+\begin{proof}
+If a square matrix $T$ had a left inverse $C$, then
+$\det(C)\det(T)=1$ in the commutative ring, so $\det(T)$ would be a unit.
+Here every determinant is zero.
+\end{proof}
+
+Thus CM-nonseparability alone does not characterize teleportation resources.
+
+\section{Complete teleportation-resource theorem}
+
+Let an arbitrary shared two-party resource have coefficient matrix $M$, and
+let $W\in GL_4(\A)$ be an arbitrary reversible analyzer acting on the unknown
+input and Alice's half of the resource.  For analyzer outcome $m$, reshape row
+$m$ of $W$ into a $2\times2$ matrix $R_m$ by
+$(R_m)_{ab}=W_{m,2a+b}$.  Direct contraction gives Bob's conditional map
+\[
+T_m=M^T R_m^T,
+\]
+and therefore
+\[
+\det(T_m)=\det(M)\det(R_m).
+\]
+
+\begin{theorem}[Teleportation-resource theorem]
+A two-party CM resource supports deterministic universal exact one-bit
+teleportation in the tight linear/modal architecture of this paper if and
+only if its coefficient matrix is invertible.  Equivalently, its determinant
+is a unit.  Equivalently, its Smith class is $(0,0)$.
+\end{theorem}
+
+\begin{proof}
+If outcome $m$ admits an exact $\A$-linear correction $C_m$ for arbitrary
+input, then $C_mT_m=I$.  Hence
+$\det(C_m)\det(T_m)=1$, so $\det(T_m)$ is a unit.  Since
+$\det(T_m)=\det(M)\det(R_m)$, $\det(M)$ must be a unit.  This proves
+necessity, and in fact rules out even one universally correctable branch for
+a singular resource.
+
+For sufficiency, use the same pure-Boolean analyzer $Q^{-1}$ above.  Its four
+rows reshape to
+\[
+\begin{pmatrix}0&1\\1&1\end{pmatrix},\quad
+\begin{pmatrix}1&0\\1&1\end{pmatrix},\quad
+\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+\begin{pmatrix}1&0\\0&1\end{pmatrix},
+\]
+each with determinant $1$.  Therefore if $M$ is invertible, all four
+$T_m=M^TR_m^T$ are invertible and Bob applies $T_m^{-1}$.
+\end{proof}
+
+Exhaustive regression over all 65,536 resource matrices confirms the theorem:
+exactly 24,576 resources work, exactly the unit-determinant matrices and
+exactly Smith class $(0,0)$.  Every other Smith class contains zero universal
+exact resources.  In particular, the strongly contextual classes
+$(1,1),(2,2),(3,3)$ still fail, so strong contextuality is not sufficient for
+this teleportation task.
+
+\section{Hierarchy below universal exact teleportation}
+
+The unit-determinant theorem closes universal exact teleportation but leaves a
+finer hierarchy inside the singular Smith classes.  Write
+\[
+D_{a,b}=\operatorname{diag}(u^a,u^b),\qquad 0\le a\le b\le 4.
+\]
+
+\begin{theorem}[Exact restricted-state hierarchy]
+For the same four-outcome $\A$-linear architecture, the maximum common family
+of exactly recoverable input vectors has cardinality
+\[
+\begin{cases}
+256,&(a,b)=(0,0),\\
+16,&a=0<b,\\
+1,&a>0,
+\end{cases}
+\]
+where cardinality one means only the zero vector.  For every $(0,b)$ the
+16-state bound is attained by one free $\A$-line.
+\end{theorem}
+
+For $a=0<b$, every corrected branch has residue-field rank at most one.  The
+fixed submodule therefore has one-dimensional socle and length at most four,
+so it has at most $2^4=16$ vectors.  A reversible analyzer with reshaped rows
+\[
+\begin{pmatrix}1&0\\0&0\end{pmatrix},\quad
+\begin{pmatrix}1&1\\0&0\end{pmatrix},\quad
+\begin{pmatrix}1&0\\1&0\end{pmatrix},\quad
+\begin{pmatrix}1&0\\0&1\end{pmatrix}
+\]
+recovers every $x\ket0$ on all four outcomes.  If $a>0$, every corrected
+branch is zero modulo $(u)$; a nonzero fixed vector would generate a nonzero
+socle vector which is simultaneously fixed and annihilated, a contradiction.
+
+A singular Smith class also retains the canonical quotient
+\[
+Q_{a,b}=\A/(u^{4-a})\oplus\A/(u^{4-b}),\qquad
+|Q_{a,b}|=2^{8-a-b}.
+\]
+We define a quotient-correctable outcome by the existence of $C_m$ satisfying
+\[
+C_mD_{a,b}R_m^T=D_{a,b}.
+\]
+
+\begin{theorem}[Fixed-quotient outcome hierarchy]
+The maximum number of quotient-correctable rows inside one reversible
+four-outcome analyzer is four for $a=b<4$, two for $a<b<4$, and three for
+$a<4,b=4$.  All three bounds are attained.
+\end{theorem}
+
+For equal valuations $D_{a,a}=u^aI$, so any invertible reshaped row is
+corrected by $(R_m^T)^{-1}$ and the existing Bell analyzer succeeds on all
+four outcomes.  For $a<b<4$, the successful reductions modulo $(u)$ are the
+two invertible upper-triangular matrices over $\F_2$, whose span has dimension
+two.  For $b=4$, the successful reductions span a three-dimensional subspace.
+Since the four analyzer rows must reduce to a basis of the four-dimensional
+row space, these dimensions give sharp upper bounds.
+
+For the principal example $\beta_\delta=\ket{00}\xorp\delta\ket{11}$,
+$\delta=u^2$, hence the class is $(0,2)$.  It fails universal exact
+teleportation, but it exactly transfers one free $\A$-line and retains the
+quotient
+\[
+\A\oplus\A/(u^2),
+\]
+with 64 algebraic equivalence classes.  At most two analyzer outcomes can be
+corrected to this same fixed quotient target.
+
+\begin{theorem}[Postselection and finite-copy no activation]
+A singular resource has no postselected analyzer branch that is universally
+exactly correctable.  Product local ancillas and any finite tensor power of a
+singular resource also cannot activate universal exact one-bit teleportation
+within the $\A$-linear calculus.
+\end{theorem}
+
+The first statement follows from
+$\det(T_m)=\det(M)\det(R_m)$: a nonunit determinant factor cannot become a
+unit by postselection.  For the ancilla and multicopy statement, reduce modulo
+the maximal ideal $(u)$.  A singular $2\times2$ resource has residue rank at
+most one, and
+\[
+\operatorname{rank}(\overline{M}^{\otimes k})
+=\operatorname{rank}(\overline{M})^k\le1.
+\]
+Every branch through any product local ancillas and local linear
+pre/post-processing therefore has residue rank at most one, whereas an
+$\A$-linear left inverse onto $\A^2$ would reduce to a rank-two identity.
+
+The model has no probability rule, so ``postselected success'' here means only
+a designated possible outcome label, not a numerical success probability.
+Ordinary complex quantum theory does permit conclusive faithful teleportation
+with partially entangled resources in suitable protocols
+\cite{SonLeeKimPark2001Conclusive,RoaDelgadoFuentesGuridi2003}; the CM no-go is
+narrower and ring-theoretic, arising from nonunit/zero-divisor Smith factors.
+
+\section{Smith classification of two-party resources}
+
+Since $\A$ is a principal finite chain ring, every $2\times2$ coefficient
+matrix is locally equivalent to
+\[
+D_{a,b}=\operatorname{diag}(u^a,u^b),\qquad 0\le a\le b\le4,
+\]
+where $u^4=0$ denotes a zero diagonal entry.  Hence there are 15 local
+classes.
+
+\begin{theorem}
+A two-party state in Smith class $(a,b)$ is CM-separable if and only if
+$b=4$.
+\end{theorem}
+
+\begin{proof}
+Over a chain ring, a length-two vector can be reduced by an invertible local
+map to $(u^r,0)$.  Therefore an outer product is locally equivalent to a
+matrix with at most one nonzero Smith diagonal entry.  Conversely
+$\operatorname{diag}(u^a,0)$ is an explicit outer product.
+\end{proof}
+
+Exhaustive classification of all 65,536 coefficient matrices gives five
+separable classes and ten nonseparable classes, containing 5,266 and 60,270
+states respectively.  Explicit enumeration of all simple tensors agrees with
+the Smith criterion with zero mismatches.
+
+The support Bell state is class $(0,0)$, whereas $\beta_\delta$ is class
+$(0,2)$.  The latter is singular but nonseparable, a possibility created by
+zero divisors and absent for nonzero $2\times2$ pure-state coefficient matrices
+over a field.  This is the central ring-specific resource distinction found in
+this investigation.
+
+\section{Complete Smith-class possibilistic classification}
+
+We now use the complete 192-basis reversible projective family on each party.
+Following the standard support hierarchy, call a model \emph{strongly
+contextual} if no deterministic global assignment is compatible with all
+supports; call it \emph{logically contextual} if at least one possible local
+section has no global extension; and call it \emph{relationally local} when
+every possible section has a global extension.  The zero vector is excluded,
+since it gives empty support in every context.
+
+\begin{theorem}[Smith/contextuality trichotomy]
+For the canonical nonzero representatives
+$D_{a,b}=\operatorname{diag}(u^a,u^b)$:
+\begin{enumerate}
+\item if $a=b<4$, the support model is strongly contextual;
+\item if $a<b<4$, it is logically contextual but not strongly contextual;
+\item if $a<4$ and $b=4$, it is relationally local.
+\end{enumerate}
+These cases exhaust all nonzero two-party Smith classes.
+\end{theorem}
+
+\begin{proof}
+First, the property is invariant under local equivalence.  If
+$M'=UMV^T$, then an effect pair $e,f$ has amplitude
+\[
+eM'f^{T}=(eU)M\bigl((fV)^{T}\bigr).
+\]
+Right multiplication by invertible $U,V$ bijects the complete reversible
+basis family, while row-unit rescaling and outcome swap only relabel support
+events.
+
+For $D_{a,a}=u^a I$, with $a<4$, use the embedded-$\F_2$ bases $Z,X,Y$
+from the preceding Bell section.  Every amplitude is $u^a$ times either zero
+or $E_0$, so the support table is exactly the strong Bell table already
+proved inconsistent with every global assignment.
+
+Now let $a<b<4$, put $p=u^a$ and $c=u^{b-a}$, so
+$D_{a,b}=p\,\operatorname{diag}(1,c)$ with nonzero nonunit $c$.  Use
+\[
+R=\{(0,1),(1,0)\},\quad
+X=\{(1,0),(1,1)\},\quad
+D_c=\{(1,0),(c,1)\}.
+\]
+Their four relevant support tables, in order $00,01,10,11$, are
+\[
+RR:1001,\qquad RX:0111,\qquad D_c X:1110,\qquad D_c R:0111.
+\]
+The possible event $RR:00$ forces, through the three forbidden events,
+\[
+R_A=0\Rightarrow X_B=1\Rightarrow D_{c,A}=0\Rightarrow R_B=1,
+\]
+contradicting its seed value $R_B=0$.  Hence the model is logically
+contextual.
+
+It is not strongly contextual.  Every invertible local basis has at least one
+row whose first coordinate is a unit; otherwise the first column lies in the
+maximal ideal and the determinant is a nonunit.  Choose such a row in every
+basis on both parties.  For chosen rows $(x,y),(s,t)$, the joint amplitude is
+\[
+p(xs\xorp cyt).
+\]
+Here $xs$ is a unit and $cyt$ a nonunit; in a local ring their sum is a unit.
+Multiplication by nonzero $p$ remains nonzero, giving a deterministic global
+section across all contexts.
+
+Finally, for the separable representative $D_{a,4}=\operatorname{diag}(u^a,0)$,
+a possible event has amplitude $u^a xs\neq0$.  Keep any specified possible
+outcomes and choose a unit-first-coordinate row at every other basis.  The
+specified/unit, unit/specified, and unit/unit amplitudes all remain nonzero,
+so every possible event extends to a global section.
+\end{proof}
+
+Exhaustive support verification over all 15 canonical classes and all
+$192^2$ contexts agrees with the theorem.  There are four strong classes, six
+logical-not-strong classes, four nonzero local classes, and the degenerate zero
+class.  Using the Smith-orbit sizes, this classifies all 65,536 two-party
+states: 26,214 are strongly contextual, 34,056 are logical-not-strong, 5,265
+nonzero states are relationally local, and one is zero.  Hence every one of
+the 60,270 CM-nonseparable states is possibilistically contextual for this
+complete measurement family.
+
+\begin{corollary}
+The natural $B_\star$ state
+$\beta_\delta=\operatorname{diag}(1,\delta)$, Smith class $(0,2)$, is
+logically contextual but not strongly contextual under the complete reversible
+basis family.
+\end{corollary}
+
+Computationally, $\beta_\delta$ has 137,216 possible sections, of which
+36,864 have no global extension.  A three-setting witness uses
+$R$, $X$, and $D_\delta$ above.  This corrects the weaker intermediate
+observation that the existence of one global section merely rules out
+\emph{strong} contextuality; it does not imply possibilistic locality.
+
+\section{GHZ-like states}
+
+Consider
+\[
+G=\ket{000}\xorp\ket{111},\qquad
+G_\delta=\ket{000}\xorp\delta\ket{111}.
+\]
+The latter is generated from $\ket{000}$ by $H_\star$ on the first bit followed
+by two CNOTs controlled by that bit.
+
+\begin{proposition}
+Both states are nonseparable across every one-versus-two bipartition.
+\end{proposition}
+
+\begin{proof}
+For the first cut, suppose a factorization has first-factor coefficients $p,q$
+and second-factor coefficient $Y_{00}$ satisfying $pY_{00}=1$.  Then $p$ is a
+unit.  The vanishing $\ket{011}$ coefficient forces $pY_{11}=0$, hence
+$Y_{11}=0$.  The $\ket{111}$ coefficient would then be zero, contradicting
+that it is either $1$ or the nonzero element $\delta$.  Symmetry gives the
+other cuts.
+\end{proof}
+
+For the support state $G$, the same $Z,X,Y$ local bases yield a six-context
+strong modal contradiction.  One minimum context set has supports
+\[
+\begin{array}{c|l}
+ZZZ&\{000,111\}\\
+ZXX&\{000,001,010,011,100\}\\
+XZY&\{001,010,011,101\}\\
+XXX&\bigl\{0,1\bigr\}^{3}\setminus\{000\}\\
+YYZ&\{001,011,101,110,111\}\\
+YYY&\bigl\{0,1\bigr\}^{3}\setminus\{111\}.
+\end{array}
+\]
+From $ZZZ$, all predetermined $Z$ outcomes share a value $z$.  If $z=1$,
+$ZXX$ forces $x_B=x_C=0$ and $XZY$ forces $x_A=0$, contradicting $XXX$.
+If $z=0$, $YYZ$ forces $y_A=y_B=1$ and $XZY$ forces $y_C=1$, contradicting
+$YYY$.  All $2^9=512$ deterministic assignments were checked, and exhaustive
+subset search confirms that no subset of one through five of the 27 tested
+contexts is already inconsistent.
+
+By contrast, $G_\delta$ admits exact relational local models for both the
+embedded-$\F_2$ $Z/X/Y$ family and the complete intrinsic-unitary projective
+basis family.  This negative result is retained.
+
+\section{Further algebraic consequences}
+
+\subsection{No cloning}
+If an $\A$-linear cloner satisfies $C\ket0=\ket{00}$ and
+$C\ket1=\ket{11}$, then linearity gives
+$C(\ket0\xorp\ket1)=\ket{00}\xorp\ket{11}$, whereas exact tensor cloning
+would also contain $\ket{01}$ and $\ket{10}$.  Thus no such linear exact
+cloner exists for this three-state set.
+
+\subsection{Global unit quotient}
+For a unit $g$, $ga=0$ iff $a=0$.  Therefore global multiplication by $g$ is
+invisible under support-only readout and preserves simple-tensor
+factorization.  Exact CM-pattern readout can distinguish such multiples, so a
+global-unit quotient is semantics-dependent rather than intrinsic.
+
+\subsection{Basis permutations}
+All 24 two-bit computational-basis permutations were tested against the full
+set of separable states.  Exactly eight preserve separability universally;
+they are the permutations generated by local bit flips and party SWAP.  The
+other 16 possess explicit nonseparability witnesses.
+
+\section{Literature boundary and limitations}
+
+Modal quantum theory already supplies finite-field possibility semantics,
+Bell/no-cloning analogues, and finite-field teleportation/dense coding
+\cite{SchumacherWestmoreland2012MQT,JamesOrtizSabry2011}.  Tight ordinary
+teleportation is classified via maximally entangled bases and unitary error
+bases \cite{Werner2001Teleportation}, while categorical quantum mechanics
+abstracts teleportation to more general scalar systems
+\cite{AbramskyCoecke2004}.
+Possibilistic contextuality is naturally expressed as a global-section
+obstruction \cite{AbramskyBrandenburger2011,AbramskyHardy2012}.  Four-element
+phase groups and GHZ behavior have also been studied abstractly
+\cite{CoeckeEdwardsSpekkens2011}.  Generalized ring/semiring quantum-like
+process theories are established \cite{CoeckeEtAl2018Composition,Tull2020}.
+Moreover, truncated chain rings $\F_2[u]/(u^s)$ already occur in quantum-code
+constructions \cite{SariSiap2016,LiuLiu2017}, and finite quotient-ring
+geometries have been related to Mermin contextuality configurations
+\cite{SanigaPlanatMinarovjech2007}.
+
+Consequently, neither finite/modal quantum-like algebra nor the ring family by
+itself should be claimed as new.  The narrower distinctive target is the
+CM-derived coefficient interpretation, original CM/LM machinery, specific
+gates and involution, and the resulting Smith-valuation contextuality and
+teleportation-resource hierarchy.  The Hardy-style logical implication itself
+has established possibilistic precedent; the new target is the theorem tying
+its strength systematically to the nilpotent Smith strata of this CM-derived
+ring model.
+
+No Born rule, positive norm, physical collapse law, quantum speedup, or claim
+about nature is established here.  The tight deterministic teleportation
+resource problem is now closed by the unit-determinant/Smith-$(0,0)$ theorem.
+The restricted-state, quotient, postselection, and product-ancilla/finite-copy
+questions are now classified within the present linear architecture.  The
+strongest remaining teleportation questions require a genuinely enlarged
+calculus---for example a formal multi-round measurement/update theory or
+nonlinear operations---together with determining how much of the
+Smith/contextuality trichotomy survives under narrower gate-generated
+measurement families.
+
+\bibliographystyle{plain}
+\bibliography{../references}
+\end{document}

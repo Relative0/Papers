@@ -1,0 +1,957 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,tabularx,array,longtable}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{tikz-cd}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{newtxtext,newtxmath}
+
+\definecolor{navy}{RGB}{35,55,85}
+\definecolor{softblue}{RGB}{235,242,250}
+\definecolor{softgray}{RGB}{246,246,246}
+\definecolor{softgreen}{RGB}{237,247,240}
+\definecolor{softgold}{RGB}{251,246,232}
+\hypersetup{colorlinks=true,linkcolor=navy,citecolor=navy,urlcolor=navy}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{navy}}{\thesubsection}{0.7em}{}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\lhead{ProLT Homological Foundations}
+\rhead{Working note v0.1}
+\cfoot{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\Om}{\Omega_P}
+\newcommand{\truth}{\varsigma}
+\newcommand{\OX}{\mathcal O}
+\newcommand{\K}{\mathcal K}
+\newcommand{\VR}{\operatorname{VR}}
+\newcommand{\Int}{\operatorname{Int}}
+\newcommand{\Cl}{\operatorname{Cl}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\Cone}{\operatorname{Cone}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\xor}{\mathbin{\Updownarrow}}
+
+\newcommand{\statusS}{\textbf{[S]}}
+\newcommand{\statusA}{\textbf{[A]}}
+\newcommand{\statusC}{\textbf{[C]}}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries\color{navy} Homological Foundations for Propositional Logical Topologies}\par
+\vspace{0.35em}
+{\large Order complexes, compatibility complexes, Boolean cochains, relative homology, and refinement cones}\par
+\vspace{0.7em}
+{\normalsize Working research note v0.1 --- 23 September 2026}\par
+\vspace{0.3em}
+{\small Built from \emph{Propositional Logical Topology: Observation, Distinguishability, and Inference}, core manuscript v0.8, together with the earlier notes \emph{HomoLogical Algebra} and \emph{Logical Complexes}.}
+\end{center}
+
+\vspace{0.8em}
+\noindent\colorbox{softgold}{\parbox{0.96\textwidth}{
+\textbf{Status convention.} \statusS\ means a standard mathematical theorem/construction being invoked essentially unchanged. \statusA\ means a direct ProLT specialization, repackaging, or elementary derived result. \statusC\ means a research contribution candidate: the construction is mathematically well-defined here, but novelty is \emph{not} claimed until a dedicated literature audit has been completed. Individual ingredients below are mostly classical; the possible contribution lies in their integration, ProLT-specific invariants, algorithms, and applications.
+}}
+
+\section{Purpose and source discipline}
+
+The v0.8 ProLT manuscript starts from a finite propositional language, treats valuations as points, selects an indexed family of observable formulas, and lets their positive truth regions generate a finite topology. It proves that equality of observation signatures is topological indistinguishability, that the specialization preorder is inclusion of positive observations, that coordinatewise XOR records observation disagreement, and that observation refinement and premise update are mathematically different operations. It also explicitly defers homology while introducing an observation-side Dowker complex.
+
+The older notes contain several intuitions that can be repaired into standard algebraic-topological objects. In particular:
+\begin{enumerate}[label=(\roman*)]
+\item the old formula-level ``short exact sequence'' becomes a genuine split exact sequence only after linearization;
+\item the old XOR calculations on logical points are more naturally simplicial \emph{cochain} calculations over $\F$ than simplicial boundary calculations;
+\item the old commuting squares should be treated as commuting diagrams, not as homotopies merely because two paths give the same result;
+\item genuine homological algebra enters most naturally through chain complexes, relative homology, mapping cones, and (optionally) Stanley--Reisner modules.
+\end{enumerate}
+
+The aim of this note is to place these observations into one coherent mathematical foundation before any cognitive, decision-theoretic, or syllogistic interpretation is imposed.
+
+\section{Base ProLT data}
+
+Let $P=\{p_1,\dots,p_n\}$ be a finite set of propositional variables and
+\[
+\Om=\{0,1\}^{P}
+\]
+its set of valuations. For a formula $L$, write
+\[
+\truth(L)=\{v\in\Om:v\models L\}.
+\]
+Let
+\[
+\Phi=(\phi_i)_{i\in I}
+\]
+be a finite indexed observation family. Define
+\[
+b_i(v)=1[v\models\phi_i],\qquad
+o_\Phi(v)=(b_i(v))_{i\in I}\in\{0,1\}^{I}.
+\]
+We freely identify a Boolean vector with its support, so that $o_\Phi(v)\subseteq I$.
+
+The observation-generated ProLT is
+\[
+X_\Phi=(\Om,\tau_\Phi),\qquad
+\tau_\Phi=\operatorname{Top}\{\truth(\phi_i):i\in I\}.
+\]
+The v0.8 manuscript proves
+\[
+v\sim_\Phi w\iff o_\Phi(v)=o_\Phi(w)
+\]
+and, with its specialization convention,
+\[
+v\preceq_\Phi w\iff o_\Phi(v)\subseteq o_\Phi(w).
+\]
+Hence the Kolmogorov quotient is naturally the realized-signature poset
+\[
+P_\Phi:=o_\Phi(\Om)\subseteq 2^I,
+\]
+ordered by inclusion.
+
+\begin{definition}[State-restricted realized-signature poset]
+For $S\subseteq\Om$, define
+\[
+P_{\Phi,S}:=o_\Phi(S)\subseteq P_\Phi
+\]
+with the induced inclusion order. For a premise set $\Gamma$, write $S_\Gamma=\bigcap_{\gamma\in\Gamma}\truth(\gamma)$ and abbreviate
+\[
+P_{\Phi,\Gamma}:=P_{\Phi,S_\Gamma}.
+\]
+For a single formula $\psi$, write $P_{\Phi,\psi}:=P_{\Phi,\truth(\psi)}$.
+\end{definition}
+
+\section{Canonical ProLT homology via the order complex}
+
+\begin{definition}[Order complex]
+For a finite poset $P$, its order complex $\Delta(P)$ is the abstract simplicial complex whose $k$-simplices are strict chains
+\[
+p_0<p_1<\cdots<p_k.
+\]
+For a ProLT define
+\[
+\OX_\Phi:=\Delta(P_\Phi),\qquad
+\OX_{\Phi,S}:=\Delta(P_{\Phi,S}).
+\]
+\end{definition}
+
+\begin{theorem}[Finite-space realization of ProLT homology]\label{thm:canonical}
+\statusS/\statusA\;
+Let $X_\Phi=(\Om,\tau_\Phi)$ be a finite ProLT. Then:
+\begin{enumerate}[label=(\roman*)]
+\item the Kolmogorov quotient map $X_\Phi\to P_\Phi$ is a homotopy equivalence of finite Alexandrov spaces;
+\item the geometric realization $|\OX_\Phi|\to P_\Phi$ supplied by McCord's finite-space construction is a weak homotopy equivalence;
+\item for every coefficient ring $R$,
+\[
+H_k(X_\Phi;R)\cong H_k(P_\Phi;R)\cong H_k(\OX_\Phi;R).
+\]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+The v0.8 indistinguishability and specialization results identify the $T_0$ quotient with the finite poset $P_\Phi$ ordered by inclusion. McCord's finite-space theory identifies the topological quotient by indistinguishable points up to homotopy and gives a weak homotopy equivalence from the order complex of a finite $T_0$ space to the space itself. Weak homotopy equivalences induce singular-homology isomorphisms. See McCord~\cite{McCord1966} and Barmak~\cite{Barmak2011}.
+\end{proof}
+
+\begin{definition}[Canonical ProLT homology]
+The \emph{canonical ProLT homology} is
+\[
+H_k^{\mathrm{ProLT}}(\Phi;R):=H_k(\OX_\Phi;R).
+\]
+Unless another coefficient ring is required, the natural Boolean choice in this program is $R=\F$.
+\end{definition}
+
+\begin{remark}[Invariance]
+Because $P_\Phi$ is the $T_0$ quotient determined by $\tau_\Phi$, $H_*^{\mathrm{ProLT}}$ is a topological invariant of the ProLT itself. It is therefore conceptually different from presentation-sensitive complexes built directly from the indexed observation family.
+\end{remark}
+
+\section{Functoriality under continuous ProLT maps}
+
+\begin{theorem}[Functoriality]\label{thm:functor}
+\statusS/\statusA\;
+Let
+\[
+f:X_\Phi\longrightarrow X_\Psi
+\]
+be continuous. Then $f$ descends to a well-defined monotone map
+\[
+\bar f:P_\Phi\longrightarrow P_\Psi.
+\]
+Consequently $\bar f$ induces a simplicial map
+\[
+\Delta(\bar f):\OX_\Phi\longrightarrow\OX_\Psi,
+\]
+a chain map
+\[
+f_\#:C_*(\OX_\Phi;R)\longrightarrow C_*(\OX_\Psi;R),
+\]
+and homomorphisms
+\[
+f_*:H_k^{\mathrm{ProLT}}(\Phi;R)\longrightarrow H_k^{\mathrm{ProLT}}(\Psi;R).
+\]
+These assignments respect identities and composition.
+\end{theorem}
+
+\begin{proof}
+If $v\sim_\Phi w$, then $v$ and $w$ have identical membership in every $\Phi$-open set. For any $\Psi$-open $U$, continuity makes $f^{-1}(U)$ $\Phi$-open, so $f(v)$ and $f(w)$ have identical membership in every $\Psi$-open set. Thus $f(v)\sim_\Psi f(w)$, and $f$ descends to the quotient. The v0.8 monotonicity theorem for continuous maps gives monotonicity of $\bar f$. A monotone map sends a chain to a chain after repetitions are removed, hence defines a simplicial map. The standard simplicial chain and homology functors complete the construction.
+\end{proof}
+
+\begin{remark}[Why this matters]
+This theorem supplies a clean category-theoretic bridge
+\[
+\text{finite ProLTs}\longrightarrow\text{finite posets}\longrightarrow
+\text{simplicial complexes}\longrightarrow\text{chain complexes}\longrightarrow\text{graded modules}.
+\]
+The first arrow is the $T_0$ quotient/signature representation; the second is the order-complex functor.
+\end{remark}
+
+\section{Premise restriction and relative homology}
+
+Premise acquisition in v0.8 restricts the current possibility region rather than refining the observable vocabulary. This produces inclusions, which are exactly the setting in which relative homology is natural.
+
+\begin{proposition}[Premise subcomplex]\label{prop:premise}
+\statusA\;
+If $S'\subseteq S\subseteq\Om$, then
+\[
+P_{\Phi,S'}\subseteq P_{\Phi,S}
+\]
+and therefore
+\[
+\OX_{\Phi,S'}\subseteq\OX_{\Phi,S}
+\]
+as a full subcomplex on the surviving realized signatures.
+\end{proposition}
+
+\begin{theorem}[Relative ProLT exact sequence]\label{thm:relative}
+\statusS/\statusA\;
+For $S'\subseteq S$ there is a short exact sequence of simplicial chain complexes
+\[
+0\longrightarrow C_*(\OX_{\Phi,S'};R)
+\longrightarrow C_*(\OX_{\Phi,S};R)
+\longrightarrow C_*(\OX_{\Phi,S},\OX_{\Phi,S'};R)
+\longrightarrow0,
+\]
+and hence the long exact sequence
+\[
+\cdots\to H_k(\OX_{\Phi,S'})\to H_k(\OX_{\Phi,S})
+\to H_k(\OX_{\Phi,S},\OX_{\Phi,S'})
+\overset{\partial}{\longrightarrow}H_{k-1}(\OX_{\Phi,S'})\to\cdots.
+\]
+\end{theorem}
+
+\begin{definition}[Update-relative homology]
+For a premise set $\Gamma$, define
+\[
+U_k^\Phi(\Gamma;R)
+:=H_k(\OX_\Phi,\OX_{\Phi,\Gamma};R).
+\]
+This measures the topology of the ambient observable-state space relative to the states that remain possible after the premise update.
+\end{definition}
+
+\begin{definition}[Inference-gap homology]
+If $\Gamma\models\psi$, then $S_\Gamma\subseteq\truth(\psi)$ and hence
+\[
+\OX_{\Phi,\Gamma}\subseteq\OX_{\Phi,\psi}.
+\]
+Define
+\[
+G_k^\Phi(\Gamma\Rightarrow\psi;R)
+:=H_k(\OX_{\Phi,\psi},\OX_{\Phi,\Gamma};R).
+\]
+\statusC\; The name and its ProLT interpretation are proposed terminology, not a claim of a new relative-homology theorem.
+\end{definition}
+
+\begin{remark}
+A nonzero relative class does not mean that an inference is invalid. Classical validity remains the set inclusion $S_\Gamma\subseteq\truth(\psi)$. Relative homology describes topological structure in the \emph{difference between the two observable-state subspaces}; it is an additional invariant, not a replacement for semantic consequence.
+\end{remark}
+
+\section{Observation refinement and mapping-cone homology}
+
+Suppose $\Psi=(\psi_j)_{j\in J}$ extends $\Phi=(\phi_i)_{i\in I}$ with $I\subseteq J$ and $\psi_i=\phi_i$ on the old coordinates. Refinement does not generally give an inclusion of quotient posets, because a coarse signature can split into several finer signatures. It does, however, give a canonical forgetful map.
+
+\begin{proposition}[Refinement projection]\label{prop:refine}
+\statusA\;
+The coordinate restriction
+\[
+r_{\Psi\Phi}:P_\Psi\longrightarrow P_\Phi,
+\qquad
+r_{\Psi\Phi}(s)=s\cap I,
+\]
+is well-defined, surjective, and monotone. Hence it induces
+\[
+r_\#:C_*(\OX_\Psi;R)\longrightarrow C_*(\OX_\Phi;R).
+\]
+\end{proposition}
+
+\begin{definition}[Refinement cone]
+For coefficients in a ring $R$, define the chain mapping cone
+\[
+\mathsf D_*(\Psi/\Phi;R):=\Cone(r_\#).
+\]
+Over $\F$ one may write
+\[
+\Cone(r_\#)_n=C_n(\OX_\Phi;\F)\oplus C_{n-1}(\OX_\Psi;\F),
+\]
+with differential
+\[
+\partial(y,x)=\bigl(\partial y+r_\#x,\,\partial x\bigr),
+\]
+since the usual sign is invisible in characteristic two.
+\end{definition}
+
+\begin{definition}[Refinement-defect homology]
+\statusC\;
+Define
+\[
+D_k(\Psi/\Phi;R):=H_k(\mathsf D_*(\Psi/\Phi;R)).
+\]
+The construction is standard; the proposed interpretation as a ProLT refinement invariant is a contribution candidate.
+\end{definition}
+
+\begin{theorem}[Cone exact sequence]\label{thm:cone}
+\statusS/\statusA\;
+There is a natural long exact sequence
+\[
+\cdots\to H_k(\OX_\Psi)
+\overset{r_*}{\longrightarrow}H_k(\OX_\Phi)
+\to D_k(\Psi/\Phi)
+\to H_{k-1}(\OX_\Psi)\to\cdots.
+\]
+In particular, $D_*(\Psi/\Phi)=0$ in all degrees if and only if $r_*$ is an isomorphism in all degrees.
+\end{theorem}
+
+\begin{remark}
+This is a better homological-algebra analogue of ``what refinement adds'' than forcing the fine and coarse quotient spaces into a nonexistent inclusion. The map itself is canonical; the cone measures its failure to be a homology equivalence.
+\end{remark}
+
+\section{XOR difference as an $\F$-valued coboundary}
+
+This section gives the cleanest repair of the central calculation in \emph{Logical Complexes}.
+
+Let $K$ be any simplicial complex whose vertices are logical states represented by realized signatures in $P_\Phi$ (or valuations with their signatures). Regard
+\[
+\lambda_\Phi:V(K)\longrightarrow\F^{I},\qquad
+\lambda_\Phi(v)=o_\Phi(v)
+\]
+as an $\F^I$-valued $0$-cochain.
+
+\begin{theorem}[Boolean difference is a coboundary]\label{thm:coboundary}
+\statusS/\statusA\;
+For every oriented edge $[u,v]$ of $K$,
+\[
+(\delta\lambda_\Phi)([u,v])
+=\lambda_\Phi(v)-\lambda_\Phi(u)
+=\lambda_\Phi(v)+\lambda_\Phi(u)
+=o_\Phi(u)\xor o_\Phi(v)
+=\Delta_\Phi(u,v).
+\]
+Thus the ProLT XOR-difference field is the exact $1$-cochain
+\[
+\Delta_\Phi=\delta\lambda_\Phi.
+\]
+Consequently
+\[
+\delta\Delta_\Phi=\delta^2\lambda_\Phi=0.
+\]
+\end{theorem}
+
+\begin{corollary}[Triangle and path telescoping]
+On every triangle $[u,v,w]$,
+\[
+\Delta_\Phi(u,v)+\Delta_\Phi(v,w)+\Delta_\Phi(w,u)=0.
+\]
+Equivalently,
+\[
+\Delta_\Phi(u,v)+\Delta_\Phi(v,w)=\Delta_\Phi(u,w).
+\]
+More generally, along a path $v_0,\ldots,v_m$,
+\[
+\sum_{j=0}^{m-1}\Delta_\Phi(v_j,v_{j+1})
+=\Delta_\Phi(v_0,v_m).
+\]
+\end{corollary}
+
+This is exactly the algebraic form behind the old calculation
+\[
+(a\xor b)\xor(b\xor c)=a\xor c.
+\]
+The important correction is interpretive: it is naturally a coboundary/telescoping identity, not by itself the simplicial boundary map on vertex coordinates.
+
+\begin{proposition}[Distance as weighted norm of the coboundary]
+With positive weights $a_i$,
+\[
+d_\Phi(u,v)=\sum_{i\in I}a_i\,(\Delta_\Phi(u,v))_i.
+\]
+Thus the symmetric ProLT logical distance is the weighted Hamming norm of the $1$-coboundary $\delta\lambda_\Phi$.
+\end{proposition}
+
+\begin{remark}[Directed loss is extra structure]
+The directed distance from v0.8 uses the source mask
+\[
+d_\Phi^+(u,v)=\sum_i a_i\,b_i(u)\,(b_i(u)\xor b_i(v)).
+\]
+Therefore $d_\Phi^+$ is not determined by the ordinary linear coboundary $\Delta_\Phi$ alone. The asymmetry requires the source state.
+\end{remark}
+
+\begin{theorem}[Boolean integration criterion]\label{thm:integration}
+\statusS/\statusA\;
+Let $g\in C^1(K;\F^I)$ satisfy $\delta g=0$. There exists a global vertex potential
+\[
+\lambda\in C^0(K;\F^I)
+\]
+with
+\[
+g=\delta\lambda
+\]
+if and only if
+\[
+[g]=0\in H^1(K;\F^I).
+\]
+If $K$ is connected, such a potential is unique up to addition of one constant vector in $\F^I$ to every vertex.
+\end{theorem}
+
+\begin{proof}
+This is the defining exact-versus-closed distinction in simplicial cohomology. The uniqueness statement follows because $\delta(\lambda-\lambda')=0$ makes the difference locally constant, hence constant on each connected component.
+\end{proof}
+
+\begin{remark}[Interpretation]
+A prescribed system of local Boolean differences may be locally closed yet fail to be globally integrable. A nonzero $H^1$ class is exactly the obstruction. This general obstruction principle is standard and is closely related to local-to-global cohomological obstruction methods in other logical settings; any claim of novelty must therefore be confined to a genuinely new ProLT-specific theorem or application.
+\end{remark}
+
+\section{Simplicial chains over $\F$: the correct place for ``signs disappear''}
+
+For a simplicial complex $K$, let $C_k(K;\F)$ be the $\F$-vector space on its $k$-simplices. The boundary is
+\[
+\partial[v_0\cdots v_k]
+=\sum_{j=0}^k[v_0\cdots\widehat{v_j}\cdots v_k],
+\]
+because $-1=+1$ in $\F$.
+
+For a triangle,
+\[
+\partial[abc]=[bc]+[ac]+[ab]
+\]
+and
+\[
+\partial^2[abc]
+=(b+c)+(a+c)+(a+b)=0.
+\]
+This rigorously captures the old intuition that sign choices disappear in characteristic two. The generators being XOR-added here are \emph{simplices/chains}; the Boolean coordinate vectors attached to vertices live instead in the cochain construction of the previous section. Conflating these two levels was the main technical ambiguity in the old \emph{Logical Complexes} notes.
+
+\section{Repairing the old formula-level exact sequence}
+
+The earlier notes proposed
+\[
+0\to L_1\wedge L_2\to L_1\vee L_2\to L_1\xor L_2\to0.
+\]
+As written, formulas or truth regions are not automatically objects in an abelian category with kernels and cokernels. There is, however, a canonical finite-dimensional repair.
+
+\begin{definition}[Free Boolean linearization]
+For a finite set $S$, let $\F[S]$ denote the free $\F$-vector space with basis $\{e_s:s\in S\}$.
+\end{definition}
+
+\begin{proposition}[Overlap--exclusive split exact sequence]\label{prop:linearized}
+\statusS/\statusA\;
+Let
+\[
+A=\truth(L_1\wedge L_2),\qquad
+U=\truth(L_1\vee L_2),\qquad
+E=\truth(L_1\xor L_2).
+\]
+Then
+\[
+U=A\,\dot\cup\,E,
+\]
+and there is a canonically split short exact sequence
+\[
+0\longrightarrow\F[A]
+\overset{i}{\longrightarrow}\F[U]
+\overset{q}{\longrightarrow}\F[E]
+\longrightarrow0,
+\]
+where $i$ includes basis vectors and
+\[
+q(e_u)=
+\begin{cases}
+0,&u\in A,\\
+e_u,&u\in E.
+\end{cases}
+\]
+Hence
+\[
+\F[U]/\F[A]\cong\F[E].
+\]
+\end{proposition}
+
+\begin{remark}
+This validates the intuition ``union modulo overlap equals exclusive remainder'' after linearization. But the sequence is split, so it carries no nontrivial extension class by itself. The richer homological content begins only after attaching nontrivial chain complexes, maps, or module structures.
+\end{remark}
+
+\section{Observation compatibility and Dowker duality}
+
+The v0.8 manuscript already defines the observation-side complex
+\[
+\K_\Phi
+=\left\{J\subseteq I:
+\bigcap_{i\in J}\truth(\phi_i)\neq\varnothing\right\}.
+\]
+Its vertices are satisfiable observations and its simplices are jointly satisfiable indexed subfamilies.
+
+Define the satisfaction relation
+\[
+R_\Phi\subseteq\Om\times I,
+\qquad
+v\,R_\Phi\,i\iff v\models\phi_i.
+\]
+Then $\K_\Phi$ is one Dowker complex of $R_\Phi$. The transpose relation gives the valuation-side complex
+\[
+\K_\Phi^{\vee}
+=\left\{S\subseteq\Om:\exists i\in I\ \text{with}\ S\subseteq\truth(\phi_i)\right\}.
+\]
+
+\begin{theorem}[Dowker duality]
+\statusS/\statusA\;
+The geometric realizations $|\K_\Phi|$ and $|\K_\Phi^{\vee}|$ are homotopy equivalent. In particular,
+\[
+H_k(\K_\Phi;R)\cong H_k(\K_\Phi^{\vee};R).
+\]
+\end{theorem}
+
+\begin{theorem}[Topology/compatibility separation by tautology]\label{thm:tautology}
+\statusA\;
+Let $\Psi$ be obtained from $\Phi$ by adjoining one tautological observation $\top$.
+Then:
+\begin{enumerate}[label=(\roman*)]
+\item $X_\Psi$ and $X_\Phi$ have the same topology;
+\item $P_\Psi$ and $P_\Phi$ are order-isomorphic by $s\mapsto s\cup\{\top\}$, so $\OX_\Psi\cong\OX_\Phi$;
+\item the new coordinate is equal at every state, so the symmetric and directed signature distances are unchanged;
+\item $\K_\Psi$ is a cone with apex $\top$, hence $\widetilde H_k(\K_\Psi;R)=0$ for every $k$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+The tautology has truth region $\Om$, already open in every topology. It appends a constant $1$ coordinate to every signature, preserving inclusion and pairwise differences. For the compatibility complex, every formerly satisfiable family remains satisfiable after adjoining $\top$, so $\top$ is a cone vertex.
+\end{proof}
+
+\begin{remark}
+This theorem makes precise why $\K_\Phi$ and $\OX_\Phi$ must not be conflated. $\OX_\Phi$ captures the topology of observable information states; $\K_\Phi$ captures higher-order compatibility of the \emph{chosen presentation} of observations.
+\end{remark}
+
+\section{The Stanley--Reisner route into homological algebra}
+
+Let $k$ be a field, naturally $k=\F$ for the Boolean program, and put
+\[
+S=k[x_i:i\in I].
+\]
+For the compatibility complex $\K_\Phi$, define its Stanley--Reisner ideal
+\[
+I_\Phi
+:=I_{\K_\Phi}
+=\left\langle
+\prod_{i\in J}x_i:
+J\notin\K_\Phi
+\right\rangle,
+\]
+where it is enough to use inclusion-minimal nonfaces.
+
+\begin{proposition}[Minimal inconsistency generators]\label{prop:SR}
+\statusS/\statusA\;
+The minimal squarefree monomial generators of $I_\Phi$ are in bijection with inclusion-minimal jointly unsatisfiable indexed subfamilies of $\Phi$.
+\end{proposition}
+
+\begin{proof}
+By definition, $J$ is a face of $\K_\Phi$ exactly when the formulas indexed by $J$ are jointly satisfiable. Minimal nonfaces are therefore exactly minimally unsatisfiable indexed subfamilies, and the Stanley--Reisner correspondence turns them into minimal squarefree monomial generators.
+\end{proof}
+
+The quotient
+\[
+k[\K_\Phi]:=S/I_\Phi
+\]
+is the Stanley--Reisner ring. Standard formulas, notably Hochster's formula, relate its multigraded Betti numbers and local algebraic invariants to reduced (co)homology of induced subcomplexes. This gives a direct route from logical incompatibility data to free resolutions, syzygies, Tor, and commutative homological algebra.
+
+\begin{remark}[Novelty caution]
+\statusC\; The ProLT-specific use of this route may be productive, but ``Boolean logic $\leftrightarrow$ simplicial topology'' is not unexplored territory. Boolean formula spaces, hypergraph complexes, and topological approaches to satisfiability already exist in the literature, for example Conant--Thistlethwaite~\cite{Conant2010}. Any publication claim here should be based on a concrete new invariant, theorem, algorithm, or application rather than the existence of the Stanley--Reisner encoding itself.
+\end{remark}
+
+\section{Metric complexes and persistence}
+
+The canonical order-complex homology uses only the ProLT topology. The symmetric logical distance from v0.8 supplies a different, presentation-sensitive geometry.
+
+\begin{definition}[Logical Rips complex]
+For $r\ge0$ and $S\subseteq\Om$, define the Vietoris--Rips complex
+\[
+\VR_r(S,d_\Phi)
+\]
+to have vertex set $S$ and a simplex on every finite $\sigma\subseteq S$ satisfying
+\[
+d_\Phi(u,v)\le r\qquad\text{for all }u,v\in\sigma.
+\]
+\end{definition}
+
+\begin{proposition}[Refinement anti-monotonicity]\label{prop:ripsref}
+\statusA\;
+Suppose $\Psi$ extends $\Phi$ and retains the old positive weights. Then v0.8 gives
+\[
+d_\Psi(u,v)\ge d_\Phi(u,v)
+\qquad(u,v\in\Om).
+\]
+Therefore, for every $r$ and $S\subseteq\Om$,
+\[
+\VR_r(S,d_\Psi)\subseteq\VR_r(S,d_\Phi).
+\]
+\end{proposition}
+
+\begin{proof}
+Every edge satisfying the stricter inequality $d_\Psi\le r$ also satisfies $d_\Phi\le r$. A Vietoris--Rips simplex is determined by all of its pairwise edges.
+\end{proof}
+
+\begin{theorem}[Monotone evidence-update filtration]\label{thm:filtration}
+\statusA/\statusC\;
+Let
+\[
+\Phi_0\subseteq\Phi_1\subseteq\cdots\subseteq\Phi_T
+\]
+be successive observation refinements with retained old weights, and let
+\[
+S_0\supseteq S_1\supseteq\cdots\supseteq S_T
+\]
+be successive premise restrictions. For every fixed scale $r$,
+\[
+\VR_r(S_T,d_{\Phi_T})
+\subseteq\cdots\subseteq
+\VR_r(S_1,d_{\Phi_1})
+\subseteq
+\VR_r(S_0,d_{\Phi_0}).
+\]
+Thus a monotone sequence of added observations and accumulated premises gives an ordinary nested filtration after reversing the time index. Zigzag persistence is required only if the process also permits nonmonotone operations such as removing observations, retracting premises, or otherwise expanding and contracting the complex in alternating directions.
+\end{theorem}
+
+\begin{remark}
+The fixed-scale filtration above is not a topological invariant of $\tau_\Phi$: it depends on the chosen observation coordinates and weights. That is a feature if the goal is to model observational geometry, but it must be stated explicitly.
+\end{remark}
+
+\section{Worked examples}
+
+All homology computations in this section use coefficients in $\F$.
+
+\subsection{Example A: $\Phi=(X,Y)$ and the canonical order complex}
+
+Use the four truth-pattern cells
+\[
+A=X\wedge\neg Y,\quad B=X\wedge Y,\quad
+C=\neg X\wedge Y,\quad D=\neg X\wedge\neg Y.
+\]
+The signatures are
+\[
+o(A)=\{X\},\quad o(B)=\{X,Y\},\quad
+o(C)=\{Y\},\quad o(D)=\varnothing.
+\]
+Hence
+\[
+D<A<B,\qquad D<C<B.
+\]
+The order complex has maximal simplices
+\[
+[D,A,B],\qquad[D,C,B].
+\]
+It is two filled triangles glued along the edge $[D,B]$, hence contractible.
+
+For an explicit chain calculation,
+\[
+\dim C_2=2,\quad\dim C_1=5,\quad\dim C_0=4.
+\]
+The two triangle boundaries are independent, so $\rank\partial_2=2$. The $1$-skeleton is connected, hence $\rank\partial_1=3$. Therefore
+\[
+H_0(\OX_\Phi)\cong\F,
+\qquad H_1(\OX_\Phi)=0,
+\qquad H_2(\OX_\Phi)=0.
+\]
+
+\subsection{Example B: compatibility homology differs from ProLT homology}
+
+Take
+\[
+\Phi=(X,Y,\neg(X\wedge Y)).
+\]
+The realized signatures are
+\[
+\begin{array}{c|c}
+A&\{1,3\}\\
+B&\{1,2\}\\
+C&\{2,3\}\\
+D&\{3\}.
+\end{array}
+\]
+The only nontrivial comparabilities among distinct points are
+\[
+D<A,\qquad D<C.
+\]
+Thus $\OX_\Phi$ is the path $A-D-C$ together with the isolated vertex $B$, so
+\[
+H_0(\OX_\Phi)\cong\F^2,
+\qquad H_k(\OX_\Phi)=0\quad(k\ge1).
+\]
+
+On the other hand, every pair among
+\[
+X,\quad Y,\quad\neg(X\wedge Y)
+\]
+is jointly satisfiable, while all three together are not. Hence $\K_\Phi$ is the boundary of a $2$-simplex:
+\[
+\K_\Phi\simeq S^1.
+\]
+Therefore
+\[
+H_0(\K_\Phi)\cong\F,
+\qquad H_1(\K_\Phi)\cong\F.
+\]
+The two homology theories are doing different jobs, exactly as intended.
+
+For the Stanley--Reisner encoding, the unique minimal nonface is $\{1,2,3\}$, so
+\[
+I_\Phi=(x_1x_2x_3).
+\]
+The unique first syzygetic/topological event reflected by Hochster's formula is the $1$-cycle of the triangle boundary.
+
+\subsection{Example C: premise restriction creates a relative $1$-class}
+
+Return to $\Phi=(X,Y)$ and impose the premise
+\[
+\gamma=X\xor Y.
+\]
+Only $A$ and $C$ remain. Hence
+\[
+\OX_{\Phi,\gamma}=\{A,C\}
+\]
+is two isolated vertices, while $\OX_\Phi$ is contractible. The long exact sequence of the pair gives
+\[
+H_1(\OX_\Phi,\OX_{\Phi,\gamma})\cong\F,
+\qquad
+H_0(\OX_\Phi,\OX_{\Phi,\gamma})=0.
+\]
+Geometrically, the relative $1$-class records that the two surviving premise-compatible states are connected in the ambient observation complex only through states removed by the premise. This is a useful interpretation, but not a replacement for the ordinary semantics of the premise.
+
+\subsection{Example D: a refinement cone detects a split}
+
+Let
+\[
+\Phi=(X),\qquad\Psi=(X,\neg X)
+\]
+on the two valuations of one variable. Then
+\[
+P_\Phi=\{\varnothing,\{X\}\}
+\]
+is a two-element chain, so $\OX_\Phi$ is one edge and is contractible. In contrast,
+\[
+P_\Psi=\{\{X\},\{\neg X\}\}
+\]
+consists of two incomparable vertices, so
+\[
+H_0(\OX_\Psi)\cong\F^2.
+\]
+The forgetful map sends the two fine states to the two endpoints of the coarse edge. On $H_0$ it has rank one and one-dimensional kernel. The cone exact sequence therefore gives
+\[
+D_1(\Psi/\Phi;\F)\cong\F,
+\qquad D_0(\Psi/\Phi;\F)=0.
+\]
+Thus the refinement cone detects the splitting of one coarse connected information structure into two disconnected refined outcomes.
+
+\subsection{Example E: a nonintegrable local Boolean difference on a Rips cycle}
+
+For $\Phi=(X,Y)$ with unit weights, the four signatures form the Boolean square. At Rips scale $r=1$, the complex on the four realized signatures has exactly the Hamming-distance-one edges, hence is a $4$-cycle:
+\[
+H^1(\VR_1(P_\Phi,d_\Phi);\F)\cong\F.
+\]
+The actual signature difference field $\Delta_\Phi=\delta\lambda_\Phi$ is exact and therefore has zero sum around the cycle. Now define a hypothetical scalar edge field $g$ that is $1$ on exactly one edge and $0$ on the other three. There are no $2$-simplices, so $\delta g=0$ automatically, but the cycle sum is $1$; hence
+\[
+[g]\neq0\in H^1
+\]
+and no global Boolean vertex potential can satisfy $g=\delta\lambda$. This is the simplest explicit local-to-global obstruction model for the proposed Boolean-difference calculus.
+
+\section{What is standard, what is adapted, and what may be worth pursuing}
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}p{0.57\textwidth}}
+\toprule
+Construction/result & Status & Assessment \\
+\midrule
+\endfirsthead
+\toprule
+Construction/result & Status & Assessment \\
+\midrule
+\endhead
+Finite-space/order-complex homology & \statusS & McCord/Barmak finite-space topology. Not a novelty claim. \\
+Canonical $H_*^{\mathrm{ProLT}}$ & \statusA & Natural specialization of the standard finite-space construction to the v0.8 signature poset. Useful because it is an invariant of the ProLT topology. \\
+Functoriality of continuous maps & \statusA & Standard poset/simplicial functoriality applied to ProLT continuity. \\
+Premise relative homology & \statusA & Standard relative homology applied to v0.8 premise restriction. The interpretation and derived examples may be useful. \\
+Inference-gap groups $G_k^\Phi$ & \statusC & Definition is sound; research value depends on finding nontrivial theorems or applications. \\
+Refinement cone $D_k(\Psi/\Phi)$ & \statusC & Mapping cones are standard. ProLT-specific refinement maps make this a promising structural invariant; literature audit required. \\
+XOR difference $=\delta$ signature & \statusA & Elementary $\F$ cohomology. Strong conceptual repair of the old notes, but unlikely novel as an abstract theorem. \\
+$H^1$ Boolean integration obstruction & \statusA/\statusC & The obstruction principle is standard; novelty could only lie in a new ProLT-specific model/theorem/application. Related local-to-global cohomology is well established. \\
+Linearized overlap/exclusive exact sequence & \statusA & Corrects the old formula-level exactness. Canonically split, so algebraically elementary. \\
+Dowker compatibility complex & \statusS/\statusA & Already correctly anticipated in v0.8; standard relation topology. \\
+Topology/compatibility tautology separation & \statusA & A useful explicit theorem showing that the two homology theories have different invariance targets. \\
+Stanley--Reisner inconsistency ideal & \statusA/\statusC & Standard face-ring machinery. Potentially useful for minimal inconsistency and syzygies, but overlaps broad SAT/hypergraph topology literature. \\
+Rips complexes from $d_\Phi$ & \statusA & Standard topological data analysis applied to the ProLT signature metric. Presentation/weight sensitive by design. \\
+Monotone evidence-update Rips filtration & \statusA/\statusC & Elementary consequence of v0.8 refinement monotonicity plus premise restriction. Potentially useful for an evolving-state theory and computational experiments. \\
+\bottomrule
+\end{longtable}
+
+\section{A theorem-and-computation program for the next stage}
+
+The following sequence would turn the present foundation into a stronger research paper rather than a catalogue of standard constructions.
+
+\begin{enumerate}[label=\textbf{P\arabic*.},leftmargin=2.6em]
+\item \textbf{Canonical topology layer.} Implement $P_\Phi$, $\OX_\Phi$, Betti numbers, Euler characteristic, connected components, and induced maps under continuous/monotone transformations. Verify that different observation presentations generating the same ProLT give order-isomorphic $T_0$ quotients.
+
+\item \textbf{Refinement theory.} Classify when the forgetful refinement map $r_{\Psi\Phi}$ is a homotopy equivalence, a homology equivalence, or neither. Test fiber criteria from finite-poset topology (Quillen/McCord/Barmak style) to obtain verifiable sufficient conditions. This is one of the best theorem targets.
+
+\item \textbf{Relative update theory.} Study $U_k^\Phi(\Gamma)$ and $G_k^\Phi(\Gamma\Rightarrow\psi)$ under premise accumulation. Identify logical conditions forcing vanishing/nonvanishing and determine whether these groups distinguish premise sets that have the same classical conclusion.
+
+\item \textbf{Boolean cochain layer.} Treat observed edge differences as $\F^I$-valued $1$-cochains. Characterize integrability on graphs and higher-dimensional complexes, and compare exactness with the actual signature map. If noisy/incomplete local differences are later introduced, replace exact equality by nearest-cocycle/nearest-coboundary optimization.
+
+\item \textbf{Compatibility algebra.} Compute $\K_\Phi$, minimal nonfaces, $I_\Phi$, Betti tables, and induced-subcomplex homology for families of logically structured observation sets. Determine which algebraic invariants add information beyond the list of minimal unsatisfiable subsets.
+
+\item \textbf{Metric/persistence layer.} For fixed $\Phi$, study the barcode of $r\mapsto\VR_r(\Om,d_\Phi)$. For evolving $\Phi_t,S_t$, exploit Theorem~\ref{thm:filtration}. Use ordinary persistence for monotone updates and reserve zigzag persistence for retractions/removals.
+
+\item \textbf{Cross-layer comparison.} Search for inequalities or comparison theorems connecting (a) canonical order-complex homology, (b) compatibility/Dowker homology, and (c) metric/Rips persistence. A theorem linking two of these layers under explicit conditions would be substantially more interesting than merely defining them separately.
+\end{enumerate}
+
+\section{Deferred path toward an evolving ``mental space''}
+
+The present note intentionally stops before identifying these objects with cognition or decisions. A mathematically disciplined later construction could, however, use the following hierarchy:
+\[
+\begin{aligned}
+\text{valuation states}
+&\longrightarrow\text{observation signatures}
+\longrightarrow\text{finite information poset}\\
+&\longrightarrow\text{simplicial/metric complexes}
+\longrightarrow\text{chain/cochain data}\\
+&\longrightarrow\text{time-indexed diagrams}.
+\end{aligned}
+\]
+A future state at time $t$ might consist of $(S_t,\Phi_t)$ together with local transition/cochain data. Accumulated premises shrink $S_t$; added observations refine $\Phi_t$; continuous/monotone maps transport information; relative groups measure restrictions; refinement cones compare observational resolutions; and cohomology detects obstructions to integrating local logical differences into a global state labeling.
+
+Only after this structural layer is validated should one decide whether ``decision states,'' syllogistic transitions, or continuous-to-discrete decision maps deserve a formal interpretation. The algebraic topology does not require such an interpretation, which is an advantage: the mathematics can stand independently and then support applications if they prove useful.
+
+\section{Immediate conclusions}
+
+The mathematically strongest salvage from the older notes is not the literal formula-level homology originally proposed. It is the following package:
+\[
+\boxed{
+X_\Phi
+\longrightarrow P_\Phi
+\longrightarrow\OX_\Phi
+\longrightarrow C_*(\OX_\Phi;\F)
+\longrightarrow H_*^{\mathrm{ProLT}}(\Phi;\F)
+}
+\]
+for topology-invariant structure,
+\[
+\boxed{
+\Phi\longrightarrow\K_\Phi\longrightarrow \F[\K_\Phi]
+}
+\]
+for presentation-sensitive compatibility and commutative algebra, and
+\[
+\boxed{
+\lambda_\Phi=o_\Phi,
+\qquad
+\Delta_\Phi=\delta\lambda_\Phi,
+\qquad
+[g]\in H^1\ \text{as a global-integration obstruction}
+}
+\]
+for Boolean difference cohomology.
+
+Premise restriction then supplies genuine relative homology, while observation refinement supplies genuine chain maps and mapping cones. These are technically standard constructions, but together they provide a coherent homological foundation on which stronger ProLT-specific theorems can now be sought.
+
+\appendix
+\section{Computational checks used for this note}
+
+The worked examples were independently checked over $\F$ by explicit boundary matrices. The computed Betti ranks were:
+\[
+\begin{array}{c|ccc}
+\text{complex} & \beta_0&\beta_1&\beta_2\\\hline
+\OX_{(X,Y)} &1&0&0\\
+\OX_{(X,Y,\neg(X\wedge Y))}&2&0&0\\
+\K_{(X,Y,\neg(X\wedge Y))}&1&1&0\\
+\OX_{(X,Y),\,X\xor Y}&2&0&0\\
+\VR_1(P_{(X,Y)},d)&1&1&0.
+\end{array}
+\]
+For the refinement example $(X,\neg X)\to(X)$, the mapping cone has
+\[
+H_1\cong\F,\qquad H_0=0.
+\]
+A compact verification script accompanies the source distribution.
+
+\begin{thebibliography}{99}
+\bibitem{McCord1966}
+M. C. McCord,
+``Singular homology groups and homotopy groups of finite topological spaces,''
+\emph{Duke Mathematical Journal} 33 (1966), 465--474.
+
+\bibitem{Barmak2011}
+J. A. Barmak,
+\emph{Algebraic Topology of Finite Topological Spaces and Applications},
+Lecture Notes in Mathematics 2032, Springer, 2011.
+
+\bibitem{Dowker1952}
+C. H. Dowker,
+``Homology groups of relations,''
+\emph{Annals of Mathematics} 56 (1952), 84--95.
+
+\bibitem{Hatcher2002}
+A. Hatcher,
+\emph{Algebraic Topology}, Cambridge University Press, 2002.
+
+\bibitem{Weibel1994}
+C. A. Weibel,
+\emph{An Introduction to Homological Algebra}, Cambridge University Press, 1994.
+
+\bibitem{Stanley1996}
+R. P. Stanley,
+\emph{Combinatorics and Commutative Algebra}, 2nd ed., Birkh\"auser, 1996.
+
+\bibitem{Conant2010}
+J. Conant and O. Thistlethwaite,
+``Boolean formulae, hypergraphs and combinatorial topology,''
+\emph{Topology and its Applications} 157 (2010), 2449--2461.
+
+\bibitem{CarlssonDeSilva2010}
+G. Carlsson and V. de Silva,
+``Zigzag persistence,''
+\emph{Foundations of Computational Mathematics} 10 (2010), 367--405.
+
+\bibitem{AbramskyMansfieldBarbosa2012}
+S. Abramsky, S. Mansfield, and R. S. Barbosa,
+``The cohomology of non-locality and contextuality,''
+in \emph{Proceedings of QPL 2011}, EPTCS 95 (2012), 1--14.
+
+\bibitem{Theory2026}
+B. Theory,
+\emph{Propositional Logical Topology: Observation, Distinguishability, and Inference},
+core manuscript v0.8, September 2026, unpublished.
+
+\bibitem{DroncheffNotes}
+B. Droncheff,
+\emph{HomoLogical Algebra} and \emph{Logical Complexes}, unpublished working notes supplied with the present project.
+\end{thebibliography}
+
+\end{document}
