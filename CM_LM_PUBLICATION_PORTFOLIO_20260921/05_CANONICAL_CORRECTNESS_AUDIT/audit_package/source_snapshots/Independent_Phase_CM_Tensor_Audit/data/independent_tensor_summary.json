@@ -1,0 +1,179 @@
+{
+  "model": {
+    "local_logical_dimension": 2,
+    "local_phase_dimension": 4,
+    "local_boolean_vector_dimension": 8,
+    "two_party_dimension": 64,
+    "three_party_dimension": 512,
+    "composition_rule": "ordinary Boolean Kronecker tensor across parties; AND on routed bits and XOR on converging routes",
+    "shared_phase_compression": false
+  },
+  "bell": {
+    "choi_lift_global_assignments_ZXY": 0,
+    "anchor_lift_global_assignments_ZXY": 0,
+    "all_64_deterministic_assignments_checked": true,
+    "tables_match_shared_register_embedded_ZXY": true
+  },
+  "contextuality": {
+    "measurement_family": "all 192 projective reversible P-compatible local bases per party",
+    "not_claimed_complete_over": "all GL(8,2) local analyzers in the independent-register model",
+    "strong_classes": 4,
+    "logical_not_strong_classes": 6,
+    "local_nonzero_classes": 4,
+    "state_counts": {
+      "strong": 26214,
+      "logical_not_strong": 34056,
+      "local_nonzero": 5265,
+      "zero": 1
+    },
+    "aggregate_classification_and_coverage_counts_match_shared_model": true,
+    "individual_context_tables_are_not_identical_for_all_classes": true
+  },
+  "ghz": {
+    "literal_full_local_GHZ_ZXY": {
+      "global_assignments": 0,
+      "possible_sections": 112,
+      "extendable_possible_sections": 0,
+      "uncovered_possible_sections": 112
+    },
+    "minimum_unsat_context_count": 6,
+    "minimum_unsat_contexts": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        2
+      ],
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        2,
+        2,
+        0
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "literal_full_local_GHZ_4_orthogonal_bases": {
+      "global_assignments": 1024,
+      "possible_sections": 470,
+      "extendable_possible_sections": 470,
+      "uncovered_possible_sections": 0
+    },
+    "weighted_N2_leg_variant_ZXY": {
+      "global_assignments": 16,
+      "possible_sections": 120,
+      "extendable_possible_sections": 120,
+      "uncovered_possible_sections": 0
+    },
+    "weighted_N2_leg_variant_4_orthogonal_bases": {
+      "global_assignments": 291,
+      "possible_sections": 418,
+      "extendable_possible_sections": 390,
+      "uncovered_possible_sections": 28
+    },
+    "weighted_variant_warning": "There is no unique canonical three-party Choi lift of a single shared phase operator; this leg-weighted construction is exploratory only."
+  },
+  "teleportation": {
+    "literal_local_dimension": 8,
+    "complete_reversible_Bell_outcomes": 64,
+    "analyzer_rank64": 64,
+    "analyzer_is_factorized_as": "4 invertible logical effects x 16 invertible phase effects",
+    "phase_effect_basis_generated_by_P_and_one_XOR_shear": true,
+    "phase_generator_group_size": 20160,
+    "exhaustive_exact_recoveries": 16384,
+    "all_256_inputs_x_64_outcomes_exact": true,
+    "full_rank_P_block_resource_count_of_65536": 24576,
+    "resource_rank_histogram": {
+      "0": 1,
+      "1": 9,
+      "2": 78,
+      "3": 648,
+      "4": 5280,
+      "5": 5760,
+      "6": 10752,
+      "7": 18432,
+      "8": 24576
+    },
+    "branch_rank_equals_resource_rank": true,
+    "naive_old_4_logical_outcomes": [
+      {
+        "outcome": 0,
+        "global_branch_rank": 8,
+        "nonzero_residual_phase_blocks": 16,
+        "distinct_nonzero_bob_maps": 16,
+        "nonzero_bob_map_ranks": [
+          2
+        ],
+        "factorizes_as_fixed_alice_residual_times_one_bob_map": false
+      },
+      {
+        "outcome": 1,
+        "global_branch_rank": 8,
+        "nonzero_residual_phase_blocks": 16,
+        "distinct_nonzero_bob_maps": 16,
+        "nonzero_bob_map_ranks": [
+          2
+        ],
+        "factorizes_as_fixed_alice_residual_times_one_bob_map": false
+      },
+      {
+        "outcome": 2,
+        "global_branch_rank": 8,
+        "nonzero_residual_phase_blocks": 16,
+        "distinct_nonzero_bob_maps": 16,
+        "nonzero_bob_map_ranks": [
+          2
+        ],
+        "factorizes_as_fixed_alice_residual_times_one_bob_map": false
+      },
+      {
+        "outcome": 3,
+        "global_branch_rank": 8,
+        "nonzero_residual_phase_blocks": 16,
+        "distinct_nonzero_bob_maps": 16,
+        "nonzero_bob_map_ranks": [
+          2
+        ],
+        "factorizes_as_fixed_alice_residual_times_one_bob_map": false
+      }
+    ],
+    "four_outcome_failure_interpretation": "With independent phase registers, the logical-only analyzer leaves 16 distinct Alice phase-pair residual sectors; Bob does not hold the full arbitrary 8-bit state after only the 4 logical outcomes.",
+    "64_outcome_interpretation": "A further complete 16-outcome phase Bell analysis resolves those phase degrees, giving 4x16=64 complete outcomes.",
+    "orthogonal_complete_effect_basis_no_go": {
+      "dimension": 8,
+      "matrix_space_dimension": 64,
+      "orthogonal_flattened_vectors_lie_in_even_weight_hyperplane": true,
+      "hyperplane_dimension": 63,
+      "therefore_no_full_orthogonal_effect_basis": true
+    },
+    "O4_count": 48,
+    "O4_flat_span_dimension": 10
+  },
+  "headline": {
+    "bell_survives_literal_tensor": true,
+    "support_GHZ_survives_literal_tensor": true,
+    "contextuality_hierarchy_aggregate_survives_on_choi_lift_192_P_compatible_bases": true,
+    "old_compact_4_outcome_universal_teleportation_survives": false,
+    "universal_exact_teleportation_survives_with_full_independent_register_Bell_analysis": true,
+    "full_literal_tensor_outcomes": 64,
+    "shared_register_outcomes": 4,
+    "universal_resource_criterion_full_rank8_survives": true
+  },
+  "elapsed_seconds": 32.82809925079346
+}

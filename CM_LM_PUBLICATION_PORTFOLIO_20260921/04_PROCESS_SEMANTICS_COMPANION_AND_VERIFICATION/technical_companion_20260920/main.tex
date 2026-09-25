@@ -1,0 +1,421 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array,tabularx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+
+\definecolor{companionblue}{RGB}{31,78,121}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=companionblue,
+  citecolor=companionblue,
+  urlcolor=companionblue,
+  pdftitle={Process Closure and Restricted Conversion in a Chain-Ring Modal Model},
+  pdfsubject={Technical companion to the CM/LM publication project},
+  pdfkeywords={modal quantum theory, finite chain rings, restricted conversion, Smith form, process theory}
+}
+\setlength{\emergencystretch}{2em}
+\setlist{nosep,leftmargin=*}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\A}{A}
+\newcommand{\B}{B}
+\newcommand{\soc}{\operatorname{soc}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\Span}{\operatorname{span}}
+\newcommand{\Mat}{\operatorname{Mat}}
+\newcommand{\GL}{\operatorname{GL}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\diag}{\operatorname{diag}}
+
+\title{\textbf{Process Closure and Restricted Conversion\\in a Chain-Ring Modal Model}\\[0.4em]
+\large Technical companion to the CM/LM publication project}
+\author{Internal research companion\thanks{Prepared for mathematical review within the CM/LM publication project. Author metadata and publication status are not assigned.}}
+\date{20 September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Let $A=\F[u]/(u^4)$. Declaring every nonzero $A$-amplitude possible is incompatible with independently composed events, since $u^3u=0$. Restricting deterministic states to primitive vectors does not repair selective conditioning. This companion separates the resulting static support model from a closed process theory. It gives a field-modal completion, a Frobenius realization of the original bipartite support tables by coarse binary effects, and exact restricted conversion results for the marked $A$-linear subtheory. The one-copy filter preorder is componentwise order on padded Smith exponents. For collective filters retaining all phase registers, extraction of a free target is possible exactly when the residue matrix has sufficient rank. This criterion is elementary local-ring algebra and is not presented as a new distillation principle. If resolved coefficient measurements are allowed before phase disposal, an explicit two-copy protocol produces a free single-register target; forgetting the outcomes instead produces a mixed modal state. The comparison is technically useful, but current priority evidence supports a technical companion rather than a separate fourth research paper.
+\end{abstract}
+
+\noindent\textbf{Status.}
+All universal statements below have written proofs. Exhaustive computations are corroboration over stated finite universes, not substitutes for those proofs. The document has not received independent human refereeing or proof-assistant certification. It asserts no Born rule, physical implementation, algorithmic speedup, or matched-contract communication advantage.
+
+\section{Question, scope, and contribution}
+
+The chain-ring model used in the CM/LM project associates bipartite resources with matrices over
+\[
+  A=\F[u]/(u^4).
+\]
+Its static support tables and Smith-type resource labels are mathematically well defined. The difficulty is operational: if nonzero amplitudes are interpreted as possible events and independent events multiply, then two locally possible nilpotent events can have an impossible joint event. A process theory must also survive selective measurements, discarded outcomes, references, and classical communication.
+
+Field-modal theories already supply generalized states, effects, conditioning, and mixtures \cite{SW10,SW12}. Module types over finite chain rings are classical \cite{BHKW}; matrix factorization comparison and its stabilized variants also have established algebraic antecedents \cite{APGPS,AntoineRing,HungLi}. Accordingly, the contribution claimed here is a careful operational comparison and boundary analysis:
+
+\begin{enumerate}
+  \item a concise obstruction to faithful nonzero-support independence and to primitive-only repair;
+  \item a closed literal binary-modal contract and an exact realization of the declared ring support tables;
+  \item the linear normalizer of the marked $A$-operation algebra and the associated coarse measurement family;
+  \item exact one-copy conversion under $A$-linear filters, with its relation to established algebraic comparison orders;
+  \item an exact retained-phase free-target criterion and a resolved-disposal activation example.
+\end{enumerate}
+
+These results do not identify the ring model with its binary realization as tensor theories. The original CM matrices, $A$-modules, literal binary systems, full binary gates, coarse ring effects, and physical quantum measurements remain distinct mathematical objects.
+
+\section{Why faithful nonzero support does not close}
+
+Write $0$ for an impossible scalar event. Suppose tensoring scalar events agrees with multiplication in $A$.
+
+\begin{theorem}[Independent-success obstruction]\label{thm:obstruction}
+There is no Boolean possibility predicate $p:A\to\{0,1\}$ such that $p(0)=0$, every nonzero scalar has value one, and $p(ab)=p(a)p(b)$.
+\end{theorem}
+
+\begin{proof}
+Both $u^3$ and $u$ are nonzero, while $u^3u=u^4=0$. Multiplicativity would give
+$0=p(0)=p(u^3u)=p(u^3)p(u)=1$.
+\end{proof}
+
+A vector in $A^n$ is \emph{primitive} when its coordinates generate the unit ideal. Primitive vectors close under invertible $A$-linear maps and balanced tensor products. That observation alone does not produce a process theory.
+
+\begin{proposition}[Primitive states fail after selection]\label{prop:primitive}
+Primitive preparations with the original nonzero-amplitude outcome rule do not have independently factorizing outcome sets, and selected outcomes need not be primitive.
+\end{proposition}
+
+\begin{proof}
+The vectors $(1,u^3)$ and $(1,u)$ are primitive. Their second coordinate outcomes are locally nonzero, but the joint second--second amplitude is $u^3u=0$. Selecting the second coordinate of $(1,u^3)$ also produces the nonprimitive scalar $u^3$.
+\end{proof}
+
+Typed quotient normalization does not fix the problem naturally. Put $B_\ell=A/(u^\ell)$. Dividing a nonzero vector of minimum valuation $a$ gives a primitive vector over $B_{\ell-a}$. For $(1,u^3)\in B_4^2$, selecting the second coordinate and normalizing gives $1\in B_1$. Tensoring that branch with $1\in B_1$ remains nonzero. If one first tensors the original state with $1\in B_1$, the image is $(1,0)$ and the second branch is zero. Thus conditioning and tensoring do not form the required natural square.
+
+There is a unique multiplicative Boolean alternative.
+
+\begin{proposition}[Unit predicate]\label{prop:unit}
+If $p:A\to\{0,1\}$ is multiplicative with $p(0)=0$ and $p(1)=1$, then $p(a)=1$ exactly for the units of $A$.
+\end{proposition}
+
+\begin{proof}
+If $a$ is a unit, $1=p(a)p(a^{-1})$, so $p(a)=1$. If $a$ is nilpotent, then $p(a)^n=p(a^n)=p(0)=0$. Units and nilpotents exhaust this finite local ring.
+\end{proof}
+
+The unit predicate reduces primitive states operationally to their nonzero residue classes over $A/(u)\cong\F$. It closes, but deletes every nilpotent support event and all higher Smith information. No preservation of coherent addition as Boolean disjunction is asserted.
+
+\section{A closed literal modal contract}
+
+The minimal closed completion used here is ordinary generalized modal theory over $\F$ \cite{SW12}.
+
+\begin{definition}[Literal contract]\label{def:literal}
+A system is a finite-dimensional $\F$-vector space $V$. A possible state is a nonzero subspace $S\le V$; the zero subspace denotes an impossible branch. A selective process is a subspace $K\le\operatorname{Hom}_{\F}(V,W)$ acting by
+\[
+  K(S)=\Span\{k(s):k\in K,\ s\in S\}.
+\]
+An instrument is a finite family $\{K_o\}$ whose constituent maps have common kernel zero. Effects are subspaces of $V^*$. A destructive measurement is complete when its effect subspaces span $V^*$. Discard uses all of $V^*$. Classical data are incoherent families of subspaces, composed by blockwise spans. Independent systems use $\otimes_{\F}$.
+\end{definition}
+
+\begin{proposition}[Closure]\label{prop:closure}
+The contract in \cref{def:literal} closes under sequential and parallel composition, selective conditioning, untouched references, classical feed-forward, outcome erasure, and discard.
+\end{proposition}
+
+\begin{proof}
+Stacking every constituent map of a complete instrument gives an injection. Composing injections and tensoring them over a field preserve injectivity, including after tensoring with an identity on a reference. A possible selected branch is nonzero by definition, and two nonzero independent subspaces contain a nonzero simple tensor. Associativity and interchange follow from their linear-map counterparts.
+
+For outcome erasure, let $k$ range over every constituent map and $f$ over the corresponding output dual. The span of $fk$ has annihilator equal to the common kernel, hence zero. Finite-dimensional duality makes that span the entire input dual. Thus forgetting a complete instrument produces the same remote reduced subspace as discard. The forgetting operation is a span of labelled branches, not a coherent XOR, so branches do not cancel.
+\end{proof}
+
+Full binary effects can distinguish some vectors related by multiplication by an $A$-unit. Therefore algebraic orbit equivalence under $A$-linear gates is not equality of all literal measurement statistics. The operational equivalence relation must always be declared with the effect set.
+
+\section{Exact coarse realization of the ring tables}
+
+Let $R(a)$ be regular multiplication by $a\in A$ in the ordered basis $(1,u,u^2,u^3)$. Let $\lambda:A\to\F$ extract the coefficient of $u^3$, and let $J$ be the anti-diagonal matrix of the Frobenius pairing $\lambda(ab)$. Then
+\[
+  R(a)J=JR(a)^T.
+\]
+For $M\in\Mat_{m\times n}(A)$ define a binary bipartite coefficient matrix $\Phi(M)$ by the $4$-by-$4$ blocks
+\[
+  \Phi(M)_{ij}=R(M_{ij})J.
+\]
+For a primitive row $x\in A^m$, let $E_x$ be the four-dimensional dual subspace containing the coefficient covectors of $z\mapsto xz\in A$.
+
+\begin{theorem}[Coarse support realization]\label{thm:support}
+An invertible $A$-basis of primitive rows gives a complete coarse measurement in the literal contract. For primitive rows $x,y$,
+\[
+  (E_x,E_y)\text{ is possible on }\Phi(M)
+  \quad\Longleftrightarrow\quad xMy^T\ne0.
+\]
+Moreover, for compatible $A$-matrices $P,Q$,
+\[
+  R(P)\Phi(M)R(Q)^T=\Phi(PMQ^T).
+\]
+\end{theorem}
+
+\begin{proof}
+Block multiplication and the Frobenius identity give
+\[
+  R(x)\Phi(M)R(y)^T=R(xMy^T)J.
+\]
+The right side is nonzero exactly when $xMy^T$ is nonzero. Expanding an invertible $A$-basis in the polynomial basis gives an invertible binary matrix, so the four-row effect blocks span the full binary dual. The local intertwining formula is the same calculation with matrix-valued $P,Q$.
+\end{proof}
+
+This preservation statement is deliberately narrow. The forgetful assignment from $A$-modules to binary spaces has natural surjections
+\[
+  U(M)\otimes_{\F}U(N)\longrightarrow U(M\otimes_A N),
+\]
+but it is not strong monoidal: for $M=N=A$ the domain has binary dimension $16$ and the target dimension $4$. The scalar Frobenius lift
+\[
+  \Delta(a)=\sum_{i=0}^{3}u^i\otimes u^{3-i}a
+\]
+satisfies $\mu\Delta(a)=4u^3a=0$. Thus the balanced comparison kills every lifted scalar. Ring separability is also not preserved: $\diag(1,0)$ factors over $A$ but its binary lift has Schmidt rank four.
+
+\section{The marked linear symmetry group}
+
+Set $V=U(A^2)$,
+\[
+  \mathcal C=\{R(a)I_2:a\in A\},\qquad
+  \mathcal B=R(\Mat_2(A))\subseteq\operatorname{End}_{\F}(V).
+\]
+
+\begin{theorem}[Algebra normalizer]\label{thm:normalizer}
+The binary linear normalizer of the marked operation algebra is
+\[
+  N_{\GL_8(\F)}(\mathcal B)
+  =\GL_2(A)\rtimes\Aut_{\F}(A),
+  \qquad |N|=98{,}304.
+\]
+It is also the state-transformation group preserving the family of coarse $A$-projective measurements. Its induced permutation group on the $24$ projective points has order $12{,}288$.
+\end{theorem}
+
+\begin{proof}
+The centre of $\mathcal B$ is $\mathcal C$, and the centralizer of $\mathcal C$ is $\mathcal B$. A normalizer of $\mathcal B$ therefore normalizes $\mathcal C$ and induces an $\F$-algebra automorphism $\sigma$ of $A$. Removing coefficientwise $\sigma$ leaves an invertible $A$-linear map. Conversely both factors normalize $\mathcal B$. Every automorphism sends
+\[
+  u\longmapsto u+cu^2+du^3,\qquad c,d\in\F,
+\]
+and all four choices occur. Reduction modulo $u$ gives
+$|\GL_2(A)|=|\GL_2(\F)|2^{12}=6\cdot4096$.
+
+For the measurement family, realize its column counterpart as the $24$ free rank-one submodules $Av\le A^2$. A binary map fixing every such point fixes both coordinate axes and has block form $\diag(P,Q)$. Fixing $A(1,1)$ gives $P=Q$, and fixing every graph $A(1,a)$ forces $P$ to commute with all $R(a)$. Hence the pointwise stabilizer is the eight scalar units. These units span $\mathcal C$, so any setwise stabilizer normalizes $\mathcal C$ and belongs to $N$. Conversely semilinear maps preserve the points and their complementary pairs.
+
+Finally put $J_2=\diag(J,J)$. Under the Frobenius pairing, effect columns are $J_2$ times projective state columns. Pullback by a state map introduces transpose and conjugation by $J_2$; because $J_2\mathcal C^TJ_2=\mathcal C$, the resulting condition is again membership in $N$. The kernel on the point set is the eight scalar units, giving $98{,}304/8=12{,}288$.
+\end{proof}
+
+This is not the abstract automorphism group of the distant graph. Projective-line geometry supplies related semilinear constructions and radical parallelism \cite{BH}; the exact historical priority of this ambient-binary stabilizer specialization remains unresolved.
+
+\section{One-copy conversion under local filters}
+
+Every matrix over the chain ring $A$ admits a Smith form. Write its sorted exponents as
+\[
+  0\le a_1\le\cdots\le a_D\le4,
+\]
+where exponent $4$ denotes a zero diagonal entry. When dimensions differ, pad both lists by $4$ to the maximum relevant diagonal length.
+
+\begin{theorem}[Exact filter preorder]\label{thm:filter}
+Let $M$ and $N$ be nonzero rectangular $A$-matrices with padded Smith exponents $a_i$ and $b_i$. The following are equivalent:
+\begin{enumerate}
+  \item $N=LMQ^T$ for compatible $A$-matrices $L,Q$;
+  \item $\Phi(N)$ is a possible pure target under local $A$-linear filters, finite classical feed-forward, and local logical product ancillas;
+  \item $b_i\ge a_i$ for every $i$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Let $H=\im(M)$. The image of $MQ^T$ is a submodule of $H$, and applying $L$ makes $\im(N)$ a quotient of that submodule. For a finite $A$-module $T$ define
+\[
+  f_j(T)=\dim_{\F}\bigl(u^{j-1}T\cap\soc(T)\bigr),\qquad 1\le j\le4.
+\]
+If $T$ has decreasing cyclic lengths $\ell_i$, then
+$f_j(T)=\#\{i:\ell_i\ge j\}$. An injection preserves these subspaces, so their dimensions cannot increase. A surjection dualizes to an injection under the exact binary dual; transposed nilpotent Jordan blocks preserve cyclic lengths. Hence every target cyclic length is bounded by its source counterpart. Since the lengths are $4-b_i$ and $4-a_i$, necessity follows.
+
+For sufficiency, reduce both matrices to rectangular Smith forms. Select the required source coordinates and multiply coordinate $i$ by $u^{b_i-a_i}$ when $b_i<4$; set all remaining target coordinates to zero. Undo the target basis changes. This constructs $L,Q$.
+
+Along a fixed adaptive transcript, local maps compose to $L,Q$. If a coarse outcome has a one-dimensional nonzero final state, expanding every process subspace into spanning maps yields at least one nonzero constituent trajectory producing that same target. Thus classical control and coarse-graining do not enlarge pure-state reachability.
+\end{proof}
+
+The complete monotones are the threshold counts
+\[
+  c_j(M)=\#\{i:a_i<j\},\qquad j=1,2,3,4.
+\]
+The filtered binary ranks
+\[
+  \rho_t(M)=\rank_{\F}R(u^tM)
+  =\sum_i\max(4-a_i-t,0)
+\]
+are monotone but not complete. For example, source $(0,2)$ has profile $(6,4,2,1)$ and target $(1,1)$ has $(6,4,2,0)$, yet conversion is impossible because the second exponent would decrease from $2$ to $1$.
+
+The relation $N=LMQ$ is an established algebraic matrix comparison \cite{APGPS,AntoineRing}. Hung and Li's Malcolmson comparison adds a triangular-block erasure and is strictly broader \cite{HungLi}: it allows $\diag(u,u)$ below $\diag(1,u^2)$, while \cref{thm:filter} forbids that local-filter conversion. Also, after normalization, $\rho_t$ is the quotient-regular Sylvester rank for $A/(u^{4-t})$, whose extreme-point classification is established \cite{JZLA}. The operational interpretation here does not make those ranks new.
+
+\section{Coding and contextuality under changed access}
+
+Let $M\in\Mat_d(A)$ be nonzero and let $r_B=\rank_{\F}R(M)$. Suppose the sender uses only $\GL_d(A)$ encoders while the receiver may apply an arbitrary complete binary basis decoder.
+
+\begin{proposition}[Fixed-orbit binary decoding]\label{prop:code}
+For $d\ge2$, the maximum number of exactly distinguishable vectors selected from the encoder orbit of $\Phi(M)$ is $d r_B$.
+\end{proposition}
+
+\begin{proof}
+The binary span of $\GL_d(A)$ is $\Mat_d(A)$. Indeed, for $i\ne j$,
+$aE_{ij}=(I+aE_{ij})+I$, and multiplication by a permutation yields the diagonal matrix units. The orbit span is therefore $\{XM:X\in\Mat_d(A)\}$, whose binary dimension is $d r_B$ because its rows range independently over the row image of $M$. Exactly decoded nonzero vectors have disjoint supports after an invertible decoder and hence are linearly independent. Conversely, choose a basis from the orbit spanning set and extend it to a full binary basis.
+\end{proof}
+
+This is a fixed-orbit statement under a changed decoder contract. It is not the $A$-linear codebook considered in P01 and is not a matched-contract communication advantage.
+
+Leading Smith multiplicity and the P01 contextuality label are not filter monotones. The selected filter $\diag(u,1)$ sends
+\[
+  \diag(1,u)\longmapsto\diag(u,u).
+\]
+The leading multiplicity rises from one to two, and the P01 static label changes from logical-but-not-strong to strong contextuality, while binary rank falls from seven to six. This is an explicit correction to a prospective resource interpretation, not a probabilistic hidden-nonlocality theorem.
+
+\section{Collective conversion with retained phase registers}
+
+For $k$ literal copies, introduce independent phase variables
+\[
+  B_k=A^{\otimes_{\F}k}
+  \cong\F[u_1,\ldots,u_k]/(u_1^4,\ldots,u_k^4).
+\]
+This is a finite commutative local Frobenius ring. It is not a chain ring for $k>1$, so no general Smith theorem over $B_k$ is used.
+
+The retained-phase contract allows $B_k$-linear local rectangular filters, finite adaptive instruments, local logical product ancillas, and classical selected transcripts. Every phase register remains in the target; there is no free correlated phase ancilla and no phase measurement or partial phase disposal.
+
+\begin{theorem}[Free-target extraction over a local ring]\label{thm:unitminor}
+Let $(B,\mathfrak m)$ be a commutative local ring with residue field $F$. For a matrix $N$ over $B$, there exist rectangular $L,Q$ such that
+\[
+  LNQ=I_d
+\]
+if and only if $\rank_F(N\bmod\mathfrak m)\ge d$.
+\end{theorem}
+
+\begin{proof}
+Reduction modulo $\mathfrak m$ proves necessity. Conversely, choose a $d$-by-$d$ minor whose residue determinant is nonzero. Its determinant is outside the maximal ideal and is therefore a unit. If $S,T$ select the corresponding rows and columns and $H=SNT$, then $H$ is invertible. Taking $L=H^{-1}S$ and $Q=T$ gives $LNQ=I_d$.
+\end{proof}
+
+This unit-minor proof is standard local-ring matrix algebra; compare the behavior of minor ideals under multiplication in \cite{StacksFitting}.
+
+\begin{corollary}[Exact retained-phase criterion]\label{cor:phase}
+Let $r_0$ be the number of unit Smith factors of an $A$-matrix $M$. Under the retained-phase contract, $k$ copies of $\Phi_A(M)$ can produce the free structured target $\Phi_{B_k}(I_d)$ on a possible selected branch if and only if
+\[
+  r_0^k\ge d.
+\]
+\end{corollary}
+
+\begin{proof}
+Regrouping the $k$ independent binary copies gives the Frobenius lift of
+\[
+  N=M(u_1)\otimes\cdots\otimes M(u_k).
+\]
+Residue commutes with the Kronecker product, so its rank is $r_0^k$. Apply \cref{thm:unitminor} and the local intertwining identity from \cref{thm:support}.
+\end{proof}
+
+The earlier socle-rank obstruction is precisely this residue rank in binary form. If
+$s=u_1^3\cdots u_k^3$, then $s\mathfrak m=0$ and $sN=s\bar N$. Regular multiplication by $s$ has binary rank one, so
+\[
+  \rank_{\F}R_{B_k}(sN)=\rank_{\F}(\bar N).
+\]
+For $M=\diag(1,u^2)$, $r_0=1$; no number of retained-phase copies produces a free target of coordinate rank two. At $k=2$ the ordinary binary input rank is $36$, while the free target rank is $32$. Ordinary rank permits the conversion, but the retained-phase residue rank forbids it.
+
+\section{Resolved phase disposal activates the example}
+
+We now enlarge the operation class. After a $B_2$-linear filter, each party may measure the second phase register in the binary coefficient dual basis, retain the outcome label, and keep only the first phase register. This is a valid selected effect in the literal modal theory, but it is not a $B_2$-linear quotient map. Therefore \cref{cor:phase} no longer applies after the measurement.
+
+Write $v=u_2$ and order the two-copy logical coordinates as $(0,0),(0,1),(1,0),(1,1)$. For two copies of $\diag(1,u^2)$, the regrouped coefficient matrix is
+\[
+  N=\diag(1,v^2,u_1^2,u_1^2v^2).
+\]
+
+\begin{proposition}[Two-copy resolved-disposal witness]\label{prop:activation}
+Two copies of $\Phi_A(\diag(1,u^2))$ can produce $\Phi_A(I_2)$ on a possible selected branch when coefficient-resolved disposal of the second phase register is allowed.
+\end{proposition}
+
+\begin{proof}
+Choose the $2$-by-$4$ filters
+\[
+  L=\begin{pmatrix}1&0&0&0\\v&0&0&0\end{pmatrix},\qquad
+  Q=\begin{pmatrix}v^3&0&0&0\\v^2&0&0&0\end{pmatrix}.
+\]
+Then
+\[
+  LNQ^T=
+  \begin{pmatrix}v^3&v^2\\0&v^3\end{pmatrix}=W.
+\]
+Let $\ell$ extract the coefficient of $v^3$ from $\F[v]/(v^4)$. On the scalar Frobenius lift
+\[
+  \Delta_v(a)=\sum_{i=0}^{3}v^i\otimes v^{3-i}a,
+\]
+one has $(\ell\otimes\ell)\Delta_v(a)=\ell(a)$. Both parties select this effect on their second phase register. Applying $\ell$ entrywise to $W$ gives $I_2$, so the retained state is exactly $\Phi_A(I_2)$.
+\end{proof}
+
+This witness uses only the $N_{00}=1$ sector. The same construction works with two copies of $\Phi_A(\diag(1,0))$, so it does not isolate a power unique to nilpotent amplitudes. It transfers part of the phase entanglement already present in the Frobenius lift into a logical coordinate.
+
+Outcome resolution matters. In the displayed protocol, forgetting the phase labels joins two independent output vectors:
+\[
+  \Span\{\Phi_A(I_2),\Phi_A(E_{12})\}.
+\]
+The unconditional output is therefore a two-dimensional mixed modal state, not the desired pure target. This calculation does not classify every protocol with unobserved phase disposal; it only shows why selected measurement and blind discard are different contracts.
+
+\section{Priority assessment and publication disposition}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Disposition of the main restricted-conversion results.}
+\label{tab:priority}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}YY@{}}
+\toprule
+Result & Mathematical status & Priority assessment \\
+\midrule
+Coarse binary realization & Proved exactly for the declared bipartite support tables & Frobenius machinery is classical; exact CM/LM comparison is a synthesis claim \\
+Linear normalizer & Proved by centre, commutant, and projective-point stabilizer & Exact ambient-binary specialization not certified as first \\
+One-copy filter preorder & Proved for rectangular systems and adaptive pure branches & Standard chain-ring module and matrix-factorization consequence \\
+Filtered ranks & Proved monotone, not complete & Normalized functions are established quotient Sylvester ranks \\
+Retained-phase free extraction & Necessary and sufficient residue-rank criterion & Elementary unit-minor result; not a new distillation principle \\
+Resolved-disposal activation & Exact two-copy witness & Useful operation-boundary example; also works on unit sectors \\
+Contextuality increase & Explicit selected-filter counterexample & Direct consequence of P01's static classification \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Cao's work on matrix monoids over Artinian chain rings explicitly studies Green relations \cite{Cao}, but only the publisher abstract was accessible during this review. No theorem number or exact equivalence is attributed to that source. A bounded search and an inaccessible full text cannot establish novelty.
+
+The appropriate disposition is therefore a technical companion, not a separate fourth full paper. Its useful role is to prevent category mistakes: static ring support is not a closed process theory; the Frobenius realization is not monoidal; conversion claims depend on the operation set; resolved conditioning differs from discard; and several apparent monotones are standard algebra in operational dress.
+
+\section{Computational verification}
+
+The analytic proofs above cover arbitrary declared dimensions. Independent finite checks provide regression evidence:
+
+\begin{itemize}
+  \item all $65{,}536$ two-by-two matrices over $A$ were classified independently;
+  \item $1{,}966{,}080$ left and right one-sided filter cases matched the exponent downsets;
+  \item $1{,}225$ ordered comparisons of three-entry profiles matched threshold-count order;
+  \item all $65{,}536$ two-by-two matrices over $\F[x,y]/(x^2,y^2)$ passed the residue/socle and explicit free-extraction checks;
+  \item a declared $4{,}096$-matrix sample over $B_2$ passed the same checks;
+  \item the resolved-disposal witness was verified by full binary matrix multiplication, with output rows identical to $\Phi_A(I_2)$;
+  \item the frozen baseline exhaustive checker and its twelve unit tests were rerun from byte-identical copies.
+\end{itemize}
+
+The baseline normalizer enumeration constructs $98{,}304$ distinct semilinear maps; its upper bound is the analytic proof in \cref{thm:normalizer}, not an exhaustive scan of $\GL_8(\F)$. Exact scripts, inputs, raw outputs, hashes, and environment records accompany the review package. The larger canonical audit's previously reported provenance mismatches are separate and were not rewritten here.
+
+\section{Conclusion}
+
+The chain-ring support tables have a faithful static realization inside a closed binary-modal theory, but the realization does not preserve tensor composition or separability. Once operations are fixed, one-copy conversion is governed by the full Smith exponent order. Collective retained-phase extraction of a free target is governed exactly by residue rank. Allowing a resolved phase measurement changes the resource theory and activates the two-copy example, while blind outcome erasure produces a mixed state.
+
+The principal lesson is methodological: every resource claim must name the systems retained, the scalar action respected by each process, the available effects, and whether outcomes are selected or forgotten. Within those boundaries, the proofs are closed. Their algebraic core is largely established machinery, so the appropriate publication vehicle is this technical companion.
+
+\small
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

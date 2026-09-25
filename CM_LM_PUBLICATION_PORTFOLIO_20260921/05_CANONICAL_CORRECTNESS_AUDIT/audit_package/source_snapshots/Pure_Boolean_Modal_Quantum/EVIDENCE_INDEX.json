@@ -1,0 +1,176 @@
+{
+  "snapshot_date": "2026-09-17",
+  "scope": "Pure-Boolean CM coefficient ring A=F2[C4]~=F2[u]/(u^4); no signed/complex/Born state evolution",
+  "claims": [
+    {
+      "id": "R1",
+      "claim": "C, H_star, phase kickback and B_star baseline identities reverify; B_star inverse checked on all 65536 two-bit states",
+      "evidence_type": [
+        "proved identity",
+        "exhaustive regression"
+      ],
+      "artifacts": [
+        "logs/run_summary.json",
+        "tests/test_cm_modal.py"
+      ]
+    },
+    {
+      "id": "R2",
+      "claim": "24576 invertible and 512 intrinsic-unitary 2x2 gates; 192 reversible projective measurement bases and 4 intrinsic-unitary projective bases",
+      "evidence_type": [
+        "analytic count",
+        "exhaustive finite search"
+      ],
+      "universe": "all 16^4=65536 2x2 matrices over A",
+      "artifacts": [
+        "data/gate_inventory_65536.csv",
+        "data/measurement_bases_192.csv"
+      ]
+    },
+    {
+      "id": "R3",
+      "claim": "Support Bell state with embedded-F2 Z/X/Y settings has no deterministic local hidden-variable assignment",
+      "evidence_type": [
+        "proved Boolean contradiction",
+        "exhaustive finite search"
+      ],
+      "universe": "2^6=64 deterministic global assignments",
+      "artifacts": [
+        "data/modal_bell_mqt_tables.csv",
+        "logs/run_summary.json"
+      ]
+    },
+    {
+      "id": "R4",
+      "claim": "Complete 192-basis Smith-class contextuality theorem: (a,a), a<4 strong; (a,b), a<b<4 logical-not-strong; (a,4), a<4 relationally local; zero excluded. B_star delta class (0,2) has 36,864 unextendable possible sections. Orbit aggregation: 26,214 strong states, 34,056 logical-not-strong, 5,265 nonzero local, one zero; all 60,270 nonseparable states are contextual in this measurement universe.",
+      "evidence_type": [
+        "proved valuation/local-ring theorem",
+        "exhaustive exact-support finite verification",
+        "explicit Hardy witnesses"
+      ],
+      "artifacts": [
+        "data/bell_contextuality_by_smith_class.csv",
+        "data/offdiagonal_hardy_witnesses.json",
+        "data/bell_bstar_complete_reversible_basis_sat.json",
+        "data/measurement_bases_192.csv"
+      ],
+      "universe": "15 canonical Smith classes; 192 reversible projective bases per party; all possible sections across 192x192 contexts"
+    },
+    {
+      "id": "R5",
+      "claim": "Universal exact modal teleportation of every one-bit A-valued state using support Bell resource and Boolean Q analyzer",
+      "evidence_type": [
+        "algebraic construction",
+        "exhaustive finite search"
+      ],
+      "universe": "16^2=256 input states times four analyzer outcomes = 1024 checks",
+      "artifacts": [
+        "data/teleportation_protocol.json",
+        "data/teleportation_all_256_states_x4_outcomes.csv"
+      ]
+    },
+    {
+      "id": "R6",
+      "claim": "Complete teleportation-resource theorem: deterministic universal exact one-bit teleportation with arbitrary reversible 4x4 analyzer and outcome-conditioned A-linear corrections is possible iff det(resource) is a unit iff Smith class is (0,0). Natural B_star delta failure is a corollary.",
+      "evidence_type": [
+        "proved determinant/branch-map theorem",
+        "exhaustive finite regression"
+      ],
+      "artifacts": [
+        "TELEPORTATION_RESOURCE_THEOREM.md",
+        "data/teleportation_resource_theorem.json",
+        "data/teleportation_resource_inventory_65536.csv",
+        "data/teleportation_resource_by_smith_class.csv",
+        "data/bstar_teleportation_failure.json"
+      ],
+      "universe": "all 16^4=65536 two-party resource matrices; all 15 Smith classes"
+    },
+    {
+      "id": "R6c",
+      "claim": "Singular-resource hierarchy: exact common state family size is 256 for (0,0), 16 for (0,b), b>0, and 1 (zero only) for a>0; canonical Smith quotient has 2^(8-a-b) classes; fixed quotient transfer allows at most 4/2/3 successful analyzer rows for equal/offdiagonal/rank-one Smith shapes; singular resources have no universally exact postselected branch and cannot be activated by product local ancillas or any finite tensor power within the A-linear architecture.",
+      "evidence_type": [
+        "proved chain-ring/residue-rank theorems",
+        "explicit constructions",
+        "finite exhaustive regression"
+      ],
+      "artifacts": [
+        "SINGULAR_TELEPORTATION_HIERARCHY.md",
+        "data/singular_teleportation_hierarchy_by_smith_class.csv",
+        "data/singular_teleportation_hierarchy.json",
+        "tests/test_cm_modal.py"
+      ],
+      "universe": "all 15 Smith classes; all 16^4 receiver corrections on the canonical identity branch for fixed-state maxima; explicit reversible four-outcome constructions"
+    },
+    {
+      "id": "R7_R8",
+      "claim": "Support and delta GHZ are nonseparable across all cuts; support GHZ has a six-context modal contradiction",
+      "evidence_type": [
+        "algebraic proof",
+        "exhaustive finite search"
+      ],
+      "universe": "27 contexts, 2^9=512 deterministic assignments; all context subsets of sizes 1..5 checked before minimum size 6 found",
+      "artifacts": [
+        "data/ghz_support_mqt_contexts.csv",
+        "data/ghz_hidden_variable_search.json"
+      ]
+    },
+    {
+      "id": "R9",
+      "claim": "Delta GHZ admits exact relational local models for embedded-F2 and intrinsic-unitary tested basis families",
+      "evidence_type": [
+        "exhaustive finite search",
+        "negative result"
+      ],
+      "artifacts": [
+        "data/ghz_delta_mqt_contexts.csv",
+        "data/ghz_hidden_variable_search.json"
+      ]
+    },
+    {
+      "id": "R13_R14_R15",
+      "claim": "All 65536 two-party states occupy 15 Smith local-equivalence classes; separable iff second Smith exponent is 4; 5266 separable and 60270 nonseparable",
+      "evidence_type": [
+        "standard chain-ring Smith theorem",
+        "proved separability criterion",
+        "exhaustive finite search"
+      ],
+      "artifacts": [
+        "data/state_local_class_inventory_65536.csv",
+        "data/local_equivalence_classes.csv"
+      ]
+    },
+    {
+      "id": "R12",
+      "claim": "Exactly 8 of 24 two-bit computational-basis permutations preserve every separable state; 16 can create nonseparability",
+      "evidence_type": [
+        "exhaustive finite search"
+      ],
+      "artifacts": [
+        "data/two_party_basis_permutation_gates.csv"
+      ]
+    },
+    {
+      "id": "R17",
+      "claim": "A-linear exact cloning of |0>, |1>, and |0> XOR |1> with a fixed blank is impossible",
+      "evidence_type": [
+        "proved linearity theorem"
+      ],
+      "artifacts": [
+        "RESULTS.md"
+      ]
+    },
+    {
+      "id": "R19",
+      "claim": "Global unit multiplication preserves support-only readout and separability but need not preserve exact CM-pattern readout",
+      "evidence_type": [
+        "proved",
+        "finite regression"
+      ],
+      "artifacts": [
+        "tests/test_cm_modal.py",
+        "RESULTS.md"
+      ]
+    }
+  ],
+  "literature_boundary": "See LITERATURE.md. Finite-field/modal teleportation and ordinary tight teleportation classifications have prior art, as does categorical teleportation over generalized scalar systems. The narrower CM result is the explicit unit-determinant/Smith-(0,0) necessary-and-sufficient criterion over F2[u]/(u^4), together with the separation between contextuality strength and exact teleportation power. Ordinary complex conclusive teleportation with partially entangled resources is established prior art; the CM postselection no-go is narrower and depends on nonunit/zero-divisor Smith factors and residue-rank obstruction."
+}

@@ -1,0 +1,264 @@
+pages: 28
+PAGE 4
+Boolean CM: correctness and model boundaries 18 September 2026
+1 Executive findings and the corrected baseline
+1.1 What survives
+The most defensible operational baseline is theliteral independent-register modal model: each
+local system has an eight-dimensional vector space over Boolean XOR/AND arithmetic, nonzero
+vectors are states, composite systems use the ordinary Boolean tensor product, reversible
+evolution is an explicitly allowed invertible Boolean-linear map, and measurement is an added
+possible/impossible basis-readout rule. This is an instance of finite-field modal quantum theory,
+with a distinguished CM rotation and optional rotation-compatible restrictions [3, 5].
+Within that baseline, the following constructions are valid: reversible modal superposition and
+XOR interference; tensor nonseparability; the tested Bell and GHZ contradictions; universal
+exact one-copy transfer with a full-rank correlated resource and a complete 64-outcome analyzer;
+and 64-message dense coding using one transmitted eight-dimensional subsystem and a shared
+resource. They arealgebraic/modal results. They are not consequences of truth-table notation
+alone.
+Claim Correct final statement Status
+CM rotation and
+phase algebra
+The order-four permutationP generates a
+16-element commuting operator algebra by XOR
+and composition.
+Proved; exhaustive
+centralizer scan.
+Superposition and
+interference
+Reversible shears create multibranch vectors and
+later XOR cancellation.
+Proved; explicit tests.
+Entanglement
+analogue
+Non-simple tensors exist. Literal bipartite
+separability is matrix rank one, not the old ring
+criterion.
+Proved; both
+classifications checked.
+Bell/GHZ The stated modal tables have no deterministic
+global assignment.
+Explicit contradictions;
+exhaustive finite checks.
+Universal
+teleportation
+With full literal resource rank eight, a fixed
+64-outcome Boolean analyzer and invertible
+corrections recover every nonzero local state.
+Proved; direct tensor
+execution.
+Dense coding 64 local encodings give 64 linearly independent joint
+states, all decoded exactly.
+Proved; 64/64 checks.
+Physical quantum
+theory
+Neither a physical implementation nor the
+probabilistic structure of quantum mechanics is
+established.
+Not claimed; a probability
+obstruction is proved.
+Table 1: Positive results do not erase the operation, tensor, and measurement assumptions.
+1.2 Corrections that must accompany those results
+Earlier interpretation Audited correction
+The CM identity squares
+to zero.
+False. The 2×2 truth patternδCM =I2 remains idempotent. The
+different 4×4 operator I4⊕P 2 squares to zero.
+Removing a primitive
+cyclic product invalidates
+its entire algebra.
+Too strong. The cyclic rule is exactly composition of the derived
+rotation operators. It is not pointwise AND or native2×2
+composition.
+3
+PAGE 8
+Boolean CM: correctness and model boundaries 18 September 2026
+4 Rotation, the derived phase algebra, and interference
+4.1 Rotation is native; its algebra is a different type from a CM
+Write the four atomic CM positions clockwise asE0,E 1,E 2,E 3, starting at the upper left. Thus
+E0 = [ AND], E1 = [ UP], E2 = [ NOR], and E3 = [ DOWN]. With v(C) = ( c0,c 1,c 2,c 3)T,
+clockwise rotation is
+P =
+
+
+0 0 0 1
+1 0 0 0
+0 1 0 0
+0 0 1 0
+
+
+, P 4 =I4, P 2̸=I4, P T =P 3. (3)
+Here powers mean repeated◦. Transposition of the underlying CM induces the permutationK
+interchanging coordinates 1 and 3, andK◦P◦K =P 3.
+Define the operator selected by a CM pattern:
+Λ(c) =
+⨁
+j:cj=1
+P j, A ={Λ(c) :c∈B4}. (4)
+This uses only selection by bits and XOR of actual matrices. Composition is still Equation(1).
+Expanding a composition of two such operators gives the cyclic coefficient rule from the earlier
+work. Thus the previously introduced cyclic product isderivable; it is not an extra primitive in
+the audited implementation.
+Theorem 4.1(Exact centralizer). The matrices commuting withP in M4(F2) are exactly the
+16 operators inA.
+Proof. The four vectorse0,Pe 0,P 2e0,P 3e0 form a basis. IfA commutes withP, its value one0
+determines its values on this whole basis:AP je0 =P jAe0. There are 16 choices forAe0. The 16
+matrices in Equation (4) realize all these choices and commute withP.
+Evidence: All 65,536 Boolean 4×4 matrices scanned; exactly 16 commute. All 256 phase-
+operator pairs checked with two contraction implementations..
+4.2 The corrected nilpotent and the limit of the imaginary-number analogy
+Let N =I4⊕P. Then
+N 2 =I4⊕P 2, N 4 = 0, rank⊕,∧(N j) = 4−j (0≤j≤4).
+The operatorsI4,N,N 2,N 3 form a basis ofA. ConsequentlyA is isomorphic toF2[u]/(u4), with
+u naming N and its product interpreted as◦.
+The truth patternδCM =E0⊕E2 =I2 satisfies
+δCM∧δCM =δCM, δ CM◦δCM =δCM.
+Its selected rotation operator is insteadΛ(δCM) =N 2, whose square is zero. No contradiction
+remains once the types are distinguished. Importantly,Λ is not a homomorphism for pointwise
+conjunction or native2×2 composition.
+The cycleI,P,P 2,P 3 is a phase-clock analogy, not complex scalar multiplication. In characteristic
+two, additivenegationisidenticaltotheoriginalscalar; P 2 isnotadistinctscalar −1. Complement
+of a coefficient vector is affine,v↦→v⊕1, and is not complex phase negation.
+7
+PAGE 11
+Boolean CM: correctness and model boundaries 18 September 2026
+In packed phase coordinates this witness isx = 15, y = 3. The literal product is nonzero (packed
+value 13,107), whereas the shared product is zero.
+This doesnot invalidate the ring identities or the explicit teleportation contractions. It does
+invalidate treating the unrestricted collection of all nonzero shared-module vectors as an automat-
+ically coherent independent-preparation operational theory. Restricting to primitive/unimodular
+preparations might repair part of this problem, but would remove many of the previously counted
+states and requires a separate closure analysis. That repair is not silently assumed here.
+6 Literal tensoring is not an entanglement-preserving change of
+notation
+6.1 The Choi-style embedding
+For a shared coefficient matrixm = (mij), form the8×8 Boolean block matrix
+M =
+(
+Λ(m00) Λ( m01)
+Λ(m10) Λ( m11)
+)
+.
+Its literal bipartite vector is
+|M⟩⟩=
+⨁
+j,k:Mjk=1
+|j⟩A⊗|k⟩B. (6)
+This is an injective linear encoding of 65,536 shared coefficient vectors into a space with264
+Boolean vectors. It is not a monoidal equivalence between the two tensor theories.
+A literal nonzero bipartite state is a simple tensor exactly when its coefficient matrix has rank
+one. For the canonical resources,
+rank⊕,∧M = 8−a−b.
+Thus the structured Choi family has just nine nonzero literal product states, rather than 5,265;
+65,526 of its vectors are literally nonseparable. For example, the shared product state with
+coefficient matrixdiag(1, 0) maps to the literal matrixdiag(I4, 0), of rank four. The encoding has
+introduced phase correlations. It cannot be used to argue that the two notions of entanglement
+are identical.
+6.2 The universal resource contains more correlations
+The phase-anchored logical Bell state
+|0,e 0; 0,e 0⟩⊕|1,e 0; 1,e 0⟩
+has literal rank two. The full resource used for universal transfer is
+|Φ 8⟩=
+7⨁
+j=0
+|j,j⟩, M =I8, (7)
+which has rank eight. It includes a correlated four-position phase factor as well as the logical Bell
+correlation. Increasing the analyzer from four to 64 outcomes is therefore not the only change:
+the operational resource has changed too.
+Equation (7) is preparable using reversible Boolean gates in the enlarged model. Regard a
+local label as three binary labels, create a modal superposition on each of Alice’s three factors
+10
+PAGE 25
+Boolean CM: correctness and model boundaries 18 September 2026
+Item Universe or evidence Result Boundary
+Dense coding 64 encoded joint states and full
+inverse decoder
+64/64 Basis rank 64; not a physical
+bandwidth claim.
+Old logical-only
+analyzer
+Four labels, each with 16 phase
+sectors
+Fails Sixteen distinct rank-two
+Bob maps per logical label.
+Shared restricted
+transfer
+983,040 correction fixed-space
+cases
+Confirmed 256, 16, or one vector
+depending on class.
+Shared fixed
+quotient
+983,040 analyzer-row solvability
+tests
+4 / 2 / 3
+labels
+Scope permits arbitrary
+A-linear corrections; zero
+quotient is trivial.
+Literal restricted
+transfer
+Rank 1 through 8, complete
+analyzers
+32,640 checks Attains all 2r vectors in an
+r-dimensional subspace.
+Literal finite-copy
+activation
+All 15 canonical classes; explicit
+filters
+Positive Two copies of rank six can
+heraldedly yield rank eight.
+Shared tensor
+closure
+Explicit two nonzero factors Fails N cubed times N is zero
+under the shared tensor.
+Shared orthogonal
+rows
+All 65,536 four-block rows Zero
+correctable
+Among rows meeting the
+necessary orthogonal
+condition.
+Orthogonal Bell
+basis
+Even-dimensional hyperplane proof No-go Complete rank-one analyzer
+with all corrections
+orthogonal.
+Common bilinear
+form
+All 65,536 four-dimensional forms Only zero No nondegenerate form
+preserves both P and T.
+No-cloning Proof and all 256 basis-cloner
+inputs
+Linear no-go 247 multi-support failures;
+coefficient copying remains
+possible.
+Probability
+extension
+External real LP and exact affine
+solution
+Fails
+faithfully
+Six modal-possible events
+forced to zero by
+no-signalling.
+Historical
+regression
+22 + 10 + 15 + 12 named tests 59 pass Passing old tests does not
+certify their interpretation.
+New test suite 31 named independent tests 31 pass In addition to all driver
+enumerations.
+16 Literature, novelty, and useful research directions
+Modal quantum theory already supplies finite-field state spaces, general invertible evolution,
+support-based measurements, entangled states, no-cloning, Bell phenomena, teleportation, and
+dense coding [3, 5]. The elementary four-state protocol underlying the presentd = 8 construction
+is not a new quantum-information primitive. The independent tensor construction makes that
+relationship particularly explicit.
+The global-section distinction between logical and strong contextuality is established prior work
+[6]. Generalized/categorical treatments also separate the algebra of protocols from their complex-
+Hilbert-space realization [8]. Werner’s classification concerns tight complex quantum teleportation
+and dense coding with the appropriate unitary resources; the Boolean full-rank criterion must
+not be imported as a deterministic physical-quantum criterion for arbitrary partially entangled
+states [7].
+“Quantum mechanics over sets” uses a related but different formalism and should not be used to
+supply a probability rule to this model without additional changes [10]. Matrix-logic square-root-
+24

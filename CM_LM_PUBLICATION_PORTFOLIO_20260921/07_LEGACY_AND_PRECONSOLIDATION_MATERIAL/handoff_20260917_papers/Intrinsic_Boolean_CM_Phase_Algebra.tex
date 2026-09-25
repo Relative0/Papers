@@ -1,0 +1,976 @@
+% Standalone LaTeX edition. Tables and bibliography are embedded.
+% Compile with latexmk -pdf (Biber).
+\begin{filecontents*}{Intrinsic_Boolean_CM_Phase_References.bib}
+@misc{droncheff,
+ author={Droncheff, Brian},
+ title={Correspondence Matrices; Algorithms for Propositional Logic},
+ note={User-supplied manuscript, 29 pages. The attached version is the source of the CM definitions; no publication date is asserted},
+ url={https://www.b-theory.com/CorrespondenceMatrices.pdf}
+}
+@misc{previous,
+ title={Correspondence Matrices, Cyclic Phase, and Exact Quantum Encodings},
+ note={AI-assisted working draft prepared for Brian Droncheff, version 1.0, 17 September 2026. Supplied in this conversation; not peer reviewed},
+ year={2026}
+}
+@article{mizraji,
+ author={Mizraji, Eduardo},
+ title={Vector logic allows counterfactual virtualization by the square root of {NOT}},
+ journal={Logic Journal of the IGPL}, year={2021}, volume={29}, number={5}, pages={859--870},
+ doi={10.1093/jigpal/jzaa026}, eprint={2003.11519}, eprinttype={arxiv}
+}
+@misc{mizrajiroots,
+ author={Mizraji, Eduardo},
+ title={Generalized ``Square roots of Not'' matrices, their application to the unveiling of hidden logical operators and to the definition of fully matrix circular Euler functions},
+ year={2024}, eprint={2107.06067}, eprinttype={arxiv},
+ note={Version 5, 10 June 2024; first submitted 2021. Repository title at review time},
+ url={https://arxiv.org/abs/2107.06067v5}, urldate={2026-09-17}
+}
+@article{modal,
+ author={Schumacher, Benjamin and Westmoreland, Michael D.}, title={Modal quantum theory},
+ journal={Foundations of Physics}, volume={42}, pages={918--925}, year={2012},
+ doi={10.1007/s10701-012-9650-z}, eprint={1010.2929}, eprinttype={arxiv}
+}
+@misc{ellerman,
+ author={Ellerman, David}, title={Quantum mechanics over sets}, year={2013},
+ eprint={1310.8221}, eprinttype={arxiv}, url={https://arxiv.org/abs/1310.8221},
+ urldate={2026-09-17}, note={Comparison concerns the set/vector lifting and counting framework, not an endorsement of its physical interpretation}
+}
+@misc{barbier,
+ author={Barbier, Morgan and Cheballah, Hayat and Le Bars, Jean-Marie},
+ title={On the computation of the {M"obius} transform},
+ year={2020}, eprint={2004.11146}, eprinttype={arxiv},
+ note={Cited by the version available through arXiv. The record also identifies Theoretical Computer Science, volume 809, pages 171--188},
+ url={https://arxiv.org/abs/2004.11146}, urldate={2026-09-17}
+}
+@article{arikan,
+ author={Ar{\i}kan, Erdal},
+ title={Channel polarization: A method for constructing capacity-achieving codes for symmetric binary-input memoryless channels},
+ journal={IEEE Transactions on Information Theory}, volume={55}, number={7}, pages={3051--3073}, year={2009},
+ doi={10.1109/TIT.2009.2021379}, eprint={0807.3917}, eprinttype={arxiv}
+}
+@article{polybori,
+ author={Brickenstein, Michael and Dreyer, Alexander},
+ title={{PolyBoRi}: A framework for {Gr\"obner}-basis computations with {Boolean} polynomials},
+ journal={Journal of Symbolic Computation}, volume={44}, number={9}, pages={1326--1345}, year={2009},
+ doi={10.1016/j.jsc.2008.02.017}
+}
+@online{polyboridoc,
+ author={{PolyBoRi project}}, title={Zero-suppressed decision diagrams and {Boolean} polynomial representation},
+ url={https://polybori.sourceforge.net/zdd.html}, urldate={2026-09-17},
+ note={Project documentation. PolyBoRi was not benchmarked in the present study}
+}
+@article{xag,
+ author={Meuli, Giulia and Soeken, Mathias and De Micheli, Giovanni},
+ title={Xor-And-Inverter Graphs for Quantum Compilation},
+ journal={npj Quantum Information}, volume={8}, pages={7}, year={2022},
+ doi={10.1038/s41534-021-00514-y}
+}
+@online{nist,
+ author={{National Institute of Standards and Technology}}, title={Circuit Complexity},
+ url={https://csrc.nist.gov/projects/circuit-complexity}, urldate={2026-09-17},
+ note={Project overview and application context for AND/XOR circuit size, depth, and multiplicative complexity}
+}
+@misc{factorized,
+ author={Shah, Mehul and Fiszer, Robert and Perkowski, Marek},
+ title={Factorized {Boolean} representations for efficient quantum synthesis},
+ year={2026}, eprint={2608.27430}, eprinttype={arxiv},
+ url={https://arxiv.org/abs/2608.27430v2}, urldate={2026-09-17},
+ note={Version 2, 1 September 2026. Recent preprint; the authors' performance claims are not independently reproduced here}
+}
+@misc{sparse2026,
+ author={Erginbas, Yigit Efe and Kang, Justin Singh and Polito, Elizabeth and Ramchandran, Kannan},
+ title={Adaptive Sparse {M\"obius} Transforms for Learning Polynomials},
+ year={2026}, eprint={2602.06246}, eprinttype={arxiv},
+ url={https://arxiv.org/abs/2602.06246}, urldate={2026-09-17},
+ note={Real-valued Boolean-domain polynomials and an additive query model, not XOR-valued ANF}
+}
+@article{dawson,
+ author={Dawson, Christopher M. and Haselgrove, Henry L. and Hines, Andrew P. and Mortimer, Duncan and Nielsen, Michael A. and Osborne, Tobias J.},
+ title={Quantum computing and polynomial equations over the finite field {$Z_2$}},
+ journal={Quantum Information and Computation}, volume={5}, number={2}, pages={102--112}, year={2005},
+ eprint={quant-ph/0408129}, eprinttype={arxiv}
+}
+@article{amy,
+ author={Amy, Matthew}, title={Towards Large-scale Functional Verification of Universal Quantum Circuits},
+ journal={Electronic Proceedings in Theoretical Computer Science}, volume={287}, pages={1--21}, year={2019},
+ doi={10.4204/EPTCS.287.1}, eprint={1805.06908}, eprinttype={arxiv}
+}
+@article{zh,
+ author={Backens, Miriam and Kissinger, Aleks}, title={{ZH}: A Complete Graphical Calculus for Quantum Computations Involving Classical Non-linearity},
+ journal={Electronic Proceedings in Theoretical Computer Science}, volume={287}, pages={23--42}, year={2019},
+ doi={10.4204/EPTCS.287.2}, eprint={1805.02175}, eprinttype={arxiv}
+}
+@article{giles,
+ author={Giles, Brett and Selinger, Peter}, title={Exact synthesis of multiqubit {Clifford+T} circuits},
+ journal={Physical Review A}, volume={87}, pages={032332}, year={2013},
+ doi={10.1103/PhysRevA.87.032332}, eprint={1212.0506}, eprinttype={arxiv}
+}
+@article{ad,
+ author={Baydin, At{\i}l{\i}m G\"une\c{s} and Pearlmutter, Barak A. and Radul, Alexey Andreyevich and Siskind, Jeffrey Mark},
+ title={Automatic differentiation in machine learning: a survey}, journal={Journal of Machine Learning Research},
+ volume={18}, number={153}, pages={1--43}, year={2018},
+ eprint={1502.05767}, eprinttype={arxiv}
+}
+@online{repo,
+ author={{Relative0 / Correspondence Matrices project}},
+ title={Correspondence Matrices: research library},
+ url={https://github.com/Relative0/Correspondence_Matrices/blob/1145537c9e2274ae7622dad5b68a7d612b27bb7e/docs/research/README.md},
+ urldate={2026-09-17}, note={Source snapshot identified at review time. Project-reported evidence, not independently reproduced in this paper}
+}
+@online{d9,
+ author={{Correspondence Matrices project}},
+ title={{CRSE} Milestone {D9}: frozen natural profitability policy}, date={2026-08-29},
+ url={https://github.com/Relative0/Correspondence_Matrices/blob/1145537c9e2274ae7622dad5b68a7d612b27bb7e/docs/recognition/NATURAL_PROFITABILITY_POLICY_MILESTONE_D9_2026_08_29.md},
+ urldate={2026-09-17}, note={Reports exact recognition but negative end-to-end profitability on its frozen EPFL evaluation workloads}
+}
+\end{filecontents*}
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=25mm,headheight=15pt]{geometry}
+\usepackage{amsmath,amsthm,mathtools,newtxtext,newtxmath}
+\usepackage{booktabs,longtable,tabularx,array,multirow}
+\usepackage{microtype,xcolor,enumitem,fancyhdr}
+\usepackage{tikz-cd}
+\definecolor{ink}{HTML}{15344A}
+\usepackage[colorlinks=true,linkcolor=ink,citecolor=ink,urlcolor=ink,pdftitle={Intrinsic Boolean Phase Algebra of Correspondence Matrices},pdfauthor={Research draft prepared for Brian Droncheff}]{hyperref}
+\usepackage[backend=biber,style=numeric-comp,sorting=none,giveninits=true,maxbibnames=99,doi=true,url=true,isbn=false,eprint=true]{biblatex}
+\addbibresource{Intrinsic_Boolean_CM_Phase_References.bib}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\F}{\mathbb F}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\R}{\mathbb R}
+\newcommand{\alg}{\mathcal A}
+\newcommand{\rot}{\mathcal R}
+\newcommand{\wt}{\operatorname{wt}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\Ann}{\operatorname{Ann}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\ANF}{\operatorname{ANF}}
+\newcommand{\ket}[1]{\lvert #1\rangle}
+\newcommand{\bra}[1]{\langle #1\rvert}
+\newcommand{\cm}[4]{\begin{pmatrix}#1&#2\\#3&#4\end{pmatrix}}
+\newcommand{\one}{1_{\phi}}
+\newcommand{\zero}{0_{\phi}}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\setlist{nosep,leftmargin=1.5em}
+\setlength{\parskip}{3pt}
+\setlength{\emergencystretch}{2em}
+\renewcommand{\arraystretch}{1.17}
+\numberwithin{equation}{section}
+\setcounter{tocdepth}{2}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Intrinsic Boolean CM phase algebra}
+\fancyhead[R]{\small Research draft II}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{10mm}
+{\small\scshape Boolean computation\quad /\quad exact algebra\quad /\quad reproducible audit\par}
+\vspace{12mm}
+{\LARGE\bfseries Intrinsic Boolean Phase Algebra\\[5pt] of Correspondence Matrices\par}
+\vspace{7mm}
+{\large Rotational phase, reversible mixing,\\M\"obius computation, and the limits of pattern readout\par}
+\vspace{12mm}
+{\large Prepared for Brian Droncheff\par}
+\vspace{3mm}
+{17 September 2026\quad $\cdot$\quad Version 1.0\par}
+\vspace{10mm}
+\begin{minipage}{0.94\textwidth}
+\begin{abstract}
+A correspondence matrix (CM) encodes a two-input Boolean predicate in four ordered bits. This paper consolidates and audits a proposed second interpretation: arrange the four atomic CM features cyclically and add an AND/XOR cyclic-convolution product. The resulting finite algebra is exactly $\F_2[C_4]\cong\F_2[u]/(u^4)$. It has four square roots of a distinct half-turn phase, eight units, a five-ideal chain, transpose conjugation, and a faithful binary operator representation. These phase relations are multiplicative, not additive negatives or complex amplitudes.
+
+We classify intrinsic two-branch isometries and reversible splitters, retaining the distinction between algebraic self-products and positive probabilities. Fresh exhaustive searches reproduce 512 intrinsic unitary matrices and 8,192 reversible splitters with detector weights $(0,2,4,2)$. A shear--phase--shear construction yields the exact output $e_{\emptyset}\oplus\delta\,\ANF(f)$, where $\delta^2=0$. This supplies Boolean-pattern versions of kickback, constancy discrimination, affine-coefficient recovery, and marked-item coding, but not a query-complexity advantage under a conventional oracle model.
+
+Additional results identify a nilpotent bound on phase-oracle interactions, distinguish independent phase registers from shared coefficients, and connect CM parity to local Boolean nonlinearity. A typed CM-to-ANF compiler is derived and tested without truth-table materialization. Prior work on vector logic, modal models, M\"obius/Reed--Muller methods, polar transforms, decision diagrams, and XOR--AND compilation establishes the surrounding landscape. Potential value lies in certified rewrites, structured Boolean analysis, and auditable compilation; practical superiority and physical quantum equivalence are not established.
+\end{abstract}
+\end{minipage}
+\vfill
+\begin{minipage}{0.94\textwidth}\small
+\textbf{Status.} AI-assisted mathematical synthesis prepared from the supplied manuscript, subsequent discussion, freshly executed verification, and primary-source research. Not peer reviewed. This is a proposed extension and correction record, not a replacement for the original manuscript. The emphasis is the intrinsic Boolean branch; the signed quantum lift is included only to mark its boundary. A proof, a finite check, a published claim, and a research hypothesis are explicitly distinguished throughout.
+\end{minipage}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section{Purpose, evidence, and the three branches}\label{sec:scope}
+The original question was whether AND and XOR could support an analogue of the imaginary phase unit, preferably through rotations of correspondence matrices. A previous research draft explored both the Boolean obstruction and an integer phase-count lift \cite{previous}. This sequel asks the more focused question: \emph{what computational structure exists before any signed lift, using only Boolean coefficient operations and explicit rewiring?}
+
+There are three distinct research programs. First, a CM is a structural representation of an ordinary Boolean predicate, with the pointwise composition and quotient operations in Droncheff's manuscript \cite{droncheff}. Second, the same four-bit arrays acquire a new convolution product, producing an intrinsic Boolean phase algebra. Third, integer multiplicities and an opposite-phase quotient produce ordinary Gaussian/cyclotomic amplitude arithmetic. This paper develops the second program and its connection back to the first. It does not import the third program's Born probabilities into the second.
+
+\paragraph{Evidence convention.}
+Statements in theorem environments are proved in the stated mathematical model. Numerical classifications are recomputed by \code{code/verify_intrinsic.py}; the complete finite operator inventory is retained. Literature comparisons describe their cited sources, not independent replications. Proposed applications and future tests are hypotheses. Prior conversational claims are not used as computational evidence by themselves.
+
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\textwidth}{@{}L{0.24\textwidth}Y L{0.25\textwidth}@{}}\toprule
+Question & Result & Boundary\\\midrule
+Can a binary object have a four-phase multiplication table? & Yes: $\one,t,t^2,t^3$ under cyclic convolution. & $t^2$ is not the additive negative of $\one$.\\
+Can CMs mix branches without a Hadamard? & Yes: reversible shears and intrinsic ring-unitaries exist. & Neither construction automatically preserves a positive probability norm.\\
+Can phase-coded patterns compute something useful? & Yes: an exact M\"obius/ANF encoding and derived classification tasks. & Reading a whole coefficient pattern is not ordinary quantum measurement.\\
+Can truth tables be avoided? & Yes for structured symbolic propagation; a local CM rule is exact. & Compressed outputs and queries may still be exponentially hard.\\
+Is practical advantage established? & No. Mechanism checks and a benchmark protocol are available. & Existing rewrite and decision-diagram baselines must be charged fairly.\\\bottomrule
+\end{tabularx}
+\caption{What the intrinsic branch establishes, and what it does not.}
+\end{table}
+
+\section{Notation and operation types}\label{sec:types}
+\subsection{Original CM semantics}
+The supplied manuscript uses $\ket{1}=(1,0)^T$, $\ket{0}=(0,1)^T$ and $\ket{x}=(x,\neg x)^T$. Its first CM row/column therefore corresponds to truth value 1. For
+\begin{equation}
+ A=\cm abcd,
+\end{equation}
+the predicate is
+\begin{equation}\label{eq:predicate}
+ f_A(x,y)=a xy\oplus b x\neg y\oplus c\neg x y\oplus d\neg x\neg y.
+\end{equation}
+Exactly one minterm is active at a fixed assignment, so the bra--CM--ket contraction selects one bit. The manuscript's XOR symbol was rendered as $m$ in earlier extracted text; here $\oplus$ always means XOR unless a tensor or module operation is explicitly labelled.
+
+Define the atomic phase ordering
+\begin{equation}\label{eq:basis}
+ E_0=\cm1000=[\wedge],\quad
+ E_1=\cm0100=[\Uparrow],\quad
+ E_2=\cm0001=[\neg\vee],\quad
+ E_3=\cm0010=[\Downarrow].
+\end{equation}
+Thus $A=a_0E_0\oplus a_1E_1\oplus a_2E_2\oplus a_3E_3$ is the displayed array
+$\left(\begin{smallmatrix}a_0&a_1\\a_3&a_2\end{smallmatrix}\right)$.
+All claims about the original CM axes retain that convention.
+
+\paragraph{Register order is a separate convention.}
+For computational registers we use labelled basis vectors $e_x=\ket{x}$ in ascending bitstring order $0,1$ or $00,01,10,11$. This does not relabel the CM phase coordinates in \cref{eq:basis}. A gate displayed in register order $(0,1)$ can be converted to the manuscript's order $(1,0)$ by conjugating by the swap matrix. For example the shear $\left(\begin{smallmatrix}1&0\\1&1\end{smallmatrix}\right)$ becomes $\left(\begin{smallmatrix}1&1\\0&1\end{smallmatrix}\right)$. Explicit labels avoid the column reversals that occurred earlier in the discussion.
+
+\subsection{Do not conflate three products}
+Pointwise CM conjunction is $(A\land B)_{ij}=A_{ij}\land B_{ij}$. The paper's quotient is
+\begin{equation}
+ A\backslash B=A\land\neg B.
+\end{equation}
+Boolean matrix multiplication, when needed, contracts indices with AND and XOR. A third product, $\star$, is cyclic convolution and will be defined in \cref{sec:ring}. It is \emph{new}: the original pointwise CM composition theorem does not silently turn into a theorem about $\star$.
+
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\textwidth}{@{}L{0.23\textwidth}Y L{0.27\textwidth}@{}}\toprule
+Operation & Meaning & Identity / diagnostic\\\midrule
+$A\land B$ & Entrywise Boolean conjunction & Identity $\Omega$, the all-ones array.\\
+$AB$ with contracted indices & Standard matrix product over $\F_2$ & Identity is the numerical $I_2$.\\
+$A\star B$ & Cyclic convolution of four phase coordinates & Identity $\one=E_0$, not $I_2$.\\
+$P Q$ for Boolean polynomials & Product in $\F_2[x]/(x_j^2-x_j)$ & Repeated variables satisfy $x_j^2=x_j$.\\
+$A\backslash B$ & Support removal, not inverse multiplication & $A\backslash A=0$.\\\bottomrule
+\end{tabularx}
+\caption{The types of multiplication matter. The numerical $I_2=E_0\oplus E_2$ is square-zero under $\star$, although it is the identity under contracted matrix multiplication.}
+\end{table}
+
+\subsection{Exactly what remains Boolean}
+Coefficient updates in $\oplus,\star,\land,\backslash$, rotation, transpose, and register shears use AND/XOR and constants. NOT is $1\oplus x$; OR is $x\oplus y\oplus xy$. A fixed rotation is a wiring permutation, not numerical trigonometry. Integer loop indices, Hamming counts, rankings of matrices, and test counters belong to the verification or readout layer, not to state arithmetic. They must not be mistaken for hidden integer amplitudes.
+
+\section{The intrinsic phase ring}\label{sec:ring}
+\begin{definition}[Cyclic CM product]
+For four-bit CMs define
+\begin{equation}\label{eq:star}
+ (A\star B)_k=\bigoplus_{r+s\equiv k\ (4)} (a_r\land b_s).
+\end{equation}
+In particular $E_r\star E_s=E_{r+s\bmod4}$. Write $\alg$ for these sixteen elements with XOR addition and this product, and put $\one=E_0$, $t=E_1$.
+\end{definition}
+The apparent modular addition of indices in \cref{eq:star} describes fixed routing among four positions. A direct implementation uses 16 one-bit AND products and four XOR reductions of four terms; further Boolean circuit optimization is possible but not claimed here.
+
+\begin{theorem}[Ring identification]\label{thm:ring}
+\begin{equation}
+ \alg\cong\F_2[t]/(t^4-1)=\F_2[C_4]\cong\F_2[u]/(u^4),\qquad u=\one\oplus t.
+\end{equation}
+It is a commutative ring with 16 elements. Its product is associative, has identity $E_0$, and distributes over XOR.
+\end{theorem}
+\begin{proof}
+Map $E_k$ to $t^k$ and use \cref{eq:star}. Polynomial multiplication modulo $t^4-1$ gives exactly that product, and the four residues $1,t,t^2,t^3$ are an $\F_2$ basis. In characteristic two $t^4-1=(t+1)^4$; substituting $u=t+1$ gives the truncated-polynomial presentation. The asserted ring laws follow. The independent verification also compares cyclic multiplication with truncated multiplication in the $u$ basis for all 256 pairs.
+\end{proof}
+
+\subsection{Four phases, not four additive signs}
+The four distinct elements
+\begin{equation}\label{eq:phasefour}
+ \one,\quad t,\quad z=t^2,\quad t^3
+\end{equation}
+form a multiplicative group $C_4$. One may label them $1_\phi,\iota,(-1)_\phi,(-\iota)_\phi$, provided the subscripts are respected. In particular
+\begin{equation}
+ t^2=z\ne\one,\quad t^4=\one,\qquad \one\oplus z\ne0.
+\end{equation}
+Every additive inverse in $\alg$ is still itself: $A\oplus A=0$. Boolean complement, additive negative, inverse phase, and a half-turn phase are different operations.
+
+The half-turn difference and all-features element will be used repeatedly:
+\begin{equation}\label{eq:specials}
+ \delta=\one\oplus z=u^2=E_0\oplus E_2=[\Leftrightarrow],\qquad
+ \Omega=\one\oplus t\oplus z\oplus t^3=u^3.
+\end{equation}
+They satisfy $\delta^2=0$ and $\Omega^2=0$ under $\star$. Powers without an explicitly stated alternative operation mean $\star$-powers from now on.
+
+\subsection{Units, nilpotents, and information loss}
+Define the augmentation
+\begin{equation}
+ \epsilon(A)=a_0\oplus a_1\oplus a_2\oplus a_3.
+\end{equation}
+It is both feature parity and evaluation at $t=1$.
+\begin{theorem}[Complete scalar classification]\label{thm:classification}
+An element is a unit exactly when $\epsilon(A)=1$. There are eight units. The other eight elements, including zero, are nilpotent; there are seven nonzero zero divisors. The only idempotents are $0$ and $\one$.
+The ideals form the chain
+\begin{equation}\label{eq:ideals}
+ 0\subset(\Omega)\subset(\delta)\subset(u)\subset\alg
+\end{equation}
+of sizes $1,2,4,8,16$. If $\nu(A)=r$ is the least nonzero $u$ exponent, with $\nu(0)=4$, multiplication by $A$ has binary rank $4-r$ and kernel size $2^r$.
+\end{theorem}
+\begin{proof}
+Write $A=c_0+c_1u+c_2u^2+c_3u^3$. Its constant coefficient is $\epsilon(A)$. When $c_0=1$, write $A=1+n$ with $n^4=0$ and use $(1+n)^{-1}=1+n+n^2+n^3$. When $c_0=0$, $A$ is divisible by $u$ and is nilpotent. Every nonzero element is $u^r$ times a unit. An ideal containing an element of least valuation $r$ is exactly $(u^r)$. Multiplication has image $(u^r)$, giving the rank and kernel count. An idempotent in a local ring is 0 or 1; here this also follows directly from the coefficient equations for $A^2=A$.
+\end{proof}
+Thus ``division'' by a unit is unique, whereas $BX=A$ for a nonunit $B$ is either unsolvable or has $2^{\nu(B)}$ solutions. This is unrelated to the manuscript's support-removal quotient $A\backslash B$.
+
+\begin{proposition}[Eight unit phases]
+\begin{equation}
+ \alg^\times\cong C_4\times C_2,
+ \qquad\alg^\times=\{t^k(\one\oplus\Omega)^e:0\le k<4,\ e\in\{0,1\}\}.
+\end{equation}
+There is one unit of order 1, three of order 2, and four of order 4. The equation $x^2=z$ has exactly the roots
+\begin{equation}
+ t,\quad t^3,\quad \one\oplus t\oplus z,\quad \one\oplus z\oplus t^3.
+\end{equation}
+In the original CM names these are $[\Uparrow],[\Downarrow],[\Leftarrow],[\Rightarrow]$.
+\end{proposition}
+\begin{proof}
+$\Omega^2=0$ gives $(1+\Omega)^2=1$, and $1+\Omega$ is not in the four pure-phase powers of $t$. Their products produce eight distinct units, exhausting the list. For the root equation, $A^2=(a_0\oplus a_2)+(a_1\oplus a_3)t^2$, so $a_0=a_2$ and $a_1\oplus a_3=1$, giving four choices.
+\end{proof}
+The extra roots are not new complex numbers: they are ordinary consequences of zero divisors in this finite ring.
+
+\section{CMs as actual binary operators}\label{sec:operators}
+Let $v(A)=(a_0,a_1,a_2,a_3)^T$ in cyclic order. Clockwise geometric rotation is
+\begin{equation}
+ \rot\cm abcd=\cm cadb,
+\end{equation}
+and hence
+\begin{equation}\label{eq:P}
+ v(\rot A)=Pv(A),\qquad
+ P=\begin{pmatrix}0&0&0&1\\1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix}.
+\end{equation}
+This $4\times4$ binary matrix, not a signed $2\times2$ rotation, is the literal operator on CM features. Define
+\begin{equation}\label{eq:regular}
+ \rho(A)=a_0I_4\oplus a_1P\oplus a_2P^2\oplus a_3P^3.
+\end{equation}
+\begin{proposition}[Faithful regular representation]
+\begin{equation}
+ \rho(A\star B)=\rho(A)\rho(B),\qquad
+ \rho(A\oplus B)=\rho(A)\oplus\rho(B),\qquad
+ \rho(A)v(B)=v(A\star B).
+\end{equation}
+The matrix products on the right use AND/XOR contraction. The map is injective.
+\end{proposition}
+\begin{proof}
+The $j$th column is $v(A\star E_j)$; applying this to $B$ gives convolution. Injectivity follows by applying $\rho(A)$ to $v(E_0)$.
+\end{proof}
+Consequently $\rho(t)=P$, $\rho(z)=P^2$, and $P^4=I_4$. Also $(P+I)^4=0$ with nilpotency index four. The operator is an order-four unipotent permutation in characteristic two; $P^2\ne-I_4$ because $-I_4=I_4$.
+
+\subsection{Transpose, rotations, and automorphisms}
+Write $\bar A=A^T$ for the original $2\times2$ CM transpose. In phase coordinates
+\begin{equation}
+ \overline{t}=t^{-1}=t^3,\qquad
+ \overline{A\star B}=\bar A\star\bar B,\qquad
+ \rho(\bar A)=\rho(A)^T.
+\end{equation}
+This is a genuine ring involution. Rotation is \emph{not} a ring automorphism: $\rot(\one\star\one)=t$ but $\rot(\one)\star\rot(\one)=z$. Instead it obeys the phase covariance law
+\begin{equation}
+ \rot^r(A)\star\rot^s(B)=\rot^{r+s}(A\star B).
+\end{equation}
+Among the eight square symmetries, only identity and transpose preserve $\star$. All four unital ring automorphisms send $t$ to one of the four roots of $x^2=z$ listed above, and form $C_2\times C_2$. Indeed, an automorphism must send $u$ to $u+b u^2+c u^3$ for $b,c\in\F_2$, and these four substitutions are invertible; their compositions add the pairs $(b,c)$. Only identity and transpose also preserve the full entrywise Boolean structure. Thus the richer ring symmetry does not erase the chosen CM support geometry.
+
+\paragraph{Additional unit action.}
+Since $\Omega A=\epsilon(A)\Omega$, multiplication by a three-feature unit has the form
+\begin{equation}\label{eq:unitaction}
+ (t^k\oplus\Omega)A=\rot^k(A)\oplus\epsilon(A)\Omega.
+\end{equation}
+It is rotation followed by complementing odd-weight inputs, while even-weight inputs are not complemented. This is XOR-linear despite its conditional description. It explains the extra $C_2$ factor without introducing a new truth value.
+
+\subsection{Support quotient and tensor types}
+For fixed $B$, $q_B(A)=A\backslash B$ is XOR-linear. Rotation and transpose commute with simultaneous support quotienting. However, among the sixteen masks $B$, only $B=0$ and $B=\Omega$ make $q_B$ multiplicative for $\star$: identity and zero map. A pure phase divided by its inverse and a feature removed by a mask are therefore different constructions.
+
+Two independent \emph{phase registers} use
+\begin{equation}
+ \alg\otimes_{\F_2}\alg\cong
+ \F_2[C_4\times C_4]\cong\F_2[u,v]/(u^4,v^4).
+\end{equation}
+There are 16 atomic phase-pair basis elements and $2^{16}$ possible coefficient patterns. In contrast, two logical registers with \emph{shared} coefficient ring use $\alg^2\otimes_{\alg}\alg^2\cong\alg^4$. These tensor products are not interchangeable. Multiplying two phase factors is the lossy algebra map $A\otimes B\mapsto A\star B$, not an identification of the independent-register algebra with $\alg$.
+
+\section{Three readouts and the norm obstruction}\label{sec:norms}
+\subsection{Pattern readout and Hamming measure}
+The primitive computational output here is the labelled four-bit CM, or a vector of such CMs. Inspecting a coefficient is a deterministic data access. Its Hamming weight is an external integer statistic. For example
+\begin{equation}\label{eq:overlap}
+ \wt(A\oplus\rot^kB)=\wt(A)+\wt(B)-2\wt(A\land\rot^kB)
+\end{equation}
+follows by counting overlapping features. This is XOR cancellation, not constructive amplitude doubling.
+
+If a real-valued support measure is normalized at $\Omega$, additive on disjoint supports, and invariant under all CM rotations, every atomic feature must have measure $1/4$. Hence $\mu(A)=\wt(A)/4$ is unique under those assumptions. The assumptions supply uniform counting; they do not derive a physical measurement law.
+
+For the left-column CM $R=E_0\oplus E_3$, the four overlaps with its rotations are $(2,1,0,1)$, so \cref{eq:overlap} gives weights $(0,2,4,2)$. Dividing by four reproduces four samples of $\sin^2(\phi/2)$. Four matching samples neither establish a continuous sine law nor physical quantum interference.
+
+\subsection{The intrinsic self-product}
+Define
+\begin{equation}
+ N_\star(A)=\bar A\star A.
+\end{equation}
+Let $r=a_0\oplus a_2$ and $s=a_1\oplus a_3$. Direct multiplication gives
+\begin{equation}\label{eq:normformula}
+ N_\star(A)=(r\oplus s)\one\oplus (r\land s)(t\oplus t^3).
+\end{equation}
+Only the three values $0,\one,t\oplus t^3$ occur. Every unit has norm $\one$ and inverse $\bar A$. The zero-norm set is exactly
+\begin{equation}\label{eq:K}
+ K=(\delta)=\{0,\delta,t\delta,\Omega\},\qquad K^2=0.
+\end{equation}
+The remaining four nonunits have norm $t\oplus t^3$. Multiplicativity $N_\star(AB)=N_\star(A)N_\star(B)$ follows from commutativity and the involution.
+
+\paragraph{Important correction: isotropic does not mean a degenerate pairing.}
+The standard $\alg$-valued Hermitian pairing on $\alg^m$,
+$\langle v,w\rangle=\sum_j\bar v_jw_j$, is nondegenerate as a pairing: testing against each basis vector recovers each component. It nevertheless has nonzero vectors with zero self-product, for example $v=(\delta,0)$. It is \emph{isotropic} and is not a positive real norm. Earlier language calling the entire form ``degenerate'' was imprecise. The scalar self-product is unsuitable as a Born-probability magnitude, but it remains a valid algebraic invariant.
+
+\subsection{Why global Hamming isometries cannot split a branch}
+\begin{proposition}\label{prop:hamming}
+A binary-linear bijection preserving Hamming weight on every vector is a coordinate permutation. For two CM coefficients, an $\alg$-linear global Hamming isometry must be
+\begin{equation}
+ \diag(t^a,t^b)\quad\text{or}\quad
+ \cm0{t^a}{t^b}0,\qquad a,b\in\{0,1,2,3\}.
+\end{equation}
+There are exactly 32.
+\end{proposition}
+\begin{proof}
+Each binary basis vector has weight one, so its image is a binary basis vector. Distinct columns must be distinct, since otherwise their XOR would map a weight-two input to zero. $\alg$-linearity forces the permutation to commute with the two cyclic shift actions; it can independently shift each four-cycle and optionally exchange them.
+\end{proof}
+Keeping the full integer cyclic-correlation profile cannot enlarge this group, because its zero-lag self-component is Hamming weight. The 32 phase-permutation maps preserve the full profile, so the same group results. The failure is not simply ``phase was discarded too early'': a stronger invariant containing the old one cannot create additional isometries.
+
+\section{Intrinsic unitary matrices and their limits}\label{sec:unitary}
+For $U\in M_2(\alg)$ define $U^\dagger$ by block transpose together with scalar CM conjugation. The term \emph{intrinsic unitary} means precisely $U^\dagger U=I$ over $\alg$; it does not assert complex-Hilbert-space unitarity.
+
+\begin{theorem}[Classification and count]\label{thm:unitaries}
+There are 512 intrinsic unitary matrices. Of these, 128 are monomial phase/swap matrices and 384 are nonmonomial. Every unit-norm column contains one unit and one element of $K=(\delta)$. There are 96 unitary involutions, 72 of them nonmonomial.
+\end{theorem}
+\begin{proof}
+The only way to sum two scalar norm values from \cref{eq:normformula} to $\one$ is $\one+0$ or $0+\one$. Thus a first column $(a,c)^T$ is specified by the choice of unit location (2), a unit (8), and an element of $K$ (4): 64 possibilities. A canonical orthogonal second column is $(\bar c,\bar a)^T$. The two columns form a unitary basis since their determinant is $a\bar a+c\bar c=1$. Every unit-norm orthogonal complement is this second column multiplied by one of the 8 scalar units, giving $64\cdot8=512$. Zero off-diagonal entries give $2\cdot8^2=128$ monomial cases. The two involution counts are exhaustive finite checks, rather than consequences claimed from the counting argument alone.
+\end{proof}
+
+For example,
+\begin{equation}\label{eq:Kgate}
+ K_0=\cm{\one}{\delta}{\delta}{\one},\qquad K_0^\dagger K_0=K_0^2=I.
+\end{equation}
+It sends $e_0$ to $(\one,\delta)^T$, creating two nonzero components. But the added component has zero self-product. This explains how mixing is compatible with the algebraic unitary condition.
+
+\begin{proposition}[A specific phase-readout obstruction]\label{prop:unitaryblind}
+For every intrinsic unitary $U$, every $k\in\{0,1,2,3\}$, and input $e_0$, the output of
+\begin{equation}
+ U^\dagger\diag(t^k,\one)Ue_0
+\end{equation}
+has component self-products $(\one,0)$. The component patterns may change, but this particular norm-pair readout cannot see the relative phase.
+\end{proposition}
+\begin{proof}
+The first column of $U$ contains a unit and a $K$ element. Thus the off-diagonal entry of $U^\dagger\diag(t^k,1)U$ lies in $K$, because it is a sum of products containing a $K$ factor. Its norm is zero. The output total self-product remains 1, forcing the first component's norm to be 1. This is also checked in all $512\cdot4=2048$ cases.
+\end{proof}
+This is not a claim that all possible CM readouts are phase-blind. The next construction deliberately uses pattern readout rather than this self-product.
+
+\section{Reversible mixing without the Hadamard}\label{sec:shears}
+For any $q\in\alg$, define a shear
+\begin{equation}\label{eq:shear}
+ B_q=\cm{\one}0q{\one},\qquad B_q(A,B)^T=(A,qA\oplus B)^T.
+\end{equation}
+Because $q\oplus q=0$, $B_q^2=I$ without any division. If $q\ne0$, $B_qe_0=(\one,q)^T$ has two nonzero CM components. Thus lack of a usual Hadamard is not lack of reversible support mixing.
+
+Put $q=u=\one\oplus t=[L]$, and phase-shift the first register component:
+\begin{equation}\label{eq:shearphase}
+ B_u\diag(t^k,\one)B_ue_0
+ =\binom{t^k}{u(\one\oplus t^k)}.
+\end{equation}
+The detector branch gives
+\begin{equation}\label{eq:shearoutputs}
+ D_0=0,\qquad D_1=\delta,\qquad D_2=\Omega,\qquad D_3=t\delta.
+\end{equation}
+In CM names this is $[0],[\Leftrightarrow],[T],[m]$, with weights $(0,2,4,2)$. Every state update is Boolean; the weight divided by four is a diagnostic, not an output probability conserved by this circuit.
+
+\subsection{A classification of all two-branch fringes}
+\begin{theorem}\label{thm:splitcount}
+For $U=\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)\in GL_2(\alg)$, write $\Delta=ad\oplus bc$. The second component of $U^{-1}\diag(t^k,1)Ue_0$ is
+\begin{equation}\label{eq:betadetector}
+ D_k=\beta(1\oplus t^k),\qquad \beta=ac\Delta^{-1}.
+\end{equation}
+Its weight profile is
+\begin{center}\begin{tabular}{@{}cc@{}}\toprule
+$\nu(\beta)$ & $(\wt D_0,\wt D_1,\wt D_2,\wt D_3)$\\\midrule
+0 & $(0,2,2,2)$\\
+1 & $(0,2,4,2)$\\
+2 & $(0,4,0,4)$\\
+3 or 4 & $(0,0,0,0)$\\\bottomrule
+\end{tabular}\end{center}
+There are 24,576 invertible matrices, 22,528 that send $e_0$ to two nonzero components, and 8,192 with profile $(0,2,4,2)$.
+\end{theorem}
+\begin{proof}
+In characteristic two $U^{-1}=\Delta^{-1}\left(\begin{smallmatrix}d&b\\c&a\end{smallmatrix}\right)$, giving \cref{eq:betadetector}. Valuations of $1+t,1+t^2,1+t^3$ are $1,2,1$. Nonzero elements of valuations $1,2,3$ have weights $2,2,4$, respectively; this gives the table. Reduction modulo $(u)$ maps invertible matrices onto $GL_2(\F_2)$, with $8^4$ lifts of each of its 6 elements: $6\cdot8^4=24,576$. A first column is primitive exactly when at least one entry is a unit. There are $256-64=192$ primitive columns and 128 admissible second columns per first column. Excluding the 16 first columns with one zero gives $176\cdot128=22,528$. Valuation-one $ac$ requires one unit and one valuation-one entry, giving $2\cdot8\cdot4\cdot128=8,192$.
+\end{proof}
+The large positive family is therefore understood algebraically, not merely observed in a brute-force table. It remains a family of finite Boolean signal transformations, not a class of optical devices.
+
+\section{Phase kickback and the phase--M\"obius theorem}\label{sec:mobius}
+\subsection{Registers and kickback}
+A register state is a vector in $\alg^{2^n}$ with basis labelled by $n$-bit strings. A scalar multiplies all coefficients by $\star$. No norm-one condition or probabilistic interpretation is imposed. A reversible Boolean oracle permutes the labels:
+\begin{equation}
+ U_f e_{x,y}=e_{x,y\oplus f(x)}.
+\end{equation}
+For the two-component target $\chi=e_0\oplus z e_1$, the swap satisfies
+\begin{equation}
+ X\chi=e_1\oplus z e_0=z\chi,
+\end{equation}
+because $z^2=1$. Hence
+\begin{equation}\label{eq:kickback}
+ U_f(e_x\otimes\chi)=z^{f(x)}e_x\otimes\chi.
+\end{equation}
+This is an exact module identity. It does not require a complex eigenvalue or a Hadamard preparation. The oracle acts on one logical factor; coefficient-ring products and tensor labels have the types specified in \cref{sec:types}.
+
+\subsection{The Boolean shear transform}
+Let
+\begin{equation}\label{eq:mobiusmatrix}
+ C=\begin{pmatrix}\one&0\\\one&\one\end{pmatrix},
+ \qquad M_n=C^{\otimes n},
+\end{equation}
+where the register basis is in ascending order $(0,1)$. We identify bitstrings with subsets of $[n]$. Then
+\begin{equation}\label{eq:subset}
+ (M_n v)_S=\bigoplus_{T\subseteq S}v_T,
+ \qquad M_n^2=I,\qquad M_ne_\emptyset=\mathbf1.
+\end{equation}
+The second identity follows because the number of intermediate subsets between $T$ and $S$ is $2^{|S\setminus T|}$, which is odd only when $T=S$.
+
+This is the standard Boolean subset/M\"obius transform, not a newly discovered transform \cite{barbier}. The same binary kernel and Kronecker powers occur in polar coding, up to row/column and bit-reversal conventions \cite{arikan}. The circuit interpretation developed here places CM phase labels around this known kernel.
+
+\begin{theorem}[Exact CM phase--ANF encoding]\label{thm:phaseanf}
+Let $f:\{0,1\}^n\to\F_2$ have ANF coefficient vector $a$, so
+\begin{equation}
+ f(x)=\bigoplus_{S\subseteq[n]} a_S\prod_{j\in S}x_j.
+\end{equation}
+Define the phase oracle $P_f e_x=z^{f(x)}e_x$. Then
+\begin{equation}\label{eq:main}
+ \mathfrak C[f]:=M_nP_fM_ne_\emptyset
+ =e_\emptyset\oplus\delta a.
+\end{equation}
+Every nonempty coordinate is either $0$ or $\delta$, exactly encoding the corresponding ANF coefficient. The empty coordinate is $\one$ if $a_\emptyset=0$ and $z$ if $a_\emptyset=1$.
+\end{theorem}
+\begin{proof}
+For a bit $b$, $z^b=\one\oplus\delta b$. Thus $P_f\mathbf1=\mathbf1\oplus\delta f$. Apply $M_n$, use $M_n\mathbf1=e_\emptyset$, and use $a=M_nf$, the truth-table-to-ANF M\"obius relation. Scalar multiplication distributes over the transform. Although $\delta$ is a zero divisor in $\alg$, the map from the two scalar bits $0,1$ to $0,\delta$ is injective, so no Boolean coefficient is lost.
+\end{proof}
+This theorem was independently checked by comparing local gate updates with direct subset sums for all 65,812 functions with $1\le n\le4$.
+
+\paragraph{Worked example.}
+For $f(x_1,x_2,x_3)=1\oplus x_1\oplus x_2x_3$, the output is $z$ at $\emptyset$, $\delta$ at $\{1\}$ and $\{2,3\}$, and zero elsewhere. These are labelled coefficient data, not a probability distribution over eight quantum outcomes.
+
+\subsection{The full conjugated oracle, not just one output}
+A useful extension exposes what happens on an arbitrary input vector.
+\begin{proposition}[Subset-interval kernel]\label{prop:interval}
+Let $K_f=M_n\diag(f)M_n$ over $\F_2$. Then
+\begin{equation}
+ M_nP_fM_n=I\oplus\delta K_f,
+\end{equation}
+with
+\begin{equation}\label{eq:interval}
+ (K_f)_{S,T}=
+ \begin{cases}
+ \displaystyle\bigoplus_{T\subseteq x\subseteq S} f(x),&T\subseteq S,\\
+ 0,&\text{otherwise}.
+ \end{cases}
+\end{equation}
+In particular, its first column is $\ANF(f)$. Also $K_fK_g=K_{f\land g}$, while
+\begin{equation}
+ (I\oplus\delta K_f)(I\oplus\delta K_g)
+ =I\oplus\delta K_{f\oplus g}.
+\end{equation}
+\end{proposition}
+\begin{proof}
+The matrix entry formula is the expansion of $M_n\diag(f)M_n$ using subset incidence. The product formula for $K_f$ uses $M_n^2=I$. The tagged product loses its $\delta^2K_fK_g$ term because $\delta^2=0$.
+\end{proof}
+This gives a precise sense in which phase composition carries XOR of predicates but not their AND interaction in a shared half-turn tag. The finite audit independently checks all 276 kernels and all 65,808 function-pair products through $n=3$.
+
+\section{What the pattern algorithms do}\label{sec:algorithms}
+\subsection{Constancy and the Deutsch--Jozsa comparison}
+A Boolean function is constant if and only if all nonempty ANF coefficients vanish. Therefore \cref{eq:main} detects constancy by checking whether any nonempty CM coordinate is nonzero. This distinguishes every nonconstant function, not merely balanced functions. Under a Deutsch--Jozsa promise it consequently discriminates the promised classes. The classical cost of obtaining and inspecting the pattern must still be counted.
+
+For $n=2$, a single $\alg$-linear detector can replace the output-vector inspection. In order $00,01,10,11$, choose weights $(0,\one,t,\one\oplus t)$ and compute
+\begin{equation}
+ D(f)=\bigoplus_x w_x z^{f(x)}.
+\end{equation}
+Both constants give 0; all six balanced functions give one of $\delta,t\delta,\Omega$. There are exactly 1,536 such ordered weight choices. To see the count, multiplication by $\delta$ reduces each weight to one of four labels in $\alg/(\delta)\cong\F_2^2$. All four labels must be distinct to make every pair sum nonzero. There are $4!$ orders and $4^3$ lifts after the total weight sum is constrained to zero, giving $24\cdot64$.
+
+For $n=3$, no single linear CM detector of this form handles every balanced truth vector. Among eight labels in a four-element additive group there are either four identical labels or two distinct repeated pairs, producing a four-subset with XOR zero. Two channels suffice; the explicit quotient-label rows
+\begin{equation}
+ (0,0,0,0,0,1,2,3),\qquad(0,0,0,1,2,0,0,3)
+\end{equation}
+cover all 70 balanced supports. Exhaustion checks 16,384 zero-sum labelings and 715 distinct coverage patterns. This is a restricted detector theorem, not a limit on arbitrary Boolean decoders.
+
+\subsection{Affine coefficients and the Bernstein--Vazirani analogy}
+For $f(x)=b\oplus\bigoplus_j a_jx_j$, only the empty and singleton ANF coordinates can be nonzero. The CM output therefore encodes $b$ at $\emptyset$ and each $a_j$ in coordinate $\{j\}$. All 252 affine functions with $1\le n\le6$ were decoded correctly.
+
+This does \emph{not} reproduce the usual one-quantum-query advantage. The corresponding classical coefficients can be recovered directly from $f(0)$ and $f(e_j)$ in $n+1$ evaluations. Moreover, replacing $f$ by $1\oplus f$ multiplies the whole CM output by $z$: $\mathfrak C[1\oplus f]=z\mathfrak C[f]$. Our literal pattern readout distinguishes that global factor, whereas conventional quantum measurement identifies global phases. Reading $b$ is therefore an explicit difference in observational semantics.
+
+\subsection{Marked-item patterns instead of Grover amplification}
+For a single marked input $m$, the truth vector is $f=e_m$. From \cref{eq:subset},
+\begin{equation}\label{eq:marked}
+ \mathfrak C[f]_S=\mathbf1_{S=\emptyset}\one
+ \oplus\delta\,\mathbf1_{m\subseteq S}.
+\end{equation}
+The marked set produces an upward-closed pattern. After XOR-removing the known empty-coordinate background, coordinate $[n]\setminus\{j\}$ contains $\delta$ exactly when $m_j=0$. This also handles $n=1$ correctly; the earlier uncorrected zero/nonzero rule failed there because it forgot the background.
+
+All 126 marks across $1\le n\le6$ passed the corrected decoder. A separate finite test of 24,576 identical local splitters on two bits found 16,384 whose four possible marks have distinct raw and Hamming-weight patterns. None made the marked output coordinate a strict weight maximum for all marks within that restricted prepare--mark--inverse architecture. This is pattern coding, not a proof of a universal absence of all Grover-like designs, and not amplitude amplification.
+
+\subsection{Resource accounting: one oracle layer is not one classical query}
+An explicit register has $4\cdot2^n$ stored bits. A local register gate acts on $2^{n-1}$ coefficient pairs, so $n$ tensor factors are not $n$ ordinary bit operations. The M\"obius butterfly uses $n2^{n-1}$ coefficient XORs and $O(2^n)$ storage. Applying an arbitrary truth-table oracle to all branches requires its values or an actual implementation of the corresponding diagonal operator. In a scalar classical black-box model those values are not obtained for free.
+
+Exact whole-pattern readout is also stronger than sampling one quantum outcome. A conventional deterministic constancy algorithm requires all $2^n$ queries in the worst case: an unqueried point can differ from an otherwise constant table. Under the balanced-or-constant promise the usual adversary argument requires $2^{n-1}+1$ deterministic scalar queries. For a unique marked item, $2^n-1$ worst-case scalar queries suffice and are necessary. The CM identities violate none of these facts, because their oracle and readout costs have not been identified with a new physical black-box interface.
+
+\section{A nilpotent bound on oracle interactions}\label{sec:nilbound}
+The preceding constructions reveal a useful limitation that was not explicit in the earlier exploration.
+
+\begin{theorem}[Shared-tag interaction bound]\label{thm:interaction}
+Consider a circuit of fixed $\alg$-linear matrices interleaved with oracle layers
+\begin{equation}
+ O_j=I\oplus u^pD_j,\qquad p\in\{1,2\},
+\end{equation}
+where $D_j$ are Boolean diagonal predicate matrices. In the expansion of the final operator, every term containing more than $\lfloor3/p\rfloor$ oracle-activation factors vanishes. For half-turn tags ($p=2$), no product of two oracle activations survives. For quarter-turn tags ($p=1$), at most cubic products survive.
+\end{theorem}
+\begin{proof}
+Expand the ordered product without commuting the matrix factors. A term selecting $r$ tagged oracle contributions contains the central scalar $u^{pr}$. Fixed $\alg$-linear matrices cannot remove that factor. It is zero whenever $pr\ge4$.
+\end{proof}
+The degree here is in separately tagged \emph{oracle activations}, not in the original input variables. Each predicate may already be a high-degree Boolean function. Readout, data-dependent gate selection, and pointwise AND between variable coefficients are not assumed linear and fall outside this theorem. A regression test of 200 five-oracle circuits confirms the predicted degree ceilings; the proof establishes the unrestricted circuit-length statement.
+
+\paragraph{Interpretation.}
+Repeated half-turn phase layers cannot manufacture the missing bilinear tag information by simply inserting more fixed linear mixers. For a fixed conjugated oracle $(I+\delta K)^2=I$. The truncation is both an obstruction to naive amplitude-amplification analogies and a potential tool for controlled low-order dependency tracking. It should not be confused with a general impossibility of Boolean nonlinear computation.
+
+\subsection{Two ways to retain an AND interaction}
+\paragraph{Independent registers.}
+In $\alg\otimes_{\F_2}\alg$, put $\eta=\delta\otimes1$ and $\theta=1\otimes\delta$. Then $\eta^2=\theta^2=0$, but $\eta\theta=\delta\otimes\delta\ne0$. Consequently
+\begin{equation}\label{eq:independent}
+ (1\oplus\eta f)(1\oplus\theta g)
+ =1\oplus\eta f\oplus\theta g\oplus\eta\theta(f\land g).
+\end{equation}
+The mixed coefficient now retains the conjunction. Compressing the two phase registers back to one sends $\eta\theta$ to $\delta^2=0$ and loses it. An $m$-register extension has $4^m$ binary coordinates, so preservation has a concrete storage cost. The general truncated-polynomial algebra has maximal-ideal nilpotency index $3m+1$.
+
+\paragraph{Nonlinear Boolean masks within one CM.}
+Let $A=z^f$ and $B=z^g$. Both are pure tags in $\{E_0,E_2\}$. Define
+\begin{equation}
+ \operatorname{decode}(A)=(A\land E_2)\star E_2=fE_0.
+\end{equation}
+Then
+\begin{equation}\label{eq:tagand}
+ \operatorname{andtag}(A,B)=E_0\oplus\delta\star
+ \big(\operatorname{decode}(A)\land\operatorname{decode}(B)\big)
+ =z^{f\land g}.
+\end{equation}
+This uses only permitted Boolean operations and fixed CM products. It is not linear in the pair of variable inputs and is not a unitary matrix gate; reversibility would require retaining the inputs and using a target register. It shows why a ring-linear no-go result must not be extended to the full AND/XOR framework.
+
+These independent nilpotent tags resemble the algebraic strategy used by dual-number and truncated-polynomial methods in automatic differentiation \cite{ad}. Here the semantics are Boolean predicate bookkeeping, not a claim that real differential calculus transfers unchanged.
+
+\section{Computing ANF without materializing the phase vector}\label{sec:compiler}
+\subsection{An exact local compiler}
+For the original truth-ordered CM $A=\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)$ define
+\begin{equation}\label{eq:localcoeff}
+ \alpha=d,\quad\beta=b\oplus d,\quad\gamma=c\oplus d,\quad
+ \kappa=a\oplus b\oplus c\oplus d.
+\end{equation}
+\begin{theorem}[CM-to-Boolean-polynomial substitution]\label{thm:local}
+If $P_X,P_Y$ are the Boolean polynomials of arbitrary subexpressions $X,Y$, then
+\begin{equation}\label{eq:compiler}
+ P_{f_A(X,Y)}=\alpha\oplus\beta P_X\oplus\gamma P_Y\oplus\kappa P_XP_Y
+\end{equation}
+in $\F_2[x_1,\ldots,x_n]/(x_j^2-x_j)$. At most one polynomial multiplication is needed at a node, before simplifications or reuse.
+\end{theorem}
+\begin{proof}
+Expand \cref{eq:predicate} using $\neg X=1\oplus X$ and collect the coefficients of $1,X,Y,XY$. Substitution of arbitrary Boolean subfunctions preserves the identity, including when their supports overlap.
+\end{proof}
+The 64 elementary cases and 1,500 internal nodes in 50 seeded random seven-variable CM DAGs were checked against direct truth evaluation. In a sparse implementation, monomials are subsets of variables; multiplying them uses union, and repeated equal monomials cancel by XOR. This is \emph{not} the four-position phase convolution $\star$.
+
+\subsection{A small but exact nonlinearity bridge}
+\begin{corollary}\label{cor:nonlinear}
+For the sixteen two-input CMs,
+\begin{equation}
+ A\in\alg^\times\quad\Longleftrightarrow\quad
+ \epsilon(A)=\kappa=1\quad\Longleftrightarrow\quad
+ f_A(X,Y)\text{ has a nonzero }XY\text{ coefficient}.
+\end{equation}
+Thus the phase-ring units are precisely the non-affine two-input truth tables.
+\end{corollary}
+This is the conjunction of two elementary facts, not an independent lower bound on whole-circuit complexity. A nonlinear local gate may become affine after substituting identical or dependent inputs: $X\land X=X$. The number of remaining nonlinear nodes is an implementation upper bound on multiplicative complexity, not necessarily the minimum. AND-count and AND-depth are nevertheless established optimization targets \cite{nist,xag}.
+
+\subsection{Fold operators before expanding operands}
+For CMs $A,B$ on the same ordered subexpressions and any pointwise Boolean connective $\Phi$, the original manuscript gives
+\begin{equation}\label{eq:fold}
+ f_A(X,Y)\,\Phi\,f_B(X,Y)=f_{A\,\Phi\,B}(X,Y).
+\end{equation}
+This holds because both sides choose the same corresponding truth-table entries; it is verified for all $16^3$ operator triples and all four valuations. It includes
+\begin{equation}\label{eq:foldexample}
+ (X\lor Y)\backslash(X\land Y)=X\oplus Y,
+ \qquad[\lor]\backslash[\land]=[\mathrm{XOR}].
+\end{equation}
+If $X,Y$ are large polynomial subexpressions, applying \cref{eq:foldexample} before expanding them avoids products that would later cancel.
+
+\begin{table}[htbp]\centering\small
+\begin{tabular}{@{}rrrrr@{}}\toprule
+$s$ & Intermediate $XY$ terms & Naive pair products & Final terms & After either exact fold\\\midrule
+10 & 100 & 12,220 & 20 & 0 pair products\\
+20 & 400 & 176,840 & 40 & 0 pair products\\
+30 & 900 & 865,860 & 60 & 0 pair products\\
+40 & 1,600 & 2,691,280 & 80 & 0 pair products\\\bottomrule
+\end{tabular}
+\caption{A freshly executed, deliberately simple sparse-expansion stress example. Each operand has $s$ disjoint singleton monomials; $XY$ is reused. Counts are deterministic operation counts, not wall-time speedups. The same rewrite in a non-CM optimizer obtains the same saving.}
+\label{tab:foldcost}
+\end{table}
+
+\subsection{Representation and query contracts}
+A factored Boolean-polynomial DAG may remain small, but merely retaining such a circuit is not the same as extracting a canonical ANF support. A flat monomial set may explode. Zero-suppressed decision diagrams and Reed--Muller/Davio decompositions are established alternatives; PolyBoRi already stores Boolean polynomials with decision-diagram structures \cite{polybori,polyboridoc}. A Davio expansion is
+\begin{equation}
+ f=f|_{x=0}\oplus x\big(f|_{x=0}\oplus f|_{x=1}\big).
+\end{equation}
+These alternatives must be baseline methods, not treated as absent prior art. A variable-by-variable polynomial view of the M\"obius transform likewise predates this construction \cite{barbier}.
+
+Different questions have different costs. The coefficient of a fixed subset $S$ is
+\begin{equation}\label{eq:coeffquery}
+ a_S=\bigoplus_{T\subseteq S}f(\mathbf1_T),
+\end{equation}
+so low-order coefficients can be obtained from $2^{|S|}$ evaluations with all outside variables zero. Singleton coefficients require just $f(0)$ and $f(e_j)$. In contrast, an arbitrary high-degree coefficient can encode the parity of all satisfying assignments. Deciding whether an arbitrary circuit has \emph{any} nonconstant coefficient is a full constancy question; a compact symbolic syntax does not make it automatically easy.
+
+For a concrete reduction, $g(x,y)=y\land F(x)$ is constant exactly when a Boolean formula $F$ is unsatisfiable. Therefore a general efficient exact constancy procedure from an arbitrary CM DAG would also give such a procedure for unsatisfiability. Independently, $\prod_{j=1}^n(1\oplus x_j)$ has a linear-size factorization but $2^n$ ANF monomials. These simple arguments rule out using ``no truth table'' as a blanket efficiency claim.
+
+\subsection{A bounded compiler experiment worth doing}
+A candidate implementation should type each CM node, normalize ordered operand pairs, use a shared DAG, perform cheap exact four-bit folds, and then dispatch to a sparse or decision-diagram ANF backend. It should estimate intermediate growth and abstain from costly rewrites when the estimate predicts no benefit. Fixed constants and affine regions should be propagated first. Exact equivalence checks, independent of timing, should gate every benchmark.
+
+The right ablation compares the \emph{same} backend with no rewriting, generic Boolean rewriting, and CM-guided rewriting. A comparison only against deliberately naive expansion would be uninformative. At present there is no implementation here of a competitive ZDD backend and no empirical claim against PolyBoRi, XAG optimization, or a production SAT/BDD package.
+
+\section{Literature and the existing CM research program}\label{sec:related}
+\subsection{Close predecessors and what differs}
+\paragraph{Vector logic and square roots of NOT.}
+Mizraji's vector-logic work explicitly studies matrix representations of truth values and square roots of NOT, including complex-valued extensions \cite{mizraji,mizrajiroots}. This is close conceptual prior art for a matrix ``imaginary'' operator. Our strict phase algebra instead fixes four binary coefficients and a newly declared convolution product. Neither matrix logic nor matrix square roots of logical negation originate here.
+
+\paragraph{Modal and set-based quantum analogues.}
+Schumacher and Westmoreland formulate finite-field modal quantum theory using invertible maps and possible/impossible outcomes rather than ordinary probabilities \cite{modal}. Their framework already shows that superposition-like support and reversible mixing need not require a positive Hilbert norm. Our coefficient object is a ring with zero divisors, not their field; our complete CM-pattern readout is also a different observational contract. Ellerman's set-based construction is a close comparison for symmetric difference, counting, and set-to-vector lifting \cite{ellerman}. These connections support careful analogy, not claims that the present data model describes a physical quantum system.
+
+\paragraph{Boolean transforms, Reed--Muller methods, and coding.}
+The truth-table/ANF M\"obius transform is established. Barbier, Cheballah, and Le Bars develop polynomial and variablewise strategies that exploit particular families \cite{barbier}. The tensor shear kernel also occurs in Ar\i kan's polar-code generator \cite{arikan}. The new object of interest here is the CM tagging and typing of that computation, not its underlying butterfly. Reusing implementations from coding or Boolean spectral analysis is plausible; improved error correction or encoding speed has not been demonstrated.
+
+\paragraph{Compressed Boolean polynomials.}
+PolyBoRi provides Boolean polynomial and Gr\"obner-basis infrastructure using decision diagrams \cite{polybori,polyboridoc}. This substantially precedes the claim that one may manipulate an ANF symbolically without a dense truth table. The proposed CM contribution, if any, must be measured at the pre-expansion rewrite or audit boundary, with these mature representations as controls.
+
+\paragraph{Quantum compilation from Boolean structure.}
+XAG-based synthesis explicitly exploits AND/XOR structure and connects network properties to quantum resource costs \cite{xag}. The article was published in \emph{2022}; the ``2021'' in its DOI is not its publication year. Shah, Fiszer, and Perkowski's September 2026 preprint studies factorized Boolean structure before quantum synthesis \cite{factorized}. Its authors' claims make it a particularly relevant comparison for CM containment and factoring. We have not reproduced those experiments.
+
+\paragraph{Sparse M\"obius learning.}
+Erginbas and collaborators' 2026 preprint considers sparse \emph{real-valued} functions on a Boolean domain with adaptive additive queries \cite{sparse2026}. Its guarantees cannot be copied into an XOR-valued coefficient model without a proof that the query and cancellation assumptions transfer. It is an adjacent research lead, not evidence of a CM sparse-recovery theorem.
+
+\paragraph{Path sums and nonlinear quantum calculi.}
+Dawson and collaborators connect quantum computation to counting solutions of Boolean polynomial equations \cite{dawson}; Amy develops formal verification using polynomial exponential sums \cite{amy}. ZH calculus compactly expresses classical nonlinearity in a quantum diagrammatic setting \cite{zh}. These precede the signed path-count branch of the exploration, but do not identify XOR coefficient arithmetic with complex amplitude addition. Exact Clifford+$T$ coefficient arithmetic belongs to the established synthesis domain studied by Giles and Selinger \cite{giles}.
+
+\subsection{What the current project already warns us about}
+The public Correspondence Matrices research repository already contains compiler, structural-reuse, representation, and benchmark investigations \cite{repo}. In its D9 report, a frozen rewrite-profitability policy abstains on all 33 evaluation workloads. Although the report records correct rewrites and a reduction in a flattened CSE operation count, unconditional rewriting was slower after matching and rebuilding costs were included \cite{d9}. These are project-reported results, not rerun in this package, and concern a different output task from compressed ANF.
+
+That negative result is directly relevant. A new CM-to-ANF experiment should not restart from the premise that recognizing structure necessarily saves runtime. It should test whether \emph{avoided polynomial multiplication} changes the economic balance, while charging the recognition overhead. Our synthetic stress example alone cannot establish that.
+
+\subsection{Novelty statement}
+No novelty is claimed for cyclic group algebras, nilpotent truncated rings, the M\"obius transform, reversible shears, or the general use of matrices for logic. The contribution of this working draft is an explicit, typed synthesis tied to the CM basis, complete small-ring classifications with reproducible checks, a precise phase--ANF equation, and several scoped deductions and counterexamples. The shared-tag interaction bound and CM-local nonlinearity correspondence are proved here, but their historical originality has not been established by an exhaustive literature review. Potential algorithmic novelty requires either a stronger theorem or a fair empirical result against established methods.
+
+\section{Potential uses and human benefit}\label{sec:uses}
+The following are pathways to test, not claims of deployed benefit. The algebra provides an exact language; benefit depends on whether that language reduces errors, resources, or analysis time in a real workflow.
+
+\subsection{Certified Boolean compilation and verification}
+A four-bit CM rewrite certificate can record its ordered inputs, original operator pair, replacement CM, and a complete local truth-table check. An independently implemented verifier needs only a tiny semantic kernel. A plausible use is translating a high-level Boolean rule network to an ANF or reversible-oracle backend while retaining auditable equivalence. The benefit would be fewer translation bugs and clearer debugging, not a new solution to arbitrary equivalence checking.
+
+A useful first deliverable is a typed front end that makes it impossible to confuse pointwise AND, cyclic convolution, and Boolean-polynomial multiplication. Such confusion caused several earlier false inferences; preventing it is an immediate and testable software-quality objective.
+
+\subsection{Privacy-preserving and resource-constrained computation}
+NIST identifies nonlinear-gate count and depth as relevant to secure multiparty computation, zero-knowledge protocols, homomorphic encryption, and small hardware circuits \cite{nist}. The local coefficient $\kappa$ in \cref{eq:localcoeff} gives an exact marker of two-input nonlinearity. A CM fold that eliminates a nonlinear node could reduce a downstream cost, but the whole network must be resynthesized and compared with an equally optimized non-CM baseline. Reduced AND count, runtime, or energy is a measurement target, not a conclusion of this draft.
+
+The intended application is defensive and constructive: cheaper privacy-preserving checks and more reliable implementations. Better circuit optimization is dual-use, including for cryptanalytic resource estimation; claims of security improvement require threat-model-specific review.
+
+\subsection{Classical support for quantum workflows}
+Quantum algorithms need classical predicates and reversible oracles. CM-derived certificates and ANF decomposition could improve that Boolean boundary while the actual quantum synthesis uses a conventional compiler \cite{xag}. The strict CM phase model should not be substituted for a physical quantum state. Its strongest near-term role is as an explanatory or verification intermediate representation, rather than as an asserted quantum accelerator.
+
+\subsection{Structured rule analysis and model revision}
+Boolean policies, hardware guards, or bounded regulatory-network update rules may contain repeated subexpressions and local changes. Pattern encodings can expose affine terms, interaction terms, and exactly which monomials changed. Whether a CM representation adds value over a standard canonical polynomial DAG remains open. For biological or other scientific models, a Boolean update rule is only a model: algebraic equivalence does not validate biological causation or clinical usefulness.
+
+Independent nilpotent tags from \cref{eq:independent} offer a controlled experiment for tracking interactions between two changed components. The mixed coefficient can distinguish a joint contribution from either individual contribution. Compare this directly with explicit pairwise perturbation evaluation and established symbolic sensitivity methods; do not assume a savings from the analogy with differentiation.
+
+\subsection{Education and accessible mathematical tools}
+A small interactive system could display a CM simultaneously as a predicate table, a cyclic four-bit polynomial, a binary linear operator, and a local ANF kernel. It could show both $t^2=z$ and $1\oplus z\ne0$, and make the missing Born interpretation visible. This is a concrete route to teaching representation theory, Boolean computation, and the limits of quantum analogies without expensive hardware. Educational usefulness should be evaluated through comprehension and error rates, not inferred from mathematical elegance.
+
+\section{Research agenda with falsifiable milestones}\label{sec:agenda}
+\paragraph{Milestone A: independent mathematical replication.}
+Reimplement ring multiplication and the phase--ANF circuit in a second language or proof assistant. Compare the complete 65,536-operator inventory, scalar classifications, and all small-function outputs. Treat a verified failure as a reason to revise the statement, not to select a different example.
+
+\paragraph{Milestone B: typed CM-to-ANF compiler.}
+Build a minimal DAG front end with canonical input-pair ordering, exact four-bit folding, and a compressed backend. Compare no rewriting, generic Boolean rewriting, and CM-specific scheduling with the same backend and equal output contracts. Measure preparation, query, peak size, number of nonlinear products, and end-to-end latency separately. Retain all failures and the no-benefit cases.
+
+\paragraph{Milestone C: independent phase registers.}
+For two or three labelled Boolean changes, test whether independent nilpotent tags provide a smaller exact interaction representation than explicit perturbation tables. Include the $4^m$ coefficient-growth cost, sparse alternatives, and collapse losses. Success requires an advantage after the tags have been constructed and decoded.
+
+\paragraph{Milestone D: task-specific readout.}
+Select a narrow task before choosing a representation: low-order coefficient queries, affine-region recognition, or bounded update equivalence. Compare against the direct formulas such as \cref{eq:coeffquery}; a full CM transform should not be preferred when two ordinary evaluations answer a singleton query.
+
+\paragraph{Milestone E: realistic workloads.}
+Use public, pinned circuit or rule families with licensing and provenance recorded. Include already optimized instances, not just CM-shaped stress inputs. Separate training/tuning families from evaluation families. Compare structural-CSE, XAG, SAT/BDD, and Boolean-polynomial methods only when they supply the same requested artifact. The existing project's unsuccessful rewrite-policy experiment is a required negative control, not a discarded inconvenience.
+
+\paragraph{Milestone F: stronger native algorithms.}
+Investigate whether typed pointwise Boolean operations can use phase tags to organize nonlinear dataflow without paying for an explicit phase vector. Any claim of speedup must specify access to $f$, storage, physical or software state preparation, and readout. A result that merely changes a known transform's notation is not an algorithmic improvement. A theorem parameterized by sparse intermediate support, bounded interaction width, or a provable cancellation class would be more meaningful.
+
+\section{Relationship to the signed lift}\label{sec:lift}
+The first paper's successful quantum-amplitude calculations used a different coefficient domain. Let $\widetilde\alg=\Z[C_4]$ retain signed multiplicities at the same four CM positions. There are two maps:
+\begin{equation}\label{eq:span}
+ \F_2[C_4]\ \xleftarrow{\ \bmod2\ }\ \Z[C_4]
+ \ \xrightarrow{\ Q\ }\ \Z[i],
+\end{equation}
+where $Q(n_0,n_1,n_2,n_3)=(n_0-n_2,n_1-n_3)$. Over integers,
+\begin{equation}
+ QP=JQ,\qquad J=\cm0{-1}10.
+\end{equation}
+This is the precise rotation intertwiner, not an argument that every four-cycle supplies complex arithmetic. The right map imposes $t^2=-1$; the left reduces counts modulo two. There is no unital characteristic-preserving embedding of $\F_2[C_4]$ into $\Z[i]$ taking XOR to ordinary addition, since it would take $1\oplus1=0$ to $2=0$.
+
+The integer quotient is the established Gaussian coefficient algebra; adjoining $1/\sqrt2$ and an eighth root of unity supplies exact Clifford+$T$ encodings \cite{giles}. Those gate computations can be implemented digitally but are not characteristic-two amplitude computations. They remain a useful comparison, while none of the intrinsic ring, shear, kickback, M\"obius, or local ANF results above depends on that lift.
+
+\section{Conclusion}
+The intrinsic Boolean branch succeeds at a precise objective: a CM can be both an ordinary four-bit predicate representation and, under an explicitly added convolution operation, an element of a complete finite cyclic-phase algebra. The phase generator has a literal binary matrix action; transpose supplies an involution; reversible mixers exist without a Hadamard; and a phase--shear circuit computes an exact encoding of the Boolean ANF.
+
+Its limitations are equally precise. Phase negatives are not additive negatives, intrinsic self-products are not positive probabilities, and global Hamming preservation forbids genuine branch mixing. Half-turn tags cannot retain products of two activations in one coefficient ring. Pattern-readout algorithms do not inherit quantum query bounds. Compressed representation avoids some materialization, not general complexity barriers.
+
+These boundaries do not make the construction empty. They identify where a useful research contribution would have to be made: a typed and certified bridge between structural CMs and established Boolean transforms, a measured reduction in symbolic nonlinear work, or a carefully bounded interaction-tracking method. The accompanying finite audit makes that program reproducible rather than dependent on persuasive examples.
+
+\appendix
+\section{Complete scalar classification}\label{app:scalars}
+\begin{center}\small
+\begin{tabular}{@{}rlrrrrrrl@{}}
+\toprule
+Code & CM & $\wt$ & $\nu$ & Rank & Order & Nil. & Inverse code & $N_\star$\\\midrule
+0 & $[0]$ & 0 & 4 & 0 & -- & 1 & -- & $[0]$\\
+1 & $[\wedge]$ & 1 & 0 & 4 & 1 & -- & 1 & $[\wedge]$\\
+2 & $[\Uparrow]$ & 1 & 0 & 4 & 4 & -- & 8 & $[\wedge]$\\
+3 & $[L]$ & 2 & 1 & 3 & -- & 4 & -- & $[m]$\\
+4 & $[\neg\vee]$ & 1 & 0 & 4 & 2 & -- & 4 & $[\wedge]$\\
+5 & $[\Leftrightarrow]$ & 2 & 2 & 2 & -- & 2 & -- & $[0]$\\
+6 & $[\neg R]$ & 2 & 1 & 3 & -- & 4 & -- & $[m]$\\
+7 & $[\Leftarrow]$ & 3 & 0 & 4 & 4 & -- & 13 & $[\wedge]$\\
+8 & $[\Downarrow]$ & 1 & 0 & 4 & 4 & -- & 2 & $[\wedge]$\\
+9 & $[R]$ & 2 & 1 & 3 & -- & 4 & -- & $[m]$\\
+10 & $[m]$ & 2 & 2 & 2 & -- & 2 & -- & $[0]$\\
+11 & $[\vee]$ & 3 & 0 & 4 & 2 & -- & 11 & $[\wedge]$\\
+12 & $[\neg L]$ & 2 & 1 & 3 & -- & 4 & -- & $[m]$\\
+13 & $[\Rightarrow]$ & 3 & 0 & 4 & 4 & -- & 7 & $[\wedge]$\\
+14 & $[\neg\wedge]$ & 3 & 0 & 4 & 2 & -- & 14 & $[\wedge]$\\
+15 & $[T]$ & 4 & 3 & 1 & -- & 2 & -- & $[0]$\\
+\bottomrule\end{tabular}
+\end{center}
+The code column is $a_0+2a_1+4a_2+8a_3$; it is a storage identifier, not a numerical amplitude. The table uses $\nu(0)=4$. A dash in the inverse or nilpotency column means that notion does not apply. Original CM names are retained even when the same array has a different role under $\star$.
+
+\section{Verification scope and reproducibility}\label{app:audit}
+\begin{longtable}{@{}L{0.48\textwidth}rL{0.31\textwidth}@{}}
+\toprule Check or classification & Count & Scope\\\midrule\endhead
+Independent scalar multiplication comparison & 256 & All pairs\\
+Associativity/distributivity & 4,096 & All triples\\
+Two-branch operator inventory & 65,536 & Complete universe\\
+States checked per operator & 256 & Complete universe\\
+Independent binary rank calculations & 65,536 & All operators\\
+Invertible operators & 24,576 & Rank and determinant agree\\
+Intrinsic unitary operators & 512 & Exact ring test\\
+Nonmonomial intrinsic unitaries & 384 & Exact ring test\\
+Unitary involutions & 96 & Exact ring test\\
+Mixing unitary involutions & 72 & Exact ring test\\
+Global Hamming isometries & 32 & All states\\
+Weight-four-shell preservers & 512 & All 70 shell states\\
+Shell/unitary intersection & 256 & Not the same sets\\
+Reversible splitters & 22,528 & Both output entries nonzero\\
+Detector-profile $(0,2,4,2)$ splitters & 8,192 & All phases\\
+Unitary interferometer checks & 2,048 & Invariant component norms\\
+Two-bit single-CM DJ detectors & 1,536 & All weights searched\\
+Three-bit quotient-label search & 16,384 & Zero-sum labelings\\
+Three-bit minimum detector channels & 2 & One impossible; two verified\\
+Phase-to-ANF truth functions & 65,812 & $1\le n\le4$, zero mismatches\\
+Kickback branch checks & 2,120 & All functions through $n=3$\\
+Affine hidden-string cases & 252 & $1\le n\le6$, zero mismatches\\
+Marked-pattern cases & 126 & $1\le n\le6$, background corrected\\
+Distinct two-bit search patterns & 16,384 & Same local splitter architecture\\
+Universal marked-coordinate peaks & 0 & None in the tested architecture\\
+Local CM-to-ANF elementary cases & 64 & All CMs and Boolean inputs\\
+Random CM DAG internal nodes & 1,500 & 50 DAGs; zero mismatches\\
+Pointwise CM folding valuations & 16,384 & All local triples and inputs\\
+Nilpotent-interaction regression circuits & 200 & Five oracle bits per circuit\\
+Independent-register/mask conjunctions & 4 & All two-bit assignments\\
+Subset-interval kernels & 276 & All functions through $n=3$\\
+Subset-interval kernel product pairs & 65,808 & All pairs through $n=3$\\
+\bottomrule\end{longtable}
+The script constructs every scalar operation from the stated bits, compares two multiplication implementations, enumerates all ideals by checking subsets, and checks the block-matrix invertibility classification independently by binary Gaussian elimination. The 65,812 phase/ANF cases compare the local-gate route with independently evaluated subset sums, not with a second invocation of the same butterfly. The sparse compiler is checked against direct Boolean node semantics. A separate standard-library report checker reaggregates all 65,536 operator records and independently checks every intrinsic-unitary flag using binary orthogonality of its $8\times8$ regular block matrix. This is an independent implementation check within the present work, not external third-party replication.
+
+Finite regression tests of the nilpotent interaction bound do not replace its proof. Counts in the source JSON are authoritative for the supplied implementation. The environment, deterministic random seed, and verification-script SHA-256 are recorded. Runtime is only a reproduction observation, not a benchmark against an incumbent tool.
+
+\paragraph{How to reproduce.}
+From the extracted project directory:
+\begin{verbatim}
+python -m pip install -r requirements.txt
+python code/verify_intrinsic.py data
+python code/build_tables.py
+python code/check_report.py
+latexmk -pdf -interaction=nonstopmode paper.tex
+\end{verbatim}
+The Python verifier makes no network, cloud, repository-write, or account calls. Installing requirements is optional when NumPy is already present. The PDF build needs a conventional TeX distribution with Biber, biblatex, newtx, and tikz-cd. Source references are external links; third-party papers and the user's original manuscript are not redistributed in this package.
+
+\paragraph{Files.}
+\code{data/operators.csv} contains all 65,536 operator records, not only successful cases. \code{data/elements.csv}, \code{star_table.csv}, the four interference tables, transformation/quotient results, algorithm checks, and the synthetic operation-count experiment are machine-readable. \code{data/verification.json} provides a compact summary. \code{RESEARCH_NOTES.md} records evidence boundaries and the source-review scope.
+
+\section{Correction ledger}\label{app:corrections}
+\begin{longtable}{@{}L{0.31\textwidth}L{0.63\textwidth}@{}}
+\toprule Earlier formulation & Corrected formulation\\\midrule\endhead
+``The right column is $Y=1$.'' & In the original paper the first/left column is $Y=1$. Computational register order is separately declared here.\\
+``A column is rotated by $90^\circ$.'' & A spatial $90^\circ$ rotation acts on all four CM feature positions. A valid conditional phase acts on a whole coefficient block attached to a logical register state.\\
+``Masked rotation is an order-four gate.'' & Cropping a rotated matrix can erase features. Its fourth power need not be the identity. Reversible shears and block-diagonal phase gates are separately proved.\\
+``The four phases form complex arithmetic.'' & They form a multiplicative $C_4$ subgroup. XOR addition cannot distinguish an element from its additive inverse.\\
+``Convolution is already the original CM multiplication.'' & The convolution product is an explicit extension. Original pointwise conjunction, contracted matrix multiplication, and polynomial multiplication remain distinct.\\
+``The norm is degenerate.'' & The self-product has nonzero isotropic elements. The standard free-module Hermitian pairing is nevertheless nondegenerate; it is not a positive real norm.\\
+``Richer correlation should enlarge the norm-preserving group.'' & Preserving a richer invariant that includes the old one can only restrict the group. The 32 global isometries already preserve the full integer correlation.\\
+``512 shell preservers are the same as 512 ring-unitaries.'' & They are different sets with equal cardinality. The fresh audit finds an intersection of 256 matrices.\\
+``The fringe gives quantum probabilities.'' & $(0,2,4,2)$ is a finite Hamming detector profile. Its normalized samples resemble a quantum fringe but do not establish a Born rule or a physical interferometer.\\
+``One oracle layer extracts an unknown truth table efficiently.'' & The operator and full-pattern readout are abstractly available in the module calculation. Their classical query, storage, and evaluation costs must be charged.\\
+``The marked-item decoder works unchanged for one bit.'' & Remove the known empty-coordinate background before zero/nonzero testing; otherwise the one-bit case fails.\\
+``Phase-to-ANF is a new transform.'' & The underlying transform is the established Boolean M\"obius/Reed--Muller transform. CM tagging is a representation and compilation interpretation.\\
+``Avoiding a truth table makes all coefficient queries easy.'' & Canonical ANF construction, high-degree coefficient extraction, and constancy testing can remain hard. Factored syntax is not an efficient universal query oracle.\\
+``The synthetic folding example proves CM superiority.'' & It shows avoided work in a naive sparse backend. A generic optimizer applying the same identity obtains the same saving. Real matched benchmarks are still needed.\\
+``The intrinsic ring lifts directly into the signed algebra.'' & The correct diagram is the two-map span in \cref{eq:span}; no XOR-preserving unital embedding into characteristic zero is provided.\\\bottomrule
+\end{longtable}
+
+\section{Worked two-bit output table}\label{app:worked}
+In ascending input order $00,01,10,11$, the subset matrix is
+\begin{equation}
+ M_2=\begin{pmatrix}1&0&0&0\\1&1&0&0\\1&0&1&0\\1&1&1&1\end{pmatrix}.
+\end{equation}
+For truth vector $(f_{00},f_{01},f_{10},f_{11})$, the ANF coordinates are
+\begin{align}
+ a_\emptyset&=f_{00},& a_{\{2\}}&=f_{00}\oplus f_{01},\\
+ a_{\{1\}}&=f_{00}\oplus f_{10},&a_{\{1,2\}}&=f_{00}\oplus f_{01}\oplus f_{10}\oplus f_{11}.
+\end{align}
+\begin{center}\small
+\begin{tabular}{@{}llcccc@{}}\toprule
+$f$ & Truth vector & $\emptyset$ & $\{2\}$ & $\{1\}$ & $\{1,2\}$\\\midrule
+$0$ & 0000 & $\one$ & 0 & 0 & 0\\
+$1$ & 1111 & $z$ & 0 & 0 & 0\\
+$x_1$ & 0011 & $\one$ & 0 & $\delta$ & 0\\
+$x_2$ & 0101 & $\one$ & $\delta$ & 0 & 0\\
+$x_1\oplus x_2$ & 0110 & $\one$ & $\delta$ & $\delta$ & 0\\
+$x_1x_2$ & 0001 & $\one$ & 0 & 0 & $\delta$\\
+$x_1\lor x_2$ & 0111 & $\one$ & $\delta$ & $\delta$ & $\delta$\\
+$(1\oplus x_1)(1\oplus x_2)$ & 1000 & $z$ & $\delta$ & $\delta$ & $\delta$\\\bottomrule
+\end{tabular}
+\end{center}
+This table makes clear why the constancy, affine, and point-function patterns are present. It also makes clear that the output contains a coefficient vector, not a single randomly selected measurement outcome.
+
+\begingroup
+\renewcommand*{\bibfont}{\small}
+\setlength{\bibitemsep}{3pt}
+\printbibliography[heading=bibintoc,title={References}]
+\endgroup
+\end{document}
