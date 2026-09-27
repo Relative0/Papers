@@ -1,0 +1,438 @@
+--- /mnt/data/cm_lm_review/final_bundle/original_snapshot/CM_LM_Boolean_Operator_Calculus_PreReview.tex	2026-09-27 13:58:12.061938795 +0000
++++ /mnt/data/cm_lm_review/final_bundle/revised_manuscript/CM_LM_Boolean_Operator_Calculus_Revised.tex	2026-09-27 14:01:39.154357244 +0000
+@@ -10,7 +10,7 @@
+ \usepackage{hyperref}
+ \hypersetup{
+   hidelinks,
+-  pdftitle={Correspondence and Logical Matrices: A Boolean Operator Calculus},
++  pdftitle={Correspondence and Logical Matrices: A Typed Boolean Operator Calculus},
+   pdfauthor={Brian Theory},
+   pdfkeywords={Boolean algebra, formula-valued logical matrices, correspondence matrices, logical pairing, operator superposition, propositional logic, truth tensors}
+ }
+@@ -51,10 +51,10 @@
+ \setlist[itemize]{leftmargin=1.6em}
+ \setlist[enumerate]{leftmargin=1.8em}
+ 
+-\title{Correspondence and Logical Matrices:\\A Boolean Operator Calculus\\[0.4em]
++\title{Correspondence and Logical Matrices:\\A Typed Boolean Operator Calculus\\[0.4em]
+ \large Formula-valued logical matrices, valuation, pairing, and coherent operator superposition}
+-\author{Brian Theory\thanks{Research draft. This manuscript reorganizes and extends material from the author's earlier correspondence-matrix work and a companion computational manuscript. Priority claims remain subject to a dedicated literature audit.}}
+-\date{LM-centered post-audit revised foundations draft, 22 September 2026}
++\author{Brian Theory}
++\date{September 2026}
+ 
+ \begin{document}
+ \maketitle
+@@ -87,13 +87,15 @@
+ The underlying truth-table, Boolean-algebra, group-action, and pointwise-composition ingredients are classical.  The paper therefore claims a unified formula-valued symbolic/numeric representation calculus and precise compatibility laws rather than a new underlying Boolean algebra.  No physical measurement interpretation, truth-table compression, or computational speedup is assumed.
+ \end{abstract}
+ 
+-\paragraph{Status of this draft.}
+-The binary CM selection, signed-frame transformations, same-frame fusion, formula-valued LM construction, valuation map, and binary logical-pairing identity have already been developed in the companion computational manuscript.  The present paper reorganizes those results around the CM/LM mathematics and develops the higher-arity tensor, frame-action, closure, and block-lift formulation that is natural for a foundations paper.  The literature comparisons below are deliberately conservative and inherit several bibliographic leads from the companion manuscript; they are not a certification of historical priority.
++\paragraph{Contribution and scope.}
++The contribution claimed here is a typed synthesis: a formula-valued polarity lift, an explicit Boolean frame normal form, agreement-bit pairing, signed-frame transport, and coherence identities linking symbolic LMs to numeric CMs.  The constituent truth-table, Boolean-matrix, group-action, pointwise-composition, tensor-flattening, and rank mechanisms have substantial prior art, so the paper does not claim firstness for those ingredients.  Its mathematical claims are the stated representation identities and their integration into one frame-aware calculus.  The representation is exact rather than compressed, and no computational speedup or physical measurement interpretation is assumed.
+ 
+ \section{Introduction}
+ 
+ Every binary Boolean connective has four output values.  A truth table records those values as data; a correspondence matrix records them in a $2\times2$ array whose row and column axes are tied to declared operands.  The information content is unchanged, but the array can participate in an operator calculus.  True-first Boolean state vectors select entries; transposition exchanges operand axes; row and column reversals absorb input negations; output complement negates the connective; and compatible operators can be combined before any particular operands are evaluated.
+ 
++A small alignment failure motivates making the frame part of the type.  The two occurrences in $(X\Rightarrow Y)\xor(Y\Rightarrow X)$ both use the local implication table.  XORing those two unlabelled arrays would therefore give zero.  In a common $(X,Y)$ frame, however, the second occurrence is $[\Rightarrow]^T$, and $[\Rightarrow]\,\widehat{\Updownarrow}\,[\Rightarrow]^T=[\Updownarrow]$, correctly yielding $X\xor Y$.  Section~\ref{sec:operatoronoperator} carries this example through the symbolic LM, valuation, and pairing layers.
++
+ The notation follows the author's original manuscript \cite{Droncheff2018}.  A Greek letter such as $\Theta$ denotes a logical operator variable, and $[\Theta]$ denotes the correspondence matrix representing that operator.  Thus $\Theta=\Leftrightarrow$ is a connective while
+ \[
+  [\Leftrightarrow]=\begin{bmatrix}1&0\\0&1\end{bmatrix}
+@@ -102,7 +104,7 @@
+ 
+ Throughout the paper, uppercase symbols such as $X,Y,A,B$ denote logical operands or formulas, while lowercase symbols such as $x,y,a,b,c,d$ denote Boolean values, assignments, or scalar coefficients.  The uppercase operands need not be atomic propositional variables: they may be arbitrary formulas.  The present theory nevertheless keeps LM entries in the Boolean formula algebra; an enrichment in which the operands or entries are themselves matrix-valued operators is a separate extension and is not assumed here.
+ 
+-The historical manuscript already contained several seeds of the present theory: a complete set of sixteen binary CMs, matrix transformations of logical operators, same-operands operator superposition, formula-valued LMs, logical pairing, support-style ``quotient'' operations, single-variable factorization, and tentative $4\times4$ constructions \cite{Droncheff2018}.  The present paper retains the sound parts in a more explicit type system.  In particular, the old arithmetic-modulo analogy is not retained; its useful core is an ordinary Boolean support difference.  The earlier higher-dimensional language is replaced by a $2^n$-entry tensor with explicitly declared matrix flattenings.
++Earlier correspondence-matrix work introduced the terminology and several constructions used here, including binary CMs, formula-valued LMs, matrix transformations, logical pairing, and preliminary higher-dimensional examples \cite{Droncheff2018}.  The present paper restates only the mathematically supported parts in an explicit type system.  In particular, the former arithmetic-modulo and measurement analogies are not premises of the calculus; higher-dimensional objects are treated as $2^n$-entry truth tensors with declared matrix flattenings.
+ 
+ The central structural claim is not that truth tables, Boolean matrices, tensor flattenings, or pointwise composition are new.  The distinctive focus is the formula-valued LM layer and the compatibility of its semantics with the numeric CM layer.  The architecture organizes several levels of the same Boolean function:
+ \begin{enumerate}
+@@ -121,7 +123,7 @@
+ 
+ Bricken's internally dated March 1997 notes are another close antecedent: they arrange the sixteen binary Boolean relations as $2\times2$ matrices, use Boolean matrix algebra, explicitly evaluate logical operators in bra--matrix--ket form $\langle x|B|y\rangle$, and treat logical matrices as operands of matrix operations \cite{Bricken1997}.  The original public-release date and peer-reviewed status of that technical note should not be inferred from the current website alone.  Thus neither Dirac-style notation, $2\times2$ logical matrices, nor the broad idea that matrices representing logic can themselves be manipulated is claimed as new.  NPN transformations and packed truth-function manipulation are likewise standard in logic synthesis \cite{Mishchenko2006,Zhou2019}.
+ 
+-Eigenlogic supplies a second important boundary.  It represents logical propositions by commuting projection operators whose truth values are eigenvalues and whose canonical input interpretations are eigenvectors \cite{Toffano2015,DuboisToffano2016}.  The 2015 Eigenlogic preprint explicitly discusses Dirac notation but deliberately uses ordinary vector notation; the later quantum-oriented treatment uses Dirac-style states.  The CM/LM contribution pursued here is therefore narrower: formula-valued polarity operators, their valuation to numeric CMs, exact logical pairing, typed frame alignment, and a coherence law showing that Boolean operations on operators are respected by valuation, frame changes, and pairing.  The abstract orbit embedding and polarity-equivariance facts are standard group-action structure and are used for characterization rather than historical priority.
++Eigenlogic supplies a second important boundary.  Its published treatment represents logical propositions by commuting projection operators whose truth values are eigenvalues and whose canonical interpretations are eigenvectors \cite{Toffano2020,DuboisToffano2016}.  The CM/LM contribution pursued here is different and narrower: formula-valued polarity operators, their valuation to numeric CMs, exact logical pairing, typed frame alignment, and a coherence law showing that Boolean operations on operators are respected by valuation, frame changes, and pairing.  The abstract orbit embedding and polarity-equivariance facts are standard group-action structure and are used for characterization rather than historical priority.
+ 
+ \section{Boolean scalar algebra and correspondence operators}
+ \label{sec:cm}
+@@ -313,7 +315,7 @@
+ 
+ \subsection{Formula-valued frame normal form}
+ 
+-There is a compact matrix factorization behind the four displayed formulas.  In this subsection only, juxtaposition of formula-valued matrices means XOR--AND matrix multiplication over the Boolean ring $(\cF,\xor,\land)$; this is distinct from pointwise operator superposition.
++There is a compact matrix factorization behind the four displayed formulas.  Whenever juxtaposition of formula-valued matrices is used in this paper, it denotes XOR--AND matrix multiplication over the Boolean ring $(\cF,\xor,\land)$; in particular this convention is reused in the matched-frame kernel theorem.  It is distinct from the hatted pointwise operator superposition introduced in Section~\ref{sec:operatoronoperator}.
+ Define the formula-valued frame matrix
+ \begin{equation}
+  \mathsf S_X:=
+@@ -353,7 +355,7 @@
+ which is $X\Theta Y$.  The remaining three entries are obtained by reversing the $Y$ polarity, the $X$ polarity, or both.  Equation~\eqref{eq:frameinverse} follows from $\mathsf S_X^2=\mathsf S_Y^2=I$.
+ \end{proof}
+ 
+-The normal form will also make valuation and logical pairing transparent: valuating $\mathsf S_X$ gives either $I$ or $[\Updownarrow]$, while multiplication by $\mathsf S_X$ converts an external formula state into its agreement state relative to $X$.  Orthogonal Boolean expansions and Boolean matrix/inner-product constructions provide close classical mechanisms for such partition-valued decompositions \cite{Sampei1950,Gudder2009}; Equation~\eqref{eq:framenormal} is used here as a structural normal form for the specific CM/LM polarity architecture, not as a priority claim for orthogonal expansion itself.
++The normal form will also make valuation and logical pairing transparent: valuating $\mathsf S_X$ gives either $I$ or $[\Updownarrow]$, while multiplication by $\mathsf S_X$ converts an external formula state into its agreement state relative to $X$.  Orthogonal Boolean expansions and Boolean matrix/inner-product constructions provide close classical mechanisms for such partition-valued decompositions \cite{Sampei1950,Gudder2009}.  In particular, Example~2.13 of Gudder and Latr\'emoli\`ere cyclically extends a stochastic Boolean vector to an orthonormal basis; for $n=2$ and the stochastic vector $(X,\neg X)$ this produces exactly the two complementary rows of $\mathsf S_X$.  Their Boolean-space multiplication uses join and meet rather than the global XOR--AND coefficient algebra fixed here.  Thus $\mathsf S_X$ itself is not presented as a new Boolean-space construction; Equation~\eqref{eq:framenormal} uses that frame inside the specific CM/LM polarity architecture.
+ 
+ \subsection{Valuation to correspondence matrices}
+ 
+@@ -562,36 +564,39 @@
+ The operation is generally unsound if the same array position refers to different assignments before alignment.
+ \end{corollary}
+ 
+-\begin{example}[Why the frame condition matters]
+-Consider $(X\Rightarrow Y)\xor(Y\Rightarrow X)$.  Each local connective is implication, but the second occurrence uses the reversed operand frame $(Y,X)$.  Naively applying XOR to the two unaligned arrays would give the zero matrix.  Transporting the second occurrence to the common $(X,Y)$ frame gives $[\Rightarrow]^T$, and
+-\[
+- [\Rightarrow] \,\widehat{\Updownarrow}\, [\Rightarrow]^T
+- =\begin{bmatrix}0&1\\1&0\end{bmatrix}
+- =[\Updownarrow],
+-\]
+-which correctly represents
++\begin{example}[End-to-end frame alignment]
++Consider again
+ \[
+- (X\Rightarrow Y)\xor(Y\Rightarrow X)=X\xor Y.
++ (X\Rightarrow Y)\xor(Y\Rightarrow X).
+ \]
+-The same alignment requirement applies to the formula-valued LMs before superposition.  This isolates the practical value of the typed frame contract from the classical pointwise-combination identity itself.
+-\end{example}
+-
+-\begin{example}[LM operators as first-class operands]
+-In ordinary propositional logic,
++The local numeric arrays are both $[\Rightarrow]$, but they are typed in frames $(X,Y)$ and $(Y,X)$.  Combining them before transport therefore gives the spurious zero matrix.  Transporting the second occurrence to the common $(X,Y)$ frame gives $[\Rightarrow]^T$, and
+ \[
+- (X\lor Y)\xor(X\land Y)=X\xor Y.
++ [\Rightarrow] \,\widehat{\Updownarrow}\, [\Rightarrow]^T
++ =\begin{bmatrix}0&1\\1&0\end{bmatrix}
++ =[\Updownarrow].
+ \]
+-At the symbolic operator level the same calculation is
++At the formula-valued level the same typed calculation is
+ \begin{equation}
+- [M_{X\lor Y}]\,\widehat{\Updownarrow}\,[M_{X\land Y}]
++ [M_{X\Rightarrow Y}]\,\widehat{\Updownarrow}\,
++ \bigl([M_{Y\Rightarrow X}]\bigr)^T
+  =[M_{X\Updownarrow Y}].
+  \label{eq:lmsuperpositionexample}
+ \end{equation}
+-Valuating either before or after Equation~\eqref{eq:lmsuperpositionexample} gives
++Here the transpose is not cosmetic: it changes the second occurrence from its local $(Y,X)$ coordinates to the declared $(X,Y)$ frame.  Valuation may be performed before or after Equation~\eqref{eq:lmsuperpositionexample}; the result is the corresponding signed-frame valuation of the XOR CM, and the all-true valuation returns $[\Updownarrow]$ itself.
++
++Logical pairing preserves the same calculation.  Writing
++$p=(A\Leftrightarrow X)$ and $q=(Y\Leftrightarrow B)$,
+ \[
+- [\lor] \,\widehat{\Updownarrow}\, [\land]=[\Updownarrow]
++ \langle A|[M_{X\Rightarrow Y}]|B\rangle\equiv p\Rightarrow q,
++ \qquad
++ \left\langle A\middle|\bigl([M_{Y\Rightarrow X}]\bigr)^T\middle|B\right\rangle\equiv q\Rightarrow p,
+ \]
+-in the corresponding valued frame.  Thus the LM operators themselves---not merely their evaluated truth vectors---serve as operands of the outer Boolean operation, while valuation preserves the result.
++so their XOR is $p\xor q$, exactly
++\[
++ \langle A|[M_{X\Updownarrow Y}]|B\rangle
++ \equiv (A\Leftrightarrow X)\xor(Y\Leftrightarrow B).
++\]
++Thus one calculation exhibits the purpose of the typing discipline: a frame error that is invisible in the unlabelled arrays is detected before superposition, while symbolic lift, valuation, and pairing all preserve the repaired operation.
+ \end{example}
+ 
+ The raw numeric equality is therefore not the novelty claim.  The structural focus is that formula-valued logical operators can be combined as first-class operands in a typed common frame, and the resulting symbolic operation is transported coherently through valuation and, as proved later, through logical pairing and higher-arity LM lifts.
+@@ -805,9 +810,9 @@
+ \item \emph{Common input-frame change:} for every common signed input reindexing $T$ (permutation and/or input polarity reversal, excluding output complement),
+ \[
+  T\,\widehat g(M_1,\ldots,M_m)
+- =\widehat g(TM_1,\ldots,TM_m),
++ =\widehat g(TM_1,\ldots,TM_m).
+ \]
+-with the corresponding variable substitution on the symbolic level.
++On the symbolic level the simultaneous reference/index transport is the one specified explicitly in Equation~\eqref{eq:symbolic-signed-transport}; the polarity mask is not applied twice.
+ \item \emph{Logical pairing:} in the binary case, for formula states $A,B$ and pairing map $\mathfrak p_{A,B}(M):=\langle A|M|B\rangle$,
+ \[
+  \mathfrak p_{A,B}\!\left(\widehat g(M_1,\ldots,M_m)\right)
+@@ -843,7 +848,7 @@
+ \node (mout) [box,right=42mm of mvec] {LM result\\$\widehat g(M_1,\ldots,M_m)$};
+ \node (vvec) [box,below=32mm of mvec] {valued CMs\\$(vM_1,\ldots,vM_m)$};
+ \node (vout) [box,below=32mm of mout] {valued result\\$\widehat g(vM_1,\ldots,vM_m)$};
+-\draw[->] (mvec) -- node[lab,above]{LM operator superposition} (mout);
++\draw[->] (mvec) -- node[lab,above]{LM operator\\superposition} (mout);
+ \draw[->] (mvec) -- node[lab,left]{valuation} (vvec);
+ \draw[->] (mout) -- node[lab,right]{valuation} (vout);
+ \draw[->] (vvec) -- node[lab,below]{same outer operation $\widehat g$} (vout);
+@@ -852,16 +857,8 @@
+ \label{fig:coherencesquare}
+ \end{figure}
+ 
+-\begin{remark}[Pairing preserves the LM operator calculation]
+-Applying Theorem~\ref{thm:coherence} to the LM superposition example in Equation~\eqref{eq:lmsuperpositionexample} gives, for arbitrary formula states $A,B$,
+-\[
+- \langle A|[M_{X\Updownarrow Y}]|B\rangle
+- \equiv
+- \langle A|[M_{X\lor Y}]|B\rangle
+- \xor
+- \langle A|[M_{X\land Y}]|B\rangle.
+-\]
+-Thus the same LM operator computation survives not only valuation but also relational pairing.
++\begin{remark}[Pairing preserves the running calculation]
++The final line of Example~5.3 is an instance of Theorem~\ref{thm:coherence}: after the reversed implication has been transported to the common frame, pairing may be applied before or after the pointwise XOR.  The agreement-bit result $(A\Leftrightarrow X)\xor(Y\Leftrightarrow B)$ is therefore the relational image of the same aligned operator computation, not a separate identity chosen for the example.
+ \end{remark}
+ 
+ \subsection{Higher-arity logical pairing}
+@@ -891,7 +888,14 @@
+ so the complete labelled basis-pairing table reconstructs the truth tensor.
+ \end{theorem}
+ \begin{proof}
+-The weights $\bigwedge_i A_i^{\langle\alpha_i\rangle}$ form a Boolean partition of unity indexed by $\alpha$.  The partition-selector theorem therefore evaluates the logical tensor at the tuple of agreement bits, yielding Equation~\eqref{eq:npairing}; valuation preservation follows from the same homomorphism property.  Setting $A_i=X_i^{\langle\beta_i\rangle}$ makes the $i$th agreement bit equal to the constant $\beta_i$, proving Equation~\eqref{eq:nreconstruction}.
++The weights $w_\alpha:=\bigwedge_i A_i^{\langle\alpha_i\rangle}$ form a Boolean partition of unity indexed by $\alpha$.  To make the selected index explicit, fix an arbitrary valuation $v$.  Exactly one weight is true, namely the one with $\alpha_i=v(A_i)$ for every $i$.  At that cell,
++\[
++ v\!\left(\cM_f(\mathbf X)[\alpha]\right)
++ =f\bigl(v(A_1)\xor v(X_1)\xor1,\ldots,
++         v(A_n)\xor v(X_n)\xor1\bigr),
++\]
++which is $f$ evaluated on the $n$ agreement bits $v(A_i\Leftrightarrow X_i)$.  Since this holds under every valuation, the selected formula is
++$\widetilde f(A_1\Leftrightarrow X_1,\ldots,A_n\Leftrightarrow X_n)$, proving Equation~\eqref{eq:npairing}.  Valuation preservation follows from the same selector homomorphism.  Setting $A_i=X_i^{\langle\beta_i\rangle}$ makes the $i$th agreement bit the constant $\beta_i$, proving Equation~\eqref{eq:nreconstruction}.
+ \end{proof}
+ 
+ \begin{figure}[ht]
+@@ -919,7 +923,7 @@
+ \[
+  \operatorname{assemble}_{R\mid C}(r,c)\in\B^n
+ \]
+-be the unique complete assignment whose coordinates $i_a$ equal $r_a$ and whose coordinates $j_b$ equal $c_b$.  This explicit assembly map avoids any ambiguity when the two blocks are noncontiguous or use a nonstandard order.
++be the unique complete assignment whose coordinates $i_a$ equal $r_a$ and whose coordinates $j_b$ equal $c_b$.  This explicit assembly map avoids any ambiguity when the two blocks are noncontiguous or use a nonstandard order.  Empty blocks are allowed: $\B^0$ is the singleton containing the empty assignment and an empty Kronecker product is the scalar state $1$.  Thus the limiting shapes $1\times2^n$ and $2^n\times1$ are covered without a separate convention.
+ 
+ \begin{definition}[Correspondence-map flattening]
+ The $(R\mid C)$ flattening is the $2^p\times2^q$ array
+@@ -931,6 +935,25 @@
+ Its formula-valued counterpart $[M_f(\mathbf X)]_{R\mid C}$ is defined by the same ordered assembly of the logical tensor.  Computationally this is an axis permutation followed by a reshape of $\cC_f$.
+ \end{definition}
+ 
++\begin{example}[A noncontiguous ordered flattening]
++Let $n=3$, take $R=(3,1)$ and $C=(2)$, and set
++$f(x_1,x_2,x_3)=x_1\xor(x_2\land x_3)$.  If the row bits are $r=(r_1,r_2)$ and the column bit is $c$, then
++\[
++ \operatorname{assemble}_{(3,1)\mid(2)}(r,c)=(r_2,c,r_1).
++\]
++In true-first row order $(11,10,01,00)$ and column order $(1,0)$ this gives
++\[
++ [f]_{(3,1)\mid(2)}=
++ \begin{bmatrix}
++ 0&1\\
++ 1&0\\
++ 1&1\\
++ 0&0
++ \end{bmatrix}.
++\]
++The example shows why the ordered assembly map is part of the type: a noncontiguous flattening is a precise reindexing, not an appeal to a visually guessed reshape.
++\end{example}
++
+ The notation $[\Theta]$ remains reserved as the binary shorthand.  For higher arity, the subscript $R\mid C$ is preferable to a bare size such as $[\Theta]_4$: two different constructions can both be $4\times4$ while having different types.  In particular, a four-variable $2\mid2$ correspondence map is not the same object as the $4\times4$ coefficient-permutation matrix introduced later to rotate the four cells of a binary CM.
+ 
+ Under XOR--AND multiplication, $[f]_{R\mid C}$ is a linear map
+@@ -1028,12 +1051,12 @@
+  \label{eq:separable}
+ \end{equation}
+ and over $\F_2$ the nonzero factors are unique.
+-\item More generally, the minimum $k$ for which
++\item More generally, the minimum integer $k\ge0$ for which
+ \begin{equation}
+  f(a,b)=\bigxor_{i=1}^{k} g_i(a)\land h_i(b)
+  \label{eq:xorrankdecomp}
+ \end{equation}
+-equals $\operatorname{rank}_{\F_2}[f]_{A\mid B}$.
++equals $\operatorname{rank}_{\F_2}[f]_{A\mid B}$.  The empty XOR for $k=0$ is defined to be $0$, so the zero function has minimum $k=0$.
+ \end{enumerate}
+ The formula-valued flattening of a rank-one term factorizes analogously as the outer product of the two polarity vectors.
+ \end{theorem}
+@@ -1091,7 +1114,22 @@
+ The transformations form the standard signed-permutation group $(C_2)^n\rtimes S_n$ on the input frame.  Output negation is a separate $C_2$ action on the coefficients.
+ \end{theorem}
+ 
+-Under a matrix flattening, the same action appears as row/column permutations, transpositions or block transpositions, and---when a variable moves across the chosen bipartition---a reshape.  The symbolic LM level carries the corresponding variable renaming and polarity substitution.
++For the symbolic level it is useful to state the transport law without leaving the mask placement implicit.  Let $P_\sigma$ permute tuples by $(P_\sigma z)_i=z_{\sigma(i)}$, and define the signed reference tuple by
++\[
++ \phi_{\sigma,\epsilon}(\mathbf X)_i
++ :=X_{\sigma(i)}^{\langle 1\xor\epsilon_i\rangle}.
++\]
++Then for every $f:\B^n\to\B$ and every polarity index $\alpha\in\B^n$,
++\begin{equation}
++ \boxed{
++ \mathcal L_{\mathbf X}(f\circ\phi_{\sigma,\epsilon})[\alpha]
++ =\mathcal L_{P_\sigma\mathbf X}(f)[P_\sigma\alpha\xor\epsilon]
++ =\mathcal L_{\phi_{\sigma,\epsilon}(\mathbf X)}(f)[P_\sigma\alpha].}
++ \label{eq:symbolic-signed-transport}
++\end{equation}
++All three formulas are the same Boolean term after substitution.  Equation~\eqref{eq:symbolic-signed-transport} also prevents a common implementation error: the polarity mask $\epsilon$ may be represented in the reference tuple or in the slot index, but not independently in both.  Applying the same mask twice cancels it.  In arity one with $f(x)=x$, $X=1$, $\alpha=1$, and $\epsilon=1$, the desired transported value is $0$; a double flip incorrectly returns $1$.
++
++Under a matrix flattening, the same action appears as row/column permutations, transpositions or block transpositions, and---when a variable moves across the chosen bipartition---a reshape.  The symbolic identity above specifies the corresponding variable renaming and polarity substitution exactly.
+ 
+ \begin{theorem}[Frame changes commute with pointwise composition]
+ For any common numeric reindexing $T$ and outer Boolean operation $g$,
+@@ -1166,7 +1204,7 @@
+ 
+ For two variables, one may also compare with an STP logical structure matrix.  Under the common delta encoding $1\mapsto(1,0)^T$, $0\mapsto(0,1)^T$ and column order $(11,10,01,00)$, if
+ \[
+- t=\vecop([f]_{X\mid Y})=(f_{11},f_{10},f_{01},f_{00}),
++ t=\vecop([f]_{X\mid Y})^T=(f_{11},f_{10},f_{01},f_{00}),
+ \]
+ then one binary-output structure matrix is
+ \[
+@@ -1243,7 +1281,7 @@
+  \F_2[C_4]\cong\F_2[g]/(g^4-1)
+  \cong\F_2[u]/(u^4),\qquad u=1+g.
+ \]
+-That convolution is not the original $2\times2$ CM matrix product, not pointwise conjunction, and not LM pairing.  Its units, nilpotents, filtration, interference interpretation, and modal applications therefore belong in the companion phase-algebra paper.  The present paper supplies the logical origin of the quarter-turn action.
++That convolution is not the original $2\times2$ CM matrix product, not pointwise conjunction, and not LM pairing.  Its algebraic consequences therefore lie outside the present calculus.  The only fact needed here is the logical origin of the quarter-turn action as a signed coordinate transformation.
+ 
+ 
+ \section{Computational interpretation without a performance claim}
+@@ -1273,7 +1311,7 @@
+ Boolean matrix calculus & Boolean matrices and truth vectors over XOR/AND & Matrix calculus plus arbitrary binary outer operation on corresponding truth-vector entries & Direct antecedent for the raw same-frame numerical superposition law; Prop.~3.3 states $m_{f\Phi g}=m_f\Phi m_g$ \cite{Cheng2011}.\\
+ NPN/LUT synthesis & Packed truth functions and shared DAGs & Input/output phase, input permutation, cut matching & Strong operational antecedent for frame transformations and small-function reuse \cite{Mishchenko2006,Zhou2019}.\\
+ ANF & Square-free polynomial coefficients & M\"obius transform and polynomial arithmetic & Different coordinates, related by Boolean M\"obius inversion.\\
+-Eigenlogic & Commuting projectors on interpretation space & Truth values as eigenvalues and logical interpretations as eigenvectors & Direct prior art for spectral logical observables; raw $2\times2$ CMs have a different $\F_2$ spectrum, while $\mathsf D_\Theta$ gives the diagonal truth-observable bridge \cite{Toffano2015,DuboisToffano2016}.\\
++Eigenlogic & Commuting projectors on interpretation space & Truth values as eigenvalues and logical interpretations as eigenvectors & Direct prior art for spectral logical observables; raw $2\times2$ CMs have a different $\F_2$ spectrum, while $\mathsf D_\Theta$ gives the diagonal truth-observable bridge \cite{Toffano2020,DuboisToffano2016}.\\
+ CM/LM calculus & Typed truth tensor plus polarity-equivariant formula tensor & Valuation, pairing, frame transport, aligned pointwise superposition, matched-frame kernel product, and block lift & Integrated object studied in this paper.\\
+ \bottomrule
+ \end{tabular}
+@@ -1281,6 +1319,8 @@
+ \label{tab:related}
+ \end{table}
+ 
++A recent neighboring construction is the Binary Matrix Product (BMP) representation of Boolean functions \cite{Usturali2025}.  BMPs use products of binary matrices as compressed normal forms closely related to BDDs, with an explicit computational aim.  The correspondence tensor and its flattenings here instead retain all $2^n$ truth coefficients and make no compression claim.  The comparison is useful precisely because both use matrix language for Boolean functions while solving different representation problems.
++
+ \subsection{Boolean closure as a claim boundary}
+ \begin{proposition}[Core Boolean closure]
+ Starting from a formula-valued LM or logical tensor, polarity substitution, logical-state construction, XOR--AND contraction, pointwise Boolean superposition, block outer composition, support difference, and signed-frame reindexing remain internal to Boolean algebra.  After valuation, the corresponding numeric operations remain in $\F_2$.
+@@ -1290,7 +1330,7 @@
+ \end{proof}
+ No real, complex, negative, or otherwise non-Boolean scalar is needed for the core calculus.  This closure is not by itself a historical priority claim.  Its value is to state exactly which transformations belong to the CM/LM system before any optional extension---for example the cyclic phase multiplication---is added.
+ 
+-The strongest defensible mathematical claim of the present draft is therefore architectural and structural rather than a claim that any one elementary operation is new.  Numeric correspondence tensors and formula-valued LMs provide two typed realizations of the same Boolean functions; aligned operators can themselves be operands of arbitrary Boolean superposition; and Theorem~\ref{thm:coherence} shows that valuation, common frame transport, and logical pairing all respect that superposition.  Higher-dimensional block construction and Boolean closure complete the calculus.  The orbit-lift and polarity-equivariance theorems identify the symbolic object cleanly, but their underlying group-action mechanism is treated as standard.
++The central mathematical contribution of the paper is architectural and structural rather than a claim that any one elementary operation is new.  Numeric correspondence tensors and formula-valued LMs provide two typed realizations of the same Boolean functions; aligned operators can themselves be operands of arbitrary Boolean superposition; and Theorem~\ref{thm:coherence} shows that valuation, common frame transport, and logical pairing all respect that superposition.  Higher-dimensional block construction and Boolean closure complete the calculus.  The orbit-lift and polarity-equivariance theorems identify the symbolic object cleanly, but their underlying group-action mechanism is treated as standard.
+ 
+ \section{Discussion}
+ 
+@@ -1302,27 +1342,17 @@
+ 
+ Higher-dimensional matrices then arise from variable grouping rather than from a new truth domain.  The order-$n$ tensor is primary; a $2^p\times2^q$ matrix is one flattening.  This removes ambiguity from historical higher-dimensional descriptions and makes recursive block structure explicit.
+ 
+-\subsection{Why the sixteen-element phase algebra is deferred}
++\subsection{Scope beyond the present calculus}
+ 
+-The cyclic phase algebra is mathematically interesting, but including its full development here would change the paper's question.  The CM/LM calculus uses XOR--AND selection, formula valuation, logical pairing, signed reindexing, and Boolean pointwise/outer composition.  The phase construction adds a second multiplication---cyclic convolution of coefficient positions---and with it units, nilpotents, an augmentation filtration, and modal interpretations.  Those are valuable consequences of the four-position geometry, but they are not needed to define or prove the CM/LM results above.
+-
+-The clean paper boundary is therefore:
+-\begin{itemize}
+-  \item this paper proves that literal CM rotation is a logical signed-frame action and develops the CM/LM calculus independent of any phase multiplication;
+-  \item the phase paper may begin from that action, choose the cyclic coefficient order, introduce convolution, and study the resulting algebra $\F_2[C_4]\cong\F_2[u]/(u^4)$ and its applications.
+-\end{itemize}
+-This separation lets the phase paper refer back to a fully developed logical foundation rather than forcing the foundations paper to justify a new scalar interpretation.
++Literal CM rotation is included because it is already a signed-frame action.  A cyclic convolution on the four coefficient positions would introduce a second multiplication and a different algebraic object; none of the results in this paper depends on that extension.  Questions about such a phase algebra, modal interpretations, or operator-valued enrichments are therefore deferred rather than used to enlarge the claims of the present calculus.
+ 
+ \subsection{Open structural questions}
+ 
+-Several directions now become sharply formulable.
++Three directions are especially natural.
+ \begin{enumerate}
+-  \item \textbf{Clone and categorical formulation.}  The faithful preservation of Boolean superposition suggests a clone-theoretic representation, while valuation and frame actions suggest an equivariant or functorial formulation.
+-  \item \textbf{Minimal generating operations.}  Which subset of frame actions, pointwise lifts, outer lifts, contractions, support differences, and substitutions generates the full finite CM/LM calculus?
+-  \item \textbf{Equivalence and canonical forms.}  Signed permutations give one natural orbit relation; NPN equivalence adds output phase.  Their relation to formula-level equivalence and efficient canonicalization should be separated carefully.
+-  \item \textbf{Higher-dimensional block algorithms.}  The block-lift theorem gives a recursive construction of large correspondence matrices.  It remains an empirical question when a symbolic block representation avoids materializing all $2^n$ entries.
+-  \item \textbf{Rotation-derived algebra.}  Once cyclic convolution is intentionally added, the $C_4$ algebra and its higher-arity analogues raise separate questions involving group algebras, finite differences, ANF degree, and modal resource theories.
+-  \item \textbf{Operator-valued enrichment.}  The present uppercase operands $X,Y,A,B$ are arbitrary Boolean formulas, but the LM entries still live in one Boolean formula algebra.  A separate extension could ask when formula slots may themselves carry matrix- or operator-valued objects while preserving frame normalization, pairing, and superposition.
++  \item \textbf{Abstract formulation.}  The faithful preservation of Boolean superposition suggests a clone-theoretic or equivariant description of the LM lift and its frame action.
++  \item \textbf{Canonicalization.}  Signed permutations and NPN equivalence provide natural orbit relations; their interaction with formula-level equivalence and efficient canonical forms deserves separate study.
++  \item \textbf{Empirical utility.}  The typed frame contract is exact, but whether it improves a compiler or symbolic workflow is an empirical question to be tested in the computational companion rather than assumed here.
+ \end{enumerate}
+ 
+ \section{Conclusion}
+@@ -1337,7 +1367,7 @@
+ 
+ \appendix
+ 
+-\section{Spectral boundary and compact-CM atlas}
++\section{Spectral boundary and representative compact-CM examples}
+ \label{sec:spectrum}
+ 
+ Because a binary CM is a square matrix over $\F_2$, ordinary finite-field eigenanalysis is available.  It should, however, be distinguished both from the older eigenproblem for matrices over a Boolean algebra and from the quantum-mechanical notion of an observable.  Boolean-matrix eigenproblems have been studied since at least Rutherford and Blyth \cite{Rutherford1965,Blyth1967}; those works use Boolean-algebra matrix operations rather than necessarily the XOR--AND field algebra fixed here.
+@@ -1396,7 +1426,7 @@
+  :=\operatorname{diag}(\Theta_{11},\Theta_{10},\Theta_{01},\Theta_{00}).
+  \label{eq:diagobservable}
+ \end{equation}
+-This $4\times4$ operator is a projector over ordinary real or complex scalars because its diagonal entries are $0$ or $1$; its eigenvectors are the four interpretation basis states and its eigenvalues are exactly the truth-table outputs.  That is the spectral logic used by Eigenlogic in a more general operator setting \cite{Toffano2015,DuboisToffano2016}.  Equation~\eqref{eq:diagobservable} therefore gives a useful \emph{spectral truth-observable representation} associated with a CM if a spectral interpretation is desired, but $\mathsf D_\Theta$ is a different representation from the compact $2\times2$ CM $[\Theta]$.  In the native CM representation, truth is read through the labelled matrix elements of Proposition~\ref{prop:cmselection} and Corollary~\ref{cor:basisreconstruction}, not through the spectrum.
++This $4\times4$ operator is a projector over ordinary real or complex scalars because its diagonal entries are $0$ or $1$; its eigenvectors are the four interpretation basis states and its eigenvalues are exactly the truth-table outputs.  That is the spectral logic used by Eigenlogic in a more general operator setting \cite{Toffano2020,DuboisToffano2016}.  Equation~\eqref{eq:diagobservable} therefore gives a useful \emph{spectral truth-observable representation} associated with a CM if a spectral interpretation is desired, but $\mathsf D_\Theta$ is a different representation from the compact $2\times2$ CM $[\Theta]$.  In the native CM representation, truth is read through the labelled matrix elements of Proposition~\ref{prop:cmselection} and Corollary~\ref{cor:basisreconstruction}, not through the spectrum.
+ 
+ Formula-valued LMs also admit algebraic eigenvalue questions, since their entries lie in a commutative Boolean ring.  Ring-valued spectra are less rigid than field spectra, so the safest intrinsic object at present is the \emph{valuation spectral profile}
+ \begin{equation}
+@@ -1471,7 +1501,7 @@
+ \end{center}
+ 
+ \section{Finite verification note}
+-An independent standard-library checker accompanies this revision.  It does not import the manuscript's computational implementation.  The current revision executes 20,873 exact finite checks covering: the binary frame normal form and valuation; all $16^3=4096$ binary outer-superposition triples on all assignments; the explicit frame-alignment example; all $16^2$ matched-frame products under all eight valuations of $X,Y,Z$; the corrected one-triggered valuation/axis convention through arity three; and every $2\times4$ Boolean matrix for the rank-one/conjunctive-separability equivalence.  These checks are regression tests for conventions and finite examples, not substitutes for the arbitrary-arity proofs or evidence of historical priority.
++The supplementary materials include an independent standard-library checker, \path{independent_verify.py}, together with the machine-readable run record \path{verification_results.json}.  The checker is self-contained and does not import a separate computational implementation.  The recorded run passes 2,022,648 explicitly counted assertions.  The families include complete formula-frame and inverse checks over the sixteen-element formula algebra on two free generators; all $16^3$ binary outer-superposition triples; exhaustive two-generator formula pairings; independent signed-frame alignment; matched-frame products; polarity-image and partition-selector characterizations; complete ternary valuation, pairing, and signed symbolic transport checks; ordered rectangular selection; all four-variable block lifts built from binary inner functions; all $2\times4$ matrices for minimum XOR rank decomposition; ANF parity through arity four; and the complete sixteen-CM finite spectral checks.  The checker also records boundary counterexamples, including the double-mask transport error.  These finite regression tests complement rather than replace the arbitrary-arity proofs and provide no evidence of historical priority.
+ 
+ \begin{thebibliography}{99}
+ 
+@@ -1489,6 +1519,7 @@
+ Eduardo Mizraji.
+ \newblock Vector logics: The matrix--vector representation of logical calculus.
+ \newblock \emph{Fuzzy Sets and Systems}, 50(2):179--185, 1992.
++\newblock DOI: 10.1016/0165-0114(92)90216-Q.
+ 
+ \bibitem{Mizraji2008}
+ Eduardo Mizraji.
+@@ -1509,12 +1540,14 @@
+ \bibitem{ZhaoSTP}
+ Yin Zhao, Xu Gao, and Daizhan Cheng.
+ \newblock Semi-tensor product approach to Boolean functions.
+-\newblock Unpublished preprint, available from the AMSS Logical Systems and Control group.  Bibliographic details to be checked before submission.
++\newblock Undated author-hosted preprint, Key Laboratory of Systems and Control, AMSS, Chinese Academy of Sciences.
++\newblock Available at \url{https://lsc.amss.ac.cn/~dcheng/preprint/bf01.pdf}; accessed September 2026.
+ 
+-\bibitem{Toffano2015}
++\bibitem{Toffano2020}
+ Zeno Toffano.
+ \newblock Eigenlogic in the spirit of George Boole.
+-\newblock arXiv:1512.06632, 2015.
++\newblock \emph{Logica Universalis}, 14:175--207, 2020.
++\newblock DOI: 10.1007/s11787-020-00252-3.
+ 
+ \bibitem{DuboisToffano2016}
+ Fran\c{c}ois Dubois and Zeno Toffano.
+@@ -1532,11 +1565,6 @@
+ \newblock Operator-Level Boolean Computation with Correspondence Matrices.
+ \newblock Unpublished companion manuscript, 2026.
+ 
+-\bibitem{TheoryPhase2026}
+-Brian Theory.
+-\newblock Correspondence Matrices and Cyclic Phase: Rotation-Generated Boolean Operator Algebra.
+-\newblock Research draft in preparation, 2026.
+-
+ \bibitem{Rutherford1965}
+ D. E. Rutherford.
+ \newblock The eigenvalue problem for Boolean matrices.
+@@ -1563,9 +1591,10 @@
+ \newblock \emph{ACM Transactions on Reconfigurable Technology and Systems}, 12(2):7, 2019.
+ 
+ \bibitem{Gudder2009}
+-Stan Gudder and Frederic Latr\'emoli\`ere.
++Stan Gudder and Fr\'ed\'eric Latr\'emoli\`ere.
+ \newblock Boolean inner-product spaces and Boolean matrices.
+-\newblock arXiv:0902.1290, 2009.
++\newblock \emph{Linear Algebra and its Applications}, 431(1--2):274--296, 2009.
++\newblock DOI: 10.1016/j.laa.2009.02.028.
+ 
+ \bibitem{Sampei1950}
+ Yoemon Sampei.
+@@ -1573,6 +1602,11 @@
+ \newblock \emph{Journal of the Faculty of Science, Hokkaido University, Series I}, 11(3):113--125, 1950.
+ \newblock DOI: 10.14492/hokmj/1530864050.
+ 
++\bibitem{Usturali2025}
++Umut Eren Usturali, Claudio Chamon, Andrei E. Ruckenstein, and Eduardo R. Mucciolo.
++\newblock A matrix product state representation of Boolean functions.
++\newblock arXiv:2505.01930, 2025.
++
+ \bibitem{Burris1981}
+ Stanley Burris and H. P. Sankappanavar.
+ \newblock \emph{A Course in Universal Algebra}.

@@ -1,0 +1,79 @@
+\section{Literature review: what is already known, and what is distinctive?}\label{sec:literature}
+\subsection{Search scope and evidence standard}
+The review was conducted through 27 September 2026. Searches covered the paper title and author; correspondence matrices and matrix logic; vector logic and square roots of NOT; finite-field and set-based quantum models; Boolean polynomial path sums; exact cyclotomic synthesis; ZH and categorical calculi; and tensor, decision-diagram, model-counting, and semi-tensor-product methods. Primary author papers, repository versions, and publisher records were preferred. The bibliography identifies the inspected version when version changes matter.
+
+This is a targeted deep review, not a systematic review with a provably complete citation corpus or a patent/priority search. No absence-of-results claim is used as proof of novelty. The search did not establish that the precise package of CM notation, audits, and translations here has appeared before; equally, it did not establish that it is new. Several of the central mathematical ideas have close, explicit predecessors. The recent semi-tensor-product preprint is reported as an adjacent proposal, not as independently verified performance evidence.  A final September 2026 search also found continuing progress in Clifford+$T$ unitary synthesis, reinforcing that exact-circuit representation and synthesis are active, well-developed areas rather than open novelty territory for the present encoding.
+
+\subsection{Matrix logic and vector logic: direct predecessors}
+\paragraph{Stern's matrix logic.}
+August Stern's 1988 book \emph{Matrix Logic} already develops a matrix/operator formulation of logical transformations \cite{stern1988}. The publisher preview establishes historical overlap with the broad idea of representing logic in vector spaces. A full technical comparison with that book has not been completed here, and its broader physical interpretations are not adopted. It is enough to rule out treating ``logic represented by matrices'' as a novel general principle.
+
+\paragraph{Mizraji's vector logic.}
+Mizraji's vector logic maps truth values to orthonormal vectors, monadic operations to square matrices, and dyadic operations to rectangular matrices acting on Kronecker products \cite{mizraji2008}. In a two-dimensional truth space, a dyadic truth-valued gate is naturally a $2\times4$ map. Droncheff's two-input CM is instead a $2\times2$ table whose contraction with two one-hot vectors returns a scalar truth value. The dimensions and operational semantics differ, but \cref{eq:logicalgate} explicitly translates every predicate CM into such a deterministic dyadic gate. This strengthens the prior-art connection: the name ``correspondence matrix'' does not by itself establish mathematical separation.
+
+Mizraji also studies counterfactual vector logic using square roots of NOT \cite{mizraji2021}. This is a close conceptual predecessor to extending a logical operator calculus beyond its original Boolean values. It is not the same as the integral phase quotient here, and its logical interpretation need not be the interpretation used in a physical quantum circuit.
+
+\paragraph{A particularly close imaginary-unit analogue.}
+The revised manuscript on generalized square roots of NOT explicitly discusses matrix extensions of the imaginary unit, Deutsch-type reasoning, and matrix circular functions \cite{mizraji2024}. On a two-valued truth space, with NOT represented by $X$, one familiar root is
+\begin{equation}
+ V=\frac{1+i}{2}I+\frac{1-i}{2}X,\qquad V^2=X,\quad V^4=I.
+\end{equation}
+This is close to the motivating question, but differs from $J^2=-I$ and from the strictly Boolean convolution model. It uses complex coefficients; it does not make $i$ a new Boolean truth value. The distinction is instructive: both $V$ and $J$ have period four, but their squares and representations differ. The present contribution must therefore be judged by the explicit quotient and compiler identities, not by fourfold periodicity or the generic use of matrices for phase.
+
+\subsection{Finite-field and set-based models: close to the Boolean stage}
+\paragraph{Modal quantum theory.}
+Schumacher and Westmoreland formulate quantum-like structures over finite fields with a modal distinction between possible and impossible outcomes \cite{modal}. This line of work demonstrates that superposition-like algebra, tensor structure, and nonclassical-looking logical properties can be investigated without the usual complex Hilbert-space probability model. It is an important counterweight to an overbroad conclusion that characteristic two forbids every useful quantum analogue. Our no-go theorem concerns Hamming-preserving $\F_2[C_4]$-linear maps under a specified measurement functional. It does not invalidate modal models with different measurement axioms.
+
+\paragraph{Quantum mechanics over sets.}
+Ellerman's set-based program uses the correspondence between subsets and binary vectors, symmetric difference, and an integer-valued overlap count such as $|S\cap T|$ \cite{ellerman}. It also explicitly discusses a sets-to-vector-spaces lifting principle. This is especially close to the Hamming/counting portion of the present investigation. The lesson is twofold: an external non-modular count on binary data is an established construction, and its status depends on the model's probability assumptions. Our integral $C_4$ lift and opposite-phase quotient specify a particular character representation; the cited set program has a different organization and interpretation. Neither adjacency justifies deriving empirical quantum probabilities from truth values without additional premises.
+
+
+\subsection{Hamming isometries and the finite-ring context}
+The global coefficient-weight theorem in \cref{thm:hamming} sits close to classical Hamming-isometry theory.  Over a finite field, the MacWilliams extension theorem identifies linear Hamming isometries with monomial equivalences; over finite Frobenius rings, Wood proved the corresponding extension property, and Greferath--Schmidt supplied a combinatorial treatment \cite{wood1999,greferath2000}.  The present weight is not the standard ring-symbol Hamming weight: each element of $\F_2[C_4]$ contributes the Hamming weight of its four binary coefficients.  Consequently, the short proof of \cref{thm:hamming} is best understood as the ordinary binary coordinate-permutation theorem together with the requirement that the permutation commute with the $d$ disjoint four-cycles induced by multiplication by $g$.  This yields $C_4\wr S_d$ directly.  The classification is useful for the CM audit, but it is not presented as a new general isometry theorem.
+
+\subsection{Boolean paths and exact amplitudes: strong prior overlap}
+Dawson and collaborators express quantum outputs through counts of solutions to polynomial equations over $\Z_2$ \cite{dawson}. Their connection between Boolean path constraints and signed amplitude counts is a direct predecessor of \cref{thm:paths}. Thus ``AND/XOR descriptions plus integer signed counting can represent quantum computation'' is not a new conclusion of the CM route.
+
+Amy develops path-sum semantics for functional quantum-circuit verification, including rewrite methods and a tractable Clifford case \cite{amy2019}. Later work gives complete equational theories for sum-over-paths expressions with unbalanced amplitudes, including coefficient-domain distinctions \cite{amy2023}. These are particularly relevant to any proposed CM simplifier: a new rule should be translated into existing path-sum syntax and tested for whether it is genuinely stronger, more local, more efficient to implement, or merely an equivalent presentation.
+
+The useful distinction here is representational granularity. A CM can serve as a small truth-table object for a local predicate, while a path sum expresses global amplitude contributions. \Cref{eq:phasecarry} is an exact interface between the two. Its value would be demonstrated by a verified compiler or a benchmark in which local CM decomposition reduces an actual verification or contraction cost.
+
+\subsection{Graphical and categorical calculi}
+The ZH calculus was developed to handle quantum computations involving classical nonlinearity, with compact representations related to Boolean AND and non-Clifford structure \cite{zh}. It is therefore a strong neighboring formalism for the proposed Boolean-predicate phase translation, especially when higher-degree monomials and controlled phases are involved. A CM-oriented graphical notation would need to compare against ZH's semantic and equational results rather than present graphical Boolean/quantum unification as new in itself.
+
+Categorical quantum semantics separates compositional structure from particular matrix coordinates and scalar choices \cite{abramsky}. That viewpoint clarifies why changing scalars, tensor operations, and adjoints must be explicit. It also suggests the right architectural goal for a CM compiler: preserve composition under a typed interpretation. It does not remove the need to state which probability model is being interpreted.
+
+\subsection{Exact synthesis and known coefficient rings}
+The ring $\Z[1/\sqrt2,i]$ is central to exact Clifford+$T$ synthesis. Giles and Selinger characterize multiqubit exact synthesis with local ancillas in terms of this ring \cite{giles}, while Kliuchnikov, Maslov, and Mosca study exact single-qubit synthesis \cite{kmm}. Consequently the Gaussian/cyclotomic phase-count arithmetic here is a standard exact quantum coefficient domain in a CM-motivated coordinate system. No novelty is claimed for its closure or for implementing $H,S,T$, and CNOT within it.  Recent work continues to improve general Clifford+$T$ synthesis bounds \cite{tan2026}; that progress further supports treating the present exact arithmetic as infrastructure rather than novelty.
+
+Aaronson and Gottesman's stabilizer algorithms give a strong baseline whenever the permitted gate set is Clifford \cite{aaronson}. A dense CM count array will generally not compete with a compact stabilizer tableau simply because it uses Boolean data. Conversely, Aharonov's Hadamard--Toffoli universality result shows why adding nonlinear reversible gates changes the computational story even without adding a literal $45^\circ$ phase instruction \cite{aharonov}. Gate-set restrictions and coefficient representations must be analyzed separately.
+
+\subsection{Existing computational bridges and a recent close neighbor}
+Markov and Shi show how tensor-network contraction exploits circuit structure, with complexity controlled by a graph-width parameter \cite{markov}. Hong and collaborators combine tensor representations with decision diagrams \cite{tdd}. Both are natural baselines for a CM proposal that uses local decomposition, shared subexpressions, or factorization. The relevant questions concern intermediate tensor size, ordering, graph sharing, and exact arithmetic growth, rather than array dimension in isolation.
+
+Mei, Bonsangue, and Laarman investigate quantum simulation through model counting \cite{mei}. This is a modern practical neighbor of the Boolean path-count interpretation. Replacing Boolean formulas by small CM objects could be useful as a front-end encoding or rewrite layer, but the hard weighted-counting task does not disappear. A credible claim would compare solver size and end-to-end cost on the same instances.
+
+A particularly relevant recent preprint by Li and collaborators uses semi-tensor products for exact synthesis of CNOT and phase-polynomial circuits \cite{stp2026}. Its approach separates topology enumeration from matrix-based instantiation and factorization. This is direct evidence that Boolean/matrix formalisms are actively being used as quantum compilation tools. It is not the same representation as the CM phase quotient, and the performance claims in that preprint were not reproduced here. The correct research response is to investigate a translation and compare synthesis kernels, not infer that either framework automatically dominates the other.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}L{0.26\textwidth}Y Y@{}}
+\toprule
+Prior line of work & Closest overlap & Main distinction to preserve\\
+\midrule
+Matrix / vector logic & Logical operators as matrices and tensors; roots of NOT. & A truth-valued gate matrix is not the same object as a scalar predicate table or phase-count coefficient.\\
+Modal and set models & Binary superposition-like structures; counting overlaps; lifting language. & Measurement axioms differ; physical equivalence is not automatic.\\
+Boolean polynomial paths & Boolean constraints plus signed path counts. & The global representation is established; CM-local compilation may be a useful interface.\\
+ZH / path-sum rewriting & Boolean nonlinearities and quantum phase in a formal calculus. & New CM rules need semantic proofs and comparative evaluation.\\
+Exact cyclotomic synthesis & Gaussian and eighth-root coefficient rings. & Pair/array notation does not create a new scalar theory.\\
+Tensor / decision diagrams / model counting & Structure-aware exact simulation. & Any advantage must beat appropriate existing backends on stated instance families.\\
+Semi-tensor-product synthesis & Matrix factorization applied to quantum circuit compilation. & A close 2026 preprint, not an independently confirmed performance benchmark here.\\
+\bottomrule
+\end{tabularx}
+\caption{A comparison map. Similarity is not identity, but it substantially narrows defensible novelty claims.}
+\end{table}
+
+\subsection{A conservative novelty assessment}
+The following are established mathematical ingredients, not discoveries claimed here: regular cyclic representations; group algebras; Gaussian and cyclotomic quotients; complex arithmetic in pairs; Boolean path-sum descriptions; and exact Clifford+$T$ simulation. The finite classifications are reproducible results for a particular explicitly defined CM phase model. They may be useful to document, but priority for such small algebraic classifications has not been established.
+
+The most defensible present contribution is a \emph{verified synthesis}: it locates the precise semantic changes in a CM-to-phase construction, proves its intertwining and no-go statements, corrects misleading shortcuts, and gives a typed route from original predicate CMs to reversible and phase oracles. Potential algorithmic novelty is deferred to measurable compiler or rewriting improvements. This narrower claim is stronger scientifically than calling an isomorphic encoding a new theory of quantum mechanics.

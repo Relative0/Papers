@@ -1,0 +1,192 @@
+\section{A direct compiler from original CM predicates to quantum operators}\label{sec:compiler}
+The preceding quotient explains a phase coordinate system, but it intentionally loses Boolean truth-table information. There is a second bridge that retains that information and makes direct use of CMs \emph{as specifications of logical operators}. It is particularly important for avoiding the impression that the CMs disappear as soon as Gaussian coordinates are introduced.
+
+\begin{definition}[Reversible CM oracle and CM phase gate]
+For the original predicate $f_A$ in \cref{eq:predicate}, define
+\begin{align}
+ O_A\ket{x,y,z}&=\ket{x,y,z\oplus f_A(x,y)},\label{eq:oracle}\\
+ D_A^{(k)}\ket{x,y}&=\zeta_8^{\,k f_A(x,y)}\ket{x,y},
+ \qquad\zeta_8=e^{i\pi/4}.\label{eq:phaseoracle}
+\end{align}
+These act on three and two qubits respectively. They are not the original $2\times2$ truth-table array acting on a ket of the wrong dimension.
+\end{definition}
+
+\begin{proposition}[Typed Boolean-oracle embedding and exact phase correction]\label{thm:compiler}
+For all two-input CMs $A,B$:
+\begin{align}
+ O_A^2&=I,\qquad O_AO_B=O_{A\oplus B},\label{eq:oraclehom}\\
+ D_{A\oplus B}^{(k)}
+ &=D_A^{(k)}D_B^{(k)}D_{A\land B}^{(-2k)}.\label{eq:phasecarry}
+\end{align}
+The map $A\mapsto O_A$ is injective. For $k=4$, the final factor in \cref{eq:phasecarry} is the identity, so XOR of predicates translates exactly into composition of their sign-phase oracles.
+\end{proposition}
+\begin{proof}
+The oracle preserves $x,y$ and toggles $z$ by its predicate, so two applications cancel and two different oracles toggle by $f_A\oplus f_B$. Distinct predicates differ on some pair and hence produce distinct permutations. For phase gates, apply $f_A\oplus f_B=f_A+f_B-2f_Af_B$ as an integer equality and compare exponents modulo eight. At $k=4$, the overlap correction is a multiple of eight.
+\end{proof}
+This is an operational use of the original CM composition law, not merely a relation between two four-cycles. It also explains why one cannot transfer an XOR rewrite unchanged to arbitrary $45^\circ$ phase gates. The correction factor may be essential.  The oracle and phase identities are elementary reversible-computation and inclusion--exclusion facts; their role here is to make the CM-to-phase interface type-correct rather than to claim a new oracle theory.
+
+\subsection{All sixteen two-input sign oracles have a simple normal form}
+For $A=\cm abcd$, write its algebraic normal form as
+\begin{equation}
+ f_A(x,y)=d\oplus p x\oplus q y\oplus rxy,
+\end{equation}
+where
+\begin{equation}
+ p=b\oplus d,\qquad q=c\oplus d,\qquad r=a\oplus b\oplus c\oplus d.
+\end{equation}
+Then
+\begin{equation}\label{eq:ANForacle}
+ D_A^{(4)}=(-1)^d Z_x^p Z_y^q\,CZ_{xy}^{\,r}.
+\end{equation}
+All sixteen cases were checked independently on all four inputs. As a worked example, OR has $d=0$ and $p=q=r=1$; therefore its sign oracle is $Z_xZ_yCZ$. AND gives $CZ$ as a phase oracle and Toffoli as the reversible oracle $O_A$.
+
+For a general angle the integer expansion is also useful:
+\begin{equation}
+ f_A(x,y)=d+(b-d)x+(c-d)y+(a-b-c+d)xy.
+\end{equation}
+It factors a diagonal phase predicate into constant, one-variable, and two-variable phases. This is a semantic identity, not an assertion that every controlled phase is a cost-free primitive or admits a particular ancilla-free synthesis. Synthesis constraints must be checked separately \cite{giles,kmm}.
+
+\subsection{Why the typed distinction matters}
+The array $E_0$ can mean the predicate $x\land y$, or it can mean one unit of zero-phase amplitude. In the first role it compiles to $O_{E_0}$ or $D_{E_0}^{(k)}$; in the second it maps to $QE_0=(1,0)$. These are different interpretations of the same array. A compiler must distinguish at least \emph{predicate CM}, \emph{phase-count CM}, and \emph{linear operator}. Their allowed rewrites are different. This type discipline is a practical contribution of the audit even if the underlying oracle constructions and Boolean phase identities are established mathematics.
+
+\section{Exact gates, coefficient domains, and the \texorpdfstring{$C_8$}{C8} extension}\label{sec:exact}
+\subsection{The common-denominator \texorpdfstring{$C_4$}{C4} format}
+For circuits built from $H,S$, CNOT, and Boolean basis permutations, integer Gaussian numerators with a shared denominator $2^{h/2}$ remain a valid representation. Each Hadamard adds or subtracts numerators and increments $h$; $S$ rotates pairs; a permutation reassigns branch labels. This proves closure under those gate rules, and the quotient intertwining proves agreement with the corresponding standard quantum gates.
+
+There are two qualifications. First, the union of the common-denominator formats is not itself closed under arbitrary scalar addition. For example $1+1/\sqrt2$ cannot be written as a single Gaussian integer divided by one power of $\sqrt2$. The format is closed under the specified synchronized circuit updates, not an unrestricted coefficient ring. Second, allowing \emph{arbitrary} reversible Boolean oracles adds gates such as Toffoli, which are not Clifford. Hadamard and Toffoli already support universal quantum computation with the standard real-amplitude encoding \cite{aharonov}. A $C_4$ phase alphabet alone therefore does not characterize the computational power of a gate set.
+
+For precisely $H,S$, and CNOT, the gates generate the Clifford group; efficient stabilizer descriptions are established and generally preferable to dense state vectors in that sector \cite{aaronson}. Our exact group checks generate $24$ one-qubit and $11{,}520$ two-qubit elements modulo global phase. They are checks of the representation, not discoveries of new group orders.
+
+\subsection{Four integer coordinates for exact \texorpdfstring{$45^\circ$}{45-degree} phases}
+Let
+\begin{equation}
+ \alg_8=\Z[z]/(z^4+1),\qquad z\mapsto\zeta_8.
+\end{equation}
+An element is uniquely represented by $(a,b,c,d)$, meaning $a+bz+cz^2+dz^3$. Multiplication by $z$ is the signed cyclic shift
+\begin{equation}
+ (a,b,c,d)\longmapsto(-d,a,b,c).
+\end{equation}
+Thus $z^2=i$, $z^4=-1$, and $z^8=1$. This $45^\circ$ phase is not an ordinary geometric $45^\circ$ rotation of a four-cell binary CM: the original array does not have eight distinct positions. It is an explicitly enlarged coefficient representation. One can use eight phase bins with opposite-bin reduction, or the four independent signed coordinates above.
+
+Conjugation is
+\begin{equation}
+ \overline{(a,b,c,d)}=(a,-d,-c,-b).
+\end{equation}
+The squared modulus has the exact form
+\begin{align}\label{eq:C8norm}
+ |a+bz+cz^2+dz^3|^2&=u+v\sqrt2,\\
+ u&=a^2+b^2+c^2+d^2,\nonumber\\
+ v&=ab+bc+cd-ad.\nonumber
+\end{align}
+These identities follow by multiplication with the conjugate and reduction using $z^4=-1$ and $\sqrt2=z-z^3$.
+
+The implementation uses the ring
+\begin{equation}\label{eq:ring}
+ \mathcal D=\Z[z,1/2]=\Z[i,1/\sqrt2].
+\end{equation}
+An amplitude is a four-integer numerator divided by $2^s$. For Hadamard, multiply each sum or difference by $\delta=z-z^3=\sqrt2$ and increment $s$; this implements division by $\sqrt2$ without floating point. The $T$ gate applies the signed shift on the selected branch, while $S=T^2$ applies two shifts. The exact synthesis literature studies precisely this coefficient domain \cite{giles,kmm}.
+
+\paragraph{An important correction about the hierarchy.}
+Once $1/\sqrt2$ has been adjoined for normalized Hadamards, $\zeta_8=(1+i)/\sqrt2$ is already in the ambient scalar ring. Accordingly, adding $T$ is not necessarily a new \emph{number-field} extension beyond the normalized $C_4$ setting. It is an additional local gate and a richer convenient numerator format. It extends Clifford dynamics because $T$ is not a Clifford generator, not because the normalization-free label $C_4$ by itself forbids every eighth-root number.
+
+\subsection{Closure and equivalence theorem}
+\begin{proposition}[Exactness of the phase-count representation]\label{thm:exact}
+Using bitstring-indexed branch vectors over $\mathcal D$, ordinary tensor products, and the integer update rules above, every finite Clifford+$T$ circuit has an exact phase-count representation. Evaluating $z$ at $e^{i\pi/4}$ intertwines every encoded gate with the standard quantum gate and therefore preserves all circuit amplitudes and their Born probabilities. The same statement holds when additional Boolean permutation oracles are supplied exactly.
+\end{proposition}
+\begin{proof}
+Evaluation is a ring homomorphism because $\zeta_8^4+1=0$. The gate updates agree entrywise with $H$, $S$, $T$, and CNOT; a Boolean permutation agrees by its basis action. Sums, products, and tensor products commute with evaluation. Induction on the gate sequence proves amplitude equality. Standard gate unitarity, or the pairwise Hadamard norm identity and phase/permutation invariance, proves norm preservation. The probability statement uses the usual Hilbert-space measurement rule under this identification.
+\end{proof}
+This proposition repackages the established exact coefficient domain for Clifford+$T$ circuits \cite{giles,kmm}; it is included to certify the CM translation, not as a new exact-synthesis theorem. It is an exact encoding of known quantum arithmetic, not a distinct physical theory. The primitive character quotient is the reason the encoding has complex structure, even when the code uses no complex-number datatype.
+
+For $H S^k H\ket0$, one obtains
+\begin{equation}
+ P(0)=\left(1,\frac12,0,\frac12\right)_k,\quad
+ P(1)=\left(0,\frac12,1,\frac12\right)_k.
+\end{equation}
+For $HTH\ket0$,
+\begin{equation}
+ P(0)=\frac{2+\sqrt2}{4},\qquad P(1)=\frac{2-\sqrt2}{4}.
+\end{equation}
+Unlike the earlier Hamming-only toy splitter, these circuits preserve the appropriate normalized norm at every step.
+
+\subsection{Measurement and projective caveats}
+The representation covers unitary circuits and computes their measurement probabilities exactly. A normalized state obtained by conditioning on an arbitrary outcome may require division by $\sqrt p$, which need not belong to $\mathcal D$. A measurement-capable implementation should therefore keep unnormalized branch vectors and an exact probability record, or explicitly extend its scalar domain. Closure under unitary updates does not silently prove closure under every normalized postselection.
+
+Global phase may also change the apparent required field of a particular matrix representation. For maximal CHSH measurements, real eigenvectors involving $\cos(\pi/8)$ suggest a larger field if that real gauge is insisted upon. However the actual observables are implemented already by Clifford+$T$ circuits:
+\begin{align}
+ U_+&=SHTHS^\dagger,& U_+^\dagger ZU_+&=(Z-X)/\sqrt2,\\
+ U_-&=SHT^\dagger HS^\dagger,& U_-^\dagger ZU_-&=(Z+X)/\sqrt2.
+\end{align}
+Thus a $C_{16}$ lift is not necessary for that experiment. The earlier field-degree argument neglected projective equivalence.
+
+\section{A Boolean phase-path theorem and its computational meaning}\label{sec:paths}
+The gate rules have a second exact implementation: enumerate Boolean paths and accumulate integer phase counts. This is directly related to established polynomial and sum-over-paths formulations \cite{dawson,amy2019,amy2023}.
+
+\begin{proposition}[CM-specialized phase-path representation]\label{thm:paths}
+Consider a circuit built from $H$, diagonal powers of $T$, and reversible Boolean gates, with $h$ Hadamard occurrences. For computational basis input $x$ there are Boolean functions $F_x$ and a phase function $p_x$ with values in $\Z/8\Z$ such that
+\begin{equation}\label{eq:pathsum}
+ \bra yU\ket x=2^{-h/2}
+ \sum_{\lambda\in\{0,1\}^h:\,F_x(\lambda)=y}
+ \zeta_8^{\,p_x(\lambda)}.
+\end{equation}
+\end{proposition}
+\begin{proof}
+A Hadamard acting on a bit $a$ introduces a new output bit $b$ and contributes the factor $2^{-1/2}\zeta_8^{4ab}$. A $T^k$ gate on bit $a$ contributes $\zeta_8^{ka}$ without changing the bit. A reversible Boolean gate updates bit values deterministically; CNOT uses XOR and Toffoli uses an AND-controlled XOR. Following these rules produces $F_x$ and the sum of all phase contributions modulo eight. Multiplying gate factors along a path and summing paths ending at $y$ gives \cref{eq:pathsum}.
+\end{proof}
+This proposition is a CM-specialized restatement of established Boolean/sum-over-paths semantics \cite{dawson,amy2019,amy2023}; its purpose is validation of the translation.
+
+The resulting program has Boolean control expressions, but its amplitudes are \emph{integer-weighted sums of phases}. They are not obtained by XORing all paths. With eight counts $n_0,\ldots,n_7$ for each output, opposite-phase cancellation reduces the numerator to
+\begin{equation}
+ (n_0-n_4)+(n_1-n_5)z+(n_2-n_6)z^2+(n_3-n_7)z^3.
+\end{equation}
+This is the $C_8$ version of the four-position quotient.
+
+Phase kickback is an especially transparent example. Since $\ket-=(\ket0-\ket1)/\sqrt2$ is an eigenvector of the bit flip,
+\begin{equation}
+ U_f\ket x\ket-=(-1)^{f(x)}\ket x\ket-=J^{2f(x)}\ket x\ket-.
+\end{equation}
+The logical predicate is converted into a half-turn phase. The signed phase sum after final Hadamards is a Walsh-type transform of $(-1)^{f(x)}$, not the original truth-table XOR sum.
+
+\paragraph{Complexity is not removed by notation.}
+Direct enumeration may take $2^h$ paths; dense state propagation has $2^n$ amplitudes. Counts need growing integers, so an honest analysis must include both arithmetic-operation count and bit complexity. Polynomial-size Boolean descriptions can encode hard counting tasks \cite{dawson}. Any claim of a faster CM method must exploit a stated structural restriction and compare against existing path-sum, stabilizer, tensor-network, decision-diagram, or model-counting methods \cite{aaronson,markov,tdd,mei}. The present algorithms establish semantics and reproducibility, not a new general simulation bound.
+
+\section{Verification of the lifted calculations}\label{sec:verification}
+\subsection{Independent implementations and exactness}
+The supplementary code contains an integer-only cyclotomic backend and an independently organized path enumerator. Amplitudes are tuples of integers, denominators are powers of two, and probabilities are rational pairs $r+s\sqrt2$. Equality and normalization tests in this backend are exact. A separate complex-double backend supplies a numerical cross-check; that check is explicitly not used to certify exact identities.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}Y L{0.38\textwidth}@{}}
+\toprule
+Check & Newly obtained result\\
+\midrule
+Parallelogram identity on small integer tuples & $6{,}561$ exact cases, no failures\\
+Exact projective Clifford enumeration & $24$ one-qubit; $11{,}520$ two-qubit elements\\
+Random exact circuit propagation & $240$ circuits, $1$--$4$ qubits, $24$ gates each\\
+Intermediate exact normalization & $5{,}760$ checks, no failures\\
+Independent exact paths versus exact state propagation & $120$ circuits, no discrepancies\\
+Numerical cross-check against complex doubles & Maximum amplitude difference $1.12\times10^{-15}$\\
+Deutsch--Jozsa, all promised functions & $8/8$ at $n=2$; $72/72$ at $n=3$\\
+Grover, one iteration, every marked input & $P=1$ at $n=2$; $P=25/32$ at $n=3$\\
+Bell correlations & $E(ZZ)=E(XX)=1$; $E(ZX)=E(XZ)=0$\\
+Optimal CHSH via exact $C_8$ gates & $2\sqrt2$; both local marginals $1/2$\\
+CM phase carry identity & $8{,}192$ input/phase/CM cases\\
+Two-input sign-oracle normal forms & All $16$ CMs verified on all inputs\\
+\bottomrule
+\end{tabularx}
+\caption{Recomputed regression results. Randomized tests use a fixed seed. Gate closure and the intertwining identities have separate proofs; finite tests do not replace them.}
+\label{tab:quantum}
+\end{table}
+
+The Pauli-conjugation group enumeration uses exact signed bit representations rather than floating-point matrix matching. The random circuits include phase powers, CNOT, and where possible Toffoli; this is intentionally broader than the Clifford-only group check. The independent path tests use at most eight Hadamards so that all paths are actually enumerated. Full definitions and commands are given in \cref{app:repro}.
+
+\subsection{What the algorithm examples do and do not demonstrate}
+For Deutsch--Jozsa, the all-zero output amplitude is
+\begin{equation}
+ 2^{-n}\sum_x(-1)^{f(x)}.
+\end{equation}
+It has magnitude one for constant functions and vanishes for balanced ones. Exhausting the promise sets for two and three inputs verifies the implementation against this identity. The oracle is supplied explicitly in the test; constructing it efficiently from an arbitrary external problem remains a separate task.
+
+For Grover with one marked item among $N$, one iteration gives marked amplitude $\sin(3\theta)$ with $\sin\theta=1/\sqrt N$. Direct gate propagation gives success probabilities one for $N=4$ and $25/32$ for $N=8$, matching this elementary amplitude calculation. The three-qubit marked-state phase uses a nonlinear oracle outside the Clifford-only subgroup.
+
+For CHSH, the Bell state and the observables $A_0=Z,A_1=X$, $B_0=(Z+X)/\sqrt2,B_1=(Z-X)/\sqrt2$ give correlations $(1,1,1,-1)/\sqrt2$. The exact circuit calculation also checks that changing the remote setting leaves each local marginal equal to $1/2$. This is a centralized calculation of quantum probabilities. It is not an experimental Bell test, a local-hidden-variable explanation, or evidence that Boolean hardware can evade Bell's assumptions. The conclusion is representational agreement, as guaranteed by \cref{thm:exact}.

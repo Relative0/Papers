@@ -1,0 +1,19 @@
+\section{A focused next step: certified local phase rewrites}\label{sec:applications}
+The present paper is strongest as a correction-oriented translation note and finite boundary analysis.  It does not yet establish a faster simulator or synthesizer.  The most direct follow-up is therefore one falsifiable implementation question: can local CM decompositions reduce the cost of an existing exact phase-rewrite or verification workflow after all correction terms and conversion overhead are included?
+
+The compiler identity
+\begin{equation}
+ D_{A\oplus B}^{(k)}=D_A^{(k)}D_B^{(k)}D_{A\land B}^{(-2k)}
+\end{equation}
+provides a small certificate.  For bounded-input predicates, a certificate can record the two truth tables, the phase modulus, the overlap/carry table, and the resulting circuit resources.  At half-turn phases the correction disappears; at eighth-root phases it retains exactly the information lost by translating XOR as ordinary phase multiplication.  This is not a new Boolean identity.  The testable claim is whether the CM packaging is useful as a local front end to an established path-sum, phase-polynomial, ZH, tensor, or decision-diagram backend \cite{amy2019,amy2023,zh,markov,tdd,mei}.
+
+\subsection{Benchmark contract}
+A credible experiment should compare the same circuit families before and after CM-local rewriting and report at least: gate count, $T$ count where relevant, logical ancillas, peak exact-expression size, coefficient bit lengths, memory, wall time, and conversion overhead.  It should include favorable and unfavorable cases.  Clifford-only instances need a stabilizer baseline \cite{aaronson}; nonlinear Boolean oracles and non-Clifford phase-polynomial instances should be compared with established exact methods.  The outcome may be negative.  A negative result would still clarify whether the typed correction law is primarily expository rather than computational.
+
+\subsection{Representation compression has a precise safety condition}
+Because $Q$ is a ring homomorphism for integer convolution, a purely convolutional subexpression may be quotiented before or after contraction with the same result.  The same move is unsafe across Boolean XOR unless the carry correction is applied.  A future compiler can therefore make ``quotient late, or quotient with a proof'' an explicit type rule.  This is a correctness condition and at most a constant-factor representation reduction; no asymptotic advantage follows from it alone.
+
+\section{Conclusion}
+The investigation yields a deliberately narrower result than the motivating analogy suggested.  Strict Boolean CMs support a faithful fourfold rotation action, but characteristic-two XOR does not preserve multiplicity or signed reinforcement.  Under the stated coefficient-Hamming measurement, the globally preserving $\F_2[C_4]$-linear maps reduce to branch permutations with independent cyclic rotations, and the exhaustive weight-four-shell search produces no target four-sample fringe.  These are model-specific boundary results, not no-go theorems for finite-field quantum analogues in general.
+
+A signed phase model appears only after changing scalars: lifting to $\Z[C_4]$ and imposing the opposite-phase relation gives $\Z[i]$, with $QP=JQ$ and an explicit carry formula identifying the failure of XOR to become signed addition.  Original CM truth predicates can then be compiled to reversible and phase oracles with a typed correction law.  Exact Clifford+$T$ arithmetic and Boolean path sums are established prior art and function here as validation targets, not new quantum formalism.  On the evidence presently available, the publishable contribution is the corrected CM-to-phase translation, the finite classifications and no-fringe audit, and the reproducible separation of Boolean, integral, and quantum semantics.  Algorithmic advantage remains a future benchmark question.

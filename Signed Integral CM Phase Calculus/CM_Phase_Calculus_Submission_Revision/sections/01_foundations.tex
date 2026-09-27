@@ -1,0 +1,160 @@
+\section{Scope, claims, and the question being answered}\label{sec:scope}
+The motivating question is concrete: can a logical calculus with AND and XOR in the roles of multiplication and addition support something analogous to multiplication by $i$, and can rotations of correspondence matrices provide that operation? An answer must distinguish a four-cycle of pictures from a representation of a group, and a group representation from an amplitude algebra with a positive norm. It must also distinguish a numerical simulation of quantum equations from a physical quantum computer.
+
+The starting manuscript, \emph{Correspondence Matrices; Algorithms for Propositional Logic}, develops CMs, their rotations and complements, XOR composition, logical measurement matrices (LMs), and higher-dimensional constructions \cite{droncheff}. A public 2018 version is available and supplies the historical CM definitions used here. Its measurement discussion explicitly does not incorporate probability densities. Here we retain those definitions when discussing the original calculus and mark every change of coefficients, multiplication, or measurement interpretation. We verify the identities needed below; this is not a line-by-line certification of every statement in the original manuscript.
+
+\paragraph{Four levels of evidence.}
+A \emph{proof} establishes an identity for its stated mathematical domain. An \emph{exhaustive check} covers a precisely specified finite universe. A \emph{regression test} checks representative circuits but is not a universal proof. A \emph{research proposal} identifies an untested possibility. The accompanying scripts implement the finite checks and regression tests independently of the prose; informal exploratory assertions are not treated as evidence.
+
+\paragraph{Contribution status.}
+The paper deliberately separates CM-specific results from standard algebra and quantum-circuit facts.  The distinction is summarized here so that theorem numbering is not mistaken for a novelty claim.
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}L{0.30\textwidth}Y L{0.25\textwidth}@{}}
+\toprule
+Item & Status in this paper & Priority position\\
+\midrule
+Strict $\F_2[C_4]$ Hamming-isometry classification and shell audit & Proved for the stated CM coefficient weight and independently enumerated. & A specialized classification; related Hamming-isometry extension theory is classical.\\
+Integral lift, quotient by $1+g^2$, and $QP=JQ$ & Proved explicitly in CM coordinates. & Standard group-ring/quotient algebra used as a CM translation, not claimed as new abstract algebra.\\
+XOR carry/overlap correction and typed predicate/phase compiler laws & Proved exactly and exhaustively checked for two-input CMs. & Elementary Boolean/inclusion--exclusion identities; contribution is the typed CM interface.\\
+Clifford+$T$ coefficient arithmetic and Boolean path sums & Re-derived and regression tested. & Established prior art; included only to validate the translation.\\
+Physical quantum model or asymptotic simulation advantage & Not claimed. & Outside the evidence supplied here.\\
+\bottomrule
+\end{tabularx}
+\caption{Claim discipline for the submission revision.}
+\label{tab:claimstatus}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}L{0.25\textwidth}Y L{0.23\textwidth}@{}}
+\toprule
+Question & Answer established here & Evidence / limitation\\
+\midrule
+Does CM rotation realize $C_4$? & Yes, as a faithful linear permutation representation. & Explicit matrix and proof.\\
+Does XOR reproduce complex addition? & No: identical terms cancel, and $-1=1$ in characteristic two. & Algebraic obstruction.\\
+Can a phase-sensitive quotient be defined? & Yes, after an integral lift and an added opposite-phase relation. & $QP=JQ$ and quotient proof.\\
+Do the lifted gates reproduce quantum circuits? & Yes, within the standard exact coefficient domain. & Intertwining proof and recomputed tests.\\
+Is the Born rule derived from logic? & No. A support measure is conditionally unique; quantum probabilities use an additional Hilbert-space interpretation. & Assumptions stated explicitly.\\
+Is a new algorithmic or physical advantage shown? & No. A concrete compiler/rewrite research program is available. & Benchmarks remain future work.\\
+\bottomrule
+\end{tabularx}
+\caption{A map of the main conclusions. Positive representation results do not erase the negative results or their assumptions.}
+\end{table}
+
+\section{Original correspondence matrices and their types}\label{sec:foundations}
+\subsection{Boolean semantics and the basis convention}
+We use $\oplus$ for XOR. The foundational manuscript uses a rotated-biconditional glyph for XOR; some text renderings display that glyph as $m$. It is not a new operation. Products of Boolean scalar entries mean AND. In the original convention,
+\begin{equation}
+ \ket{1}=\binom10,\qquad \ket{0}=\binom01,\qquad
+ \ket{x}=\binom{x}{\neg x}.
+\end{equation}
+Consequently, the \emph{first/left} column of a CM is indexed by $y=1$, and the second/right column by $y=0$. The analogous row order is $x=1,0$. For
+\begin{equation}
+ A=\cm abcd,
+\end{equation}
+the associated predicate is
+\begin{equation}\label{eq:predicate}
+ f_A(x,y)=a xy\oplus b x\neg y\oplus c\neg x y\oplus d\neg x\neg y
+          =\bra{x}A\ket{y}.
+\end{equation}
+For a fixed valuation, exactly one of the four minterms can be true. Thus the contraction reads one entry of $A$. This is the essential content of the truth-table representation in \cite[Sections 2.2--3]{droncheff}.
+
+\begin{proposition}[Pointwise CM composition]\label{prop:pointwise}
+Let $A,B$ encode predicates on the same two ordered inputs, and let $\Phi$ be any binary Boolean operation. Applying $\Phi$ entrywise gives
+\begin{equation}
+ f_{A\,\Phi\,B}(x,y)=f_A(x,y)\,\Phi\,f_B(x,y).
+\end{equation}
+In particular the representation is linear for XOR.
+\end{proposition}
+\begin{proof}
+At each fixed input pair, both sides apply $\Phi$ to the same two selected entries. Since the four input pairs exhaust the truth table, the predicates agree.
+\end{proof}
+This proof also makes the scope clear: one must align the inputs and their ordering before combining truth tables. A generic pair of quantum state vectors is not a pair of one-hot truth assignments, so the entry-selection argument does not automatically extend to them.
+
+\subsection{The four atomic CMs}
+For phase discussions it is useful to order the atomic features clockwise:
+\begin{align}
+ E_0=[\land]&=\cm1000,& E_1=[\Uparrow]&=\cm0100,\\
+ E_2=[\neg\lor]&=\cm0001,& E_3=[\Downarrow]&=\cm0010.
+\end{align}
+Then
+\begin{equation}
+ A=a_0E_0\oplus a_1E_1\oplus a_2E_2\oplus a_3E_3,
+ \qquad A=\cm{a_0}{a_1}{a_3}{a_2}.
+\end{equation}
+The reordered coordinates are $v(A)=(a_0,a_1,a_2,a_3)^T=(a,b,d,c)^T$. The existence of the four basis features and the XOR expansion are source results \cite[Figure 1 and Section 3.2.1]{droncheff}; the cyclic ordering is a presentational choice.
+
+\subsection{Three different products must not be conflated}
+The same array can inhabit different algebras. Its shape alone does not specify its multiplication.
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}L{0.26\textwidth}Y L{0.21\textwidth}@{}}
+\toprule
+Operation & Definition / role & Multiplicative unit\\
+\midrule
+Entrywise AND $A\land B$ & Combines truth predicates pointwise. & $\ones=\cm1111$\\
+AND/XOR matrix product $AB$ & $(AB)_{ij}=\bigoplus_k A_{ik}B_{kj}$. Acts on two-component Boolean vectors. & $I_2=\cm1001$\\
+Cyclic convolution $A\star B$ & $E_j\star E_k=E_{j+k\bmod4}$, extended distributively. Added in this paper's phase interpretation. & $E_0=\cm1000$\\
+\bottomrule
+\end{tabularx}
+\caption{Three distinct algebras on related arrays. Neither the identities nor the products are interchangeable.}
+\end{table}
+A Boolean truth-table CM is generally neither invertible nor unitary. The all-ones truth table, the ordinary identity matrix, and the convolution identity are three different objects. In particular, an equation such as ``$i$ AND $i$'' cannot be reinterpreted as convolution or gate composition without saying so.
+
+\subsection{Single states, tensor states, and operators}
+The tensor product, not XOR, combines two registers:
+\begin{equation}
+ \ket{10}=\ket1\otimes\ket0=(0,1,0,0)^T
+\end{equation}
+in the source's ordering $(11,10,01,00)$. More generally
+\begin{equation}
+ \ket X\otimes\ket Y=(XY,X\neg Y,\neg XY,\neg X\neg Y)^T.
+\end{equation}
+The outer product $\ket X\bra Y$ is instead a $2\times2$ operator-shaped array. The two contain related products but have different types. A $2\times2$ CM cannot directly multiply a four-component ket without a specified conversion. Later quantum computations use bitstring labels and the standard ascending storage order $(00,01,10,11)$; this is only a permutation of coordinates, not a change of truth convention.
+
+
+\subsection{An explicit bridge to logical gate matrices}\label{sec:logicalgate}
+The same predicate has a truth-valued linear gate representation
+\begin{equation}\label{eq:logicalgate}
+ M_{f_A}=\begin{pmatrix}a&b&c&d\\\neg a&\neg b&\neg c&\neg d\end{pmatrix},
+ \qquad M_{f_A}(\ket x\otimes\ket y)=\ket{f_A(x,y)}.
+\end{equation}
+The tensor input order is $(11,10,01,00)$. Each column is a one-hot truth vector. The identity follows by selecting the column indexed by $(x,y)$, and converting back to the CM simply reshapes the first row. Thus there is a bijection between the sixteen predicate CMs and these sixteen $2\times4$ deterministic logical gate matrices. This is a concrete translation into the dyadic vector-logic viewpoint \cite{mizraji2008}; it is not merely a visual resemblance. The rectangular gate can erase its inputs and is generally not reversible. The oracle construction in \cref{sec:compiler} retains those inputs to obtain a unitary permutation embedding.
+
+\section{What the four rotations actually represent}\label{sec:rotation}
+Clockwise rotation is
+\begin{equation}
+ \rot\cm abcd=\cm cadb,\qquad
+ v(\rot A)=Pv(A),\qquad
+ P=\begin{pmatrix}0&0&0&1\\1&0&0&0\\0&1&0&0\\0&0&1&0\end{pmatrix}.
+\end{equation}
+Thus $\rot E_j=E_{j+1\bmod4}$. The matrix has $P^4=I_4$ and $P^2\ne I_4$ over both $\F_2$ and $\Z$.
+
+\begin{proposition}[Faithful rotation representation]
+The map $C_4\to GL(4,\F_2)$ sending a generator to $P$ is faithful. With cyclic convolution, the sixteen arrays form
+\begin{equation}
+ \alg_2=\F_2[C_4]\cong\F_2[g]/(g^4-1),\qquad E_j\leftrightarrow g^j,
+\end{equation}
+and $g\star A=\rot A$.
+\end{proposition}
+\begin{proof}
+The orbit of $E_0$ has length four, so no smaller positive power of $P$ is the identity. The convolution rule is precisely multiplication of the four group elements, extended over $\F_2$.
+\end{proof}
+The new product is circular convolution: if $A=\sum a_jg^j$ and $B=\sum b_jg^j$, then
+\begin{equation}
+ (A\star B)_k=\bigoplus_{j=0}^3(a_j\land b_{k-j\bmod4}).
+\end{equation}
+Although multiplication by $g$ is an invertible linear map, it is not a unital algebra automorphism of this convolution algebra. The phrase ``rotation symmetry'' should not obscure that distinction.
+
+Transpose induces the involution $g\mapsto g^{-1}$. It is a natural phase-reversal operation for convolution, not a claim that Boolean complement is complex conjugation. The Boolean ring has
+\begin{equation}\label{eq:nilpotent}
+ g^4-1=(g+1)^4,
+\end{equation}
+so it contains nilpotents. Its order-four units are not four distinct complex scalar eigenphases; in characteristic two, $-1=1$.
+
+There is also a purely logical reading of the same rotation:
+\begin{equation}
+ f_{\rot A}(x,y)=f_A(\neg y,x).
+\end{equation}
+Equivalently, a feature indexed by $(x,y)$ moves to $(y,\neg x)$. That motion is a classical basis permutation, expressible as a swap followed by a NOT. It becomes a phase operation only after an additional amplitude interpretation is specified. This provides a useful guard against reasoning from the geometry of the drawing alone.
