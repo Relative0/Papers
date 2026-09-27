@@ -1,0 +1,291 @@
+{
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "source_repository": "/mnt/data/CM_LM_RESEARCH_CONSOLIDATION",
+  "fresh_timing_campaign": false,
+  "stages": [
+    {
+      "name": "independent",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "consolidation_checks.py",
+        "/mnt/data/CM_LM_RESEARCH_CONSOLIDATION/provenance/source_snapshots/bench"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/independent",
+      "seconds": 7.812420969999948,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/independent.log"
+    },
+    {
+      "name": "oracle_contract",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "oracle_contract_check.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/independent",
+      "seconds": 0.6863106109999535,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/oracle_contract.log"
+    },
+    {
+      "name": "audit_tests",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit",
+      "seconds": 1.8251768689997334,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_tests.log"
+    },
+    {
+      "name": "historical_pure",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit/source_snapshots/Pure_Boolean_Modal_Quantum",
+      "seconds": 29.478163487000074,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_pure.log"
+    },
+    {
+      "name": "historical_rotation",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit/source_snapshots/Native_Boolean_CM_Rotation_Phase",
+      "seconds": 0.983892276000006,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_rotation.log"
+    },
+    {
+      "name": "historical_block",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit/source_snapshots/Native_Boolean_CM_Block_Quantum",
+      "seconds": 18.240316860999883,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_block.log"
+    },
+    {
+      "name": "historical_tensor",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit/source_snapshots/Independent_Phase_CM_Tensor_Audit",
+      "seconds": 3.818348211000284,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_tensor.log"
+    },
+    {
+      "name": "audit_models",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/audit_models.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit",
+      "seconds": 8.384904321999784,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_models.log"
+    },
+    {
+      "name": "audit_protocols",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/audit_protocols.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit",
+      "seconds": 11.573388126000282,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_protocols.log"
+    },
+    {
+      "name": "audit_restrictions",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/audit_restrictions.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/audit",
+      "seconds": 18.42090461800035,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_restrictions.log"
+    },
+    {
+      "name": "bridge_expanded",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/lm_modal_bridge_checks.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/bridge",
+      "seconds": 6.551020654999775,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/bridge_expanded.log"
+    },
+    {
+      "name": "bridge_original",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/cm_bridge_checks_original.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/bridge",
+      "seconds": 6.939600040000187,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/bridge_original.log"
+    },
+    {
+      "name": "capability_laboratory",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/laboratory.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/capability",
+      "seconds": 6.233240232000298,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_laboratory.log"
+    },
+    {
+      "name": "capability_ablations",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/ablations.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/capability",
+      "seconds": 3.3746782670000357,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_ablations.log"
+    },
+    {
+      "name": "capability_bridges_phase",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/bridges_phase.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/capability",
+      "seconds": 0.7319710149999992,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_bridges_phase.log"
+    },
+    {
+      "name": "capability_two_setting_theorem",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/two_setting_theorem.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/capability",
+      "seconds": 0.8748344890000226,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_two_setting_theorem.log"
+    },
+    {
+      "name": "capability_validate_and_index",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/validate_and_index.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/capability",
+      "seconds": 1.0113657290003175,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_validate_and_index.log"
+    },
+    {
+      "name": "adversarial_extensions",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "checks/independent_extensions.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/adversarial",
+      "seconds": 4.567559323999831,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/adversarial_extensions.log"
+    },
+    {
+      "name": "adversarial_boundaries",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "checks/additional_boundaries.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/adversarial",
+      "seconds": 0.7721839740001997,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/adversarial_boundaries.log"
+    },
+    {
+      "name": "benchmark_tests",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/bench",
+      "seconds": 1.0958518190000177,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/benchmark_tests.log"
+    },
+    {
+      "name": "benchmark_raw_audit",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "scripts/audit_gate_a_results.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation_v2/bench",
+      "seconds": 0.9885611919999064,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/benchmark_raw_audit.log"
+    }
+  ]
+}

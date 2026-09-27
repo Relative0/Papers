@@ -1,0 +1,50 @@
+{
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "source_repository": "/mnt/data/repro_sup/canonical_input",
+  "fresh_timing_campaign": false,
+  "stages": [
+    {
+      "name": "independent",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "consolidation_checks.py",
+        "/mnt/data/repro_sup/canonical_input/provenance/source_snapshots/bench"
+      ],
+      "cwd": "/mnt/data/p02_recovered_reproduction_run_20260927/independent",
+      "seconds": 8.201850277000176,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/independent.log"
+    },
+    {
+      "name": "oracle_contract",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "oracle_contract_check.py"
+      ],
+      "cwd": "/mnt/data/p02_recovered_reproduction_run_20260927/independent",
+      "seconds": 0.8865346970001156,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/oracle_contract.log"
+    },
+    {
+      "name": "audit_tests",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/p02_recovered_reproduction_run_20260927/audit",
+      "seconds": 1.7641940769999565,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_tests.log"
+    }
+  ]
+}

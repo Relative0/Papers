@@ -1,0 +1,21 @@
+digraph ResourceHierarchy {
+  rankdir=TB;
+  node [shape=box];
+  subgraph cluster_S {
+    label="S: complete A-bases; two-dimensional shared carriers; single-copy exact protocols";
+    S_T [label="Universal A^2 teleportation\na=b=0"];
+    S_C [label="Strong contextuality\n<=> four shared block messages\na=b<4"];
+    S_N [label="Logical contextuality\n<=> shared nonseparability\n<=> Bell-support nonlocality\nb<4"];
+    S_T -> S_C; S_C -> S_N;
+    S_W1 [shape=note,label="Strict reverse failure:\nD(1,1): strong + 4 messages, no universal teleportation"];
+    S_W2 [shape=note,label="Strict reverse failure:\nD(0,1): logical but not strong; 2 messages"];
+  }
+  subgraph cluster_L {
+    label="L: unrestricted local GL_d(F2), all field bases";
+    L_T [label="Universal d-state teleportation\n<=> d^2-message codebook\nrank=d"];
+    L_N [label="Strong contextuality\n<=> nonseparability\n<=> rank>=2"];
+    L_T -> L_N;
+    L_W [shape=note,label="For d=8, rank 2 is strong but not universally teleporting"];
+  }
+  note [shape=note,label="These are different contracts, not a universal hierarchy.\nRestricted/coarse literal measurements can hide field entanglement.\nNonprimitive shared states have composition-closure problems."];
+}

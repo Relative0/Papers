@@ -1,0 +1,321 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,booktabs,array,graphicx,microtype,url,hyperref}
+\hypersetup{
+  hidelinks,
+  pdftitle={Exact Bernstein--Vazirani Query Complexity in Characteristic-Two Modal Computation},
+  pdfauthor={Brian Theory}
+}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\F}{\mathbb F}
+\newcommand{\A}{\F_2[u]/(u^4)}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\diag}{diag}
+\setlength{\emergencystretch}{3em}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{Exact Bernstein--Vazirani Query Complexity in Characteristic-Two Modal Computation\\\large Adaptive complete readout, oracle contracts, and related obstructions}
+\author{Brian Theory}
+\date{Revised research draft, 27 September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study exact oracle-query complexity for linear modal computation over fields of characteristic two under an explicit operational contract: finite-dimensional state spaces, arbitrary finite ancillas, finite adaptive trees, and complete recorded linear instruments with every possible terminal label required to be correct. The main result is an exact Bernstein--Vazirani bound. Recovering an $n$-bit secret requires at least $n$ pointwise queries even when the fixed invertible target actions may vary with recorded history, while the standard XOR interface attains the bound with $n$ queries. The lower bound follows from a recorded-branch multilinear expansion whose degree grows by at most one per query; we also give a point-indicator proof and a worked two-bit example. Related results show that one query cannot solve Deutsch or distinguish constant from balanced Deutsch--Jozsa promises under the same characteristic-two pointwise model. General dependence of query complexity on oracle access, polynomial lower-bound methods, and exact oracle-identification bounds have substantial prior antecedents; the contribution claimed here is the narrower characteristic-two exact theorem under the stated adaptive modal readout contract, not those general ideas. Appendices isolate a ring-valued kickback example and provide reproducible finite checks.
+\end{abstract}
+
+\section{Introduction and contribution boundary}
+Modal quantum theory retains linear state evolution and a possible/impossible distinction while allowing amplitudes in general fields rather than requiring complex amplitudes and Born probabilities \cite{Schumacher2010,Schumacher2012}. In characteristic two, familiar sign and phase constructions can collapse, but a failed textbook circuit does not by itself determine exact oracle-query complexity. A lower bound must survive alternative preparations, finite ancillas, adaptive branch-dependent operations, and every complete readout allowed by the model.
+
+This note proves such a bound for Bernstein--Vazirani recovery. Let $s\in\F_2^n$ and $f_s(x)=s\cdot x$. Under the pointwise characteristic-two oracle contract of Section~\ref{sec:contract}, every exact finite adaptive algorithm recovering all $n$ secret bits uses at least $n$ queries. Under the standard XOR oracle, $n$ queries suffice. Thus
+\[
+ Q_{\mathrm{exact}}^{\mathrm{QXOR}}(\mathrm{BV}_n)=n
+\]
+within this modal model. The statement is deliberately stronger than a failure of the usual one-query complex-amplitude circuit: the lower bound allows arbitrary finite ancillas, complete recorded instruments, and branch-dependent future operations, and it permits a broader class of fixed pointwise invertible target actions than the QXOR interface used for the matching upper bound.
+
+The closest methodological antecedents make the novelty boundary important. Polynomial query bounds are established in ordinary quantum query complexity \cite{Beals2001}, and Farhi, Goldstone, Gutmann and Sipser bound the number of Boolean oracles distinguishable with $k$ standard complex quantum queries by a binomial sum \cite{Farhi1999}. Exact one-query Boolean promise problems containing Deutsch--Jozsa and Bernstein--Vazirani have also been organized directly in the usual complex quantum model \cite{Combarro2021}, while group-theoretic oracle identification is treated more generally by Copeland and Pommersheim \cite{Copeland2021}. Montanaro studies exact quantum learning of polynomials whose \emph{values} lie in finite fields, but with ordinary complex-amplitude quantum computation \cite{Montanaro2012}. Finite-field algebra appears in several nearby but different quantum settings. De Beaudrap, Cleve and Watrous give an exact one-query hidden-linear-structure algorithm over $\mathrm{GF}(2^m)$, but the computation uses ordinary complex Hilbert-space amplitudes and a finite-field QFT; the finite field belongs to the oracle/register algebra rather than the amplitude field \cite{deBeaudrap2002}. Hanson, Ortiz, Sabry and Tai instead study finite-field amplitudes: they explicitly note that the unrestricted two-valued theory cannot express Deutsch's algorithm, while for suitable odd-characteristic finite-complex fields they report that deterministic algorithms including Bernstein--Vazirani perform as desired (with the BV statement attributed there to unpublished results) \cite{Hanson2014}. Modular/ring circuit models \cite{deBeaudrap2014} and systematic treatments of exact quantum query complexity \cite{MontanaroJozsa2015} provide further background. These results are important antecedents, but they do not state the characteristic-two amplitude theorem proved here: the degree variables below are the $n$ secret bits themselves, and the exact readout is modal rather than Hilbert-space orthogonality.
+
+Access-model sensitivity is likewise background rather than a novelty claim. Svozil explicitly formulates exact query complexity in terms of both an answer partition and its oracle access and, for Deutsch's problem in ordinary complex-unitary computation, shows that changing the response unitary can change the exact one-query cost \cite{Svozil2026}. Our Deutsch discussion should therefore be read as a characteristic-two contract-level refinement, not as the discovery that oracle encodings matter. James, Ortiz and Sabry had already identified the qualitative failure of Deutsch's usual advantage in their finite-field setting \cite{James2011}.
+
+The main proof has two complementary forms. First, all terminal histories are embedded in one recorded direct sum. After $q$ queries every recorded coefficient is a multilinear polynomial of degree at most $q$ in the secret bits, so $2^n$ exactly distinguishable secrets cannot fit into the degree-$q$ coefficient span when $q<n$. Second, any nonzero coordinate reserved for one output label becomes a Boolean point-indicator polynomial and therefore has degree $n$. Both arguments depend on exact operational readout, not inspection of a symbolic amplitude table.
+
+For context we also prove one-query obstructions for Deutsch and Deutsch--Jozsa under the same pointwise characteristic-two model. A separate appendix studies a chain-ring kickback example to show that nontrivial eigen-information need not produce an invertible Fourier analyzer. Known one-query modal UNIQUE-SAT is retained as a positive control \cite{WillcockSabry2011}. The finite checks accompanying this note are reproducibility aids and bounded examples; they are not substitutes for the quantified proofs.
+
+\section{Access and readout contract}\label{sec:contract}
+Let $F$ be a field of characteristic two; it need not be finite. The main lower bound is algebraic and therefore also covers infinite characteristic-two fields, although several discrete-quantum antecedents cited below specialize to finite fields. At every node an algorithm has a finite-dimensional $F$-vector space. Its state is a nonzero vector. Independent carriers compose by $\otimes_F$. Secret-independent invertible gates and injections, including appending a fixed nonzero ancilla, are allowed.
+
+A complete linear instrument is a finite family
+\[
+ L_b:V\longrightarrow V_b,\qquad
+ L:V\longrightarrow\bigoplus_bV_b,\quad v\longmapsto (L_bv)_b,
+\]
+whose combined map $L$ is injective. Equivalently, $\bigcap_b\ker L_b=\{0\}$; this common-kernel condition is the modal analogue already used for unconditional operations in the foundational modal framework \cite{Schumacher2012}. Branch $b$ is possible exactly when $L_bv\ne0$. All branches are retained as classical histories; subsequent operations may depend on the history. Coordinate readout in any complete dual basis is included. There is no probability, normalization, postselection, removal of inconvenient possible branches, or free access to a coefficient list.
+
+An algorithm is a finite tree with a secret-independent nonzero root preparation. The tree is syntactic and secret-independent: every recorded history is a fixed node whether or not that history is possible for a particular secret, and an impossible history is represented by the zero vector in that node space. Every terminal branch has an output label. Exactness means that, for each promised oracle, every possible terminal label is correct. The query bound is the maximum number of oracle calls on a root-to-leaf path, including paths impossible for some secrets. Terminal internal states may be retained. Query complexity here counts only oracle uses, not the number of secret-independent gates or the dimension of retained workspace.
+
+For a Boolean function $f$ on a finite address set $X$, a query node acts on address sectors as
+\begin{equation}\label{eq:oracle}
+ O_f=\bigoplus_{x\in X}G_{f(x)},\qquad G_0,G_1\in\GL(W).
+\end{equation}
+The target $W$ may include finite working space; untouched ancillas tensor with the identity. At each recorded node the pair $(G_0,G_1)$ is fixed independently of $x$ and of the hidden oracle. Different recorded nodes may use different fixed pairs, copied to appropriate ancillas and surrounded by secret-independent preprocessing. This node-wise generality is allowed in the lower bounds. Inverse access, if separately supplied, has the same affine Boolean dependence and does not change those lower bounds.
+
+The matching upper bounds use the \emph{standard XOR interface}, denoted QXOR:
+\[
+ O_f\lvert x,y,a\rangle=\lvert x,y+f(x),a\rangle,
+ \qquad y\in\F_2.
+\]
+Here $G_0=I$ and $G_1=X=\left(\begin{smallmatrix}0&1\\1&0\end{smallmatrix}\right)$ on a two-dimensional target. The bit labels are embedded in $F$. These upper bounds are not asserted for arbitrary invertible pairs: if $G_0=G_1$, every oracle is identical and no nonconstant property can be recovered with any number of queries.
+
+\begin{figure}[ht]\centering
+\fbox{\begin{minipage}{.92\linewidth}
+Secret-independent preparation $\longrightarrow$ pointwise oracle $O_f$ $\longrightarrow$ complete instrument $(L_b)_b$ $\longrightarrow$ recorded histories.\par\smallskip
+Each history chooses its next secret-independent map or query. All terminal histories are retained in $\bigoplus_h V_h$ and grouped by output label.\par\smallskip
+Separate ablation: inspecting the full coefficient description of a state. This extra access is excluded from the operational query contract.
+\end{minipage}}
+\caption{The access/readout boundary. The arrows denote linear maps and recorded outcomes, not stochastic transitions.}\label{fig:contract}
+\end{figure}
+
+\begin{lemma}[Exact discrimination]\label{lem:discrimination}
+Let $S_i\subset V\setminus\{0\}$ be nonempty sets with required labels $i$, and $U_i=\Span_F S_i$. A complete linear readout exactly distinguishes these labels if and only if $\sum_iU_i$ is a direct sum.
+\end{lemma}
+\begin{proof}
+Record every output of the readout in a direct sum, grouping output spaces by label. Each state in $S_i$ has zero components in every other label group. Linearity gives the same property for $U_i$. An injective map taking the $U_i$ into disjoint coordinate groups forces their sum to be direct. Conversely choose bases of the $U_i$, concatenate them, and extend to a basis of $V$. The dual-basis readout, with the corresponding label on each coordinate, distinguishes the sets. Unused coordinates may receive any label.
+\end{proof}
+The singleton version is the familiar modal fact that linearly independent states can be perfectly distinguished, whereas a dependent family cannot \cite{Diamond2023}; Lemma~\ref{lem:discrimination} is the label-span form needed below.
+
+\begin{lemma}[Complete recorded evolution]\label{lem:record}
+A finite secret-independent tree of complete instruments and injective gates induces an injective linear map from its root space into the direct sum of its terminal spaces. For any fixed oracle, an algorithm satisfying the contract has a nonzero total terminal record.
+\end{lemma}
+\begin{proof}
+At a terminal node use the identity. Induct upward. If the descendant maps $T_b$ are injective, the composite $v\mapsto(T_bL_bv)_b$ is injective because the instrument's combined map is injective. Injective gates and fixed invertible oracle calls preserve this property. This induction applies separately to every fixed oracle, including when some individual branches vanish. Early termination is represented by a terminal block in the same direct sum; a branch impossible for one secret contributes a zero block rather than disappearing from the common record space.
+\end{proof}
+
+\section{Main result: exact Bernstein--Vazirani recovery}\label{sec:bv}
+The secret is $s\in\F_2^n$ and
+\[
+ f_s(x)=s\cdot x=\sum_{j=1}^n s_jx_j\pmod 2,
+ \qquad x\in\F_2^n.
+\]
+Exact success means recovering the entire secret $s$.
+
+\begin{lemma}[Recorded monomial bound]\label{lem:degree}
+For every node $u$ in the fixed algorithm tree, let $d(u)$ be the number of query nodes on the root-to-$u$ path and let $\psi_u(s)$ denote the branch state there, with $\psi_u(s)=0$ when that history is impossible for secret $s$. Then $\psi_u(s)$ is a vector-valued multilinear function of the secret bits of degree at most $d(u)$. Consequently, for an algorithm with at most $q$ queries, its total terminal record $\Psi_s$ can be written
+\begin{equation}\label{eq:monomials}
+ \Psi_s=\sum_{\substack{J\subseteq\{1,\ldots,n\}\\|J|\le q}}
+       \left(\prod_{j\in J}s_j\right)c_J
+\end{equation}
+in a fixed finite direct sum of terminal spaces, with coefficient vectors $c_J$ independent of $s$.
+\end{lemma}
+\begin{proof}
+Work with polynomial functions on the Boolean cube, equivalently in the quotient
+\[
+ F[s_1,\ldots,s_n]/(s_1^2-s_1,\ldots,s_n^2-s_n),
+\]
+so replacing $s_j^2$ by $s_j$ preserves every evaluation and never increases degree. We prove the node-local statement directly on the fixed syntactic tree. The root state is constant, hence has degree zero.
+
+A secret-independent linear gate, injection, or instrument component $L_b$ acts coefficientwise on a vector-valued polynomial and cannot increase its degree. In particular, the child state at a recorded instrument outcome is always the formal vector $L_b\psi_u(s)$; whether this vector evaluates to zero for a particular secret is a semantic statement about branch possibility, not a nonlinear selector that changes the tree or the map.
+
+At a query node, on Boolean inputs and in characteristic two,
+\[
+ f_s(x)=\sum_{j=1}^n s_jx_j
+\]
+as a scalar equality in $F$. Since $G_b=G_0+b(G_0+G_1)$ for $b\in\{0,1\}$,
+\[
+ O_s=O_0+\sum_{j=1}^n s_jA_j,
+ \qquad A_j=\bigoplus_x x_j(G_0+G_1),
+\]
+where $G_0,G_1$ and hence the $A_j$ are the matrices fixed at that recorded node. Applying this affine degree-one operator to a branch state of degree at most $d(u)$ gives degree at most $d(u)+1$. Thus induction over the tree proves $\deg \psi_u\le d(u)$ at every node, including nodes reached only for some secrets. Recorded-history dependence causes different nodes to carry different fixed maps; it does not introduce a secret-dependent map inside any node.
+
+Every terminal state therefore has degree at most its query depth, at most $q$. Taking their direct sum and concatenating coefficients of the same monomial gives \eqref{eq:monomials}. Early termination merely contributes a terminal block at smaller degree. Arbitrary finite ancillas enlarge coefficient vectors but create no additional monomials. If inverse queries are separately supplied, $G_b^{-1}=G_0^{-1}+b(G_0^{-1}+G_1^{-1})$ on $b\in\{0,1\}$, so the same induction applies.
+\end{proof}
+
+\begin{theorem}[Exact characteristic-two Bernstein--Vazirani bound]\label{thm:bv}
+Let $F$ be any field of characteristic two. Consider a finite adaptive algorithm satisfying Section~\ref{sec:contract}, with arbitrary finite ancillas and with each oracle node using a fixed pointwise invertible pair independent of the secret. If the algorithm exactly recovers every $s\in\F_2^n$ with worst-case $q$ queries, then $q\ge n$. Under standard QXOR access, $n$ queries suffice. Hence
+\[
+ Q_{\mathrm{exact}}^{\mathrm{QXOR}}(\mathrm{BV}_n)=n.
+\]
+\end{theorem}
+\begin{proof}
+The terminal spaces are grouped by output label $s$. Exactness puts $\Psi_s$ entirely in its own label group, and Lemma~\ref{lem:record} makes it nonzero. The $2^n$ vectors $\Psi_s$ are consequently linearly independent. This conclusion already includes any information carried by the classical history: the history is a direct-sum coordinate of $\Psi_s$, and a secret-dependent pattern of zero and nonzero branches cannot create vectors outside the coefficient span of Lemma~\ref{lem:degree}. By that lemma, the records lie in the span of at most
+\[
+ D(n,q)=\sum_{j=0}^{\min(q,n)}\binom nj
+\]
+coefficient vectors. For $q<n$, $D(n,q)<2^n$, a contradiction. For the upper bound, standard XOR queries at the $n$ unit addresses $e_j$ give $f_s(e_j)=s_j$ on separate basis targets. Retaining those targets and reading them in the basis recovers $s$ exactly.
+\end{proof}
+
+\paragraph{The obstruction already appears for two secret bits.}
+For $n=2$ and one query, Lemma~\ref{lem:degree} has the form
+\[
+ \Psi_{s_1s_2}=c_\varnothing+s_1c_1+s_2c_2.
+\]
+Summing the four records over $(s_1,s_2)\in\F_2^2$ gives zero: each coefficient occurs an even number of times. Exact recovery would place the four nonzero records in four disjoint output-label subspaces, hence make them linearly independent. The displayed dependence is therefore impossible. The general proof replaces this four-state relation by the dimension count $D(n,q)<2^n$.
+
+\paragraph{Alternative point-indicator proof.}
+Fix a secret $s^{\star}$. Since $\Psi_{s^{\star}}\ne0$ in its own output-label block, choose one coordinate functional on that block with value $a\ne0$ on $\Psi_{s^{\star}}$. Applied to \eqref{eq:monomials}, it gives a multilinear polynomial $p(s)$ of degree at most $q$. Exactness forces $p(s)=0$ for every $s\ne s^{\star}$ and $p(s^{\star})=a$. Multilinear polynomials have unique evaluations on the Boolean cube, so
+\[
+ p(s)=a\prod_{j:s^{\star}_j=1}s_j
+       \prod_{j:s^{\star}_j=0}(1+s_j).
+\]
+Its coefficient of $s_1\cdots s_n$ is $a\ne0$, so $\deg p=n$. Therefore $q\ge n$. This proof is a useful cross-check of the dimension argument, not a claim of a new general polynomial method; point-indicator and nondeterministic polynomial ideas have extensive antecedents in ordinary query complexity \cite{Beals2001,deWolf2003}.
+
+The characteristic-two dependence is essential to this proof. The parity $s\cdot x$ is the degree-one scalar sum $\sum_js_jx_j$ in $F$, so each pointwise query is affine linear in the $n$ secret bits. In ordinary complex-amplitude quantum computation, the standard BV phase is $(-1)^{s\cdot x}$ and the one-query algorithm is available; one cannot replace that multiplicative sign character by the scalar sum used above. The result therefore does not contradict the standard one-query BV algorithm or the one-query exact promise-problem classifications in the complex model \cite{Combarro2021}.
+
+The coefficient-span bound is structurally related to ordinary polynomial and oracle-identification bounds, but its parameterization is different. Farhi et al. treat the truth-table values of a Boolean oracle as variables and obtain a binomial bound in the address-domain size \cite{Farhi1999}. Here the promised BV family makes every truth-table entry a characteristic-two linear form in only $n$ secret bits; the degree-$q$ space therefore has dimension $\sum_{j\le q}\binom nj$. This promise-specific collapse is what yields $q\ge n$ even though ordinary complex BV is solvable with one query.
+
+\section{Deutsch and Deutsch--Jozsa as related access obstructions}\label{sec:dj}
+The following results are included to mark the same access/readout boundary on familiar promise problems. Their role is secondary to Theorem~\ref{thm:bv}. The qualitative finite-field Deutsch obstruction is known \cite{James2011}, and the broader principle that exact query cost can change with the response unitary is explicit in recent ordinary complex-unitary work \cite{Svozil2026}.
+
+\begin{theorem}[Deutsch]\label{thm:deutsch}
+Under \eqref{eq:oracle}, no exact algorithm using at most one query determines $f(0)+f(1)$. Under QXOR the exact query complexity is two.
+\end{theorem}
+\begin{proof}
+First consider a fixed nonzero prequery state, written in address sectors $(a_0,a_1)$, including the target and ancilla coordinates. Write $v_{ij}$ for the state after the oracle with $f(0)=i,f(1)=j$, and put $\Delta=G_0+G_1$. In characteristic two,
+\[
+ v_{00}+v_{11}=v_{01}+v_{10}
+   =(\Delta a_0,\Delta a_1)=w.
+\]
+If $w\ne0$, the constant-state span and balanced-state span have a nonzero intersection. Lemma~\ref{lem:discrimination} excludes an exact subsequent complete readout. If $w=0$, the two sector differences vanish separately, so all four $v_{ij}$ are identical. They are nonzero because the oracle is invertible; discrimination is again impossible. An arbitrary query-free continuation is an injective recorded map by Lemma~\ref{lem:record} and cannot remove either obstruction.
+
+For an adaptive algorithm with at most one query, unfold its finite query-free prefix. Its branches have states independent of $f$, with at least one nonzero state. A nonzero terminal branch in that prefix would give the same possible answer for every $f$, violating exactness. Thus some nonzero prefix branch reaches a query. Conditional on this branch, the preceding argument applies to its nonzero state and query-free continuation. Since every possible branch must be correct, the whole algorithm is impossible.
+
+For the upper bound, query $0$ and $1$ on basis states into separate initialized targets, retain both answers, and label their basis readout by their XOR. Exactly two standard oracle calls suffice.
+\end{proof}
+
+\begin{theorem}[Deutsch--Jozsa, one-query obstruction]\label{thm:dj}
+For $n\ge2$ and $N=2^n$ addresses, no exact one-query algorithm with fixed invertible pointwise actions distinguishes constant from balanced Boolean functions. Under QXOR,
+\[
+ 2\le Q_{\rm exact}(\mathrm{DJ}_n)\le N/2+1.
+\]
+\end{theorem}
+\begin{proof}
+Partition the addresses into four equally sized nonempty blocks $A,B,C,D$. Let $f_{AB},f_{AC},f_{BC}$ be the indicator functions of the named unions. They are balanced and their pointwise XOR is zero. Each oracle block is $G_0+f(x)(G_0+G_1)$, so
+\[
+ O_{f_{AB}}+O_{f_{AC}}+O_{f_{BC}}=O_0.
+\]
+Applied to any nonzero preparation, the constant-zero state, which is nonzero, lies in the balanced-state span. Lemma~\ref{lem:discrimination} rules out exact readout. The same query-free-prefix argument as in Theorem~\ref{thm:deutsch} covers arbitrary finite adaptivity. For the upper bound, query $N/2+1$ distinct addresses on basis states and retain the answers. Under the promise, agreement implies constancy and any disagreement implies balance.
+\end{proof}
+The case $n=1$ is Deutsch. The theorem does not establish the optimal multi-query complexity for larger $n$. Failure of the conventional Hadamard circuit is a weaker statement than the quantified one-query obstruction proved here; neither statement is an all-search impossibility theorem.
+
+\section{Discussion, prior art, and limitations}\label{sec:discussion}
+\begin{table}[ht]\centering\small
+\begin{tabular}{@{}L{.17\linewidth}L{.18\linewidth}L{.19\linewidth}L{.36\linewidth}@{}}\toprule
+Task & Lower bound & QXOR upper & Scope\\\midrule
+Deutsch & $2$ & $2$ & Theorem~\ref{thm:deutsch}; the qualitative obstruction has prior antecedents.\\
+DJ, $n\ge2$ & $2$ & $2^{n-1}+1$ & Theorem~\ref{thm:dj}; the general exact optimum remains open here.\\
+BV & $n$ & $n$ & Theorem~\ref{thm:bv}; arbitrary finite ancillas and finite adaptive complete recorded histories.\\
+Simon & No general bound & Not studied & Appendix~\ref{sec:checks} reports only a specified one-query $n=2$ scan.\\\bottomrule
+\end{tabular}
+\caption{Proved bounds. The lower bounds allow fixed pointwise invertible actions at each recorded query node; every displayed matching or finite upper bound uses standard QXOR.}\label{tab:tasks}
+\end{table}
+
+The contribution is best viewed as a focused exact-query result rather than a new general theory of oracle access. The most relevant comparisons are summarized in Table~\ref{tab:prior}. In particular, Svozil's access-dependent Deutsch analysis makes clear that response-unitary sensitivity is not unique to characteristic-two modal computation \cite{Svozil2026}. Farhi et al. and Beals et al. establish the broader polynomial/dimension methodology in standard quantum query complexity \cite{Farhi1999,Beals2001}. The narrower point here is that, under modal amplitudes of characteristic two, the BV promise turns each oracle query into an affine degree-one operation in the \emph{secret bits}, and exact modal recovery then forces degree $n$ even with finite adaptive complete readout.
+
+\begin{table}[ht]\centering\scriptsize
+\begin{tabular}{@{}L{.16\linewidth}L{.21\linewidth}L{.25\linewidth}L{.28\linewidth}@{}}\toprule
+Source & Setting & Closest antecedent & Distinction of this note\\\midrule
+Schumacher--Westmoreland \cite{Schumacher2010,Schumacher2012} & Modal linear theory over general fields & Possible/impossible outcomes; complete operations & Supplies the model background, not the BV query theorem.\\
+James--Ortiz--Sabry; Hanson et al. \cite{James2011,Hanson2014} & Finite-field/discrete quantum amplitudes & $\F_2$ qualitative Deutsch obstruction; reported BV behavior in suitable odd characteristic (with that BV statement attributed there to unpublished results) & Closest amplitude-field antecedents, but not the characteristic-two adaptive exact BV lower bound.\\
+Beals et al.; Farhi et al. \cite{Beals2001,Farhi1999} & Standard complex quantum queries & Degree-per-query and function-identification dimension bounds & Their variables and Hilbert-space readout differ; standard complex BV remains one-query.\\
+De Beaudrap--Cleve--Watrous \cite{deBeaudrap2002} & Complex quantum algorithm with finite-field oracle algebra & Exact one-query recovery of hidden linear structure over $\mathrm{GF}(2^m)$ & Finite field labels the oracle/register structure; amplitudes and readout remain ordinary complex quantum.\\
+Combarro et al.; Copeland--Pommersheim \cite{Combarro2021,Copeland2021} & Standard complex exact oracle identification & BV/DJ promise families and general oracle identification & Different scalar and measurement models; no characteristic-two adaptive BV theorem.\\
+Montanaro \cite{Montanaro2012} & Complex quantum learning of finite-field-valued polynomials & Exact learning with finite-field function values & The finite field occurs in the oracle's function values, not in the amplitude field.\\
+Svozil \cite{Svozil2026} & Complex-unitary exact query theory & Query cost depends on answer partition and oracle response; Deutsch response-unitary criterion & Strong antecedent for access-model framing; not a characteristic-two modal amplitude result.\\\bottomrule
+\end{tabular}
+\caption{Closest methodological and model antecedents. The table is intended to delimit, rather than inflate, the contribution.}\label{tab:prior}
+\end{table}
+
+A final theorem-level search through 27 September 2026, including the closest modal/discrete, exact-query, polynomial-method, finite-field-QFT, and oracle-identification literature, did not locate a prior theorem with the full combination used in Theorem~\ref{thm:bv}: characteristic-two amplitudes, exact recovery of all BV secrets, arbitrary finite ancillas, finite adaptive complete recorded instruments, and the stated pointwise invertible lower-bound interface. The closest finite-field hits separate cleanly by model: Hanson et al. use finite-field amplitudes but place their positive BV discussion in suitable odd characteristic and attribute the specific BV behavior there to unpublished results \cite{Hanson2014}, whereas de Beaudrap, Cleve and Watrous use ordinary complex amplitudes for a different hidden-linear-structure oracle over $\mathrm{GF}(2^m)$ \cite{deBeaudrap2002}. This evidence supports treating Theorem~\ref{thm:bv} as a differentiated specialization. It does \emph{not} certify historical firstness, and no such firstness claim is made.
+
+The theorem is significant chiefly because it converts a qualitative loss of familiar phase structure into a sharp, model-robust exact query cost. The one-query complex BV algorithm is not merely unavailable in its textbook form: within the stated characteristic-two modal contract, no alternative finite adaptive exact algorithm can reduce the QXOR cost below $n$. At the same time, known one-query modal UNIQUE-SAT \cite{WillcockSabry2011} shows that the model is not uniformly query-weak; the obstruction is task- and access-specific.
+
+Several limitations should remain explicit. The theorem concerns exact all-branches-correct output, not bounded-error or probabilistic success. It assumes a finite adaptive tree, not unbounded stopping. It permits only secret-independent linear state transformations between queries. The matching upper bound is for QXOR, not every pair $(G_0,G_1)$. The Deutsch--Jozsa theorem is only a one-query obstruction. No general Simon or unstructured-search lower bound is claimed. The ring calculation in Appendix~\ref{sec:phase} is a separate algebraic boundary and is not an automatic extension of the field theorem.
+
+\appendix
+\section{Ring-valued kickback boundary}\label{sec:phase}
+This appendix changes scalar domains explicitly: set $A=\A$, use free $A$-modules, balance tensors over $A$, admit invertible $A$-linear gates, and test possibility by nonzero contraction. It is a worked algebraic boundary, not an automatic extension of the field-query lower bounds to all ring algorithms. Let $R=1+u$ and $z=R^2=1+u^2$, so $R^4=z^2=1$.
+
+\begin{proposition}\label{prop:phase}
+For $\chi=(1,z)^T$ and the standard target flip $X$, $X\chi=z\chi$. Nevertheless
+\[
+ H_z=\begin{pmatrix}1&1\\1&z\end{pmatrix}
+       \sim\diag(1,u^2)
+\]
+is singular. Its $n$-fold tensor over $A$, viewed by regular representation over $\F_2$, has rank $4+2n$ for $n\ge1$ and dimension $4\cdot2^n$.
+\end{proposition}
+\begin{proof}
+$X\chi=(z,1)^T=z(1,z)^T$. Adding the first row to the second and then the first column to the second gives the displayed diagonal form; these are invertible elementary operations. Tensoring those operations gives diagonal factors $u^{2k}$, one for each subset of $k$ positions. Since $u^4=0$, only $k=0,1$ contribute. Multiplication by $1$ on $A$ has binary rank four; multiplication by $u^2$ has rank two. There is one first factor and $n$ second factors, giving $4+2n$.
+\end{proof}
+
+\input{phase_table}
+
+The character obstruction is elementary. A multiplicative character of $C_2^n$ into a characteristic-two field satisfies $a^2=1$, hence $(a+1)^2=0$ and $a=1$. Over $A$, unit-valued characters can be nontrivial, but every value reduces to $1$ modulo $(u)$. A square character matrix of size greater than one therefore reduces to the all-ones matrix and has nonunit determinant. This concerns an order-two group in characteristic two, not all finite-field transforms or odd-order groups.
+
+The standard two-level flip does not admit a \emph{primitive eigenvector} with eigenvalue $R$. Indeed, if $X\eta=R\eta$, then $\eta=X^2\eta=R^2\eta$, hence $u^2\eta=0$; that is impossible if either coordinate of $\eta$ is a unit. Nonprimitive eigenvectors can nevertheless exist. For example
+\[
+ \eta=(u^2,\,u^2+u^3)^T\ne0
+ \quad\text{satisfies}\quad
+ X\eta=R\eta,
+\]
+but neither coordinate is a unit. This distinction corrects the potentially misleading shorthand that ``$R$ is not an eigenvalue.''
+
+A four-level cyclic shift $T\lvert j\rangle=\lvert j+1\bmod4\rangle$ does admit the primitive eigenvector with coordinates $R^{-j}$ and eigenvalue $R$. The controlled oracle $T^{f(x)}$ is a different access primitive. In particular $R^{a\mathbin\oplus b}$ need not equal $R^aR^b$: take $a=b=1$. A generic clean compute--control--uncompute construction uses two standard XOR calls, so one such synthesized cyclic oracle must not be silently charged as one QXOR query. This statement concerns that construction; it is not a universal lower bound on every possible implementation of the cyclic access primitive.
+
+Finally, literal binary expansion of an $A$-target is not permission to move its scalar action onto an independent binary control register. Under $\otimes_A$ scalars are balanced; under $\otimes_{\F_2}$ only binary scalars are. Equality of two nonzero simple binary tensors forces equality of both factors, since the only nonzero binary scalar is $1$. Kickback calculations must retain their tensor base.
+
+\section{Positive control, finite checks, and reproducibility}\label{sec:checks}
+The known one-query UNIQUE-SAT protocol of Willcock and Sabry \cite{WillcockSabry2011} applies to the promise of no marked address or exactly one. It uses the same QXOR interface with $O(n)$ other gates. Its existence prevents interpreting the preceding obstructions as the claim that characteristic-two modal computation has no query advantages.
+
+For completeness, one can check the protocol algebraically. Put $S=\left(\begin{smallmatrix}1&0\\1&1\end{smallmatrix}\right)$ and use its transpose $S^T$ on the target. Starting at zero, apply $S$ to every address bit, query, apply $S$ to every address bit again, then apply $S^T$ to the target, flip every address bit conditional on target $1$, and apply $S^T$ again. With no marked point the final state is the all-zero basis vector. With a single marked point $a$ it is
+\[
+ |0\rangle|0^n\rangle+|+\rangle X^{\otimes n}S^{\otimes n}|a\rangle,
+ \qquad |+\rangle=|0\rangle+|1\rangle.
+\]
+The address factor has coefficient one at $0^n$, so the all-zero coefficient cancels. The state is nonzero because all gates are invertible. Thus a complete coordinate readout distinguishes the promise cases exactly. This is a reproduction and notation-level verification of the cited construction, not a new algorithm.
+
+The accompanying supplement contains two evidence layers. First, the recovered portfolio reproduction supplement preserves the original runner, pinned requirements, provenance, input/output hashes, and a completed full-run manifest. Second, a P02-targeted rerun package executes the independent checks, oracle-contract checker, and the capability stages that generate the data used below. The targeted package also includes a new deterministic table generator whose input is the package-local phase JSON; it is clearly marked as a reconstruction and is not represented as the missing historical \texttt{complete\_p02.py} script.
+
+\begin{center}\small
+\begin{tabular}{@{}L{.28\linewidth}L{.62\linewidth}@{}}
+\toprule
+Record & Actual scope\\\midrule
+Deutsch preparations & Exhaustive 15 and 255 nonzero binary preparations in dimensions 4 and 8 for the specified standard one-query oracle.\\
+Oracle-contract checker & 552 degenerate oracle matrices with $G_0=G_1$, for address-bit sizes $n=1,2,3$ and two shared target permutations. This is not an enumeration of all algorithms; identical oracle operators give the unbounded degeneracy immediately.\\
+BV oracle identities & Standard-XOR checks for 126 secrets over $n=1,\ldots,6$, together with smaller recorded operator-span checks. The general $n$ theorem comes from Section~\ref{sec:bv}.\\
+UNIQUE-SAT & 132 promised instances for $n=1,\ldots,6$, reproducing the known protocol.\\
+Simon scan & 65,535 nonzero preparations in dimension 16, one query, no ancilla, $n=2$, 36 standard oracles and three hidden shifts; no exact preparation found. No larger or adaptive theorem is inferred.\\
+Phase ranks & $n=1,\ldots,6$ agree with $4+2n$; the standard-flip search finds no primitive $R$ eigenvector among 192 primitive candidates, while the nonprimitive distinction is handled analytically above.\\
+Description-readout ablation & Forms and inspects the full coefficient description on supplied small DJ/BV cases. This deliberately changes the access/readout model and is not an operational modal algorithm.\\
+Adaptive-tree stress check & 400 generated $\F_2$ fixed-tree protocols at $n=3$, worst-case $q=2$, with branch-specific second queries, secret-dependent zero branches, and 200 early-termination cases. Every coordinate had algebraic-normal-form degree at most 2 and every eight-secret record matrix had rank at most 7. This is finite stress evidence only; Lemma~\ref{lem:degree} is the proof.\\\bottomrule
+\end{tabular}
+\end{center}
+
+The description-readout ablation illustrates why a symbolic state description is not free readout. It forms the coefficient representation of $\sum_x|x,f(x)\rangle$ and then inspects it classically; under that stronger interface, the small supplied DJ and BV instances expose the answer after one algebraic oracle application. Constructing the same description with a classical point oracle requires querying its addresses, and printing a full support table carries output cost. The ablation therefore identifies a changed access model, not a speedup under Section~\ref{sec:contract}.
+
+The Simon scan is similarly bounded evidence only. Conventional sign/diffusion formulas also collapse in characteristic two, but neither observation supplies a general Simon or search lower bound. The quantified claims of this paper rest on the proofs, while the supplement records executable checks of finite instances, algebra identities, data provenance, and the generated appendix table.
+
+\begin{thebibliography}{99}
+\bibitem{Schumacher2010} B. Schumacher and M. D. Westmoreland, ``Modal Quantum Theory,'' \emph{Foundations of Physics} 42 (2012), 918--925. \url{https://doi.org/10.1007/s10701-012-9650-z}. Preprint: \url{https://arxiv.org/abs/1010.2929}.
+\bibitem{Schumacher2012} B. Schumacher and M. D. Westmoreland, ``Almost Quantum Theory,'' in \emph{Quantum Theory: Informational Foundations and Foils}, Springer (2016), 45--81. Preprint: \url{https://arxiv.org/abs/1204.0701}.
+\bibitem{James2011} R. P. James, G. Ortiz, and A. Sabry, ``Quantum Computing over Finite Fields: Reversible Relational Programming with Exclusive Disjunctions,'' arXiv:1101.3764 (2011). \url{https://arxiv.org/abs/1101.3764}.
+\bibitem{deBeaudrap2002} J. N. de Beaudrap, R. Cleve, and J. Watrous, ``Sharp quantum vs. classical query complexity separations,'' \emph{Algorithmica} 34(4) (2002), 449--461. Preprint: \url{https://arxiv.org/abs/quant-ph/0011065}.
+\bibitem{deBeaudrap2014} N. de Beaudrap, ``On computation with `probabilities' modulo k,'' arXiv:1405.7381 (2014). \url{https://arxiv.org/abs/1405.7381}.
+\bibitem{Hanson2011} A. J. Hanson, G. Ortiz, A. Sabry, and J. Willcock, ``The Power of Discrete Quantum Theories,'' arXiv:1104.1630 (2011). \url{https://arxiv.org/abs/1104.1630}.
+\bibitem{Hanson2014} A. J. Hanson, G. Ortiz, A. Sabry, and Y.-T. Tai, ``Discrete quantum theories,'' \emph{Journal of Physics A: Mathematical and Theoretical} 47 (2014), 115305. \url{https://doi.org/10.1088/1751-8113/47/11/115305}.
+\bibitem{WillcockSabry2011} J. Willcock and A. Sabry, ``Solving UNIQUE-SAT in a Modal Quantum Theory,'' arXiv:1102.3587 (2011). \url{https://arxiv.org/abs/1102.3587}.
+\bibitem{Diamond2023} P. Diamond and B. Schumacher, ``Cloning, deleting, and hiding in modal quantum theory,'' arXiv:2310.04397 (2023). \url{https://arxiv.org/abs/2310.04397}.
+\bibitem{Beals2001} R. Beals, H. Buhrman, R. Cleve, M. Mosca, and R. de Wolf, ``Quantum Lower Bounds by Polynomials,'' \emph{Journal of the ACM} 48(4) (2001), 778--797. \url{https://doi.org/10.1145/502090.502097}.
+\bibitem{Farhi1999} E. Farhi, J. Goldstone, S. Gutmann, and M. Sipser, ``Bound on the number of functions that can be distinguished with k quantum queries,'' \emph{Physical Review A} 60 (1999), 4331--4333. \url{https://doi.org/10.1103/PhysRevA.60.4331}. Preprint: \url{https://arxiv.org/abs/quant-ph/9901012}.
+\bibitem{Combarro2021} E. F. Combarro, S. Vallecorsa, A. Di Meglio, A. Pi\~nera, and I. Fern\'andez R\'ua, ``On a poset of quantum exact promise problems,'' \emph{Quantum Information Processing} 20 (2021), 214. \url{https://doi.org/10.1007/s11128-021-03156-3}.
+\bibitem{Copeland2021} D. Copeland and J. Pommersheim, ``Quantum query complexity of symmetric oracle problems,'' \emph{Quantum} 5 (2021), 403. \url{https://doi.org/10.22331/q-2021-03-07-403}.
+\bibitem{Montanaro2012} A. Montanaro, ``The quantum query complexity of learning multilinear polynomials,'' \emph{Information Processing Letters} 112(11) (2012), 438--442. \url{https://doi.org/10.1016/j.ipl.2012.03.002}.
+\bibitem{MontanaroJozsa2015} A. Montanaro, R. Jozsa, and G. Mitchison, ``On Exact Quantum Query Complexity,'' \emph{Algorithmica} 71 (2015), 775--796. \url{https://doi.org/10.1007/s00453-013-9826-8}.
+\bibitem{deWolf2003} R. de Wolf, ``Nondeterministic Quantum Query and Communication Complexities,'' \emph{SIAM Journal on Computing} 32(3) (2003), 681--699. \url{https://doi.org/10.1137/S0097539702407345}.
+\bibitem{Svozil2026} K. Svozil, ``Answer Partitions and Oracle Access Determine Quantum Query Complexity,'' arXiv:2605.12675v4 (2026). \url{https://arxiv.org/abs/2605.12675}.
+\bibitem{Tai2019} Y.-T. Tai, \emph{Discrete Quantum Theories and Computing}, PhD thesis, Indiana University (2019).
+\end{thebibliography}
+\end{document}

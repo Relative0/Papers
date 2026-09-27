@@ -1,0 +1,144 @@
+{
+  "definitions": {
+    "logical_contextuality": "at least one supported event has no global extension",
+    "strong_contextuality": "no compatible global assignment",
+    "Bell_support_nonlocality": "same as logical contextuality for the specified Bell support scenario",
+    "protocol_exactness": "all possible branches correct, single-copy, named carrier and complete linear readout"
+  },
+  "contracts": [
+    {
+      "model": "S",
+      "resource": "D(a,b)=diag(u^a,u^b), 0<=a<=b<=4, excluding (4,4)",
+      "local_operations": "GL_2(A)",
+      "measurements": "all 192 primitive projective binary bases per party; complete A-linear joint analyzers for protocols",
+      "equivalences": [
+        [
+          "strong_contextuality",
+          "four_shared_block_messages",
+          "a=b<4"
+        ],
+        [
+          "logical_contextuality",
+          "Bell_support_nonlocality",
+          "shared_nonseparability",
+          "b<4"
+        ],
+        [
+          "universal_A2_teleportation",
+          "a=b=0"
+        ]
+      ],
+      "strict_implications": [
+        [
+          "universal_A2_teleportation",
+          "strong_contextuality"
+        ],
+        [
+          "strong_contextuality",
+          "logical_contextuality"
+        ]
+      ],
+      "counterexamples": [
+        {
+          "D": [
+            1,
+            1
+          ],
+          "proves": "strong and full shared dense coding do not imply universal teleportation",
+          "shared_messages": 4,
+          "universal_teleportation": false,
+          "nonprimitive": true
+        },
+        {
+          "D": [
+            0,
+            1
+          ],
+          "proves": "logical contextuality does not imply strong contextuality",
+          "shared_messages": 2
+        }
+      ],
+      "primitive_restriction": "a=0; then strong, four-message dense coding and universal teleportation coincide; primitive-only conditioning is still not closed"
+    },
+    {
+      "model": "L_full",
+      "local_dimension": 8,
+      "local_operations": "GL_8(F2)",
+      "measurements": "all field dual bases",
+      "equivalences": [
+        [
+          "strong_contextuality",
+          "literal_nonseparability",
+          "binary_rank>=2"
+        ],
+        [
+          "universal_F2_8_teleportation",
+          "64_invertible_orbit_messages",
+          "binary_rank=8"
+        ]
+      ],
+      "counterexamples": [
+        {
+          "binary_rank": 2,
+          "proves": "strong contextuality does not imply universal eight-dimensional teleportation"
+        }
+      ]
+    },
+    {
+      "model": "L_restricted_coarse",
+      "local_dimension": 8,
+      "local_operations": "GL_2(A) embedded in GL_8(F2)",
+      "measurements": "A-linear block-coarse binary effects",
+      "counterexamples": [
+        {
+          "D": [
+            0,
+            4
+          ],
+          "binary_rank": 4,
+          "literal_nonseparable": true,
+          "support_local": true,
+          "proves": "literal nonseparability does not imply nonlocal restricted support"
+        },
+        {
+          "D_pair": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "common_binary_rank": 6,
+          "shared_messages": [
+            2,
+            4
+          ],
+          "restricted_statuses": [
+            "logical_not_strong",
+            "strong"
+          ],
+          "proves": "equal binary rank need not mean equal restricted resource power"
+        }
+      ]
+    }
+  ],
+  "minimum_nontrivial_ring_witness": {
+    "ring": "F2[epsilon]/epsilon^2",
+    "resource": "epsilon I_2",
+    "conclusions": [
+      "strong support contextuality",
+      "four shared block messages",
+      "no universal teleportation"
+    ],
+    "minimality_scope": "nontrivial finite commutative chain rings and nonseparable two-dimensional local carriers"
+  },
+  "outside_model_counterexample": {
+    "model": "Spekkens toy theory",
+    "phenomenon": "teleportation analogue without Bell nonlocality",
+    "source": "Spekkens2007"
+  },
+  "warning": "No assertion is made about a closed operational completion of all nonprimitive shared states."
+}
