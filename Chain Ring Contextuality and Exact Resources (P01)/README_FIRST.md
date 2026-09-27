@@ -1,25 +1,21 @@
 # Contextuality and Exact Information Resources over Finite Chain Rings
 
-**Status:** mature draft. **Disposition:** KEEP — publication-track manuscript.
+**Current draft:** revised 26 September 2026. **Author:** Brian Theory, B-Theory.
 
-One coherent algebra/resources article. Very high uniqueness within this portfolio; external priority remains separate.
+Read [the revised PDF](REVISION_2026-09-26/manuscript/main.pdf) or edit [the LaTeX source](REVISION_2026-09-26/manuscript/main.tex). The [revision entry point](REVISION_2026-09-26/README.md) links the self-contained computational supplement, audit response and optional Boolean note.
 
-Current entry point: [01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex](01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex).
+The article retains three linked contribution groups:
 
-- P011: Residue-hyperplane lemma, uniform Hardy witness and complete-basis Smith trichotomy (lem:hyperplane, lem:hardy, thm:trichotomy).
-- P012: Exact leading-layer orbit codebook d*h, with h the multiplicity of the least Smith exponent (thm:code).
-- P013: Universal raw-vector teleportation criterion and nonprimitive separator between maximal coding and teleportation (thm:teleport, cor:separator).
+- P011: Residue-hyperplane criterion, uniform Hardy witness and complete-basis Smith trichotomy.
+- P012: Exact orbit codebook dh under full invertible local encoders and complete joint readout.
+- P013: Universal exact raw teleportation iff invertibility, with a nonprimitive separator and an explicit primitive-resource boundary.
 
-Read [CLAIMS_AND_UNIQUENESS.md](CLAIMS_AND_UNIQUENESS.md) for boundaries, corrections and evidence.
+The two major and seven localized audit issues are addressed in the [revision response](REVISION_2026-09-26/REVISION_RESPONSE.md). Full finite checks and a scoped check using the supplied process-semantics companion pass. Historical priority remains a bounded literature judgment; no publication or submission has been made.
 
-**Remaining work:** Independently audit all-basis quantifiers, d*h upper bound, analyzer construction and branch invertibility; compare primary local-ring/module and modal-resource antecedents under identical contracts.
-
-**Main risk:** Strong internal separation from the other papers is not external novelty certification. Some finite checks use the analytic criterion they corroborate.
-
-- [Reviews and recommendations](REVIEWS_AND_RECOMMENDATIONS/README.md)
-- [Reproducibility and duplicate policy](REPRODUCIBILITY/README.md)
-- [Version history](HISTORY/README.md)
+- [Claims and boundaries](CLAIMS_AND_UNIQUENESS.md)
+- [Reproduction](REPRODUCIBILITY/README.md)
+- [Reviews](REVIEWS_AND_RECOMMENDATIONS/README.md)
+- [History](HISTORY/README.md)
 - [Current source manifest](SOURCE_MANIFEST_SHA256.csv)
-- [Program project register](../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/PROJECT_REGISTER.md)
 
-This navigation was added on 2026-09-25. Historical manuscript, review, code, data and archive bytes were preserved.
+The source package dated 19 September and prior reviews remain preserved. They are historical versions, not competing manuscript heads.

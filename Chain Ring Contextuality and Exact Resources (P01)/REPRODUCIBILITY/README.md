@@ -1,11 +1,13 @@
-# Reproducibility and evidence policy
+# Reproducibility
 
-Source of record: [01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex](../01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex).
+The current draft has a [standalone computational supplement](../REVISION_2026-09-26/supplement/README.md).
 
-Keep package-relative files together. Repeated data/code in frozen release, source-snapshot and submission bundles is intentional: it records the inputs used for that package and permits isolated reproduction. It is not another novelty claim. The exact overlap ledger records every repeated hash. Current manuscript pointers and HISTORY labels distinguish loose manuscript heads from archival copies.
+After extracting the revised package, run:
 
-- [01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/generate_assets.py](../01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/generate_assets.py)
+    python supplement/run_reproduction.py
 
-Shared evidence: [program reproduction supplement](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/08_PORTFOLIO_PROGRAM_REPORTS_20260921/REPRODUCTION_SUPPLEMENT.zip); [phase handoff tables](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/11_SHARED_PHASE_HANDOFF_20260917). Canonical model corrections: [audit project](../../CM%20Correctness%20Audit%20and%20Model%20Boundaries%20%28Technical%20Report%29/README_FIRST.md).
+Python 3.10+ and the standard library suffice. The wrapper reruns the unchanged audit checker, a scoped companion comparison and ten supplied tests; compares substantive outputs; regenerates the manuscript table; and writes commands, timings, exit codes and hashes. No original portfolio dependencies are needed. Do not disable assertions.
 
-The cleanup verifies bytes and path dependencies; it does not certify all mathematical proofs or rerun performance campaigns. Historical `/mnt/data` imports/output paths are retained and documented. Fresh checks are in [verification ledger](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/10_UNIQUE_PROJECT_PARTITION_20260925/verification_runs.json). No timings or historical outputs were rewritten.
+The [revision response](../REVISION_2026-09-26/REVISION_RESPONSE.md) states coverage and limits. The historical generator in the preserved 19 September source package depended on absent inputs and is not the current entry point. Old canonical-runner or LM-product assertions describe historical snapshots and are not evidence claims of the revised article.
+
+Build PDFs with python supplement/build_documents.py using an installed TeX distribution. The [revision README](../REVISION_2026-09-26/README.md) gives details.

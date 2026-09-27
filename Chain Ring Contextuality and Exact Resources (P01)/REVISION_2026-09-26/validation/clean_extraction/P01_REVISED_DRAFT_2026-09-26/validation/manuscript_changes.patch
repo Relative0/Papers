@@ -1,0 +1,454 @@
+--- preserved_19_September/main.tex
++++ revised_26_September/main.tex
+@@ -2,7 +2,7 @@
+ \usepackage[margin=1in]{geometry}
+ \usepackage[T1]{fontenc}
+ \usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,booktabs,array,longtable,graphicx}
+-\usepackage{microtype,url,hyperref}
++\usepackage{microtype,url,hyperref,placeins}
+ \hypersetup{hidelinks,pdftitle={Contextuality and Exact Information Resources over Finite Chain Rings}}
+ \newtheorem{theorem}{Theorem}[section]
+ \newtheorem{lemma}[theorem]{Lemma}
+@@ -19,30 +19,51 @@
+ \DeclareMathOperator{\Span}{span}
+ \setlength{\emergencystretch}{3em}
+ \title{Contextuality and Exact Information Resources\\over Finite Chain Rings}
+-\author{Brian Theory\thanks{Research draft. Author metadata and venue remain to be finalized.}}
+-\date{Research draft, 19 September 2026}
++\author{Brian Theory\\\small B-Theory}
++\date{26 September 2026}
+ \begin{document}
+ \maketitle
+ \begin{abstract}
+-We study nonzero bipartite matrices over a finite commutative chain ring using all primitive projective local bases and nonzero-amplitude support. Two Smith invariants determine the support type: the number $r$ of nonzero factors and the multiplicity $h$ of the least exponent. The model is local when $r=1$, logically but not strongly contextual when $r\geq2$ and $h=1$, and strongly contextual when $h\geq2$. A residue-hyperplane criterion and a valuation-uniform Hardy construction give the classification. For a square $d$-dimensional resource, invertible local orbit encoding and one arbitrary complete joint basis readout admit exactly $dh$ messages. Universal exact raw-vector teleportation, with complete rank-one analysis and unrestricted invertible corrections, instead requires an invertible resource. We prove the existence of complete invertible-matrix analyzers over finite local rings and exhibit nonprimitive resources separating maximal orbit coding from teleportation. Tensor choice, preparation closure and a conditional symbolic Boolean interface delimit the interpretation. Finite checks accompany the proofs; no physical probability model or priority claim follows from them.
++We study nonzero bipartite matrices over a finite commutative chain ring using all primitive projective local bases, setting-indexed outcomes and nonzero-amplitude support. Two Smith invariants determine the support type: the number $r$ of nonzero factors and the multiplicity $h$ of the least exponent. The model is local when $r=1$, logically but not strongly contextual when $r\geq2$ and $h=1$, and strongly contextual when $h\geq2$. A residue-hyperplane criterion and a valuation-uniform Hardy construction give the classification. For a square $d$-dimensional resource, invertible local orbit encoding and one arbitrary complete joint basis readout admit exactly $dh$ messages. Universal exact raw-vector teleportation, with a complete joint covector basis and unrestricted invertible corrections, instead requires an invertible resource. We prove the existence of complete invertible-matrix analyzers over finite local rings and exhibit nonprimitive resources separating maximal orbit coding from teleportation. For primitive resources, maximal coding and universal exact raw teleportation coincide. Tensor choice and preparation closure delimit the interpretation. Finite checks accompany the proofs; no physical probability model or priority claim follows from them.
+ \end{abstract}
+ 
+ \section{Introduction}
+ Replacing complex amplitudes by a finite scalar system makes it possible to separate algebraic support from probability. In modal quantum theory, an effect is possible when its contraction with a state is nonzero. Field models already support entanglement, nonlocal support and communication protocols \cite{Schumacher2010,Schumacher2012}. Passing from a field to a ring introduces a different question: which aspects of a resource survive when nonzero amplitudes can annihilate one another?
+ 
+-This paper answers that question for static bipartite resources over finite commutative chain rings, with complete local basis families. The classification uses two elementary pieces of Smith data. Nonzero Smith rank detects whether a Hardy obstruction is available. Leading multiplicity detects whether any global outcome assignment survives. Under a separately stated exact communication task, the same leading multiplicity measures the number of linearly distinguishable orbit messages. Universal exact teleportation distinguishes yet another property, invertibility.
+-
+-The contribution is the classification and the comparison under matched contracts. Smith theory, the language of support contextuality, Hardy implications and modal protocols are established ingredients. The results do not propose a physical theory, and do not infer a Born rule. In particular, allowing all nonzero ring vectors is useful for static resource questions but does not define a preparation theory closed under arbitrary balanced tensor products.
+-
+-The proofs are self-contained. The accompanying priority ledger distinguishes a proof from a claim to precedence: a bounded primary-source review found close ingredients and different-context results, but does not certify that no equivalent theorem exists. The scalar-extension appendix connects the results to Boolean correspondence matrices without making either companion manuscript a dependency of the main theorems.
++This paper answers that question for static bipartite resources over finite commutative chain rings, with complete local basis families. The classification uses two elementary pieces of Smith data. At least two nonzero Smith factors are necessary and sufficient for a Hardy obstruction. Leading multiplicity detects whether any global outcome assignment survives. Under a separately stated exact communication task, the same leading multiplicity measures the number of linearly distinguishable orbit messages. Universal exact teleportation distinguishes yet another property, invertibility.
++
++The contribution is the complete chain-ring classification and the comparison of contextuality, exact orbit coding and raw-vector teleportation through related Smith invariants under explicit contracts. Smith theory, the language of support contextuality, Hardy implications and modal protocols are established ingredients. The results do not propose a physical theory, and do not infer a Born rule. In particular, allowing all nonzero ring vectors is useful for static resource questions but does not define a preparation theory closed under arbitrary balanced tensor products.
++
++The proofs are self-contained. The source comparison below identifies established ingredients and the hypotheses that distinguish the present tasks. It makes no claim of historical firstness. A standalone computational supplement supplies finite checks with their exact scope; an optional Boolean-interface note is separate from the article and is not a dependency of its results.
+ 
+ \subsection{Relation to established work}
+ Schumacher and Westmoreland's two-mobit model already gives a nonlocal support table and a four-message orbit code \cite{Schumacher2010}; their later treatment develops generalized field effects and modal probability-completion questions \cite{Schumacher2012}. These supply background, not new claims here. The support hierarchy follows the global-section formulation of Abramsky and Brandenburger \cite{AbramskyBrandenburger2011}. Our settings are local bases. We do not additionally require the same effect ray to carry a context-independent truth value across distinct bases.
+ 
+-That distinction matters for comparisons with single-system modal Kochen--Specker arguments \cite{SchumacherFreeWill} and the uncolorability of integer-matrix idempotents \cite{BenZvi2017}. The latter concerns compatible idempotent decompositions and transports to arbitrary scalar rings; it is not a Smith classification of a fixed bipartite state with basis-indexed outcomes. Finite-chain-ring module structure and projective ring geometry are likewise classical \cite{Byrne2021,Honold2009}. The use of primitive rows is a standard local-ring construction. Our assertions concern their complete bilinear support tables and two specified information tasks.
+-
+-State admissibility is a substantive difference from other ring models. In de Beaudrap's generic state space, the coordinates must generate the unit ideal \cite{deBeaudrap2014}. Over a local ring this means that at least one coordinate is a unit. Our nonprimitive nilpotent separator is therefore excluded from that state space; its conclusions belong to the static all-nonzero-vector contract used here. Categorical finite-field protocols can also use a different measurement notion: Varughese's Example~8.3 uses three Bell outcomes on a nine-dimensional pair \cite{Varughese2009}. It does not provide the complete nine-row rank-one analyzer required by our teleportation contract.
+-
++That distinction matters for comparisons with modal noncontextuality and free-will arguments \cite{SchumacherFreeWill} and the uncolorability of integer-matrix idempotents \cite{BenZvi2017}. The latter concerns compatible idempotent decompositions and transports to arbitrary scalar rings; it is not a Smith classification of a fixed bipartite state with basis-indexed outcomes. Finite-chain-ring module structure and projective ring geometry are likewise classical \cite{HonoldLandjev2000,Byrne2021}. The use of primitive rows is a standard local-ring construction. Our assertions concern their complete bilinear support tables and two specified information tasks.
++
++State admissibility is a substantive difference from other ring models. In de Beaudrap's generic state space, the coordinates must generate the unit ideal \cite{deBeaudrap2014}. Over a local ring this means that at least one coordinate is a unit. Our nonprimitive nilpotent separator is therefore excluded from that state space; its conclusions belong to the static all-nonzero-vector contract used here. Categorical finite-field protocols can also use a different measurement notion: Varughese's Example~8.3 uses three Bell outcomes on a nine-dimensional pair \cite{Varughese2009}. It does not provide the complete nine-row covector analyzer required by our teleportation contract.
++
++
++
++The matrix-spanning ingredient is classical: nonsingular-summand results go back to Wolfson and Zelinsky, and Henriksen proves the stronger statement that every square matrix of size greater than one over a unital ring is a sum of three units \cite{Zelinsky1954,Henriksen1974}. Lemma~\ref{lem:span} supplies a short proof sufficient for our use, followed by residue-basis lifting. Neither this spanning fact nor the existence of modal protocols is asserted as a new general result.
++
++Finite-chain-ring coding also uses module invariants, but its optimization problem must be distinguished. Feng et al.\ study a stochastic channel $Y=AX+BE$ with random transfer and error matrices, deriving capacity results under specified distributions \cite{Feng2014}. Here a sender controls $U$ in $UM$ for a fixed resource $M$, and a single complete joint basis readout must identify the message at every supported outcome. A direct consequence of the former channel definition makes the distinction concrete: if $A$ is uniform in $\GL_d(K)$ and noise is absent, then $AUM$ has the same distribution for every $U\in\GL_d(K)$. This observation is our comparison of the two tasks, not a claim made in that source about the present theorem.
++
++\begin{table}[ht]\centering\small
++\begin{tabular}{>{\raggedright\arraybackslash}p{.19\linewidth}>{\raggedright\arraybackslash}p{.25\linewidth}>{\raggedright\arraybackslash}p{.43\linewidth}}
++\toprule
++Source and domain & Admissible objects & Operations, readout and conclusion\\\midrule
++Modal theory \cite{Schumacher2010,Schumacher2012}; fields & Nonzero state vectors; composite vector spaces & Reversible linear maps and basis effects; nonzero contraction gives possibility. Includes finite-field coding and teleportation examples.\\[3pt]
++Ring computation \cite{deBeaudrap2014}; commutative rings & Generic vectors whose coordinates generate the unit ideal & Model-dependent algebraic transformations and outcome rules; this admissibility excludes our nonprimitive separator.\\[3pt]
++Chain-ring codes \cite{HonoldLandjev2000,Byrne2021} & Submodules and their module types & Code equivalence, geometry and enumeration; no fixed-resource joint support readout or raw teleportation task.\\[3pt]
++Matrix channels \cite{Feng2014}; chain rings & Input matrices in a prescribed ambient module & Random $A,B,E$ in $Y=AX+BE$; stochastic decoding and capacity, rather than a controlled orbit with disjoint nonzero supports.\\[3pt]
++This article; chain rings & Every nonzero static matrix, including nonprimitive ones & All local bases for support; full $\GL_d(K)$ encoders and one complete joint decoder for exact coding; complete covector analysis and invertible corrections for exact raw recovery. Conclusions: Smith trichotomy, $dh$ messages, and invertibility criterion.\\
++\bottomrule
++\end{tabular}
++\caption{Comparison by scalar domain, admissibility and task. The support hierarchy itself is the established global-section hierarchy \cite{AbramskyBrandenburger2011}. Theorem~\ref{thm:teleport} also applies to finite commutative local rings that are not chain rings.}\label{tab:prior}
++\end{table}
++
++\FloatBarrier
+ \section{Scalar, state and measurement contracts}\label{sec:contract}
+ Let $K$ be a finite commutative chain ring with identity, maximal ideal $J=(\pi)$, residue field $k=K/J$ of size $q$, and nilpotency index $s$, so $\pi^s=0$ and $\pi^{s-1}\ne0$. The field case has $s=1$. Bars denote reduction modulo $J$. An element is a unit exactly when its residue is nonzero. A square matrix is invertible exactly when its residue is invertible, by the determinant criterion.
+ 
+@@ -51,11 +72,11 @@
+  PMQ^T=\diag(\pi^{a_1},\ldots,\pi^{a_r},0,\ldots),\qquad
+  0\leq a_1\leq\cdots\leq a_r<s,
+ \]
+-with $P\in\GL_m(K)$ and $Q\in\GL_n(K)$. Clearing a pivot is possible because it divides all remaining entries; induction gives the diagonal form. The invariant exponents can equivalently be recovered from the module type \cite{Byrne2021}. We write $r$ for the number of nonzero factors and
++with $P\in\GL_m(K)$ and $Q\in\GL_n(K)$. Clearing a pivot is possible because it divides all remaining entries; induction gives the diagonal form. The invariant exponents can equivalently be recovered from the module type \cite{HonoldLandjev2000,Byrne2021}. We write $r$ for the number of nonzero factors and
+ \[
+  a=a_1,\qquad h=\#\{i:a_i=a\}.
+ \]
+-Writing $M=\pi^a N$ involves a choice of preimage, not division by a unit. Its residue $\bar N$ is well-defined: the ambiguity lies in $(\pi^{s-a})$, which is contained in $J$. Thus $h=\rank_k\bar N$.
++Writing $M=\pi^a N$ involves a choice of preimage, not division by a unit. Its residue $\bar N$ is well-defined: entrywise, the ambiguity lies in $\operatorname{Ann}(\pi^a)=(\pi^{s-a})\subseteq J$ (and is zero when $a=0$). Thus $h=\rank_k\bar N$. In contrast, $\bar M$ is zero whenever $a>0$; its rank is then not the leading multiplicity.
+ 
+ \begin{definition}[Complete-basis support]
+ A primitive row in $K^m$ has a unit coordinate. Its projective ray is its orbit under unit scaling. A local setting is an unordered basis of primitive projective rows, represented by an invertible matrix. For a nonzero resource $M\in K^m\otimes_K K^n\cong\Mat_{m\times n}(K)$, the outcome pair represented by rows $x,y$ is supported exactly when
+@@ -76,10 +97,40 @@
+ Task & Contract \\\midrule
+ Support & Nonzero static $M$; balanced tensor over $K$; all primitive projective local bases; nonzero contraction means possible. \\
+ Orbit coding & Square $M$, $d\geq2$; encodings $UM$ with $U\in\GL_d(K)$; one invertible $K$-linear joint decoder on $d^2$ coordinates; every possible outcome identifies the message. No discard and reprepare. \\
+-Teleportation & Every nonzero raw input, including correlations with an untouched reference; complete joint rank-one effect basis; all possible branches corrected exactly by allowed invertible maps. No selected successful branch or postselection. \\\bottomrule
++Teleportation & Every nonzero raw input, including correlations with an untouched reference; complete basis of primitive joint covectors; all possible branches corrected exactly by allowed invertible maps. No selected successful branch or postselection. \\\bottomrule
+ \end{tabular}
+ \end{center}
+ For support and coding, multiplying a whole resource by a unit is immaterial. Teleportation below demands actual vector recovery and does not silently replace this by an unspecified projective task.
++
++
++
++\subsection{Resource map and a worked comparison}
++Table~\ref{tab:map} previews the consequences of Theorems~\ref{thm:trichotomy}, \ref{thm:code} and~\ref{thm:teleport} for square resources. Primitivity of $M$, viewed as a vector of entries, is equivalent to $a=0$.
++\begin{table}[ht]\centering\small
++\begin{tabular}{ccl}
++\toprule
++Smith region & Orbit messages & Support and raw teleportation\\\midrule
++$r=1$ & $d$ & Local; singular for $d\geq2$\\
++$r\geq2,\ h=1$ & $d$ & Logical, not strong; singular\\
++$2\leq h<d$ & $dh$ & Strong; singular\\
++$h=d,\ a>0$ & $d^2$ & Strong; nonprimitive, singular\\
++$h=d,\ a=0$ & $d^2$ & Strong; invertible, universally teleporting\\\bottomrule
++\end{tabular}
++\caption{Square resources under the stated contracts, $d\geq2$. Zero is excluded.}\label{tab:map}
++\end{table}
++
++For $A=\A$, compare the four resources in Table~\ref{tab:examples}. In $M=\diag(u,u)=uI_2$, a choice of leading preimage is $N=I_2$, so $a=1$ and $h=2$ even though $\bar M=0$. All four orbit messages remain distinguishable, but the nonzero input $(u^3,0)^T$ is annihilated by $M$ and cannot be universally recovered. By contrast, $\diag(1,u^2)$ is primitive and has two nonzero factors, but only one leading factor; it has a Hardy obstruction and also a global assignment. These examples distinguish $r$, $h$ and invertibility without changing the scalar ring.
++\begin{table}[ht]\centering\small
++\begin{tabular}{lccclcc}
++\toprule
++$M$ over $A$ & $r$ & $a$ & $h$ & Support & Messages & Teleports\\\midrule
++$\diag(1,0)$ & 1 & 0 & 1 & Local & 2 & No\\
++$\diag(1,u^2)$ & 2 & 0 & 1 & Logical, not strong & 2 & No\\
++$\diag(u,u)$ & 2 & 1 & 2 & Strong & 4 & No\\
++$I_2$ & 2 & 0 & 2 & Strong & 4 & Yes\\\bottomrule
++\end{tabular}
++\caption{A worked comparison over one chain ring. Teleportation means universal exact raw-vector recovery.}\label{tab:examples}
++\end{table}
+ 
+ \section{Complete-basis contextuality}\label{sec:classification}
+ The first lemma requires only that $K$ be finite, commutative and local.
+@@ -109,7 +160,12 @@
+  CDX^T&=\begin{pmatrix}p&p\\-q_0&0\end{pmatrix},&
+  CDF^T&=\begin{pmatrix}0&p\\q_0&-q_0\end{pmatrix}.
+ \end{align*}
+-Index outcomes by $0,1$. The supported seed $(F_A=0,F_B=0)$ forces $X_B=1$, then $C_A=0$, and then $F_B=1$, a contradiction. The support strings, in row order, are $1001,0111,1110,0111$. The minus sign cannot be dropped outside characteristic two.
++Index outcomes by $0,1$. The forcing chain from the supported seed is
++\[
++(F_A=0,F_B=0)\ \Longrightarrow\ X_B=1
++\ \Longrightarrow\ C_A=0\ \Longrightarrow\ F_B=1,
++\]
++a contradiction. Each implication excludes an outcome using, successively, the zero entries in $FDX^T$, $CDX^T$ and $CDF^T$. The support strings, in row order, are $1001,0111,1110,0111$. The minus sign cannot be dropped outside characteristic two.
+ \end{proof}
+ 
+ \begin{theorem}[Smith trichotomy]\label{thm:trichotomy}
+@@ -127,11 +183,11 @@
+ 
+ Suppose $r=1$, with sole nonzero entry $p$ in position $(1,1)$. Retain the outcomes of any supported seed event $(x,y)$. In every other setting choose a row with unit first coordinate. A new--new pair has contraction equal to $p$ times a unit. The seed condition $px_1y_1\ne0$ implies $px_1\ne0$ and $py_1\ne0$, so a seed--new pair is also supported. The seed therefore extends.
+ 
+-If $h=1$, choose a row with unit first coordinate in every setting. Factoring out $\pi^a$, each selected contraction is a product of units plus terms in the radical, hence is a unit. Multiplication by the nonzero $\pi^a$ gives a supported cross pair. A global assignment exists.
++If $h=1$, choose a row with unit first coordinate in every setting. In the divided matrix, each selected contraction is a product of units plus terms in the radical, hence is a unit. Multiplication by the nonzero $\pi^a$ gives a supported cross pair. A global assignment exists.
+ 
+ If $h\geq2$, write $M=\pi^a M_0$, so $\bar M_0$ has rank $h$. Suppose the hyperplanes of Lemma~\ref{lem:hyperplane} existed, and write $H_B=\ker\beta$. The vectors outside $H_A$ span $k^m$. Since the row space of $\bar M_0$ has dimension at least two, some $x\notin H_A$ has $w=x\bar M_0$ outside the line spanned by $\beta$. There is $y\in\ker w$ with $\beta(y)\ne0$. Lift $x,y$ to rows $\tilde x,\tilde y$. The row $\tilde xM_0$ has a unit coordinate, whereas its contraction with $\tilde y$ lies in $J$. Subtracting that contraction divided by the unit from the corresponding coordinate of $\tilde y$ cancels it exactly and changes no residue. This yields lifts outside both hyperplanes with zero contraction, a contradiction.
+ 
+-Finally, if $r\geq2$, embed Lemma~\ref{lem:hardy} in the first two nonzero Smith coordinates and extend its bases with standard rows. At each forcing step, the forced row has zero contraction with every added coordinate outcome. Thus the same seed cannot extend, even in higher dimensions. These observations exhaust all nonzero cases.
++Finally, if $r\geq2$, embed Lemma~\ref{lem:hardy} in the first two nonzero Smith coordinates and extend its bases with standard rows. The embedded matrices are block diagonal. At each forcing step, the already selected row is supported only in the first two coordinates and therefore has zero contraction with every added coordinate outcome on the other side. No additional outcome can escape the forcing chain. Thus the same seed cannot extend, even in higher dimensions. These observations exhaust all nonzero cases.
+ \end{proof}
+ 
+ There are $q^{sm}-q^{(s-1)m}$ primitive rows in $K^m$. Unit scaling acts freely, and $|K^\times|=q^{s-1}(q-1)$. Consequently the numbers of rays and unordered projective bases are
+@@ -142,6 +198,7 @@
+ For $K=\A$ and $m=2$, these are $24$ rays and $192$ bases. These counting facts are background; enumeration is unnecessary for the classification proof.
+ 
+ \section{Exact orbit coding and teleportation}\label{sec:tasks}
++The following classical spanning fact is included with a constructive proof; stronger units-generation results are available in \cite{Zelinsky1954,Henriksen1974}.
+ \begin{lemma}[Invertible matrices span]\label{lem:span}
+ For a field $k$ and $d\geq2$, $\GL_d(k)$ spans $\Mat_d(k)$. Over a finite commutative local ring $K$, there is a $K$-basis of $\Mat_d(K)$ consisting entirely of invertible matrices.
+ \end{lemma}
+@@ -157,7 +214,12 @@
+ \[
+  V=\{X\bar N:X\in\Mat_d(k)\},\qquad \dim_k V=dh.
+ \]
+-Every orbit codeword has a nonzero leading residue. An invertible joint decoder preserves this fact. Exact decoding forces supports for different messages to be disjoint; their nonzero leading residue vectors are therefore independent. Hence their number is at most $dh$.
++Each row of $X\bar N$ belongs to the $h$-dimensional row space of $\bar N$, and all such rows can be chosen independently, proving $\dim_kV=dh$. Put $v_i=\operatorname{vec}(U_iN)$ and let $D\in\GL_{d^2}(K)$ be a proposed decoder. The vectors $\bar v_i$ and $\bar D\bar v_i$ are nonzero. If a coordinate of $Dv_i$ has nonzero residue, it is a unit, and multiplication by $\pi^a\ne0$ cannot kill it. Thus
++\[
++\operatorname{supp}(\bar D\bar v_i)
++\subseteq\operatorname{supp}(\pi^aDv_i).
++\]
++Exact decoding requires the supports on the right to be pairwise disjoint. Consequently the nonzero field vectors on the left have disjoint supports and are linearly independent. They lie in the $dh$-dimensional space $\bar D\operatorname{vec}(V)$, giving the upper bound. The reverse support inclusion is neither asserted nor needed.
+ 
+ By Lemma~\ref{lem:span}, images of invertible residue matrices span $V$. Choose $dh$ of these images that are independent and lift the encoders to $U_1,\ldots,U_{dh}\in\GL_d(K)$. The columns $\operatorname{vec}(U_iN)$ are independent modulo $J$. Extend the residue columns to a basis and lift the added columns arbitrarily. The resulting matrix $B$ over $K$ is invertible. Its inverse sends the actual codewords to $\pi^ae_i$, each with a unique possible coordinate outcome. This attains the bound.
+ \end{proof}
+@@ -170,16 +232,27 @@
+ \end{proof}
+ The $d$-message comparison is the dimension baseline for a fresh $d$-coordinate carrier with complete basis readout. It is not an entropy or an asymptotic channel capacity. If encoders may discard the resource, or decoders are restricted, the stated optimization changes. Over a field $h=r$, giving the familiar linear-algebra orbit count $dr$; the two-mobit four-message protocol is already known \cite{Schumacher2010}.
+ 
++A joint effect is a primitive covector
++\[
++e:K^d\otimes_K K^d\longrightarrow K,
++\qquad E_{ij}=e(e_i\otimes e_j),
++\]
++where the first factor holds the input and the second Alice's share of the resource. A complete analysis is a basis of $d^2$ such covectors. Its analysis matrix has rows $\operatorname{vec}(E)^T$ and must be invertible. This is different from requiring an individual reshape $E$ to have matrix rank one: $E$ may be invertible and need not represent a decomposable local effect. For $M=\sum_{j,k}M_{jk}e_j\otimes e_k$, contraction gives
++\[
++(T_ex)_k=\sum_{i,j}E_{ij}x_iM_{jk},\qquad T_e=M^TE^T.
++\]
++The branch label is communicated to Bob, who applies a fixed correction for that label.
++
+ \begin{theorem}[Universal raw teleportation]\label{thm:teleport}
+-Let $K$ be a finite commutative local ring. For nonzero $M\in\Mat_d(K)$, $d\geq2$, universal exact raw-vector teleportation with complete rank-one analysis and unrestricted invertible corrections is possible if and only if $M$ is invertible.
++Let $K$ be a finite commutative local ring. For nonzero $M\in\Mat_d(K)$, $d\geq2$, universal exact raw-vector teleportation with a complete joint covector basis and unrestricted invertible corrections is possible if and only if $M$ is invertible.
+ \end{theorem}
+ \begin{proof}
+-Fix vectorization so that the branch labeled by the reshaped joint effect $E$ transfers the input by $T=M^TE^T$. If a nonzero branch map had a nonzero kernel vector $z$, choose $x$ with $Tx\ne0$. Both $x$ and $x+z$ are nonzero and give the same possible branch output. A fixed correction cannot recover both. Thus each nonzero universally correct branch is injective. On the finite free module $K^d$, it is bijective and its inverse is linear; its invertibility forces $M$ to be invertible. A complete effect basis and nonzero $M$ exclude the possibility that every branch map is zero: the reshapes span all matrices, so this would force $M^TE_{ij}=0$ for all $i,j$ and hence $M=0$.
++Use the contraction convention above, so a branch with reshape $E$ has transfer $T=M^TE^T$. If a nonzero branch map had a nonzero kernel vector $z$, choose $x$ with $Tx\ne0$. Both $x$ and $x+z$ are nonzero and give the same possible branch output. A fixed correction cannot recover both. Thus each nonzero universally correct branch is injective. On the finite free module $K^d$, it is bijective and its inverse is linear; its invertibility forces $M$ to be invertible. A complete effect basis and nonzero $M$ exclude the possibility that every branch map is zero: the reshapes span all matrices, so this would force $M^TE_{ij}=0$ for all $i,j$ and hence $M=0$.
+ 
+ Conversely, choose the invertible-matrix basis of Lemma~\ref{lem:span} as the reshapes of the joint effects. It is a complete analysis basis, and every transfer $M^TE^T$ is invertible. Correct with its inverse. The identity $T^{-1}T=I$ remains an identity after tensoring with the identity on an untouched reference, proving the reference-preserving statement as well.
+ \end{proof}
+ 
+-The analyzer existence step extends the explicitly constructed dimension-two and dimension-eight analyzers in the supplied research. It is a residue-lifting corollary of elementary matrix algebra. Its inclusion removes a dimension restriction from sufficiency when all the required bases and corrections are admitted; it does not assert that a physically restricted gate set can implement them.
++The analyzer existence step is a residue-lifting corollary of the classical spanning fact. It requires both invertibility of each reshape and invertibility of the full analysis matrix. Its inclusion removes a dimension restriction from sufficiency when all the required bases and corrections are admitted; it does not assert that a physically restricted gate set can implement them.
+ 
+ \begin{corollary}[A nonprimitive separator]\label{cor:separator}
+ For a chain ring of length $s>1$ and $0<a<s$, the resource $\pi^a I_d$ is strongly contextual and has $d^2$ exact orbit messages, but cannot teleport universally under Theorem~\ref{thm:teleport}.
+@@ -187,7 +260,18 @@
+ \begin{proof}
+ Its leading multiplicity is $d$. It also annihilates every vector multiplied by $\pi^{s-a}$, so is singular. Apply Theorems~\ref{thm:trichotomy}--\ref{thm:teleport}.
+ \end{proof}
+-The smallest example is $\varepsilon I_2$ over $\F_2[\varepsilon]/(\varepsilon^2)$. This resource is nonprimitive. Restricting preparation to primitive vectors excludes this particular separator and must be stated explicitly.
++The smallest example is $\varepsilon I_2$ over $\F_2[\varepsilon]/(\varepsilon^2)$. The role of nonprimitivity is exact:
++\begin{corollary}[Primitive-resource boundary]\label{cor:primitive}
++For a primitive $M\in\Mat_d(K)$ over a finite commutative chain ring, under the stated contracts,
++\[
++N_{\max}=d^2\quad\Longleftrightarrow\quad M\text{ invertible}
++\quad\Longleftrightarrow\quad\text{universal exact raw teleportation}.
++\]
++\end{corollary}
++\begin{proof}
++Primitivity gives $a=0$. By Theorem~\ref{thm:code}, maximal coding is equivalent to $h=d$, so all Smith factors are units. Apply Theorem~\ref{thm:teleport}.
++\end{proof}
++Thus the maximal-coding/nonteleportation separation requires nonprimitive resources and does not occur in the generic state class of \cite{deBeaudrap2014}. This does not equate strong contextuality with teleportation for primitive resources: $2\leq h<d$ is still possible when $d>2$.
+ 
+ \section{Boundaries of the resource comparison}\label{sec:boundaries}
+ \subsection{Balanced tensors and regular binary expansion}
+@@ -209,20 +293,8 @@
+ \]
+ both have binary rank nine, while their leading multiplicities are two and one. Their $A$-linear orbit codebooks have sizes six and three; both are singular, and hence neither universally teleports in the stated task.
+ 
+-In one audited restricted bipartite construction, shared and literal support tables agree after transposing Bob's regular blocks and applying the involution $R\mapsto R^{-1}$. This is an isomorphism of those particular outcome tables. It does not identify their tensor spaces or preparation rules. Figure~\ref{fig:tensors} records these distinct comparisons.
+-
+-\begin{figure}[ht]\centering
+-\fbox{\begin{minipage}{.91\linewidth}
+-\textbf{Three comparisons with different contracts}\par\smallskip
+-Balanced scalar tensor: $u^3\otimes_Au=0$; literal field tensor: $u^3\otimes_{\F_2}u\ne0$.\par\smallskip
+-Restricted $A$ operations retain Smith data; unrestricted binary operations retain total binary rank.\par\smallskip
+-An outcome-table relabeling for selected measurements preserves those supports only. It implies neither equality of tensor spaces nor unrestricted operational equivalence.
+-\end{minipage}}
+-\caption{Tensor choice, operation group and table equivalence are separate statements.}\label{fig:tensors}
+-\end{figure}
+-
+ \subsection{A boundary on the number of settings}
+-\begin{theorem}\label{thm:two}
++\begin{theorem}[Absence of strong contextuality with two settings]\label{thm:two}
+ A nonzero tensor with any finite number of parties over $\F_2$, two-dimensional local carriers, and at most two complete binary settings per party has a global assignment. The same conclusion holds over a finite commutative local ring with residue field $\F_2$.
+ \end{theorem}
+ \begin{proof}
+@@ -233,78 +305,39 @@
+ This does not exclude Hardy logical contextuality, which concerns failure to extend a particular event. Nor does it cover three settings or a different residue field. For two parties, the exclusion of a strongly contextual binary two-setting table is close to the established PR-box and modal-table boundaries \cite{AbramskyBrandenburger2011,Schumacher2012}; the proof above states explicitly what extends to arbitrary party number and radical layers.
+ 
+ \section{Finite verification and reproducibility}\label{sec:verification}
+-The analytic proofs determine the general statements. Independent finite checks examine whether the implementations and selected examples agree with those statements. They do not establish mathematical priority or replace quantifiers in a proof.
++The proofs establish the general statements. The standalone supplement contains a separate checker developed for the September 2026 audit and rerun for this revision. It uses only the Python standard library. It is not the earlier historical runner, whose dependencies are absent from the original article package. The current evidence claims refer only to the files and commands in this supplement.
++
++The support checker enumerates primitive rays, complete bases and exact contraction tables. Forbidden outcome pairs become binary clauses; implication-graph reachability decides global assignments and whether each supported event extends. Smith data are computed afterward for comparison, not used to decide support type. Identical support tables are cached. For the binary field these decisions are also checked by direct assignment enumeration.
++
++\begin{center}\small
++\begin{tabular}{p{.27\linewidth}p{.61\linewidth}}
++\toprule
++Check & Coverage and limitation\\\midrule
++Direct support & All $22{,}170$ nonzero $2\times2$ resources over $\F_2,\F_3,\F_4$, $\F_2[u]/(u^2)$, $\F_2[u]/(u^3)$, $\F_3[u]/(u^2)$, and $\mathbb Z/4,\mathbb Z/8,\mathbb Z/9$; zero disagreements.\\[3pt]
++Length-four support & Fourteen nonzero Smith representatives and 24 deterministic sampled resources over $A=\A$, each using all 192 local bases; not all $65{,}535$ nonzero resources.\\[3pt]
++Hardy and analyzers & 36 ring/exponent Hardy cases; 28 analyzer configurations, checking each reshape and the complete analysis matrix, plus correction identities for one invertible resource per configuration.\\[3pt]
++Coding & 52 explicit encoder/decoder certificates across seven rings, including all fourteen nonzero $A$ Smith representatives. These certify achievability; the general upper bound is analytic.\\[3pt]
++Binary coding optimum & All 15 nonzero $2\times2$ binary resources, all $20{,}160$ invertible joint decoders per resource, and all disjoint-support subsets of each decoded orbit.\\[3pt]
++Two-setting boundary & All 255 nonzero three-party binary tensors for a representative pair of distinct settings per party; the arbitrary-party and ring statements are analytic.\\\bottomrule
++\end{tabular}
++\end{center}
+ 
+ \input{smith_table}
+ 
+-Table~\ref{tab:smith} is regenerated from the supplied, independently rechecked inventory. For $A^2$, the $65{,}535$ nonzero matrices divide into $5{,}265$ local, $34{,}056$ logical-but-not-strong and $26{,}214$ strong instances. The inventory includes zero separately, outside the resource model. A separate direct support/2-SAT implementation over the dual numbers classifies all $255$ nonzero $2\times2$ matrices as $81$ local, $72$ logical-but-not-strong and $102$ strong. That method does not use the hyperplane classification as its decision rule. The supplement also contains explicit encoders and joint decoder matrices for all fourteen nonzero $A$ Smith representatives.
+-
+-\begin{center}\small
+-\begin{tabular}{p{.25\linewidth}p{.61\linewidth}}
+-\toprule
+-Evidence & Scope and limitation\\\midrule
+-Analytic proofs & All finite commutative chain rings for classification/coding; all finite commutative local rings for analyzer lifting and raw teleportation.\\
+-Independent enumeration & $2\times2$ resources over $A$ and the dual numbers; finite domains only.\\
+-Explicit certificates & Fourteen nonzero $A$ Smith representatives, with actual invertible encoder/decoder matrices.\\
+-Supplied historical suites & Separately rerun in an isolated directory; assertion counts are not merged with exhaustive-state counts.\\
+-Symbolic bridge checks & All $256$ products in the fixed sixteen-element LM family; $112$ remain inside and $144$ do not.\\\bottomrule
+-\end{tabular}
+-\end{center}
+-
+-The supplement records the unchanged canonical runner, exact commands, interpreter and dependency versions, input/output SHA-256 hashes, runtime and per-stage status. It also records the new analyzer argument and a finite verification of its two independent invertibility requirements. No new timing campaign is part of these mathematical checks.
++Table~\ref{tab:smith} uses a separate exhaustive Smith inventory of all $65{,}536$ matrices over $A$, including zero. Its support labels are assigned by Theorem~\ref{thm:trichotomy}; they are not direct support decisions on the entire population. The nonzero counts are $5{,}265$ local, $34{,}056$ logical but not strong, and $26{,}214$ strong. The direct dual-number check yields $81$, $72$ and $102$ respectively for its 255 nonzero matrices.
++
++A separately supplied process-semantics implementation is included unchanged for an additional, scoped cross-check: its Smith types and independently computed regular-representation binary ranks are checked on all $65{,}536$ matrices over $A$. Its inventory agrees with the audit checker. This comparison does not constitute another full support classification or a rerun of every historical process-semantics suite.
++
++From the extracted revision directory, run \texttt{python supplement/run\_reproduction.py}. The wrapper refuses optimized Python execution, runs the full stated population, compares substantive outputs with the supplied reference results, regenerates Table~\ref{tab:smith}, and writes commands, interpreter/platform, exit statuses, runtimes and SHA-256 hashes. Runtime and platform fields are excluded from substantive-output comparisons. The Boolean coefficient-support identity is analytic; no historical LM-product or missing canonical-runner result is claimed as reproduced here. These finite checks corroborate the proofs and do not certify historical priority.
+ 
+ \section{Discussion}
+-The resource hierarchy is controlled by different questions about the same Smith form. Nonzero rank permits a logical obstruction; leading multiplicity controls the absence of every global assignment and the size of an exact orbit code; invertibility controls universal raw-vector transfer. None of these statements identifies a physical capability without the relevant operation and readout assumptions.
+-
+-There are two particularly useful limits. First, the nilpotent maximal-code example is a static nonprimitive resource, so it cannot by itself justify a closed process theory. Second, the codebook/contextuality equivalence compares matched complete-basis contracts. Restricting gates, changing the scalar tensor, adding discard-and-reprepare, or weakening exactness requires a new theorem.
+-
+-The next mathematical questions are a classification beyond chain rings, a process semantics closed under both preparation and conditioning, and resource comparisons for restricted measurement families. These remain open here. The publication priority of the specific classification and exact orbit formula also remains subject to the unresolved source checks listed in the accompanying ledger; the paper claims the displayed proofs, not certified historical firstness.
+-
+-\appendix
+-\section{A conditional interface from Boolean formulas}\label{app:lm}
+-Let $B$ be the Boolean algebra of formulas modulo logical equivalence, regarded as a Boolean ring over $\F_2$. Paper B's formula-valued matrix is
+-\[
+- M_f(X,Y)=\begin{pmatrix}f(X,Y)&f(X,\neg Y)\\f(\neg X,Y)&f(\neg X,\neg Y)\end{pmatrix}.
+-\]
+-Its valuation and pairing identities belong to that Boolean calculus \cite{PaperB}. They do not choose amplitudes, a tensor base, effects or a possibility rule. In particular, every Boolean-ring element is idempotent, while the only idempotents in a local ring are $0,1$: if $e(1-e)=0$, one of $e,1-e$ is a unit. Thus a unital Boolean-ring map into $A$ has image in $\{0,1\}$ and cannot generate $u$.
+-
+-Choose instead the scalar extension $B_A=B\otimes_{\F_2}A$. Each element is uniquely $\sum_{j=0}^3 f_j u^j$. A Boolean valuation $v:B\to\F_2$ extends coefficientwise to $v_A:B_A\to A$. For a selected enriched state $\psi$ and effect $e$, write $e\psi=\sum_j g_j u^j$ and define the Boolean formula
+-\[
+- \operatorname{Supp}(e\psi)=g_0\lor g_1\lor g_2\lor g_3.
+-\]
+-Then
+-\[
+- v(\operatorname{Supp}(e\psi))=1
+- \quad\Longleftrightarrow\quad v_A(e)v_A(\psi)\ne0.
+-\]
+-This follows from coefficientwise valuation and uniqueness of the $u$ expansion. The disjunction is essential; nonzero testing is neither an additive nor a multiplicative homomorphism. The construction is natural relative to the chosen enrichment and valuation, not a unique modal interpretation of bare Boolean formulas. It applies to the specified $\F_2$-algebra $A$, not automatically to mixed-characteristic $K$.
+-
+-For an invertible coordinate readout $B_0$, put $J_i=B_0^{-1}P_iB_0$, with $P_i$ the standard coordinate projections. Direct multiplication yields $J_i^2=J_i$, $J_iJ_j=0$ for $i\ne j$, and $\sum_iJ_i=I$. Moreover $J_i\psi$ is nonzero exactly when the measured coordinate $(B_0\psi)_i$ is nonzero, because the corresponding column of $B_0^{-1}$ has a unit coordinate. No division by that measured amplitude is required. Symbolic valuation commutes with these operations when $B_0$ is invertible symbolically. This supplies repeatable linear branches, but no probability normalization or repair of primitive-state closure.
+-
+-\begin{figure}[ht]\centering
+-\fbox{\begin{minipage}{.91\linewidth}
+-Boolean formulas $B$ and their valuations are the starting data.\par\smallskip
+-$B\longrightarrow B\otimes_{\F_2}A$: scalar enrichment requires the explicit choice of $A$.\par\smallskip
+-Choose carrier, tensor base, gates and effects. Coefficientwise valuation then produces $A$-valued contractions.\par\smallskip
+-Apply coefficient OR to obtain symbolic support. No arrow in this construction supplies real probabilities or a physical realization.
+-\end{minipage}}
+-\caption{The typed interface distinguishes proved maps from additional modeling choices.}\label{fig:interface}
+-\end{figure}
+-
+-\section{Resource map}
+-The table below collects the square-resource cases under the contracts of Section~\ref{sec:contract}.
+-\begin{figure}[ht]\centering
+-\begin{tabular}{ccl}
+-\toprule
+-Smith region & Exact orbit count & Support and teleportation\\\midrule
+-$r=1$ & $d$ & Local; singular for $d\geq2$\\
+-$r\geq2,\ h=1$ & $d$ & Logical, not strong; singular\\
+-$2\leq h<d$ & $dh$ & Strong; singular\\
+-$h=d,\ a>0$ & $d^2$ & Strong; nonprimitive, singular\\
+-$h=d,\ a=0$ & $d^2$ & Strong; invertible, universally teleporting\\\bottomrule
+-\end{tabular}
+-\caption{Square-resource map under the stated contracts, $d\geq2$. Zero is excluded. The nilpotent separator occupies the fourth row; the primitive rank-nine pair occupies the third and second rows with $d=3$.}\label{fig:map}
+-\end{figure}
++The resource hierarchy is controlled by different questions about the same Smith form. At least two nonzero Smith factors permit a logical obstruction; leading multiplicity controls the absence of every global assignment and the size of an exact orbit code; invertibility controls universal raw-vector transfer. None of these statements identifies a physical capability without the relevant operation and readout assumptions.
++
++There are two particularly useful limits. First, the nilpotent maximal-code example is a static nonprimitive resource, so it cannot by itself justify a closed process theory. For primitive resources, maximal orbit coding and universal raw teleportation coincide by Corollary~
++ef{cor:primitive}. Second, the codebook/contextuality equivalence compares matched complete-basis contracts. Restricting gates, changing the scalar tensor, adding discard-and-reprepare, or weakening exactness requires a new theorem.
++
++The next mathematical questions are a classification beyond chain rings, a process semantics closed under both preparation and conditioning, and resource comparisons for restricted measurement families. These remain open here. The contribution is the classification and the explicit comparison of resource criteria. The primary-source comparison is bounded; it does not certify historical firstness for the specific classification or orbit formula.
++
+ \bibliographystyle{plain}
+ \bibliography{references}
+ \end{document}
+--- preserved_19_September/references.bib
++++ revised_26_September/references.bib
+@@ -1,35 +1,64 @@
+-@misc{Schumacher2010,
++@article{Schumacher2010,
+  author={Benjamin Schumacher and Michael D. Westmoreland},
+- title={Modal quantum theory}, year={2010},
+- howpublished={\url{https://arxiv.org/abs/1010.2929}}}
+-@misc{Schumacher2012,
++ title={Modal Quantum Theory}, journal={Foundations of Physics},
++ year={2012}, volume={42}, number={7}, pages={918--925},
++ doi={10.1007/s10701-012-9650-z},
++ note={\href{https://doi.org/10.1007/s10701-012-9650-z}{doi:10.1007/s10701-012-9650-z}; \href{https://arxiv.org/abs/1010.2929}{arXiv:1010.2929}}}
++@incollection{Schumacher2012,
+  author={Benjamin Schumacher and Michael D. Westmoreland},
+- title={Almost quantum theory}, year={2012},
+- howpublished={\url{https://arxiv.org/abs/1204.0701}}}
++ title={Almost Quantum Theory},
++ editor={Giulio Chiribella and Robert W. Spekkens},
++ booktitle={Quantum Theory: Informational Foundations and Foils},
++ series={Fundamental Theories of Physics}, volume={181},
++ publisher={Springer}, address={Dordrecht}, year={2016}, pages={45--81},
++ doi={10.1007/978-94-017-7303-4_3},
++ note={\href{https://doi.org/10.1007/978-94-017-7303-4_3}{doi:10.1007/978-94-017-7303-4\_3}; \href{https://arxiv.org/abs/1204.0701}{arXiv:1204.0701}}}
+ @misc{SchumacherFreeWill,
+  author={Benjamin Schumacher and Michael D. Westmoreland},
+  title={Non-contextuality and free will in modal quantum theory}, year={2010},
+- howpublished={\url{https://arxiv.org/abs/1010.5452}}}
+-@misc{AbramskyBrandenburger2011,
++ howpublished={\href{https://arxiv.org/abs/1010.5452}{arXiv:1010.5452}}}
++@article{AbramskyBrandenburger2011,
+  author={Samson Abramsky and Adam Brandenburger},
+- title={The Sheaf-Theoretic Structure of Non-Locality and Contextuality}, year={2011},
+- howpublished={\url{https://arxiv.org/abs/1102.0264}}}
+-@misc{Byrne2021,
++ title={The Sheaf-Theoretic Structure of Non-Locality and Contextuality},
++ journal={New Journal of Physics}, year={2011}, volume={13}, pages={113036},
++ doi={10.1088/1367-2630/13/11/113036},
++ note={\href{https://doi.org/10.1088/1367-2630/13/11/113036}{doi:10.1088/1367-2630/13/11/113036}; \href{https://arxiv.org/abs/1102.0264}{arXiv:1102.0264}}}
++@article{Byrne2021,
+  author={Eimear Byrne and Anna-Lena Horlemann and Karan Khathuria and Violetta Weger},
+- title={Density of Free Modules over Finite Chain Rings}, year={2022},
+- howpublished={\url{https://arxiv.org/abs/2106.09403}}, note={Version 2; first preprint 2021}}
+-@misc{Honold2009,
+- author={Thomas Honold}, title={Linear Codes and Geometry over Finite Chain Rings},
+- year={2009}, note={ZiF Cooperation Group lectures, August},
+- howpublished={\url{https://www.geometrie.tuwien.ac.at/zif-cg09/pdf/lecture_honold.pdf}}}
+-@misc{BenZvi2017,
++ title={Density of Free Modules over Finite Chain Rings},
++ journal={Linear Algebra and its Applications}, year={2022}, volume={651}, pages={1--25},
++ doi={10.1016/j.laa.2022.06.013},
++ note={\href{https://doi.org/10.1016/j.laa.2022.06.013}{doi:10.1016/j.laa.2022.06.013}; \href{https://arxiv.org/abs/2106.09403}{arXiv:2106.09403}}}
++@article{HonoldLandjev2000,
++ author={Thomas Honold and Ivan Landjev}, title={Linear Codes over Finite Chain Rings},
++ journal={Electronic Journal of Combinatorics}, year={2000}, volume={7}, number={1}, pages={R11},
++ doi={10.37236/1489}, note={\href{https://doi.org/10.37236/1489}{doi:10.37236/1489}. Volume year 2000; published online December 1999}}
++@article{BenZvi2017,
+  author={Michael Ben-Zvi and Alexander Ma and Manuel Reyes},
+  title={A {Kochen--Specker} theorem for integer matrices and noncommutative spectrum functors},
+- year={2017}, howpublished={\url{https://arxiv.org/abs/1509.03618}},
+- note={Appendix by Alexandru Chirvasitu; arXiv version 3}}
+-@misc{PaperB,
+- author={Brian Theory},title={Operator-Level Boolean Computation with Correspondence Matrices},
+- year={2026}, note={Unpublished companion manuscript; Boolean interface only}}
+-
+-@misc{deBeaudrap2014,author={Niel de Beaudrap},title={On computation with `probabilities' modulo k},year={2014},howpublished={arXiv:1405.7381},note={\url{https://arxiv.org/abs/1405.7381}}}
+-@mastersthesis{Varughese2009,author={Matthew Varughese},title={Categorical Quantum Computing with Finite Fields},school={University of Oxford},year={2009},note={Examples 8.3--8.4. \url{https://www.cs.ox.ac.uk/people/aleks.kissinger/theses/bob/Varughese.pdf}}}
++ journal={Journal of Algebra}, year={2017}, volume={491}, pages={280--313},
++ doi={10.1016/j.jalgebra.2017.08.008},
++ note={With an appendix by Alexandru Chirvasitu. \href{https://doi.org/10.1016/j.jalgebra.2017.08.008}{doi:10.1016/j.jalgebra.2017.08.008}; \href{https://arxiv.org/abs/1509.03618}{arXiv:1509.03618}}}
++@misc{deBeaudrap2014,
++ author={Niel de Beaudrap},title={On computation with `probabilities' modulo k},
++ year={2014},howpublished={\href{https://arxiv.org/abs/1405.7381}{arXiv:1405.7381}}}
++@mastersthesis{Varughese2009,
++ author={Matthew Varughese},title={Categorical Quantum Computing with Finite Fields},
++ school={University of Oxford},year={2009},
++ note={Examples 8.3--8.4. \url{https://www.cs.ox.ac.uk/people/aleks.kissinger/theses/bob/Varughese.pdf}}}
++@article{Zelinsky1954,
++ author={Daniel Zelinsky},title={Every linear transformation is a sum of nonsingular ones},
++ journal={Proceedings of the American Mathematical Society},year={1954},volume={5},number={4},pages={627--630},
++ doi={10.1090/S0002-9939-1954-0062728-7},
++ note={\href{https://doi.org/10.1090/S0002-9939-1954-0062728-7}{doi:10.1090/S0002-9939-1954-0062728-7}}}
++@article{Henriksen1974,
++ author={Melvin Henriksen},title={Two Classes of Rings Generated by Their Units},
++ journal={Journal of Algebra},year={1974},volume={31},number={1},pages={182--193},
++ doi={10.1016/0021-8693(74)90013-1},
++ note={\href{https://doi.org/10.1016/0021-8693(74)90013-1}{doi:10.1016/0021-8693(74)90013-1}}}
++@article{Feng2014,
++ author={Chen Feng and Roberto W. N{\'o}brega and Frank R. Kschischang and Danilo Silva},
++ title={Communication over Finite-Chain-Ring Matrix Channels},
++ journal={IEEE Transactions on Information Theory},year={2014},volume={60},pages={5899--5917},
++ doi={10.1109/TIT.2014.2346079},
++ note={\href{https://doi.org/10.1109/TIT.2014.2346079}{doi:10.1109/TIT.2014.2346079}; \href{https://arxiv.org/abs/1304.2523}{arXiv:1304.2523}}}

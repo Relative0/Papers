@@ -1,9 +1,10 @@
-# Version history and preserved context
+# Version history
 
-Working head: [01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex](../01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex). Historical filenames, dates and claims describe their own snapshots. They do not override CLAIMS_AND_UNIQUENESS.md.
+Current head: [26 September revision](../REVISION_2026-09-26/manuscript/main.tex).
 
-Static nonzero ring support is not an unchanged tensor-closed process theory. Preserve nonprimitive-state and all-bases contracts. Literal binary expansion changes the tensor/effect model.
+- The [19 September manuscript source](../01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex), PDF, generator and accompanying evidence are preserved unchanged.
+- The [partition baseline](PARTITION_BASELINE_20260925/00_PUBLICATION_CONTEXT_2026-09-25.md) and its manifest remain historical records.
+- The received Astra audit is preserved unchanged in REVISION_2026-09-26/P01_ASTRA_AUDIT.
+- The revised draft adds a self-contained replacement supplement, scoped companion evidence, an explicit primitive-resource consequence, corrected exposition and bibliography, and confirmed authorship.
 
-- [HISTORY/PARTITION_BASELINE_20260925/00_PUBLICATION_CONTEXT_2026-09-25.md](../HISTORY/PARTITION_BASELINE_20260925/00_PUBLICATION_CONTEXT_2026-09-25.md)
-
-Full old-to-new path map and hashes: [mutation receipt](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/10_UNIQUE_PROJECT_PARTITION_20260925/mutation_receipt.json). Original context notes and manifests are preserved under this history or the merged subdirection; current top-level manifests were regenerated.
+Historical filenames and claims describe their own snapshots. They do not override the current manuscript or CLAIMS_AND_UNIQUENESS.md.

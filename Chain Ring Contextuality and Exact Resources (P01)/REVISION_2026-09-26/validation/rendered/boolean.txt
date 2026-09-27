@@ -1,0 +1,54 @@
+A Conditional Boolean Interface
+Optional Supplement to the Chain-Ring Resource Classification
+Brian Theory
+B-Theory
+26 September 2026
+This note records an optional symbolic construction. The main article does not depend on it. It
+supplies neither a physical probability model nor a preparation theory closed under all conditioning
+operations.
+1 Scalar enrichment and support
+Let B be the Boolean ring of formulas modulo logical equivalence and letA = F2[u]/(u4). Every
+element ofB is idempotent, whereas the only idempotents in a commutative local ring are0 and 1:
+if e(1−e) = 0, one ofe and 1−e is a unit. A unital mapB→A therefore cannot generateu.
+Instead choose the scalar extensionR = B⊗F2 A. Each element ofR is uniquely ∑3
+j=0fjuj,
+with fj∈B. A Boolean valuationv :B→F2 extends coefficientwise tovA :R→A. For a chosen
+state ψ∈Rn and covectore∈(Rn)∗, writeeψ= ∑
+jgjuj and define
+Supp(eψ) = g0∨g1∨g2∨g3.
+Then uniqueness of the polynomial expansion gives
+v(Supp(eψ)) = 1 ⇐⇒vA(e)vA(ψ)̸= 0.
+Disjunction is essential; nonzero testing is neither additive nor multiplicative. The construction is
+conditional on the chosen enrichment, state, effects and tensor base. It is not a unique interpretation
+of bare Boolean formulas and does not automatically extend to mixed-characteristic scalar rings.
+2 Coordinate projectors over the symbolic ring
+Let B0∈GLn(R) and letPi be the standard coordinate projections. SetJi =B− 1
+0 PiB0. Direct
+multiplication gives
+J 2
+i =Ji, J iJj = 0 (i̸=j),
+∑
+i
+Ji =I.
+For everyψ∈Rn,
+B0Jiψ=PiB0ψ.
+Since B0 is invertible,Jiψ= 0 if and only ifPiB0ψ= 0, which is equivalent to(B0ψ)i = 0. This
+proof is valid over any commutative coefficient ring. It uses no division by the measured amplitude
+and no unit-coordinate assumption on individual columns. ApplyingvA to the inverse identity
+preserves invertibility and the projector identities, so the same statement holds after every valuation.
+1
+
+The unit-coordinate shortcut valid over a local ring cannot be used overR, which need not be
+local. For a nontrivial idempotentt∈B, the symbolic matrix
+C =
+(
+t 1 +t
+1 +t t
+)
+satisfies C2 =I,
+but neither entry in either column is a unit:t and 1 +t are nonzero orthogonal idempotents. The
+inverse-identity argument above avoids this obstruction.
+These projectors supply repeatable linear branches, not probability normalization. They do not
+repair primitive-state closure: overA, conditioning the primitive resourcediag(1,u ) on its second
+standard row gives the nonprimitive nonzero vector(0,u ).
+2

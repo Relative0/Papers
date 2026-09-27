@@ -1,34 +1,17 @@
-# Claims and uniqueness — Contextuality and Exact Information Resources over Finite Chain Rings
+# Claims and boundaries - P01
 
-**Canonical owner:** P01 — `Chain Ring Contextuality and Exact Resources (P01)`.
+**Canonical owner:** Chain Ring Contextuality and Exact Resources (P01).
 
-**Stage / recommended form:** mature draft / One coherent algebra/resources article.
+Current source: [revised main.tex](REVISION_2026-09-26/manuscript/main.tex).
 
-## Unique results or bounded research targets
+- P011: Complete-basis support classification by r and h; hyperplane and Hardy lemmas. Outcome choices are indexed by settings, with no extra shared-ray KS identification.
+- P012: Exactly dh messages for the specified full-GL orbit and complete joint decoder. This is not general channel capacity.
+- P013: Universal exact raw-vector, reference-preserving teleportation iff invertibility, with a complete joint covector basis and unrestricted invertible corrections.
+- Primitive-resource boundary: maximal d^2 coding iff invertibility iff raw teleportation. The maximal-coding/nonteleportation separator requires nonprimitive resources.
+- Two-setting boundary: a global assignment exists in the stated binary-residue setting; this does not assert full locality.
 
-- P011: Residue-hyperplane lemma, uniform Hardy witness and complete-basis Smith trichotomy (lem:hyperplane, lem:hardy, thm:trichotomy).
-- P012: Exact leading-layer orbit codebook d*h, with h the multiplicity of the least Smith exponent (thm:code).
-- P013: Universal raw-vector teleportation criterion and nonprimitive separator between maximal coding and teleportation (thm:teleport, cor:separator).
+Classical ingredients include Smith/module theory, matrix spanning by invertibles, modal protocols and the global-section hierarchy. The [source comparison](REVISION_2026-09-26/LITERATURE_COMPARISON.md) records established overlap, different task assumptions and access limitations. External firstness is not certified.
 
-## Shared or excluded from novelty
+The support model admits nonzero static resources but is not an unchanged tensor-closed preparation/process theory. Literal binary expansion changes tensor and effect contracts. The optional Boolean construction is separate from the article.
 
-General modal theory and contextuality hierarchies are established. Phase-ring construction belongs to IP; generic support enrichment belongs to BR; closure/filter/disposal results belong to PC. The audit owns earlier finite classifications and correction provenance.
-
-## Corrections and excluded claims
-
-Static nonzero ring support is not an unchanged tensor-closed process theory. Preserve nonprimitive-state and all-bases contracts. Literal binary expansion changes the tensor/effect model.
-
-## Evidence and locators
-
-Current source: [01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex](01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex). Line ranges below refer to the preserved source text after normalizing newline sequences for inspection; theorem labels/section titles are authoritative locators.
-
-- `01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex:46-191`
-- `01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/main.tex:192-293`
-
-File and ZIP-member SHA-256, titles/objectives and section anchors are in the [complete evidence inventory](../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/10_UNIQUE_PROJECT_PARTITION_20260925/complete_file_inventory_before.json). The [pairwise matrix](../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/10_UNIQUE_PROJECT_PARTITION_20260925/pairwise_surviving.json) specifies ownership, treatment and residual content for every project pair.
-
-## Work still required
-
-Independently audit all-basis quantifiers, d*h upper bound, analyzer construction and branch invertibility; compare primary local-ring/module and modal-resource antecedents under identical contracts.
-
-Strong internal separation from the other papers is not external novelty certification. Some finite checks use the analytic criterion they corroborate.
+The [standalone supplement](REVISION_2026-09-26/supplement/README.md) distinguishes direct support solving, invariant-derived aggregation and explicit lower-bound certificates. The received audit and all historical manuscript files remain preserved. No general physical realization, probability model, speedup or formal proof certification is claimed.

@@ -1,12 +1,8 @@
-# Reviews and recommendations
+# Reviews and revision response
 
-Independently audit all-basis quantifiers, d*h upper bound, analyzer construction and branch invertibility; compare primary local-ring/module and modal-resource antecedents under identical contracts.
+- [Supplied Astra publication-readiness audit](../REVISION_2026-09-26/P01_ASTRA_AUDIT/P01_ASTRA_PUBLICATION_READINESS_AUDIT.md), preserved unchanged; describes the 19 September draft.
+- [Issue-by-issue response](../REVISION_2026-09-26/REVISION_RESPONSE.md) for the revised draft.
+- [Source comparison](../REVISION_2026-09-26/LITERATURE_COMPARISON.md), with bounded priority claims.
+- [Original internal review](../01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/ADVERSARIAL_REVIEW.md), preserved as historical context.
 
-Strong internal separation from the other papers is not external novelty certification. Some finite checks use the analytic criterion they corroborate.
-
-Reviews are preserved as received; labels such as panel/referee do not establish independent human review. Original package-relative layouts are retained where build or provenance depends on them.
-
-- [01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/ADVERSARIAL_REVIEW.md](../01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/ADVERSARIAL_REVIEW.md)
-- [01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/CHANGED_CLAIMS.md](../01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/CHANGED_CLAIMS.md)
-
-Program-level review record: [audits](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/05_CURRENT_AUDIT_AND_RECOMMENDATIONS).
+Labels such as panel/referee in supplied reviews do not establish independent human review. The revision does not re-score itself or claim a new journal acceptance/readiness verdict. All identified draft and package repairs are documented; external release remains an author decision.
