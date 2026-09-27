@@ -8,7 +8,7 @@
 
 - CO1: Typed normalization, same-frame fusion and pair compilation with structural/tabulated/hybrid S/T/H provenance.
 - CO2: Pure structural soundness and completeness only for the declared fragment, plus exact pair tabulation and admitted compiler soundness.
-- CO3: Generic-optimizer tie and completed negative P14 dispatcher boundary; explicit endpoint/cost accounting.
+- CO3: Generic-optimizer tie, negative P14 dispatcher boundary, and negative frozen synthetic pair-token primary cell; explicit endpoint/cost accounting.
 
 ## Shared or excluded from novelty
 
@@ -16,11 +16,11 @@ FO owns LM valuation/coherence and the main foundations manuscript. IP local CM-
 
 ## Corrections and excluded claims
 
-Current working head is the 14-page revision, not the 24-page file named current.pdf. Historical portfolio Paper B is CO, not GU. The confirmatory pair-compiler campaign remains unexecuted.
+Current working head is the September 26 contract revision in `02_CONTRACT_REVISION_20260926`. The September 22 14-page draft and the 24-page predecessor are preserved history. Historical portfolio Paper B is CO, not GU. The narrower synthetic protocol-v4 pair-token study is complete and negative. A separate natural admission/correctness gate and descriptive secondary timing run are complete, with one retained calibration failure; the full protocol-v3 systems scope remains open. The claimed methods contribution is a checked integration contract and bounded negative systems result; elementary truth-table operations and operand/leaf metadata are established prior art.
 
 ## Evidence and locators
 
-Current source: [01_CURRENT_REVISED_COMPILER_AND_REVIEW_20260922/Operator_Level_CM_Compiler_Revised_Draft.tex](01_CURRENT_REVISED_COMPILER_AND_REVIEW_20260922/Operator_Level_CM_Compiler_Revised_Draft.tex). Line ranges below refer to the preserved source text after normalizing newline sequences for inspection; theorem labels/section titles are authoritative locators.
+Current source: [02_CONTRACT_REVISION_20260926/Operator_Level_CM_Compiler_Revised_Draft.tex](02_CONTRACT_REVISION_20260926/Operator_Level_CM_Compiler_Revised_Draft.tex). Current evidence and remaining limits: [revision response](02_CONTRACT_REVISION_20260926/REVIEW_RESPONSE.md). Line ranges below refer to the preserved September 22 source, not the current revision; theorem labels/section titles are authoritative locators.
 
 - `01_CURRENT_REVISED_COMPILER_AND_REVIEW_20260922/Operator_Level_CM_Compiler_Revised_Draft.tex:169-414`
 - `01_CURRENT_REVISED_COMPILER_AND_REVIEW_20260922/Operator_Level_CM_Compiler_Revised_Draft.tex:524-692`
@@ -29,6 +29,6 @@ File and ZIP-member SHA-256, titles/objectives and section anchors are in the [c
 
 ## Work still required
 
-Review normalization and tabulation rules, scoped completeness and S/T/H cases; reconcile historical bibliography/data and package the exact current implementation; run a frozen confirmatory campaign only under a separately scoped research task.
+Contract corrections, pinned source recovery, 123 selected correctness tests, S1/S2/P14 raw-record recounts, P14 bootstrap replay, a frozen negative synthetic pair campaign, a 71-case natural admission/correctness gate, and a 70-case complete-case natural secondary timing result are complete. Applicable task-matched ABC/AIG and generic timing comparators, historical imported-runtime identity, and public release remain separate requirements.
 
-Historical benchmark archives now indexed contain source/raw records but do not establish the missing current confirmatory campaign. No CM-specific speedup beyond matched evidence is implied.
+The matched synthetic primary result directly contradicts a CM speedup claim in that cell. In the selected EPFL cohort only four of 71 hybrid roots were pure structural; direct packed full-bitset production was faster on all 70 natural cases with complete secondary timing.

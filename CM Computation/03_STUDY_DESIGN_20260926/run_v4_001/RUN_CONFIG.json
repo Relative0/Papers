@@ -1,0 +1,17 @@
+{
+  "schema": "cm-pair-v4-synthetic/v1",
+  "case_count": 64,
+  "repetitions_per_case": 30,
+  "target_block_ns": 100000000,
+  "calibration_retarget_ns": 150000000,
+  "max_inner_calls": 1000,
+  "case_timeout_s": 60,
+  "schedule_seed_rule": "202610020099 XOR formula_seed",
+  "bootstrap_seed": 202610020001,
+  "bootstrap_draws": 10000,
+  "primary_time_ratio": "median over formulas of median(packed repetitions)/median(CM repetitions)",
+  "primary_memory_increase": "median over formulas of CM peak working set / packed peak working set - 1",
+  "time_threshold": 1.2,
+  "interval_lower_threshold": 1.0,
+  "memory_increase_max": 0.1
+}

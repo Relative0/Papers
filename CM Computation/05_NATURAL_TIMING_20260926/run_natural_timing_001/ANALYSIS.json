@@ -1,0 +1,2505 @@
+{
+  "status": "INCOMPLETE_WITH_FAILURES",
+  "primary_v4_result": "FAILED; unchanged",
+  "counts": {
+    "admitted_cases": 71,
+    "python_timing_rows": 2100,
+    "python_complete_cases": 70,
+    "memory_rows": 142,
+    "memory_complete_cases": 71,
+    "abc_rows": 1065,
+    "abc_complete_cases": 71,
+    "failure_rows": 1
+  },
+  "all_complete_case_median_direct_over_cm": 0.03761117666854963,
+  "all_complete_case_median_cm_peak_memory_increase": -0.0014754703061601315,
+  "all_complete_case_median_abc_process_wall_ns": 303631600,
+  "all_complete_case_median_python_aiger_query_ns": 497900,
+  "strata": {
+    "pure_structural": {
+      "cases": 4,
+      "median_direct_over_cm": 0.23963537460042006,
+      "median_cm_producer_ns": 22677.396328935803,
+      "median_direct_producer_ns": 5485.7145556195355
+    },
+    "full_retabulation": {
+      "cases": 1,
+      "median_direct_over_cm": 0.11157390826453199,
+      "median_cm_producer_ns": 52848.825966850825,
+      "median_direct_producer_ns": 5896.550060313631
+    },
+    "ordinary_fallback": {
+      "cases": 65,
+      "median_direct_over_cm": 0.03603111520839538,
+      "median_cm_producer_ns": 1046876.3440860215,
+      "median_direct_producer_ns": 45514.72844430807
+    }
+  },
+  "designs": {
+    "adder": {
+      "cases": 5,
+      "median_direct_over_cm": 0.03208213492064991
+    },
+    "cavlc": {
+      "cases": 8,
+      "median_direct_over_cm": 0.030870898440673214
+    },
+    "ctrl": {
+      "cases": 8,
+      "median_direct_over_cm": 0.027350179893532674
+    },
+    "dec": {
+      "cases": 8,
+      "median_direct_over_cm": 0.09019093630654129
+    },
+    "i2c": {
+      "cases": 8,
+      "median_direct_over_cm": 0.06309293689755954
+    },
+    "int2float": {
+      "cases": 7,
+      "median_direct_over_cm": 0.02426308209845736
+    },
+    "mem_ctrl": {
+      "cases": 8,
+      "median_direct_over_cm": 0.063816806937029
+    },
+    "multiplier": {
+      "cases": 5,
+      "median_direct_over_cm": 0.005210606165529696
+    },
+    "sqrt": {
+      "cases": 5,
+      "median_direct_over_cm": 0.012040260485503645
+    },
+    "square": {
+      "cases": 8,
+      "median_direct_over_cm": 0.011934523100674825
+    }
+  },
+  "environment_stable_before_after": true,
+  "raw_sha256": {
+    "TIMING.jsonl": "6d0055b41f0dce9175e7fd5fc0938daeac4df1b2fab58b22cbf4020c1f583300",
+    "MEMORY.jsonl": "f93c624b45c8b776bfeec9aac86c4ec647f1848264da077fc251e2f78d27e2be",
+    "ABC.jsonl": "edd0d8e31d695c581db38c853387de15a59e5911d0f2d1a70a2562e38cef7757",
+    "FAILURES.jsonl": "b4128c18bd650c487cd85423b713f6b50532da3333b9345f2acbab56ba5693c0"
+  },
+  "cases": [
+    {
+      "case_index": 0,
+      "design": "adder",
+      "output": "f[0]",
+      "support_count": 2,
+      "root_outcome": "pure_structural",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 46612.3587812393,
+        "direct_packed": 9316.533277169334
+      },
+      "ratio_direct_over_cm": 0.19987259861474943,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33763328,
+        "direct_packed": 33751040
+      },
+      "cm_peak_memory_increase": 0.0003640776699029846,
+      "median_abc_process_wall_ns": 336289800,
+      "median_python_aiger_query_ns": 316800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 1,
+      "design": "adder",
+      "output": "f[3]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1656062.5,
+        "direct_packed": 53130.02056202879
+      },
+      "ratio_direct_over_cm": 0.03208213492064991,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33800192,
+        "direct_packed": 33726464
+      },
+      "cm_peak_memory_increase": 0.0021860578090842075,
+      "median_abc_process_wall_ns": 341480500,
+      "median_python_aiger_query_ns": 564300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 2,
+      "design": "adder",
+      "output": "f[5]",
+      "support_count": 12,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 3457107.6923076925,
+        "direct_packed": 88126.93965517242
+      },
+      "ratio_direct_over_cm": 0.025491522827379966,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33787904,
+        "direct_packed": 33738752
+      },
+      "cm_peak_memory_increase": 0.0014568410829185474,
+      "median_abc_process_wall_ns": 316769400,
+      "median_python_aiger_query_ns": 9034800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 3,
+      "design": "adder",
+      "output": "f[2]",
+      "support_count": 6,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1025766.6666666666,
+        "direct_packed": 28707.56843800322
+      },
+      "ratio_direct_over_cm": 0.027986450886819506,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33701888,
+        "direct_packed": 33705984
+      },
+      "cm_peak_memory_increase": -0.00012152144853572189,
+      "median_abc_process_wall_ns": 338591300,
+      "median_python_aiger_query_ns": 362200,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 4,
+      "design": "adder",
+      "output": "f[1]",
+      "support_count": 4,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 0,
+        "direct_packed": 0
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33804288,
+        "direct_packed": 33705984
+      },
+      "cm_peak_memory_increase": 0.002916514764855993,
+      "median_abc_process_wall_ns": 352678900,
+      "median_python_aiger_query_ns": 316200,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 5,
+      "design": "adder",
+      "output": "f[4]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 2602286.8421052634,
+        "direct_packed": 141219.32270916336
+      },
+      "ratio_direct_over_cm": 0.05426739298075081,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33812480,
+        "direct_packed": 33718272
+      },
+      "cm_peak_memory_increase": 0.0027939747327503373,
+      "median_abc_process_wall_ns": 338408500,
+      "median_python_aiger_query_ns": 1778300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 6,
+      "design": "multiplier",
+      "output": "f[2]",
+      "support_count": 6,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 14716372.727272727,
+        "direct_packed": 76681.22246696035
+      },
+      "ratio_direct_over_cm": 0.005210606165529696,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 54042624,
+        "direct_packed": 53731328
+      },
+      "cm_peak_memory_increase": 0.005793566092392233,
+      "median_abc_process_wall_ns": 306958700,
+      "median_python_aiger_query_ns": 356000,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 7,
+      "design": "multiplier",
+      "output": "f[0]",
+      "support_count": 3,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 262795.73070607556,
+        "direct_packed": 10992.876690276884
+      },
+      "ratio_direct_over_cm": 0.041830499531866024,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 53854208,
+        "direct_packed": 53952512
+      },
+      "cm_peak_memory_increase": -0.001822046765866947,
+      "median_abc_process_wall_ns": 314112800,
+      "median_python_aiger_query_ns": 291800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 8,
+      "design": "multiplier",
+      "output": "f[3]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 37515833.333333336,
+        "direct_packed": 145167.40331491712
+      },
+      "ratio_direct_over_cm": 0.0038694969674559748,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 53702656,
+        "direct_packed": 54009856
+      },
+      "cm_peak_memory_increase": -0.005687850750796253,
+      "median_abc_process_wall_ns": 349075700,
+      "median_python_aiger_query_ns": 629800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 9,
+      "design": "multiplier",
+      "output": "f[4]",
+      "support_count": 11,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 138260200.0,
+        "direct_packed": 213757.04918032786
+      },
+      "ratio_direct_over_cm": 0.001546049037831045,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 53563392,
+        "direct_packed": 54710272
+      },
+      "cm_peak_memory_increase": -0.020962791045893492,
+      "median_abc_process_wall_ns": 303631600,
+      "median_python_aiger_query_ns": 3472200,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 10,
+      "design": "multiplier",
+      "output": "f[1]",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 5261511.111111111,
+        "direct_packed": 37572.44813278008
+      },
+      "ratio_direct_over_cm": 0.007140999484622515,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 54792192,
+        "direct_packed": 53956608
+      },
+      "cm_peak_memory_increase": 0.015486221817353707,
+      "median_abc_process_wall_ns": 303829500,
+      "median_python_aiger_query_ns": 300900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 11,
+      "design": "sqrt",
+      "output": "asqrt[60]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 73776450.0,
+        "direct_packed": 115643.18181818182
+      },
+      "ratio_direct_over_cm": 0.0015674809755441177,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 52953088,
+        "direct_packed": 51859456
+      },
+      "cm_peak_memory_increase": 0.02108838164441984,
+      "median_abc_process_wall_ns": 306763400,
+      "median_python_aiger_query_ns": 567800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 12,
+      "design": "sqrt",
+      "output": "asqrt[63]",
+      "support_count": 2,
+      "root_outcome": "pure_structural",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 25867.69176387416,
+        "direct_packed": 5990.7593864684295
+      },
+      "ratio_direct_over_cm": 0.2315923446573187,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 51818496,
+        "direct_packed": 51904512
+      },
+      "cm_peak_memory_increase": -0.0016571969696970168,
+      "median_abc_process_wall_ns": 305514000,
+      "median_python_aiger_query_ns": 288500,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 13,
+      "design": "sqrt",
+      "output": "asqrt[59]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 2456532500.0,
+        "direct_packed": 279184.1328413284
+      },
+      "ratio_direct_over_cm": 0.00011364968012486234,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 51843072,
+        "direct_packed": 51838976
+      },
+      "cm_peak_memory_increase": 7.901390644748929e-05,
+      "median_abc_process_wall_ns": 297346100,
+      "median_python_aiger_query_ns": 1642300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 14,
+      "design": "sqrt",
+      "output": "asqrt[61]",
+      "support_count": 6,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 3637787.5,
+        "direct_packed": 43799.90909090909
+      },
+      "ratio_direct_over_cm": 0.012040260485503645,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 51834880,
+        "direct_packed": 51884032
+      },
+      "cm_peak_memory_increase": -0.0009473434909608169,
+      "median_abc_process_wall_ns": 293991100,
+      "median_python_aiger_query_ns": 335600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 15,
+      "design": "sqrt",
+      "output": "asqrt[62]",
+      "support_count": 4,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 413796.3788300836,
+        "direct_packed": 15826.312934027777
+      },
+      "ratio_direct_over_cm": 0.038246620182547576,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 51838976,
+        "direct_packed": 51822592
+      },
+      "cm_peak_memory_increase": 0.0003161555485298173,
+      "median_abc_process_wall_ns": 300108700,
+      "median_python_aiger_query_ns": 292700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 16,
+      "design": "square",
+      "output": "asquared[4]",
+      "support_count": 4,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1009335.3535353536,
+        "direct_packed": 21278.854323694668
+      },
+      "ratio_direct_over_cm": 0.02108204597130397,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47722496,
+        "direct_packed": 47288320
+      },
+      "cm_peak_memory_increase": 0.00918146383715901,
+      "median_abc_process_wall_ns": 309384300,
+      "median_python_aiger_query_ns": 294000,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 17,
+      "design": "square",
+      "output": "asquared[2]",
+      "support_count": 2,
+      "root_outcome": "full_retabulation",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 52848.825966850825,
+        "direct_packed": 5896.550060313631
+      },
+      "ratio_direct_over_cm": 0.11157390826453199,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47546368,
+        "direct_packed": 47292416
+      },
+      "cm_peak_memory_increase": 0.005369825047635501,
+      "median_abc_process_wall_ns": 423150100,
+      "median_python_aiger_query_ns": 343900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 18,
+      "design": "square",
+      "output": "asquared[7]",
+      "support_count": 7,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 14256900.0,
+        "direct_packed": 85559.85620131815
+      },
+      "ratio_direct_over_cm": 0.006001294545189918,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47394816,
+        "direct_packed": 47276032
+      },
+      "cm_peak_memory_increase": 0.002512562814070307,
+      "median_abc_process_wall_ns": 297197200,
+      "median_python_aiger_query_ns": 431300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 19,
+      "design": "square",
+      "output": "asquared[9]",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 64764650.0,
+        "direct_packed": 195101.7766497462
+      },
+      "ratio_direct_over_cm": 0.0030124732651183356,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47382528,
+        "direct_packed": 47276032
+      },
+      "cm_peak_memory_increase": 0.002252642522959647,
+      "median_abc_process_wall_ns": 297747400,
+      "median_python_aiger_query_ns": 938400,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 20,
+      "design": "square",
+      "output": "asquared[5]",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1598989.010989011,
+        "direct_packed": 25390.36635006784
+      },
+      "ratio_direct_over_cm": 0.01587901241070026,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47292416,
+        "direct_packed": 47284224
+      },
+      "cm_peak_memory_increase": 0.00017325017325009462,
+      "median_abc_process_wall_ns": 286288900,
+      "median_python_aiger_query_ns": 301100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 21,
+      "design": "square",
+      "output": "asquared[6]",
+      "support_count": 6,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 5952394.117647059,
+        "direct_packed": 47559.83013526266
+      },
+      "ratio_direct_over_cm": 0.007990033790649389,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47575040,
+        "direct_packed": 47308800
+      },
+      "cm_peak_memory_increase": 0.005627705627705648,
+      "median_abc_process_wall_ns": 289209300,
+      "median_python_aiger_query_ns": 348500,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 22,
+      "design": "square",
+      "output": "asquared[3]",
+      "support_count": 3,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 248638.0228136882,
+        "direct_packed": 10219.82157231017
+      },
+      "ratio_direct_over_cm": 0.04110321284194004,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47386624,
+        "direct_packed": 47300608
+      },
+      "cm_peak_memory_increase": 0.0018184967093868298,
+      "median_abc_process_wall_ns": 291433900,
+      "median_python_aiger_query_ns": 286300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 23,
+      "design": "square",
+      "output": "asquared[8]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 29831450.0,
+        "direct_packed": 127375.69444444444
+      },
+      "ratio_direct_over_cm": 0.004269845899024165,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 47550464,
+        "direct_packed": 47263744
+      },
+      "cm_peak_memory_increase": 0.0060663835687668755,
+      "median_abc_process_wall_ns": 302806200,
+      "median_python_aiger_query_ns": 578700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 24,
+      "design": "cavlc",
+      "output": "ctoken_len[4]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1335165.4545454546,
+        "direct_packed": 123314.24979044426
+      },
+      "ratio_direct_over_cm": 0.09235877798562839,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33681408,
+        "direct_packed": 33755136
+      },
+      "cm_peak_memory_increase": -0.0021842009464870804,
+      "median_abc_process_wall_ns": 325404800,
+      "median_python_aiger_query_ns": 1547100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 25,
+      "design": "cavlc",
+      "output": "ctoken_len[2]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 9916270.0,
+        "direct_packed": 251065.0
+      },
+      "ratio_direct_over_cm": 0.02531849173126589,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33861632,
+        "direct_packed": 33800192
+      },
+      "cm_peak_memory_increase": 0.0018177411536597354,
+      "median_abc_process_wall_ns": 307028700,
+      "median_python_aiger_query_ns": 1632600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 26,
+      "design": "cavlc",
+      "output": "coeff_token[5]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 790257.7235772358,
+        "direct_packed": 42306.777237632254
+      },
+      "ratio_direct_over_cm": 0.05353541759278661,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33497088,
+        "direct_packed": 33705984
+      },
+      "cm_peak_memory_increase": -0.006197593875319041,
+      "median_abc_process_wall_ns": 302070900,
+      "median_python_aiger_query_ns": 514500,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 27,
+      "design": "cavlc",
+      "output": "ctoken_len[1]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 13417300.0,
+        "direct_packed": 301692.3379174853
+      },
+      "ratio_direct_over_cm": 0.022485324015821758,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33681408,
+        "direct_packed": 33837056
+      },
+      "cm_peak_memory_increase": -0.0045999273695678244,
+      "median_abc_process_wall_ns": 295240300,
+      "median_python_aiger_query_ns": 1611900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 28,
+      "design": "cavlc",
+      "output": "coeff_token[1]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 23678420.0,
+        "direct_packed": 454814.66275659826
+      },
+      "ratio_direct_over_cm": 0.01920798189898643,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33689600,
+        "direct_packed": 33812480
+      },
+      "cm_peak_memory_increase": -0.00363416111447612,
+      "median_abc_process_wall_ns": 412335100,
+      "median_python_aiger_query_ns": 2180300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.01,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 29,
+      "design": "cavlc",
+      "output": "ctoken_len[3]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 5328186.363636363,
+        "direct_packed": 194070.15781922525
+      },
+      "ratio_direct_over_cm": 0.03642330515008054,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33665024,
+        "direct_packed": 33685504
+      },
+      "cm_peak_memory_increase": -0.0006079766536964959,
+      "median_abc_process_wall_ns": 327757900,
+      "median_python_aiger_query_ns": 1703400,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 30,
+      "design": "cavlc",
+      "output": "coeff_token[4]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 921348.275862069,
+        "direct_packed": 45514.72844430807
+      },
+      "ratio_direct_over_cm": 0.04940013416937449,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33579008,
+        "direct_packed": 33693696
+      },
+      "cm_peak_memory_increase": -0.0034038414782396886,
+      "median_abc_process_wall_ns": 286110800,
+      "median_python_aiger_query_ns": 525100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 31,
+      "design": "cavlc",
+      "output": "coeff_token[2]",
+      "support_count": 10,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 12315938.461538462,
+        "direct_packed": 277473.69402985077
+      },
+      "ratio_direct_over_cm": 0.022529642779263268,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33681408,
+        "direct_packed": 33812480
+      },
+      "cm_peak_memory_increase": -0.003876438522107839,
+      "median_abc_process_wall_ns": 286320300,
+      "median_python_aiger_query_ns": 1604300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 32,
+      "design": "ctrl",
+      "output": "alu_op[0]",
+      "support_count": 7,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1640090.2173913044,
+        "direct_packed": 44767.9766330324
+      },
+      "ratio_direct_over_cm": 0.027296045155515574,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33193984,
+        "direct_packed": 33325056
+      },
+      "cm_peak_memory_increase": -0.003933136676499527,
+      "median_abc_process_wall_ns": 287349900,
+      "median_python_aiger_query_ns": 374600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 33,
+      "design": "ctrl",
+      "output": "invB",
+      "support_count": 7,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1381314.2857142857,
+        "direct_packed": 41456.61641541038
+      },
+      "ratio_direct_over_cm": 0.030012443108827273,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33320960,
+        "direct_packed": 33312768
+      },
+      "cm_peak_memory_increase": 0.00024591171769339226,
+      "median_abc_process_wall_ns": 281195800,
+      "median_python_aiger_query_ns": 378100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 34,
+      "design": "ctrl",
+      "output": "sel_reg_dst[0]",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 993252.9411764706,
+        "direct_packed": 26859.32140881431
+      },
+      "ratio_direct_over_cm": 0.027041773847657033,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33263616,
+        "direct_packed": 33312768
+      },
+      "cm_peak_memory_increase": -0.0014754703061601315,
+      "median_abc_process_wall_ns": 304311900,
+      "median_python_aiger_query_ns": 311700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 35,
+      "design": "ctrl",
+      "output": "alu_op[1]",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 845130.2521008403,
+        "direct_packed": 25471.009490940465
+      },
+      "ratio_direct_over_cm": 0.030138560804827613,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33181696,
+        "direct_packed": 33292288
+      },
+      "cm_peak_memory_increase": -0.0033218503937008093,
+      "median_abc_process_wall_ns": 287386300,
+      "median_python_aiger_query_ns": 293700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 36,
+      "design": "ctrl",
+      "output": "alu_op_ext[2]",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1128521.3483146068,
+        "direct_packed": 30779.19968304279
+      },
+      "ratio_direct_over_cm": 0.027273918857636203,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33185792,
+        "direct_packed": 33120256
+      },
+      "cm_peak_memory_increase": 0.001978728666831575,
+      "median_abc_process_wall_ns": 290980100,
+      "median_python_aiger_query_ns": 299500,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 37,
+      "design": "ctrl",
+      "output": "mem_write",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 995694.0,
+        "direct_packed": 25334.269469331495
+      },
+      "ratio_direct_over_cm": 0.02544383060391194,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33181696,
+        "direct_packed": 33312768
+      },
+      "cm_peak_memory_increase": -0.00393458748309361,
+      "median_abc_process_wall_ns": 309296400,
+      "median_python_aiger_query_ns": 292700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 38,
+      "design": "ctrl",
+      "output": "alu_op_ext[3]",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1046876.3440860215,
+        "direct_packed": 28688.928713659898
+      },
+      "ratio_direct_over_cm": 0.027404314631549777,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33153024,
+        "direct_packed": 33034240
+      },
+      "cm_peak_memory_increase": 0.0035957842529448225,
+      "median_abc_process_wall_ns": 487694300,
+      "median_python_aiger_query_ns": 539800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 39,
+      "design": "ctrl",
+      "output": "bltz",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1488746.1538461538,
+        "direct_packed": 55047.48051948052
+      },
+      "ratio_direct_over_cm": 0.03697573315455168,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33132544,
+        "direct_packed": 33280000
+      },
+      "cm_peak_memory_increase": -0.004430769230769238,
+      "median_abc_process_wall_ns": 424253000,
+      "median_python_aiger_query_ns": 397100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 40,
+      "design": "dec",
+      "output": "selectp2[9]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 418036.8715083799,
+        "direct_packed": 33723.713080168774
+      },
+      "ratio_direct_over_cm": 0.08067162343475905,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33280000,
+        "direct_packed": 33406976
+      },
+      "cm_peak_memory_increase": -0.0038008827856792493,
+      "median_abc_process_wall_ns": 305326800,
+      "median_python_aiger_query_ns": 497900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 41,
+      "design": "dec",
+      "output": "selectp2[68]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 433825.22123893804,
+        "direct_packed": 35478.751537515374
+      },
+      "ratio_direct_over_cm": 0.08178121003705945,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33280000,
+        "direct_packed": 33402880
+      },
+      "cm_peak_memory_increase": -0.0036787247087676223,
+      "median_abc_process_wall_ns": 300519800,
+      "median_python_aiger_query_ns": 504900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 42,
+      "design": "dec",
+      "output": "selectp1[90]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 352239.86486486485,
+        "direct_packed": 33351.095197978095
+      },
+      "ratio_direct_over_cm": 0.09468290935999843,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33284096,
+        "direct_packed": 33431552
+      },
+      "cm_peak_memory_increase": -0.004410683655966641,
+      "median_abc_process_wall_ns": 291038100,
+      "median_python_aiger_query_ns": 492800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 43,
+      "design": "dec",
+      "output": "selectp1[50]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 372675.57840616966,
+        "direct_packed": 33547.28997289973
+      },
+      "ratio_direct_over_cm": 0.09001740901931972,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33292288,
+        "direct_packed": 33390592
+      },
+      "cm_peak_memory_increase": -0.0029440628066732533,
+      "median_abc_process_wall_ns": 285990000,
+      "median_python_aiger_query_ns": 490900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 44,
+      "design": "dec",
+      "output": "selectp2[110]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 352840.14598540147,
+        "direct_packed": 31884.21052631579
+      },
+      "ratio_direct_over_cm": 0.09036446359376288,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33275904,
+        "direct_packed": 33402880
+      },
+      "cm_peak_memory_increase": -0.0038013488657265837,
+      "median_abc_process_wall_ns": 284881100,
+      "median_python_aiger_query_ns": 480800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 45,
+      "design": "dec",
+      "output": "selectp1[74]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 371723.1617647059,
+        "direct_packed": 33788.79787469559
+      },
+      "ratio_direct_over_cm": 0.09089774689929947,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33284096,
+        "direct_packed": 33394688
+      },
+      "cm_peak_memory_increase": -0.0033116644180056776,
+      "median_abc_process_wall_ns": 289185600,
+      "median_python_aiger_query_ns": 495600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 46,
+      "design": "dec",
+      "output": "selectp2[91]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 348515.4676258993,
+        "direct_packed": 31912.17948717949
+      },
+      "ratio_direct_over_cm": 0.09156603494406282,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33271808,
+        "direct_packed": 33394688
+      },
+      "cm_peak_memory_increase": -0.003679627131117358,
+      "median_abc_process_wall_ns": 284839200,
+      "median_python_aiger_query_ns": 491300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 47,
+      "design": "dec",
+      "output": "selectp1[56]",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 356887.36059479555,
+        "direct_packed": 32115.174182517632
+      },
+      "ratio_direct_over_cm": 0.08998686344339527,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33366016,
+        "direct_packed": 33394688
+      },
+      "cm_peak_memory_increase": -0.000858579663927439,
+      "median_abc_process_wall_ns": 310160100,
+      "median_python_aiger_query_ns": 514000,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 48,
+      "design": "i2c",
+      "output": "po105",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 757755.905511811,
+        "direct_packed": 60578.37268128162
+      },
+      "ratio_direct_over_cm": 0.07994444152878646,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 34086912,
+        "direct_packed": 34111488
+      },
+      "cm_peak_memory_increase": -0.0007204610951008217,
+      "median_abc_process_wall_ns": 295073300,
+      "median_python_aiger_query_ns": 792400,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 49,
+      "design": "i2c",
+      "output": "po095",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 747989.84375,
+        "direct_packed": 57862.407002188185
+      },
+      "ratio_direct_over_cm": 0.07735720944030289,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33992704,
+        "direct_packed": 34111488
+      },
+      "cm_peak_memory_increase": -0.00348222862632086,
+      "median_abc_process_wall_ns": 291073600,
+      "median_python_aiger_query_ns": 797800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 50,
+      "design": "i2c",
+      "output": "po052",
+      "support_count": 6,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 484672.94520547945,
+        "direct_packed": 20862.897678417885
+      },
+      "ratio_direct_over_cm": 0.04304531103871077,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 34004992,
+        "direct_packed": 34115584
+      },
+      "cm_peak_memory_increase": -0.0032416856765518087,
+      "median_abc_process_wall_ns": 287752600,
+      "median_python_aiger_query_ns": 318700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 51,
+      "design": "i2c",
+      "output": "po066",
+      "support_count": 4,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 301525.4403131115,
+        "direct_packed": 13418.350570140547
+      },
+      "ratio_direct_over_cm": 0.044501553687166816,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33996800,
+        "direct_packed": 33914880
+      },
+      "cm_peak_memory_increase": 0.0024154589371980784,
+      "median_abc_process_wall_ns": 292513100,
+      "median_python_aiger_query_ns": 288600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 52,
+      "design": "i2c",
+      "output": "po084",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 900449.0909090909,
+        "direct_packed": 63943.38942307692
+      },
+      "ratio_direct_over_cm": 0.07101277581225592,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 34000896,
+        "direct_packed": 33906688
+      },
+      "cm_peak_memory_increase": 0.0027784489007005586,
+      "median_abc_process_wall_ns": 286251800,
+      "median_python_aiger_query_ns": 767300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 53,
+      "design": "i2c",
+      "output": "po076",
+      "support_count": 4,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 185703.22180916977,
+        "direct_packed": 10104.3011487965
+      },
+      "ratio_direct_over_cm": 0.05441101694605905,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33996800,
+        "direct_packed": 34136064
+      },
+      "cm_peak_memory_increase": -0.0040796736261099475,
+      "median_abc_process_wall_ns": 295244400,
+      "median_python_aiger_query_ns": 287200,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 54,
+      "design": "i2c",
+      "output": "po133",
+      "support_count": 7,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 482154.3333333333,
+        "direct_packed": 26601.94827586207
+      },
+      "ratio_direct_over_cm": 0.05517309798286317,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 34029568,
+        "direct_packed": 34111488
+      },
+      "cm_peak_memory_increase": -0.0024015369836695166,
+      "median_abc_process_wall_ns": 204602400,
+      "median_python_aiger_query_ns": 747000,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.02
+      }
+    },
+    {
+      "case_index": 55,
+      "design": "i2c",
+      "output": "po086",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 2006542.156862745,
+        "direct_packed": 144170.27600849257
+      },
+      "ratio_direct_over_cm": 0.07185011065698449,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 34131968,
+        "direct_packed": 34123776
+      },
+      "cm_peak_memory_increase": 0.00024006721882119386,
+      "median_abc_process_wall_ns": 370016600,
+      "median_python_aiger_query_ns": 987700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 56,
+      "design": "int2float",
+      "output": "E[1]",
+      "support_count": 11,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1762812.6582278481,
+        "direct_packed": 49364.62386511025
+      },
+      "ratio_direct_over_cm": 0.02800332958508274,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33247232,
+        "direct_packed": 33468416
+      },
+      "cm_peak_memory_increase": -0.006608738220536092,
+      "median_abc_process_wall_ns": 289007300,
+      "median_python_aiger_query_ns": 3481600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 57,
+      "design": "int2float",
+      "output": "E[2]",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 594101.0928961749,
+        "direct_packed": 63850.29133284778
+      },
+      "ratio_direct_over_cm": 0.10747378198142157,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33316864,
+        "direct_packed": 33366016
+      },
+      "cm_peak_memory_increase": -0.001473115639577749,
+      "median_abc_process_wall_ns": 317736600,
+      "median_python_aiger_query_ns": 787100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.04
+      }
+    },
+    {
+      "case_index": 58,
+      "design": "int2float",
+      "output": "M[1]",
+      "support_count": 11,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 6261782.608695652,
+        "direct_packed": 135549.31129476585
+      },
+      "ratio_direct_over_cm": 0.02164708035480669,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33415168,
+        "direct_packed": 33472512
+      },
+      "cm_peak_memory_increase": -0.0017131669114047732,
+      "median_abc_process_wall_ns": 329318900,
+      "median_python_aiger_query_ns": 3518600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 59,
+      "design": "int2float",
+      "output": "M[3]",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 1087946.9387755103,
+        "direct_packed": 74389.0395480226
+      },
+      "ratio_direct_over_cm": 0.06837561364136732,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33230848,
+        "direct_packed": 33361920
+      },
+      "cm_peak_memory_increase": -0.003928790669122106,
+      "median_abc_process_wall_ns": 338367500,
+      "median_python_aiger_query_ns": 882800,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 60,
+      "design": "int2float",
+      "output": "M[0]",
+      "support_count": 11,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 5631971.428571428,
+        "direct_packed": 128696.44921552436
+      },
+      "ratio_direct_over_cm": 0.02285104795855982,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33382400,
+        "direct_packed": 33427456
+      },
+      "cm_peak_memory_increase": -0.0013478740350447715,
+      "median_abc_process_wall_ns": 339138900,
+      "median_python_aiger_query_ns": 3648300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 61,
+      "design": "int2float",
+      "output": "E[0]",
+      "support_count": 11,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 3241393.9393939395,
+        "direct_packed": 78646.20726495727
+      },
+      "ratio_direct_over_cm": 0.02426308209845736,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33316864,
+        "direct_packed": 33378304
+      },
+      "cm_peak_memory_increase": -0.0018407166523499718,
+      "median_abc_process_wall_ns": 337935800,
+      "median_python_aiger_query_ns": 3848300,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 62,
+      "design": "int2float",
+      "output": "M[2]",
+      "support_count": 11,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 7512785.714285715,
+        "direct_packed": 135785.7142857143
+      },
+      "ratio_direct_over_cm": 0.018073950123123437,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 33349632,
+        "direct_packed": 33460224
+      },
+      "cm_peak_memory_increase": -0.0033051781123760726,
+      "median_abc_process_wall_ns": 360506900,
+      "median_python_aiger_query_ns": 3720600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 63,
+      "design": "mem_ctrl",
+      "output": "po0967",
+      "support_count": 8,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 756568.992248062,
+        "direct_packed": 40144.63215258856
+      },
+      "ratio_direct_over_cm": 0.05306142937910153,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 69861376,
+        "direct_packed": 69828608
+      },
+      "cm_peak_memory_increase": 0.000469263256686947,
+      "median_abc_process_wall_ns": 338866600,
+      "median_python_aiger_query_ns": 567100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 64,
+      "design": "mem_ctrl",
+      "output": "po1131",
+      "support_count": 2,
+      "root_outcome": "pure_structural",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 19333.146871341225,
+        "direct_packed": 4788.402971899367
+      },
+      "ratio_direct_over_cm": 0.2476784045435214,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 71159808,
+        "direct_packed": 71311360
+      },
+      "cm_peak_memory_increase": -0.002125215393452007,
+      "median_abc_process_wall_ns": 288907700,
+      "median_python_aiger_query_ns": 273900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 65,
+      "design": "mem_ctrl",
+      "output": "po0920",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 787124.7933884298,
+        "direct_packed": 60414.1785150079
+      },
+      "ratio_direct_over_cm": 0.07675298634024193,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 69857280,
+        "direct_packed": 69824512
+      },
+      "cm_peak_memory_increase": 0.00046929078430224536,
+      "median_abc_process_wall_ns": 285453800,
+      "median_python_aiger_query_ns": 777700,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 66,
+      "design": "mem_ctrl",
+      "output": "po1017",
+      "support_count": 5,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 582037.2881355932,
+        "direct_packed": 20971.452584395574
+      },
+      "ratio_direct_over_cm": 0.03603111520839538,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 69763072,
+        "direct_packed": 71208960
+      },
+      "cm_peak_memory_increase": -0.020304860511935585,
+      "median_abc_process_wall_ns": 361260500,
+      "median_python_aiger_query_ns": 326500,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 67,
+      "design": "mem_ctrl",
+      "output": "po0915",
+      "support_count": 9,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 896179.8076923077,
+        "direct_packed": 66830.08595988539
+      },
+      "ratio_direct_over_cm": 0.07457218449495648,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 69857280,
+        "direct_packed": 70840320
+      },
+      "cm_peak_memory_increase": -0.013876843018213347,
+      "median_abc_process_wall_ns": 294685800,
+      "median_python_aiger_query_ns": 816900,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.0
+      }
+    },
+    {
+      "case_index": 68,
+      "design": "mem_ctrl",
+      "output": "po1096",
+      "support_count": 3,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 184151.67958656332,
+        "direct_packed": 8575.739938080495
+      },
+      "ratio_direct_over_cm": 0.0465688934107676,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 71163904,
+        "direct_packed": 70836224
+      },
+      "cm_peak_memory_increase": 0.004625881808719701,
+      "median_abc_process_wall_ns": 322979400,
+      "median_python_aiger_query_ns": 282100,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.02
+      }
+    },
+    {
+      "case_index": 69,
+      "design": "mem_ctrl",
+      "output": "po0464",
+      "support_count": 3,
+      "root_outcome": "ordinary_fallback",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 215680.15978695074,
+        "direct_packed": 9819.069121222647
+      },
+      "ratio_direct_over_cm": 0.04552606568412199,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 69849088,
+        "direct_packed": 70529024
+      },
+      "cm_peak_memory_increase": -0.009640513386375504,
+      "median_abc_process_wall_ns": 389233500,
+      "median_python_aiger_query_ns": 331000,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    },
+    {
+      "case_index": 70,
+      "design": "mem_ctrl",
+      "output": "po1128",
+      "support_count": 2,
+      "root_outcome": "pure_structural",
+      "python_repetitions": {
+        "CM_hybrid_fallback": 15,
+        "direct_packed": 15
+      },
+      "memory_arms": [
+        "CM_hybrid_fallback",
+        "direct_packed"
+      ],
+      "abc_repetitions": 15,
+      "median_python_producer_ns": {
+        "CM_hybrid_fallback": 19487.100893997445,
+        "direct_packed": 4980.6697247706425
+      },
+      "ratio_direct_over_cm": 0.25558802983900103,
+      "peak_working_set_bytes": {
+        "CM_hybrid_fallback": 69861376,
+        "direct_packed": 70840320
+      },
+      "cm_peak_memory_increase": -0.013819022838970851,
+      "median_abc_process_wall_ns": 290907900,
+      "median_python_aiger_query_ns": 279600,
+      "median_abc_stage_seconds_rounded": {
+        "read_blif": 0.0,
+        "strash": 0.0,
+        "dc2": 0.0,
+        "write_aiger": 0.01
+      }
+    }
+  ],
+  "limits": [
+    "Descriptive secondary cohort; cases cluster within nine designs and overlap P1-P14 families.",
+    "ABC process wall includes startup and serialization and is not a matched producer ratio.",
+    "ABC stage time diagnostics are rounded to 0.01 seconds.",
+    "Python AIGER exhaustive simulation is not native ABC query latency.",
+    "ABC process peak memory, ROBDD, prepared reuse, dense output and independent families remain unmeasured."
+  ]
+}

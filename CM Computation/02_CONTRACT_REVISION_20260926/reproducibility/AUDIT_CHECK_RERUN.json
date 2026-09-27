@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "archive_sha256": "399cf4bb2b1d0b885bd51f85d76792728d2227cf972ee3cf2496cfa4e45a8caf",
+  "manifest_entries_verified": 21,
+  "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+  "unmodified_checker_sha256": "70028e689049562ee78bc5efe1a074ef1abe7fbb59832f1ac4a157d3d76473ae",
+  "matches_supplied_results_exactly": true,
+  "results": {
+    "scope": "Independent scalar/matrix/token calculations and a reference model; not author implementation tests.",
+    "selection_evaluations": 64,
+    "signed_frame_records": 128,
+    "signed_frame_assignment_checks": 512,
+    "signed_fusion_assignment_checks": 1048576,
+    "signed_fusion_table_cases": 262144,
+    "bounded_structural_expressions": 8080,
+    "seeded_expression_strategy_runs": 15000,
+    "seeded_successful_tokens": 6615,
+    "seeded_outcomes": {
+      "S": 98,
+      "T": 4880,
+      "H": 1637,
+      "fallback": 8385
+    },
+    "explicit_regressions": {
+      "worked_tokens": [
+        "0111",
+        "1110",
+        "1001"
+      ],
+      "untransported_implications": {
+        "wrong_token": 0,
+        "correct_token": 6
+      },
+      "syntactic_support_vs_constant": {
+        "syntactic": [
+          "X",
+          "Y"
+        ],
+        "essential": [],
+        "token": 0
+      },
+      "tabulated_example": {
+        "expression": "X OR (Y AND Y)",
+        "provenance": "T"
+      },
+      "negated_tabulated_example": "H",
+      "mixed_child_example": "H",
+      "derivability_note": "X AND Y permits S by primitive rule and T by unguarded TAB, but structural-first hybrid strategy selects S."
+    },
+    "status": "PASS",
+    "script_sha256": "70028e689049562ee78bc5efe1a074ef1abe7fbb59832f1ac4a157d3d76473ae"
+  },
+  "scope": "Rerun of supplied mathematical/reference model, separate from production-source tests and timing evidence."
+}

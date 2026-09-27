@@ -1,8 +1,8 @@
 # Reviews and recommendations
 
-Review normalization and tabulation rules, scoped completeness and S/T/H cases; reconcile historical bibliography/data and package the exact current implementation; run a frozen confirmatory campaign only under a separately scoped research task.
+The [September 26 review response](../02_CONTRACT_REVISION_20260926/REVIEW_RESPONSE.md) records completed contract corrections, source recovery and fresh verification. The [current PDF draft](../02_CONTRACT_REVISION_20260926/Operator_Level_CM_Compiler_Revised_Draft.pdf) preserves the narrow compiler/methods scope. A [frozen synthetic pair-token campaign](../03_STUDY_DESIGN_20260926/README.md) failed its unchanged primary utility rule. A [frozen natural admission/correctness gate](../04_NATURAL_CIRCUIT_EXTENSION_20260926/README.md) passed 71 cases, with four pure structural roots. Natural timing, historical runtime identity and public release remain open.
 
-Historical benchmark archives now indexed contain source/raw records but do not establish the missing current confirmatory campaign. No CM-specific speedup beyond matched evidence is implied.
+The completed synthetic cell directly disfavors CM against a matched direct-packed evaluator. Natural admission and correctness have been established for the selected EPFL cohort; natural-circuit performance has not.
 
 Reviews are preserved as received; labels such as panel/referee do not establish independent human review. Original package-relative layouts are retained where build or provenance depends on them.
 

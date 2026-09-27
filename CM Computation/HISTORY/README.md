@@ -1,8 +1,8 @@
 # Version history and preserved context
 
-Working head: [01_CURRENT_REVISED_COMPILER_AND_REVIEW_20260922/Operator_Level_CM_Compiler_Revised_Draft.tex](../01_CURRENT_REVISED_COMPILER_AND_REVIEW_20260922/Operator_Level_CM_Compiler_Revised_Draft.tex). Historical filenames, dates and claims describe their own snapshots. They do not override CLAIMS_AND_UNIQUENESS.md.
+Working head: [02_CONTRACT_REVISION_20260926/Operator_Level_CM_Compiler_Revised_Draft.tex](../02_CONTRACT_REVISION_20260926/Operator_Level_CM_Compiler_Revised_Draft.tex). Historical filenames, dates and claims describe their own snapshots. They do not override CLAIMS_AND_UNIQUENESS.md.
 
-Current working head is the 14-page revision, not the 24-page file named current.pdf. Historical portfolio Paper B is CO, not GU. The confirmatory pair-compiler campaign remains unexecuted.
+The September 22 revision was 14 pages and the older `current.pdf` was 24 pages. Both are preserved. Historical portfolio Paper B is CO, not GU. The later synthetic v4 pair-token study is negative; the natural/circuit study remains open. The earlier September 26 deliveries are preserved as `CONTRACT_REVISION_BEFORE_FULL_AUDIT_20260926.zip` and `CONTRACT_REVISION_BEFORE_V4_STUDY_20260926.zip`.
 
 - [HISTORY/LEGACY_PRECONSOLIDATION/operator-level-boolean-computation-with-correspondence-matrices.pdf](../HISTORY/LEGACY_PRECONSOLIDATION/operator-level-boolean-computation-with-correspondence-matrices.pdf)
 - [HISTORY/PARTITION_BASELINE_20260925/00_PUBLICATION_CONTEXT_2026-09-25.md](../HISTORY/PARTITION_BASELINE_20260925/00_PUBLICATION_CONTEXT_2026-09-25.md)
