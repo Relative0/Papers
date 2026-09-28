@@ -1,0 +1,18 @@
+{
+  "recorded_utc": "2026-09-26T13:13:26.170789+00:00",
+  "status": "written after frozen Draft 2 audit and before v3 replay timings; same-data repair, not a new held-out study",
+  "cases": "same 38 cases and exact original seeded 128-query batches",
+  "selection": "minimum actual SC binary bytes among at most 16 candidate partitions plus XOR and flat fallback",
+  "repetitions": 5,
+  "methods": [
+    "artifact",
+    "packed",
+    "reference_robdd"
+  ],
+  "sequence": "build/discover, verify if representation changes, serialize, discard original object, construct fresh object from serialization, reverify against external source, execute the 128 queries on loaded instance",
+  "timing": "record separate phases and one actual complete elapsed interval; no untimed warm batch before queries",
+  "boundary": "common truth extraction and query generation excluded; in-memory logical persistence, not cold disk/new OS process; the reference packed serialized form regenerates its masks on load",
+  "comparability": "representation schemas deliberately differ; this is end-to-end reference sensitivity, not optimized compressor or CUDD contest",
+  "continuation": "record each completed case and preserve it; explicit start/end chunks are fixed by runtime limits, never by outcomes",
+  "statistics": "per-case medians of five complete elapsed intervals; Q=128 directly executed, no Q=1000 claim from this arm"
+}

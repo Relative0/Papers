@@ -1,0 +1,50 @@
+{
+  "status": "PASS",
+  "counts": {
+    "fresh_three_backend_roundtrips": 278,
+    "fresh_instance_query_triples": 7070,
+    "caller_alias_mutation_checks": 1,
+    "constructor_rejections": 4,
+    "json_structure_rejections": 3,
+    "binary_structure_rejections": 4,
+    "codec_label_policy_rejections": 1,
+    "residual_assignment_rejections": 3,
+    "single_spike_rank_checks": 510,
+    "explicit_histogram_counterexamples": 1,
+    "explicit_factor_refinement_counterexamples": 1
+  },
+  "histogram_counterexample": {
+    "f": "x*y",
+    "g": "(1-x)*y",
+    "f_truth_hex": "0x8",
+    "g_truth_hex": "0x2",
+    "coefficient_histogram": {
+      "0": 1,
+      "1": 1
+    },
+    "column_profile_histogram": {
+      "0": 1,
+      "1": 1
+    },
+    "unconditional_counts": [
+      1,
+      1
+    ],
+    "counts_given_x_0": [
+      0,
+      1
+    ]
+  },
+  "factor_refinement_counterexample": {
+    "formula": "x*y*z XOR x XOR y",
+    "truth_hex": "0xbc",
+    "restriction": {
+      "z": 0
+    },
+    "residual_formula": "x XOR y",
+    "original_factor_count": 1,
+    "retained_factor_count": 1,
+    "rediscovered_factor_count": 2
+  },
+  "elapsed_seconds": 0.2892172090000713
+}

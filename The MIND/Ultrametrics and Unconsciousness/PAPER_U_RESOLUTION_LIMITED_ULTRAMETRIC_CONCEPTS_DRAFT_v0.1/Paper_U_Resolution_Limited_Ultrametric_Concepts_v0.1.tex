@@ -1,0 +1,809 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array,enumitem}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\hypersetup{hidelinks}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\A}{\mathcal A}
+\newcommand{\B}{\mathcal B}
+\newcommand{\F}{\mathcal F}
+\newcommand{\Obs}{\mathcal O}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Zp}{\mathbb Z_p}
+\newcommand{\Qp}{\mathbb Q_p}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\cyl}[1]{C_{#1}}
+\newcommand{\pref}{\preceq}
+\newcommand{\lcp}{\operatorname{lcp}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\XOR}{\operatorname{XOR}}
+\newcommand{\id}{\operatorname{id}}
+
+\title{Hierarchical Concepts Under Finite Resolution:\\
+Ultrametric Geometry, Observational Equivalence, and Symmetry\\
+\large Working draft of ``Paper U''}
+\author{Brian Droncheff}
+\date{Draft v0.1 --- September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Hierarchical models of cognition often encode increasingly specific categories by progressively deeper nodes of a rooted tree or, in a $p$-adic coordinatization, by balls determined by successively many digits.  This paper isolates the mathematically sound part of that idea and separates it from a distinct notion: observational indistinguishability.  An ultrametric space is Hausdorff, so ultrametricity alone cannot make distinct points topologically indistinguishable.  We instead equip a fine-grained hierarchical state space $X$ with a nested family of finite-resolution observation maps $\pi_k$.  Their fibers are precisely the depth-$k$ concept balls.  Pulling back the discrete topology from the quotient $X_k$ produces a coarse observation topology $\tau_k$ in which each depth-$k$ concept is internally indiscrete, even though the underlying ultrametric topology remains Hausdorff.  Equivalently, each $\tau_k$ is induced by an ultrapseudometric that assigns zero distance to states unresolved at level $k$.
+
+For regular rooted trees we show that five descriptions of finite-resolution equivalence coincide: agreement of the first $k$ coordinates, membership in the same concept ball, zero distance in the truncated pseudoultrametric, agreement under every level-$k$ observable, and membership in the same orbit of a natural within-fiber symmetry group.  The ultrametric distance itself then records the minimum resolution at which two states can first be distinguished.  In the prime-base specialization, $X\cong\mathbb Z_p$ and the observation maps become the canonical reductions $\mathbb Z_p\to\mathbb Z/p^k\mathbb Z$, making the theory an inverse system of finite-resolution quotients.  We also develop the concept algebra, probability and information filtrations, adaptive nonuniform resolution, and a binary XOR example that formalizes partial distinction: XOR separates equality from inequality while leaving the orientation of the two operands unresolved.
+
+The framework is motivated by Matte-Blanco's distinction between members of a class being treated as equivalent without being literally identical, and by earlier $p$-adic and ultrametric models of mental space.  It is intended as a mathematical model of hierarchical representation and restricted observability, not as an empirical theory of unconscious cognition.  A separate companion project (``Paper F'') is reserved for simplicial unfolding, gluing, and homological structure; here we state only the precise bridge between resolution refinement and structural decomposition.
+\end{abstract}
+
+\section{Introduction}
+
+A recurring mathematical idea in hierarchical models of cognition is that a detailed state can be represented by an infinite branch of a rooted tree, while a category or concept is represented by a node together with all of its descendants.  In a regular $m$-ary tree this becomes the familiar prefix construction
+\[
+C_{s_0\cdots s_{k-1}}
+ = \{x=(x_0,x_1,\ldots):x_i=s_i\text{ for }0\le i<k\}.
+\]
+Increasing $k$ fixes more attributes and therefore gives a more specific concept.  This construction is closely related to the $m$-adic and $p$-adic mental-space program developed by Khrennikov and later discussed in connection with Matte-Blanco by Lauro-Grotto and Murtagh \cite{Khrennikov1998,Khrennikov2007,Khrennikov2010,LauroGrotto2008,Murtagh2012,Murtagh2014,Khrennikov2014}.  A version also appeared in the author's 2015 thesis \cite{Droncheff2015}.
+
+The thesis contained a mathematically incorrect step: it attempted to derive an indiscrete topology directly from ultrametricity.  That cannot hold for a nontrivial ultrametric space, because every metric space is Hausdorff.  The correction proposed here is conceptually simple but structurally useful.  We distinguish two layers:
+\begin{enumerate}[label=(\roman*)]
+\item a \emph{latent hierarchical geometry}, which is genuinely ultrametric and hence Hausdorff; and
+\item an \emph{observation structure}, which specifies which distinctions are currently accessible.
+\end{enumerate}
+Distinct states may therefore remain distinct in the latent space while being equivalent relative to the chosen observation map.
+
+The central mathematical object is not an ``indiscrete ultrametric'' but a hierarchy of observation quotients
+\[
+X \xrightarrow{\pi_{k+1}} X_{k+1}
+\xrightarrow{q_{k+1,k}} X_k,
+\qquad
+\pi_k=q_{k+1,k}\circ\pi_{k+1}.
+\]
+At resolution $k$, two states are observationally equivalent when $\pi_k(x)=\pi_k(y)$.  In the prefix model, this is exactly agreement through the first $k$ hierarchical coordinates.  The resulting equivalence classes are the depth-$k$ ultrametric balls.
+
+This separation yields several consequences.
+\begin{itemize}
+\item The full ultrametric topology remains Hausdorff, but the coarse topology induced by $\pi_k$ is non-$T_0$ on unresolved states.
+\item Every depth-$k$ concept is internally indiscrete in the level-$k$ observation topology.
+\item Quotienting by observational equivalence restores a genuine finite ultrametric space.
+\item The ultrametric distance records the minimum resolution required to separate a pair of states.
+\item A natural group of within-fiber tree automorphisms provides a rigorous notion of symmetry at fixed resolution.
+\item Finer resolution reduces the group of invisible symmetries: symmetry breaking occurs by making previously hidden distinctions observable, without requiring a quantum-mechanical collapse analogy.
+\end{itemize}
+
+The resulting theory is deliberately modest about psychology.  Matte-Blanco's language motivates the distinction between equivalence and identity, but the theorems below concern rooted trees, ultrametrics, quotient spaces, group actions, and information filtrations.  Empirical claims about cognition would require a separate model-selection and validation program.
+
+\subsection*{Relation to the companion ``Paper F''}
+The word \emph{unfolding} will not be used in this paper for the passage $k\mapsto k+1$.  That passage is called \emph{resolution refinement}.  In the companion project, unfolding is reserved for a different operation: decomposition of a higher-dimensional simplex or complex into lower-dimensional faces or subcomplexes together with enough incidence or attachment data to reconstruct the original object.  The two theories share a broad theme---hidden distinctions becoming explicit---but their mathematical mechanisms are different.
+
+\\section{Relation to prior ultrametric cognition models and scope of contribution}
+
+The basic hierarchical ingredients of this paper are not new.  Khrennikov's 1998 model already represented a space of ideas by $p$-adic numbers and interpreted $p$-adic nearness through a long common root \cite{Khrennikov1998}.  His 2007 $m$-adic mental-space model explicitly used branches as mental states, balls as associations, and collections of balls as ideas \cite{Khrennikov2007}.  The 2010 work made the encoding of categories by ultrametric balls explicit \cite{Khrennikov2010}.  Lauro-Grotto and Murtagh independently connected ultrametric organization to Matte-Blanco's account of the unconscious and bi-logic \cite{LauroGrotto2008,Murtagh2012,Murtagh2014}.  Khrennikov's later work continued the dynamics of mental points, categories, and ideas in ultrametric spaces \cite{Khrennikov2014}.
+
+Accordingly, this manuscript does not claim priority for ``concepts as ultrametric balls,'' ``mental states as branches,'' or the general proposal that unconscious information may have hierarchical non-Archimedean structure.  Its purpose is narrower: to repair the topological mechanism and organize several standard mathematical structures around finite observational resolution.
+
+The proposed contribution is the following theorem-led synthesis.
+\begin{enumerate}[label=(C\arabic*)]
+\item Separate the full Hausdorff ultrametric topology from a nested family of coarse observation topologies.
+\item Show that each finite observation topology is equivalently induced by a truncated ultrapseudometric whose zero classes are the concept balls.
+\item Identify coordinate agreement, concept membership, zero pseudodistance, equality of all admissible observations, and within-fiber symmetry orbits in a single resolution-equivalence theorem.
+\item Interpret ultrametric distance as a monotone code for the minimum resolution at which two states become distinguishable.
+\item In prime base, identify finite-resolution observation with the canonical reductions $\mathbb Z_p\to\mathbb Z/p^k\mathbb Z$ and the full state space with their inverse limit.
+\item Use XOR as a minimal binary example of partial distinguishability: equality versus inequality becomes observable while operand orientation remains unresolved.
+\end{enumerate}
+
+These constructions use standard mathematics individually.  Whether their exact combination and Matte-Blanco interpretation constitute a novel research contribution is a priority question separate from correctness; the present draft therefore presents them as a synthesis and correction rather than asserting theorem-level novelty.
+
+\section{Hierarchical state spaces and primitive concepts}
+
+\subsection{Prefix space}
+
+Fix a finite alphabet
+\[
+\Sigma_m=\{0,1,\ldots,m-1\},\qquad m\ge 2,
+\]
+and let
+\[
+X=\Sigma_m^{\N}
+\]
+be the set of one-sided infinite sequences.  A point
+\[
+x=(x_0,x_1,x_2,\ldots)\in X
+\]
+will be called a \emph{fully specified hierarchical state}.  The terminology is intentionally neutral: the mathematics does not require that every coordinate correspond to a psychologically meaningful attribute.
+
+For distinct $x,y\in X$, define their common-prefix length by
+\[
+\ell(x,y)=\min\{j\ge 0:x_j\ne y_j\},
+\]
+and put $\ell(x,x)=\infty$.  Fix a scale parameter $0<\lambda<1$.
+
+\begin{definition}[Prefix ultrametric]
+Define
+\[
+d_\lambda(x,y)=
+\begin{cases}
+0,&x=y,\\
+\lambda^{\ell(x,y)},&x\ne y.
+\end{cases}
+\]
+\end{definition}
+
+\begin{proposition}\label{prop:ultrametric}
+The function $d_\lambda$ is an ultrametric on $X$.
+\end{proposition}
+
+\begin{proof}
+For any $x,y,z\in X$, if $x$ agrees with $y$ for the first $a$ coordinates and $y$ agrees with $z$ for the first $b$ coordinates, then $x$ and $z$ agree for at least the first $\min(a,b)$ coordinates.  Hence
+\[
+\ell(x,z)\ge \min\{\ell(x,y),\ell(y,z)\}.
+\]
+Because $0<\lambda<1$, exponentiation reverses this inequality in the required way:
+\[
+d_\lambda(x,z)
+\le \max\{d_\lambda(x,y),d_\lambda(y,z)\}.
+\]
+\end{proof}
+
+\subsection{Concepts as cylinders and balls}
+
+Let $\Sigma_m^{<\N}$ denote the finite words over $\Sigma_m$.  If
+\[
+s=s_0s_1\cdots s_{k-1}\in\Sigma_m^k,
+\]
+define the cylinder
+\[
+\cyl{s}=\{x\in X:x_i=s_i\text{ for }0\le i<k\}.
+\]
+
+\begin{definition}[Primitive hierarchical concept]
+A \emph{primitive concept of order $k$} is a depth-$k$ cylinder $\cyl{s}$ with $s\in\Sigma_m^k$.
+\end{definition}
+
+Thus ``order'' measures specificity in the hierarchy: a depth-$k+1$ concept fixes one additional hierarchical coordinate relative to its parent.
+
+\begin{proposition}[Ball representation]\label{prop:ball}
+For any $x\in\cyl{s}$ with $|s|=k$,
+\[
+\cyl{s}=\overline B_{d_\lambda}(x,\lambda^k).
+\]
+Every primitive concept is clopen in the ultrametric topology.
+\end{proposition}
+
+\begin{proof}
+A point $y$ lies in $\cyl{s}$ exactly when $\ell(x,y)\ge k$, which is equivalent to $d_\lambda(x,y)\le\lambda^k$.  Ultrametric balls at the discrete radii occurring here are both open and closed.
+\end{proof}
+
+\begin{proposition}[Laminarity]\label{prop:laminar}
+For any finite words $s,t$, the cylinders $\cyl{s}$ and $\cyl{t}$ are either disjoint or one contains the other.  More precisely,
+\[
+\cyl{t}\subseteq\cyl{s}
+\quad\Longleftrightarrow\quad
+s\text{ is a prefix of }t.
+\]
+\end{proposition}
+
+This is the correct ultrametric replacement for the overstrong statement that any two intersecting balls are equal.  Equal-radius balls that intersect are equal; balls of different radii may intersect by strict inclusion.
+
+\subsection{The order structure of concepts}
+
+Write $s\pref t$ when $s$ is a prefix of $t$.  Then
+\[
+s\pref t \quad\Longleftrightarrow\quad \cyl{t}\subseteq\cyl{s}.
+\]
+The finite words form the vertices of the rooted $m$-ary tree.  The empty word $\varnothing$ corresponds to the universal concept $X$, and appending a symbol gives an immediate refinement:
+\[
+\cyl{s}\supset \cyl{s0},\ldots,\cyl{s(m-1)},
+\qquad
+\cyl{s}=\bigsqcup_{a\in\Sigma_m}\cyl{sa}.
+\]
+
+For finite words $s,t$, let $\lcp(s,t)$ be their longest common prefix.  Then
+\[
+\cyl{\lcp(s,t)}
+\]
+is the smallest primitive concept containing both $\cyl{s}$ and $\cyl{t}$.  Intersections satisfy
+\[
+\cyl{s}\cap\cyl{t}=
+\begin{cases}
+\cyl{t},&s\pref t,\\
+\cyl{s},&t\pref s,\\
+\varnothing,&\text{otherwise.}
+\end{cases}
+\]
+Thus the primitive concepts form a rooted laminar family, not a Boolean algebra.
+
+At a fixed depth $k$, however, the $m^k$ cylinders partition $X$.  Arbitrary unions of those cells form a finite Boolean algebra
+\[
+\B_k=\left\{\bigcup_{s\in S}\cyl{s}:S\subseteq\Sigma_m^k\right\}.
+\]
+We call elements of $\B_k$ \emph{observable concepts at resolution $k$}.  This distinction is useful:
+\begin{itemize}
+\item primitive concepts are single hierarchical balls/nodes;
+\item observable concepts may be disjunctions/unions of primitive concepts at the available resolution.
+\end{itemize}
+The union $\bigcup_k\B_k$ is the cylinder algebra; its generated sigma-algebra is the Borel sigma-algebra of the prefix topology.
+
+\section{Finite resolution and observational indistinguishability}
+
+\subsection{Observation maps and equivalence relations}
+
+For $k\ge 0$, define
+\[
+\pi_k:X\longrightarrow X_k:=\Sigma_m^k,
+\qquad
+\pi_k(x)=(x_0,\ldots,x_{k-1}),
+\]
+with $X_0=\{\ast\}$.  Define
+\[
+x\sim_k y
+\quad\Longleftrightarrow\quad
+\pi_k(x)=\pi_k(y).
+\]
+
+\begin{proposition}\label{prop:fibers}
+For each $k$, the relation $\sim_k$ is an equivalence relation and its equivalence classes are exactly the order-$k$ primitive concepts $\cyl{s}$, $s\in\Sigma_m^k$.
+\end{proposition}
+
+The partitions become strictly finer with increasing $k$:
+\[
+\sim_{k+1}\ \subseteq\ \sim_k.
+\]
+There are canonical truncation maps
+\[
+q_{k+1,k}:X_{k+1}\to X_k,
+\qquad
+q_{k+1,k}(s_0\cdots s_k)=s_0\cdots s_{k-1},
+\]
+with
+\[
+\pi_k=q_{k+1,k}\circ\pi_{k+1}.
+\]
+
+\subsection{The observation topology}
+
+Give $X_k$ the discrete topology and pull it back along $\pi_k$.
+
+\begin{definition}[Resolution-$k$ observation topology]
+Define
+\[
+\tau_k
+=\{\pi_k^{-1}(S):S\subseteq X_k\}
+=\B_k.
+\]
+\end{definition}
+
+\begin{theorem}[Coarse topology theorem]\label{thm:coarsetop}
+For the full infinite prefix space $X$:
+\begin{enumerate}[label=(\alph*)]
+\item $\tau_0=\{\varnothing,X\}$ is the indiscrete topology;
+\item $\tau_k\subseteq\tau_{k+1}$ for every $k$;
+\item for finite $k$, distinct points in the same depth-$k$ concept have exactly the same $\tau_k$-neighborhoods, so $(X,\tau_k)$ is not $T_0$ and hence not Hausdorff;
+\item the subspace topology induced by $\tau_k$ on any fiber $\cyl{s}$ is exactly $\{\varnothing,\cyl{s}\}$;
+\item the topology generated by $\bigcup_{k\ge 0}\tau_k$ is the full Hausdorff ultrametric topology of $d_\lambda$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Parts (a) and (b) follow from the definitions and the factorization of the truncation maps.  Every $\tau_k$-open set is a union of whole fibers of $\pi_k$, proving (c) and (d).  Finally, all finite-prefix cylinders occur in some $\tau_k$, and those cylinders form a basis for the ultrametric topology, proving (e).
+\end{proof}
+
+The theorem resolves the apparent contradiction between ultrametric Hausdorffness and an indiscrete model.  There are two topologies on the same underlying set.  The latent topology generated by all resolutions is Hausdorff.  The observation topology at a fixed finite resolution is deliberately coarser and may fail even $T_0$ separation.  The original indiscrete intuition is recovered exactly at resolution zero and locally inside each unresolved concept class at resolution $k$.
+
+\subsection{A truncated ultrapseudometric}
+
+The same structure can be expressed metrically if the identity-of-indiscernibles axiom is relaxed.
+
+\begin{definition}[Resolution-$k$ ultrapseudometric]
+For $k\ge 1$, define
+\[
+d^{(k)}(x,y)=
+\begin{cases}
+0,&\ell(x,y)\ge k,\\
+\lambda^{\ell(x,y)},&\ell(x,y)<k.
+\end{cases}
+\]
+For $k=0$, put $d^{(0)}\equiv 0$.
+\end{definition}
+
+\begin{theorem}\label{thm:pseudo}
+For every $k$, $d^{(k)}$ is an ultrapseudometric.  Its zero-distance equivalence relation is $\sim_k$, and its induced topology is exactly $\tau_k$.
+\end{theorem}
+
+\begin{proof}
+The common-prefix inequality used in \cref{prop:ultrametric} still gives the strong triangle inequality after truncation.  By construction, $d^{(k)}(x,y)=0$ exactly when $x$ and $y$ agree in the first $k$ coordinates.  Since the positive distances of $d^{(k)}$ form a finite discrete set, each zero-distance class is an open ball; every open set is therefore a union of such classes, yielding $\tau_k$.
+\end{proof}
+
+The quotient
+\[
+X/\{d^{(k)}=0\}\cong X_k
+\]
+therefore inherits a genuine finite ultrametric.  This gives a useful three-level distinction:
+\[
+\begin{array}{ccl}
+(X,d_\lambda)&:&\text{fine latent ultrametric, Hausdorff},\\
+(X,d^{(k)})&:&\text{finite-resolution ultrapseudometric, non-$T_0$},\\
+X_k&:&\text{finite quotient ultrametric, Hausdorff}.
+\end{array}
+\]
+
+\subsection{The resolution-equivalence theorem}
+
+Let $\Obs_k$ be the class of all functions $f:X\to Y$ (for arbitrary target sets $Y$) that factor through $\pi_k$:
+\[
+f=\bar f\circ\pi_k.
+\]
+These are exactly the observables available at resolution $k$.
+
+Let $T_m$ be the full rooted $m$-ary tree and let $G_k$ denote the subgroup of tree automorphisms that fixes every vertex through depth $k$.  Such automorphisms may rearrange descendants inside each depth-$k$ subtree but cannot move a state to a different depth-$k$ concept.
+
+\begin{theorem}[Resolution equivalence]\label{thm:equiv}
+For $x,y\in X$ and fixed $k$, the following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $\pi_k(x)=\pi_k(y)$;
+\item $x\sim_k y$;
+\item $x$ and $y$ lie in the same order-$k$ concept;
+\item $d^{(k)}(x,y)=0$;
+\item $f(x)=f(y)$ for every $f\in\Obs_k$;
+\item $x$ and $y$ lie in the same orbit of $G_k$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+The equivalence of (i)--(iv) is definitional.  If (i) holds, every factorized observable has equal values on $x$ and $y$, so (v) follows.  Conversely, $\pi_k$ itself is a level-$k$ observable, so (v) implies (i).  Finally, $G_k$ preserves each depth-$k$ cylinder and the automorphism group of a full regular rooted subtree acts transitively on its boundary; hence (i) and (vi) are equivalent.
+\end{proof}
+
+This theorem gives six mathematically distinct but compatible readings of ``treated as the same at resolution $k$'': same code, same concept, zero pseudodistance, same observable values, and same symmetry orbit.  None asserts literal equality in $X$.
+
+\subsection{Ultrametric distance as a threshold of distinguishability}
+
+For $x\ne y$, define their \emph{distinguishing depth}
+\[
+\kappa(x,y)=\min\{k\ge 1:\pi_k(x)\ne\pi_k(y)\}.
+\]
+
+\begin{corollary}[Distance--resolution correspondence]\label{cor:distres}
+For $x\ne y$,
+\[
+\kappa(x,y)=\ell(x,y)+1,
+\qquad
+ d_\lambda(x,y)=\lambda^{\kappa(x,y)-1}.
+\]
+\end{corollary}
+
+Thus ultrametricity does not itself make points indistinguishable.  Rather, the ultrametric distance quantifies \emph{how much observational resolution is required before they become distinguishable}.  This is the principal role assigned to the metric in the present model.
+
+\section{Inverse systems and the $p$-adic specialization}
+
+\subsection{The hierarchy as an inverse limit}
+
+The finite observation spaces form an inverse system
+\[
+\cdots \to X_{k+1}\xrightarrow{q_{k+1,k}}X_k\to\cdots\to X_1\to X_0.
+\]
+
+\begin{theorem}[Inverse-limit reconstruction]\label{thm:inverse}
+The prefix space $X=\Sigma_m^{\N}$ is naturally isomorphic, as a topological space, to the inverse limit
+\[
+X\cong\varprojlim_k X_k.
+\]
+\end{theorem}
+
+\begin{proof}
+A point $x\in X$ determines the coherent family $(\pi_k(x))_k$.  Conversely, a coherent family of finite prefixes determines a unique infinite sequence.  Cylinder neighborhoods correspond under this bijection, giving the topological isomorphism.
+\end{proof}
+
+The fine state may therefore be understood as the coherent totality of all finite-resolution observations.  A finite observer receives only one stage of the inverse system.
+
+\subsection{Prime-base coordinates}
+
+Take $m=p$ prime and set $\lambda=p^{-1}$.  Define
+\[
+\Phi:X\to\Zp,
+\qquad
+\Phi(x)=\sum_{j=0}^{\infty}x_jp^j.
+\]
+
+\begin{proposition}[$p$-adic realization]\label{prop:padic}
+The map $\Phi$ is an isometry from $(X,d_{p^{-1}})$ onto $\Zp$ with its standard $p$-adic metric.  If $s=s_0\cdots s_{k-1}$ and
+\[
+a_s=\sum_{j=0}^{k-1}s_jp^j,
+\]
+then
+\[
+\Phi(\cyl{s})=a_s+p^k\Zp.
+\]
+Moreover, $\pi_k$ corresponds to the canonical reduction map
+\[
+\Zp\longrightarrow \Z/p^k\Z.
+\]
+\end{proposition}
+
+\begin{proof}
+If $x\ne y$, the first differing digit occurs at $\ell(x,y)$, so
+\[
+v_p(\Phi(x)-\Phi(y))=\ell(x,y).
+\]
+Hence
+\[
+|\Phi(x)-\Phi(y)|_p=p^{-\ell(x,y)}=d_{p^{-1}}(x,y).
+\]
+Fixing the first $k$ digits is exactly fixing the residue modulo $p^k$.
+\end{proof}
+
+This makes the resolution structure particularly canonical:
+\[
+\Zp\cong\varprojlim_k\Z/p^k\Z.
+\]
+In the $p$-adic representation, finite observational resolution is literally reduction modulo $p^k$.
+
+\begin{remark}[Why $\Zp$ rather than $\Qp$?]
+The one-sided rooted hierarchy corresponds naturally to the compact unit ball $\Zp$.  Passing to $\Qp$ adds negative valuations and additional scales outside that rooted unit ball.  Those may be useful for some applications, but they are not needed for the basic hierarchy of progressively fixed attributes.
+\end{remark}
+
+\begin{remark}[Are $p$-adics essential?]
+No.  The hierarchy, ultrametric, observation quotients, and symmetry theorems require only a rooted tree or prefix space.  The $p$-adic representation adds compatible arithmetic, Haar measure, canonical finite quotient rings, and access to non-Archimedean analytic tools.  Those additions should be used only when they contribute to a mathematical or empirical question.
+\end{remark}
+
+\section{Symmetry and symmetry reduction under resolution}
+
+\subsection{Symmetry as invisibility to observables}
+
+At resolution $k$, the group $G_k$ can change latent details inside a depth-$k$ concept while leaving every level-$k$ observable unchanged.  By \cref{thm:equiv}, for the regular tree this invariance is not merely sufficient but complete: the $G_k$-orbits are exactly the observational equivalence classes.
+
+The symmetry groups form a descending chain
+\[
+G_0\supseteq G_1\supseteq G_2\supseteq\cdots.
+\]
+At level $0$, the observation sees only the universal concept, so every hierarchy-preserving permutation is invisible.  Increasing resolution constrains the transformations that remain unobservable.
+
+\begin{proposition}[Resolution-induced symmetry reduction]\label{prop:symbreak}
+Suppose $m\ge2$.  Then for every $k$ there exist automorphisms in $G_k$ that exchange two depth-$(k+1)$ child concepts of a common depth-$k$ concept.  Such an automorphism is not in $G_{k+1}$.  Hence
+\[
+G_{k+1}\subsetneq G_k.
+\]
+\end{proposition}
+
+This gives a precise sense in which increasing observational resolution breaks symmetry: distinctions between child classes become accessible, so transformations that exchange those classes cease to be observationally invisible.
+
+Importantly, this is not yet a choice of one child.  The refinement
+\[
+\cyl{s}=\bigsqcup_{a\in\Sigma_m}\cyl{sa}
+\]
+merely exposes the possible subcategories.  A subsequent observation of a particular latent state $x\in\cyl{s}$ returns the unique child $\cyl{sa}$ containing $x$.  The distinction between \emph{refining the partition} and \emph{selecting the observed cell} will be important when this theory is compared with simplicial unfolding in Paper F.
+
+\section{XOR as partial distinguishability in the binary case}
+
+The binary XOR operator supplies a small but revealing example of incomplete distinction.  Let
+\[
+P=\{0,1\}^2
+\]
+and define
+\[
+\delta(a,b)=\XOR(a,b)=a+b\pmod 2.
+\]
+Then
+\[
+\delta^{-1}(0)=\{(0,0),(1,1)\},
+\qquad
+\delta^{-1}(1)=\{(0,1),(1,0)\}.
+\]
+XOR therefore distinguishes \emph{equality} from \emph{inequality}, but it does not identify which operand is $0$ and which is $1$ when the value is $1$.
+
+Let $S(a,b)=(b,a)$ be operand swap and let $C(a,b)=(1-a,1-b)$ be simultaneous complementation.  The group
+\[
+H=\langle S,C\rangle
+\]
+has exactly two orbits:
+\[
+\{00,11\},\qquad\{01,10\}.
+\]
+
+\begin{proposition}[XOR orbit quotient]\label{prop:xor}
+The XOR observable $\delta:P\to\{0,1\}$ is a complete invariant of the $H$-orbits.  Equivalently,
+\[
+\delta(u)=\delta(v)
+\quad\Longleftrightarrow\quad
+ u\text{ and }v\text{ lie in the same }H\text{-orbit}.
+\]
+\end{proposition}
+
+Thus XOR performs a genuine symmetry reduction without producing complete orientation information.  This matches the intuitive statement: if XOR is true, the operands must be opposite, but the observable alone does not reveal which is which.
+
+A single anchor removes the residual ambiguity.
+
+\begin{proposition}[Anchored XOR reconstruction]\label{prop:xoranchor}
+The map
+\[
+R:P\to P,
+\qquad
+R(a,b)=(a,\XOR(a,b))
+\]
+is a bijection.  In fact
+\[
+b=a+\XOR(a,b)\pmod 2.
+\]
+\end{proposition}
+
+Consequently, XOR plus one oriented bit reconstructs the ordered pair.  This provides a useful model of \emph{partial distinguishability}: one observable may destroy some symmetry while leaving another symmetry unresolved.  The example can later be connected to Boolean correspondence-matrix work, but that machinery is not needed for the present theory.
+
+\section{Probability, information, and filtration}
+
+Let $\mu$ be a probability measure on the Borel sigma-algebra of $X$.  Define
+\[
+\F_k=\sigma(\pi_k)=\B_k.
+\]
+Then
+\[
+\F_0\subseteq\F_1\subseteq\F_2\subseteq\cdots.
+\]
+The filtration $\{\F_k\}$ records the information available at successive resolutions.
+
+\subsection{Uniform branching}
+
+Under the uniform product measure,
+\[
+\mu(\cyl{s})=m^{-|s|}.
+\]
+If $S_k=\pi_k(X)$ denotes the observed depth-$k$ state, then
+\[
+H(S_k)=k\log_2m
+\]
+for the uniform model, and the information gained by one regular refinement is
+\[
+H(S_{k+1}\mid S_k)=\log_2m.
+\]
+
+\subsection{Nonuniform branching}
+
+More generally, assign conditional child probabilities $p(a\mid s)$ satisfying
+\[
+\sum_{a\in\Sigma_m}p(a\mid s)=1.
+\]
+Then
+\[
+\mu(\cyl{sa})=\mu(\cyl{s})p(a\mid s),
+\]
+and observing child $a$ after parent $s$ contributes self-information
+\[
+-\log_2p(a\mid s).
+\]
+
+\subsection{Conditional expectation as finite-resolution representation}
+
+For an integrable fine observable $f\in L^1(X,\mu)$, the conditional expectation
+\[
+M_k=\mathbb E[f\mid\F_k]
+\]
+is the canonical $\F_k$-measurable coarse representation of $f$.  When $f\in L^2$, it is the orthogonal projection of $f$ onto the closed subspace of $\F_k$-measurable square-integrable functions.  The sequence $(M_k)$ is a martingale.  Under the standard martingale-convergence hypotheses, and when the increasing filtration generates the full Borel sigma-algebra modulo $\mu$, $M_k$ converges to $f$ almost surely (and in the corresponding $L^p$ regimes under the usual assumptions).
+
+This provides a conservative mathematical language for progressively resolving a fine quantity: no quantum-mechanical postulate is needed.  At level $k$, only averages or statistics constant on depth-$k$ fibers are accessible; increasing $k$ reveals finer variation.
+
+\section{Adaptive rather than uniform resolution}
+
+Human or computational attention need not refine every branch to the same depth.  The uniform spaces $X_k$ therefore form only the simplest case.
+
+\begin{definition}[Observation frontier]
+An \emph{observation frontier} is a finite prefix-free set $F\subset\Sigma_m^{<\N}$ such that
+\[
+X=\bigsqcup_{s\in F}\cyl{s}.
+\]
+The associated observation partition is $\Pi_F=\{\cyl{s}:s\in F\}$.
+\end{definition}
+
+Replacing one frontier node $s$ by its children
+\[
+\{s0,\ldots,s(m-1)\}
+\]
+is a \emph{local refinement}.  This permits high resolution in one conceptual region while leaving other regions coarse.  The resulting observable sets are arbitrary unions of frontier cells, and the same equivalence, pseudometric, symmetry, and information constructions can be repeated cellwise.
+
+This adaptive formulation may be more appropriate for models of attention: refinement is allocated where a task demands it rather than imposed globally by a single integer $k$.
+
+\section{A four-attribute binary example}
+
+For a finite illustration, take terminal states
+\[
+X^{(4)}=\{0,1\}^4
+\]
+with the same prefix distance and with $\lambda=1/2$.  A terminal state $x=x_0x_1x_2x_3$ records four ordered binary attributes.
+
+The hierarchy is
+\[
+\begin{array}{c|c|c}
+\text{depth}&\text{number of concept cells}&\text{states per cell}\\
+\hline
+0&1&16\\
+1&2&8\\
+2&4&4\\
+3&8&2\\
+4&16&1.
+\end{array}
+\]
+At depth $2$ the observable concepts are unions of the four cells
+\[
+00** ,\quad 01** ,\quad 10** ,\quad 11**.
+\]
+Within $00**$, the four terminal states
+\[
+0000,\ 0001,\ 0010,\ 0011
+\]
+are observationally indistinguishable in $\tau_2$ even though their full ultrametric distances are nonzero.
+
+For example,
+\[
+d(0010,0011)=2^{-3}=\frac18,
+\]
+because the first differing coordinate is index $3$, whereas
+\[
+d(0010,0110)=2^{-1}=\frac12.
+\]
+The first pair requires resolution $4$ to distinguish, while the second requires resolution $2$.
+
+Refining from depth $2$ to depth $3$ splits
+\[
+00**=000*\ \sqcup\ 001*.
+\]
+Before this refinement, a symmetry that exchanges the two child subtrees is invisible.  After refinement, that exchange changes the observed depth-$3$ label and is therefore no longer invisible.  This is symmetry reduction by increased resolution, not a simplicial unfolding.
+
+At depth $4$, all terminal states are singletons and the observation topology on the finite set becomes discrete.  Thus the finite example exhibits the full path
+\[
+\text{indiscrete}\to\text{coarse partition topologies}\to\text{discrete}.
+\]
+In the infinite model the same sequence continues indefinitely, and the full ultrametric topology is recovered only from all finite depths together.
+
+\section{Interpretation in relation to Matte-Blanco}
+
+Matte-Blanco's descriptions distinguish literal identity from a mode in which members of a class are treated as equivalent, and emphasize a contrast between symmetrical and asymmetrical organization \cite{MatteBlanco1975}.  The present framework supplies one precise mathematical interpretation of that distinction:
+\[
+\text{``treated as identical at resolution }k\text{''}
+\quad\rightsquigarrow\quad
+x\sim_k y,
+\]
+meaning
+\[
+f(x)=f(y)\quad\text{for every currently admissible observable }f.
+\]
+This does not imply $x=y$ in the latent space.
+
+The hierarchy also formalizes generalization and specialization:
+\begin{itemize}
+\item moving from $\cyl{sa}$ to $\cyl{s}$ forgets a distinction and is a coarsening;
+\item moving from $\cyl{s}$ to its children makes a new distinction available and is a refinement;
+\item the longest common prefix of two concepts gives their least common hierarchical generalization.
+\end{itemize}
+
+The model does \emph{not} automatically formalize every aspect of Matte-Blanco's bi-logic.  In particular, symmetrizing an asymmetric relation such as ``parent of'' is a separate operation from collapsing states into observational equivalence classes.  Likewise, absence of negation is not a consequence of ultrametricity.  Those features would require additional logical or relational structure.
+
+The psychological interpretation should therefore be stated as a modeling proposal rather than an identification theorem: hierarchical ultrametric geometry is a candidate representation of conceptual organization, while observational quotients provide a candidate representation of limited discrimination within that organization.
+
+\section{What the $p$-adic language contributes}
+
+The rooted tree is the minimal mathematical substrate.  It already gives cylinders, refinement, common ancestors, and a prefix ultrametric.  The $p$-adic specialization contributes additional structure:
+\begin{enumerate}[label=(\roman*)]
+\item a canonical compact topological ring $\Zp$;
+\item canonical quotient rings $\Z/p^k\Z$ representing finite resolutions;
+\item compatible arithmetic across all levels;
+\item Haar measure and harmonic-analysis tools;
+\item established $p$-adic dynamical systems, wavelets, and diffusion operators if a later model genuinely requires dynamics.
+\end{enumerate}
+
+The inverse-limit identity
+\[
+\Zp\cong\varprojlim_k\Z/p^k\Z
+\]
+is especially relevant: finite observational resolution is not an externally imposed interpretation but part of the native algebraic structure of $\Zp$.  Nevertheless, if arithmetic is never used, the tree model is more fundamental and avoids giving the $p$-adic coordinates an importance they do not earn.
+
+For composite branching number $m$, one should not silently transfer field properties of $\Qp$ to an ``$m$-adic field.''  The rooted $m$-ary tree and its prefix ultrametric remain valid, and inverse limits of the rings $\Z/m^k\Z$ can still be studied, but the algebra differs from the prime-base case.
+
+\section{Concept semantics, coordinate order, and modeling limitations}
+
+The prefix construction makes an assumption that should be explicit: earlier coordinates are hierarchically prior to later coordinates.  Permuting attributes generally changes the ultrametric.  Therefore a semantic model needs a justified tree, not merely an arbitrary list of features.
+
+There are several possible sources of a justified hierarchy:
+\begin{itemize}
+\item a domain taxonomy specified independently of the model;
+\item a learned dendrogram or hierarchical clustering from data;
+\item a decision tree in which earlier questions genuinely gate later distinctions;
+\item a nonregular rooted tree in which different concepts admit different subsequent refinements.
+\end{itemize}
+The regular prefix space should therefore be regarded as a normal form or coordinate model for a hierarchy, not as a claim that cognition literally stores ordered base-$p$ digits.
+
+A second limitation is empirical.  The model says how hierarchical distinctions \emph{could} be represented and restricted.  It does not by itself establish that unconscious cognition has an ultrametric geometry, that a particular cognitive system has a specific resolution $k$, or that Matte-Blanco's clinical observations select this model over alternatives.
+
+A third limitation concerns dynamics.  The present paper is deliberately static except for changes of resolution.  Random walks, hierarchical Markov processes, $p$-adic dynamical systems, ultrametric diffusion, and wavelet methods should be added only after a transition mechanism or empirical task has been specified.
+
+\section{Bridge to simplicial unfolding and gluing (Paper F)}
+
+The present paper treats a concept primarily as a hierarchical region.  Paper F will treat a concept as, or decorate it with, a simplicial complex encoding internal relational structure.  The two levels should not be conflated.
+
+A useful combined architecture is therefore
+\[
+\text{hierarchical node }s
+\quad\longmapsto\quad
+\text{concept region }\cyl{s}
+\quad\longmapsto\quad
+\text{internal complex }K_s.
+\]
+The tree answers \emph{where a concept sits in a classification hierarchy}; the complex answers \emph{how constituents of that concept are related}.
+
+In this language, the operations are different:
+\begin{description}
+\item[Resolution refinement (Paper U):] replace one observational cell by finer hierarchical cells, e.g.
+\[
+\cyl{s}\rightsquigarrow\{\cyl{s0},\ldots,\cyl{s(m-1)}\}.
+\]
+No simplex is being decomposed.
+\item[Simplicial unfolding (Paper F):] replace a complex $K$ by lower-dimensional faces or subcomplexes together with the incidence/overlap information needed to know how they came from $K$.
+\item[Gluing (Paper F):] assemble pieces using explicit attaching data.  The attaching pattern can reduce symmetry even when the pieces are individually isomorphic.
+\end{description}
+
+The last point gives a clean connection to the current paper.  Suppose isomorphic child complexes are initially permutable by a group $H$.  Once one specifies asymmetric attachment data, only the subgroup
+\[
+H_{\mathrm{attach}}=\{h\in H:h\text{ preserves all attaching data}\}
+\]
+remains a symmetry.  Thus \emph{gluing can break symmetry} by introducing relational information, whereas \emph{resolution refinement can break observational symmetry} by exposing distinctions that were previously hidden.  These are parallel ideas but not the same operation.
+
+The natural future bridge is functorial.  If hierarchical refinement maps induce simplicial maps
+\[
+K_{k+1}\to K_k,
+\]
+then they induce chain maps
+\[
+C_\bullet(K_{k+1})\to C_\bullet(K_k)
+\]
+and hence maps on homology.  Questions about which cycles become visible, disappear, or become identifiable at a given observational resolution belong naturally to Paper F or to a later bridge paper, not to the core of Paper U.
+
+\section{Further mathematical directions}
+
+The framework above suggests several extensions that can be investigated without changing the core definitions.
+
+\subsection{Nonregular and data-driven trees}
+Replace the regular $m$-ary tree by a locally finite rooted tree $T$.  Boundary points are infinite rays, concepts are descendant sets of vertices, and the distance is determined by the depth of the least common ancestor.  Finite ultrametric spaces admit standard rooted-tree representations, so this is the natural coordinate-free setting.
+
+\subsection{Noisy observation}
+Replace the deterministic map $\pi_k$ by a channel
+\[
+Q_k(y\mid x).
+\]
+Then indistinguishability becomes statistical rather than exact.  One may quantify distinguishability by total variation, likelihood ratios, mutual information, or hypothesis-testing risk.  The exact quotient theory developed here is the zero-noise limit.
+
+\subsection{Observation-design problems}
+Given a cost for refinement, one may ask which cells to split to maximize information, prediction accuracy, or discrimination of a target property.  Adaptive frontiers make this a combinatorial optimization problem on the hierarchy.
+
+\subsection{Dynamics}
+A latent process $X_t$ may evolve by a map or Markov kernel on the tree while an observation schedule controls the available resolution.  The observer sees
+\[
+Y_t=\pi_{k(t)}(X_t).
+\]
+This cleanly separates state dynamics from observation dynamics and allows later use of $p$-adic dynamical systems when justified.
+
+\section{Conclusion}
+
+The mathematically stable core of the ultrametric-unconscious idea is not that ultrametricity makes a nontrivial space indiscrete.  Ultrametricity instead supplies a geometry of hierarchy: nested/disjoint balls, common ancestors, and a numerical scale that records how deep two states remain identical in their prefixes.  Actual indistinguishability must be specified by an observation structure.
+
+For prefix spaces, the corrected model is particularly rigid.  At each finite resolution $k$, the observable equivalence classes are exactly the depth-$k$ ultrametric balls.  The coarse topology is a partition topology whose fibers are internally indiscrete; the corresponding ultrapseudometric assigns zero distance to unresolved states; the quotient is a finite genuine ultrametric; and a natural symmetry group acts transitively within each observational class.  Increasing resolution refines the partition and shrinks the group of invisible transformations.  The ultrametric distance is then a direct encoding of the first resolution at which a distinction can be made.
+
+The $p$-adic representation is optional but mathematically meaningful.  In prime base it identifies the hierarchy with $\Zp$, the concepts with residue classes $a+p^k\Zp$, and the finite observations with the canonical reductions modulo $p^k$.  This gives a compact inverse-limit realization of a system whose full state is the coherent limit of all finite resolutions.
+
+The resulting formulation supports a cautious interpretation inspired by Matte-Blanco: members of a class may be \emph{observationally equivalent without being literally identical}.  It also clarifies the relation to the author's separate unfolding program.  Paper U concerns hierarchical classification and observability; Paper F concerns simplicial decomposition, incidence, gluing, and homological structure.  Their bridge is the study of how additional information---whether finer observational labels or asymmetric attachment data---reduces a symmetry group and makes previously hidden distinctions mathematically available.
+
+\bibliographystyle{plain}
+\bibliography{paper_u_refs}
+
+\end{document}

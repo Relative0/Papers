@@ -1,0 +1,37 @@
+\section{What must persist, and what exact checking can establish}
+\label{sec:persistence}
+The preceding formulas describe a specified query. They do not by themselves identify a sufficient state for all future named-variable queries.
+
+\begin{proposition}[A profile histogram is not a persistent coordinate index]
+The unconditional histograms of coefficient rows and column profiles in a rank factorization need not determine counts after a coordinate restriction, even for two variables and inner dimension one.
+\end{proposition}
+\begin{proof}
+Let $f(x,y)=xy$ and $g(x,y)=(1-x)y$. Using row order $x=0,1$ and column order $y=0,1$, their factorizations have coefficient columns $(0,1)^T$ and $(1,0)^T$, respectively, and the same basis row $(0,1)$. In each case the two profile histograms put multiplicity one on each of $0$ and $1$. Both unconditional counts are one. But fixing $x=0$ gives count zero for $f$ and one for $g$. The histograms have discarded the row-to-assignment association needed to distinguish the queries.
+\end{proof}
+
+The reference rank artifact therefore retains assignment-indexed factors. Histograms may be computed for one selected row/column set, or cached together with the state they describe, but they cannot replace that state merely because they give the right unconditional count.
+
+\begin{proposition}[Exact all-query states distinguish functions]
+Let a deterministic state and query procedure answer $N(f,\rho)$ exactly for every partial assignment, including complete assignments, for each $f$ in a supported class $\mathcal F$. Distinct functions in $\mathcal F$ must have distinct states. Consequently a fixed $b$-bit state requires $b\ge\lceil\log_2|\mathcal F|\rceil$.
+\end{proposition}
+\begin{proof}
+If $f\ne g$, there is a complete assignment $a$ with $f(a)\ne g(a)$. The residual universe is empty, so $N(f,a)=f(a)$ and $N(g,a)=g(a)$. A common state could not answer both queries correctly. The bit bound is the elementary count of at most $2^b$ fixed-width states.
+\end{proof}
+
+For all Boolean functions this gives $b\ge2^n$. It does not rule out strong compression of structured subclasses, variable-length codes with appropriate size guarantees, or smaller summaries for a restricted query family. No historical novelty is claimed for this information-counting argument.
+
+\begin{proposition}[Black-box exact verification requires a full zero transcript]
+Consider a deterministic zero-error verifier given an artifact for the zero function on $n$ variables and only individual value-query access to an unknown source $f$. To accept exactly when $f$ equals that artifact for every permitted source, it must query all $2^n$ assignments on the all-zero source. The conclusion remains true under the promise that the source's truth matrix has GF(2) rank at most one across a fixed cut.
+\end{proposition}
+\begin{proof}
+Suppose some assignment $a$ is unqueried on the all-zero transcript. Replace the source by the function that is one exactly at $a$. All queries made by the deterministic verifier receive the same answers, so it follows the same path and accepts incorrectly. Across any fixed cut, the one-spike matrix has the form $e_xe_y^T$ and rank one, while the zero matrix has rank zero. Thus the promised class does not remove the adversary.
+\end{proof}
+
+This is a statement about an explicit access model. It is not a lower bound against source formulas with proof certificates, authenticated preprocessing, aggregate queries, trusted summaries, or approximate/randomized verification. In an analogous raw-word read model without global summaries, a word that reveals at most $w$ truth bits gives a lower bound of $\lceil2^n/w\rceil$ reads. A trusted canonical integer object's metadata is not automatically that raw-word model. In particular, this proposition must not be used to dismiss proof-producing certified knowledge compilation\cite{certified2025}, or to charge a redundant exhaustive equivalence proof when a flat wrapper retains its identical source value.
+
+\begin{example}[Rediscovery can increase the finest XOR factor count]
+Let $f(x,y,z)=xyz\xor x\xor y$. The ANF interaction hypergraph is connected by the monomial $xyz$, so a finest disjoint-XOR decomposition has one nonconstant component. Restricting $z=0$ leaves $x\xor y$, with two singleton components. The retained update can still store one two-variable factor; a fresh decomposition can split it into two. Thus monotonicity of a \emph{stored} factor list does not imply monotonicity of the number of freshly discovered components. The assertion follows directly from uniqueness of ANF: monomials spanning a proposed disjoint partition cannot be supplied by either side alone.
+\end{example}
+
+\paragraph{Implementation boundary.}
+A condition operation returns a new artifact over the remaining declared variables. A later condition may mention only that remaining universe; assigning an already removed variable is rejected rather than silently interpreted as a fresh query on the original state. The scalar query interface instead evaluates a view of whichever artifact it receives. Both behaviors are covered by separate tests. Exact semantics, mutable API behavior, serialization policy, and a performance model must remain distinct claims.

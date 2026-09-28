@@ -1,0 +1,242 @@
+## Overall verdict
+
+**The paper is promising as a narrowly scoped compiler-methods paper, but it is not yet ready for serious journal submission.** Its core Boolean mathematics survived the checks I performed. The main obstacles are the precision of the implementation contract, incomplete reproducibility, and whether the remaining contribution is sufficiently differentiated from ordinary local truth-function compilation.
+
+My weighted publication-readiness assessment is **65.3/100**, or approximately **65/100**. This is an editorial assessment—not an acceptance probability or a percentage of work completed.
+
+| Publication decision | Verdict |
+|---|---|
+| Public preprint | **GO AFTER SPECIFIED CORRECTIONS** |
+| Serious peer-reviewed submission | **MAJOR REVISION BEFORE SUBMISSION** |
+| Complete reproducibility/artifact release | **NOT YET REPRODUCIBLE** |
+
+The full audit is **26 pages**, with theorem-by-theorem findings, implementation comparisons, prior-art analysis, a reviewer-resolution matrix, six simulated referee perspectives, and a prioritized repair plan.
+
+**Downloads:** :chatgpt-content-reference{index="13"}[Full audit — PDF](sandbox:/mnt/data/CM_Publication_Readiness_Audit_2026-09-26.pdf) · :chatgpt-content-reference{index="14"}[Editable audit — Markdown](sandbox:/mnt/data/CM_Publication_Readiness_Audit_2026-09-26.md) · :chatgpt-content-reference{index="15"}[Audit and verification bundle — ZIP](sandbox:/mnt/data/CM_Publication_Audit_Evidence_2026-09-26.zip)
+
+## What I actually checked
+
+I examined the archive recursively, identifying **58 files**, and used the designated **14-page revised compiler manuscript** as the current paper rather than allowing historical drafts to supersede it.
+
+I read the current mathematical definitions, rules, proofs, worked examples, experimental claims, limitations, and bibliography; checked the earlier reviews and responses against the revised text; verified the archive manifests; rebuilt the manuscript; and inspected relevant public implementation files at the pinned repository revision:
+
+`0ab8ffd0c23ffa71ee951d375b1c170ffdcc084b`
+
+The implementation inspection covered the pair compiler, token operations, and dense-layout conversion—not merely pseudocode or an earlier reviewer’s description.    
+
+Two important positive results were:
+
+- **All 54 entries in the current root manifest passed their hash checks.**
+- The independently rebuilt PDF had **14 pages**, with normalized extracted text matching the supplied PDF on every page.
+
+However, I did **not** rerun the author’s reported 116-test suite or regenerate the historical timing statistics from their raw measurements. The audit distinguishes those reported results from the fresh checks executed here.
+
+## Publication-readiness scores
+
+The detailed report explains the confidence, evidence, and remaining requirements behind every score.
+
+| Category | Score /5 | Principal assessment |
+|---|---:|---|
+| Mathematical correctness | **4.5** | Core local identities and soundness arguments checked out |
+| Formal completeness and proof adequacy | **3.5** | Strategy selection, support, and output contracts need precision |
+| Novelty and differentiation | **2.5** | Classical ingredients are acknowledged; residual contribution needs stronger justification |
+| Prior-art coverage and citation quality | **3.5** | Substantive coverage, but closer implementation comparisons are needed |
+| Claim–evidence calibration | **4.0** | Particularly good acknowledgment of negative results and limitations |
+| Experimental methodology and evidence | **2.0** | Thoughtful protocol, but the designated pair-compiler study remains unexecuted |
+| Manuscript–implementation alignment | **2.5** | Several consequential boundary issues remain |
+| Reproducibility and artifact quality | **2.0** | Build reproducible; full code–test–data chain not closed |
+| Scope and substantive completeness | **4.0** | The compiler/foundations split is coherent |
+| Exposition and readability | **4.0** | Revised rules and worked example are substantially clearer |
+| Resolution of reviewer concerns | **3.5** | Many genuine fixes; several substantive issues remain |
+| Contribution positioning and venue fit | **3.0** | Methods/specification identity is stronger than mathematics or demonstrated performance |
+
+The finding register contains **no demonstrated P0 collapse of the central mathematical result**, but **seven P1 major issues**, four P2 improvements, and three P3 editorial/packaging items. Absence of a P0 finding is not a blanket correctness certificate.
+
+## 1. The core mathematics is in reasonably good shape
+
+I found no counterexample to the current paper’s one-hot selection identity, signed and swapped frame transformations, same-frame fusion, structural soundness, explicitly limited structural completeness theorem, or exact four-assignment tabulation.
+
+The worked example also checks out:
+
+\[
+[X\Rightarrow\neg Y]=0111,\qquad
+[\neg Y\Rightarrow X]=1110,
+\]
+
+and therefore
+
+\[
+0111\mathbin{\Updownarrow}1110
+=
+1001
+=
+[X\Leftrightarrow Y].
+\]
+
+The independent verification included:
+
+| Fresh verification | Coverage | Outcome |
+|---|---:|---|
+| One-hot selection | 64 assignment checks | Passed |
+| Signed-frame transport | 128 representation records; 512 assignment checks | Passed |
+| Signed-frame fusion | 262,144 table cases; **1,048,576 assignment checks** | Passed |
+| Bounded structural fragment | **8,080 expressions** | Passed |
+| Seeded reference-compiler testing | **15,000 strategy runs** | Passed |
+| Successful seeded compilations | **6,615 tokens checked against direct evaluation** | Passed |
+
+These are fresh mathematical and reference-model checks, **not a rerun of the author’s implementation tests**. They support the finite identities and the interpreted rules; they do not establish production-runtime correctness or performance. The executable checker and its results are included in the verification bundle.
+
+The completeness theorem deserves a balanced assessment: it is **correct for the syntactically generated fragment**, and the revised manuscript appropriately says so. It is useful as a specification guarantee, but it is not a broad semantic completeness theorem or, by itself, a substantial novelty claim.
+
+## 2. The most concrete new issue is the dense-output contract
+
+The manuscript describes dense output over **requested unfixed axes**. The inspected implementation instead retains **all axes in the supplied ambient row and column layouts**, including axes whose variables have been fixed or become irrelevant.
+
+For example, take
+
+\[
+e=(X\land Y)\lor Z,
+\qquad F=\{Z\mapsto0\},
+\]
+
+with row axes `[X,Z]` and column axes `[Y]`.
+
+The remaining function is \(X\land Y\), which has a four-entry truth table over its two unfixed variables. But the dense implementation reinserts the retained \(Z\) axis by broadcasting and returns a
+
+\[
+4\times2
+\]
+
+array: **eight entries, not four**. This follows directly from the dense wrapper and `lift_cm`.  
+
+**This is not an error in the Boolean answers. It is an error in how the manuscript describes the returned object and its size.**
+
+The least disruptive repair is to document the existing behavior accurately: distinguish the retained ambient layout from the unfixed or essential variables, and use the retained-axis count for allocation and materialization costs.
+
+A projected-output API would also be valid, but that would be a code change requiring new tests and appropriately versioned measurements.
+
+## 3. The formal rules need to separate valid derivations from selected compiler behavior
+
+The current inference system permits more than one provenance derivation for some expressions.
+
+For instance, \(X\land Y\) can receive an **S** derivation through primitive recognition, but the displayed TAB rule also permits a **T** derivation. Both produce the same correct token.
+
+That is harmless for semantic soundness. It becomes problematic when the judgment is also presented as though it uniquely describes what a particular compiler strategy does.
+
+A second example makes the distinction clearer:
+
+\[
+e=X\lor(Y\land Y).
+\]
+
+The tabulation rule is applicable to this two-variable expression. Nevertheless, the **pure-structural strategy** can fail because it is not allowed to use that rule. Thus “no pair judgment is derivable” is not an accurate unqualified description of failure under every selected strategy. The implementation explicitly distinguishes these strategies. 
+
+The repair is straightforward:
+
+> Keep the existing judgments as a relation describing admissible derivations, and separately specify the ordered, strategy-dependent compiler procedure that selects an outcome.
+
+The paper should also define its support calculation explicitly as **syntactic variable occurrence after excluding fixed names**, rather than leaving readers to assume essential functional dependence. The implementation collects the former. 
+
+These are important specification repairs, but they do **not** require abandoning the soundness proofs.
+
+## 4. Successful child folds are not necessarily retained after root failure
+
+The source confirms a significant operational boundary:
+
+> If root pair compilation fails, the dense wrapper passes the **original expression** to the ordinary builder.
+
+It does not retain a rewritten tree containing successfully compiled pair children. 
+
+Consequently, a diagnostic counter showing successful child pair operations does not necessarily show optimizations that survived into the returned result. Some work was attempted and then discarded.
+
+This matters for both exposition and benchmarking. The paper should distinguish **attempted/local pair constructions** from **committed contributions to the returned compilation**. The ordinary builder may perform its own optimizations; the finding is specifically that the pair wrapper does not preserve its successful child results on root failure.
+
+This should be documented and tested rather than silently “fixed” by implementing a different persistent local-rewriting algorithm.
+
+## 5. Novelty remains narrower than the mathematical presentation might initially suggest
+
+The current manuscript deserves credit for already acknowledging that the pointwise algebra is classical.
+
+The fresh literature check confirmed a particularly direct antecedent: **Cheng, Zhao, and Xu’s Proposition 3.3 gives the same-variable truth-vector identity underlying entrywise outer Boolean combination**. Their paper also defines XOR–AND Boolean matrix multiplication. The revised manuscript’s acknowledgment of that antecedent is appropriate. :chatgpt-content-reference{index="9"}
+
+The low-level implementation primitives also have close practical counterparts. Kitty’s official interface includes truth-table Boolean operations, variable swaps and flips, dependence tests, cofactors, and base expansion. These operations should not carry the paper’s novelty burden. :chatgpt-content-reference{index="10"}
+
+For stronger circuit-optimization positioning, the comparison becomes more demanding: DAG-aware AIG rewriting already combines local truth functions, input/output transformations, sharing-aware decisions, and a distinction between candidate and committed rewrites. That is not the identical algorithm, but it is close enough to require a precise comparison. :chatgpt-content-reference{index="11"}
+
+**My conclusion is not that nothing publishable remains.** It is that the strongest defensible contribution is closer to:
+
+> An explicit, frame-carrying specification of a restricted truth-function compiler, with strategy provenance, correctness guarantees, fallback and output boundaries, and an honest account of when the mechanism does or does not provide an implementation benefit.
+
+That can be useful. But the paper still needs to show why this integration offers a reusable research contribution rather than simply careful documentation of familiar operations.
+
+The most promising strengthening would be an executable contract and failure-mode suite, paired with a directly matched comparative study—not unrelated additional theory.
+
+## 6. The empirical story is honest, but not complete for this compiler
+
+The manuscript correctly distinguishes three different things:
+
+**Exploratory mechanism evidence.** The reported S1/S2 results show useful reductions relative to direct expansion, but the matched generic local optimizer agrees with CM on the principal symbolic-output metrics. That supports a local optimization mechanism, not a uniquely CM-specific advantage.
+
+**Negative dispatcher evidence.** The reported P14-PY0 result is a legitimate negative boundary on recipe-to-owned-ANF compilation. Its aggregate exact-dispatcher/direct ratios are approximately 1.0508 and 1.0607, with lower ratios better. Selected favorable examples do not overturn that aggregate result.
+
+**The designated pair-compiler confirmation.** The current manuscript expressly says that protocol v3 remains unexecuted. I did not establish an executed campaign matching that primary endpoint from the available package.
+
+These distinctions are documented in the audit’s empirical section with exact manuscript locations. I checked their interpretation and internal consistency, but did not regenerate the historical statistics from raw data.
+
+### Does the confirmatory experiment have to be completed before publication?
+
+**Not for every possible paper identity—but it is necessary for a demonstrated-performance identity.**
+
+A good methods or negative-results paper does not need a positive speedup. However, merely relabeling the current paper “methods” does not eliminate the need for a substantial contribution and appropriate evidence.
+
+My recommendation is to complete **one focused, task-matched study** using the already declared primary pair endpoint and direct packed comparator. A valid negative or parity result can still support the narrowed paper. Changing endpoints after an unfavorable result would be much less defensible.
+
+A small natural-input admission survey would also be valuable: how often does the current root-only pair path actually apply, and how much apparent child-level opportunity is discarded at root failure?
+
+## 7. Reproducibility is the other major obstacle
+
+The current paper builds, and the archive’s current integrity checks pass. Those are genuine strengths.
+
+But the package does not yet close the chain:
+
+\[
+\text{manuscript}
+\longrightarrow
+\text{exact code}
+\longrightarrow
+\text{tests}
+\longrightarrow
+\text{raw data}
+\longrightarrow
+\text{reported tables}.
+\]
+
+The public source is inspectable, but that does not by itself establish which revision produced every historical test report or measurement. Some important supporting material is referenced through external supplements or directories rather than included as a complete executable release.
+
+The only Python file shipped inside the ZIP is a historical manuscript checker. Its attempt to run fails because a required historical protocol file is absent from the retained relative location. That is a **packaging limitation**, not evidence that the current manuscript or Boolean algorithm is invalid.
+
+Before submission, the release should bind the manuscript, implementation revision, dependency information, test commands and logs, generators, seeds, raw records, analysis scripts, and table outputs in one versioned manifest. Recovering existing evidence may be sufficient; an expensive timing rerun should not be the first response when the missing step may be artifact recovery.
+
+## 8. Many earlier reviewer concerns really have been resolved
+
+I did not simply carry old criticism forward.
+
+The current draft has genuinely improved its XOR–AND conventions, operator transpose treatment, S/T/H explanation, displayed rules, worked example, limited completeness statement, direct packed baseline, primary endpoint, and distinction between occurrence count and unique DAG-node count.
+
+It also prominently acknowledges the generic optimizer tie, the negative dispatcher result, and the difference between broader project benchmarks and the pair-compiler task.
+
+Several historical requests concern material removed by the foundations/compiler split. Those should be marked **out of current scope**, not counted as continuing defects in this paper.
+
+The remaining reviewer-facing concerns are concentrated: operational precision, exact artifacts, directly relevant evidence, and substantive differentiation.
+
+## Recommended next step
+
+**Keep the paper narrow and perform a focused release-and-evidence revision.**
+
+Before preprint release, correct the output-axis contract, clarify strategy selection and syntactic support, document root-failure commitment, add the small regression examples, and accurately label the status of historical evidence.
+
+Before serious submission, close the reproducibility package, complete the directly matched pair study or an equally substantial reusable-method demonstration, and make the closest-prior-art comparison explicit.
+
+I would **not** add more general LM theory, phase structure, or quantum-adjacent material to strengthen this paper. Its best route is to become a precise, reproducible account of a restricted compiler and its empirical boundaries.
+
+**The strongest part is the sound, clearly bounded Boolean mechanism. The work most likely to improve publication readiness is now contract alignment, evidence completion, and a sharper demonstration of what the compiler contributes—not additional elementary lemmas.**

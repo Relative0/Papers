@@ -1,0 +1,17 @@
+{
+  "status": "frozen before first timing execution; exploratory bounded study, not confirmatory industrial benchmark",
+  "case_selection": "all 26 primary outputs of pinned EPFL ctrl; no cherry-picking; declared syntactic cone inputs including semantically unused inputs; plus 12 explicitly synthetic controls",
+  "external_commit": "0060e156826e733d69bf5b3322d1bdd0d03a1f9a",
+  "external_sha256": "59b209caf863b2c6a9739777ae0a60a37cc4480c2e0d72fcbfcdddeb9a49be08",
+  "partition_budget": 16,
+  "selection": "minimum actual compact JSON bytes among generated portfolio including flat fallback; tie ideal bits, kind, bytes",
+  "query_distribution": "128 independently generated partial assignments per case; per variable probability 1/2 of fixed, then uniform 0/1; deterministic seeds; queries are independent views of original function, not a cumulative chain",
+  "repetitions": 5,
+  "query_batch_size": 128,
+  "baselines": ["packed integer truth table with literal masks and native popcount", "fixed declared-order Python reference ROBDD without dynamic reordering"],
+  "artifact_query": "construct conditioned artifact then count; no dense residual matrix for nonflat families",
+  "source_input": "truth integer shared input, constructed and cross-checked before timing; this excludes common circuit-to-truth extraction only",
+  "charged": ["discovery/construction", "independent source-equivalence verification where representation changes", "serialization", "load for artifact", "literal mask construction for flat fallback", "query including condition updates"],
+  "report": ["all raw timing samples", "selected and per-kind ideal bits and serialized bytes", "validation failures", "full lifecycle totals at Q=1,10,100,1000", "nonpositive per-query advantage yields no finite break-even"],
+  "limits": ["one external design cannot establish prevalence", "26 related outputs are not independent circuit families", "not compared to optimized CUDD/DSD/ACD/TT", "CPU timings descriptive and environment-specific", "no formal verification"]
+}

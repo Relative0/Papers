@@ -1,0 +1,401 @@
+{
+  "started_utc": "2026-09-26T13:25:51.086121+00:00",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "method": "new temporary directory; separate child processes; user PYTHONPATH removed; no original output overwritten",
+  "code_hashes": {
+    "artifacts.py": "442990481100915ef17967ac650d74d9165763358737b945d28a46b47b7eb972",
+    "audit_historical.py": "576db497d4a18cfadbbb186f86e5679bb7229d88bb7deea573621a43a574ab7c",
+    "baselines.py": "dfa36dbda1e0cba33f7c08370d0b1ee521d8f02ba893722ea958789292b4d578",
+    "benchmark.py": "a4353ffa2e866e007dd3de5c610003d32f5e5c7d45e5281cee34d5e29eb21af0",
+    "benchmark_replay_v3.py": "cd3f690ce227e79f760fbe0c6bbf93b1174cc5b41d87baf2e85dc8f610a46e9f",
+    "checker.py": "ccdd456a5f2548e4428802de2b707e5b2ef24665c2e2321aeecc6329426075a5",
+    "codec.py": "f9375c0e66c6be5a53b93afe148fe8570d480d332b5cfdf4ad54b6b86e728a31",
+    "datasets.py": "3f84ea530916aa5370eabb14200287d2a1607730ca95f37d6259f7b5a5459acb",
+    "legacy_adapter.py": "fdac70e1037e99b428256296d41098fd651d91c4a6d6a72a1aa6cece9b4737e8"
+  },
+  "commands": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/datasets.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.5698449240003356,
+      "stdout": "{\n  \"cases\": 38,\n  \"external\": 26,\n  \"sha256\": \"04e0a7bd92b6a731a41472fbbd4e56b45d1c4e3387780ab7a3aa77cadb5ec41c\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_core.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.5512842789999013,
+      "stdout": "{\n  \"functions\": 278,\n  \"artifacts\": 3988,\n  \"conditioning_checks\": 105292,\n  \"serialization_checks\": 3988,\n  \"corruption_rejections\": 3988,\n  \"elapsed_seconds\": 1.9879966660000719,\n  \"status\": \"PASS\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_extensions_v2.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 4.897641045,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"counts\": {\n    \"matrices_4x4\": 65536,\n    \"binary_roundtrips\": 151,\n    \"trailing_data_rejections\": 151,\n    \"sequential_fused_condition_checks\": 3020,\n    \"recompression_checks\": 2000\n  },\n  \"elapsed_seconds\": 4.354274106000048\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_field_ranks.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.5281256670000403,
+      "stdout": "[\n  {\n    \"r\": 1,\n    \"dimension\": 2,\n    \"rank_real_01\": 1,\n    \"rank_real_sign\": 2,\n    \"expected_GF2_rank\": 1,\n    \"prototype_classes\": 2\n  },\n  {\n    \"r\": 2,\n    \"dimension\": 4,\n    \"rank_real_01\": 3,\n    \"rank_real_sign\": 4,\n    \"expected_GF2_rank\": 2,\n    \"prototype_classes\": 4\n  },\n  {\n    \"r\": 3,\n    \"dimension\": 8,\n    \"rank_real_01\": 7,\n    \"rank_real_sign\": 8,\n    \"expected_GF2_rank\": 3,\n    \"prototype_classes\": 8\n  },\n  {\n    \"r\": 4,\n    \"dimension\": 16,\n    \"rank_real_01\": 15,\n    \"rank_real_sign\": 16,\n    \"expected_GF2_rank\": 4,\n    \"prototype_classes\": 16\n  },\n  {\n    \"r\": 5,\n    \"dimension\": 32,\n    \"rank_real_01\": 31,\n    \"rank_real_sign\": 32,\n    \"expected_GF2_rank\": 5,\n    \"prototype_classes\": 32\n  }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_legacy_adapter.py",
+        "--source",
+        "<CLEAN_ROOT>/legacy_source"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 1.2823269290001917,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"counts\": {\n    \"gf2_rank\": 240,\n    \"queries\": 6750,\n    \"cofactor_blocks\": 269,\n    \"kronecker\": 162,\n    \"xor_components\": 4\n  },\n  \"scope\": \"At most 16 partitions, 2<=n<=10 cases in the shared dataset, not exhaustive legacy testing\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_persistence_v3.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.8355719289997978,
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"counts\": {\n    \"fresh_three_backend_roundtrips\": 278,\n    \"fresh_instance_query_triples\": 7070,\n    \"caller_alias_mutation_checks\": 1,\n    \"constructor_rejections\": 4,\n    \"json_structure_rejections\": 3,\n    \"binary_structure_rejections\": 4,\n    \"codec_label_policy_rejections\": 1,\n    \"residual_assignment_rejections\": 3,\n    \"single_spike_rank_checks\": 510,\n    \"explicit_histogram_counterexamples\": 1,\n    \"explicit_factor_refinement_counterexamples\": 1\n  },\n  \"histogram_counterexample\": {\n    \"f\": \"x*y\",\n    \"g\": \"(1-x)*y\",\n    \"f_truth_hex\": \"0x8\",\n    \"g_truth_hex\": \"0x2\",\n    \"coefficient_histogram\": {\n      \"0\": 1,\n      \"1\": 1\n    },\n    \"column_profile_histogram\": {\n      \"0\": 1,\n      \"1\": 1\n    },\n    \"unconditional_counts\": [\n      1,\n      1\n    ],\n    \"counts_given_x_0\": [\n      0,\n      1\n    ]\n  },\n  \"factor_refinement_counterexample\": {\n    \"formula\": \"x*y*z XOR x XOR y\",\n    \"truth_hex\": \"0xbc\",\n    \"restriction\": {\n      \"z\": 0\n    },\n    \"residual_formula\": \"x XOR y\",\n    \"original_factor_count\": 1,\n    \"retained_factor_count\": 1,\n    \"rediscovered_factor_count\": 2\n  },\n  \"elapsed_seconds\": 0.28473636199987595\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_scope_limits.py"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.5805414789997485,
+      "stdout": "{\n  \"status\": \"PASS; policy limitation reproduced, not silently disabled\",\n  \"python_decimal_guard\": 4300,\n  \"cases\": [\n    {\n      \"n\": 14,\n      \"binary_bytes\": 2059,\n      \"binary_roundtrip\": \"PASS\",\n      \"unconditional_count\": 16384,\n      \"artifact_json\": \"rejected by Python decimal conversion guard\",\n      \"packed_json\": \"rejected by Python decimal conversion guard\"\n    },\n    {\n      \"n\": 16,\n      \"binary_bytes\": 8204,\n      \"binary_roundtrip\": \"PASS\",\n      \"unconditional_count\": 65536,\n      \"artifact_json\": \"rejected by Python decimal conversion guard\",\n      \"packed_json\": \"rejected by Python decimal conversion guard\"\n    }\n  ],\n  \"implication\": \"n<=16 is a numerical policy cap, not a guarantee that every JSON encoding works; measured cases stop at n=12\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "code/audit_historical.py",
+        "--source",
+        "<CLEAN_ROOT>/legacy_source",
+        "--output",
+        "<CLEAN_ROOT>/reproducibility/raw_results/historical_contract_audit.json"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.6291048899997804,
+      "stdout": "{\n  \"status\": \"observations reproduced\",\n  \"events\": [\n    {\n      \"id\": \"H1\",\n      \"finding\": \"factor_bits is not recomputed by loader\",\n      \"original_factor_bits\": 16,\n      \"admitted_factor_bits\": 1,\n      \"truth_unchanged\": true\n    },\n    {\n      \"id\": \"H2\",\n      \"finding\": \"declared rank may be nonminimal inner dimension\",\n      \"actual_rank\": 1,\n      \"admitted_rank\": 2,\n      \"truth_unchanged\": true\n    },\n    {\n      \"id\": \"H3\",\n      \"finding\": \"self-supplied digest does not authenticate external source\",\n      \"admitted_changed_truth\": true,\n      \"interpretation\": \"integrity contract is not externally rooted source-equivalence certification\"\n    },\n    {\n      \"id\": \"H4\",\n      \"finding\": \"frozen dataclass does not deep-freeze document\",\n      \"post_admission_mutation_changes_truth\": true\n    },\n    {\n      \"id\": \"H5\",\n      \"finding\": \"boundary dimension unsupported\",\n      \"n_vars\": 0,\n      \"rejected\": true\n    },\n    {\n      \"id\": \"H6\",\n      \"finding\": \"boundary dimension unsupported\",\n      \"n_vars\": 1,\n      \"rejected\": true\n    }\n  ],\n  \"source_file_sha256\": \"cc862dc4f99266aa94be27c7116e62cdfffbdcee59c76d92781e86c52f5bbd37\",\n  \"scope_note\": \"No claim of a malicious use case; these are contract and metadata limits. Producer reconstruction was correct for the tested witness.\"\n}\n",
+      "stderr": ""
+    }
+  ],
+  "dataset_sha256": "04e0a7bd92b6a731a41472fbbd4e56b45d1c4e3387780ab7a3aa77cadb5ec41c",
+  "results": {
+    "core_exhaustive_v1.json": {
+      "functions": 278,
+      "artifacts": 3988,
+      "conditioning_checks": 105292,
+      "serialization_checks": 3988,
+      "corruption_rejections": 3988,
+      "elapsed_seconds": 1.9879966660000719,
+      "status": "PASS"
+    },
+    "extensions_v2.json": {
+      "status": "PASS",
+      "counts": {
+        "matrices_4x4": 65536,
+        "binary_roundtrips": 151,
+        "trailing_data_rejections": 151,
+        "sequential_fused_condition_checks": 3020,
+        "recompression_checks": 2000
+      },
+      "quotient_distribution": [
+        {
+          "rank": 0,
+          "delta": 0,
+          "prototype_classes": 1,
+          "matrices": 1
+        },
+        {
+          "rank": 1,
+          "delta": 0,
+          "prototype_classes": 1,
+          "matrices": 14
+        },
+        {
+          "rank": 1,
+          "delta": 0,
+          "prototype_classes": 2,
+          "matrices": 196
+        },
+        {
+          "rank": 1,
+          "delta": 1,
+          "prototype_classes": 1,
+          "matrices": 15
+        },
+        {
+          "rank": 2,
+          "delta": 0,
+          "prototype_classes": 2,
+          "matrices": 1176
+        },
+        {
+          "rank": 2,
+          "delta": 0,
+          "prototype_classes": 3,
+          "matrices": 4032
+        },
+        {
+          "rank": 2,
+          "delta": 0,
+          "prototype_classes": 4,
+          "matrices": 672
+        },
+        {
+          "rank": 2,
+          "delta": 1,
+          "prototype_classes": 1,
+          "matrices": 98
+        },
+        {
+          "rank": 2,
+          "delta": 1,
+          "prototype_classes": 2,
+          "matrices": 1372
+        },
+        {
+          "rank": 3,
+          "delta": 0,
+          "prototype_classes": 3,
+          "matrices": 8064
+        },
+        {
+          "rank": 3,
+          "delta": 0,
+          "prototype_classes": 4,
+          "matrices": 12096
+        },
+        {
+          "rank": 3,
+          "delta": 1,
+          "prototype_classes": 2,
+          "matrices": 3528
+        },
+        {
+          "rank": 3,
+          "delta": 1,
+          "prototype_classes": 3,
+          "matrices": 12096
+        },
+        {
+          "rank": 3,
+          "delta": 1,
+          "prototype_classes": 4,
+          "matrices": 2016
+        },
+        {
+          "rank": 4,
+          "delta": 1,
+          "prototype_classes": 3,
+          "matrices": 8064
+        },
+        {
+          "rank": 4,
+          "delta": 1,
+          "prototype_classes": 4,
+          "matrices": 12096
+        }
+      ],
+      "elapsed_seconds": 4.354274106000048
+    },
+    "field_ranks_v2.json": {
+      "status": "PASS",
+      "exact_arithmetic": "fractions.Fraction",
+      "cases": [
+        {
+          "r": 1,
+          "dimension": 2,
+          "rank_real_01": 1,
+          "rank_real_sign": 2,
+          "expected_GF2_rank": 1,
+          "prototype_classes": 2
+        },
+        {
+          "r": 2,
+          "dimension": 4,
+          "rank_real_01": 3,
+          "rank_real_sign": 4,
+          "expected_GF2_rank": 2,
+          "prototype_classes": 4
+        },
+        {
+          "r": 3,
+          "dimension": 8,
+          "rank_real_01": 7,
+          "rank_real_sign": 8,
+          "expected_GF2_rank": 3,
+          "prototype_classes": 8
+        },
+        {
+          "r": 4,
+          "dimension": 16,
+          "rank_real_01": 15,
+          "rank_real_sign": 16,
+          "expected_GF2_rank": 4,
+          "prototype_classes": 16
+        },
+        {
+          "r": 5,
+          "dimension": 32,
+          "rank_real_01": 31,
+          "rank_real_sign": 32,
+          "expected_GF2_rank": 5,
+          "prototype_classes": 32
+        }
+      ]
+    },
+    "historical_contract_audit.json": {
+      "status": "observations reproduced",
+      "events": [
+        {
+          "id": "H1",
+          "finding": "factor_bits is not recomputed by loader",
+          "original_factor_bits": 16,
+          "admitted_factor_bits": 1,
+          "truth_unchanged": true
+        },
+        {
+          "id": "H2",
+          "finding": "declared rank may be nonminimal inner dimension",
+          "actual_rank": 1,
+          "admitted_rank": 2,
+          "truth_unchanged": true
+        },
+        {
+          "id": "H3",
+          "finding": "self-supplied digest does not authenticate external source",
+          "admitted_changed_truth": true,
+          "interpretation": "integrity contract is not externally rooted source-equivalence certification"
+        },
+        {
+          "id": "H4",
+          "finding": "frozen dataclass does not deep-freeze document",
+          "post_admission_mutation_changes_truth": true
+        },
+        {
+          "id": "H5",
+          "finding": "boundary dimension unsupported",
+          "n_vars": 0,
+          "rejected": true
+        },
+        {
+          "id": "H6",
+          "finding": "boundary dimension unsupported",
+          "n_vars": 1,
+          "rejected": true
+        }
+      ],
+      "source_file_sha256": "cc862dc4f99266aa94be27c7116e62cdfffbdcee59c76d92781e86c52f5bbd37",
+      "scope_note": "No claim of a malicious use case; these are contract and metadata limits. Producer reconstruction was correct for the tested witness."
+    },
+    "legacy_adapter_v2.json": {
+      "status": "PASS",
+      "counts": {
+        "gf2_rank": 240,
+        "queries": 6750,
+        "cofactor_blocks": 269,
+        "kronecker": 162,
+        "xor_components": 4
+      },
+      "scope": "At most 16 partitions, 2<=n<=10 cases in the shared dataset, not exhaustive legacy testing"
+    },
+    "persistence_v3.json": {
+      "status": "PASS",
+      "counts": {
+        "fresh_three_backend_roundtrips": 278,
+        "fresh_instance_query_triples": 7070,
+        "caller_alias_mutation_checks": 1,
+        "constructor_rejections": 4,
+        "json_structure_rejections": 3,
+        "binary_structure_rejections": 4,
+        "codec_label_policy_rejections": 1,
+        "residual_assignment_rejections": 3,
+        "single_spike_rank_checks": 510,
+        "explicit_histogram_counterexamples": 1,
+        "explicit_factor_refinement_counterexamples": 1
+      },
+      "histogram_counterexample": {
+        "f": "x*y",
+        "g": "(1-x)*y",
+        "f_truth_hex": "0x8",
+        "g_truth_hex": "0x2",
+        "coefficient_histogram": {
+          "0": 1,
+          "1": 1
+        },
+        "column_profile_histogram": {
+          "0": 1,
+          "1": 1
+        },
+        "unconditional_counts": [
+          1,
+          1
+        ],
+        "counts_given_x_0": [
+          0,
+          1
+        ]
+      },
+      "factor_refinement_counterexample": {
+        "formula": "x*y*z XOR x XOR y",
+        "truth_hex": "0xbc",
+        "restriction": {
+          "z": 0
+        },
+        "residual_formula": "x XOR y",
+        "original_factor_count": 1,
+        "retained_factor_count": 1,
+        "rediscovered_factor_count": 2
+      },
+      "elapsed_seconds": 0.28473636199987595
+    },
+    "scope_limits_v3.json": {
+      "status": "PASS; policy limitation reproduced, not silently disabled",
+      "python_decimal_guard": 4300,
+      "cases": [
+        {
+          "n": 14,
+          "binary_bytes": 2059,
+          "binary_roundtrip": "PASS",
+          "unconditional_count": 16384,
+          "artifact_json": "rejected by Python decimal conversion guard",
+          "packed_json": "rejected by Python decimal conversion guard"
+        },
+        {
+          "n": 16,
+          "binary_bytes": 8204,
+          "binary_roundtrip": "PASS",
+          "unconditional_count": 65536,
+          "artifact_json": "rejected by Python decimal conversion guard",
+          "packed_json": "rejected by Python decimal conversion guard"
+        }
+      ],
+      "implication": "n<=16 is a numerical policy cap, not a guarantee that every JSON encoding works; measured cases stop at n=12"
+    }
+  },
+  "status": "PASS",
+  "finished_utc": "2026-09-26T13:26:02.981451+00:00"
+}

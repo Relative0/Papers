@@ -1,0 +1,47 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,microtype,hyperref}
+\hypersetup{hidelinks}
+\title{A Conditional Boolean Interface\\Optional Supplement to the Chain-Ring Resource Classification}
+\author{Brian Theory\\\small B-Theory}
+\date{26 September 2026}
+\begin{document}
+\maketitle
+This note records an optional symbolic construction. The main article does not depend on it. It supplies neither a physical probability model nor a preparation theory closed under all conditioning operations.
+
+\section{Scalar enrichment and support}
+Let $B$ be the Boolean ring of formulas modulo logical equivalence and let
+$A=\mathbb F_2[u]/(u^4)$. Every element of $B$ is idempotent, whereas the only idempotents in a commutative local ring are $0$ and $1$: if $e(1-e)=0$, one of $e$ and $1-e$ is a unit. A unital map $B\to A$ therefore cannot generate $u$.
+
+Instead choose the scalar extension $R=B\otimes_{\mathbb F_2}A$. Each element of $R$ is uniquely $\sum_{j=0}^3f_ju^j$, with $f_j\in B$. A Boolean valuation $v:B\to\mathbb F_2$ extends coefficientwise to $v_A:R\to A$. For a chosen state $\psi\in R^n$ and covector $e\in(R^n)^*$, write $e\psi=\sum_jg_ju^j$ and define
+\[
+\operatorname{Supp}(e\psi)=g_0\lor g_1\lor g_2\lor g_3.
+\]
+Then uniqueness of the polynomial expansion gives
+\[
+v(\operatorname{Supp}(e\psi))=1
+\quad\Longleftrightarrow\quad v_A(e)v_A(\psi)\ne0.
+\]
+Disjunction is essential; nonzero testing is neither additive nor multiplicative. The construction is conditional on the chosen enrichment, state, effects and tensor base. It is not a unique interpretation of bare Boolean formulas and does not automatically extend to mixed-characteristic scalar rings.
+
+\section{Coordinate projectors over the symbolic ring}
+Let $B_0\in\operatorname{GL}_n(R)$ and let $P_i$ be the standard coordinate projections. Set $J_i=B_0^{-1}P_iB_0$. Direct multiplication gives
+\[
+J_i^2=J_i,\qquad J_iJ_j=0\ (i\ne j),\qquad \sum_iJ_i=I.
+\]
+For every $\psi\in R^n$,
+\[
+B_0J_i\psi=P_iB_0\psi.
+\]
+Since $B_0$ is invertible, $J_i\psi=0$ if and only if $P_iB_0\psi=0$, which is equivalent to $(B_0\psi)_i=0$. This proof is valid over any commutative coefficient ring. It uses no division by the measured amplitude and no unit-coordinate assumption on individual columns. Applying $v_A$ to the inverse identity preserves invertibility and the projector identities, so the same statement holds after every valuation.
+
+The unit-coordinate shortcut valid over a local ring cannot be used over $R$, which need not be local. For a nontrivial idempotent $t\in B$, the symbolic matrix
+\[
+C=\begin{pmatrix}t&1+t\\1+t&t\end{pmatrix}
+\quad\text{satisfies}\quad C^2=I,
+\]
+but neither entry in either column is a unit: $t$ and $1+t$ are nonzero orthogonal idempotents. The inverse-identity argument above avoids this obstruction.
+
+These projectors supply repeatable linear branches, not probability normalization. They do not repair primitive-state closure: over $A$, conditioning the primitive resource $\operatorname{diag}(1,u)$ on its second standard row gives the nonprimitive nonzero vector $(0,u)$.
+\end{document}

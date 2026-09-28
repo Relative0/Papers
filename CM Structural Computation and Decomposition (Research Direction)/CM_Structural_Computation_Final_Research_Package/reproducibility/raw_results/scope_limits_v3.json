@@ -1,0 +1,23 @@
+{
+  "status": "PASS; policy limitation reproduced, not silently disabled",
+  "python_decimal_guard": 4300,
+  "cases": [
+    {
+      "n": 14,
+      "binary_bytes": 2059,
+      "binary_roundtrip": "PASS",
+      "unconditional_count": 16384,
+      "artifact_json": "rejected by Python decimal conversion guard",
+      "packed_json": "rejected by Python decimal conversion guard"
+    },
+    {
+      "n": 16,
+      "binary_bytes": 8204,
+      "binary_roundtrip": "PASS",
+      "unconditional_count": 65536,
+      "artifact_json": "rejected by Python decimal conversion guard",
+      "packed_json": "rejected by Python decimal conversion guard"
+    }
+  ],
+  "implication": "n<=16 is a numerical policy cap, not a guarantee that every JSON encoding works; measured cases stop at n=12"
+}

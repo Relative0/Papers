@@ -1,0 +1,174 @@
+{
+  "status": "PASS",
+  "source_commit": "0ab8ffd0c23ffa71ee951d375b1c170ffdcc084b",
+  "source_files_verified": 63,
+  "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "dependencies": {
+    "numpy": "2.2.6",
+    "pytest": "9.0.2",
+    "requests": "2.32.5",
+    "psutil": null,
+    "numba": null,
+    "dd": null
+  },
+  "test_command": [
+    "python",
+    "-m",
+    "pytest",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "source/tests/test_cm_pair_alignment.py",
+    "source/tests/test_output_budget.py",
+    "test_contract.py"
+  ],
+  "test_returncode": 0,
+  "test_scope": "90 upstream tests and 33 contract cases; one contract test includes 327680 scalar fusion comparisons.",
+  "historical": {
+    "status": "PASS",
+    "recovered_member_hashes_checked": 95,
+    "s1_s2": {
+      "raw_rows": 10500,
+      "all_arm_rows": 10389,
+      "families": {
+        "S1": 3750,
+        "S2": 6639
+      },
+      "seven_metric_differences": {
+        "final_degree": 0,
+        "final_monomials": 0,
+        "multiplications": 0,
+        "output_unique_nodes": 0,
+        "pair_terms": 0,
+        "peak_monomials": 0,
+        "serialized_bytes": 0
+      },
+      "fold_wins": {
+        "tie": 4379,
+        "generic": 6010
+      },
+      "failure_patterns": {
+        "BUDGET|BUDGET|BUDGET|BUDGET": 108,
+        "BUDGET|OK|BUDGET|BUDGET": 1,
+        "BUDGET|BUDGET|OK|OK": 2
+      },
+      "s2_sharing_medians_direct_cm": {
+        "0.0": [
+          35.0,
+          35.0
+        ],
+        "0.25": [
+          17.0,
+          12.0
+        ],
+        "0.5": [
+          9.0,
+          0.0
+        ]
+      }
+    },
+    "p14": {
+      "raw_rows": 51102,
+      "freeze_hashes_checked": 8,
+      "primary_estimates": [
+        {
+          "corpus": "synthetic",
+          "comparison": "E/F",
+          "cases": 384,
+          "geomean_recomputed": 0.9606159144454475,
+          "historical_ci98_75_not_recomputed": [
+            0.9454674888855255,
+            0.9811402291767519
+          ]
+        },
+        {
+          "corpus": "synthetic",
+          "comparison": "E/D",
+          "cases": 384,
+          "geomean_recomputed": 1.050842631357668,
+          "historical_ci98_75_not_recomputed": [
+            0.9683143025870368,
+            1.1075073405116616
+          ]
+        },
+        {
+          "corpus": "natural",
+          "comparison": "E/F",
+          "cases": 107,
+          "geomean_recomputed": 0.9610361761126052,
+          "historical_ci98_75_not_recomputed": [
+            0.9411428869579086,
+            1.000051222181085
+          ]
+        },
+        {
+          "corpus": "natural",
+          "comparison": "E/D",
+          "cases": 107,
+          "geomean_recomputed": 1.060667085385537,
+          "historical_ci98_75_not_recomputed": [
+            1.0176482939384681,
+            1.092694647134635
+          ]
+        }
+      ],
+      "scope": "Point estimates and all primary case ratios regenerated; bootstrap intervals read, not rerun. No new timings."
+    }
+  },
+  "audit_reference_model": {
+    "status": "PASS",
+    "archive_sha256": "399cf4bb2b1d0b885bd51f85d76792728d2227cf972ee3cf2496cfa4e45a8caf",
+    "manifest_entries_verified": 21,
+    "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+    "unmodified_checker_sha256": "70028e689049562ee78bc5efe1a074ef1abe7fbb59832f1ac4a157d3d76473ae",
+    "matches_supplied_results_exactly": true,
+    "results": {
+      "scope": "Independent scalar/matrix/token calculations and a reference model; not author implementation tests.",
+      "selection_evaluations": 64,
+      "signed_frame_records": 128,
+      "signed_frame_assignment_checks": 512,
+      "signed_fusion_assignment_checks": 1048576,
+      "signed_fusion_table_cases": 262144,
+      "bounded_structural_expressions": 8080,
+      "seeded_expression_strategy_runs": 15000,
+      "seeded_successful_tokens": 6615,
+      "seeded_outcomes": {
+        "S": 98,
+        "T": 4880,
+        "H": 1637,
+        "fallback": 8385
+      },
+      "explicit_regressions": {
+        "worked_tokens": [
+          "0111",
+          "1110",
+          "1001"
+        ],
+        "untransported_implications": {
+          "wrong_token": 0,
+          "correct_token": 6
+        },
+        "syntactic_support_vs_constant": {
+          "syntactic": [
+            "X",
+            "Y"
+          ],
+          "essential": [],
+          "token": 0
+        },
+        "tabulated_example": {
+          "expression": "X OR (Y AND Y)",
+          "provenance": "T"
+        },
+        "negated_tabulated_example": "H",
+        "mixed_child_example": "H",
+        "derivability_note": "X AND Y permits S by primitive rule and T by unguarded TAB, but structural-first hybrid strategy selects S."
+      },
+      "status": "PASS",
+      "script_sha256": "70028e689049562ee78bc5efe1a074ef1abe7fbb59832f1ac4a157d3d76473ae"
+    },
+    "scope": "Rerun of supplied mathematical/reference model, separate from production-source tests and timing evidence."
+  },
+  "timing_campaign_executed": false
+}

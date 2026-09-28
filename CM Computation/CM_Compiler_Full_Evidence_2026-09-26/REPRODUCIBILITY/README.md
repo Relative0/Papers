@@ -1,0 +1,13 @@
+# Reproducibility and evidence policy
+
+Source of record: [02_CONTRACT_REVISION_20260926/Operator_Level_CM_Compiler_Revised_Draft.tex](../02_CONTRACT_REVISION_20260926/Operator_Level_CM_Compiler_Revised_Draft.tex).
+
+Current correctness entry point: [September 26 reproduction instructions](../02_CONTRACT_REVISION_20260926/reproducibility/README.md). The package contains pinned implementation files, 123 selected passing tests, recovered historical records and independent S1/S2/P14 recounts. The [separate study package](../03_STUDY_DESIGN_20260926/README.md) contains the frozen negative synthetic pair-token run and P14 bootstrap replay. Natural/circuit performance and historical imported-runtime identity remain open.
+
+Keep package-relative files together. Repeated data/code in frozen release, source-snapshot and submission bundles is intentional: it records the inputs used for that package and permits isolated reproduction. It is not another novelty claim. The exact overlap ledger records every repeated hash. Current manuscript pointers and HISTORY labels distinguish loose manuscript heads from archival copies.
+
+- [Historical checker](../HISTORY/PORTFOLIO_PREDECESSOR_20260921/manuscript/check_manuscript.py): preserved history, not the current runner; its original relative protocol dependency is absent from this retained historical layout.
+
+Shared evidence: [program reproduction supplement](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/08_PORTFOLIO_PROGRAM_REPORTS_20260921/REPRODUCTION_SUPPLEMENT.zip); [phase handoff tables](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/11_SHARED_PHASE_HANDOFF_20260917). Canonical model corrections: [audit project](../../CM%20Correctness%20Audit%20and%20Model%20Boundaries%20%28Technical%20Report%29/README_FIRST.md).
+
+The original cleanup verified bytes and path dependencies; it did not certify all mathematical proofs. Historical `/mnt/data` imports/output paths are retained and documented. Earlier checks are in the [verification ledger](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/10_UNIQUE_PROJECT_PARTITION_20260925/verification_runs.json). The subsequent synthetic v4 timing observations are in a separate frozen run; historical timing rows were not rewritten.

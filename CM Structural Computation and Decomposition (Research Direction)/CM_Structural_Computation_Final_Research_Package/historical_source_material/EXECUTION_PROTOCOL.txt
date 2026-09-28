@@ -1,0 +1,859 @@
+# Pro Astra Master Research, Synthesis, Audit, Adversarial Review, and Three-Draft Revision Protocol
+
+## Project
+
+**CM Structural Computation and Decomposition (Research Direction)**
+
+You are acting as an independent senior research program composed of mathematical researchers, Boolean-function and logic-synthesis specialists, knowledge-compilation specialists, exact-algorithm designers, GF(2) linear-algebra researchers, tensor/decomposition specialists, research-software and reproducibility auditors, experimental-methodology reviewers, prior-art researchers, senior mathematical writers, journal editors, and adversarial peer reviewers.
+
+You have received a ZIP package containing a research portfolio. The primary folder for this assignment is:
+
+`CM Structural Computation and Decomposition (Research Direction)`
+
+The other folders are supporting material and neighboring projects. In particular:
+
+`CM-LMs and lifting`
+
+is intended to remain a separate standalone publication. You may cite it, use definitions/results from it when necessary, and recommend carefully bounded cross-references, but you must avoid building the new paper by duplicating its contribution. The same non-overlap discipline applies to the pair-compiler/computational project and other distinct papers in the portfolio.
+
+Read `00_ASSISTANT_RESEARCH_HANDOFF.md`, but treat it as a non-authoritative hypothesis ledger. Your task includes auditing and attacking that handoff.
+
+---
+
+# 1. Ultimate objective
+
+Your goal is to determine whether the present research direction can be developed into a genuinely standalone paper, article, or serious technical report that:
+
+1. has a clear and worthwhile research endpoint;
+2. is mathematically and computationally correct;
+3. is differentiated from both external prior art and the other papers in this package;
+4. contains enough theory, evidence, experiments, or negative results to justify publication;
+5. states novelty conservatively and accurately;
+6. has a reproducible evidence trail;
+7. is understandable outside the immediate CM research program;
+8. survives two full rounds of independent audit and adversarial peer review; and
+9. ends as a third, substantially revised manuscript plus a complete ZIP of all artifacts.
+
+You are not being asked merely to edit existing notes into prose. You are being asked to conduct research, test the research direction, discover stronger or more appropriate directions when possible, synthesize a paper, attack it, revise it based on those attacks and new research, attack it again, and revise it a third time.
+
+If the best final result is a negative-results paper, bounded methods paper, technical report, or a conclusion that no separate publication is justified, say so. Do not manufacture a positive contribution merely to satisfy the request for a paper.
+
+---
+
+# 2. Non-negotiable independence rules
+
+## 2.1 Read the actual artifacts recursively
+
+Unpack the supplied package and inspect the relevant directory tree, including useful nested ZIPs, source code, raw data, logs, TeX, PDFs, bibliographies, prior audits, historical reports, manifests, and review records.
+
+Do not work from filenames or summaries alone.
+
+Create a machine-readable file inventory with hashes and a human-readable evidence map.
+
+## 2.2 Do not assume the supplied material is correct
+
+Every one of the following is evidence to check, not authority:
+
+- prior audits;
+- review reports;
+- research viability decisions;
+- novelty ledgers;
+- performance summaries;
+- claimed theorem statements;
+- assistant handoffs;
+- generated tables;
+- historical experimental conclusions.
+
+When a claim cannot be reconciled with primary source, source code, raw data, or independent derivation, label it unresolved and do not elevate it into the manuscript.
+
+## 2.3 Do not assume novelty
+
+For every proposed main contribution, search external literature broadly and then primary literature narrowly. Track:
+
+- exact antecedents;
+- close conceptual antecedents;
+- different formalism/same result;
+- standard textbook facts;
+- recent work that changes priority;
+- whether novelty lies in theorem, representation, algorithm, combination, empirical endpoint, certification, workload, or negative result.
+
+Never infer novelty merely because the vocabulary `Correspondence Matrix` is absent from prior work.
+
+## 2.4 Distinguish theorem, implementation fact, experiment, conjecture, and proposal
+
+Maintain a claim ledger in which every important statement has one of these statuses:
+
+- proved in manuscript;
+- independently proved/verified in this research pass;
+- computationally verified over a stated finite domain;
+- empirically supported on a stated dataset;
+- supported by cited prior art;
+- conjecture/open question;
+- proposed experiment;
+- rejected/false;
+- unresolved.
+
+## 2.5 Preserve portfolio boundaries
+
+Construct an overlap matrix showing what belongs to:
+
+- this new structural-computation paper;
+- `CM-LMs and lifting`;
+- the pair-compiler/computational paper;
+- any model-boundary/modal/phase paper;
+- any guard-synthesis paper;
+- external prior art.
+
+If a result belongs elsewhere, cite/import it rather than re-deriving it as a new contribution unless a short self-contained lemma is genuinely necessary.
+
+---
+
+# 3. Initial hypotheses to audit, not obey
+
+The supplied handoff proposes that the strongest endpoint may be:
+
+> persistent, exact, independently checkable structural decomposition artifacts that support repeated Boolean restriction/conditioning and exact queries such as model counting without repeatedly reinflating the full truth table.
+
+It identifies four existing artifact families to inspect:
+
+1. XOR-component structure;
+2. GF(2)-rank factorization;
+3. cofactor/prototype blocks;
+4. Kronecker-product structure.
+
+It also proposes investigating a common restriction-stability framework, direct counting/query algorithms, artifact-size relationships, lifecycle amortization, and rigorous negative regions.
+
+Audit all of this. Attempt to falsify it. If another endpoint is materially stronger and cleaner, pursue that instead.
+
+---
+
+# 4. Phase 0 - Evidence recovery and research map
+
+Before new theorizing, build an evidence foundation.
+
+Produce:
+
+- `EVIDENCE_INVENTORY.csv` or JSON with paths, hashes, file types, dates if available, and project ownership;
+- `SOURCE_PRIORITY.md` distinguishing primary source/code/raw data from secondary summaries;
+- `PORTFOLIO_OVERLAP_MATRIX.md`;
+- `CLAIM_EVIDENCE_LEDGER.csv`;
+- `UNRESOLVED_EVIDENCE.md`;
+- `RESEARCH_MAP.md` showing the candidate endpoints and how existing artifacts connect to them.
+
+Recover and document, where possible:
+
+- exact implementations of structural decomposition;
+- partition-generation rules and limits;
+- correctness tests;
+- serialization formats;
+- historical repeated-query experiments;
+- workload identities/hashes;
+- timing methodology;
+- environment/configuration information;
+- code revisions or source snapshots;
+- raw versus summarized results.
+
+If historical results cannot be reproduced, preserve them as historical claims but do not use them as current evidence.
+
+---
+
+# 5. Phase 1 - Independent audit of the preliminary findings
+
+Write `AUDIT_OF_ASSISTANT_HANDOFF.md`.
+
+For every substantial recommendation in `00_ASSISTANT_RESEARCH_HANDOFF.md`, classify it as:
+
+- ACCEPT;
+- ACCEPT WITH MODIFICATION;
+- DEFER;
+- REJECT;
+- SUPERSEDED BY STRONGER DIRECTION.
+
+For each classification give:
+
+- mathematical reason;
+- source/package evidence;
+- external prior-art evidence;
+- practical/reproducibility reason;
+- consequence for the prospective paper.
+
+At minimum, explicitly audit:
+
+1. whether repeated restriction/counting is actually the strongest endpoint;
+2. whether no-reinflation has substantive content after comparison with BDD/KC/tensor/decomposition methods;
+3. whether the four artifact families form a coherent portfolio or an artificial bundle;
+4. whether there is a natural unifying theorem;
+5. whether the implementation's search is exhaustive or bounded;
+6. whether current size/cost metrics are honest;
+7. whether independent certification adds research value;
+8. whether the problem should target small/local Boolean functions rather than arbitrary large functions;
+9. whether structural retrieval deserves inclusion or a separate paper;
+10. whether a negative-results paper is stronger than a positive methods paper.
+
+---
+
+# 6. Phase 2 - Broad prior-art and connection search
+
+Conduct a serious literature review before freezing the paper.
+
+Search, at minimum, the following areas when relevant:
+
+- knowledge compilation, tractable queries, conditioning, model counting, DNNF/d-DNNF/SDD;
+- BDD/ROBDD/ZDD and CUDD;
+- disjoint-support decomposition;
+- Ashenhurst-Curtis decomposition and modern Boolean functional decomposition;
+- LUT/cut decomposition and logic synthesis;
+- ABC and comparable synthesis frameworks;
+- ANF/Mobius/Walsh/Fourier structural methods;
+- GF(2) matrix rank/factorization and related communication-complexity or rectangle viewpoints only where the mathematics truly matches;
+- tensor products, Kronecker decompositions, tensor trains, matrix-product states, and Boolean tensor representations;
+- circuit DAG/CSE representations;
+- factor graphs or algebraic decision diagrams if relevant;
+- certified knowledge compilation and proof-producing/checkable representations;
+- exact model counting, weighted model counting if it naturally extends the work;
+- incremental/repeated query processing;
+- dynamic or conditioned Boolean representations;
+- structural retrieval/circuit embeddings/GNN retrieval if retrieval remains under consideration;
+- negative-results/reproducibility methodology for systems and exact algorithms.
+
+Use primary sources whenever possible. For every paper that materially affects the contribution, record:
+
+- exact result;
+- formalism;
+- supported operations;
+- asymptotics or scope;
+- experimental setting;
+- overlap with this project;
+- difference from this project;
+- what must be cited or removed from novelty claims.
+
+Produce:
+
+- `PRIOR_ART_MATRIX.csv`;
+- `LITERATURE_REVIEW_NOTES.md`;
+- `NOVELTY_LEDGER.md`.
+
+A novelty claim may survive only if it remains distinct after this comparison.
+
+---
+
+# 7. Phase 3 - Research program before Draft 1
+
+Run parallel theory, algorithm, and experimental tracks. Do not force all tracks into the paper.
+
+## 7.1 Theory track
+
+Formalize the computational object without relying on CM-specific prose when a standard Boolean-function statement is clearer.
+
+Investigate and either prove or reject the following kinds of results.
+
+### A. Restriction stability
+
+For each candidate artifact A representing f, determine whether a partial assignment rho permits direct construction of an artifact A|rho representing f|rho without reconstruction of the full truth table.
+
+State exact conditions. For example, coordinate alignment may matter for tensor/Kronecker structure.
+
+Prove correctness and complexity bounds.
+
+### B. Direct exact queries
+
+For each artifact family, determine which queries can be answered directly:
+
+- satisfiable/unsatisfiable;
+- tautology;
+- exact model count;
+- repeated conditioning;
+- support/relevance queries;
+- equivalence within a restricted class;
+- any other query with a natural exact algorithm.
+
+Do not include a query merely because it is possible; include it if it helps form a coherent research contribution.
+
+### C. Size monotonicity and update complexity
+
+Investigate whether restriction can increase, preserve, or decrease:
+
+- factor count;
+- GF(2) rank;
+- prototype count;
+- Kronecker factor size;
+- serialized artifact size.
+
+Prove what is true and construct minimal counterexamples to what is false.
+
+### D. Relations and separations among artifact families
+
+Search for implications, non-implications, and representation-size separations.
+
+Examples of questions, not assumed results:
+
+- Does a disjoint XOR decomposition impose a small rank bound across compatible splits?
+- Does a small cofactor-prototype family impose a rank bound?
+- What is the relationship between Kronecker factorization and rank or prototype count?
+- Can one family be exponentially more succinct than another?
+- Are there natural closure properties under restriction, negation, variable permutation, input/output polarity changes, or composition?
+
+Be especially cautious about overlap with the rank/separability foundations in `CM-LMs and lifting` and with standard external results.
+
+### E. Search optimality and candidate universes
+
+Precisely define what the current discovery algorithm optimizes.
+
+If it examines a bounded candidate family, say so.
+
+If a globally optimal decomposition problem can be solved for the target scale, investigate complexity and implementation. Otherwise use calibrated language such as `best among the frozen candidate partitions`.
+
+### F. Stronger theory not anticipated here
+
+Actively search for stronger connections or theorems. Potentially relevant concepts may include functional decomposition theory, tensor rank, algebraic normal forms, communication measures, knowledge-compilation transformations, incremental algorithms, or exact dynamic representations.
+
+Do not add a connection unless it produces a theorem, algorithm, meaningful explanation, or benchmark requirement.
+
+## 7.2 Algorithm and implementation track
+
+Inspect and, when justified, refactor/extend the recovered code so that the manuscript's exact claims correspond to actual executable algorithms.
+
+Strongly consider a four-part architecture:
+
+1. artifact producer/discoverer;
+2. serialized witness;
+3. small independent checker/verifier;
+4. direct downstream query/update evaluator.
+
+Avoid circular validation where producer and verifier silently reuse the same critical logic.
+
+Report both:
+
+- idealized mathematical payload size;
+- actual serialized bytes and, if feasible, resident memory.
+
+## 7.3 Experimental track
+
+Freeze research questions and decision criteria before looking at confirmatory results.
+
+Candidate core questions:
+
+- natural prevalence of artifact families;
+- compression/space value;
+- direct-query performance;
+- repeated-query amortization;
+- break-even query count Q;
+- identifiable negative regions;
+- predictive structural conditions.
+
+Separate:
+
+- synthetic positive controls;
+- synthetic negative controls;
+- natural/external benchmark functions;
+- held-out confirmatory data.
+
+Do not use deliberately generated decomposable instances as evidence that decompositions are common in practice.
+
+### Required lifecycle accounting
+
+Unless a different endpoint is rigorously justified, charge the full lifecycle:
+
+`T_total(Q) = T_discover + T_verify + T_serialize_or_load + sum(T_query) + T_fallback + other unavoidable conversion costs.`
+
+Report cold and warm scenarios separately where reuse is legitimate.
+
+### Baselines
+
+Choose baselines appropriate to the final endpoint, not merely easy ones. Candidate baselines include:
+
+- packed truth table;
+- direct AST/DAG/CSE;
+- ROBDD/CUDD;
+- DSD;
+- modern ACD or comparable functional decomposition;
+- relevant knowledge-compilation language;
+- tensor-train/factorized representation when tensor claims are made;
+- ABC or synthesis tools where the endpoint concerns local circuit functions.
+
+If a baseline is infeasible or mismatched, document why.
+
+### Scale and domain
+
+The recovered implementation appears bounded in variable count. Decide whether the paper is explicitly about bounded/local Boolean functions or whether scaling work is required.
+
+If local circuit cuts are the intended domain, evaluate a range that is meaningful for that domain and explain the connection to synthesis practice.
+
+## 7.4 Alternative-direction track
+
+Briefly test whether another paper is stronger, such as:
+
+- structural retrieval;
+- negative-results/reproducibility;
+- a pure theorem paper on restriction-stable decompositions;
+- a compact artifact-certification paper;
+- another unexpected direction discovered during prior-art review.
+
+Do not combine multiple weak directions simply to make a longer manuscript.
+
+---
+
+# 8. Phase 4 - Freeze the paper spine
+
+Before writing Draft 1, produce `PAPER_SPINE_DECISION.md` containing:
+
+1. final research question;
+2. paper type: theory, methods, empirical, negative-results, technical report, or hybrid;
+3. one-sentence contribution;
+4. 3-6 main contributions, each independently supportable;
+5. excluded directions and why they were excluded;
+6. exact relationship to `CM-LMs and lifting` and the pair-compiler paper;
+7. primary external comparators;
+8. evidence still missing;
+9. stop/go decision.
+
+If the research does not support a standalone paper, stop pretending otherwise and produce a rigorous technical report explaining why. You may still complete the three-pass process on that report.
+
+---
+
+# 9. Phase 5 - Manuscript Draft 1
+
+Create a complete manuscript, not an outline.
+
+Required files:
+
+- `paper_v1.tex`;
+- `references_v1.bib` or a shared rigorously maintained bibliography;
+- `paper_v1.pdf` if the environment permits compilation;
+- source for all figures/tables;
+- appendix/supplement source;
+- code/data used for manuscript claims;
+- `DRAFT1_CLAIM_CROSSWALK.md` mapping every major claim to theorem, source, code, data, or citation.
+
+## 9.1 Expository standard
+
+The paper should be mathematically serious but explanatory. Include concrete examples that help a reader understand:
+
+- what an artifact looks like;
+- how restriction changes it;
+- how a direct query avoids reinflation;
+- when discovery cost is or is not repaid.
+
+Use standard language where possible. Explain how CM/LM ideas motivated the work without requiring the reader to accept unfamiliar vocabulary for standard Boolean-function concepts.
+
+## 9.2 Notation
+
+When the manuscript uses the established project notation, preserve it unless there is a strong mathematical/expository reason to change it:
+
+- Boolean values: `\mathbb B = \{0,1\} \cong \mathbb F_2`;
+- XOR is written `\Updownarrow` rather than casually replacing it with `\oplus` in project-specific notation;
+- equivalence/XNOR may use `\Leftrightarrow`;
+- binary connective variable `\Theta` and compact CM `[\Theta]` when CM notation is actually needed;
+- rotation operator `R`, not `P`, if rotation material is referenced.
+
+However, do not force CM notation into a theorem that is clearer and more broadly meaningful as a theorem about ordinary Boolean functions or GF(2) matrices.
+
+## 9.3 Contribution language
+
+Distinguish:
+
+- new theorem;
+- new algorithm;
+- new integration of known structures;
+- new empirical observation;
+- new negative result;
+- reproduced prior result;
+- background.
+
+Never imply that a standard decomposition becomes novel merely because it is expressed using CM vocabulary.
+
+---
+
+# 10. Phase 6 - Independent Audit 1 of Draft 1
+
+After Draft 1 is frozen, switch roles. Treat it as a submission received from someone else.
+
+Do not edit it during the audit.
+
+Produce `AUDIT_ROUND_1.md` with category ratings and detailed evidence.
+
+Audit at least:
+
+1. mathematical correctness;
+2. theorem completeness and hidden assumptions;
+3. algorithm correctness;
+4. experimental design;
+5. statistics/measurement validity;
+6. reproducibility;
+7. claim-to-evidence traceability;
+8. novelty and priority;
+9. literature completeness;
+10. overlap with neighboring CM papers;
+11. terminology and notation;
+12. exposition and examples;
+13. scope/coherence;
+14. limitations honesty;
+15. title/abstract/conclusion calibration;
+16. publication readiness.
+
+For every theorem, proposition, important equation, and empirical claim, try to construct counterexamples or reproduce the computation.
+
+Maintain:
+
+- `ROUND1_BLOCKERS.md`;
+- `ROUND1_NONBLOCKERS.md`;
+- updated `CLAIM_EVIDENCE_LEDGER.csv`;
+- updated `NOVELTY_LEDGER.md`.
+
+---
+
+# 11. Phase 7 - Adversarial Reviewer Round 1
+
+Create a panel of independent reviewers. Each reviewer must write a separate report before seeing the synthesized panel conclusion.
+
+At minimum include:
+
+### Reviewer A - Boolean decomposition and logic synthesis specialist
+
+Attack decomposition novelty, search design, DSD/ACD comparisons, circuit-cut relevance, and synthesis baselines.
+
+### Reviewer B - Knowledge compilation and symbolic reasoning specialist
+
+Attack claims about conditioning, exact queries, counting, compilation, and representation value. Compare with BDD/DNNF/SDD and certified KC where relevant.
+
+### Reviewer C - GF(2), matrix, tensor, and algebra specialist
+
+Attack rank, Kronecker, factorization, closure, hierarchy, and separation theorems. Look for standard results being renamed.
+
+### Reviewer D - Algorithms and experimental methodology specialist
+
+Attack lifecycle costing, benchmark selection, amortization, cold/warm comparisons, leakage, stopping rules, scaling, and statistical conclusions.
+
+### Reviewer E - Research software/reproducibility specialist
+
+Attempt to reproduce the computational claims from a clean path. Attack hidden dependencies, shared verifier logic, missing seeds, environment drift, data provenance, and artifact integrity.
+
+### Reviewer F - Skeptical general theory/systems reviewer
+
+Ask whether the paper has one coherent contribution, whether the endpoint matters, and whether the work would still be interesting if all CM terminology were removed.
+
+### Reviewer G - Senior editor
+
+Assess audience, positioning, paper type, length, likely reviewer objections, and what would be required before serious submission.
+
+Each reviewer must provide:
+
+- concise summary of what the paper actually contributes;
+- strongest argument for publication;
+- strongest argument against publication;
+- major issues;
+- minor issues;
+- claims requiring citation or weakening;
+- experiments/theorems that must be added or removed;
+- suspected overlap/prior-art risks;
+- fatal flaw test;
+- specific revision requests.
+
+Do not let reviewer reports converge artificially. Genuine disagreement is useful.
+
+Then produce `REVIEW_PANEL_SYNTHESIS_R1.md` with a cross-review issue matrix.
+
+---
+
+# 12. Phase 8 - Revision to Draft 2
+
+Now respond to Audit 1 and Reviewer Round 1.
+
+Produce:
+
+- `RESPONSE_TO_AUDIT_AND_REVIEWERS_R1.md`;
+- `REVISION_PLAN_V2.md`;
+- `CHANGELOG_V1_TO_V2.md`;
+- `paper_v2.tex`;
+- `paper_v2.pdf` if compilable;
+- updated bibliography;
+- updated code/data/figures/tables;
+- `DRAFT2_CLAIM_CROSSWALK.md`.
+
+This must be a substantive revision.
+
+If reviewers identify a mathematical or empirical gap, do the new research necessary to close it. Examples:
+
+- prove a missing lemma;
+- weaken or remove a theorem;
+- find a counterexample;
+- add a stronger prior-art comparison;
+- run a new baseline;
+- run a held-out experiment;
+- add serialization/memory measurements;
+- split a direction into future work;
+- change the title or central thesis;
+- turn a positive paper into a negative-results paper if that is what the evidence warrants.
+
+Do not answer a major reviewer objection with wording alone when new evidence is needed.
+
+For every Round 1 issue, mark:
+
+- RESOLVED;
+- PARTIALLY RESOLVED;
+- REJECTED WITH REASON;
+- OPEN BLOCKER.
+
+---
+
+# 13. Phase 9 - Independent Audit 2 of Draft 2
+
+Freeze Draft 2, then perform a second independent audit from scratch.
+
+Produce `AUDIT_ROUND_2.md`.
+
+The second audit must explicitly test whether the first revision created new problems. In particular:
+
+- verify all newly added theorems;
+- reproduce all newly added experiments;
+- inspect whether scope creep occurred;
+- check whether prior-art additions undermine novelty claims;
+- check whether responses actually changed the manuscript;
+- search for contradictions between abstract, theorem statements, results, limitations, and conclusion;
+- check whether negative results are reported symmetrically;
+- check whether baselines remain fair after implementation changes.
+
+Produce updated blockers/nonblockers and ledgers.
+
+---
+
+# 14. Phase 10 - Adversarial Reviewer Round 2
+
+Use a partly fresh panel. At least three reviewers should be new personas who were not responsible for Round 1. Existing reviewer roles may also return to check their previous objections.
+
+Require the panel to attack Draft 2 without assuming Round 1 was successfully answered.
+
+Additional Round 2 tasks:
+
+- identify any surviving reason for rejection;
+- search for a stronger external paper that would collapse the novelty claim;
+- test whether the paper's best result can be stated more simply;
+- determine whether any section belongs in another paper;
+- test whether the empirical result generalizes beyond the selected benchmark family;
+- inspect supplement/reproducibility completeness;
+- decide which claims should be theorem-level, experimental, conjectural, or removed.
+
+Produce separate reports plus `REVIEW_PANEL_SYNTHESIS_R2.md`.
+
+---
+
+# 15. Phase 11 - Revision to Draft 3
+
+Create the third manuscript as the final integrated research draft.
+
+Required outputs:
+
+- `RESPONSE_TO_AUDIT_AND_REVIEWERS_R2.md`;
+- `REVISION_PLAN_V3.md`;
+- `CHANGELOG_V2_TO_V3.md`;
+- `paper_v3.tex`;
+- `paper_v3.pdf` if compilable;
+- final bibliography;
+- final figures/tables;
+- final code/data/reproducibility supplement;
+- `DRAFT3_CLAIM_CROSSWALK.md`.
+
+Draft 3 must incorporate the strongest defensible version of the research, not merely preserve Draft 1's thesis.
+
+If the project changed direction after the evidence, document that evolution clearly.
+
+---
+
+# 16. Phase 12 - Final audit and publication-readiness decision
+
+Perform one final audit of Draft 3 and the full reproducibility bundle.
+
+Produce `FINAL_PUBLICATION_READINESS_AUDIT.md`.
+
+Rate and explain:
+
+- correctness;
+- completeness;
+- novelty/differentiation;
+- prior-art coverage;
+- theorem quality;
+- experimental quality;
+- reproducibility;
+- overlap control;
+- exposition;
+- limitations;
+- artifact quality;
+- suitability as preprint;
+- suitability for workshop/conference/journal/technical-report release.
+
+Do not predict acceptance. Instead state what class of venue/audience the work is technically suited for, what issues remain, and whether the manuscript is mature enough to circulate publicly.
+
+Give one of these evidence-based statuses:
+
+- READY FOR PUBLIC PREPRINT AND SERIOUS SUBMISSION;
+- READY FOR PUBLIC PREPRINT, BUT NEEDS SPECIFIC WORK BEFORE SUBMISSION;
+- TECHNICAL REPORT / WORKSHOP-LEVEL RESULT ONLY AT PRESENT;
+- NOT YET PUBLICATION-READY;
+- NO DISTINCT STANDALONE PAPER JUSTIFIED.
+
+List every unresolved issue that could materially affect correctness or novelty.
+
+---
+
+# 17. Required research discipline
+
+## 17.1 Counterexample-first mathematics
+
+For every proposed general theorem, actively search for the smallest counterexample computationally and analytically before polishing the proof.
+
+## 17.2 Reproduction before promotion
+
+Do not cite historical internal performance numbers as current findings unless they are reconciled with exact code, workload, environment, and raw measurements.
+
+## 17.3 Full-cost performance claims
+
+Never exclude preprocessing or verification merely because it makes the new method look worse. If a legitimate amortized-use scenario exists, report both first-use and amortized results.
+
+## 17.4 No circular benchmark labels
+
+If a structural retrieval experiment remains, do not define families by a mutation generator and then claim success from features that recover that generator. Use an independently meaningful target.
+
+## 17.5 Standard facts remain standard
+
+Do not market Boolean lattices, tiny operator orbits, standard GF(2) factorization, ordinary Kronecker identities, or known decomposition theorems as new results.
+
+## 17.6 Negative evidence is a result
+
+If a method fails to amortize or a proposed theorem is false, preserve that information. It may belong in the paper, supplement, or negative-results report.
+
+---
+
+# 18. Required final ZIP structure
+
+At the end, create one complete ZIP. A recommended layout is:
+
+```text
+CM_Structural_Computation_Final_Research_Package/
+|
++-- 00_READ_ME_FIRST.md
++-- 01_FINAL_PUBLICATION_READINESS_AUDIT.md
++-- 02_FINAL_EXECUTIVE_SUMMARY.md
++-- 03_FINAL_CLAIMS_AND_NOVELTY.md
++-- 04_UNRESOLVED_ISSUES.md
++-- 05_MANIFEST_SHA256.csv
++-- 06_PACKAGE_TREE.txt
++-- evidence/
+|   +-- EVIDENCE_INVENTORY.csv
+|   +-- SOURCE_PRIORITY.md
+|   +-- PORTFOLIO_OVERLAP_MATRIX.md
+|   +-- CLAIM_EVIDENCE_LEDGER.csv
+|   +-- UNRESOLVED_EVIDENCE.md
+|   +-- RESEARCH_MAP.md
++-- prior_art/
+|   +-- PRIOR_ART_MATRIX.csv
+|   +-- LITERATURE_REVIEW_NOTES.md
+|   +-- NOVELTY_LEDGER.md
+|   +-- references_master.bib
++-- research/
+|   +-- AUDIT_OF_ASSISTANT_HANDOFF.md
+|   +-- PAPER_SPINE_DECISION.md
+|   +-- theorem_notes/
+|   +-- counterexamples/
+|   +-- experiment_design/
+|   +-- research_logs/
++-- manuscripts/
+|   +-- v1/
+|   |   +-- paper_v1.tex
+|   |   +-- paper_v1.pdf
+|   |   +-- DRAFT1_CLAIM_CROSSWALK.md
+|   +-- v2/
+|   |   +-- paper_v2.tex
+|   |   +-- paper_v2.pdf
+|   |   +-- DRAFT2_CLAIM_CROSSWALK.md
+|   +-- v3/
+|       +-- paper_v3.tex
+|       +-- paper_v3.pdf
+|       +-- DRAFT3_CLAIM_CROSSWALK.md
++-- audits/
+|   +-- AUDIT_ROUND_1.md
+|   +-- ROUND1_BLOCKERS.md
+|   +-- ROUND1_NONBLOCKERS.md
+|   +-- AUDIT_ROUND_2.md
+|   +-- ROUND2_BLOCKERS.md
+|   +-- ROUND2_NONBLOCKERS.md
+|   +-- FINAL_PUBLICATION_READINESS_AUDIT.md
++-- reviews/
+|   +-- round1/
+|   |   +-- reviewer_A.md
+|   |   +-- reviewer_B.md
+|   |   +-- reviewer_C.md
+|   |   +-- reviewer_D.md
+|   |   +-- reviewer_E.md
+|   |   +-- reviewer_F.md
+|   |   +-- reviewer_G.md
+|   |   +-- REVIEW_PANEL_SYNTHESIS_R1.md
+|   +-- round2/
+|       +-- reviewer_*.md
+|       +-- REVIEW_PANEL_SYNTHESIS_R2.md
++-- responses_and_changelogs/
+|   +-- RESPONSE_TO_AUDIT_AND_REVIEWERS_R1.md
+|   +-- REVISION_PLAN_V2.md
+|   +-- CHANGELOG_V1_TO_V2.md
+|   +-- RESPONSE_TO_AUDIT_AND_REVIEWERS_R2.md
+|   +-- REVISION_PLAN_V3.md
+|   +-- CHANGELOG_V2_TO_V3.md
++-- reproducibility/
+|   +-- README.md
+|   +-- environment/
+|   +-- code/
+|   +-- tests/
+|   +-- data/
+|   +-- raw_results/
+|   +-- processed_results/
+|   +-- figures/
+|   +-- tables/
+|   +-- logs/
++-- historical_source_material/
+    +-- preserved or referenced relevant source artifacts
+```
+
+If PDF compilation is impossible, include compile logs and exact instructions. Do not fabricate a PDF.
+
+The ZIP must include hashes for generated research artifacts and enough documentation for another researcher to understand which files are original inputs, which are generated, and which claims depend on which artifacts.
+
+---
+
+# 19. Final executive summary requirements
+
+`02_FINAL_EXECUTIVE_SUMMARY.md` must answer, directly:
+
+1. What paper/report ultimately emerged?
+2. What is genuinely new?
+3. What proposed novelty was rejected as prior art or overlap?
+4. What new research was performed during this pass?
+5. Which theorems survived adversarial review?
+6. Which experiments survived lifecycle-cost and baseline scrutiny?
+7. What changed from Draft 1 to Draft 2 to Draft 3?
+8. What are the strongest remaining reviewer objections?
+9. How does this paper differ from `CM-LMs and lifting` and the pair-compiler paper?
+10. Is there enough independent contribution for a standalone publication?
+11. What is the recommended publication form and audience?
+12. What future paper directions were deliberately excluded?
+
+---
+
+# 20. Completion criterion
+
+Do not stop after generating Draft 1.
+
+This assignment is complete only when you have:
+
+- audited the supplied findings;
+- performed new literature and mathematical/computational research;
+- frozen a defensible paper spine;
+- created Draft 1;
+- independently audited Draft 1;
+- obtained a full adversarial Reviewer Round 1;
+- performed substantive research/revision to Draft 2;
+- independently audited Draft 2;
+- obtained a second adversarial review round;
+- revised to Draft 3;
+- performed the final publication-readiness audit;
+- created the complete artifact ZIP with the source, manuscripts, audits, reviews, responses, code/data, ledgers, logs, and manifests.
+
+The purpose of the three-pass sequence is not to guarantee a positive publication verdict. It is to maximize the chance that whatever survives is correct, differentiated, reproducible, and worth reading.
