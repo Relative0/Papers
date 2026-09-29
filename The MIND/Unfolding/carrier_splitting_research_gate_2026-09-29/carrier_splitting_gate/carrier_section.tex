@@ -1,0 +1,314 @@
+\section{Carrier splitting under a new Boolean observation}\label{sec:carrier-splitting}
+
+We now treat the refinement regime left open in the previous draft: a new
+observation is not constant on every current observational-equivalence class, so
+one old $T_0$ state can split into two refined states.  This operation is not a
+cover refinement and is not, on its face, a same-carrier order thinning.  It does,
+however, admit a canonical factorization through one.
+
+Let $W$ be the finite world set, let $\Phi$ be the current observation family,
+and write
+\[
+ Q=o_\Phi(W)\subseteq\{0,1\}^{I}
+\]
+for the finite $T_0$ quotient ordered coordinatewise.  Add one Boolean
+observation $\psi$.  The refined quotient is
+\[
+ Q^\psi=o_{\Phi\cup\{\psi\}}(W)
+ \subseteq Q\times\{0,1\},
+\]
+with the product order.  Let
+\[
+ \pi:Q^\psi\longrightarrow Q,
+ \qquad \pi(s,a)=s,
+\]
+be the coordinate-forgetting map.  For $a\in\{0,1\}$ put
+\[
+ A_a:=\{s\in Q:(s,a)\in Q^\psi\},
+ \qquad C:=A_0\cap A_1.
+\]
+Thus $A_0\cup A_1=Q$, and $C$ is precisely the set of old observational
+states that split.
+
+\begin{definition}[Split completion]
+On the same carrier as $Q^\psi$, define the split-completion order
+$\widehat Q^\psi$ by
+\[
+ (s,a)\leq_{\widehat Q}(t,b)
+ \quad\Longleftrightarrow\quad
+ \bigl(s<t\text{ in }Q\bigr)
+ \ \text{or}\ 
+ \bigl(s=t\text{ and }a\leq b\bigr).
+\]
+Equivalently, $\widehat Q^\psi$ is the lexicographic sum over $Q$ of the
+nonempty fiber chains
+\[
+ F_s:=\{a\in\{0,1\}:(s,a)\in Q^\psi\}.
+\]
+Let $b(s,a)=a$ be the new-bit label on this expanded carrier.
+\end{definition}
+
+The distinction between $Q^\psi$ and $\widehat Q^\psi$ is exact.  The split
+completion remembers every old comparison between coarse states, independently
+of the new bit.  The actual refined order keeps only those comparisons along
+which the new bit is nondecreasing.
+
+\begin{theorem}[Carrier-splitting factorization]\label{thm:split-factorization}
+With the notation above:
+\begin{enumerate}[label=(\roman*)]
+\item the projection $p:\widehat Q^\psi\to Q$, $p(s,a)=s$, is a homotopy
+  equivalence of finite posets; in fact $\widehat Q^\psi$ beat-reduces to a
+  subposet isomorphic to $Q$;
+\item the actual refined quotient is exactly the one-bit thinning of the split
+  completion,
+  \[
+    Q^\psi=(\widehat Q^\psi)_b,
+  \]
+  meaning that a comparison $x<_{\widehat Q}y$ is retained precisely when
+  $b(x)\leq b(y)$;
+\item if $i:\Delta(Q^\psi)\hookrightarrow\Delta(\widehat Q^\psi)$ is the
+  inclusion, then $\Delta(\pi)=\Delta(p)\circ i$, and there is a homotopy
+  equivalence of homotopy cofibers
+  \[
+  \operatorname{Cof}(\Delta\pi)\simeq
+  \operatorname{Cof}(i).
+  \]
+  Consequently, for every coefficient ring $R$,
+  \[
+  \widetilde H_n\!\left(\Cone(\Delta\pi);R\right)
+  \cong
+  H_n\!\left(\Delta(\widehat Q^\psi),\Delta(Q^\psi);R\right).
+  \]
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+For every split state $s\in C$, the lower copy $(s,0)$ is an up-beat point of
+$\widehat Q^\psi$: its strict upper set has the minimum $(s,1)$, because
+$(s,1)$ lies below every copy over every $t>s$.  Remove these lower split
+copies one at a time.  What remains has one representative over each $s\in Q$
+and is order-isomorphic to $Q$.  Beat-point removal is a strong deformation
+retraction for finite $T_0$ spaces, giving (i).
+
+For distinct coarse states $s<t$, the split completion always contains
+$(s,a)<(t,b)$ whenever those copies exist.  The product order on $Q^\psi$
+retains exactly the cases $a\leq b$.  The same statement holds within a split
+fiber, where $(s,0)<(s,1)$ is retained.  This proves (ii).  Part (iii) follows
+from $\pi=p\circ i$ and homotopy invariance of the homotopy cofiber under
+postcomposition by the homotopy equivalence $\Delta(p)$.  Since $i$ is a
+simplicial inclusion, its homotopy cofiber computes the relative homology of
+its simplicial pair.
+\end{proof}
+
+\begin{remark}[What is standard and what is specific]
+Beat-point reduction is classical finite-space topology, and homotopy cofiber
+invariance is standard.  The project-specific content is the observation-theoretic
+factorization: an actual split of $T_0$ observational states is converted canonically
+into a homotopy-neutral lexicographic expansion followed by the precise one-bit
+monotonicity thinning already studied on a fixed carrier.  Thus carrier splitting
+is not a fourth unrelated operation; it is a neutral blow-up plus an order defect.
+\end{remark}
+
+\subsection{The exact inversion-chain complex}
+
+Theorem~\ref{thm:split-factorization} gives a chain-level classification without
+any nerve hypothesis.
+
+\begin{theorem}[Inversion-chain model]\label{thm:inversion-chain}
+For any coefficient ring $R$, the relative group
+\[
+ C_k\!\left(\Delta(\widehat Q^\psi),\Delta(Q^\psi);R\right)
+\]
+is free on the strict chains
+\[
+ x_0<_{\widehat Q}x_1<_{\widehat Q}\cdots<_{\widehat Q}x_k
+\]
+whose bit word
+\[
+ b(x_0)b(x_1)\cdots b(x_k)
+\]
+is not weakly increasing.  Equivalently, a relative generator is exactly a
+split-completion chain containing an inversion $1\cdots0$.  Its relative boundary
+is the ordinary alternating simplicial boundary with every monotone-bit face set
+to zero.
+\end{theorem}
+
+\begin{proof}
+The two order complexes have the same vertex set.  A split-completion chain is a
+simplex of $\Delta(Q^\psi)$ exactly when every comparison in the chain survives
+the one-bit thinning, which is equivalent to the bit word being weakly increasing.
+Quotienting the simplicial chain groups therefore leaves exactly the nonmonotone
+chains, and the relative differential is the induced simplicial differential.
+\end{proof}
+
+This formulation is useful computationally: the defect depends only on the old
+signature poset and the three-valued fiber profile
+\[
+ F_s\in\bigl\{\{0\},\{1\},\{0,1\}\bigr\},
+\]
+not on the number of worlds inside each old equivalence class.
+
+\subsection{Immediate homotopy-neutrality criteria}
+
+The factorization also reveals when splitting is automatically conservative.
+
+\begin{proposition}[Monotone-section criterion]\label{prop:monotone-section}
+If $A_1$ is an upward-closed subset of $Q$, then $\pi:Q^\psi\to Q$ is a
+homotopy equivalence.  Dually, if $A_0$ is downward closed, then $\pi$ is a
+homotopy equivalence.
+\end{proposition}
+
+\begin{proof}
+Assume $A_1$ is upward closed.  Define
+\[
+ r_+(s)=
+ \begin{cases}
+ (s,1),&s\in A_1,\\
+ (s,0),&s\notin A_1.
+ \end{cases}
+\]
+The upset condition makes $r_+$ order preserving, and $\pi r_+=\mathrm{id}_Q$.
+Moreover every $(s,a)\in Q^\psi$ satisfies $(s,a)\leq r_+(s)$, so
+$\mathrm{id}_{Q^\psi}\leq r_+\pi$.  The order-homotopy lemma gives
+$r_+\pi\simeq\mathrm{id}$ and hence $\pi$ is a homotopy equivalence.  The
+$A_0$ statement is dual, using the minimum available bit in each fiber.
+\end{proof}
+
+\begin{corollary}[Common-outcome anchor]
+If every old observational state has at least one refined world with $\psi=1$
+($A_1=Q$), or every old state has at least one with $\psi=0$ ($A_0=Q$), then
+carrier splitting is homotopy-neutral.  In particular, if every old state genuinely
+splits, so $A_0=A_1=Q$, then $Q^\psi=Q\times\{0<1\}$ and the projection is a
+homotopy equivalence.
+\end{corollary}
+
+Thus the act of duplicating a state is not itself the source of topological defect.
+The defect is caused by incompatible outcome availability across comparable coarse
+states: a lower state that can realize $1$ together with an upper state that can
+realize $0$ creates a potentially deleted comparison.
+
+\subsection{Localization by lower fibers}
+
+For $s\in Q$ define the lower fiber
+\[
+ L_s:=\pi^{-1}(Q_{\leq s}).
+\]
+If $s\in A_1$, then $(s,1)$ is a maximum of $L_s$, hence $L_s$ is
+contractible.  Therefore all lower-fiber obstructions to Quillen-type equivalence
+localize to the $0$-only states $A_0\setminus A_1$.  Dually, all upper-fiber
+obstructions localize to the $1$-only states $A_1\setminus A_0$.
+
+This observation does not replace the exact relative complex above.  It does,
+however, connect the carrier-splitting problem to the classical poset-fiber
+framework.  Under the connectivity hypotheses of the Bj\"orner--Wachs--Welker
+fiber theorem, the source $\Delta(Q^\psi)$ admits a wedge decomposition in terms
+of the noncontractible lower fibers and upper links.  The important point here is
+that the split fibers themselves disappear from that list whenever their top copy
+is present.
+
+\subsection{Exact low-height classification}
+
+The general inversion complex can have arbitrarily high dimension.  In the first
+nontrivial dimensional regime it collapses to graph incidence and admits a closed
+integral classification.
+
+\begin{definition}[Weighted split height]
+Let $C=A_0\cap A_1$ be the split set.  Define
+\[
+ h_\psi(Q)
+ :=\max_{s_0<\cdots<s_r\text{ in }Q}
+ \left(r+\#\{j:s_j\in C\}\right).
+\]
+\end{definition}
+
+\begin{lemma}\label{lem:split-height}
+$h_\psi(Q)=\dim\Delta(\widehat Q^\psi)$.
+\end{lemma}
+\begin{proof}
+A strict coarse chain contributes one vertex from every fiber, and a split fiber can
+contribute both copies consecutively.  Taking both copies at every split state on the
+chain attains the displayed number, and no split-completion chain can contain more.
+\end{proof}
+
+Suppose $h_\psi(Q)\leq2$.  An \emph{inversion edge} is a deleted order-complex edge
+of $\Delta(\widehat Q^\psi)$, equivalently a pair
+\[
+ (s,1)<_{\widehat Q}(t,0),\qquad s<t,
+\]
+with $s\in A_1$ and $t\in A_0$.  A deleted triangle has one of the four nonmonotone
+bit patterns
+\[
+ 010,\qquad100,\qquad101,\qquad110.
+\]
+It therefore contains either one or two inversion edges.  Introduce one formal root
+for each connected component of $Q$ (equivalently of $\widehat Q^\psi$).  The
+\emph{carrier-split defect graph} $G_\psi(Q)$ has one vertex for every inversion edge;
+a deleted triangle with two inversion edges joins their vertices, while a deleted
+triangle with one inversion edge joins that vertex to the root of its component.
+Parallel graph edges are allowed.
+
+\begin{theorem}[Carrier-splitting cone classification in weighted height two]
+\label{thm:carrier-graph}
+Assume $h_\psi(Q)\leq2$.  Let $c_0(G_\psi)$ be the number of connected components
+of $G_\psi(Q)$ containing no formal root.  Then
+\[
+ \widetilde H_n\!\left(\Cone(\Delta\pi);\mathbb Z\right)
+ \cong
+ \begin{cases}
+   \mathbb Z^{\beta_1(G_\psi)},&n=2,\\
+   \mathbb Z^{c_0(G_\psi)},&n=1,\\
+   0,&\text{otherwise}.
+ \end{cases}
+\]
+The relative boundary matrix is totally unimodular.  Hence the same Betti ranks hold
+over every field.  Moreover the following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item the carrier-splitting cone is acyclic over $\mathbb Z$;
+\item it is acyclic over every field;
+\item $G_\psi(Q)$ is a rooted forest;
+\item $\Delta(\widehat Q^\psi)$ collapses onto $\Delta(Q^\psi)$ through deleted
+edge--triangle pairs;
+\item $\Delta\pi:\Delta(Q^\psi)\to\Delta(Q)$ is a homotopy equivalence.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+By Theorem~\ref{thm:split-factorization}, the mapping-cone homology is the relative
+homology of the one-bit thinning
+$\Delta(Q^\psi)\subseteq\Delta(\widehat Q^\psi)$.  Lemma~\ref{lem:split-height}
+places the split completion in dimension at most two.  The one-bit height-two
+incidence theorem from the companion order-thinning analysis applies verbatim: the
+relative $C_2\to C_1$ boundary is the oriented incidence matrix of the rooted defect
+graph with root rows deleted.  Ordinary graph incidence gives the two displayed free
+homology groups and total unimodularity; the rooted-forest condition is equivalent to
+perfect relative cancellation and to an elementary collapse.  Finally
+$\Delta(p)$ is already a homotopy equivalence, so two-out-of-three identifies
+homotopy neutrality of the inclusion with homotopy neutrality of $\Delta\pi$.
+\end{proof}
+
+\begin{remark}[Status of the low-height theorem]
+The graph-incidence algebra, total unimodularity, rooted forests, and beat-point
+technology are standard.  The exact height-two theorem for one-bit thinning is proved
+in the companion structural-computation manuscript.  The new point here is the
+carrier-splitting reduction that makes that theorem applicable to a process which
+changes the $T_0$ carrier.  Accordingly, this theorem should be positioned as an
+exact transfer theorem, not as a new general theory of rooted forests.
+\end{remark}
+
+\subsection{Sharpness beyond weighted height two}
+
+No coefficient-independent forest criterion can hold in unrestricted dimension.
+The carrier-splitting family contains the no-split case $C=\varnothing$, which is
+exactly arbitrary same-carrier one-bit thinning.  Companion results show that one-bit
+thinning in height three can already have relative integral torsion, and in unrestricted
+height can encode arbitrary finite-poset homotopy types inside a contractible coarse
+cone.  If one insists that at least one old state genuinely split, a disjoint neutral
+split component may be adjoined without changing positive-degree cone homology.
+Thus the weighted-height-two hypothesis in Theorem~\ref{thm:carrier-graph} marks a
+real boundary rather than a presentational convenience.
+
+The appropriate all-height object is therefore the inversion-chain complex of
+Theorem~\ref{thm:inversion-chain}, supplemented where useful by poset-fiber or
+homotopy-colimit methods.  A realistic next target is not another universal forest
+theorem, but a classification of higher-dimensional inversion complexes under
+additional structural hypotheses on $Q$ and on the split profile $(A_0,A_1)$.

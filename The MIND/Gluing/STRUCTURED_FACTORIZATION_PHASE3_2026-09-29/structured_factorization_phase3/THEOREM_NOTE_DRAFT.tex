@@ -1,0 +1,62 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,geometry}
+\geometry{margin=1in}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\F}{\mathbb F}
+\newcommand{\xor}{\mathbin{\Updownarrow}}
+\title{Carrier-Aware Boolean Factorization at Bounded Incidence Width}
+\author{Working theorem note}
+\date{29 September 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We consider a structured object consisting of a simplicial carrier and a Boolean semantic layer on the same attribute set. A valid factorization must be simultaneously a simplicial join factorization and a disjoint conjunctive factorization of the Boolean function. We give an exact four-corner correspondence-matrix defect test, formulate carrier-compatible pair separation as a fixed-alternation quantified Boolean problem, and deduce fixed-parameter tractability when the combined carrier--semantic incidence graph has bounded treewidth. The result is positioned as a synthesis of established Boolean bi-decomposition and bounded-width QBF mechanisms with a canonical simplicial carrier constraint; no firstness claim is made for SAT/QBF decomposition or bounded-width quantification.
+\end{abstract}
+
+\section{Setup}
+Let $V$ be finite, $K$ a simplicial complex represented by its minimal nonfaces $\mathcal N(K)$, and $\varphi$ a CNF over $V$. A partition $\Pi$ is structured-valid if
+\[
+K=*_{B\in\Pi}K|_B,
+\qquad
+\varphi(x)=\bigwedge_{B\in\Pi}\varphi_B(x_B).
+\]
+Let $G_{K,\varphi}$ be the incidence graph with attribute vertices, semantic-clause vertices, and minimal-nonface vertices. Put $\tau=\operatorname{tw}(G_{K,\varphi})$.
+
+\section{Four-corner defect}
+For a bipartition $S\mid \bar S$ define
+\[
+D_{\varphi,S}=
+(\varphi(a_0,b_0)\wedge\varphi(a_1,b_1))
+\xor
+(\varphi(a_0,b_1)\wedge\varphi(a_1,b_0)).
+\]
+The cut is a disjoint AND-factor cut iff $D_{\varphi,S}=0$ for every choice of the four partial assignments. Equivalently, the matrix flattening $[\varphi]_{S\mid\bar S}$ has ordinary $\F_2$-rank at most one.
+
+\begin{lemma}[Width lift]
+For a fixed pair $p,q\in V$, the existence of a carrier-compatible factor cut separating $p$ and $q$ is expressible as a prenex CNF QBF with a constant number of quantifier blocks and incidence treewidth $O(\tau)$.
+\end{lemma}
+\begin{proof}[Proof sketch]
+Use existential cut-control variables, universal four-corner assignment variables, and existential Tseitin variables for the copied semantic circuits. Carrier compatibility is enforced locally on minimal-nonface incidences. Starting from a tree decomposition of $G_{K,\varphi}$, each original vertex is replaced by only constantly many copies/gadget vertices, so bags grow by only a constant factor.
+\end{proof}
+
+\begin{theorem}[Bounded-width carrier-aware factorization]
+The canonical finest structured-valid partition can be computed in
+\[
+F(\tau)\operatorname{poly}(|K|+|\varphi|)
+\]
+time.
+\end{theorem}
+\begin{proof}
+For each pair $p,q$, decide whether a structured-valid bipartition separates them. By the lemma and fixed-alternation bounded-treewidth QBF, each query is FPT in $\tau$. Declare $p\equiv q$ iff no valid cut separates them. If $p,q$ are in one block of the finest partition then no coarsening can separate them. If they are in distinct finest blocks, regroup the finest factors into two sides separating those blocks; join and Cartesian/conjunctive products are preserved by regrouping. Hence the equivalence classes are exactly the finest factors. There are $O(|V|^2)$ pair queries.
+\end{proof}
+
+\section{SAT realization for a fixed cut}
+For a fixed carrier-compatible cut, two copies of every input variable suffice. Four internal copies evaluate $F_{00},F_{01},F_{10},F_{11}$ and a constant-size top gadget asserts
+\[
+(F_{00}\wedge F_{11})\xor(F_{01}\wedge F_{10})=1.
+\]
+Satisfiability supplies a nonzero-minor witness; unsatisfiability proves rank at most one.
+
+\section{Claim boundary}
+SAT-based and QBF-based Boolean bi-decomposition have substantial prior art, and bounded-treewidth quantified CNF with bounded alternation is known fixed-parameter tractable. The present theorem should therefore be viewed as a carrier-aware synthesis theorem unless a sharper representation-specific bound survives dedicated priority review.
+\end{document}
