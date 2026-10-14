@@ -1,0 +1,77 @@
+# N2/P10 Results - Fused Minimal Telemetry Construction
+
+## Status
+
+P10 is complete. The frozen P8/P9 dispatch policy and P6 folding backend were held unchanged while P9's seven-counter telemetry was fused directly into one specialized source `Factory._make` path.
+
+Mandatory invariance passed on all **332/332** frozen policy cases: 188 training, 98 validation, 36 Gate-P evaluation, and 10 natural evaluation cases. P10 reproduced P9's seven primitive counters, five tree inputs, frozen-tree prediction, and annotate/bypass decision exactly. Fresh fuzz passed **1000/1000**.
+
+## Gate-P primary endpoint
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P10 / direct, source-inclusive | **1.067366x** | **0.996775-1.118040** | **1.028688x** | 2/36 |
+| P10 / P9, source-inclusive | **0.976619x** | **0.969118-0.984328** | **0.976601x** | 30/36 |
+| P10 / direct, source build | **1.520357x** | **1.483467-1.553044** | **1.535783x** | 0/36 |
+| P10 / P9, source build | **0.934367x** | **0.927659-0.941463** | **0.931841x** | 36/36 |
+| P10 / direct, selected compiler | **0.970169x** | **0.860653-1.050463** | **0.831443x** | 7/36 |
+
+The preregistered **direct-crossover criterion failed**: P10 remained about **6.7% slower** than direct case-balanced, and its confidence interval includes 1. However, the gap fell from P9's simultaneous result: P10 was **2.3% faster than P9** source-inclusive, with the complete 95% interval below 1.
+
+The narrower fused-construction engineering criterion also failed because P10/P9 source build was **0.9344x**, an improvement of about **6.6%**, short of the preregistered 10% target. The source-inclusive P10/P9 portion of that criterion did pass.
+
+Median Gate-P source construction was approximately **47.0 us direct**, **79.2 us P9**, and **75.3 us P10**.
+
+## Depth strata
+
+| Depth | P10/direct source-inclusive | P10/P9 source-inclusive | P10/direct source-build |
+|---:|---:|---:|---:|
+| 6 | 1.111432x | 0.993078x | 1.508882x |
+| 8 | 1.024164x | 0.968471x | 1.528100x |
+| 10 | 1.068288x | 0.968514x | 1.524158x |
+
+## Dispatch and Boolean work
+
+P10 made exactly the same frozen decisions as P9/P8: **5/36** Gate-P cases annotated, all **5** consuming a fold, for **5** total consumed folds. Relative to simultaneous always-P6 profitability, 3 annotations were P6 wins, 2 were P6 losses, and 4 P6-winning cases were bypassed.
+
+Because the decisions are invariant, the Boolean-work reductions are the same selective P8/P9 mechanism:
+
+- multiplications: **0.812451x direct**;
+- pair terms: **0.570459x direct**;
+- peak monomials: **0.978577x direct**;
+- ANF nodes evaluated: **0.873553x direct**.
+
+## Memory
+
+Gate-P traced peak allocation was **1.011176x direct** and **1.002189x P9**. P10 therefore changes time more than memory; its data representation is intentionally the same as P9's.
+
+## Natural EPFL control
+
+P10 annotated **0/10** frozen natural cases and consumed **0 folds**. Natural results remain strictly an abstention/overhead control.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P10 / direct, source-inclusive | **1.013863x** | **1.000773-1.026136** | **0.980356x** | 2/10 |
+| P10 / P9, source-inclusive | **0.994501x** | **0.984482-1.006355** | **0.993699x** | 8/10 |
+| P10 / direct, source build | **1.531169x** | **1.403565-1.700469** | **1.389358x** | 0/10 |
+| P10 / P9, source build | **0.909822x** | **0.888718-0.931298** | **0.928963x** | 10/10 |
+
+The case-balanced natural overhead is about **1.4%**; workload-weighted P10 is below direct, but with zero folds this is not a natural-folding speedup claim.
+
+## Post-hoc diagnostic
+
+Keeping P10's exact frozen dispatch decisions and measured compiler medians but replacing P10 source-build time by direct source-build time gives **0.966425x direct case-balanced** and **0.884917x workload-weighted**. This is diagnostic only, not a preregistered endpoint.
+
+## Measurement counts
+
+- Gate-P timed rows: **2,880**
+- natural timed rows: **600**
+- total timed rows: **3,480**
+- policy-invariance cases: **332**
+- fresh fuzz cases: **1,000**
+
+The long `cavlc:35` natural schedule was executed in deterministic ten-position chunks and merged without changing the frozen schedule or policy.
+
+## Conclusion
+
+Fusing telemetry into the ordinary `_make` path is a real improvement but not a complete solution. It removes about **6.6%** of P9's source-build time and **2.3%** of its full pipeline time while preserving every decision and work metric. P10 still pays roughly a **52.0%** source-construction premium over direct, leaving the case-balanced end-to-end pipeline above direct.

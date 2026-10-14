@@ -1,0 +1,50 @@
+{
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "source_repository": "/mnt/data/CM_LM_RESEARCH_CONSOLIDATION",
+  "fresh_timing_campaign": false,
+  "stages": [
+    {
+      "name": "independent",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "consolidation_checks.py",
+        "/mnt/data/CM_LM_RESEARCH_CONSOLIDATION/provenance/source_snapshots/bench"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation/independent",
+      "seconds": 8.322070124999755,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/independent.log"
+    },
+    {
+      "name": "oracle_contract",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "oracle_contract_check.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation/independent",
+      "seconds": 0.6648631650000425,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/oracle_contract.log"
+    },
+    {
+      "name": "audit_tests",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_full_validation/audit",
+      "seconds": 1.6556349030001911,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_tests.log"
+    }
+  ]
+}

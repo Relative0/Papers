@@ -1,0 +1,47 @@
+# N2/P7 Interpretation
+
+## What P7 tested
+
+P7 was deliberately narrow: keep P6's exact two-word logical format and P4-P6's exact propagation/profitability semantics, but store the words in two C-backed `array('Q')` buffers rather than as Python integer attributes on each node. This isolates storage placement from the folding algorithm.
+
+## Main finding
+
+The storage hypothesis is **not supported for wall time in CPython**. P7 build time is **1.072x P6** and **1.076x P5**, with both 95% intervals entirely above 1. P7's full pipeline is likewise **1.039x P6**.
+
+This matters because P7 is not doing more optimization. It makes the same 29 Gate-P fold decisions, consumes all 29, and produces exactly the same ANF work. The regression is therefore representation/runtime overhead.
+
+## Why two arrays can still be slower
+
+The post-hoc profile is qualitative, not a timing endpoint, but it suggests a plausible mechanism. `array('Q')` still crosses the Python/C conversion boundary for every indexed read/write. P7 also performs packed-word masking/shifting on values returned from those arrays. P6 keeps the same packed words as ordinary Python integers directly reachable from the node object, while P5 uses narrower typed arrays/bytearrays for several fields. Fewer containers therefore does not imply fewer or cheaper Python-level operations.
+
+The authoritative randomized endpoint says the key fact: P7 construction is ~7% slower than simultaneous P6/P5 on Gate-P despite using only two C-backed buffers.
+
+## Memory is a different story
+
+P7's full-pipeline traced peak is **0.752x direct**, **0.922x P6**, and **0.960x P5**. The separate build-only diagnostic also puts P7 below P6/P5 in peak allocation. So the representation is memory-efficient even though it is not time-efficient.
+
+That distinction is useful: the remaining obstacle is not metadata size alone.
+
+## Folding itself remains strong
+
+P7 lowering is **0.667x direct**, with its entire confidence interval below 1. Pair terms remain **0.098x direct** and evaluated ANF nodes **0.542x**. P7 is also modestly faster than P6 in lowering (**0.971x**) and statistically indistinguishable from P5 (**1.007x**).
+
+The mechanism result therefore survives unchanged: propagated two-support information can substantially accelerate the actual sparse-ANF computation on fold-rich structure.
+
+## End-to-end status
+
+Case-balanced P7/direct full pipeline is **1.305x**, so the strong endpoint fails. The workload-weighted ratio is **1.0039x**, extremely close to parity. Six of 36 cases beat direct end-to-end.
+
+This is close enough that a dispatch gate now becomes more scientifically interesting than another Python container rearrangement. The natural corpus accepts zero folds and pays a **1.127x** full-pipeline tax. Avoiding annotation entirely on low-opportunity formulas could remove that tax without changing fold-rich behavior.
+
+## Most informative next experiment: P7B / P8 dispatch
+
+The next pass should keep P5/P6/P7 folding semantics frozen and test only a formula-level bypass gate. To avoid tuning on the evaluation set:
+
+1. create a calibration corpus disjoint from the 36 Gate-P evaluation cases and the ten frozen EPFL evaluation cones;
+2. use only very cheap pre-annotation structural features available from the ordinary DAG (for example reachable-node count, binary-node count, depth, and perhaps repeated immediate operand-pair count if it can be obtained without a full reference scan);
+3. choose a fixed rule whose purpose is to predict whether annotation cost can plausibly amortize;
+4. freeze that rule before replaying Gate-P and the natural evaluation set;
+5. dispatch to direct/no-rewrite when the gate says no, otherwise run the best annotated representation unchanged.
+
+Given P7's result, I would use **P5 or P6 as the annotated backend**, not P7, because simultaneous timing shows them faster to construct. The question has shifted from “which Python metadata container wins?” to “can we avoid paying any metadata cost when the formula gives us no reason to?”

@@ -1,0 +1,13 @@
+# Handoff after bounded referee repairs — 29 September 2026
+
+The current integrated reading draft is `Observation_Refinement_Descent_and_Cone_Draft_v0.5.pdf` with its matching `.tex` in this directory. It was generated from v0.4 by `build_v05.py`; `REPAIR_RECEIPT.json` records source/output hashes and ten bounded transformations. The v0.3 frozen baseline, v0.4 convergence draft, transferred archive, interaction gate, and independent referee report remain separate.
+
+v0.5 repairs the independent referee's two material theorem-statement findings: Theorem 2.4 now has fixed arity `m≥2` and an explicit `m=1` negation exception; Theorem 11.2 requires a finite simplicial pair and good covers **by subcomplexes** for all three displayed covers. Its descent clauses specify an inclusion site, intersection pullbacks, and target limits/colimits. Section 11.1 now limits what cone homology detects. Theorem 4.2 gets the missing vertex proof, Section 18 states direct prior-art specializations, and Section 9.1 includes explicit signed seven-state paths.
+
+Read `RESPONSE_TO_REFEREE.md` for the point-by-point disposition and `SIGNED_WITNESS_SUPPLEMENT.md` for portable details of both integral `d²` witnesses. The reader should still use the interaction gate for the detailed certificates and computation scopes. None of the established negative results, coefficient conventions, integral extension cautions, or global-minimality limitations has been dropped.
+
+`VERIFICATION_RECEIPT.json` records the checks: 83 incoming manifest hashes preserved, exact v0.4 source hash, fixed-arity examples and the one-factor exception checked, 23 source labels and 14 citations, clean three-pass pdfLaTeX build, 27-page PDF text extraction, and visual review. The earlier interaction enumeration was not repeated because these are bounded theorem and exposition repairs.
+
+Publication novelty remains unverified. The referee classified the deletion part of matching and the general filtered-chain/cone algebra as direct specializations or standard tools; the candidate contribution is the observation-product calculation, graph restrictions, and sharp signed integral examples together. The archived companion title page uses Brian Theory while the main manuscript uses Brian Droncheff; resolve intended public attribution before submission. A human expert and venue-specific review remain appropriate. The optional nonunit-C4-d² research question is still open and was not pursued here.
+
+No external publication, message, commit, push, or frozen-file overwrite was performed. Further work on this manuscript should start from v0.5 and retain the previous versions for provenance.

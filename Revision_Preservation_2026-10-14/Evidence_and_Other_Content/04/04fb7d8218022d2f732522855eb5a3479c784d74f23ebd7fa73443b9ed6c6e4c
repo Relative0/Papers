@@ -1,0 +1,324 @@
+# T3 Result: Coordinate-Aware Profile-Moment Persistence
+
+**Date:** 2026-09-28  
+**Contract:** `T1_FORMAL_CONTRACT.md`  
+**Status:** proved under the supplied-factor, fixed-cut, cumulative-budget destructive-update model  
+**Priority status:** apparently differentiated combination; exact firstness unresolved after bounded search. Do not claim firstness.
+
+## 1. Problem solved
+
+Let \(f(x,y)=u_x\cdot w_y\pmod2\) be supplied by factors
+\[
+U\in\mathbb F_2^{2^p\times r},\qquad W\in\mathbb F_2^{r\times2^q}
+\]
+for a fixed cut \(X\mid Y\). We preprocess once, discard \(U,W\), and then allow at most \(k\) **cumulative distinct-coordinate destructive restrictions** across both sides. After every legal prefix we must return the exact number of residual ones.
+
+The old unordered profile histograms are not closed under coordinate restriction. The state below adds exactly the missing kind of information: low-degree **coordinate moments indexed by factor profiles**.
+
+Define
+\[
+D(d,h)=\sum_{j=0}^{\min(d,h)}\binom dj.
+\]
+
+We state the row-anchored construction; the column-anchored version is symmetric.
+
+## 2. Persistent state
+
+Let
+\[
+P=\{a\in\mathbb F_2^r\setminus\{0\}: a=u_x\text{ for some initial }x\},\qquad s=|P|\le 2^r-1.
+\]
+At a residual state let \(X_f\subseteq X\) and \(Y_f\subseteq Y\) be the currently free coordinates, with \(d_X=|X_f|\), \(d_Y=|Y_f|\), and remaining cumulative horizon \(h\).
+
+For every \(a\in P\) and \(T\subseteq X_f\) with \(|T|\le h\), store the **profile count moment**
+\[
+A_a(T)=\sum_{x\text{ consistent with current restrictions}\atop u_x=a}
+\prod_{i\in T}x_i.
+\]
+Thus \(A_a(T)\) counts residual row assignments of profile \(a\) on which all coordinates in \(T\) equal one.
+
+For every \(a\in P\) and \(T\subseteq Y_f\) with \(|T|\le h\), store the **profile-character moment**
+\[
+B_a(T)=\sum_{y\text{ consistent with current restrictions}}
+(-1)^{a\cdot w_y}\prod_{j\in T}y_j.
+\]
+
+No zero-profile arrays are required. Their contribution is derived from the residual cube size.
+
+## 3. Exact query formula
+
+Put
+\[
+\alpha_a=A_a(\varnothing),\qquad
+\alpha_0=2^{d_X}-\sum_{a\in P}\alpha_a.
+\]
+The residual signed sum is
+\[
+\Sigma
+=\sum_{x,y}(-1)^{u_x\cdot w_y}
+=\alpha_0 2^{d_Y}+\sum_{a\in P}\alpha_a B_a(\varnothing).
+\]
+Because \(1[z=1]=(1-(-1)^z)/2\), the exact residual number of ones is
+\[
+\boxed{
+N=\frac{2^{d_X+d_Y}-\Sigma}{2}.
+}
+\]
+
+This costs \(O(s)\) exact integer multiply-add operations after preprocessing; in the dense worst case \(O(2^r)\). It does not require rescanning residual factor rows/columns, rebuilding histograms, or running a Walsh transform at query time.
+
+## 4. Destructive update recurrence
+
+Suppose the current remaining budget is \(h\ge1\).
+
+### Restrict an X-coordinate \(i\in X_f\) to \(b\in\{0,1\}\)
+For each \(a\in P\) and each \(T\subseteq X_f\setminus\{i\}\) with \(|T|\le h-1\),
+\[
+A'_a(T)=
+\begin{cases}
+A_a(T\cup\{i\}),&b=1,\\[2mm]
+A_a(T)-A_a(T\cup\{i\}),&b=0.
+\end{cases}
+\]
+The \(B\)-family is unchanged except that only degrees through \(h-1\) remain active.
+
+### Restrict a Y-coordinate \(j\in Y_f\) to \(b\in\{0,1\}\)
+For each \(a\in P\) and each \(T\subseteq Y_f\setminus\{j\}\) with \(|T|\le h-1\),
+\[
+B'_a(T)=
+\begin{cases}
+B_a(T\cup\{j\}),&b=1,\\[2mm]
+B_a(T)-B_a(T\cup\{j\}),&b=0.
+\end{cases}
+\]
+The \(A\)-family is unchanged except that only degrees through \(h-1\) remain active.
+
+In either case remove the fixed coordinate from the free mask and set \(h' = h-1\).
+
+## 5. Main theorem
+
+### Theorem T3.1 — cumulative profile-moment persistence
+Under the T1 supplied-factor contract, the state \((A,B,P,X_f,Y_f,h)\) constructed above is sufficient for `COUNT()` after **every** legal cumulative sequence of at most \(k\) distinct-coordinate restrictions. The update recurrences preserve the state invariant, and the query formula returns the exact residual count.
+
+### Proof
+We prove the invariant by induction on the number of destructive restrictions.
+
+At preprocessing, the definitions of \(A_a(T)\) and \(B_a(T)\) are direct sums over all assignments, so the invariant holds.
+
+Assume it holds at a current residual state with horizon \(h\). Restrict \(i\in X_f\). For \(b=1\), multiplying the indicator of the current residual set by \(x_i\) selects exactly assignments with \(x_i=1\), hence the new moment indexed by \(T\) is the old moment indexed by \(T\cup\{i\}\). For \(b=0\), the indicator \(1-x_i\) yields
+\[
+\sum 1[u_x=a]\Bigl(\prod_{t\in T}x_t\Bigr)(1-x_i)
+=A_a(T)-A_a(T\cup\{i\}).
+\]
+This proves the \(A\) recurrence. The \(B\) moments do not change because the restriction is on the other side; reducing the active degree to \(h-1\) is sufficient because only \(h-1\) future distinct-coordinate restrictions remain. The proof for a Y update is identical with the signed weight \((-1)^{a\cdot w_y}\) carried through the same indicator identity.
+
+Thus the moment definitions remain true after every legal prefix.
+
+For the query, partition residual row assignments by profile. If \(u_x=0\), then \((-1)^{u_x\cdot w_y}=1\) for every residual column assignment. For nonzero profile \(a\), the inner signed column sum is exactly \(B_a(\varnothing)\). Therefore
+\[
+\sum_{x,y}(-1)^{u_x\cdot w_y}
+=\alpha_0 2^{d_Y}+\sum_{a\in P}\alpha_a B_a(\varnothing).
+\]
+The standard \(0/1\)-to-sign identity converts this signed sum to the number of ones, giving the displayed formula for \(N\). Induction proves correctness for every legal continuation. \(\square\)
+
+## 6. Storage bound
+
+The primary theorem uses fixed counter widths from T1.
+
+### Sparse-support layout
+Store only the \(s\) initial nonzero row profiles, with their \(r\)-bit labels. The **live logical payload** at residual dimensions \((d_X,d_Y)\) and horizon \(h\) is at most
+\[
+\boxed{
+S_{\rm sparse}^{\rm live}
+\le
+s\Bigl[r+(p+1)D(d_X,h)+(q+2)D(d_Y,h)\Bigr]
++O(n+k+r)
+\text{ bits}.
+}
+\]
+
+At construction, this is
+\[
+\boxed{
+S_{\rm sparse}^{0}
+\le
+s\Bigl[r+(p+1)D(p,k)+(q+2)D(q,k)\Bigr]
++O(n+k+r).
+}
+\]
+
+### Dense profile-indexed layout
+If arrays are indexed by every nonzero \(a\in\mathbb F_2^r\), profile labels need not be stored. Then
+\[
+\boxed{
+S_{\rm dense}^{0}
+\le
+(2^r-1)\Bigl[(p+1)D(p,k)+(q+2)D(q,k)\Bigr]
++O(n+k+r).
+}
+\]
+
+For an in-place implementation that allocates the construction arrays once and merely lowers the active degree after updates, **peak allocated persistent storage remains \(S^0\)**. The smaller live formulas describe what can be serialized after compaction; compaction itself must be charged if performed.
+
+A symmetric column-anchored state replaces \(s\) by the number of occurring nonzero column profiles and swaps the roles of \(p,q\). One may choose the cheaper orientation after inspecting the supplied factors.
+
+## 7. Update cost
+
+If the restricted coordinate is currently on a side with \(d\) free coordinates, the affected moment family performs one copy (for bit 1) or one subtraction (for bit 0) per surviving indexed moment:
+\[
+\boxed{
+U_{\rm arith}(d,h)=s\,D(d-1,h-1)
+}
+\]
+exact counter operations in the sparse row-anchored layout; worst case replace \(s\) by \(2^r-1\).
+
+The unaffected side needs only an \(O(1)\) logical horizon change if high-degree cells remain allocated but inactive. Physical compaction adds proportional copy cost and is not hidden in this bound.
+
+Each counter operation uses at most \(\max(p+1,q+2)\) fixed bits, so standard bit complexity multiplies the arithmetic-operation bound by the cost of an addition/subtraction at that width.
+
+## 8. Query cost
+
+The query uses \(s\) products \(\alpha_a B_a(\varnothing)\) plus \(O(s)\) additions:
+\[
+\boxed{T_{\rm arith}=O(s)\le O(2^r).}
+\]
+With exact \(O(n)\)-bit integers, bit complexity is
+\[
+\boxed{T_{\rm bit}=O(s\,M(n)+s n),}
+\]
+where \(M(n)\) is the bit cost of multiplying two \(O(n)\)-bit integers. No floating point is used.
+
+## 9. Construction cost
+
+One direct construction is:
+
+1. Scan all \(2^p\) row assignments, read each \(r\)-bit profile, and increment \(A_a(T)\) for every \(T\subseteq\{i:x_i=1\}\) with \(|T|\le k\). Worst-case counter updates: \(O(2^pD(p,k))\).
+2. Build column profile-count moments
+   \[
+   \beta_b(T)=\#\{y:w_y=b,\ y_j=1\ \forall j\in T\}
+   \]
+   in \(O(2^qD(q,k))\) counter updates.
+3. For each \(T\), apply a length-\(2^r\) Walsh-Hadamard transform over profile labels:
+   \[
+   B_a(T)=\sum_b\beta_b(T)(-1)^{a\cdot b},
+   \]
+   costing \(O(r2^rD(q,k))\) integer additions/subtractions.
+
+Including factor-bit reads, a conservative arithmetic/read bound is
+\[
+\boxed{
+C=O\!\left(
+ r(2^p+2^q)
+ +2^pD(p,k)
+ +2^qD(q,k)
+ +r2^rD(q,k)
+\right).
+}
+\]
+The temporary transform workspace can be reused across \(T\); peak construction workspace is separate from the serialized persistent state and must be measured separately in experiments.
+
+This construction deliberately treats the Draft-3 profile/Walsh pairing formula as a baseline lemma. The new claim is the **coordinate-indexed moment state plus the closed destructive-update recurrence and lifecycle bounds**.
+
+## 10. Factor-basis (gauge) changes
+
+Let \(G\in GL(r,2)\) and transform
+\[
+U\mapsto UG,\qquad W\mapsto G^{-1}W.
+\]
+For a row profile \(a\), write \(a'=aG\). Then
+\[
+a'\cdot(G^{-1}w)=a\cdot w.
+\]
+Therefore
+\[
+A'_{aG}(T)=A_a(T),\qquad B'_{aG}(T)=B_a(T).
+\]
+The state changes only by the common permutation \(a\mapsto aG\) of nonzero profile labels. Consequently \(s\), the storage bounds, update counts, and query counts are invariant under invertible basis changes. No canonical gauge is claimed or required.
+
+If a non-invertible recompression lowers the factor width, that is a different preprocessing transformation. Retaining the original width \(r\) remains exact; the theorem does not claim that a reduced-width state appears automatically.
+
+## 11. Scoped negative theorem
+
+### Theorem T3.2 — unordered profile multisets are insufficient
+Consider any state map that is invariant under arbitrary permutations of the row-assignment indices and depends on \(U\) only through its unordered multiset of row profiles (with the same \(W\)-side data). Such a state cannot, in general, support even one named row-coordinate restriction followed by exact counting.
+
+**Proof.** Take \(p=q=r=1\), \(W=[0,1]\),
+\[
+U_f=[0,1],\qquad U_g=[1,0].
+\]
+Then \(f(x,y)=xy\) and \(g(x,y)=(1-x)y\). The two \(U\) arrays have the same unordered profile multiset \(\{0,1\}\), the same \(W\), and the same unconditional count \(1\). Any permutation-invariant profile-multiset state is therefore equal. But after the named restriction \(x=0\), the residual counts are \(0\) and \(1\). Hence no common state value can answer both correctly. \(\square\)
+
+This is a lower bound **only for the stated coordinate-blind/permutation-invariant representation class**. It is not an impossibility theorem for arbitrary encodings.
+
+## 12. Why the state does not solve reset-horizon persistence
+
+After one update the active moments have degree at most \(k-1\), exactly matching the remaining cumulative budget. If the model instead grants a fresh budget of \(k\) after every update, these moments are not generally sufficient. Complementary parity on \(k+1\) variables gives the information-theoretic counterexample already recorded in T1. Supporting an indefinite reset horizon is a different problem and may require retaining higher-degree coordinate information or the source itself.
+
+## 13. Restricted linear optimality observation (not a count-only minimality claim)
+
+If one strengthens the output interface so that, for each independent profile block, the state must linearly recover **all** depth-\(k\) coordinate moments for arbitrary real profile-weight functions, then Q15 applies blockwise: at least \(D(d,k)\) real linear dimensions are required per independent block, and the monomial moment basis attains that dimension.
+
+This does **not** prove minimality for the finite Boolean factor class, for exact count-only states, or for nonlinear encodings. It is included only to delimit one representation/access model in which the coordinate-moment count is dimension-optimal.
+
+## 14. Pre-registered quantitative prediction for Computation C2
+
+These predictions are recorded **before** the new C2 benchmarks.
+
+For fixed \(r,k\) and balanced \(p\approx q\approx m\),
+\[
+D(m,k)=\Theta(m^k),
+\]
+so dense fixed-width persistent storage scales as
+\[
+\boxed{S=\Theta(2^r m^{k+1})\text{ bits}}
+\]
+while the raw factor tables use
+\[
+\boxed{F=\Theta(r2^m)\text{ bits}}
+\]
+and the full truth matrix uses \(2^{2m}\) bits. Update arithmetic after the current restriction depth is polynomial in \(m\) for fixed \(r,k\), and each count query is \(O(2^r)\) arithmetic operations.
+
+A concrete serialized-state crossover prediction is therefore the inequality
+\[
+\boxed{
+(2^r-1)\bigl[(p+1)D(p,k)+(q+2)D(q,k)\bigr]
+< r(2^p+2^q).
+}
+\]
+Ignoring small metadata, the fixed-width dense examples are:
+
+| \((p,q,r,k)\) | state bits | raw factor bits | state/factor |
+|---|---:|---:|---:|
+| (10,10,2,1) | 759 | 4,096 | 0.185 |
+| (10,10,2,2) | 3,864 | 4,096 | 0.943 |
+| (16,16,3,2) | 33,565 | 393,216 | 0.085 |
+| (20,20,3,2) | 63,511 | 6,291,456 | 0.010 |
+| (20,20,4,2) | 136,095 | 8,388,608 | 0.016 |
+| (20,20,4,4) | 3,996,420 | 8,388,608 | 0.476 |
+
+**Runtime prediction.** After preprocessing, repeated cumulative update/query workloads should increasingly favor this state over implementations that rescan residual factor rows/columns to rebuild coordinate-sensitive histograms, because the online costs depend on \(2^r\) and \(D(d,h)\), not directly on \(2^p\) or \(2^q\). The exact wall-clock crossover is intentionally **not** predicted without implementation constants; C2 should measure it rather than extrapolate it.
+
+## 15. Verification evidence
+
+The independent checker `verify_profile_moment_state.py` recorded:
+
+- **3,749,102** explicit checks passed;
+- **74,384** enumerated/sampled factor cases across small dimensions;
+- **8,847** factor-basis/gauge moment checks;
+- reset-horizon parity counterexamples for \(k=1,\dots,5\);
+- the one-bit identifiability/storage warning for \(n=1,\dots,5\);
+- the \(xy\) / \((1-x)y\) unordered-histogram counterexample;
+- exact agreement between state queries and direct residual truth-table counts along legal destructive-update paths.
+
+These computations test the formulas and boundary cases; the theorem itself is proved above for arbitrary parameters under the frozen contract.
+
+## 16. Priority boundary
+
+The following are **not** claimed as new here:
+
+- the profile-pairing identity for counting from already-constructed histograms;
+- the Walsh-Hadamard transform used to accelerate profile pairing;
+- low-order marginal/Fourier equivalence;
+- generic partial materialization of low-dimensional data-cube aggregates.
+
+A bounded 2026-09-28 search found related exact/approximate data-cube materialization and factorized-aggregation literature, but did not locate this exact combination of (i) fixed-cut GF(2) factor profiles, (ii) profile-indexed coordinate moments and character moments, (iii) the cumulative destructive-update recurrence, and (iv) the stated gauge-invariant lifecycle bounds. That absence is **not** evidence of firstness. The contribution status remains **apparently differentiated combination/corollary; exact priority unresolved** pending specialist search.

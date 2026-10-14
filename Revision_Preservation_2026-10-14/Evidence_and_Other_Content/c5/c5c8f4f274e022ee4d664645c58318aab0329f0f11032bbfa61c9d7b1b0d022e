@@ -1,0 +1,74 @@
+# N1 Natural Replay + Gate-P Speed Campaign
+
+Run date: 2026-09-17T17:05:05Z
+Frozen natural source: `int2float_depth_2025.blif` (Git blob `ac0cb9d3f2f576f05a14ceb2604a843c16526c8e`)
+Natural cases admitted: **7** outputs with structural support 9-12.
+
+## Pre-registered protocol
+
+- Arms: `direct_sparse_anf`, `cse_flat_sparse`, `generic_2support_sparse`, `cm_frontend_sparse`.
+- Correctness gate: every arm must reproduce an independent BLIF packed truth-table oracle.
+- N1 CM-specific positive criterion: at least 5% paired improvement over `generic_2support_sparse` in both pair-term work and peak intermediate monomials on this untouched natural stratum, with zero mismatches.
+- Cold timing: 15 randomized file-to-all-output repetitions per arm; timing includes BLIF parse, formula construction, optimization, and sparse-ANF propagation.
+- Warm timing: optimizer + sparse ANF are prepared once; the prepared ANF truth-vector execution is repeated for (8, 32, 128).
+- Gate-P: 12 cases at each depth (6, 8, 10); generic and CM produce the same ANF before timing; 15 randomized repetitions per arm/case.
+- Python allocation peaks use `tracemalloc`; they are not process RSS. Timings are local single-process diagnostics, not cross-machine headline benchmarks.
+
+## N1 natural symbolic results
+
+| arm | mult median | pair-terms median | peak monomials | final monomials | IR nodes | Python peak | folds | cut retabs |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `direct_sparse_anf` | 291.0 | 271021.0 | 352.0 | 255.0 | 316.0 | 561.4 KiB | 0.0 | 0.0 |
+| `cse_flat_sparse` | 588.0 | 426064.0 | 352.0 | 255.0 | 133.0 | 737.3 KiB | 0.0 | 0.0 |
+| `generic_2support_sparse` | 294.0 | 271202.0 | 352.0 | 255.0 | 308.0 | 898.9 KiB | 4.0 | 43.0 |
+| `cm_frontend_sparse` | 294.0 | 271253.0 | 352.0 | 255.0 | 316.0 | 623.6 KiB | 4.0 | 0.0 |
+
+CM / generic paired ratios (lower is better):
+- multiplications: geometric mean ratio `1.0037` across 7 comparable outputs
+- pair_terms: geometric mean ratio `1.0006` across 7 comparable outputs
+- peak_monomials: geometric mean ratio `1.0000` across 7 comparable outputs
+- output_unique_nodes: geometric mean ratio `1.0335` across 7 comparable outputs
+- python_peak_bytes: geometric mean ratio `0.7527` across 7 comparable outputs
+
+**Pre-registered N1 outcome: NO PASS / no CM-specific natural advantage under this criterion.**
+
+## Cold end-to-end timing
+
+| arm | median file -> all ANFs | reps |
+|---|---:|---:|
+| `direct_sparse_anf` | 250.10 ms | 15 |
+| `cse_flat_sparse` | 601.67 ms | 15 |
+| `generic_2support_sparse` | 261.97 ms | 15 |
+| `cm_frontend_sparse` | 261.44 ms | 15 |
+
+- CM/generic cold ratio: **0.9980**, exploratory bootstrap 95% CI [0.9694, 1.0091].
+- CM/direct cold ratio: **1.0453**, exploratory bootstrap 95% CI [0.9977, 1.0761].
+- Median summed optimizer time across the seven outputs: generic 16.30 ms, CM 9.23 ms; median summed ANF propagation: generic 213.21 ms, CM 218.22 ms.
+
+## Warm optimizer-reuse timing
+
+Median time per output execution after optimizer + sparse ANF are prepared:
+
+| reuse | direct | CSE-flat | generic 2-support | CM frontend |
+|---:|---:|---:|---:|---:|
+| 8 | 175.21 us | 175.98 us | 177.00 us | 171.83 us |
+| 32 | 176.10 us | 172.18 us | 171.55 us | 191.78 us |
+| 128 | 171.81 us | 176.02 us | 170.58 us | 175.74 us |
+
+## Gate-P equal-result speed test
+
+- CM/generic geometric-mean paired time ratio: **0.8173** (lower favors CM) across 36 cases.
+- Paired-case bootstrap 95% CI for that geometric-mean ratio: **[0.7854, 0.8490]**.
+- CM/generic symbolic-difference counts: `{"multiplications": 6, "output_unique_nodes": 12, "pair_terms": 11, "peak_monomials": 5}`.
+- Exploratory >= 10% CM speed signal: **YES**.
+
+## Correctness / falsification checks
+
+- Natural rows: 28; mismatches: 0.
+- Random exhaustive fuzz: 500 formulas x 4 arms = 2000 checks; failures: 0.
+
+## Interpretation
+
+This run distinguishes **pre-expansion reduction** from **CM-specific advantage**. A pre-expansion win over direct ANF would still be useful even when the generic two-support reducer obtains the same reduction; this particular natural pilot did not show such a win for the CM frontend. The CM-specific question is whether the CM frontend beats that strongest artifact-equivalent generic reducer on untouched natural formulas.
+
+This is a **natural-stratum pilot**, not the complete EPFL campaign: it freezes every eligible output of one pinned public `int2float` netlist rather than selecting favorable outputs. Broader cross-circuit validation remains the next step if the result is worth pursuing.

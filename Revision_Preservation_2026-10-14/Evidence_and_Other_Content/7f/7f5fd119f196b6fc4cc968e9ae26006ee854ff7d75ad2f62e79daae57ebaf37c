@@ -1,0 +1,291 @@
+{
+  "python": "3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "source_repository": "C:\\Users\\brian\\Documents\\Paper-Workbench\\tmp\\cm_canonical\\CM_LM_RESEARCH_CONSOLIDATION",
+  "fresh_timing_campaign": false,
+  "stages": [
+    {
+      "name": "independent",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "consolidation_checks.py",
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\tmp\\cm_canonical\\CM_LM_RESEARCH_CONSOLIDATION\\provenance\\source_snapshots\\bench"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\independent",
+      "seconds": 13.871905400010291,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/independent.log"
+    },
+    {
+      "name": "oracle_contract",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "oracle_contract_check.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\independent",
+      "seconds": 0.14962159999413416,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/oracle_contract.log"
+    },
+    {
+      "name": "audit_tests",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit",
+      "seconds": 3.295631000015419,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_tests.log"
+    },
+    {
+      "name": "historical_pure",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit\\source_snapshots\\Pure_Boolean_Modal_Quantum",
+      "seconds": 63.67860089999158,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_pure.log"
+    },
+    {
+      "name": "historical_rotation",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit\\source_snapshots\\Native_Boolean_CM_Rotation_Phase",
+      "seconds": 0.6981947999738622,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_rotation.log"
+    },
+    {
+      "name": "historical_block",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit\\source_snapshots\\Native_Boolean_CM_Block_Quantum",
+      "seconds": 34.39398490000167,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_block.log"
+    },
+    {
+      "name": "historical_tensor",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit\\source_snapshots\\Independent_Phase_CM_Tensor_Audit",
+      "seconds": 7.063565499993274,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/historical_tensor.log"
+    },
+    {
+      "name": "audit_models",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/audit_models.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit",
+      "seconds": 18.278581299993675,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_models.log"
+    },
+    {
+      "name": "audit_protocols",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/audit_protocols.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit",
+      "seconds": 27.70464800001355,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_protocols.log"
+    },
+    {
+      "name": "audit_restrictions",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/audit_restrictions.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\audit",
+      "seconds": 39.2699747000006,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/audit_restrictions.log"
+    },
+    {
+      "name": "bridge_expanded",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "tests/lm_modal_bridge_checks.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\bridge",
+      "seconds": 12.87306469999021,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/bridge_expanded.log"
+    },
+    {
+      "name": "bridge_original",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "tests/cm_bridge_checks_original.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\bridge",
+      "seconds": 14.125487000012072,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/bridge_original.log"
+    },
+    {
+      "name": "capability_laboratory",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/laboratory.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\capability",
+      "seconds": 8.117104500008281,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_laboratory.log"
+    },
+    {
+      "name": "capability_ablations",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/ablations.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\capability",
+      "seconds": 6.556557600008091,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_ablations.log"
+    },
+    {
+      "name": "capability_bridges_phase",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/bridges_phase.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\capability",
+      "seconds": 0.3364572999998927,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_bridges_phase.log"
+    },
+    {
+      "name": "capability_two_setting_theorem",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/two_setting_theorem.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\capability",
+      "seconds": 0.5074258000240661,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_two_setting_theorem.log"
+    },
+    {
+      "name": "capability_validate_and_index",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "code/validate_and_index.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\capability",
+      "seconds": 0.9256661999970675,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/capability_validate_and_index.log"
+    },
+    {
+      "name": "adversarial_extensions",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "checks/independent_extensions.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\adversarial",
+      "seconds": 11.381124000006821,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/adversarial_extensions.log"
+    },
+    {
+      "name": "adversarial_boundaries",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "checks/additional_boundaries.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\adversarial",
+      "seconds": 0.5647350999934133,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/adversarial_boundaries.log"
+    },
+    {
+      "name": "benchmark_tests",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\bench",
+      "seconds": 1.032742799987318,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/benchmark_tests.log"
+    },
+    {
+      "name": "benchmark_raw_audit",
+      "command": [
+        "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\repro_env\\Scripts\\python.exe",
+        "scripts/audit_gate_a_results.py"
+      ],
+      "cwd": "C:\\Users\\brian\\Documents\\Paper-Workbench\\output\\cm_lm_publication_20260918\\runs\\canonical_01\\bench",
+      "seconds": 0.8339484999887645,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/benchmark_raw_audit.log"
+    }
+  ]
+}

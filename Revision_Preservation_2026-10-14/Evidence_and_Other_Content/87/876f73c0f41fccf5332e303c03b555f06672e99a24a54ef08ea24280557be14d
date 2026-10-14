@@ -1,0 +1,21 @@
+function Table(t)
+  local n = #t.colspecs
+  local header = ''
+  if #t.head.rows > 0 then
+    header = pandoc.utils.stringify(t.head.rows[1].cells[1].contents)
+  end
+  local widths
+  if n == 4 then widths = {0.57, 0.12, 0.13, 0.18}
+  elseif n == 3 then
+    if header:match('Result and source') then widths = {0.32, 0.08, 0.60}
+    elseif header:match('No%.') then widths = {0.06, 0.29, 0.65}
+    elseif header:match('Manuscript entry') then widths = {0.21, 0.36, 0.43}
+    elseif header:match('Contribution') then widths = {0.23, 0.41, 0.36}
+    elseif header:match('ID / level') then widths = {0.14, 0.40, 0.46}
+    elseif header:match('Location') then widths = {0.22, 0.43, 0.35}
+    else widths = {0.27, 0.25, 0.48} end
+  elseif n == 2 then widths = {0.34, 0.66}
+  else return t end
+  for i=1,n do t.colspecs[i][2] = widths[i] end
+  return t
+end

@@ -1,0 +1,173 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,booktabs,array}
+\usepackage{microtype,xurl,hyperref}
+\hypersetup{hidelinks}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\setlength{\emergencystretch}{3em}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\input{../../math/notation}
+\newcommand{\buildnote}[1]{\par\smallskip\noindent\textbf{Drafting instruction.} #1\par\smallskip}
+\newcommand{\figslot}[2]{\begin{figure}[ht]\centering\fbox{\begin{minipage}{0.9\linewidth}\textbf{Figure specification:} #1\par #2\end{minipage}}\caption{Planning placeholder; replace with the generated, source-linked figure.}\end{figure}}
+
+\title{Exact Query Obstructions in\\Characteristic-Two Modal Computation}
+\author{Brian Theory\\\small Provisional article skeleton: access contracts retained}
+\date{18 September 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+This planned article studies exact all-outcomes-correct linear modal query
+procedures over characteristic-two fields. In a fixed pointwise oracle model,
+linear relations obstruct one-query Deutsch and Deutsch--Jozsa procedures, and
+an amplitude-polynomial span argument requires at least $n$ queries for the
+$n$-bit Bernstein--Vazirani problem. The standard informative XOR oracle
+attains the Deutsch and Bernstein--Vazirani bounds with two and $n$ queries.
+These upper bounds are not asserted for arbitrary coincident oracle gates.
+We distinguish genuine nilpotent-ring phase kickback from an invertible
+character readout, and retain the known UNIQUE-SAT protocol as a positive
+control against overbroad impossibility claims. The intended contribution is a
+precisely typed query and resource separation, subject to a remaining
+primary-source priority review, not a new polynomial method or a universal
+no-go for modal computation.
+\end{abstract}
+\buildnote{This is a planning skeleton, not a final paper. Read the exact
+contracts and correction C17 before inserting prose. Proof anchors are in
+\path{../../math/THEOREM_BANK.tex}, sections \texttt{sec:resources},
+\texttt{sec:query} and \texttt{sec:diagnostics}.}
+
+\section{Introduction}
+\buildnote{State Deutsch2, the one-query DJ obstruction and BV$n$ with the
+standard XOR upper-bound qualifier immediately. Explain the difference between
+a structural lower bound and failure of a familiar circuit translation. Credit
+known modal UNIQUE-SAT as a counterweight, not a new discovery.}
+
+\section{Oracle access and complete readout}
+Let $F$ be a characteristic-two field. A pointwise oracle is
+$O_f=\bigoplus_xG_{f(x)}$ for fixed invertible target gates $G_0,G_1$.
+QXOR specializes this to
+$\lvert x,y\rangle\mapsto\lvert x,y+f(x)\rangle$.
+Preparations and nonquery linear operations are independent of the oracle.
+Ancillas are allowed. Every possible final outcome must carry the correct
+label; complete collected linear instruments must be injective.
+
+\buildnote{Give exact dimensions/types, effect completeness and adaptive-record
+semantics. No postselection, unreported discarded branches or free access to
+full state descriptions is included. Explain that arbitrary Boolean oracle
+logic can act as a linear basis permutation without being an affine Boolean
+function. Import that reversible-computation fact.}
+
+\claimid{ALG-001}
+\begin{lemma}[Exact discrimination]
+For state sets $S_i\subset V\setminus\{0\}$, a complete injective linear
+readout distinguishes every label exactly if and only if the subspaces
+$\Span S_i$ have a direct sum.
+\end{lemma}
+\buildnote{Insert the coordinate-support necessity and basis-extension
+sufficiency. Compare modal distinguishability antecedents
+\cite{DiamondSchumacher2023}; do not headline this elementary ingredient as a
+new discovery.}
+
+\figslot{Exact-access diagram}{Include explicit adaptive branch records and a
+separate, differently labeled full-description-access model.}
+
+\section{One-query affine obstructions}
+\claimid{ALG-002}
+\begin{theorem}[Deutsch]
+No exact one-query linear modal procedure under the fixed pointwise contract
+computes $f(0)+f(1)$. Under QXOR its exact query complexity is two.
+\end{theorem}
+\buildnote{Prove $v_{00}+v_{11}=v_{01}+v_{10}=w$. Treat $w\ne0$ by subspace
+intersection and $w=0$ by identical states. Give the QXOR two-query basis-label
+construction. Explicitly state that $G_0=G_1$ makes every oracle identical,
+invalidating any unqualified general upper bound.}
+
+\claimid{ALG-003}
+\begin{theorem}[Deutsch--Jozsa]
+For $n\geq2$ no exact one-query procedure satisfies the constant-or-balanced
+promise under the same contract. QXOR obeys
+$2\leq Q_{\rm exact}\leq2^{n-1}+1$.
+\end{theorem}
+\buildnote{Use four equal address blocks and balanced supports $AB,AC,BC$ whose
+three affine oracle operators sum to the constant-zero operator. Give the
+classical upper bound and explicitly leave its optimality in this model open.
+Do not infer a general multi-query theorem from the56-coordinate check.}
+
+\section{Secret-polynomial span and Bernstein--Vazirani}
+\claimid{ALG-004}
+\begin{theorem}[Exact BV]
+For $f_s(x)=s\cdot x$ with $s\in\F_2^n$, exact identification needs at least
+$n$ queries under the fixed pointwise characteristic-two interface. QXOR
+attains $n$.
+\end{theorem}
+\buildnote{Prove that $O_s$ is affine in the secret and that after $q$ queries
+all components are multilinear polynomials of degree at most $q$. All final
+states therefore span at most $\sum_{j\leq q}\binom nj$ coefficient vectors,
+less than $2^n$ when $q<n$. Exact discrimination needs independence. Supply a
+full induction for complete recorded adaptive histories, including early
+stopping at different depths and maximum query count. Give the standard-address
+upper bound. Compare the established polynomial method \cite{Beals2001} and
+explain why complex-amplitude BV does not use this same degree-one secret
+encoding.}
+
+\section{Kickback is not a character basis}
+\claimid{ALG-005, ALG-006, ALG-007}
+\begin{proposition}[Nilpotent-ring kickback and singular readout]
+In $\A=\F_2[u]/(u^4)$, let $z=1+u^2$. Then
+$X(1,z)^T=z(1,z)^T$, while
+$H_z=\begin{pmatrix}1&1\\1&z\end{pmatrix}\sim\diag(1,u^2)$ is singular.
+The shared $n$th tensor power has binary rank $4+2n$.
+\end{proposition}
+\buildnote{Insert the exact Smith/rank proof and the triviality of order-two
+multiplicative field characters in characteristic two. Explain that all A-unit
+characters reduce to one. Distinguish two-level $R^2$ kickback from a four-level
+$R$ target, and shared from independent literal tensors. Do not claim all
+finite-field Fourier transforms or odd-order characters are obstructed.}
+
+\figslot{Two different resources}{Show an actual kickback identity next to the
+rank-deficient character matrix, with the tensor base and dimensions written
+on each arrow.}
+
+\section{Positive control and scoped diagnostics}
+\claimid{ALG-010, ALG-011, ALG-012; supporting ALG-008, ALG-009}
+The Willcock--Sabry UNIQUE-SAT construction \cite{WillcockSabry2011} remains a
+known one-query positive control with $O(n)$ other gates on its promise.
+\buildnote{Report132 promised instances through $n=6$, without relabeling the
+algorithm as ours. State that the finite Simon scan uses dimension16,
+65,535 nonzero preparations,36 standard oracles,one query and no ancilla.
+Conventional Grover sign/diffusion failure is not an all-search impossibility.
+Present the full-description-readout ablation as a different model.}
+
+\section{Related work and exact-model comparisons}
+\buildnote{Replace this source-navigation paragraph with a primary theorem-level
+comparison. Read \cite{Schumacher2010,Schumacher2012,deBeaudrap2014,James2011,Hanson2011}
+and query-related citations/dissertations. Record scalar algebra, oracle
+encoding, gate/readout sets, ancillas, description access and success notion.
+If named bounds already exist under an equivalent or stronger access model,
+downgrade the novelty paragraph and reconsider article versus note format.}
+
+\section{Limitations and open questions}
+No optimal unrestricted multi-query DJ bound, arbitrary-size Simon theorem,
+all-search no-go, runtime speed claim, probability distribution or physical
+realization follows. The field-based lower bounds and chosen ring kickback
+comparison are typed separately. A complete adaptive proof is required, not an
+appeal to a quantum deferred-measurement slogan. Priority of the exact bounds
+remains conditional until the remaining review is completed.
+
+\appendix
+\section{Proof, experiment and source crosswalk}
+\buildnote{Place the full branch-record induction, upper-bound circuit details,
+phase-rank calculations and finite-control certificates here. Link all rerun
+commands and exact finite domains. Cite P01 or standard algebra rather than
+repeating a chain-ring resource-classification proof. Retain canonical IDs in
+an internal crosswalk even if journal theorem numbers change.}
+
+% This fallback is generated from the same canonical records as references.bib.
+% For journal BibTeX tooling, use the two lines in the fallback branch directly.
+\IfFileExists{../../literature/references_static.tex}{\input{../../literature/references_static}}{
+\bibliographystyle{plain}
+\bibliography{../../literature/references}}
+\end{document}

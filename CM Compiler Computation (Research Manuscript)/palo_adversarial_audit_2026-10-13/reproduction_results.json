@@ -1,0 +1,2812 @@
+{
+  "audit_date": "2026-10-13",
+  "timezone": "Asia/Bangkok",
+  "status": "all recorded executions passed; replay-domain probe exposes intended interface defect",
+  "runs": [
+    {
+      "run": "independent",
+      "result_path": "C:\\Users\\brian\\Documents\\CM_Computation\\output\\research\\palo_adversarial_audit_2026-10-13\\independent_results.json",
+      "sha256": "63514a98c9662140f009ec432a0008d05f4a27fdd7fe1d91ae25e2d0547e8581",
+      "assertions": 10193,
+      "results": {
+        "status": "PASS",
+        "checks_by_family": {
+          "joint_law": 3072,
+          "dependence": 3072,
+          "composition_count_reproduction": 3,
+          "guard_pair_sums": 2025,
+          "quartic_dispatch": 2020,
+          "replay_domain_gap": 1
+        },
+        "total_assertions": 10193,
+        "independent_composition_counts": [
+          {
+            "family": "same_frame",
+            "circuits": 4096,
+            "rejected": 1880,
+            "preserved": 2216,
+            "reason_grid_is_decisive": "coordinate degrees <=2; tensor grid of three distinct points is unisolvent"
+          },
+          {
+            "family": "overlap",
+            "circuits": 4096,
+            "rejected": 1440,
+            "preserved": 2656,
+            "reason_grid_is_decisive": "coordinate degrees <=2; tensor grid of three distinct points is unisolvent"
+          },
+          {
+            "family": "disjoint",
+            "circuits": 4096,
+            "rejected": 0,
+            "preserved": 4096,
+            "reason_grid_is_decisive": "coordinate degrees <=2; tensor grid of three distinct points is unisolvent"
+          }
+        ],
+        "examples": {
+          "and_repeat": "1/4",
+          "event_repeat": "1/2",
+          "primitive_equivalence": "1/2",
+          "two_implications": "9/16",
+          "value_error_p_squared_to_p": "99/10000",
+          "input_gradient_error_sup": "1",
+          "real_switch_at_half": [
+            [
+              "1/2",
+              "1/2"
+            ],
+            [
+              "1/2",
+              "1/2"
+            ]
+          ]
+        },
+        "extraction_interface_probe": {
+          "extract_status": "UNKNOWN",
+          "replay_accepts_negative_magnitude": true,
+          "certificate": {
+            "model": "D+A*x+B*y+C*x*y; joint-box; strict-zero-threshold; v1",
+            "frame": [
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "bounds": {
+              "D": [
+                "0",
+                "0"
+              ],
+              "A": [
+                "1",
+                "1"
+              ],
+              "B": [
+                "1",
+                "1"
+              ],
+              "C": [
+                "1",
+                "1"
+              ],
+              "a": [
+                "-1/2",
+                "-1/2"
+              ],
+              "b": [
+                "1/2",
+                "1/2"
+              ]
+            },
+            "range_proof": "multi-affine box interpolation",
+            "rows": [
+              {
+                "alpha": [
+                  1,
+                  1
+                ],
+                "min": "-1/4",
+                "max": "-1/4",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  1,
+                  0
+                ],
+                "min": "-3/4",
+                "max": "-3/4",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  1
+                ],
+                "min": "5/4",
+                "max": "5/4",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "+"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  0
+                ],
+                "min": "-1/4",
+                "max": "-1/4",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "-1/2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              }
+            ],
+            "status": "EXACT",
+            "truth_vector": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "contract_sha256": "37968552fb1bf7064df07b3ca8edcf3b411aab4ddd8c3444ca4e95456ce022be"
+          }
+        },
+        "elapsed_seconds": 100.21875830000499,
+        "scope": "Exact finite diagnostics and exhaustive bounded composition identities; no source-wide proof, learning or performance validation.",
+        "script_sha256": "58d2468ea6dc262ce9a986db972261dacd1b533f6f91b922687f55a8f6aa5fa8"
+      }
+    },
+    {
+      "run": "additional",
+      "result_path": "C:\\Users\\brian\\Documents\\CM_Computation\\output\\research\\palo_adversarial_audit_2026-10-13\\additional_results.json",
+      "sha256": "235769e4489445a2caefa763ba199385c2cae49862fb55f570923e87497ab75a",
+      "assertions": 797,
+      "results": {
+        "status": "PASS",
+        "checks_by_family": {
+          "LM_normal_form": 256,
+          "logical_pairing": 256,
+          "Boolean_switch_involution": 2,
+          "real_switch_determinant": 4,
+          "real_switch_involution_domain": 4,
+          "nilpotent_support": 1,
+          "unit_predicate": 256,
+          "ReLU_min_AND": 16,
+          "Lipschitz_boundary": 1,
+          "pairwise_global_conflict": 1
+        },
+        "total_assertions": 797,
+        "scope": "Exhaustive finite Boolean valuations and F2[u]/u4 scalar checks; concrete domain counterexamples. Not a full ring-contextuality proof."
+      }
+    },
+    {
+      "run": "synthesis",
+      "result_path": "C:\\Users\\brian\\Documents\\CM_Computation\\output\\research\\palo_adversarial_audit_2026-10-13\\snapshots\\output\\pdf\\palo_cm_relationships_2026-10-13\\verification_results.json",
+      "sha256": "4fe66c2e7644195519e57d82bb283e5d3323078535ddda8d193edf1b476e3785",
+      "assertions": 40668,
+      "results": {
+        "status": "passed",
+        "arithmetic": "Python fractions.Fraction; exact rational arithmetic",
+        "truth_tables": 16,
+        "marginal_grid": "0, 1/8, ..., 1",
+        "joint_interpolation_grid": "0, 1/8, ..., 1 between Frechet endpoints",
+        "checks_by_family": {
+          "boolean_corners": 64,
+          "probability_range": 1296,
+          "transpose": 1296,
+          "input_complement": 1296,
+          "output_complement": 1296,
+          "joint_feasibility": 11664,
+          "covariance_correction": 11664,
+          "endpoint_bounds": 11664,
+          "palo_and": 81,
+          "palo_or": 81,
+          "palo_implication": 81,
+          "palo_equivalence": 81,
+          "xor_extension": 81,
+          "counterexample_repeat": 1,
+          "counterexample_repeat_disagrees": 1,
+          "counterexample_complement": 1,
+          "counterexample_equivalence": 1,
+          "counterexample_equivalence_disagrees": 1,
+          "crispification_order": 2,
+          "guard_witness_nonzero": 4,
+          "guard_witness_table": 4,
+          "guard_quartic_codes": 4,
+          "reciprocal_coordinates": 4
+        },
+        "total_assertions": 40668,
+        "scope": "Elementary derived identities and examples only; not a LIME integration or source-paper proof audit"
+      }
+    },
+    {
+      "run": "representational",
+      "result_path": "C:\\Users\\brian\\Documents\\CM_Computation\\output\\research\\palo_adversarial_audit_2026-10-13\\snapshots\\output\\research\\palo_paper_directions_2026-10-13\\representational_limits\\verification_results.json",
+      "sha256": "2e8d20672280cd74a7ea3488ef24fda59108f9cbfb921e6acaa6bdafd706248b",
+      "assertions": {
+        "exact_rational_assertions": 23964,
+        "floating_assertions": 32
+      },
+      "results": {
+        "scope": "Finite rational identities and bounded diagnostic samples; no universal sign certificate from sampling.",
+        "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+        "counts": {
+          "exact_rational_assertions": 23964,
+          "floating_assertions": 32
+        },
+        "rational_constructions": [
+          {
+            "m": 1,
+            "delta": "1/2",
+            "total_degree_upper": 8,
+            "certified_normalized_margin_lower": "1/80",
+            "log10_margin_lower": -1.9030899869919433,
+            "corner_normalized_margin": "1/48"
+          },
+          {
+            "m": 2,
+            "delta": "1/4",
+            "total_degree_upper": 12,
+            "certified_normalized_margin_lower": "1/20480",
+            "log10_margin_lower": -4.311329952303793,
+            "corner_normalized_margin": "1/12288"
+          },
+          {
+            "m": 3,
+            "delta": "1/8",
+            "total_degree_upper": 16,
+            "certified_normalized_margin_lower": "1/83886080",
+            "log10_margin_lower": -7.923689900271567,
+            "corner_normalized_margin": "1/50331648"
+          },
+          {
+            "m": 4,
+            "delta": "1/16",
+            "total_degree_upper": 20,
+            "certified_normalized_margin_lower": "1/5497558138880",
+            "log10_margin_lower": -12.740169830895265,
+            "corner_normalized_margin": "1/3298534883328"
+          },
+          {
+            "m": 5,
+            "delta": "1/32",
+            "total_degree_upper": 24,
+            "certified_normalized_margin_lower": "1/5764607523034234880",
+            "log10_margin_lower": -18.76076974417489,
+            "corner_normalized_margin": "1/3458764513820540928"
+          },
+          {
+            "m": 6,
+            "delta": "1/64",
+            "total_degree_upper": 28,
+            "certified_normalized_margin_lower": "1/96714065569170333976494080",
+            "log10_margin_lower": -25.985489640110437,
+            "corner_normalized_margin": "1/58028439341502200385896448"
+          }
+        ],
+        "floating_illustrations": [
+          {
+            "delta": 0.5,
+            "beta": 2.772588722239781,
+            "softmin_positive_margin": 0.25,
+            "rounded_R_positive_margin": 0.1339745962155614,
+            "flat_selector_log_abs_at_balanced_corner_n2": -8.0,
+            "bounded_polynomial_degree_lower_gamma_half": 0.8660254037844386
+          },
+          {
+            "delta": 0.25,
+            "beta": 5.545177444479562,
+            "softmin_positive_margin": 0.125,
+            "rounded_R_positive_margin": 0.0669872981077807,
+            "flat_selector_log_abs_at_balanced_corner_n2": -32.0,
+            "bounded_polynomial_degree_lower_gamma_half": 1.9364916731037085
+          },
+          {
+            "delta": 0.125,
+            "beta": 11.090354888959125,
+            "softmin_positive_margin": 0.0625,
+            "rounded_R_positive_margin": 0.03349364905389035,
+            "flat_selector_log_abs_at_balanced_corner_n2": -128.0,
+            "bounded_polynomial_degree_lower_gamma_half": 3.968626966596886
+          },
+          {
+            "delta": 0.0625,
+            "beta": 22.18070977791825,
+            "softmin_positive_margin": 0.03125,
+            "rounded_R_positive_margin": 0.016746824526945175,
+            "flat_selector_log_abs_at_balanced_corner_n2": -512.0,
+            "bounded_polynomial_degree_lower_gamma_half": 7.984359711335656
+          }
+        ],
+        "script_sha256": "c670924ecb15322e46d9397ab3b0370d55ee53bc625115939fd6b0fa5bcd341d"
+      }
+    },
+    {
+      "run": "extraction",
+      "result_path": "C:\\Users\\brian\\Documents\\CM_Computation\\output\\research\\palo_adversarial_audit_2026-10-13\\snapshots\\output\\research\\palo_paper_directions_2026-10-13\\certified_boolean_extraction\\demo_results.json",
+      "sha256": "bafe27430526efbb8b43e1918047e948b68c00b7ddca7e7821e99e4a27dcb761",
+      "assertions": 3587,
+      "results": {
+        "status": "PASS",
+        "assertions_by_group": {
+          "interval_comparison": 2,
+          "certificate_replay": 4,
+          "typed_statuses": 6,
+          "tamper_rejection": 4,
+          "interpolation_identity": 2916,
+          "sixteen_parameter_certificates": 32,
+          "original_point_dispatch": 576,
+          "star_codes": 34,
+          "seven_disc_witnesses": 8,
+          "weighted_star": 1,
+          "trajectory_counterexample": 2,
+          "corner_only_unsound_outside_family": 1,
+          "disconnected_image_counterexample": 1
+        },
+        "total_assertions": 3587,
+        "examples": {
+          "and_input_region": {
+            "status": "EXACT",
+            "model": "D+A*x+B*y+C*x*y; joint-box; strict-zero-threshold; v1",
+            "frame": [
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "bounds": {
+              "D": [
+                "0",
+                "0"
+              ],
+              "A": [
+                "1",
+                "1"
+              ],
+              "B": [
+                "1",
+                "1"
+              ],
+              "C": [
+                "1",
+                "1"
+              ],
+              "a": [
+                "2/5",
+                "3/5"
+              ],
+              "b": [
+                "2/5",
+                "3/5"
+              ]
+            },
+            "range_proof": "multi-affine box interpolation",
+            "rows": [
+              {
+                "alpha": [
+                  1,
+                  1
+                ],
+                "min": "24/25",
+                "max": "39/25",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2/5",
+                  "2/5"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "3/5",
+                  "3/5"
+                ],
+                "attained_signs": [
+                  "+"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  1,
+                  0
+                ],
+                "min": "-11/25",
+                "max": "-1/25",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2/5",
+                  "3/5"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "3/5",
+                  "2/5"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  1
+                ],
+                "min": "-11/25",
+                "max": "-1/25",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "3/5",
+                  "2/5"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2/5",
+                  "3/5"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  0
+                ],
+                "min": "-21/25",
+                "max": "-16/25",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "3/5",
+                  "3/5"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2/5",
+                  "2/5"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              }
+            ],
+            "vertex_evaluations": 16,
+            "truth_vector": [
+              1,
+              0,
+              0,
+              0
+            ],
+            "contract_sha256": "7e431506951eafdf43fa5335b65fe6407d1071750b9be3b3501b6ba612e0bc4c"
+          },
+          "joint_input_parameter_region": {
+            "status": "EXACT",
+            "model": "D+A*x+B*y+C*x*y; joint-box; strict-zero-threshold; v1",
+            "frame": [
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "bounds": {
+              "D": [
+                "-1/100",
+                "1/100"
+              ],
+              "A": [
+                "99/100",
+                "101/100"
+              ],
+              "B": [
+                "99/100",
+                "101/100"
+              ],
+              "C": [
+                "99/100",
+                "101/100"
+              ],
+              "a": [
+                "2/5",
+                "3/5"
+              ],
+              "b": [
+                "2/5",
+                "3/5"
+              ]
+            },
+            "range_proof": "multi-affine box interpolation",
+            "rows": [
+              {
+                "alpha": [
+                  1,
+                  1
+                ],
+                "min": "2351/2500",
+                "max": "991/625",
+                "min_vertex": [
+                  "-1/100",
+                  "99/100",
+                  "99/100",
+                  "99/100",
+                  "2/5",
+                  "2/5"
+                ],
+                "max_vertex": [
+                  "1/100",
+                  "101/100",
+                  "101/100",
+                  "101/100",
+                  "3/5",
+                  "3/5"
+                ],
+                "attained_signs": [
+                  "+"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  1,
+                  0
+                ],
+                "min": "-289/625",
+                "max": "-11/625",
+                "min_vertex": [
+                  "-1/100",
+                  "99/100",
+                  "101/100",
+                  "101/100",
+                  "2/5",
+                  "3/5"
+                ],
+                "max_vertex": [
+                  "1/100",
+                  "101/100",
+                  "99/100",
+                  "99/100",
+                  "3/5",
+                  "2/5"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  1
+                ],
+                "min": "-289/625",
+                "max": "-11/625",
+                "min_vertex": [
+                  "-1/100",
+                  "101/100",
+                  "99/100",
+                  "101/100",
+                  "3/5",
+                  "2/5"
+                ],
+                "max_vertex": [
+                  "1/100",
+                  "99/100",
+                  "101/100",
+                  "99/100",
+                  "2/5",
+                  "3/5"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  0
+                ],
+                "min": "-541/625",
+                "max": "-1551/2500",
+                "min_vertex": [
+                  "-1/100",
+                  "101/100",
+                  "101/100",
+                  "99/100",
+                  "3/5",
+                  "3/5"
+                ],
+                "max_vertex": [
+                  "1/100",
+                  "99/100",
+                  "99/100",
+                  "101/100",
+                  "2/5",
+                  "2/5"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              }
+            ],
+            "vertex_evaluations": 256,
+            "truth_vector": [
+              1,
+              0,
+              0,
+              0
+            ],
+            "contract_sha256": "814b22ee32a7a2356ebb39578a126ff87c5e1b83c6b390b7a580c6a918674d52"
+          },
+          "mixed_region": {
+            "status": "NONEXACT",
+            "model": "D+A*x+B*y+C*x*y; joint-box; strict-zero-threshold; v1",
+            "frame": [
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "bounds": {
+              "D": [
+                "0",
+                "0"
+              ],
+              "A": [
+                "1",
+                "1"
+              ],
+              "B": [
+                "1",
+                "1"
+              ],
+              "C": [
+                "1",
+                "1"
+              ],
+              "a": [
+                "1/2",
+                "2"
+              ],
+              "b": [
+                "1/2",
+                "1/2"
+              ]
+            },
+            "range_proof": "multi-affine box interpolation",
+            "rows": [
+              {
+                "alpha": [
+                  1,
+                  1
+                ],
+                "min": "5/4",
+                "max": "7/2",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "+"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  1,
+                  0
+                ],
+                "min": "-1/4",
+                "max": "1/2",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-",
+                  "0",
+                  "+"
+                ],
+                "status": "MIXED"
+              },
+              {
+                "alpha": [
+                  0,
+                  1
+                ],
+                "min": "-5/2",
+                "max": "-1/4",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  0
+                ],
+                "min": "-3/2",
+                "max": "-3/4",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "2",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              }
+            ],
+            "vertex_evaluations": 8,
+            "truth_vector": null,
+            "contract_sha256": "941d796daf5cb9476f8ce4933787d6a09a9f5075a9b663def3704a69b26b8e71"
+          },
+          "boundary_point": {
+            "status": "NONEXACT",
+            "model": "D+A*x+B*y+C*x*y; joint-box; strict-zero-threshold; v1",
+            "frame": [
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "bounds": {
+              "D": [
+                "0",
+                "0"
+              ],
+              "A": [
+                "1",
+                "1"
+              ],
+              "B": [
+                "1",
+                "1"
+              ],
+              "C": [
+                "1",
+                "1"
+              ],
+              "a": [
+                "1",
+                "1"
+              ],
+              "b": [
+                "1/2",
+                "1/2"
+              ]
+            },
+            "range_proof": "multi-affine box interpolation",
+            "rows": [
+              {
+                "alpha": [
+                  1,
+                  1
+                ],
+                "min": "2",
+                "max": "2",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "+"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  1,
+                  0
+                ],
+                "min": "0",
+                "max": "0",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "0"
+                ],
+                "status": "TIE_PRESENT"
+              },
+              {
+                "alpha": [
+                  0,
+                  1
+                ],
+                "min": "-1",
+                "max": "-1",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              },
+              {
+                "alpha": [
+                  0,
+                  0
+                ],
+                "min": "-1",
+                "max": "-1",
+                "min_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "max_vertex": [
+                  "0",
+                  "1",
+                  "1",
+                  "1",
+                  "1",
+                  "1/2"
+                ],
+                "attained_signs": [
+                  "-"
+                ],
+                "status": "STRICT"
+              }
+            ],
+            "vertex_evaluations": 4,
+            "truth_vector": null,
+            "contract_sha256": "ed3eb8e4ad800a30538b1820a1a876c2fdbd3868bba92b863159f357601b26ce"
+          },
+          "empty_box": {
+            "status": "UNREACHABLE",
+            "reason": "empty joint box"
+          }
+        },
+        "interval_baselines": [
+          {
+            "case": "and_input_region",
+            "natural_interval_ranges": [
+              [
+                "24/25",
+                "39/25"
+              ],
+              [
+                "-14/25",
+                "1/25"
+              ],
+              [
+                "-14/25",
+                "1/25"
+              ],
+              [
+                "-26/25",
+                "-11/25"
+              ]
+            ],
+            "natural_interval_status": "UNKNOWN",
+            "corner_certificate_status": "EXACT"
+          },
+          {
+            "case": "joint_input_parameter_region",
+            "natural_interval_ranges": [
+              [
+                "2351/2500",
+                "991/625"
+              ],
+              [
+                "-1459/2500",
+                "77/1250"
+              ],
+              [
+                "-1459/2500",
+                "77/1250"
+              ],
+              [
+                "-2659/2500",
+                "-523/1250"
+              ]
+            ],
+            "natural_interval_status": "UNKNOWN",
+            "corner_certificate_status": "EXACT"
+          }
+        ],
+        "sixteen_tables": [
+          {
+            "truth_vector": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "coefficients": [
+              "-1",
+              "0",
+              "0",
+              "0"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "coefficients": [
+              "-1/2",
+              "-1/2",
+              "-1/2",
+              "1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              0,
+              0,
+              1,
+              0
+            ],
+            "coefficients": [
+              "-1/2",
+              "-1/2",
+              "1/2",
+              "-1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "coefficients": [
+              "0",
+              "-1",
+              "0",
+              "0"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              0,
+              1,
+              0,
+              0
+            ],
+            "coefficients": [
+              "-1/2",
+              "1/2",
+              "-1/2",
+              "-1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              0,
+              1,
+              0,
+              1
+            ],
+            "coefficients": [
+              "0",
+              "0",
+              "-1",
+              "0"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              0,
+              1,
+              1,
+              0
+            ],
+            "coefficients": [
+              "0",
+              "0",
+              "0",
+              "-1"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              0,
+              1,
+              1,
+              1
+            ],
+            "coefficients": [
+              "1/2",
+              "-1/2",
+              "-1/2",
+              "-1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              0,
+              0,
+              0
+            ],
+            "coefficients": [
+              "-1/2",
+              "1/2",
+              "1/2",
+              "1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              0,
+              0,
+              1
+            ],
+            "coefficients": [
+              "0",
+              "0",
+              "0",
+              "1"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              0,
+              1,
+              0
+            ],
+            "coefficients": [
+              "0",
+              "0",
+              "1",
+              "0"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              0,
+              1,
+              1
+            ],
+            "coefficients": [
+              "1/2",
+              "-1/2",
+              "1/2",
+              "1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              1,
+              0,
+              0
+            ],
+            "coefficients": [
+              "0",
+              "1",
+              "0",
+              "0"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              1,
+              0,
+              1
+            ],
+            "coefficients": [
+              "1/2",
+              "1/2",
+              "-1/2",
+              "1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              1,
+              1,
+              0
+            ],
+            "coefficients": [
+              "1/2",
+              "1/2",
+              "1/2",
+              "-1/2"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          },
+          {
+            "truth_vector": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "coefficients": [
+              "1",
+              "0",
+              "0",
+              "0"
+            ],
+            "parameter_box_halfwidth": "1/20",
+            "margin": "4/5"
+          }
+        ],
+        "star_code_checks": [
+          {
+            "labels": 2,
+            "minimum_bits": 1,
+            "quadratic_boundary_degree_required": 2
+          },
+          {
+            "labels": 4,
+            "minimum_bits": 2,
+            "quadratic_boundary_degree_required": 4
+          },
+          {
+            "labels": 8,
+            "minimum_bits": 3,
+            "quadratic_boundary_degree_required": 8
+          },
+          {
+            "labels": 16,
+            "minimum_bits": 4,
+            "quadratic_boundary_degree_required": 16
+          }
+        ],
+        "weighted_three_leaf_optimum": 4,
+        "trajectory": [
+          {
+            "t": "0",
+            "D": "3/4",
+            "status": "EXACT",
+            "truth_vector": [
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "1/2",
+            "D": "0",
+            "status": "NONEXACT",
+            "truth_vector": null
+          },
+          {
+            "t": "1",
+            "D": "-1/4",
+            "status": "EXACT",
+            "truth_vector": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "3/2",
+            "D": "0",
+            "status": "NONEXACT",
+            "truth_vector": null
+          },
+          {
+            "t": "2",
+            "D": "3/4",
+            "status": "EXACT",
+            "truth_vector": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "limitations": [
+          "No neural training or PALO integration",
+          "No SMT, general polynomial, constrained-region or floating-point backend",
+          "Corner checks support a classical multi-affine theorem; no general sampling certificate",
+          "Star lower bounds are mathematical arguments in the dossier, not established by enumeration",
+          "No runtime speedup or novelty claim"
+        ]
+      }
+    },
+    {
+      "run": "semantic",
+      "result_path": "C:\\Users\\brian\\Documents\\CM_Computation\\output\\research\\palo_adversarial_audit_2026-10-13\\dossier_snapshots\\semantic_compilation\\checker_results.json",
+      "sha256": "c06838aae5acd4881d9c5b1f1405bffad501c9859d6dc34812553a8aaf07c15c",
+      "assertions": 42918,
+      "results": {
+        "status": "PASS",
+        "assertions": 42918,
+        "elapsed_seconds": 11.405067299987422,
+        "scope": "bounded exact research checks, not a PALO integration, performance benchmark or priority proof",
+        "rewrites": [
+          {
+            "name": "and_commutativity",
+            "source_ast": [
+              "and",
+              "x",
+              "y"
+            ],
+            "target_ast": [
+              "and",
+              "y",
+              "x"
+            ],
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": true,
+            "exact_soft_residual": [],
+            "boolean_ideal_certificate": [
+              [],
+              []
+            ],
+            "rational_soft_counterexample": null,
+            "gradient_residuals": [
+              [],
+              []
+            ]
+          },
+          {
+            "name": "and_associativity",
+            "source_ast": [
+              "and",
+              [
+                "and",
+                "x",
+                "y"
+              ],
+              "z"
+            ],
+            "target_ast": [
+              "and",
+              "x",
+              [
+                "and",
+                "y",
+                "z"
+              ]
+            ],
+            "variables": [
+              "x",
+              "y",
+              "z"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": true,
+            "exact_soft_residual": [],
+            "boolean_ideal_certificate": [
+              [],
+              [],
+              []
+            ],
+            "rational_soft_counterexample": null,
+            "gradient_residuals": [
+              [],
+              [],
+              []
+            ]
+          },
+          {
+            "name": "or_associativity",
+            "source_ast": [
+              "or",
+              [
+                "or",
+                "x",
+                "y"
+              ],
+              "z"
+            ],
+            "target_ast": [
+              "or",
+              "x",
+              [
+                "or",
+                "y",
+                "z"
+              ]
+            ],
+            "variables": [
+              "x",
+              "y",
+              "z"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": true,
+            "exact_soft_residual": [],
+            "boolean_ideal_certificate": [
+              [],
+              [],
+              []
+            ],
+            "rational_soft_counterexample": null,
+            "gradient_residuals": [
+              [],
+              [],
+              []
+            ]
+          },
+          {
+            "name": "de_morgan",
+            "source_ast": [
+              "not",
+              [
+                "and",
+                "x",
+                "y"
+              ]
+            ],
+            "target_ast": [
+              "or",
+              [
+                "not",
+                "x"
+              ],
+              [
+                "not",
+                "y"
+              ]
+            ],
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": true,
+            "exact_soft_residual": [],
+            "boolean_ideal_certificate": [
+              [],
+              []
+            ],
+            "rational_soft_counterexample": null,
+            "gradient_residuals": [
+              [],
+              []
+            ]
+          },
+          {
+            "name": "implication_expansion",
+            "source_ast": [
+              "imp",
+              "x",
+              "y"
+            ],
+            "target_ast": [
+              "or",
+              [
+                "not",
+                "x"
+              ],
+              "y"
+            ],
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": true,
+            "exact_soft_residual": [],
+            "boolean_ideal_certificate": [
+              [],
+              []
+            ],
+            "rational_soft_counterexample": null,
+            "gradient_residuals": [
+              [],
+              []
+            ]
+          },
+          {
+            "name": "equivalence_to_two_implications",
+            "source_ast": [
+              "eq",
+              "x",
+              "y"
+            ],
+            "target_ast": [
+              "and",
+              [
+                "imp",
+                "x",
+                "y"
+              ],
+              [
+                "imp",
+                "y",
+                "x"
+              ]
+            ],
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1,
+                  1
+                ],
+                "coefficient": "-1"
+              },
+              {
+                "powers": [
+                  1,
+                  2
+                ],
+                "coefficient": "1"
+              },
+              {
+                "powers": [
+                  2,
+                  1
+                ],
+                "coefficient": "1"
+              },
+              {
+                "powers": [
+                  2,
+                  2
+                ],
+                "coefficient": "-1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0,
+                    1
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    0,
+                    2
+                  ],
+                  "coefficient": "-1"
+                }
+              ],
+              []
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4",
+                "1/4"
+              ],
+              "residual": "-9/256"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0,
+                    1
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    0,
+                    2
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    1,
+                    1
+                  ],
+                  "coefficient": "2"
+                },
+                {
+                  "powers": [
+                    1,
+                    2
+                  ],
+                  "coefficient": "-2"
+                }
+              ],
+              [
+                {
+                  "powers": [
+                    1,
+                    0
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    1,
+                    1
+                  ],
+                  "coefficient": "2"
+                },
+                {
+                  "powers": [
+                    2,
+                    0
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    2,
+                    1
+                  ],
+                  "coefficient": "-2"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "and_idempotence",
+            "source_ast": [
+              "and",
+              "x",
+              "x"
+            ],
+            "target_ast": "x",
+            "variables": [
+              "x"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1
+                ],
+                "coefficient": "-1"
+              },
+              {
+                "powers": [
+                  2
+                ],
+                "coefficient": "1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "1"
+                }
+              ]
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4"
+              ],
+              "residual": "-3/16"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    1
+                  ],
+                  "coefficient": "2"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "or_idempotence",
+            "source_ast": [
+              "or",
+              "x",
+              "x"
+            ],
+            "target_ast": "x",
+            "variables": [
+              "x"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1
+                ],
+                "coefficient": "1"
+              },
+              {
+                "powers": [
+                  2
+                ],
+                "coefficient": "-1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "-1"
+                }
+              ]
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4"
+              ],
+              "residual": "3/16"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    1
+                  ],
+                  "coefficient": "-2"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "excluded_middle",
+            "source_ast": [
+              "or",
+              "x",
+              [
+                "not",
+                "x"
+              ]
+            ],
+            "target_ast": 1,
+            "variables": [
+              "x"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1
+                ],
+                "coefficient": "-1"
+              },
+              {
+                "powers": [
+                  2
+                ],
+                "coefficient": "1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "1"
+                }
+              ]
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4"
+              ],
+              "residual": "-3/16"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    1
+                  ],
+                  "coefficient": "2"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "contradiction",
+            "source_ast": [
+              "and",
+              "x",
+              [
+                "not",
+                "x"
+              ]
+            ],
+            "target_ast": 0,
+            "variables": [
+              "x"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1
+                ],
+                "coefficient": "1"
+              },
+              {
+                "powers": [
+                  2
+                ],
+                "coefficient": "-1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "-1"
+                }
+              ]
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4"
+              ],
+              "residual": "3/16"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    1
+                  ],
+                  "coefficient": "-2"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "absorption",
+            "source_ast": [
+              "and",
+              "x",
+              [
+                "or",
+                "x",
+                "y"
+              ]
+            ],
+            "target_ast": "x",
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1,
+                  0
+                ],
+                "coefficient": "-1"
+              },
+              {
+                "powers": [
+                  1,
+                  1
+                ],
+                "coefficient": "1"
+              },
+              {
+                "powers": [
+                  2,
+                  0
+                ],
+                "coefficient": "1"
+              },
+              {
+                "powers": [
+                  2,
+                  1
+                ],
+                "coefficient": "-1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0,
+                    0
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    0,
+                    1
+                  ],
+                  "coefficient": "-1"
+                }
+              ],
+              []
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4",
+                "1/3"
+              ],
+              "residual": "-1/8"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0,
+                    0
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    0,
+                    1
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    1,
+                    0
+                  ],
+                  "coefficient": "2"
+                },
+                {
+                  "powers": [
+                    1,
+                    1
+                  ],
+                  "coefficient": "-2"
+                }
+              ],
+              [
+                {
+                  "powers": [
+                    1,
+                    0
+                  ],
+                  "coefficient": "1"
+                },
+                {
+                  "powers": [
+                    2,
+                    0
+                  ],
+                  "coefficient": "-1"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "distribution",
+            "source_ast": [
+              "and",
+              "x",
+              [
+                "or",
+                "y",
+                "z"
+              ]
+            ],
+            "target_ast": [
+              "or",
+              [
+                "and",
+                "x",
+                "y"
+              ],
+              [
+                "and",
+                "x",
+                "z"
+              ]
+            ],
+            "variables": [
+              "x",
+              "y",
+              "z"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1,
+                  1,
+                  1
+                ],
+                "coefficient": "-1"
+              },
+              {
+                "powers": [
+                  2,
+                  1,
+                  1
+                ],
+                "coefficient": "1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0,
+                    1,
+                    1
+                  ],
+                  "coefficient": "1"
+                }
+              ],
+              [],
+              []
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4",
+                "1/3",
+                "1/3"
+              ],
+              "residual": "-1/48"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0,
+                    1,
+                    1
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "coefficient": "2"
+                }
+              ],
+              [
+                {
+                  "powers": [
+                    1,
+                    0,
+                    1
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    2,
+                    0,
+                    1
+                  ],
+                  "coefficient": "1"
+                }
+              ],
+              [
+                {
+                  "powers": [
+                    1,
+                    1,
+                    0
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    2,
+                    1,
+                    0
+                  ],
+                  "coefficient": "1"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "xor_self",
+            "source_ast": [
+              "xor",
+              "x",
+              "x"
+            ],
+            "target_ast": 0,
+            "variables": [
+              "x"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1
+                ],
+                "coefficient": "2"
+              },
+              {
+                "powers": [
+                  2
+                ],
+                "coefficient": "-2"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "-2"
+                }
+              ]
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4"
+              ],
+              "residual": "3/8"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0
+                  ],
+                  "coefficient": "2"
+                },
+                {
+                  "powers": [
+                    1
+                  ],
+                  "coefficient": "-4"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "signed_frame_transport",
+            "source_ast": [
+              "imp",
+              [
+                "not",
+                "y"
+              ],
+              "x"
+            ],
+            "target_ast": [
+              "or",
+              "y",
+              "x"
+            ],
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": true,
+            "exact_soft_residual": [],
+            "boolean_ideal_certificate": [
+              [],
+              []
+            ],
+            "rational_soft_counterexample": null,
+            "gradient_residuals": [
+              [],
+              []
+            ]
+          },
+          {
+            "name": "compiler_paper_worked_fusion",
+            "source_ast": [
+              "xor",
+              [
+                "imp",
+                "x",
+                [
+                  "not",
+                  "y"
+                ]
+              ],
+              [
+                "imp",
+                [
+                  "not",
+                  "y"
+                ],
+                "x"
+              ]
+            ],
+            "target_ast": [
+              "eq",
+              "x",
+              "y"
+            ],
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  1,
+                  1
+                ],
+                "coefficient": "-2"
+              },
+              {
+                "powers": [
+                  1,
+                  2
+                ],
+                "coefficient": "2"
+              },
+              {
+                "powers": [
+                  2,
+                  1
+                ],
+                "coefficient": "2"
+              },
+              {
+                "powers": [
+                  2,
+                  2
+                ],
+                "coefficient": "-2"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0,
+                    1
+                  ],
+                  "coefficient": "2"
+                },
+                {
+                  "powers": [
+                    0,
+                    2
+                  ],
+                  "coefficient": "-2"
+                }
+              ],
+              []
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4",
+                "1/4"
+              ],
+              "residual": "-9/128"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    0,
+                    1
+                  ],
+                  "coefficient": "-2"
+                },
+                {
+                  "powers": [
+                    0,
+                    2
+                  ],
+                  "coefficient": "2"
+                },
+                {
+                  "powers": [
+                    1,
+                    1
+                  ],
+                  "coefficient": "4"
+                },
+                {
+                  "powers": [
+                    1,
+                    2
+                  ],
+                  "coefficient": "-4"
+                }
+              ],
+              [
+                {
+                  "powers": [
+                    1,
+                    0
+                  ],
+                  "coefficient": "-2"
+                },
+                {
+                  "powers": [
+                    1,
+                    1
+                  ],
+                  "coefficient": "4"
+                },
+                {
+                  "powers": [
+                    2,
+                    0
+                  ],
+                  "coefficient": "2"
+                },
+                {
+                  "powers": [
+                    2,
+                    1
+                  ],
+                  "coefficient": "-4"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "shared_support_cancellation",
+            "source_ast": [
+              "or",
+              [
+                "and",
+                "x",
+                "y"
+              ],
+              [
+                "and",
+                "x",
+                [
+                  "not",
+                  "y"
+                ]
+              ]
+            ],
+            "target_ast": "x",
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": false,
+            "exact_soft_residual": [
+              {
+                "powers": [
+                  2,
+                  1
+                ],
+                "coefficient": "-1"
+              },
+              {
+                "powers": [
+                  2,
+                  2
+                ],
+                "coefficient": "1"
+              }
+            ],
+            "boolean_ideal_certificate": [
+              [
+                {
+                  "powers": [
+                    0,
+                    1
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    0,
+                    2
+                  ],
+                  "coefficient": "1"
+                }
+              ],
+              [
+                {
+                  "powers": [
+                    1,
+                    0
+                  ],
+                  "coefficient": "1"
+                }
+              ]
+            ],
+            "rational_soft_counterexample": {
+              "point": [
+                "1/4",
+                "1/4"
+              ],
+              "residual": "-3/256"
+            },
+            "gradient_residuals": [
+              [
+                {
+                  "powers": [
+                    1,
+                    1
+                  ],
+                  "coefficient": "-2"
+                },
+                {
+                  "powers": [
+                    1,
+                    2
+                  ],
+                  "coefficient": "2"
+                }
+              ],
+              [
+                {
+                  "powers": [
+                    2,
+                    0
+                  ],
+                  "coefficient": "-1"
+                },
+                {
+                  "powers": [
+                    2,
+                    1
+                  ],
+                  "coefficient": "2"
+                }
+              ]
+            ]
+          },
+          {
+            "name": "dag_cse_value",
+            "source_ast": [
+              "and",
+              [
+                "imp",
+                "x",
+                "y"
+              ],
+              [
+                "imp",
+                "x",
+                "y"
+              ]
+            ],
+            "target_ast": [
+              "and",
+              [
+                "imp",
+                "x",
+                "y"
+              ],
+              [
+                "imp",
+                "x",
+                "y"
+              ]
+            ],
+            "variables": [
+              "x",
+              "y"
+            ],
+            "boolean_equivalent": true,
+            "same_expectation_every_joint_model": true,
+            "recursive_soft_equal": true,
+            "exact_soft_residual": [],
+            "boolean_ideal_certificate": [
+              [],
+              []
+            ],
+            "rational_soft_counterexample": null,
+            "gradient_residuals": [
+              [],
+              []
+            ]
+          }
+        ],
+        "exhaustive_composition_families": [
+          {
+            "family": "same_frame",
+            "circuits": 4096,
+            "soft_preserving_table_folds": 2216,
+            "rejected_folds": 1880
+          },
+          {
+            "family": "overlapping_support",
+            "circuits": 4096,
+            "soft_preserving_table_folds": 2656,
+            "rejected_folds": 1440
+          },
+          {
+            "family": "disjoint_support",
+            "circuits": 4096,
+            "soft_preserving_table_folds": 4096,
+            "rejected_folds": 0
+          }
+        ],
+        "correlated_expectation_examples": 17,
+        "parameter_restriction_example": {
+          "condition": "q=1, p=t",
+          "equivalence_expansion_residual": []
+        },
+        "marginal_context_counterexample": {
+          "model": "independent fair X,Y",
+          "P(X)": "1/2",
+          "P(Y)": "1/2",
+          "P(X and X)": "1/2",
+          "P(X and Y)": "1/4"
+        },
+        "gradient_falsification": {
+          "box": [
+            "0",
+            "1/100"
+          ],
+          "value_error_bound": "99/10000",
+          "input_gradient_error_bound": "1"
+        },
+        "decision_certificate": {
+          "box": [
+            "3/4",
+            "1"
+          ],
+          "threshold": "1/2",
+          "x_range": [
+            "3/4",
+            "1"
+          ],
+          "x_squared_range": [
+            "9/16",
+            "1"
+          ]
+        }
+      }
+    }
+  ],
+  "independent_total_assertions": 10990,
+  "scope": "Counts are not summed as independent proof coverage; copied runs corroborate executable diagnostics. No learning/timing/source-wide proof audit.",
+  "claim_rows": 73,
+  "severity_counts": {
+    "critical": 0,
+    "major": 4,
+    "minor": 4,
+    "none": 65
+  }
+}

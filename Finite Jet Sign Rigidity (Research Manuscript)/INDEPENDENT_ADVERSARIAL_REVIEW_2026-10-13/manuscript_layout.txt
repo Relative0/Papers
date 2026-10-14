@@ -1,0 +1,961 @@
+
+=== PDF PAGE 1 ===
+Finite-JetSignRigidityonHyperplaneArrangements
+                   andDenjoy–CarlemanRealization
+
+                                            Brian Theory
+
+                                           13 October 2026
+
+
+                                               Abstract
+         LetAbeafiniterealaffinehyperplanearrangement.Westudywhich{±1}-valuedchamber
+      labelingscanoccurasthesignofafunctionwithprescribedregularity. Afirstnonzero
+      homogeneousTaylorterminheritsthechambersignsweakly,andfactormultiplicitiesforce
+      aconstantcrossingparity.Thisgivesashortarrangement-levelproofoftheknownsmooth
+      signature-flatnessobstructionand,infiniteregularity,explicitCdorthantandCNarrangement
+      rigiditystatements.
+         FornormalizedcompactwiseRoumieuDenjoy–CarlemanclassesE{M},theDenjoy–Carleman
+      criterionyieldsanexactrealizationdichotomy.Inthequasianalyticcasetherealizablechamber
+      lawsarepreciselythesignedparitylaws;inthenon-quasianalyticcaseeverychamberlabeling
+      isrealizedbyexplicitselectorformulas.Thusanarrangementofmdistincthyperplaneswithr
+      chambersadmitsexactly 2m+1and 2rrealizablesignlawsinthetworegimes.Wealsorecord
+      corner-marginconsequencesandafixed-dimensionalpolynomialcomparisononacubewith
+      coordinate-wallstripsofwidthδremoved:signedparityhasconstantexactdegree,non-affine
+      lawshavedegree Θ(log(1/δ)),andanynonconstantlawrequiresdegree Θ(1/δ)underaglobal
+      amplitudeboundandfixedpositivemargin.Thesmoothobstruction,positive-flatexistence,
+      andapproximationingredientsareclassical;thecontributionistheirexplicitformulationand
+      synthesis,withfinite-orderstatementsandcompletereductions.
+
+2020MathematicsSubjectClassification.26E10,52C35.
+Keywords.finitejets;hyperplanearrangements;Denjoy–Carlemanclasses;quasianalyticity;sign
+distributions;polynomialsignrepresentation.
+
+1 Introduction
+
+ABooleantruthtableisfinite.Requiringthesametruthvaluethroughoutanentireorthantof
+Rnisnot.ThisdistinctionbecomessharpwhentheBooleanvalueisextractedfromthesignofa
+smoothreal-valuedfunction.
+   Forexample,thepolynomial
+                                             F(x,y) =xy
+ispositiveinthefirstandthirdquadrantsandnegativeintheothertwo.Withpositiveinterpreted
+as 1andnegativeas 0,itrealizesequivalence(XNOR),anaffineBooleanfunctionoverF2.By
+contrast,theANDsignpatternispositiveonlyinthepositive-positivequadrantandnegativein
+theotherthree.Thenonsmoothfunction min(x,y)hasexactlythatsignpattern,buttheresults
+belowshowthatanysmoothrealizationofANDonallfourquadrantsmustbeflatattheorigin.
+Inaquasianalyticclassthisisimpossibleforanonzerofunction;inanon-quasianalyticclassitis
+possiblebyusingflatone-sidedselectors.
+   Thefirstpurposeofthispaperistoisolatethelocalmechanismbehindthatphenomenon.Itis
+notcoordinatedivision,resolutionofsingularities,oraspecialfeatureofoneultradifferentiable
+
+                                                    1
+
+=== PDF PAGE 2 ===
+class.ItisthefirstnonzerohomogeneousTaylorterm.Ifasmoothfunctionhasanonzerofinite
+jetatthecommoncorner,itsleadingpolynomialalreadyinheritstheorthantsignsinaweak
+sense. Polynomialfactorizationacrosscoordinatehyperplanesthenforcesanaffineparitylaw.
+Thelastfactor-multiplicitystepiselementaryandhasclearantecedents;thepointofthefinite-jet
+formulationisthatittransportsthatobstructionfrompolynomialstoarbitrarysmoothgerms
+andmakesthesubsequentregularityclassificationimmediate.
+   Thesecondpurposeistocarrythatmechanismtoafiniteaffinehyperplanearrangement.If
+asmoothfunctionisnonzerooffthearrangementandhasnoflatpointonit,thelocalleading
+polynomialateachpointfixesacrossingparityforeveryincidenthyperplane. Thoseparities
+propagatealongeachconnectedaffinehyperplaneandhencedeterminethesignoneverychamber.
+   ThethirdpurposeistocombinethesesmoothstatementswiththeclassicalDenjoy–Carleman
+theorem.WeusethroughoutonecompactwiseRoumieuconvention,
+
+                            |Dαf(x)|≤CKρ|α|K|α|!M|α|,   x∈K⋐U,
+
+andnoderivative-stabilityassumption.Inthisnormalizationthequasianalyticcriterionis
+
+                                        ∞∑      Mk
+
+                                       k=0 (k+1)Mk+1 =∞.
+
+Onthedivergentside,quasianalyticityrulesouttheflatnessrequiredbyanon-affineorthantlaw.
+Ontheconvergentside,aclassicalcompactlysupportedcutoffyieldsaone-sidedselector,from
+whicharbitraryBooleanlawsareassembledwithoutcancellation.
+
+Priorworkandcontributionboundary. TheC∞arrangementobstructionbelongstothe
+signature-flatnesstheoryofBrogliaandTognoli[12];Remark4.6givestheprecisereductionfrom
+thehypothesesusedhere,includingthehomologicalpointintheirtheorem.Theirfactorization
+analysisalsocontainstheparity-of-multiplicitymechanismunderlyingLemma3.1,andtheir
+examplesalreadyuseafirstnonzeroTaylorcoefficienttodetectincompatiblecrossingparities.
+Thusneitherthesmoothobstructionnortheleading-termideaisclaimedasnew.
+   Thebroaderhistoricalsettingincludesdistributionsofsignsandsignatures[5,1,2,4,3],the
+Varchenko–Gelfandalgebraofchamberfunctionsanditslaterarrangement-theoreticextensions[7,
+8,6],andtheclassicalDenjoy–Carlemantheoryofquasianalyticity,cutoffs,andpositive-flat
+functions[14,13,15].Strongerdivisionandmonomializationframeworksarealsoavailable[11,9,
+10],buttheyarenotneededfortheelementaryproofsbelow.
+   ExactBooleansignoperationsalsohaveaclassicalconstructivetheoryintheR-function
+literature. Shapiro’ssurvey[16, Sections3.3and3.6]describesroot-basedconjunctionand
+disjunctionandtheirfinite-differentiabilityupgrades.Thesesupplydirectexamplesattheboundary
+ofthefinite-jetstatements;theyarecreditedexplicitlyinSection8.3.
+   Thenotecombinesexplicitfinite-orderrigidity,aself-containedproofforaffinearrangements,
+andexactrealizationclassificationswithconstructiveformulasandchambercounts. Section7
+addsquantitativeconsequences:Taylorestimatesturnvanishingjetsintocorner-marginbounds,
+whileclassicalrationalapproximation,Sherstov’smajority-conjunctionlowerbound[17],and
+Bernstein–Jacksoninequalities[18]giveafixed-dimensionaldegreeclassificationafterexcludingthe
+walls.Thesearederivedconsequences,withnoclaimofhistoricalfirstnessornewapproximation
+machinery.Theydistinguishexactrealizationnearthecommoncornerfromsigncorrectnessata
+positivedistancefromthewalls.
+
+
+                                                   2
+
+=== PDF PAGE 3 ===
+Organization. Section2fixesthesignandDenjoy–Carlemanconventions.Section3provesthe
+weak-signpolynomiallemma.Section4establishesfinite-jetrigidityandthesmootharrangement
+theorem. Section5constructsone-sidedselectorsandprovesthewhole-orthantdichotomy.
+Section6givesthearrangementclassificationandexactcounts.Section7derivescorner-margin
+andpolynomial-degreebounds. Section8recordscounterexamplesandcomparisonswithR-
+functionsandnormal-crossingresults.
+
+2 Definitions,conventions,andclassicalinput
+
+2.1  OrthantsandBooleansignlaws
+
+Forα= (α1,...,αn)∈{0,1}n,put
+
+                                  εi(α) = 2αi−1∈{−1,+1}
+
+anddefinetheopenorthant
+
+                            Oα={x∈Rn :εi(α)xi>0foreveryi}.
+
+AfunctionF definedonanopensetU meetingalltheseorthantsrealizesaBooleanlaw Θ :
+{0,1}n→{0,1}ontheorthantsinUifFisnonzeroontheirintersectionswithUand
+
+                            sgnF(x) = 2Θ(α)−1,   x∈Oα∩U.
+
+LocalrealizationatthecommoncornermeansrealizationonacenteredballcontainedinU;global
+realizationmeansU =Rn.Wecall Θ affineif
+
+                        Θ(α) =b⊕e1α1⊕···⊕enαn,   b,ei∈{0,1},
+
+where⊕denotesadditioninF2.Thereare 2n+1affineBooleanfunctions.Whenn=1,theseare
+allfourunaryBooleanfunctions.
+  AsmoothfunctionisflatatpifDαF(p) = 0foreverymulti-indexα.
+Definition2.1(Taylor-quasianalyticclass).Forthetwogenericcorollariesbelow,asmooth
+functionclassiscalledTaylor-quasianalyticif,ateverypointofitsdomain,afunctionwhosefull
+Taylorjetvanisheshaszerogermthere. Foravectorspaceofgerms,thiszero-jetimplication
+isequivalenttoinjectivityoftheTaylormap. Onlythezero-jetimplicationisusedinthetwo
+genericcorollariesbelow.Nodivision,composition,orsheafaxiomisintendedbythisshorthand.
+ThedivergentDenjoy–CarlemanclassesusedlaterhavethispropertybytheDenjoy–Carleman
+theorem.
+
+2.2  Affinearrangements
+
+Let
+                      A={H1,...,Hm},   Hj ={x∈Rn :ℓj(x) = 0},
+beafinitefamilyofdistinctproperaffinehyperplanes,whereeachnonconstantaffinedefining
+formℓjisfixedonceandforall.Achamberisaconnectedcomponentof
+
+                                                m⋃
+                                          Rn\     Hj.
+                                               j=1
+
+                                               3
+
+=== PDF PAGE 4 ===
+Wewrite Ch(A)forthechamberset. OnachamberC,every sgnℓjisconstant. Achamber
+labelingh: Ch(A)→{±1}isasignedparitylawif
+
+                                m∏
+                      h(C) =c     sgn(ℓj|C)ej,   c∈{±1}, ej∈{0,1}.                (1)
+                               j=1
+Theword“signed”isdeliberate: whenc =−1,thisisnotliterallyagroupcharacter,andthe
+realizedchambersignvectorsneednotformagroup.
+
+2.3  OneDenjoy–Carlemanconvention
+
+ThroughoutSections5–6,anormalizedweightmeansasequenceM = (Mk)k≥0suchthat
+
+                                     M0 = 1,   Mk>0,
+
+withMnondecreasingandlog-convex.ForanopensetU⊆Rn,definethecompactwiseRoumieu
+classE{M}(U)byrequiringthatforeverycompactK⋐UthereexistCK,ρK>0suchthat
+
+                            |Dαf(x)|≤CKρ|α|K|α|!M|α|  (x∈K).                      (2)
+
+ThisconventionkeepsthefactorialoutsideM. Tocomparewiththecommontotal-weight
+convention,set
+                                          Wk =k!Mk.
+ThenWisaweightsequenceinthesenseusedin[14]:itispositiveandlog-convex,W0 =1≤W1,
+andW1/kk →∞.Itsquotientsequencesatisfies
+                                     Wk+1
+                                      Wk   = (k+1)Mk+1Mk ,
+sotheDenjoy–Carlemanseriesisprecisely
+
+                                        ∞∑      Mk
+
+                                       k=0 (k+1)Mk+1.                               (3)
+
+TheDenjoy–CarlemantheoremsaysthatE{M}isquasianalyticexactlywhen(3)diverges;see[14,
+Theorem3.6].Intheconvergentcase,nontrivialcompactlysupportedfunctionsexist;thecutoff
+formweuseissupplied,forexample,by[14,Corollary3.12].
+  Wewillneedonlyelementaryclosurepropertiesinadditiontothisclassicalinput.
+
+Lemma2.2(Elementaryclosure).ForanormalizedweightM,theclassE{M}isclosedunder
+finitesums,finiteproducts,translations,andprecompositionwithaffinelinearfunctionals.For
+functionsonRitisalsoclosedundertheprimitiveG(t) =∫t0g(s)ds.
+
+Proof.Onlyproductsandprimitivesneedcomment.Log-convexitywithM0 =1impliesMjMk−j≤
+Mk.CombiningthiswithLeibniz’ruleandthebounds(2)givesthesameformofestimatewitha
+largerradiusconstant.
+  Foraone-variableg∈E{M}(R),defineG(t) =∫t0g(s)ds. Onacompactinterval,Gitselfis
+bounded.Fork≥1,G(k) =g(k−1),andmonotonicityofMgives
+
+                          |G(k)|≤Cρk−1(k−1)!Mk−1≤C′(ρ′)kk!Mk
+
+                                               4
+
+=== PDF PAGE 5 ===
+forsuitableenlargedconstants.Foranaffinefunctionalℓ(x)=a·x+bandaone-variablefunction
+g,thechainrulegives
+                                  Dα(g◦ℓ)(x) =aαg(|α|)(ℓ(x)).
+
+Theimageofacompactsetiscompact,andthefactorsfromaareabsorbedintotheradius
+constant.Translationsaretheone-variablespecialcaseofslopeone.
+
+3 Aweak-signpolynomiallemma
+
+Thefinite-jetargumentrestsonanelementaryfact:evenaweakchambersignprescriptionfora
+nonzeropolynomialhasparityform.
+Lemma3.1(Polynomialweak-signlemma).LetA ={H1,...,Hm}beafinitefamilyofdistinct
+properaffinehyperplanesinRn,withfixeddefiningformsℓj.LetPbeanonzerorealpolynomial.
+SupposenumbershC∈{±1}areassignedtothechambersC∈Ch(A)andsatisfy
+                                    hCP(x)≥0       (x∈C).                            (4)
+Thenthereareuniquec∈{±1}ande1,...,em∈{0,1}suchthat
+                                    m∏
+                            hC =c      sgn(ℓj|C)ej       (C∈Ch(A)).                      (5)
+                                   j=1
+Thepolynomialisallowedtovanishatpointsinsideachamber.
+
+Proof.Foreachj,letajbethelargestexponentforwhichℓajj dividesP,andwrite
+                                     P =ℓajjQj,   ℓj ∤Qj.
+TherestrictionofQjtoHjisthereforeanonzeropolynomialonHjandcannotvanishona
+relativelyopensubsetofHj.
+   ConsidertwochamberssharingafacetcontainedinHj.Intherelativeinteriorofthatfacet
+chooseapointpoutsideeveryotherhyperplaneandwithQj(p)̸= 0.Inasufficientlysmallball
+aboutp,thesignofQjisfixed,whileℓjchangessignwhenHjiscrossed.HencethesignofP
+changesbythefactor (−1)aj.WhereverP̸=0,theweakinequality(4)forcesitssigntoequalthe
+prescribedchambersign.ThuseveryadjacencyacrossHjhasthesameratio
+                                         hC′
+                                          hC  = (−1)aj.
+Putej≡aj (mod 2).
+   Nowdividethechamberlabelby∏jsgn(ℓj)ej.Thequotientisunchangedacrosseverychamber
+adjacency.Thechamberadjacencygraphisconnected:chooseinteriorpointsoftwochambers
+andperturbasegment,oruseatwo-segmentpolygonalpath,sothatitmeetsthehyperplanes
+transverselyandnevermeetstwoatthesametime.Thequotientisthereforeasingleconstant
+c∈{±1},proving(5).
+   Foruniqueness,fixjandchooseapointofHjoutsideallotherhyperplanes. Thetwolocal
+chambersonitstwosidesdifferonlyinthesignofℓj,sotheirlabelratiodeterminesej. One
+chamberthendeterminesc.
+
+Remark 3.2. ThecontentofLemma3.1iselementarypolynomialfactorizationpluschamber
+adjacency. Weuseitasatransparentengineforthesmoothresults; wedonotattachan
+independentnoveltyclaimtoit.
+
+                                                5
+
+=== PDF PAGE 6 ===
+4 Finite-jetrigidity
+
+4.1  Orthants
+
+Theorem4.1(Finite-jetrigidity).LetFbeC∞onaneighborhoodoftheorigininRn.Assume
+thatinsomeballBcenteredattheorigin,
+
+                    F(x)̸= 0   whenevereverycoordinateofxisnonzero.
+
+BecauseeachB∩Oαisconnected,continuitymakesthesignofFconstantthere;writetheresulting
+localorthantsignlawash:{±1}n→{±1}.IfatleastonederivativeofFattheoriginisnonzero,
+thenthereareuniquec∈{±1}ande∈{0,1}nsuchthat
+
+                                                  n∏
+                                         h(s) =c     seii.                                (6)
+                                                 i=1
+Equivalently,everysmoothrealizationofanon-affineBooleanorthantlawisflatattheorigin.
+
+Proof.LetdbetheleastorderofanonzeroderivativeofFattheorigin;d=0isallowed.The
+firstnonzerohomogeneousTaylortermis
+                              Pd(x) =∑     DαF(0)              = 0.
+                                      |α|=d   α!  xα,   Pd̸
+
+Foranyv∈Rnwithnozerocoordinate,Taylor’sformulaalongtheraytv,t↓0,gives
+
+                                    F(tv) =tdPd(v)+o(td).
+
+Bythenonvanishinghypothesisandconnectednessjustnoted,F(tv)hassignh(sgnv)forevery
+sufficientlysmallt>0,
+                                       h(sgnv)Pd(v)≥0.
+ThusthenonzeropolynomialPdsatisfiesaweaksignprescriptiononthecoordinate-hyperplane
+arrangement.Lemma3.1gives(6)anditsuniqueness.
+  Undertheidentificationsi = 2αi−1,asignlawoftheform(6)isequivalenttoanaffine
+Booleanfunctionb⊕e1α1⊕···⊕enαn.Thecontrapositivegivestheflatnessstatement.
+
+Remark4.2(Finiteregularity).TheproofusesonlythefirstnonzeroTaylororder. Ifthefirst
+nonzerojethasorderd,thenaCdTaylorexpansionisenough.Thetheoremdoesnotassertthat
+nonflatnessisnecessaryforanaffinelaw:flatfunctionscanalsorealizeaffinelaws.
+Theorem4.3(Finite-orderorthantrigidity).Letd≥0andletFbeCdneartheorigin,nonzero
+wheneverallcoordinatesarenonzeroinsomecenteredball. Ifeveryderivativeoforder<d
+vanishesattheoriginandatleastonederivativeoforderdisnonzero,thenthelocalorthantsign
+lawisaffineparity.
+
+Proof.Theorder-dTaylorexpansionsuppliesthesamenonzeroleadinghomogeneouspolynomial
+usedinTheorem4.1;Lemma3.1thenappliesverbatim.
+
+Corollary4.4(Quasianalyticorthantrigidity).LetFbelongtoaTaylor-quasianalyticclasson
+aneighborhoodoftheoriginandsupposeitrealizesawholelocalorthantlawthere. Thenthat
+Booleanlawisaffine.
+
+                                                6
+
+=== PDF PAGE 7 ===
+Proof.IfeveryderivativeofFvanishedattheorigin,thedefiningzero-jetpropertywouldmake
+thegermofFattheoriginzero,contradictingnonvanishingoneverylocalopenorthant.Apply
+Theorem4.1.
+
+4.2  Affinehyperplanearrangements
+
+Theorem4.5(No-flat-pointarrangementrigidity).LetA={H1,...,Hm}beafinitefamilyof
+distinctproperaffinehyperplanesinRn.LetF∈C∞(Rn)benonzeroonRn\⋃jHj.Assumethat
+Fisnotflatatanypointof⋃jHj.Thenthereareuniquec∈{±1}ande1,...,em∈{0,1}such
+that                                     m∏
+                           sgnF(x) =c       sgnℓj(x)ej,   x/∈⋃Hj.                    (7)
+                                        j=1                      j
+
+Proof.Fixp∈⋃jHj.ChooseaballBpsmallenoughthateveryhyperplanemeetingBpcontains
+p.Aftertranslatingptotheorigin,theincidenthyperplanesformacentralarrangement.LetPp
+bethefirstnonzerohomogeneousTaylorpolynomialofFatp.
+  Foreverydirectionvoutsidetheincidenthyperplanes,
+
+                           F(p+tv) =td(p)Pp(v)+o(td(p)),   t↓0.
+
+ThefunctionFhasafixedsignoneachlocalchamberbecauseitiscontinuousandnonzerothere.
+HencePpinheritsthosesignsweakly.Lemma3.1gives,foreveryhyperplaneHjthroughp,alocal
+crossingparityej(p)∈{0,1}.
+  Weclaimthatej(p)islocallyconstantaspvariesinHj.Fixp∈HjanditsballBp.Forp′∈Hj
+sufficientlyclosetop,choosethelocalballBp′containedinBpandavoidingallhyperplanesnot
+containingp′.TherelativelyopensetHj∩Bp′containsapointqoutsideeveryotherhyperplane:
+theexcludedintersectionsformafiniteunionofproperaffinesubspacesofHj.Indimensionone,
+Hjisapointanddistincthyperplanesdonotmeetit.Asufficientlysmalltransversepairnearq,
+onoppositesidesofHj,liesinsidebothballsandmeetsnootherhyperplane.Theratioofthe
+twoactualsignsofFisboth (−1)ej(p)and (−1)ej(p′).Thusthebitsagree.SinceHjisconnected,
+ej(p)isasingleglobalbitej.
+  Nowconsidertheglobalchamberadjacencygraph. AcrossagenericfacetcontainedinHj,
+thesignofFchangesby (−1)ej.Thesameistrueoftheproduct∏jsgn(ℓj)ej.Theirquotientis
+thereforeunchangedacrosseverychamberadjacency.AsinLemma3.1,thechamberadjacency
+graphisconnected,sothequotientisaglobalconstantc∈{±1}.Thisproves(7).Uniqueness
+followsbycrossingagenericpointofeachHj.
+
+Remark4.6(Earliersignature-flatnesstheorem).Theorem4.5isanelementaryaffine-arrangement
+caseofthesignature-flatnesstheoryofBrogliaandTognoli[12,Theorem4.2]. Tocompare
+hypotheses,set
+                                                  m∏
+                                          G=F        ℓ2j.
+                                                  j=1
+ThenGhaszerosetexactly⋃jHjandthesamechambersignsasF. IfFhasafirstnonzero
+Taylortermatapointofthearrangement,thefirstnonzerotermofGisitsproductwithanonzero
+polynomial,sononflatnessispreserved.Forn≥2theirhomologicalconditionisautomaticonRn
+becauseHn−1(Rn;Z2)= 0;thehyperplanecomponentsadmitglobalaffineequationsandsatisfy
+therequiredconnectivity.Thecasen= 1isimmediatefromtheone-dimensionalcrossingpicture.
+
+
+                                                7
+
+=== PDF PAGE 8 ===
+Theiradmissiblesignaturesreduce,forhyperplanes,tothesignedparitylawsin(1).Thisremark
+recordsthehistoricalimplicationexplicitly;theproofaboveisretainedbecauseitisolatesthe
+finite-jetmechanismneededforTheorem4.7.
+
+Theorem4.7(Uniformfinite-orderarrangementrigidity).LetN≥0,letA ={H1,...,Hm}
+beafinitefamilyofdistinctproperaffinehyperplanesinRn,andletF∈CN(Rn)benonzeroon
+Rn\⋃jHj.Assumethatforeveryp∈⋃jHjtheN-jetofFatpisnonzero;equivalently,foreach
+suchpthereisamulti-indexαwith|α|≤NandDαF(p)̸=0.ThenthechambersignlawofFis
+auniquesignedparitylawoftheform(7).
+
+Proof.Ateachponthearrangementchoosetheleastd(p)≤Nforwhichsomederivativeoforder
+d(p)isnonzero. TheCd(p)Taylorexpansiongivesanonzeroleadinghomogeneouspolynomial
+andthereforethesamelocalcrossingparitiesasintheproofofTheorem4.5.Thepropagationof
+thoseparitiesalongahyperplane,andthenacrosstheconnectedchamberadjacencygraph,uses
+onlycontinuityandnonvanishingoffthearrangement.Thustheremainderofthatproofapplies
+unchanged.
+
+Remark4.8(Afinite-orderobstruction).Equivalently,ifaCN functionisnonzerooffthear-
+rangementandrealizesachamberlabelingthatisnotsignedparity,thenatsomepointofthe
+arrangementitsentireN-jetmustvanish.Thesmooththeoremisastrongerall-ordersanalogue:
+ityieldsasingleflatpoint. Thefinite-orderstatementsalonedonotimplythatconclusionby
+lettingNtendtoinfinity,becausethepointatwhichtheN-jetvanishesmaydependonN.
+
+Corollary4.9(Quasianalyticarrangementrigidity).LetFbeanonzerogloballydefinedmember
+ofaTaylor-quasianalyticclassonRn,andsupposeFisnonzerooffafiniteaffinearrangement.
+Thenitschambersignlawhastheform(7).
+
+Proof.Ataflatpoint,thedefiningzero-jetpropertywouldmakethegermofFtherezero.Every
+neighborhoodofapointonafinitehyperplanearrangementcontainspointsoffthearrangement,
+contradictingtheassumednonvanishingthere.ThusFhasnoflatpointonthearrangement,and
+Theorem4.5applies.
+
+5 Denjoy–Carlemanrealizationonorthants
+
+Thefinite-jettheoremsuppliestherigidityhalfoftheclassification.Theconversedirectionina
+non-quasianalyticclassisconstructive.
+
+Lemma5.1(One-sidedselector).LetMbeanormalizedweight.If
+
+                                      ∞∑      Mk
+
+                                      k=0 (k+1)Mk+1<∞,                              (8)
+
+thenthereexistsψ∈E{M}(R)suchthat
+
+                            ψ(t) = 0   (t≤0),   ψ(t)>0   (t>0).
+
+Proof.WithWk =k!Mk,condition(8)isthenon-quasianalyticDenjoy–Carlemancondition
+∑Wk/Wk+1<∞. Bytheclassicalcutofftheorem,chooseanonzeroreal-valuedcompactly
+
+
+
+                                                 8
+
+=== PDF PAGE 9 ===
+supportedfunctionfinthecorrespondingRoumieuclass;see[14,Theorem3.6andCorollary3.12].
+Translatefsothattheleftendpointofitssupportis 0.Then
+                                        f(t) = 0   (t≤0),
+andeveryinterval (0,t),t>0,containsapointatwhichfisnonzero:otherwisefwouldvanish
+onaright-neighborhoodof 0,contradictingthat 0istheleftendpointof suppf.
+  ByLemma2.2,f2anditsprimitivebelongtothesameclass.Define
+                                               ∫t
+                                        ψ(t) =
+                                                0f(s)2ds.
+Fort≤0theintegraliszero.Fort>0,theinterval (0,t)containsapointwheref̸=0;continuity
+thengivesanintervalonwhichf2>0,andthereforeψ(t)>0.
+
+Classicalconstructiveantecedent. Astrongerexistencestatementisclassical. Rainer’s
+Remark3.13,citingworkofLangenbruch,recordspositive-flatultradifferentiablefunctionsfor
+prescribedclosedsetsinthenon-quasianalyticsetting[14,Remark3.13];seealso[13].Takingthe
+closedsettobethearrangementandchangingthesignofsuchafunctionindependentlyoneach
+chamberalreadygivesarbitrarychamberlabelings,sinceflatnessmakesthechamberwisepieces
+gluewithzerojetoneverywall.Theselectorconstructionaboveisretainedbecauseitgivesan
+explicitformulainthedefiningaffineformsandmakesthelatercountingargumenttransparent.
+Definition5.2.ForanormalizedweightM,letRM(n)bethesetofBooleanfunctions Θ :
+{0,1}n→{0,1}realizedbysomegloballydefinedF∈E{M}(Rn)thatisnonzerowheneverall
+coordinatesarenonzero.
+Theorem5.3(Whole-orthantclassification).LetMbeanormalizedweight.Then
+                                                         ∞∑
+                         {affineBooleanfunctions},                      Mk
+                                                               k=0 (k+1)Mk+1 =∞,
+            RM(n) =                                       ∞∑      Mk
+                         {allBooleanfunctionson{0,1}n},            (k+1)Mk+1<∞.
+                                                               k=0
+Proof.Assumefirstthattheseriesdiverges.BytheDenjoy–Carlemantheorem,E{M}isquasiana-
+lytic.IfFrealizesawhole-orthantlaw,thenFisnotthezerofunctioninanyneighborhoodof
+theorigin,soitsTaylorjetattheorigincannotvanishidentically.Theorem4.1impliesthatthe
+lawisaffine.Conversely,everyaffinelawisrealizedbythepolynomial
+
+                                                    n∏
+                                         F(x) =c      xeii
+                                                   i=1
+forsuitablec∈{±1}andei∈{0,1},andeverypolynomialliesintheclass.
+  NowassumetheseriesconvergesandchoosetheselectorψfromLemma5.1.Forα∈{0,1}n,
+define                                          n∏
+                                     Ψα(x) =      ψ(εi(α)xi).
+                                               i=1
+ForanarbitraryBooleanfunction Θ,set
+                               FΘ(x) = ∑        (2Θ(α)−1)Ψα(x).                        (9)
+
+                                         α∈{0,1}n
+
+                                                 9
+
+=== PDF PAGE 10 ===
+ByLemma2.2,FΘ∈E{M}(Rn).Ifx∈Oα,then Ψα(x)> 0,whileforeveryβ̸=αatleastone
+factorof Ψβ(x)iszero.Hence
+                                     sgnFΘ(x) = 2Θ(α)−1.
+ThuseveryBooleanfunctionisrealized.
+
+Corollary5.4(Gevreydichotomy).FortheGevreyclassGs,s≥1,withderivativegrowth
+Cρk(k!)s,thewhole-orthantlawsareexactlytheaffineBooleanfunctionswhens = 1,andall
+Booleanfunctionswhens>1.
+
+Proof.Inthenormalization(2),takeMk = (k!)s−1.Then
+
+                                         Mk
+                                    (k+1)Mk+1 = (k+1)−s.
+
+Thecorrespondingseriesdivergesexactlyats= 1fors≥1.ApplyTheorem5.3.
+
+Remark5.5.Forn = 1,thetwosidesofTheorem5.3containthesamefourBooleanfunctions
+becauseeveryunaryBooleanfunctionisaffine. Thestrictexpressivedifferencebeginsatarity
+n≥2.
+
+6 Affinearrangements:classificationandexactcounts
+
+Theorthantconstructionextendsdirectlyonceorthantsarereplacedbytherealizedsigncellsofa
+finiteaffinearrangement.
+
+Theorem6.1(Arrangementclassification).LetMbeanormalizedweight.LetAbeanarrange-
+mentofmdistinctproperaffinehyperplanesinRn,andwriter =|Ch(A)|.
+   Iftheseries(3)diverges,thechambersignlawsrealizedbygloballydefinedF∈E{M}(Rn)that
+arenonzerooffthearrangementareexactlythesignedparitylaws(1);thereareexactly 2m+1such
+laws.
+   Iftheseries(3)converges,everyoneofthe 2rchamberlabelingsisrealizablebysuchafunction.
+
+Proof.Onthequasianalyticside,Corollary4.9givesthesigned-parityform. Everychoiceof
+(c,e1,...,em)isrealizedbythepolynomial
+
+                                             m∏
+                                           c    ℓj(x)ej.
+                                             j=1
+
+These 2m+1restrictionsaredistinct.Indeed,foreachHjchooseagenericpointofHjoutsideall
+otherhyperplanes.Theadjacentchamberpairatthatpointdiffersonlyinthesignofℓj,soits
+labelratiorecoversej;onechamberthenrecoversc.
+   Onthenon-quasianalyticside,letψbetheselectorfromLemma5.1.ForeachchamberC,let
+
+                                        sj(C) = sgn(ℓj|C)
+
+anddefine                                     m∏
+                                   ΨC(x) =      ψ(sj(C)ℓj(x)).
+                                             j=1
+
+
+                                                10
+
+=== PDF PAGE 11 ===
+Table1:Theclassificationinthecommonnotationofthispaper.Allexactrealizabilitycounts
+refertothefullnormalizedRoumieuclassesE{M}.
+Setting                Mechanism                               Signlaws
+Smoothgermwitha           LeadinghomogeneousTaylorpolynomialand             Affineparityonly
+nonzerojetatthe           Lemma3.1
+commonorthantcorner
+CNfunctiononan            Localleadingtermsplusparitypropagation   Signedparityonly
+arrangementwith
+nonzeroN-jetatevery
+wallpoint
+QuasianalyticE{M}on       Taylor injectivity excludes the flatness re-      Exactly 2n+1affine
+orthants                  quiredbyTheorem4.1                                Booleanlaws
+Non-quasianalytic         One-sidedflatselector                      All 22nBooleanlaws
+E{M}onorthants
+QuasianalyticE{M}on       NoflatpointsplusTheorem4.5             Exactly 2m+1
+mdistincthyperplanes                                                        signed-paritylaws
+Non-quasianalytic         Chamberselectors                         All 2rchamber
+E{M}onan                                                                    labelings
+arrangementwithr
+chambers
+
+
+Distinctchambershavedistinctsignvectors:anonemptyfixedsigncellisanintersectionofopen
+half-spacesandisthereforeconvexandconnected.HenceifxliesinachamberD,then ΨD(x)>0
+and ΨC(x) = 0foreveryC̸=D.
+  Givenanylabelingh: Ch(A)→{±1},set
+
+                                   Fh(x) = ∑        h(C)ΨC(x).
+                                            C∈Ch(A)
+
+ElementaryclosuregivesFh∈E{M}(Rn),andonchamberDthesumreducestoh(D)ΨD(x).
+ThusFhhastheprescribedsignandisnonzerooffthearrangement.
+
+Example6.2(Threeconcurrentlines).TakethreedistinctlinesthroughtheorigininR2,for
+example
+                                 x= 0,   y = 0,   x−y = 0.
+Therearer = 6chambers.AfullquasianalyticnormalizedRoumieuclassE{M}thereforerealizes
+23+1 = 16signed-paritychamberlaws,whereasafullnon-quasianalyticsuchclassrealizesall
+26 = 64labelings.
+
+Remark 6.3(Whenthecountscoincide). Eachaddeddistincthyperplanesplitsatleastone
+existingchamber,sor≥m+1. Thenumericalgapisstrictexactlywhenr>m+1. Form
+parallelhyperplanesonehasr =m+1,sothetwocountscoincide.Thusthequasianalytic/non-
+quasianalyticdistinctionisstructural,butitscardinalityshadowdependsonthearrangement.
+
+
+
+
+
+                                                 11
+
+=== PDF PAGE 12 ===
+7 Marginsandexclusionofthecoordinatewalls
+
+Thequalitativeclassificationimposescorrectnessarbitrarilyclosetoeverywall.Twoquantitative
+consequencesclarifythisrequirement.Throughoutthissectionh :{−1,+1}n→{−1,+1},with
+positivemeaningtrue,andnisfixed.Anon-affinelawmeansonenotoftheformc∏i∈Ssi.
+
+7.1  Cornermarginsunderderivativebounds
+
+Proposition7.1(Anormalizedcornerestimate).Letk≥0, 0<α≤1,andletF∈Ck,α(BR(0))
+realizeanon-affineorthantlaw.SupposethatDkFhasHölderseminormatmostH,usingthe
+Euclideanmultilinearoperatornorm(absolutevaluefork = 0). Thenitsentirek-jetatzero
+vanishesand
+                       |F(x)|≤H   Γ(α+1)Γ(k+α+1)∥x∥k+α     (x∈BR(0)).                 (10)
+
+Inparticular,if√nδ<Randh(s)F(δs)≥γforallsignvectorss,then
+
+                                 γ≤H   Γ(α+1)Γ(k+α+1)(√nδ)k+α.
+
+Proof.AnyleastnonzeroderivativeoforderatmostkwouldcontradictTheorem4.3.Thusall
+thesederivativesvanish.Fork = 0,(10)istheHölderestimatefromF(0) =0.Fork≥1,write
+x=rv,∥v∥= 1,anduseintegralTaylorremainder:
+                                     ∫r
+                  |F(rv)|≤H(k−1)!                          Γ(k+α+1)rk+α.
+                                      0 (r−t)k−1tαdt =H   Γ(α+1)
+
+Substituter =√nδforthemarginconclusion.
+
+Remark7.2(Smoothderivativebudgets).Forasmoothexactnon-affinerealization,Theorem4.1
+givesflatness.If,onBR(0),fixedconstantsA,B>0satisfy
+
+                              ∥DjF(x)∥op≤ABjj!Mj       (j≥0),
+
+Taylorremainderateveryordergives
+
+                         |F(x)|≤AhM(B∥x∥),   hM(t) = infj≥0Mjtj.                  (11)
+
+Forj =0usetheamplitudebound;forj≥1thefactorialcancelsintheremainder.Thisistheusual
+associated-functionestimateinthefactorial-outconvention;compare[14,Section7].Coordinate
+partial-derivativeboundsasin(2)implythedisplayedoperatorboundsafterreplacingBby
+B√n.IntheGevreycaseMj =(j!)s−1,s>1,optimizationinjgiveshM(t)≤Cexp(−ct−1/(s−1))
+forsmallt> 0. Amatchingoptimal-cutoffassertionforgeneralweightsrequiresadditional
+assumptionsandisnotusedhere.Theseestimatesconcernspatialderivativesanddonotassert
+failureofanoptimizationorlearningprocedure.
+
+7.2  Polynomialsignsatpositivedistancefromthewalls
+
+Put
+              Qn = [−1,1]n,   Dδ,n={x∈Qn :|xi|≥δforalli},    0<δ<1.
+
+
+                                               12
+
+=== PDF PAGE 13 ===
+Letdh(δ)betheleasttotaldegreeofarealpolynomialPsatisfying
+
+                                 h(sgnx)P(x)>0       (x∈Dδ,n).
+
+Thereisnoamplitudeorcoefficientboundinthisdefinition.Forfixed0<γ<1,letdbdh,γ(δ)be
+theleasttotaldegreesubjectinsteadto
+
+                        ∥P∥Qn,∞≤1,   h(sgnx)P(x)≥γ(x∈Dδ,n).                (12)
+
+Theamplitudeboundcoverstheentirecube,includingitsexcludedstrips.
+Theorem7.3(Fixed-dimensionaldegreecomparison).Forfixedn≥1thefollowingstatements
+hold.
+  (i)If  h(s) =c∏i∈Ssi,thendh(δ) =|S|forevery 0<δ<1.
+ (ii)If  hisnon-affine,thendh(δ) = Θh(log(1/δ))asδ↓0.
+(iii)If   hisnonconstantand 0<γ<1isfixed,then
+
+                                     dbdh,γ(δ) = Θh,γ(1/δ)       (δ↓0).
+
+      Infact,dbdh,γ(δ)≥γ√1−δ2/δ.
+Constantsmaydependonthefixeddimension,law,andmargin. Nouniformgrowing-arity,
+coefficient-size,orevaluation-costassertionisintended.
+
+Proof.Parity. Thepolynomialc∏i∈Sxi provestheupperbound. OnBooleanvertices, fix
+coordinatesoutsideS.Everypolynomialofdegreelessthan|S|haszerocorrelationwithparity,
+byexpandingintomonomialsandaveragingovertheremainingindependentsigns. Strictsign
+agreementwouldgivepositivecorrelation.Thisproves(i),includingconstantswithS =∅.
+   Alogarithmicupperboundforeverylaw. Letm =⌈log2(1/δ)⌉andchooseanintegerL≥1.
+Define
+
+                m∏
+        p(t) =    (t+2−j)2L, a(t) =p(t)−p(−t), q(t) =p(t)+p(−t), r(t) =a(t)q(t).
+               j=0
+
+Thetwononnegativepolynomialsp(t)andp(−t)havedisjointrealzerosets,soq> 0and|r|≤1
+onR.For 2−m≤t≤1,somedyadicnodeu= 2−jsatisfiesu≤t≤2u.Therefore
+
+                                 m∏ ⏐⏐⏐⏐⏐   ⏐⏐⏐⏐⏐2L
+                   0≤p(−t)           2−j−t      ≤3−2L,  |r(t)−1|≤23−2L.
+                        p(t)  = j=0  2−j +t
+
+Oddnessgivesthenegative-intervalestimate.ThisisadyadicrationalconstructionofNewman
+type;seealso[17,Theorem2.4].
+   Foru∈[−1,1]n,definethemultilinearexpectationextension
+
+                                                         n∏1+siui
+                               Hh(u) =  ∑                      2  .
+                                        s∈{−1,+1}nh(s)i=1
+
+Itisboundedbyone.If|ui−si|≤εforeverycoordinate,regardHh(u)astheexpectationofh
+underindependentsignswithmeansui.Eachsigndiffersfromsiwithprobabilityatmostε/2,so
+theunionboundgives
+                                       h(s)Hh(u)≥1−nε.                           (13)
+
+                                                13
+
+=== PDF PAGE 14 ===
+ChooseLwith 2n3−2L< 1. Substitutionofr(xi)andmultiplicationby∏iq(xi)> 0givea
+polynomialoftotaldegreeatmost2Ln(m+1),strictlycorrectonDδ,n.Hencedh(δ)=On(log(1/δ)).
+  Thenon-affinelowerbound.Everynon-affineBooleanlawhasanon-affinetwo-dimensionalface:
+otherwiseeverysecondBooleandifferenceofitsF2-valuedtruthfunctionwouldvanishidentically,
+forcingitsmultilinearalgebraicnormalformtohavedegreeatmostone.Fixtheothercoordinates
+atthecorresponding±1values.Eachoftheeightnon-affinebinarylawsisANDafterinputsign
+flipsandpossiblyoutputnegation,allofwhichpreservedegreeandtheguardedsquare.
+  ChooseanoddintegerN≤1/δwithN≍1/δ.InapolynomialforbinaryANDsubstitute
+
+                              N∑                N∑
+                     x=  1N     zi,   y =  1N      wi,   zi,wi∈{−1,+1}.
+                             i=1               i=1
+Eachmagnitudeisatleast 1/N≥δ. Thusthesubstitutedpolynomialsign-representsthe
+conjunctionoftwoindependentN-variablemajoritiesonafiniteBooleancube,withoutincreasing
+degree.Sherstov’slowerbound[17,Theorem1.10]is Ω(logN).Hisconventionuses−1fortrue;
+inputandoutputsignchangesaligntheconventions.Thisproves(ii).
+  Boundedmargin:lowerbound.AnonconstantlawchangesalongsomeBooleanedge.Fixthe
+othercoordinatesatthatedge’s±1values.Theresultingunivariateslicepisboundedbyoneon
+[−1,1]andtakesoppositevaluesofmagnitudeatleastγat±δ.Themeanvaluetheoremgives
+ξ∈(−δ,δ)with|p′(ξ)|≥γ/δ.Bernstein’sinequality[18,Theorem24.1]gives,withd = degP,
+
+                                γ             √           √
+                                δ≤|p′(ξ)|≤d1−ξ2≤d1−δ2.
+
+  Boundedmargin:upperbound.Theclippedrampvδ(t)= max(−1,min(1,t/δ))is 1/δ-Lipschitz.
+Jackson’sinequalityyieldsapolynomialuofdegreeatmostkwith
+
+                                      ∥u−vδ∥[−1,1],∞≤Ckδ.
+
+Forcompleteness,thetrigonometricform[18,Theorem21.1]appliestotheevenperiodicfunction
+vδ(cosθ).Symmetrizingitsapproximantpreservestheerrorandleavesonlycosineterms; cos(jθ)=
+Tj(cosθ)convertsittoanalgebraicpolynomialofthesamedegree.Chooseafixederrorη>0and
+k≥C/(ηδ).Thepolynomialr =u/(1+η)isboundedbyoneonthewholeintervalanddiffers
+from sgntbyatmostε=2η/(1+η)when|t|≥δ.Chooseηsmallenoughthatnε≤1−γ.Then
+Hh(r(x1),...,r(xn))satisfies(12),by(13),andhastotaldegreeatmostnk =On,γ(1/δ). This
+proves(iii).
+
+Remark7.4(Interpretationandendpoints).Positivedenominatorclearingpreservessignsbut
+neednotpreserveafixedmarginafternormalizingthepolynomialonQn.Thisexplainswhy(ii)
+and(iii)concerndifferentresources.Constantshavedegreezeroinbothmodels;whenγ=1,no
+nonconstantlawsatisfies(12),sincethepolynomialwouldequalaconstantonanopenboxand
+henceeverywhere.Thetheoremisasynthesisofestablishedapproximationinputs.Itdoesnot
+followfromqualitativefinite-jetrigidityalone,nordoesitapplythatrigiditytoapolynomial
+requiredtobecorrectonlyonDδ,n.
+
+
+
+
+
+
+                                                14
+
+=== PDF PAGE 15 ===
+8 Scope,counterexamples,andrelationtonearbytheory
+
+8.1  Realzerosupportisweakerthananormal-crossingdivisor
+
+Ifonealreadyhasafactorization
+                                          F =u∏     xaii
+                                                  i
+withanonvanishingunitu,thenthesignlawisimmediatelythesignofutimesaparityproduct
+ofcoordinatesigns.Normal-crossingandmonomializationtheoriesthereforeprovideimportant
+neighboringcontext; see[11,10]. Theyshouldnot,however,besubstitutedfortheweaker
+hypothesisusedinTheorems4.5and6.1.
+  Indeed,
+                                      F(x,y) =xy(x2+y2)                             (14)
+isrealanalyticandhasrealzerosetexactlyequaltotheunionofthetwocoordinateaxes.Itssign
+offthoseaxesis sgn(xy).Butafterextractingthegenericfirst-orderfactorsxandy,theresidual
+factorx2+y2stillvanishesattheoriginandisnotaunit.Thusset-theoreticrealzerosupporton
+anarrangementdoesnotimplyaunit-times-monomialfactorizationintheoriginalcoordinates.
+  Thisiswhythearrangementtheoremaboveisstatedandproveddirectlyatthesignlevel.
+Resolutionandmonomializationresultsinvolvestrongerdivisorhypothesesand/ortransformations
+ofsourceandtarget;theyremainrelevantbackground,notareplacementforthepresentargument.
+
+8.2  Acommoncornerisessentialforlocalorthantrigidity
+
+Theconnectednessofadomainalonedoesnotreplacethecommon-cornerhypothesisinTheorem4.1.
+OnthepuncturedplaneU =R2\{0},define
+                                                     √
+                                  F(x,y) =x+y+         x2+y2.                          (15)
+
+ThisfunctionisrealanalyticonU.Itispositiveinthepositive-positivequadrantandinboth
+mixed-signquadrants,whileitisnegativeinthenegative-negativequadrant. Inamixed-sign
+quadrant,                 √
+                                         x2+y2>|x+y|
+becausexy<0,whereasinthenegative-negativequadrant
+                                  √
+                                    x2+y2<|x+y|=−x−y.
+
+Thus(15)realizesORonthefourquadrantsofthepuncturedplane.Thereisnocontradiction
+withTheorem4.1:theorigin,atwhichthefinite-jetobstructionwouldlive,hasbeenremoved.
+
+8.3  ClassicalR-functionsandfinitedifferentiability
+
+TheprecedingrootformulaistheclassicalR-disjunction.Changingtheplussigntoaminussign
+givesanR-conjunction;see[16,Section3.3,equations(3.4)–(3.5)].Inparticular,foranyinteger
+k≥0,putr = (x2+y2)1/2and
+
+                           Fk(x,y) =rk(x+y−r),   Fk(0,0) = 0.
+
+
+
+                                                15
+
+=== PDF PAGE 16 ===
+ThisrealizesANDontheopenquadrants.Itssmoothangularfactorandpositivehomogeneity
+ofdegreek+1giveDjFk =O(rk+1−j)forj≤k;thesederivativesextendbyzeroattheorigin.
+ThekthderivativeisLipschitz:forpairsatdistancecomparabletotheirradiususeitsO(r)size
+bound,andforcloserpairsintegrateitsboundedderivativealongasegmentawayfromzero.Thus
+Fk∈Ck,1anditsk-jetvanishes. ItisnotCk+1: thatregularityandhomogeneitywouldmake
+ititshomogeneousTaylorpolynomialofdegreek+1,contrarytothenon-affinesignlaw. On
+(t,t),t>0,itsvalueis 2k/2(2−√2)tk+1.Hencetheexponentk+1inProposition7.1forα= 1
+cannotbeincreasedingeneral.Theconstructionisclassical;theestimatestatesitsrelationtothe
+finite-orderobstruction.
+
+8.4  Analyticmodelsandrestricteddomains
+
+Afinitecompositionofreal-analyticmapsisrealanalyticonitsdomain.Ifascalaroutputrealizes
+anorthantlawonafullneighborhoodofthecommoncorner,Corollary4.4thereforeforcesaffine
+parity.Thehypothesisconcernsindependentlyvariablecoordinatesthroughoutthatneighborhood;
+itdoesnotcovermerelyfittingfinitelymanyBooleanrepresentativesorarestrictedsetofreachable
+inputs.
+   EvenananalyticformulacanrealizeANDoneveryDδ,2whenitdependsonδ.Forexample,
+                                                    √
+                                 Fδ(x,y) =x+y−x2+y2+δ2
+
+isgloballyrealanalytic.Inthepositive-positiveguardedquadrantitisincreasingineachcoordinate,
+soitsminimumis (2−√3)δ>0. Ifx≤−δ,thenFδ(x,y)<x+y−|y|≤−δ,andtheother
+negative-inputcaseissymmetric.AtthecommoncornerFδ(0,0) =−δ,soitfailsthepositive-
+positivelawsufficientlynearzero.Thisexampleimposesnoglobalamplitudenormalizationand
+doesnotcontradictTheorem7.3.Anonsmoothalternativeis min(x,y)=x−max(0,x−y),which
+realizesANDexactlyoneveryopenquadrant.
+
+8.5  Smoothnessalonedoesnotimplyrigidity
+
+Theselectorconstructionin(9)givesC∞realizationsofeveryBooleanlawinthenon-quasianalytic
+case.Foranon-affinelaw,Theorem4.1saysthatsucharealizationmustbeflatattheorigin;the
+constructionisconsistentwithexactlythatrequirement.Themathematicalboundaryistherefore
+not“smoothversusnonsmooth,”butratherthepresenceorabsenceofanonzerofinitejetatthe
+relevantcommonboundary.
+
+8.6  Signaturesandchamberfunctions
+
+Thefactor-paritymechanisminLemma3.1isclassicalantecedentmaterial. Broglia–Tognoli’s
+Proposition2.4recordshowparityofmaximalfactormultiplicitiescontrolstheinducedsigna-
+ture[12,Proposition2.4],whilethesubsequentsignatureandsign-distributionliteraturestudies
+broaderrealizationandapproximationquestions[5,1,2,4,3].
+   Adistinctcombinatorialtraditionstudiesallfunctionsthatareconstantonarrangement
+chambers. VarchenkoandGelfandintroducedthealgebrageneratedbyhyperplaneHeaviside
+functions[7];seealso[8,6]. Thepresentanalyticquestionisnarrower: regularityconstraints
+selectasmallfamilyof{±1}-valuedchamberfunctionsinthequasianalyticregime,whilethe
+non-quasianalyticregimepermitsthemall.
+
+
+                                                 16
+
+=== PDF PAGE 17 ===
+8.7  Establishedmachineryversusthesignclassification
+
+Strongerdivision,quasianalyticlocal-ring,resolution,andmonomializationframeworksareavail-
+able[15,11,9,10].Theproofsheredeliberatelyavoidthatmachinery:therigidityinputisonlythe
+firstnonzeroTaylorpolynomial,andtherealizationinputisonlytheclassicalDenjoy–Carleman
+criteriontogetherwithcutoffsorpositive-flatfunctions. Thisisthesenseinwhichthenoteis
+self-containedwithoutclaimingfoundationalpriority.
+
+9 Conclusion
+
+AfirstnonzeroTaylortermprovidesacompactbridgefromlocalregularitytoglobalchambersigns.
+InfiniteorderityieldsexplicitCdorthantandCNarrangementobstructions;inthesmoothsetting
+thesamemechanismgivesanelementaryproofoftheestablishedsignature-flatnessconsequence
+foraffinearrangements.CombinedwiththeDenjoy–Carlemancriterion,theargumentgivesan
+exactrealizationclassification:formdistincthyperplaneswithrchambers,thefullnormalized
+Roumieuclassrealizesexactly 2m+1signedparitylawsinthequasianalyticcaseandall 2rchamber
+labelingsinthenon-quasianalyticcase.
+   Withfixedderivativebounds,thesamevanishingjetscontrolhowrapidlyanexactnon-affine
+scoreapproacheszeroatthecorner.Excludingwallstripschangesthepolynomialproblem:at
+fixeddimensionnon-affinesignlawsrequirelogarithmicdegreeintheinversewidth,whereas
+afixedmarginunderawhole-cubeamplitudeboundrequiresreciprocal-widthdegreeforevery
+nonconstantlaw. Thecompletereductionsmakethesedistinctionsexplicit. Thefinite-order
+formulation,arrangementproof,andsynthesisremainthecontribution;thesmoothobstruction,
+R-functionconstructions,positive-flattheory,andapproximationinputsretaintheirclassical
+attribution.
+
+References
+
+ [1]F.AcquistapaceandF.Broglia,Signaturesandflatness,  Journalfürdiereineundangewandte
+     Mathematik425(1992),61–70.
+
+ [2]F.AcquistapaceandF.Broglia,Correctiontothepaper“Signaturesandflatness”(Vol.425,pp.
+     61–70,1992),JournalfürdiereineundangewandteMathematik444(1993),155–156.
+
+ [3] F.AcquistapaceandF.Broglia,Moreaboutsignaturesandapproximation,GeometriaeDedicata50
+     (1994),no.2,107–116.DOI:10.1007/BF01265306.
+
+ [4]F.Acquistapace,F.Broglia,andE.Fortuna,Whenisadistributionofsignslocallycompletable?,
+     CanadianJournalofMathematics46(1994),no.3,449–473.DOI:10.4153/CJM-1994-024-2.
+
+ [5]E.Fortuna,Distributionsdesignes,  Mathematika38(1991),no.1,50–62.DOI:
+     10.1112/S0025579300006434.
+
+ [6]A.Björner,M.LasVergnas,B.Sturmfels,N.White,andG.M.Ziegler,  OrientedMatroids,2nded.,
+     EncyclopediaofMathematicsanditsApplications,vol.46,CambridgeUniversityPress,Cambridge,
+     1999.
+
+ [7] A.N.VarchenkoandI.M.Gel’fand,Heavisidefunctionsofaconfigurationofhyperplanes,Functional
+     AnalysisandItsApplications21(1987),no.4,255–270.DOI:10.1007/BF01077800.
+
+
+
+                                                    17
+
+=== PDF PAGE 18 ===
+ [8]D.Moseley,EquivariantcohomologyandtheVarchenko–Gelfandfiltration, JournalofAlgebra472
+    (2017),95–114.DOI:10.1016/j.jalgebra.2016.10.010;arXiv:1110.5369.
+
+ [9]A.BelottodaSilva,E.Bierstone,andM.Chow,Compositequasianalyticfunctions,  Compositio
+    Mathematica154(2018),no.9,1960–1973.DOI:10.1112/S0010437X18007339;arXiv:1709.06629.
+
+[10]A.BelottodaSilvaandE.Bierstone,Monomializationofaquasianalyticmorphism,   Annales
+     Scientifiquesdel’EcoleNormaleSuperieure56(2023),no.5,1583–1651.DOI:10.24033/asens.2562;
+     arXiv:1907.09502.
+
+[11]E.BierstoneandP.D.Milman,ResolutionofsingularitiesinDenjoy–Carlemanclasses,  Selecta
+    Mathematica10(2004),no.1,1–28.DOI:10.1007/s00029-004-0327-0;arXiv:math/0108204.
+
+[12] F.BrogliaandA.Tognoli,ApproximationofC∞-functionswithoutchangingtheirzero-set,Annales
+    del’InstitutFourier39(1989),no.3,611–632.DOI:10.5802/aif.1178.
+
+[13]M.Langenbruch,AgeneralapproximationtheoremofWhitneytype,   Rev.R.Acad.Cien.SerieA.
+    Mat.(RACSAM)97(2003),no.2,287–303.https://rac.es/ficheros/doc/00128.pdf.
+
+[14] A.Rainer,Ultradifferentiableextensiontheorems:asurvey,ExpositionesMathematicae40(2022),no.
+     3,679–757.DOI:10.1016/j.exmath.2021.12.001;arXiv:2107.01061.
+
+[15]V.Thilliez,Onquasianalyticlocalrings,   ExpositionesMathematicae26(2008),no.1,1–23.DOI:
+     10.1016/j.exmath.2007.04.001;arXiv:math/0509273.
+
+[16]V.Shapiro,Semi-analyticgeometrywith  R-functions,ActaNumerica16(2007),239–303.DOI:
+     10.1017/S096249290631001X.
+
+[17]A.A.Sherstov,Theintersectionoftwohalfspaceshashighthresholddegree,   SIAMJournalon
+    Computing42(2013),no.6,2329–2374.DOI:10.1137/100785260.
+
+[18]K.A.Kopotun,A.V.Prymak,andI.O.Shevchuk,   IntroductiontoApproximationTheory,study
+     guide,24January2018,Theorems21.1and24.1. https://mathanalysis.knu.ua/wp-content/
+     uploads/2020/07/at-study-guide-january-22-2018-1-1.pdf.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                      18

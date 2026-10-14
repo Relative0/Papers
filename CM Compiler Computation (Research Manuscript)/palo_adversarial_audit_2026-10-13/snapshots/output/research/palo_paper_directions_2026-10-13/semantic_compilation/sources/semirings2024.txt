@@ -1,0 +1,1115 @@
+=== PDF PAGE 1 ===
+Semirings for Probabilistic and Neuro-Symbolic
+Logic Programming ⋆
+Vincent Derkinderena,b,∗, Robin Manhaevea,b, Pedro Zuidberg Dos Martiresc,
+Luc De Raedta,b,c
+aDTAI, Dept. of Computer Science, KU Leuven, Leuven, B-3000, Belgium
+bLeuven.AI - KU Leuven Institute for AI, Belgium
+cCenter for Applied Autonomous Systems, Örebro University, Örebro, SE-70182, Sweden
+Abstract
+The field of probabilistic logic programming (PLP) focuses on integrating prob-
+abilistic models into programming languages based on logic. Over the past 30
+years, numerous languages and frameworks have been developed for modeling,
+inference and learning in probabilistic logic programs. While originally PLP fo-
+cused on discrete probability, more recent approaches have incorporated continu-
+ous distributions as well as neural networks, effectively yielding neural-symbolic
+methods. We provide a unified algebraic perspective on PLP, showing that many
+if not most of the extensions of PLP can be cast within a common algebraic logic
+programming framework, in which facts are labeled with elements of a semir-
+ing and disjunction and conjunction are replaced by addition and multiplication.
+This does not only hold for the PLP variations itself but also for the underlying
+execution mechanism that is based on (algebraic) model counting.
+Keywords: Probabilistic logic programming, Neural-Symbolic, Semiring
+Programming, Model counting
+⋆A peer-reviewed version of this preprint is published in the International Journal of Approxi-
+mate Reasoning (https://doi.org/10.1016/j.ijar.2024.109130)
+∗Corresponding author
+Email addresses: vincent.derkinderen@kuleuven.be (Vincent Derkinderen),
+robin.manhaeve@kuleuven.be (Robin Manhaeve),
+pedro.zuidberg-dos-martires@oru.se (Pedro Zuidberg Dos Martires),
+luc.deraedt@kuleuven.be (Luc De Raedt)
+Preprint submitted to International Journal of Approximate Reasoning March 14, 2023
+arXiv:2402.13782v1  [cs.AI]  21 Feb 2024
+
+=== PDF PAGE 2 ===
+1. Introduction
+Poole (1993) and Sato (1995) introduced the first frameworks for modeling,
+inference and learning probabilistic logic programming (PLP) in the early 90s.
+The original framework of Poole and Sato extended the logic programming lan-
+guage Prolog (Flach, 1994) with probabilistic facts. These are facts that are an-
+notated with the probability that they are true; they play a role similar to the par-
+entless nodes in Bayesian networks in that they are marginally independent of
+one another, and that the probabilistic dependencies are induced by the rules of
+the logic program. This resulted in the celebrated distribution semantics (Sato,
+1995) that is the basis of probabilistic logic programming, and the corresponding
+learning algorithm in the PRISM language (Sato, 1995) constitutes – to the best of
+the authors’ knowledge – the very first probabilistic programming language with
+built-in support for machine learning. The work of Sato and Poole has inspired
+many follow-up works on inference and learning, and has also introduced many
+variations and extensions of the probabilistic logic programming and its celebrated
+distribution semantics.
+Some of these works are concerned with faster inference using knowledge
+compilation technology (in ProbLog (De Raedt et al., 2007)) and approximate
+inference (Vlasselaer et al., 2016) as well as extensions towards continuous dis-
+tributions (Gutmann et al., 2011), the use of semirings (Eisner and Filardo, 2010;
+Kimmig et al., 2011), neural networks (Manhaeve et al., 2018; Yang et al., 2020),
+and dynamics (Vlasselaer et al., 2016). An overview of many PLP techniques is
+provided in (Riguzzi, 2018; De Raedt and Kimmig, 2015).
+The key contribution of this paper is the insight that many of the extensions of
+the basic PLP framework can be viewed within an algebraic logic programming
+framework (Eisner and Filardo, 2010; Kimmig et al., 2011), in which the proba-
+bilistic semiring is replaced by other, sometimes special purpose semirings. This
+holds, for instance, for working with discrete - continuous distributions in PLP
+as well as for computing gradients, for which the WMI semiring of (Zuidberg
+Dos Martires et al., 2019, 2023) can be used as well as the gradient semiring. This
+does not only hold, as we will show, at the level of logic programs, but also at
+the circuit level when performing inference or learning. A circuit is obtained after
+grounding the logic program with regard to a specific query and compiling it into a
+boolean circuit (Darwiche, 2002). On the resulting circuit, one can then use semir-
+ings to compute probabilities, integrals and gradients, which are useful for discrete
+and continuous inference as well as for learning. The resulting approach has been
+dubbed algebraic model counting (Kimmig et al., 2017). A further insight is that
+2
+
+=== PDF PAGE 3 ===
+the algebraic approach allows to tightly couple neural networks to PLPs using the
+neural predicates as introduced in DeepProbLog (Manhaeve et al., 2021). These
+neural predicates are incorporated in PLP via so-called neural facts, which en-
+capsulate a neural network computing a probability from its inputs. Thus, this
+paper provides a general semiring framework for probabilistic and neural logic
+programming by allowing for other algebraic types of labels for the probabilistic
+facts than the probabilistic ones, which provides a more general algebraic seman-
+tics and corresponding inference and parameter learning algorithm. In this way,
+it summarizes the key insights obtained from our 15-year journey in PLP that
+started with Problog (De Raedt et al., 2007). Throughout the paper we will focus
+on intuitions and on the simplest setting for PLP based on labeled facts, rather
+than exhaustively cover all (syntactic) variations for which we will refer to the
+literature for technical details.
+This paper is organised as follows: in Section 2, we give a brief introduction
+to logic programming, and how logic programs can be extended to a wide variety
+of domains such as statistical relational AI and neural-symbolic AI. We also show
+how these extensions are generalized by the concept of the algebraic fact and the
+use of semirings. In Section 3, we give an explanation of how inference happens
+for logic programming and its extensions. In Section 4, we show how learning
+happens for such programs. Finally, we give an overview of related work and
+applications in Section 5, followed by concluding remarks in Section 6.
+2. From Logic Programs to Algebraic Logic Programs
+We will first introduce definite clause logic, which forms the basis of logic
+programming and the programming language Prolog. Afterwards we will consider
+various variations in which facts are labeled, which are used in probabilistic and
+neural-symbolic logic programs.
+2.1. Logic programming
+Logic programming is based on definite clauses. These are expressions of
+the form h :– b1,..., bN where h and the bi’s are logical atoms. A logical atom
+a(t1,..., tK) consists of a predicate a of arity K (often denoted a/K), followed by
+K terms ti. Terms then are either constants, logical variables or structured terms
+of the form f (t1,..., tL) with f a functor and the ti terms. A clause of the form
+h :– b1,..., bN states that h is true whenever all bi’s are true. When N = 0, the
+clause is a fact and it is assumed to be true. A substitution θ is an expression of
+the form{V1 = t1,..., VN = tN} where the Vi are different variables and the ti’s
+3
+
+=== PDF PAGE 4 ===
+are terms. Applying a substitution θ to an expression e (term or clause) yields
+the instantiated expression eθ where all variables Vi in e have been replaced by
+their corresponding terms ti in e. For example, applying the substitutionθ ={X =
+an, Y = bob} to parent(X,Y) results in parent(an,bob). When an expression
+does not contain any variables, it is called ground. Logic programs consist of two
+main components: 1) a set of facts F that define the atoms that are considered
+true, and 2) a set of rules (or clauses) C which allow the program to derive new
+atoms from the given set of facts through resolution. A logic program, together
+with a specific semantics defines the entailment relationship ( |= ), which defines
+all the atoms that can be derived using the given facts and rules. For further details
+on logic programming, we refer to Flach (1994).
+Facts are a basic constituent of logic programs, they represent atoms that are
+true. We will now show how they can be extended to cope with discrete, continu-
+ous, neural and algebraic labels that form the basis of modern PLP.
+2.2. Probabilistic Facts
+The probabilistic fact is a generalisation of the logic fact, in which the fact is
+annotated with a probability of being true instead of being deterministically true.
+This lifts logic programming to probabilistic logic programming (PLP).
+Definition 1 (Probabilistic fact). A probabilistic fact is an expression of the form
+p :: f where f is a ground fact that is true with a probability p ∈ [0, 1].
+Introducing the probabilistic fact to the logic programming language Prolog
+resulted in the PLP language ProbLog (De Raedt et al., 2007).
+Definition 2 (ProbLog program). A ProbLog program is a triple (F, w,C) where
+F is a set of probabilistic facts, w is a function mapping each ground probabilistic
+fact f ∈F to its probability p, andC is a set of definite clauses.
+Example 1 (Bayesian network). The ProbLog program below models a variant of
+the well-known sprinkler Bayesian network. It contains three probabilistic facts
+and three rules.
+1 % Probabilistic facts
+2 0.25 :: cloudy.
+3 0.8 :: humid.
+4 0.5 :: sprinkler.
+5
+6 % Rules
+4
+
+=== PDF PAGE 5 ===
+7 rain :- cloudy, humid.
+8 wet :- rain.
+9 wet :- sprinkler.
+When considering all probabilistic facts in a program, the probability that a
+set of probabilistic facts F′⊆F is true, and all other facts in the program (F\ F′)
+false, is given by (Kimmig et al., 2017):
+PF (F′) =
+ Y
+fi∈F′
+w( fi)
+ Y
+fi∈F\ F′
+(1− w( fi))
+
+(1)
+A set of facts F′⊆F of a program, combined with the rules C again form
+a deterministic program. In this way, the probabilistic facts induce a probability
+distribution over all the deterministic programs. The set of all atoms that are
+entailed to be true from F′ andC together is often referred to as a possible world
+(Kimmig et al., 2017).
+Example 2 (Possible worlds). Consider the ProbLog program in Example 1. The
+set of all ground probabilistic factsF is{cloudy, humid, sprinkler}. An exam-
+ple F′ is{cloudy, humid}⊂F , which has probability
+PF (F′) = (0.25× 0.8)× (1− 0.5) = 0.1 (2)
+The possible world entailed by F′ in the ProbLog program is the set
+{cloudy, humid, rain, wet} (3)
+A different F′ would lead to a different possible world; the table below shows all
+the possible worlds of this ProbLog program along with their probability.
+Possible world P F (F′)
+{} 0.075
+{cloudy} 0.025
+{humid} 0.3
+{cloudy, humid, rain, wet} 0.1
+{sprinkler, wet} 0.075
+{sprinkler, cloudy, wet} 0.025
+{sprinkler, humid, wet} 0.3
+{sprinkler, cloudy, humid, rain, wet} 0.1
+5
+
+=== PDF PAGE 6 ===
+Definition 3 (Success probability). The success probability P (G) of a query G
+considers all possible worlds in which G is entailed, and sums their probabilities.
+P(F,w,C)(G) =
+X
+F′⊆F
+F′∪C|=G
+PF (F′) =
+X
+F′⊆F
+F′∪C|=G
+ Y
+fi∈F′
+w( fi)
+ Y
+fi∈F\ F′
+(1− w( fi))
+
+(4)
+Example 3. The success probability for query G = wet considers all possible
+worlds where G is true (those with a bold probability in Example 2’s table):
+P(wet) = 0.1 + 0.075 + 0.025 + 0.3 + 0.1 = 0.6
+2.3. Neural Facts
+Just like the probabilistic fact is a generalisation of the fact, the neural fact is
+a generalisation of the probabilistic fact. Instead of the probability being fixed,
+or treated as a single learnable parameter, the probability of the neural fact is
+parameterized by a neural network. This allows for the introduction of a neural
+probabilistic logic programming language, which is a type of neural-symbolic
+integration. One of the simplest forms of the neural fact is where its probability
+is defined by a neural network binary classifier. Introducing this neural fact to the
+ProbLog language leads to the introduction of DeepProbLog (Manhaeve et al.,
+2021).
+Definition 4 (Neural fact). A neural fact is an expression of the form
+nn(mr, [x1,..., xk]) ::r(x1,..., xk).
+where r is a predicate symbol, nn is a reserved functor, m r uniquely identifies
+a neural network model that defines a probability distribution over the Boolean
+domain{true, f alse}, conditioned on the ground inputs to the neural network
+x1,..., xk.
+The semantics of the neural fact is defined in terms of the semantics of regu-
+lar probabilistic facts. A neural fact of the form nn(mr, [x1,..., xk]) ::r(x1,..., xk)
+represents a probabilistic fact fmr(x1,..., xk) ::r(x1,..., xk) where fmr is the func-
+tion defined by network mr.
+Example 4 (Neural fact). Extending on Example 1, we can use a neural network
+to predict whether the day will be cloudy, based on additional info that is provided,
+such as pressure and temperature.
+6
+
+=== PDF PAGE 7 ===
+1 nn(cloudnet, [ 18◦C, 998hPa]) :: cloudy( 18◦C, 998hPa).
+2 0.8 :: humid.
+3 0.5 :: sprinkler.
+4
+5 % Rules
+6 rain(T,P) :- cloudy(T,P), humid.
+7 wet(T,P) :- rain(T,P).
+8 wet(_,_) :- sprinkler.
+We can now query this model for the probability of wet, given a certain tempera-
+ture and pressure: P(wet(18◦C, 998 hPa)).
+The concept of the neural fact, which can be used to encode binary classifiers,
+can be extended to the neural annotated disjunction in order to encode multiclass
+classifiers. For more details, we refer to Manhaeve et al. (2021).
+2.4. Distributional Facts and Indicator Facts
+As ProbLog and DeepProblog only allow for (neural) probabilistic facts, they
+are inherently restricted to discrete random variables. We alleviate this by intro-
+ducing so-called distributional facts and indicator facts 1 (Zuidberg Dos Martires
+et al., 2023).
+Definition 5 (Distributional Fact). A distributional fact is of the form x∼ d, with
+x being a ground term, and d a ground term whose functor denotes a probability
+distribution. The distributional fact states that the ground term x is a random
+variable distributed according to d.
+Definition 6 (Indicator Fact). An indicator fact is an expression of the formσ :: f
+where f is a ground fact labeled with a measurable set σ.
+Example 5. We rewrite the program in Example 1 using distributional and indi-
+cator facts. Note how the program separates into two layers. On the one hand we
+have the distributional facts that tell us how random variables are distributed. On
+the other hand we have logical rules. The link between the two layers is made by
+the indicator facts that are each labeled with a measurable set using the random
+variables introduced by the distributional facts.
+1Zuidberg Dos Martires et al. (2023) implicitly introduced indicator facts by means of Boolean
+comparison predicates.
+7
+
+=== PDF PAGE 8 ===
+1 % Distributional facts
+2 xc ~ flip(0.25).
+3 xh ~ flip(0.8).
+4 xs ~ flip(0.5).
+5
+6 % Indicator Facts
+7 [xc = 1]::cloud.
+8 [xh = 1]::humid.
+9 [xs = 1]::sprinkler.
+10
+11 % Rules
+12 rain :- cloudy, humid.
+13 wet :- rain.
+14 wet :- sprinkler.
+Example 6. In Example 1 and Example 5 we modeled the humidity as a Boolean
+random variable. Extending ProbLog with continuous random variables allows
+us now to model the humidity as a continuous variable. Using, for instance, a
+beta distribution, we model the relative humidity as a random variable that takes
+values in the [0, 1] interval.
+1 % Distributional facts
+2 xc ~ flip(0.25).
+3 xh ~ beta(4,2).
+4 xs ~ flip(0.5).
+5
+6 %Indicator Facts
+7 [xc = 1]::cloud.
+8 [xh > 0.6]::humid.
+9 [xs = 1]::sprinkler.
+10
+11 % Rules
+12 rain :- cloudy, humid.
+13 wet :- rain.
+14 wet :- sprinkler.
+As we model the humidity as a continuous random variables we use an inequality
+instead of an equality in Line 8.
+8
+
+=== PDF PAGE 9 ===
+In order to define the success probability of a probabilistic program with dis-
+tributional and indicator facts we resort to measure theoretic concepts. While this
+introduces some notational overhead, defining the success probability for arbi-
+trary probability distributions (not only Bernoulli distributions) becomes straight-
+forward. In other words, this allows us to extend probabilistic logic programming
+from the discrete domain to the discrete-continuous domain.
+Definition 7 (Measure theoretic success probability). The success probability P(G)
+of a query G is given by
+P(F,σ,C)(G) =
+Z
+
+X
+F′⊆F
+F′∪C|=G
+
+Y
+fi∈F′
+σ( fi)
+
+
+Y
+fi∈F\ F′
+σ(¬ fi)
+
+
+dµ (5)
+whereσ(·) is a function that maps indicator facts to measurable indicator func-
+tions and dµ denotes the differential of the probability measure induced by the set
+of distributional facts.
+Example 7 (Indicator functions). The function σ(·) in Definition 7 maps the the
+indicator facts from Example 5 to indicator functions as follows:
+σ(cloud) = ⟦xc = 1⟧
+σ(humid) = ⟦xh > 0.6⟧
+σ(sprinkler) = ⟦xs = 1⟧
+σ(¬cloud) = ⟦xc = 0⟧
+σ(¬humid) = ⟦xh≤ 0.6⟧
+σ(¬sprinkler) = ⟦xs = 0⟧
+Here we use Iversion brackets ⟦·⟧ do denote the indicator function: whenever
+the relation inside an Iverson brackets holds it evaluates to 1. It evaluates to 0
+otherwise.
+Example 8 (Differential of probability measure) . The distributional facts in Ex-
+ample 6 induce a probability measure that we can write as a product of measures,
+and we can also write the differential as a product of differentials:
+dµ = dµc× dµh× dµs
+Using the functional form of the Bernoulli and beta distribution we can rewrite
+the measure explicitly in terms of the random variables xc, xh, and x s:
+dµ =
+ 
+0.25xc(1− 0.75)xc dxc
+! 1
+B(4, 2) x3
+h(1− xh)1 dxh
+! 
+0.5xs(1− 0.5)xs dx s
+!
+The symbol B(·,·) denotes the beta function, used to normalize the beta distribu-
+tion.
+9
+
+=== PDF PAGE 10 ===
+Example 9. Using Definition 7 we can compute the success probability for the
+query G = wet in a similar fashion to Example 3. For the world{cloudy, humid,
+rain, wet} we get:
+Z
+⟦xc = 1⟧⟦xh > 0.6⟧⟦xh = 0⟧ dµ
+Plugging now in the expression for the differential in Example 8 and rearranging
+the factors the integrals we get:
+ Z
+⟦xc = 1⟧0.25xc(1− 0.75)xc dxc
+!
+×
+ Z
+⟦xh > 0.6⟧ 1
+B(4, 2) x3
+h(1− xh)1 dxh
+!
+×
+ Z
+⟦xs = 0⟧0.5xs(1− 0.5)xs dx s
+!
+= 0.25× 0.66304× 0.5 = 0.08288
+We can compute in a similar fashion the probabilities of the remaining worlds.
+The program in Example 6 is rather simple in terms of functional dependencies
+between random variables. For instance, none of the parameters of any of the
+distributions depends on the parameters of another random variable. Furthermore,
+the labels of the indicator facts are all univariate. This means, e ffectively, that all
+the random variables are independent of each other. Note however that Definition
+7 is more general and does allow for functional dependencies between random
+variables and also for multivariate labels of indicator facts. We refer the interested
+reader to Zuidberg Dos Martires et al. (2023) for an in depth and formal exposition
+of such cases. We also note that De Smet et al. (2023) generalize distributional
+facts to so-called neural distributional facts , which allows them to unify neural
+and discrete-continuous PLP. The main idea is that parameters of distributional
+facts are allowed to be the output of neural networks.
+2.5. Algebraic Facts
+The previously introduced concepts of probabilistic fact, neural fact, and indi-
+cator fact can each be generalised into an algebraic fact, a concept first discussed
+in aProbLog (Kimmig et al., 2011).
+Definition 8 (Algebraic fact). An algebraic fact is an expression of the form a:: f
+where f is a fact and a is an element of a commutative semiring’s domain.
+10
+
+=== PDF PAGE 11 ===
+Definition 9 (Commutative semiring). (Derkinderen and De Raedt, 2020) A com-
+mutative semiringS is an algebraic structure (A,⊕,⊗, e⊕, e⊗) where
+• A defines the domain of the values,
+• ⊕ and⊗ are associative, commutative binary operations overA,
+• ⊗ distributes over⊕,
+• e⊗∈A and∀a∈A : e⊗⊗ a = a, i.e. e⊗ is a neutral element for⊗.
+• e⊕∈A and∀a∈ A: e⊕⊕ a = a and e⊕⊗ a = e⊕, i.e. e⊕ is a neutral and
+absorbing element for⊕ and⊗ respectively.
+Example 10 (Commutative semiring). Examples of relevant commutative semir-
+ings include the Boolean semiring (B,∨,∧,⊥,⊤), the probability semiring (R, +,
+×, 0, 1), and the most probable explanation semiring (R, max,×, 0, 1).
+In this generalisation a program has four components ( F,α,C,S) where S
+is a commutative semiring and w became α mapping not only facts f but also
+their negation¬ f to elements ofS’s domainA. This allows¬ fi to be associated
+to something else than 1 − w( fi). The inference task within such a program is
+generalised to Equation 6. Note the use of the semiring operations⊗ and⊕, which
+replaced× and +. We also replaced P(F,α,C)(G) with AMC (F,α,C,S)(G) since it is no
+longer necessarily a probability.
+AMC (F,α,C,S)(G) =
+M
+F′⊆F
+F′∪C|=G
+O
+fi∈F′
+α( fi)
+ O
+fi∈F\ F′
+α(¬ fi)
+
+(6)
+Example 11. Consider the program in Example 1. When using(R, max,×, 0, 1) as
+a semiring the output of the query becomes instead the most probable explanation.
+Indeed,⊗ =× means that the weight of a model m is still its probability, and by
+choosing⊕ = max the most probable model is selected.
+While the example above is also solving a probabilistic task, the algebraic
+framework is certainly not restricted to probabilities alone. In fact, the semiring
+elementsA can be anything as long as we define the proper operations over them:
+preference values, distances, weights, tuples, sets, . . .
+Several other extensions built around this framework include reasoning over
+second-order queries (Verreet et al., 2022), decision making via the expected util-
+ity semiring (Derkinderen and De Raedt, 2020), and parameter learning via the
+11
+
+=== PDF PAGE 12 ===
+gradient semiring (Kimmig et al., 2011). More information on the latter is pro-
+vided in Section 4. Comparing Equation 6 to Equation 5 we also see that we can
+formulate the probability of a query to a discrete-continuous probabilistic program
+in terms of an algebraic model count as well:
+P(F,σ,C)(G) =
+Z
+AMC (F,σ,C,S)(G) dµ
+A similar formulation is also used in (Zuidberg Dos Martires et al., 2019; Miosic
+and Zuidberg Dos Martires, 2021; Zuidberg Dos Martires et al., 2023; De Smet
+et al., 2023).
+3. Inference
+We now discuss inference for algebraic logic programs. Inference happens
+in three steps: 1) logical inference, 2) translation to an algebraic model counting
+problem, 3) calculating the algebraic model count. We now discuss each step in
+detail.
+3.1. Logical inference
+The first step concerns the logical inference, for which we discern two different
+but related approaches.
+The first approach is proving, which uses SLD resolution to calculate the set
+of all proofs for a query G. SLD resolution uses a backward chaining, goal-
+oriented approach. A goal is a sequence of atoms ?– l1,..., ln. The initial goal is
+the query. At each step, the algorithm chooses a clauseh :– b1,..., bn whose head
+h unifies with the first atom l1 in the goal, with the substitution θ, i.e. hθ = l1θ.
+The application of resolution yields a new goal, ?–( b1,... bn, l2,..., l j)θ. This is
+repeated until the goal is empty, resulting in a successful proof, or until no more
+clauses can be applied, in which case the proof fails. It is possible that multiple
+clauses can be applied to a goal, which leads to different branches in the SLD tree
+and the possibility of multiple proofs for a single query.
+The second approach is to construct the relevant ground programPG. Ground-
+ing replaces each rule c containing variables{V1,..., Vk} by all instances cθ where
+θ is a substitution {V1 = c1,... Vk = ck} and the ci are constants or other ground
+terms appearing in the domain. If G is not ground, the grounding will compute
+all possible answer substitutions Gθ. To keep inference tractable, it is key to only
+consider that part of the ground program that is relevant to the query (i.e. the
+grounded facts and rules are used in the derivations of the query). Again, SLD
+resolution is used to find the relevant grounding.
+12
+
+=== PDF PAGE 13 ===
+Example 12 (Logical inference). We demonstrate the different steps of inference
+by extending Example 1 to reason about separate days of the week. For ease
+of modeling (and grounding), we also use rules annotated with probabilities, a
+purely syntactical construct 2.
+1 day(monday).
+2 ...
+3 day(sunday).
+4
+5 0.25 :: cloudy(Day) :- day(Day).
+6 0.5 :: sprinkler(Day) :- day(Day).
+7
+8 0.8 :: rain(Day) :- cloudy(Day).
+9
+10 wet(Day) :- rain(Day).
+11 wet(Day) :- sprinkler(Day).
+We query the probability of the grass being wet on Sunday, i.e. P(wet(sunday)).
+We first consider the proving approach. The proving procedure is easily visualized
+as an SLD tree, shown in Figure 1. There are two proofs for our query, one where
+the grass is made wet by the sprinkler, and one where it was rainy and cloudy.
+For the grounding approach, we only consider the part that is relevant to the
+query wet(sunday), so the variableDay only needs to be substituted withsunday.
+The resulting relevant ground program is:
+1 day(sunday).
+2
+3 0.25 :: cloudy(sunday) :- day(sunday).
+4 0.5 :: sprinkler(sunday) :- day(sunday).
+5
+6 0.8 :: rain(sunday) :- cloudy(sunday).
+7
+8 wet(sunday) :- rain(sunday).
+9 wet(sunday) :- sprinkler(sunday).
+2For example, the rule 0.25 :: cloudy(sunday) :- day(sunday) is syntactic sugar for
+a rule cloudy(sunday) :- cloudy_on_day(sunday), day(sunday) and a fact 0.25 ::
+cloudy_on_day(sunday).
+13
+
+=== PDF PAGE 14 ===
+wet(sunday) 
+rain(sunday) sprinkler(sunday) 
+cloudy(sunday)
+day(sunday)
+day(sunday)
+Figure 1: The SLD tree for Example 12. The two branches represent the two separate proofs for
+the query wet(sunday).
+3.2. Translation to algebraic model counting
+In the next step of the inference we map our results onto propositional logical
+formulas, for which we use the following concepts and notations. A literal l is an
+atom v or its negation¬v. A truth assignment to each atom is called an interpre-
+tation, which we represent as a set of literals M where v∈ M iff v is assigned to
+true and¬v∈ M otherwise. An interpretation is called a model M of a theoryT
+whenT is satisfied in M, formally denoted as M|=T . We useM(T ) to denote
+the set of all models of a theoryT .
+Note that the possible worlds of a ProbLog program discussed in Section 2.2
+are simply models of a theory formed by that program. Considering this equiva-
+lence, the probability query P(G) (Equation 4) can be identified as an instance of
+the weighted model counting problem. Consequently the problem of computing
+P(G) can be addressed by transforming it into a weighted model counting problem
+for which several solvers exist.
+Definition 10 (weighted model count) . The weighted model count (WMC) of a
+propositional logic theoryT over variables V and a weight function α mapping
+literals of V to a real, is
+W MC(T,α ) =
+X
+m∈M(T )
+Y
+l∈m
+α(l) (7)
+where a model m is a set of its literals such that Q
+l∈mα(l) is the total weight of
+m (Chavira and Darwiche, 2008). We use W MC(T ) to refer to the WMC polyno-
+mial ofT whereα is unspecified.
+14
+
+=== PDF PAGE 15 ===
+Example 13 (weighted model count) . Consider the propositional theoryT and
+weight function α below. The models of T , denoted as M(T ), correspond ex-
+actly to the possible worlds of Example 1. Additionally, because we have chosen
+α appropriately, the weighted model count is the probability of wet being true,
+W MC(T,α ) = 0.6.
+T =  rain ⇐⇒ cloudy∧ humid∧  wet ⇐⇒ rain∨ sprinkler
+α ={cloudy7→ 0.25,¬cloudy7→ 0.75, humid7→ 0.8,¬humid7→ 0.2,
+sprinkler7→ 0.5,¬sprinkler7→ 0.5, rain7→ 1,¬rain7→ 1,
+wet7→ 1,¬wet7→ 0}
+Similarly, the algebraic query (Equation 6) can be identified as an instance of
+algebraic model counting.
+Definition 11 (algebraic model count) . The algebraic model count (AMC) of a
+propositional logic theory T over variables V, a commutative semiring S =
+(A,⊕,⊗, e⊕, e⊗), and a labeling function α mapping literals of V to a ∈ A, is
+(Kimmig et al., 2017)
+AMC(T,S,α ) =
+M
+m∈M(T )
+O
+l∈m
+α(l) (8)
+Example 14 (algebraic model count) . (Derkinderen and De Raedt, 2020) Con-
+sider Example 13 but using semiringS = (R, max,×, 0, 1), then AMC (T,S,α ) =
+0.3, the highest model weight out of all m∈M (T ).
+The construction of the logical formula itself depends on how the previous
+inference step was performed. In the proving approach, the proofs for a query q
+are combined into a logical formula
+G↔
+_
+E∈Proofs(G)
+^
+fi∈E
+fi
+where the fi∈ E are the probabilistic facts used in proof E.
+In the grounding approach, Clark’s completion can be used for cycle-free pro-
+grams. Clark’s completion constructs a formula
+h↔
+_
+(h :– b1,...,bn)∈PG
+b1∧···∧ bn
+for each set of rules with the same ground head h, whose bodies are b1,..., bn.
+Cyclical programs first need to be turned into equivalent acyclic programs through
+cycle breaking. For this, we refer to Fierens et al. (2015). The propositional theory
+T in Example 13 would for instance follow from this grounding approach.
+15
+
+=== PDF PAGE 16 ===
+3.3. Solving model counting
+Weighted model counting is a #P-complete problem (Valiant, 1992). Fortu-
+nately, distributivity, associativity and commutativity can often be exploited to
+drastically reduce the number of required computations. The state of the art ap-
+proach that we highlight recognizes that theoryT dictates the computation and in-
+stead takes a more logical perspective. More specifically, it first compiles T into
+a representation that then facilitates an e fficient counting operation in a second
+phase. Compilation algorithms are studied in the knowledge compilation research
+domain, and they aim to produce succinct suitable representations fast (Darwiche
+and Marquis, 2002; Darwiche, 2011).
+A suitable target representation language from which counting is e fficient is
+sd-DNNF. Adapted from Kimmig et al. (2017),
+Definition 12 (sd-DNNF). A propositional theoryT is in negation normal form
+(NNF) when the only Boolean operations in T are{¬,∧,∨}, and when negation
+(¬) only occurs on variables. T is in sd-DNNF when it is in NNF and has the
+following additional properties:
+• smooth (s): when for each disjunction node Wn
+i=1ϕi, each childϕi mentions
+the same set of variables.
+• deterministic (d): when for each disjunction Wn
+i=1ϕi, each pair of di fferent
+childrenϕi andϕ j is logically inconsistent.
+• decomposable (D): when for each conjunctions Vn
+i=1ϕi, no two children ϕi
+andϕ j share any variables.
+This representation3 can easily be converted into a computational graph that
+represents the weighted model count polynomial W MC(T ). Simply replace each
+∨ into +, each∧ into×, each literal l intoα(l), each true (⊤) into 1, and each false
+(⊥) into 0. The soundness of this procedure can be proven inductively, we refer
+to Kimmig et al. (2017). To provide a high-level intuition: determinism ensures
+that each model is considered at most once, decomposability ensures each literal
+is considered at most once, and smoothness is important when α(l) +α(¬l) , 1.
+The computational graph resulting from this procedure is called an arithmetic
+circuit (Darwiche, 2002).
+3A d-DNNF is sufficient, as smoothing can be performed during evaluation.
+16
+
+=== PDF PAGE 17 ===
+∨
+∧ ∧
+wet ∨
+∨
+¬wet ¬rain ¬sprinkler
+∧ ∧
+rain cloudy humid ∨
+sprinkler
+¬rain
+¬sprinkler ∧ ∧
+cloudy
+¬humid
+¬cloudy ∨
+humid
+Figure 2: An sd-DNNF corresponding to the ProbLog program in Example 1.
+Example 15 (sd-DNNF). Figure 2 shows the ProbLog program of Example 1
+in sd-DNNF , the theoryT of which was already illustrated in Example 13. The
+corresponding representation of W MC(T ) is illustrated in Figure 3.
+Crucially the procedure’s soundness relies on the sd-DNNF properties, and on
+the commutative semiring properties of (A,∧,∨,⊤,⊥). Consequently, the same
+compilation procedure can be used more generally to compute an algebraic model
+count AMC(T,S,α ). When converting into a computational graph, we then use
+⊕,⊗, e⊕ and e⊗ instead of +,×, 0 and 1.
+Once the computational graph W MC(T ) is available, the count W MC(T,α )
+can be computed by instantiating each α(l) with their value and propagating all
+values upwards. The result of the root node is exactlyW MC(T,α ). Evidently, the
+second phase of this counting approach is linear in the size of the computational
+graph. This procedure is similar for AMC(T,S,α ).
+The compilation approach is not the only possible approach. Instead of ex-
+plicitly compiling the sd-DNNF, some approaches intertwine both the compilation
+and evaluation and avoid keeping the entire compiled structure in memory. While
+some sd-DNNF compilers have flags for this behavior, e.g. D4 (Lagniez and Mar-
+17
+
+=== PDF PAGE 18 ===
++
+× ×
+α(wet) +
++
+α(¬wet) α(¬rain) α(¬sprinkler)
+× ×
+α(rain) α(cloudy) α(humid) +
+α(sprinkler)
+α(¬rain)
+α(¬sprinkler) × ×
+α(cloudy)
+α(¬humid)
+α(¬cloudy) +
+α(humid)
+Figure 3: A W MC(T ) representation of Figure 2.
+quis, 2017), others are more specific to counting-only (Dudek et al., 2020).
+A major functional advantage of the compiled approach however is that the
+computational graph can be re-used for several queries, or with a di fferentα. In
+this way the largest computational cost is amortized, and re-evaluation is linear
+in the graph size. This is especially useful for parameter learning as then only α
+varies, e.g. learning in DeepProbLog (Manhaeve et al., 2021).
+4. Learning
+The generalisations of the fact as discussed in Section 2 can also introduce
+parameters to the logic program. For probabilistic facts, the probability itself can
+be learned, and would thus be a parameter of the model. Similarly, the distribu-
+tions in the distributional facts can have learnable parameters, e.g. the mean and
+standard deviation of a normal distribution. For the neural predicate, the weights
+of the neural networks are usually considered to be learnable paremeters.
+We now consider the parameter learning setting. Given a program with pa-
+rametersW, a setQ of tuples (G, p) with G a query and p the target probability,
+18
+
+=== PDF PAGE 19 ===
+and a loss functionL, compute the following Equation:
+arg min
+W
+1
+|Q|
+X
+(G,p)∈Q
+L(PW(G), p). (9)
+Earlier approaches to parameter learning used an expectation-maximization
+approach. Recently, gradient-based optimization has become the dominant strat-
+egy for learning. AMC enables us to automatically derive gradients for the param-
+eters in the program through the use of the gradient semiring, which we explain
+in Section 4.1. After the gradients have been calculated, standard gradient-based
+optimizers can be used. When the parameters are contained in differentiable struc-
+tures (e.g. in a neural network), they are easy to optimize in conjunction with other
+parameters, as the same gradient-based techniques can be used.
+4.1. Gradient semiring
+To derive gradients, we use the gradient semiring (Kimmig et al., 2011). The
+elements of this semiring are tuples
+ 
+p, ∂p
+∂w
+!
+,
+where p is a probability, and ∂p
+∂w is the partial derivative of that probability with
+respect to a parameter w. This is easily extended to a vector of parameters ⃗w =
+[w1,..., wN]T, the concatenation of all N parameters in the ground program. The
+elements of the semiring then become tuples
+(p,∇p) ,
+where p is a probability and∇p the gradient of p with respect to all parameters
+in ⃗w. Addition⊕, multiplication⊗ and the neutral elements with respect to these
+operations are defined as follows:
+(p1,∇p1)⊕ (p2,∇p2) = (p1 + p1,∇p1 +∇p2), (10)
+(p1,∇p1)⊗ (p2,∇p2) = (p1p2, p2∇p1 + p1∇p2), (11)
+e⊕ = (0,⃗0), (12)
+e⊗ = (1,⃗0). (13)
+Note that the first element of the tuple performs ProbLog’s probability com-
+putation, whereas the second element computes the gradient of the first element.
+19
+
+=== PDF PAGE 20 ===
+To perform parameter learning in ProbLog, we use the mapping α defined
+below, where the vector ei has a 1 in the i-th position and 0 in all others:
+α( f ) = (p,⃗0) for p :: f with fixed p, (14)
+α( fi) = (pi, ei) for t(pi) :: fi with learnable pi, (15)
+α(¬ f ) = (1− p,−∇p) with α( f ) = (p,∇p). (16)
+Example 16. We demonstrate the joint learning of probabilistic parameters and
+the neural network’s parameters for the program in Example 4. For this example,
+we learn the parameter of humid and jointly train the cloudnet network. We use
+cross-entropy as our loss function L =−(p log(P(G)) + (1− p) log(1− P(G))),
+with p the target probability and P(G) the probability predicted using the current
+weight parameters. Since the target probability is 1,L is− log(P(G)). To update
+the parameters, we must compute
+∂L
+∂W = ∂L
+∂P(G)
+∂P(G)
+∂W = −1
+P(G)
+∂P(G)
+∂W .
+To compute this gradient, we need both P (G) and ∂P(G)
+∂W , which we can calculate
+using the gradient semiring. The resulting arithmetic circuit after all stages of
+inference is given in Figure 4. The final gradients are thus ∂L
+∂humid =−0.41 and
+∂L
+∂cloudy(18◦C,998 hPa ) =−0.54.
+5. Related Work and Applications
+There a many more variants of the logical fact introduced in related work. We
+discuss a few more in this section. DTProbLog (Van den Broeck et al., 2010)
+is a decision-theoretic variant of ProbLog which adds the decision fact, along
+with the possibility of assigning utilities to atoms. The probabilistic facts, rules,
+and utilities define an expected utility given a set of values for the decision facts.
+These values thus define a decision problem that needs to be solved in order to
+maximize the expected utility. BetaProbLog (Verreet et al., 2022) further gener-
+alizes the concept of the probabilistic fact by replacing the single probability (i.e.
+a point estimate) by a beta distribution which additionally models the epistemic
+uncertainty over the probability of the fact. NeurASP (Yang et al., 2020) takes
+the idea of the neural fact, and applies it to answer set programming, a di fferent
+logic programming language, where it is called the neural atom. In Belle and De
+20
+
+=== PDF PAGE 21 ===
+wet(18℃,998hPa)
+⨂
+⨁
+0.6,[1,0] 
+0.24,[0.4,0.3]
+humidcloudy(18℃,998hPa) sprinkler
+cloudnet
+18℃,998hPa
+¬sprinkler
+t(0.8),[0,1] 0.5,[0,0] 0.5,[0,0] 
+0.74,[0.4,0.3]
+Figure 4: The arithmetic circuit for Example 16. Each node is annotated with an element of the
+gradient semiring, where the two elements of the gradient represent the partial derivative of the
+probability with respect to the neural network, and the probabilistic parameter respectively.
+Raedt (2020), the authors introduce Semiring Programming, a declarative frame-
+work where semirings are used to model and solve a wide variety of tasks in AI.
+In Scallop (Huang et al., 2021), semirings are used to define approximate infer-
+ence in order to alleviate the intractability that methods such as DeepProbLog
+encounter. In (Zuidberg Dos Martires, 2021), the authors investigate the setting in
+which the semiring operations are functions that have to be learned. Other work
+involving semirings and the application of them onto functional programming,
+include (Dolan, 2013) and (van den Berg et al., 2022).
+An application domain well suited for algebraic and probabilistic logic pro-
+gramming is in the field of robotics. Here, the probabilistic modelling and reason-
+ing capabilities have been used for object tracking, a ffordance and object manip-
+ulation (Moldovan et al., 2011, 2012b,a, 2018; Nitti et al., 2014; Antanas et al.,
+2019; Persson et al., 2020; Zuidberg Dos Martires et al., 2020), for represent-
+ing and tracking cognitive knowledge about the environment (Veiga et al., 2019;
+Mekuria et al., 2019; Yang et al., 2023), and for performing the uncertain deci-
+sion making itself (Van den Broeck et al., 2010; Nitti et al., 2015, 2017; Bueno
+et al., 2016; Latour et al., 2017; Derkinderen and De Raedt, 2020; Venturato et al.,
+2022).
+Other application tasks include activity recognition (Skarlatidis et al., 2015;
+21
+
+=== PDF PAGE 22 ===
+McAreavey et al., 2017; Sztyler et al., 2018; Smith et al., 2021), consistency-
+based diagnosis (Hommersom and Bueno, 2016), modeling incomplete and im-
+precise information (Doherty and Szalas, 2022), system prognostics (Vlasselaer
+and Meert, 2012), ontology matching and querying (Wang, 2015; van Bremen
+et al., 2019, 2020), probabilistic argumentation (Hung, 2017; Mantadelis and
+Bistarelli, 2020; Totis et al., 2021), solving word-problems (Dries et al., 2017;
+Suster et al., 2021), automating video montages (Aerts et al., 2016), epidemio-
+logical modelling (Weitkämper et al., 2021), game-playing (Thon et al., 2008,
+2011), event processing (Xing et al., 2019; Apriceno et al., 2021; Roig Vilamala
+et al., 2023), modelling probabilistic routing networks (van den Berg et al., 2021),
+and biology (De Raedt, 2007; Kimmig and Costa, 2012; De Maeyer et al., 2013;
+De Maeyer et al., 2015; De Maeyer et al., 2016; Groß et al., 2019).
+6. Conclusion
+In this paper, we have shown a unified perspective that describes how logic
+programming can be extended to a wide variety of settings by generalizing the
+concept of the fact. We have shown how these extensions are all special cases
+of the concept of the algebraic fact, where facts are labeled with elements from
+commutative semirings, and the conjunction and disjunction are replaced with
+multiplication and addition respectively. We have further shown a recipe for ef-
+ficient inference and learning for programs that include such algebraic facts. Fi-
+nally, we have discussed other works that perform similar extensions, and where
+these systems have been applied. Going forward, it would be valuable to look
+into what benefits the use of semirings has for other languages and programming
+paradigms. We have already identified links to functional programming, and new,
+semiring-focused declarative frameworks.
+Acknowledgements
+This work was supported by the Research Foundation-Flanders (FWO) un-
+der grant 1SA5520N and S007318N, the KU Leuven Research fund, the Flem-
+ish Government under the “Onderzoeksprogramma Artificiële Intelligentie (AI)
+Vlaanderen” programme, and the Wallenberg AI, Autonomous Systems and Soft-
+ware Program (W ASP) funded by the Knut and Alice Wallenberg Foundation.
+22
+
+=== PDF PAGE 23 ===
+References
+Aerts, B., Goedemé, T., Vennekens, J., 2016. A probabilistic logic programming
+approach to automatic video montage, in: ECAI, pp. 234–242.
+Antanas, L., Moreno, P., Neumann, M., de Figueiredo, R.P., Kersting, K., Santos-
+Victor, J., De Raedt, L., 2019. Semantic and geometric reasoning for robotic
+grasping: a probabilistic logic approach. Auton. Robots 43, 1393–1418.
+Apriceno, G., Passerini, A., Serafini, L., 2021. A neuro-symbolic approach to
+structured event recognition, in: TIME, Schloss Dagstuhl - Leibniz-Zentrum
+für Informatik. pp. 11:1–11:14.
+Belle, V ., De Raedt, L., 2020. Semiring programming: A semantic framework
+for generalized sum product problems. International Journal of Approximate
+Reasoning 126, 181–201. doi: 10.1016/j.ijar.2020.08.001.
+van den Berg, B., Schrijvers, T., McKinna, J., Vandenbroucke, A., 2022. Forward-
+or reverse-mode automatic di fferentiation: What’s the di fference? CoRR
+abs/2212.11088.
+van den Berg, B., Van Bremen, T., Derkinderen, V ., Kimmig, A., Schrijvers, T.,
+De Raedt, L., 2021. From probabilistic NetKAT to ProbLog: New algorithms
+for inference and learning in probabilistic networks.
+Bueno, T.P., Mauá, D., de Barros, L.N., Cozman, F.G., 2016. Markov decision
+processes specified by probabilistic logic programming: Representation and
+solution. 5th Brazilian Conference on Intelligent Systems (BRACIS) , 337–
+342.
+Chavira, M., Darwiche, A., 2008. On probabilistic inference by weighted model
+counting. Artificial Intelligence 172, 772–799.
+Darwiche, A., 2002. A logical approach to factoring belief networks, in: KR,
+Morgan Kaufmann. pp. 409–420.
+Darwiche, A., 2011. SDD: A new canonical representation of propositional
+knowledge bases, in: IJCAI, pp. 819–826.
+Darwiche, A., Marquis, P., 2002. A knowledge compilation map. Journal of
+Artificial Intelligence Research 17, 229–264.
+23
+
+=== PDF PAGE 24 ===
+De Maeyer, D., Renkens, J., Cloots, L., De Raedt, L., Marchal, K., 2013. Phe-
+Netic: network-based interpretation of unstructured gene lists in E. coli. Mol.
+BioSyst. 9, 1594–1603. doi: 10.1039/C3MB25551D.
+De Maeyer, D., Weytjens, B., De Raedt, L., Marchal, K., 2016. Network-based
+analysis of eQTL data to prioritize driver mutations. Genome Biology and
+Evolution 8, 481–494. doi:10.1093/gbe/evw010.
+De Raedt, L., 2007. ProbLog and its application to link mining in biological
+networks.
+De Raedt, L., Kimmig, A., 2015. Probabilistic (logic) programming concepts.
+Mach. Learn. 100, 5–47. doi: 10.1007/s10994-015-5494-z.
+De Raedt, L., Kimmig, A., Toivonen, H., 2007. ProbLog: A probabilistic Prolog
+and its application in link discovery, in: Veloso, M.M. (Ed.), IJCAI, pp. 2462–
+2467.
+De Smet, L., Zuidberg Dos Martires, P., Manhaeve, R., Marra, G., Kimmig,
+A., De Readt, L., 2023. Neural probabilistic logic programming in discrete-
+continuous domains, in: Evans, R.J., Shpitser, I. (Eds.), Uncertainty in Artificial
+Intelligence, PMLR. pp. 529–538.
+Derkinderen, V ., De Raedt, L., 2020. Algebraic circuits for decision theoretic
+inference and learning, in: ECAI. IOS Press, pp. 2569–2576.
+De Maeyer, D., Weytjens, B., Renkens, J., De Raedt, L., Marchal, K., 2015. Phe-
+Netic: network-based interpretation of molecular profiling data. Nucleic Acids
+Research 43, W244–W250. doi: 10.1093/nar/gkv347.
+Doherty, P., Szalas, A., 2022. A landscape and implementation framework for
+probabilistic rough sets using ProbLog. Inf. Sci. 593, 546–576.
+Dolan, S., 2013. Fun with semirings: a functional pearl on the abuse of linear
+algebra, in: ICFP, ACM. pp. 101–110.
+Dries, A., Kimmig, A., Davis, J., Belle, V ., De Raedt, L., 2017. Solving probabil-
+ity problems in natural language, in: IJCAI, pp. 3981–3987.
+Dudek, J.M., Phan, V ., Vardi, M.Y ., 2020. ADDMC: weighted model counting
+with algebraic decision diagrams, in: AAAI, AAAI Press. pp. 1468–1476.
+24
+
+=== PDF PAGE 25 ===
+Eisner, J., Filardo, N.W., 2010. Dyna: Extending datalog for modern AI, in:
+de Moor, O., Gottlob, G., Furche, T., Sellers, A.J. (Eds.), Datalog Reloaded -
+First International Workshop, Datalog 2010, Oxford, UK, March 16-19, 2010.
+Revised Selected Papers, Springer. pp. 181–220.
+Fierens, D., Van den Broeck, G., Renkens, J., Shterionov, D.S., Gutmann, B.,
+Thon, I., Janssens, G., De Raedt, L., 2015. Inference and learning in proba-
+bilistic logic programs using weighted Boolean formulas. Theory Pract. Log.
+Program. 15, 358–401. doi: 10.1017/S1471068414000076.
+Flach, P., 1994. Simply Logical: Intelligent Reasoning by Example. John Wiley
+& Sons, Inc.
+Groß, A., Kracher, B., Kraus, J., Kühlwein, S., Pfister, A., Wiese, S., Luckert, K.,
+Pötz, O., Joos, T., Daele, D., De Raedt, L., Kühl, M., Kestler, H., 2019. Rep-
+resenting dynamic biological networks with multi-scale probabilistic models.
+Communications Biology 2. doi: 10.1038/s42003-018-0268-3.
+Gutmann, B., Thon, I., Kimmig, A., Bruynooghe, M., De Raedt, L., 2011. The
+magic of logical inference in probabilistic programming. Theory and Practice
+of Logic Programming 11, 663–680.
+Hommersom, A., Bueno, M.L.P., 2016. Toward computing conflict-based diag-
+noses in probabilistic logic programming, in: PLP@ILP, CEUR-WS.org. pp.
+29–38.
+Huang, J., Li, Z., Chen, B., Samel, K., Naik, M., Song, L., Si, X., 2021. Scal-
+lop: From probabilistic deductive databases to scalable differentiable reasoning.
+Advances in Neural Information Processing Systems 34, 25134–25145.
+Hung, N.D., 2017. Inference and learning in probabilistic argumentation, in: MI-
+W AI, Springer. pp. 3–17.
+Kimmig, A., Van den Broeck, G., De Raedt, L., 2017. Algebraic model counting.
+Journal of Applied Logic 22, 46–62.
+Kimmig, A., Costa, F., 2012. Link and node prediction in metabolic networks
+with probabilistic logic, in: Bisociative Knowledge Discovery: An Introduction
+to Concept, Algorithms, Tools, and Applications. Springer. volume 7250, pp.
+407–426. doi: 10.1007/978-3-642-31830-6\_29 .
+25
+
+=== PDF PAGE 26 ===
+Kimmig, A., Van den Broeck, G., De Raedt, L., 2011. An algebraic Prolog for
+reasoning about possible worlds, in: AAAI, AAAI Press. pp. 209–214.
+Lagniez, J., Marquis, P., 2017. An improved Decision-DNNF compiler, in: IJCAI,
+pp. 667–673.
+Latour, A.L.D., Babaki, B., Dries, A., Kimmig, A., Van den Broeck, G., Ni-
+jssen, S., 2017. Combining stochastic constraint optimization and probabilis-
+tic programming - from knowledge compilation to constraint solving, in: CP,
+Springer. pp. 495–511.
+Manhaeve, R., Duman ˇci´c, S., Kimmig, A., Demeester, T., De Raedt, L., 2018.
+DeepProbLog: Neural probabilistic logic programming, in: Advances in Neural
+Information Processing Systems 31, pp. 3749–3759.
+Manhaeve, R., Duman ˇci´c, S., Kimmig, A., Demeester, T., De Raedt, L., 2021.
+Neural probabilistic logic programming in DeepProbLog. Artificial Intelligence
+298, 103504.
+Mantadelis, T., Bistarelli, S., 2020. Probabilistic abstract argumentation frame-
+works, a possible world view. International Journal of Approximate Reasoning
+119, 204–219.
+McAreavey, K., Bauters, K., Liu, W., Hong, J., 2017. The event calculus in prob-
+abilistic logic programming with annotated disjunctions, in: AAMAS, ACM.
+pp. 105–113.
+Mekuria, D.N., Sernani, P., Falcionelli, N., Dragoni, A.F., 2019. A probabilis-
+tic multi-agent system architecture for reasoning in smart homes. IEEE Inter-
+national Symposium on INnovations in Intelligent SysTems and Applications
+(INISTA) , 1–6.
+Miosic, I., Zuidberg Dos Martires, P., 2021. Measure theoretic weighted model
+integration. arXiv preprint arXiv:2103.13901 .
+Moldovan, B., Antanas, L., Hoffmann, M., 2012a. Opening doors: An initial SRL
+approach, in: ILP, Springer. pp. 178–192.
+Moldovan, B., Moreno, P., Nitti, D., Santos-Victor, J., De Raedt, L., 2018. Rela-
+tional affordances for multiple-object manipulation. Auton. Robots 42, 19–44.
+26
+
+=== PDF PAGE 27 ===
+Moldovan, B., Moreno, P., van Otterlo, M., Santos-Victor, J., De Raedt, L., 2012b.
+Learning relational affordance models for robots in multi-object manipulation
+tasks, in: ICRA, IEEE. pp. 4373–4378.
+Moldovan, B., van Otterlo, M., De Raedt, L., Moreno, P., Santos-Victor, J., 2011.
+Statistical relational learning of object affordances for robotic manipulation, in:
+ILP (Late Breaking Papers), Imperial College Press / World Scientific. pp. 95–
+103.
+Nitti, D., Belle, V ., De Raedt, L., 2015. Planning in discrete and continuous
+Markov decision processes by probabilistic programming, in: ECML /PKDD
+(2), Springer. pp. 327–342.
+Nitti, D., Belle, V ., Laet, T.D., De Raedt, L., 2017. Planning in hybrid relational
+MDPs. Mach. Learn. 106, 1905–1932.
+Nitti, D., De Laet, T., De Raedt, L., 2014. Relational object tracking and learning,
+in: ICRA, IEEE. pp. 935–942.
+Persson, A., Zuidberg Dos Martires, P., De Raedt, L., Loutfi, A., 2020. Semantic
+relational object tracking. IEEE Trans. Cogn. Dev. Syst. 12, 84–97.
+Poole, D., 1993. Probabilistic Horn abduction and Bayesian networks. Artificial
+Intelligence 64, 81–129.
+Riguzzi, F., 2018. Foundations of Probabilistic Logic Programming. River Pub-
+lishers, Gistrup, Denmark.
+Roig Vilamala, M., Xing, T., Taylor, H., Garcia, L., Srivastava, M., Kaplan, L.,
+Preece, A., Kimmig, A., Cerutti, F., 2023. DeepProbCEP: A neuro-symbolic
+approach for complex event processing in adversarial settings. Expert Systems
+with Applications 215, 119376. doi: 10.1016/j.eswa.2022.119376.
+Sato, T., 1995. A statistical learning method for logic programs with distribution
+semantics, in: Sterling, L. (Ed.), ICLP, MIT Press. pp. 715–729.
+Skarlatidis, A., Artikis, A., Filipou, J., Paliouras, G., 2015. A probabilistic logic
+programming event calculus. Theory Pract. Log. Program. 15, 213–245.
+Smith, G., Petrick, R.P.A., Belle, V ., 2021. Intent recognition in smart homes with
+ProbLog, in: PerCom Workshops, IEEE. pp. 430–431.
+27
+
+=== PDF PAGE 28 ===
+Suster, S., Fivez, P., Totis, P., Kimmig, A., Davis, J., De Raedt, L., Daelemans,
+W., 2021. Mapping probability word problems to executable representations,
+in: EMNLP (1), Association for Computational Linguistics. pp. 3627–3640.
+Sztyler, T., Civitarese, G., Stuckenschmidt, H., 2018. Modeling and reasoning
+with ProbLog: An application in recognizing complex activities, in: PerCom
+Workshops, IEEE Computer Society. pp. 259–264.
+Thon, I., Landwehr, N., De Raedt, L., 2008. A simple model for sequences of
+relational state descriptions, in: Daelemans, W., Goethals, B., Morik, K. (Eds.),
+Machine Learning and Knowledge Discovery in Databases, Springer Berlin
+Heidelberg. pp. 506–521.
+Thon, I., Landwehr, N., De Raedt, L., 2011. Stochastic relational processes: E ffi-
+cient inference and applications. Mach. Learn. 82, 239–272.
+Totis, P., Kimmig, A., De Raedt, L., 2021. SMProbLog: Stable model semantics
+in ProbLog and its applications in argumentation. CoRR abs/2110.01990.
+Valiant, L.G., 1992. Why is Boolean complexity theory difficult?, in: Proceedings
+of the London Mathematical Society Symposium on Boolean Function Com-
+plexity, Cambridge University Press, USA. p. 84–94.
+van Bremen, T., Dries, A., Jung, J.C., 2019. Ontology-mediated queries over
+probabilistic data via probabilistic logic programming, in: CIKM, ACM. pp.
+2437–2440.
+van Bremen, T., Dries, A., Jung, J.C., 2020. onto2problog: A probabilistic
+ontology-mediated querying system using probabilistic logic programming.
+Künstliche Intell. 34, 501–507.
+Van den Broeck, G., Thon, I., van Otterlo, M., De Raedt, L., 2010. DTProbLog: A
+decision-theoretic probabilistic Prolog, in: AAAI, AAAI Press. pp. 1217–1222.
+Veiga, T., Silva, M., Ventura, R., Lima, P.U., 2019. A hierarchical approach
+to active semantic mapping using probabilistic logic and information reward
+POMDPs, in: ICAPS, pp. 773–781.
+Venturato, G., Derkinderen, V ., Zuidberg Dos Martires, P., De Raedt, L., 2022.
+Towards tractable dynamic decision making with circuits.
+28
+
+=== PDF PAGE 29 ===
+Verreet, V ., Derkinderen, V ., Zuidberg Dos Martires, P., De Raedt, L., 2022. In-
+ference and learning with model uncertainty in probabilistic logic programs, in:
+AAAI, AAAI Press. pp. 10060–10069.
+Vlasselaer, J., Meert, W., 2012. Statistical relational learning for prognostics, in:
+Proceedings of the 21st Belgian-Dutch Conference on Machine Learning, pp.
+45–50.
+Vlasselaer, J., Van den Broeck, G., Kimmig, A., Meert, W., De Raedt, L., 2016.
+Tp-compilation for inference in probabilistic logic programs. International
+Journal of Approximate Reasoning 78, 15–32. doi: 10.1016/j.ijar.2016.
+06.009.
+Wang, Y ., 2015. ProbLog program based ontology matching, in: KSEM, Springer.
+pp. 778–783.
+Weitkämper, F., Sarbu, B., Sun, K., 2021. Modelling infectious disease dynamics
+with probabilistic logic programming.
+Xing, T., Vilamala, M.R., Garcia, L., Cerutti, F., Kaplan, L.M., Preece, A.D.,
+Srivastava, M.B., 2019. DeepCEP: Deep complex event processing using dis-
+tributed multimodal information, in: SMARTCOMP, IEEE. pp. 87–92.
+Yang, W.C., Marra, G., Rens, G., De Raedt, L., 2023. Safe reinforcement learning
+via probabilistic logic shields. doi: 10.48550/ARXIV.2303.03226.
+Yang, Z., Ishay, A., Lee, J., 2020. NeurASP: Embracing neural networks into
+answer set programming, in: IJCAI, pp. 1755–1762.
+Zuidberg Dos Martires, P., 2021. Neural semirings, in: d’Avila Garcez, A.S.,
+Jiménez-Ruiz, E. (Eds.), Proceedings of the 15th International Workshop on
+Neural-Symbolic Learning and Reasoning as part of the 1st International Joint
+Conference on Learning & Reasoning (IJCLR 2021), Virtual conference, Oc-
+tober 25-27, 2021, CEUR-WS.org. pp. 94–103.
+Zuidberg Dos Martires, P., De Raedt, L., Kimmig, A., 2023. Declara-
+tive probabilistic logic programming in discrete-continuous domains. CoRR
+abs/2302.10674.
+Zuidberg Dos Martires, P., Dries, A., De Raedt, L., 2019. Exact and approximate
+weighted model integration with probability density functions using knowledge
+compilation, in: AAAI, AAAI Press. pp. 7825–7833.
+29
+
+=== PDF PAGE 30 ===
+Zuidberg Dos Martires, P., Kumar, N., Persson, A., Loutfi, A., De Raedt, L., 2020.
+Symbolic learning and reasoning with noisy data for probabilistic anchoring.
+Frontiers Robotics AI 7, 100.
+30

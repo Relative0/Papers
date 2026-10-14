@@ -1,0 +1,20 @@
+digraph Research {
+ rankdir=LR; graph [label="CM / LM research: derived maps and added contracts",labelloc=t];
+ node [shape=box,fontname="Helvetica",fontsize=11];
+ CM [label="Paper B\nCM / LM + typed frames"];
+ Fold [label="Frame fusion\nGeneric-cut comparison"];
+ Oracle [label="Reversible Boolean oracle\nNonlinear labels, linear amplitudes"];
+ Query [label="P02: Exact modal queries\nDeutsch / DJ / BV"];
+ Rot [label="Chosen cyclic coefficient order\nA = F2[u]/u^4"];
+ Gate [label="Rotation commutant\nGL_m(A)"];
+ Contract [label="ADDED contracts\nTensor, preparations, effects, support"];
+ Smith [label="P01: Smith leading layer\nContextuality and d*h codebooks"];
+ TP [label="Invertible branch transfers\nTeleportation separation"];
+ Enrich [label="ADDED A-enrichment\nValuation + symbolic support"];
+ Limit [label="Closure / probability / form\nlimitations"];
+ CM -> Fold; CM -> Oracle; Oracle -> Query;
+ CM -> Rot [style=dashed,label="choice, not old product"];
+ Rot -> Gate; Gate -> Contract [style=dashed,label="not implied"];
+ Contract -> Smith; Smith -> TP; Contract -> Limit;
+ CM -> Enrich [style=dashed]; Rot -> Enrich; Enrich -> Contract [style=dashed,label="expresses, not derives"];
+}

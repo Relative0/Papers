@@ -1,0 +1,251 @@
+% Proposed insertion for Observation_Refinement_Descent_and_Cone_Draft_v0.3.tex
+% Recommended location: after the general carrier-splitting factorization and
+% before the cover-refinement section.  Bibliography additions are supplied in
+% MANUSCRIPT_BIBLIOGRAPHY_ADDITIONS.tex.
+
+\section{All-height carrier splitting under noninteracting exclusive inversions}
+\label{sec:exclusive-matching}
+
+The low-height rooted-incidence theorem gives a complete answer when the
+weighted height is at most two.  In higher dimensions a universal rooted-forest
+criterion is impossible: the same-carrier boundary case already supports
+integral torsion and arbitrary finite-poset homotopy types.  Nevertheless, an
+all-height exact classification survives when the genuinely incompatible
+carrier outcomes do not interact.
+
+Let
+\[
+A_a=\{s\in Q:(s,a)\in Q^\psi\},\qquad a\in\{0,1\},
+\]
+and put
+\[
+P=A_1\setminus A_0,\qquad Z=A_0\setminus A_1,\qquad
+C=A_0\cap A_1.
+\]
+Thus $P$ consists of the $1$-only coarse states, $Z$ of the $0$-only coarse
+states, and $C$ of the states that genuinely split.
+
+\begin{definition}[Exclusive inversion graph]
+\label{def:exclusive-inversion-graph}
+The \emph{exclusive inversion graph} is the bipartite graph
+\[
+G_\psi=(P\sqcup Z,E_\psi),\qquad
+E_\psi=\{(p,z)\in P\times Z:p<z\text{ in }Q\}.
+\]
+An edge records a coarse comparison whose earlier endpoint admits only the new
+outcome $1$ while its later endpoint admits only $0$.
+\end{definition}
+
+\subsection{The full-doubling model}
+
+Let
+\[
+D=Q\times\{0<1\},\qquad K=\Delta D,\qquad L=\Delta Q^\psi.
+\]
+The actual refined carrier is the induced subposet of $D$ obtained by deleting
+exactly
+\[
+M_0=\{(p,0):p\in P\},\qquad
+M_1=\{(z,1):z\in Z\}.
+\]
+Let $K_P$ be obtained by deleting $M_0$, let $K_Z$ be obtained by deleting
+$M_1$, and put
+\[
+U=K_P\cup K_Z,\qquad L=K_P\cap K_Z.
+\]
+The complex $K_P$ closes upward to the full top row, while $K_Z$ closes
+downward to the full bottom row.  Hence both $K_P\hookrightarrow K$ and
+$K_Z\hookrightarrow K$ are homotopy equivalences.  The long exact sequences
+of triples together with simplicial excision give
+\begin{equation}
+H_n(K,L;R)\cong H_{n+1}(K,U;R)
+\label{eq:two-colour-shift}
+\end{equation}
+for every coefficient ring $R$.  Since $D\to Q$ is a homotopy equivalence,
+$H_n(K,L;R)$ is the reduced homology of the homotopy cofiber of the refined
+projection $\Delta\pi:\Delta Q^\psi\to\Delta Q$.
+
+A simplex of $K\setminus U$ contains at least one missing lower copy $(p,0)$
+and at least one missing upper copy $(z,1)$.  Because it is a product-order
+chain, every such pair satisfies $p<z$.  Therefore the missing vertices of a
+relative simplex project to a complete bipartite subgraph of $G_\psi$.  This
+observation isolates the source of higher interaction: bicliques with more than
+one edge couple otherwise local defects.
+
+\begin{theorem}[Exclusive-Inversion Matching Theorem]
+\label{thm:exclusive-matching}
+Suppose that the exclusive inversion graph $G_\psi$ is a matching.  Then, for
+every coefficient ring $R$ and every integer $n$,
+\begin{equation}
+\widetilde H_n\!\left(\Cone(\Delta\pi);R\right)
+\cong
+\bigoplus_{(p,z)\in E_\psi}
+\widetilde H_{n-2}\!\left(
+\operatorname{lk}_{\Delta Q}[p,z];R
+\right).
+\label{eq:exclusive-matching}
+\end{equation}
+Consequently $\Delta\pi$ is an $R$-homology equivalence if and only if every
+coarse edge link $\operatorname{lk}_{\Delta Q}[p,z]$ indexed by an exclusive
+inversion is $R$-acyclic.
+\end{theorem}
+
+\begin{proof}
+A relative simplex of $(K,U)$ contains at least one vertex of $M_0$ and one
+vertex of $M_1$.  If it contained two missing lower vertices and one missing
+upper vertex, the corresponding upper endpoint would have degree at least two
+in $G_\psi$; the dual statement holds for two missing upper vertices.  The
+matching hypothesis therefore forces every relative simplex to contain a unique
+mixed pair
+\[
+e=((p,0)<(z,1)),\qquad (p,z)\in E_\psi.
+\]
+Deleting either endpoint of $e$ sends the simplex into $U$, while deleting any
+other vertex preserves the same pair.  Hence the relative chain complex splits
+as
+\[
+C_m(K,U;R)=\bigoplus_{e\in E_\psi}C_m^{(e)},
+\qquad
+C_m^{(e)}\cong
+\widetilde C_{m-2}(\operatorname{lk}_K e;R).
+\]
+Thus
+\[
+H_m(K,U;R)\cong
+\bigoplus_{e\in E_\psi}
+\widetilde H_{m-2}(\operatorname{lk}_K e;R).
+\]
+
+It remains to identify the product-order link.  For
+$e=((p,0)<(z,1))$, its link factors into the lower interval, the open middle
+interval, and the upper interval.  The open middle interval is covered by two
+contractible subposets: delete $(z,0)$ and close upward to the bit-$1$ row, or
+delete $(p,1)$ and close downward to the bit-$0$ row.  Their intersection is
+$(p,z)_Q\times\{0<1\}$, homotopy equivalent to $(p,z)_Q$.  Since $(p,1)$ and
+$(z,0)$ are incomparable, every middle-chain lies in one of these two pieces;
+therefore
+\[
+\Delta((p,0),(z,1))\simeq\Sigma\Delta(p,z)_Q.
+\]
+Joining with the lower and upper factors gives
+\[
+\operatorname{lk}_{\Delta(Q\times\mathbf2)}e
+\simeq
+\Sigma\operatorname{lk}_{\Delta Q}[p,z].
+\]
+Combining this suspension shift with~\eqref{eq:two-colour-shift} yields
+\eqref{eq:exclusive-matching}.
+\end{proof}
+
+\begin{corollary}[Bounded-poset localization]
+\label{cor:bounded-localization}
+Assume that $Q$ has a global minimum $\hat0$ and maximum $\hat1$, and that
+$G_\psi$ is a matching.  Then every exclusive edge except possibly
+$(\hat0,\hat1)$ has contractible coarse edge link.  Hence only the global
+endpoint inversion can contribute to the cone homology.
+\end{corollary}
+
+\begin{proof}
+If $p\ne\hat0$, the lower factor $\Delta Q_{<p}$ has the minimum $\hat0$; if
+$z\ne\hat1$, the upper factor $\Delta Q_{>z}$ has the maximum $\hat1$.  In
+either case the edge link is a join with a nonempty contractible complex.
+\end{proof}
+
+\begin{corollary}[Distributive endpoint profile]
+\label{cor:distributive-endpoint}
+Let $Q=J(R)$ be the lattice of order ideals of a finite poset $R$.  Make the
+bottom state $1$-only, the top state $0$-only, and every other state split.  If
+$R$ is an $r$-element antichain, so that $Q=B_r$, then
+\[
+\widetilde H_r(\Cone(\Delta\pi);\mathbb Z)\cong\mathbb Z
+\]
+and all other reduced cone homology vanishes.  If $R$ is not an antichain,
+the cone is integrally acyclic.
+\end{corollary}
+
+\begin{proof}
+Corollary~\ref{cor:bounded-localization} reduces the answer to the reduced
+homology of the proper part of $J(R)$, shifted by two.  The atom crosscut is a
+full simplex unless the atoms join to the top element.  In $J(R)$ the atoms
+correspond to the minimal elements of $R$, and they join to the top exactly
+when every element of $R$ is minimal, i.e. exactly when $R$ is an antichain.
+In that case $J(R)=B_r$ and its proper part is homotopy equivalent to
+$S^{r-2}$.
+\end{proof}
+
+\subsection{Sharpness: interaction begins at the first shared endpoint}
+
+The matching condition cannot be weakened merely to ``$G_\psi$ is a
+forest.''  For the three-element chain $0<1<2$ with availability profile
+\[
+0:\{1\},\qquad 1:\{0\},\qquad 2:\{0\},
+\]
+the exclusive graph is the two-edge star $K_{1,2}$.  Direct integral Smith
+normal form gives
+\[
+\widetilde H_1(\Cone(\Delta\pi);\mathbb Z)\cong\mathbb Z,
+\]
+while the sum of the two individual coarse-edge-link contributions is zero.
+The shared endpoint creates a three-vertex interaction core and a differential
+between the two edge defects.
+
+Nor does matching imply total unimodularity or torsion-freeness.  Given any
+nonempty finite poset $R$, take
+\[
+Q=\hat0\oplus R\oplus\hat1
+\]
+and use the endpoint profile above.  There is exactly one exclusive inversion,
+and Theorem~\ref{thm:exclusive-matching} gives
+\[
+\widetilde H_n(\Cone(\Delta\pi);\mathbb Z)
+\cong
+\widetilde H_{n-2}(\Delta R;\mathbb Z).
+\]
+Thus arbitrary finite-poset homology, including torsion, can occur even inside
+the matching class.  In particular, total unimodularity must be controlled by
+stronger conditions on the relevant links; global torsion-freeness alone is
+not a TU criterion~\cite{DeyHiraniKrishnamoorthy2011}.
+
+\subsection{Beyond matching: the interaction-core filtration}
+
+For a relative simplex $\sigma\in K\setminus U$, define its missing core
+\[
+S(\sigma)=\sigma\cap(M_0\cup M_1).
+\]
+Filter $C_*(K,U)$ by $|S(\sigma)|$.  If $\mathcal C_r$ is the family of mixed
+$r$-vertex missing cores that are simplices of $K$ and
+\[
+\Lambda_S=\operatorname{lk}_K(S)[V(L)],
+\]
+then the associated graded complex is
+\begin{equation}
+\operatorname{gr}_r C_m(K,U)
+\cong
+\bigoplus_{S\in\mathcal C_r}
+\widetilde C_{m-r}(\Lambda_S).
+\label{eq:interaction-graded}
+\end{equation}
+Indeed, deleting an available vertex preserves $S$, while deleting a missing
+vertex lowers the filtration.  This produces a convergent interaction spectral
+sequence whose first page is assembled from the homology of the
+$\Lambda_S$.  The cores project to chain-supported bicliques of $G_\psi$.
+Under the matching hypothesis only $r=2$ occurs, so the spectral sequence
+collapses immediately and recovers Theorem~\ref{thm:exclusive-matching}.
+
+This filtration is the natural next object beyond matching.  The smallest
+nonmatching example above shows that shared endpoints already create higher
+core differentials; therefore a higher-dimensional analogue of the low-height
+rooted-forest theorem must control these interactions rather than only the
+acyclicity of $G_\psi$.
+
+\begin{remark}[Priority boundary]
+The deletion/cofiber technology used here is classical.  In particular,
+vertex-cover obstruction complexes already provide general homotopical tools
+for comparing a complex with unions of induced subcomplexes
+\cite{ChacholskiEtAl2021}, while poset-fiber decompositions give broad results
+under fiber-connectivity hypotheses \cite{BjornerWachsWelker2005}.  The
+candidate contribution of Theorem~\ref{thm:exclusive-matching} is the
+observation-theoretic two-colour recognition and the resulting exact coarse
+edge-link formula.  No claim is made that simplicial vertex deletion or
+homotopy cofibers themselves are new.
+\end{remark}

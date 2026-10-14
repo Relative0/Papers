@@ -1,0 +1,29 @@
+# Resource hierarchy under declared operations
+
+Let M have Smith exponents a1<=...<=ad in a length-s finite chain ring. Put r=#{i:a_i<s} and h=#{i:a_i=a1}. Nonzero M has r,h>=1.
+
+| Invariant | Capability under complete K-linear basis contracts |
+|---|---|
+| r=1 | Relationally local bipartite support |
+| r>=2,h=1 | Logical but not strong contextuality; fixed-orbit codebook d |
+| h>=2 | Strong contextuality; fixed-orbit codebook d*h > d |
+| h=d | Maximum d^2 codewords, even when the common exponent is positive |
+| All a_i=0 | Invertible resource; universal exact teleportation when a complete invertible analyzer/corrections are admitted |
+
+Thus the hierarchy is not 'entangled -> strong -> teleportable'. Logical contextuality can coexist with no dense advantage in the matched codebook contract; maximal dense coding can coexist with failure of exact universal teleportation. Leading residue multiplicity and full module injectivity play different roles.
+
+## A=F2[u]/u^4, d=2
+
+The complete15-class table is [the independent inventory](../computation/independent/resource_inventory_summary.json). There are14 nonzero Smith classes: four equal-exponent strong classes, six unequal-exponent logical classes, and four single-factor local classes. Raw resource counts are respectively26,214,34,056 and5,265, plus the zero matrix. These are raw matrices, not unit-projective state counts.
+
+D(0,0) has4 messages and full teleportability. D(a,a), a=1,2,3, still has4 messages but no invertible transfer. D(a,b), a<b<4, has2 messages and logical contextuality. D(a,4) is a shared product with2 messages.
+
+## Preparation sensitivity
+
+The dual-number witness epsilon I2 is the smallest clean nilpotent illustration, but it is nonprimitive. If initial shared resources are required primitive, the two-dimensional maximal-codebook/no-teleportation example disappears: h=2 then forces both exponents zero. In dimension3, diag(1,1,u^3) is primitive, strongly contextual and has6>3 messages but is singular. Contrast diag(1,u,u^2), also primitive and binary rank9, but h=1 and only3 messages. These examples preserve the restricted-resource contrast under that preparation policy without solving conditioning closure.
+
+## Enlargement sensitivity
+
+Regular binary expansion gives rank r_bin=sum_i max(4-a_i,0). Under arbitrary local field-linear equivalence only r_bin remains. In dimension2, D(0,2) and D(1,1) both become binary rank6 even though their restricted support types differ. In the particular restricted literal coarse readout, the support trichotomy is recovered after a transpose-involution basis relabeling; tensor inequivalence alone does not make that table different.
+
+Unrestricted literal fixed-orbit dense coding gives d_literal*r_bin. Restricted GL2(A) encoders with an unrestricted fine decoder give2*r_bin. These are different operation sets. Algebraic literal k-copy extraction is possible iff r_bin^k>=d_target; this changes the single-copy hierarchy. None of these counts is a probability of distillation or a noisy capacity.

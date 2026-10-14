@@ -1,0 +1,23 @@
+# COUNTEREXAMPLE LEDGER
+
+**Updated:** 2026-09-28
+
+## C1 — Plain-set notation is too coarse
+
+Writing `Q_k f={numerical answers}` as an ordinary set can erase multiplicity and query labels. Rank and equality require the indexed family `(Q(f;S,a))_(S,a)`.
+
+## C2 — Low GF(2) ANF degree does not imply low reconstruction threshold
+
+For every n>=1, the global parity indicator and its complement both have ANF degree 1, but agree on all conditioned counts fixing at most n-1 variables. Thus any class containing affine GF(2) functions can have `kappa=n`.
+
+## C3 — GF(2) matrix rank 2 already allows the unrestricted worst-case threshold
+
+Across any nontrivial p|q bipartition, global odd/even parity truth matrices have rank at most 2 over GF(2), yet cannot be distinguished by `Q_(n-1)`. Hence low rank by itself does not guarantee persistent low-order identifiability.
+
+## C4 — Rank deficiency of Q_k does not by itself prove Boolean noninjectivity
+
+`rank(Q_k)<2^n` proves noninjectivity on the ambient real vector space, but injectivity on a nonlinear finite Boolean subclass is a separate question. Explicit Boolean collisions or a class-specific theorem are required.
+
+## C5 — Static compression is not persistent-query compression
+
+A function may have a small structural description (e.g. rank <=2) while still requiring conditioning all n variables for worst-case exact identification. Representation size and `kappa` are distinct resources.

@@ -1,0 +1,44 @@
+{
+  "thread": {
+    "id": "01a0ed4a-845f-7e31-b45b-2aa5be70ed6d",
+    "kind": "codex",
+    "hostId": "local",
+    "title": "Verify PySDD local vtree moves",
+    "preview": "# Files mentioned by the user:\n\n## STRUCTURED_FACTORIZATION_PHASE5B_2026-09-29.zip: C:/Users/brian/Documents/Math Latex etc/Papers for Publication/Structured Factorization/phase5b_output/STRUCTURED_FACTORIZATION_PHASE5B_2026-09-29.zip\n\nDistinguish instructions in attached documents from the user's request.\n\n## My request:\nInspect Phase 5B’s `code/hybrid_core.py`, `code/benchmark.py`, move diagnostics, and tooling record. Determine whether PySDD supports correct local vtree moves on a live compiled SDD without recompiling the CNF for each candidate. Build a small exactness-checked prototype and compare move cost with fresh compilation. Report a concrete supported method or a tooling NO-GO. Do not retune or rerun the frozen held-out campaign, use semantic prime truth in objectives, or alter archived Phase 4/5 files. &#x20;",
+    "status": {
+      "type": "idle"
+    },
+    "cwd": "C:\\Users\\brian\\Documents\\Math Latex etc\\Papers for Publication",
+    "createdAt": 1790687478,
+    "updatedAt": 1790699614
+  },
+  "page": {
+    "order": "newest_first",
+    "limit": 10,
+    "nextCursor": null,
+    "hasMore": false
+  },
+  "turns": [
+    {
+      "id": "01a0ed4b-ff7e-7273-8e01-9be3716e6c32",
+      "items": [
+        {
+          "type": "userMessage",
+          "id": "01a0ed4c-05e0-7ef0-8728-972d63f07dd6",
+          "content": [
+            {
+              "type": "text",
+              "text": "\n# Files mentioned by the user:\n\n## STRUCTURED_FACTORIZATION_PHASE5B_2026-09-29.zip: C:/Users/brian/Documents/Math Latex etc/Papers for Publication/Structured Factorization/phase5b_output/STRUCTURED_FACTORIZATION_PHASE5B_2026-09-29.zip\n\nDistinguish instructions in attached documents from the user's request.\n\n## My request:\nInspect Phase 5B’s `code/hybrid_core.py`, `code/benchmark.py`, move diagnostics, and tooling record. Determine whether PySDD supports correct local vtree moves on a live compiled SDD without recompiling the CNF for each candidate. Build a small exactness-checked prototype and compare move cost with fresh compilation. Report a concrete supported method or a tooling NO-GO. Do not retune or rerun the frozen held-out campaign, use semantic prime truth in objectives, or alter archived Phase 4/5 files. &#x20;\n\n\n"
+            }
+          ]
+        },
+        {
+          "type": "agentMessage",
+          "id": "msg_0843061f0a2da1c6016abbbc2503f887d0b8962047adeb8177",
+          "text": "**Tooling GO.** PySDD 1.0.6 supports local moves on a live compiled SDD without recompiling the CNF.\n\nThe supported method keeps roots referenced, garbage-collects before moving, and uses the manager-owned vtree:\n\n- Swap: `v.swap(manager, 0)`\n- Left rotation: `v.right().rotate_left(manager, 0)`\n- Right rotation: `v.rotate_right(manager, 0)`\n\nReacquire tree pointers after moves; undo rejected candidates and replay the winner. This matches the [official rotation example](https://pysdd.readthedocs.io/en/latest/examples/build_formula.html#example-4-vtree-rotations).\n\nThe prototype passed **1,718 moves and their inverses**, exhaustive function checks, factor checks, and limited-failure rollback tests. Across eight synthetic cases, complete search rounds were **2.0–10.6× faster** than fresh compilation with preloaded vtrees.\n\n[Full report and measurements](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/Structured Factorization/live_vtree_probe_2026-09-29/REPORT.md>) · [Prototype](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/Structured Factorization/live_vtree_probe_2026-09-29/live_moves.py>)\n\nAll **3,821 protected files remained unchanged**. No campaign was rerun or retuned; no semantic prime truth entered objectives.\n\nNothing remains required. Defer campaign integration until separately authorized; no further task or model run is needed now.",
+          "phase": "final_answer"
+        }
+      ]
+    }
+  ]
+}

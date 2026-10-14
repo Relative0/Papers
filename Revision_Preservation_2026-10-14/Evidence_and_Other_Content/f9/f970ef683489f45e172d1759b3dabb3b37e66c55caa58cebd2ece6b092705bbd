@@ -1,0 +1,47 @@
+# N2/P4 Interpretation
+
+## The important new result
+
+P4 is the first pass in this sequence where the preregistered **folding-stage** comparison crosses below direct/no-rewrite on the synthetic Gate-P benchmark. The case-balanced P4-propagated/direct lowering ratio is **0.5752×** (95% CI 0.4416–0.7455). This is not merely an optimizer-vs-optimizer comparison: the denominator is direct sparse-ANF lowering on the same already-built DAG.
+
+The result is also supported by work counters rather than timing alone. P4-propagated reduces Gate-P pair terms to **0.0984×** direct, multiplications to **0.3360×**, and evaluated ANF nodes to **0.5415×**.
+
+## Why P4 succeeded where P3 did not
+
+P4-native is the clean control. It has construction-time fanout and monomial estimates, avoids P3's reference scan and recursive estimator, and reproduces P3's accepted folds/work exactly. Yet its Gate-P lowering ratio is still **1.1822× direct**. So bookkeeping removal alone does not explain the P4-propagated win.
+
+The decisive change is the propagated semantic signature. P3 asks whether the immediate source shell exposes a same-pair fold. P4 carries upward a compact statement of the form:
+
+`this subgraph = TF_token(A, B)`
+
+without actually rewriting the subgraph. That signature may survive through several levels. An ancestor can therefore see a profitable large fold even if one or more intermediate local folds would have failed the profitability test.
+
+This matters because profitability is not necessarily compositional: "do not fold this child" does **not** imply "there is no profitable fold above this child." P4 preserves the semantic information independently of the local optimization decision.
+
+That is why P4-propagated takes only **29** Gate-P folds, compared with **58** for P3/native and 110 P2 planned accepts, yet performs substantially less downstream algebra. One high ancestor fold can replace several local decisions.
+
+## The remaining bottleneck
+
+The construction-inclusive result is still negative: **2.2259× direct**. The metadata-bearing DAG build itself is **5.5995×** the ordinary Python Factory build.
+
+That does not invalidate the lowering result; it tells us where the next experiment belongs. The current implementation eagerly creates Python `Sig` and `Candidate` objects and computes candidate metadata for nodes that may later be bypassed. Across the 36 Gate-P cases, the built metadata contains 520 propagated candidate nodes, while the demanded lowering path checks only 181 candidates and accepts 29. In effect, P4 solved P2's speculative *lowering plan* problem but reintroduced some speculation at *construction time*.
+
+The post-hoc profile agrees: `MetaFactory._make` and `_candidate_from_children` dominate the construction path.
+
+## The most informative P5
+
+The next pass should keep the successful semantic idea but make construction metadata much smaller:
+
+1. Store only packed primitive fields per node: `use_count`, saturating `m_est`, and a compact `(a_id, b_id, token)` signature. Avoid per-node dataclass/object allocation.
+2. **Do not build a `Candidate` object during DAG construction.** At a demanded binary node, derive the candidate from the two child signatures with a few integer/array reads and compute the frozen profitability arithmetic then.
+3. Preserve signature propagation independently of fold acceptance. That is the feature P4 showed to be valuable.
+4. Keep direct/no-rewrite as the baseline and retain both lowering-only and build+lower endpoints.
+5. Add a frozen cheap bypass for nodes with no propagated candidate, ideally one sentinel comparison in the lowering loop.
+
+This would test whether the 0.575× lowering advantage can survive when the construction metadata is implemented as a near-zero-cost compiler annotation rather than as an object-rich Python side structure.
+
+## Scope of the evidence
+
+The positive result remains **synthetic mechanism evidence**. Gate-P was deliberately constructed to contain repeated two-support/same-pair structure, and the speedup strengthens with depth. The frozen EPFL natural set still contains no accepted P4 fold, so it cannot establish prevalence or speed benefit on ordinary circuits.
+
+The appropriate natural follow-up is not to select circuits because P4 happens to win on them. A stronger design would scan a larger circuit-disjoint EPFL set using a predeclared **structural incidence criterion only** (for example, count propagated two-support signatures without timing), freeze that corpus, and then evaluate P5 timing on the held-out set.

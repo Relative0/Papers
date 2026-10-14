@@ -1,0 +1,18 @@
+# Build the mathematical PDFs
+
+The generated PDFs use ordinary LaTeX with Latin Modern, AMS, geometry, microtype, hyperref and xurl packages. The repository also includes a deterministic static bibliography so the default build does not require a BibTeX executable.
+
+From `math/`:
+
+```sh
+pdflatex -interaction=nonstopmode -halt-on-error THEOREM_BANK.tex
+pdflatex -interaction=nonstopmode -halt-on-error THEOREM_BANK.tex
+```
+
+From either paper directory, run the same two commands on `PAPER_SKELETON.tex`. From `papers/`, build `ONE_PAGE_PUBLICATION_MAP.tex` likewise. The reference database is `literature/references.bib`; `REFERENCE_RECORDS.json` additionally stores access limits and claim relevance. To refresh the no-BibTeX fallback after editing the canonical records:
+
+```sh
+python literature/build_static_bibliography.py
+```
+
+For journal BibTeX tooling replace the conditional static input at the bottom of each manuscript with its displayed `bibliographystyle` and `bibliography` fallback lines, then run the usual BibTeX cycle. The static fallback is a portability provision, not a claim that an initial missing-BibTeX build succeeded. Final delivered PDFs have resolved references. Paper skeletons are planning documents; figures and prose slots are intentionally not finished articles.

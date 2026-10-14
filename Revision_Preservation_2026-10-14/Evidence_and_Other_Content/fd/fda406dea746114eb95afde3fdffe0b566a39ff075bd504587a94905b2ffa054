@@ -1,0 +1,31 @@
+# N2/P6 Reproducibility README
+
+This bundle contains the frozen P6 preregistration/harness, raw results, the frozen P1-P5/N1 dependencies, the exact EPFL inputs, per-case CSVs, independent verification, and explicitly post-hoc diagnostics.
+
+## Frozen hashes
+
+- `N2_P6_PREREGISTRATION.md`: `898781343d0e9379bdf37d7c053eece3deb9c674b7bc514d2722504d97b0f60b`
+- `n2_p6_harness.py`: `6afec487a6a1a91b29fd8c4adc8ac4dcef4c787f9987b24111b00dd82f408030`
+
+## Main reproduction
+
+From `cm_n2_p6_run/`:
+
+```bash
+python n2_p6_harness.py --mode fuzz --out fuzz.json
+python n2_p6_harness.py --mode selection --out selection.json
+python n2_p6_harness.py --mode gatep --out gatep.json
+```
+
+Run `--mode natural-case --case-id <id>` for the ten frozen ids in `selection.json`. `cavlc:35` is slow under the execution environment; `run_p6_nat_chunk.py` reproduces the exact frozen schedule in deterministic slices.
+
+Then run:
+
+```bash
+python combine_p6_results.py
+python independent_verify.py
+```
+
+The independent verifier should report `PASS`.
+
+`P6_POSTHOC_PROFILE.txt` and `P6_POSTHOC_BUILD_MEMORY.json` are post-hoc diagnostics and are not part of preregistered pass/fail criteria.

@@ -1,0 +1,1391 @@
+# Pro Astra Master Publication-Readiness Audit
+
+## Exact Query Bounds in Characteristic-Two Modal Computation
+
+You are acting as an **independent senior mathematical research panel, adversarial referee team, query-complexity specialist, modal/finite-field computation specialist, algebraist, prior-art and novelty investigator, reproducibility auditor, and journal publication-readiness editor**.
+
+You will receive a ZIP archive containing the current research package for the manuscript:
+
+> **Exact Query Bounds in Characteristic-Two Modal Computation**  
+> *A technical note on oracle access, adaptive readout and kickback*
+
+The archive contains the current manuscript together with substantial supporting material, including manuscript source and PDF, theorem/proof/source crosswalks, novelty and priority ledgers, primary-source reviews, search logs, computational checks, reproducibility records, build records, visual-QA material, previous adversarial review, issue registers, historical material, and a later research-viability assessment.
+
+Your task is to perform a **deep, independent, publication-readiness audit of the entire research package, with the manuscript itself as the primary object of evaluation**.
+
+The central question is:
+
+> **Is the present manuscript mathematically correct, sufficiently complete, genuinely differentiated from prior work, appropriately scoped, adequately supported, reproducible, clearly written, internally consistent, and mature enough for public preprint release and/or submission to a serious peer-reviewed venue?**
+
+Do not merely summarize the manuscript.
+
+Do not merely summarize the existing reviews.
+
+Do not assume the package's own claims of correctness, novelty, priority, completeness, or reproducibility are correct.
+
+Do not assume that an existing "no contradiction found" result means a proof is sound.
+
+Do not assume that something identified as novel in the novelty ledger is actually novel.
+
+Do not assume that a previous reviewer's criticism is valid merely because it appears in the archive.
+
+Do not assume that computational verification establishes a general theorem.
+
+Audit everything independently.
+
+---
+
+# 1. Read and inventory the complete archive first
+
+Before giving substantive conclusions, recursively inspect the ZIP archive, including its subdirectories.
+
+Do not restrict yourself to the obvious manuscript files.
+
+At minimum, identify and examine, where present:
+
+- `main.tex`
+- `main.pdf`
+- `references.bib`
+- `phase_table.tex`
+- `README_FIRST.md`
+- `CLAIMS_AND_UNIQUENESS.md`
+- `FINAL_CLAIMS.md`
+- `CHANGED_CLAIMS.md`
+- `UNRESOLVED_PRIORITY_AND_ISSUES.md`
+- `ADVERSARIAL_REVIEW.md`
+- `GATE_4_PRIORITY_PROOF_REPORT.md`
+- `THEOREM_PROOF_SOURCE_CROSSWALK.csv`
+- `PRIORITY_AND_NOVELTY_LEDGER.csv`
+- `PRIMARY_SOURCE_REVIEW.csv`
+- `SEARCH_LOG.csv`
+- `REPRODUCIBILITY.md`
+- `TABLE_PROVENANCE.json`
+- `BUILD_MANIFEST.json`
+- build logs
+- visual-QA records
+- archive/source manifests
+- history directories
+- prior publication-context records
+- `RESEARCH_VIABILITY_REVIEW_2026-09-26/`
+- its `RESEARCH_ASSESSMENT.md`
+- its decision/manifest material
+- any computational artifacts or referenced results that are actually available.
+
+Create an internal map of:
+
+1. the canonical manuscript;
+2. supporting proofs;
+3. computational evidence;
+4. literature/priority evidence;
+5. prior reviews;
+6. editorial records;
+7. historical material;
+8. unresolved issues;
+9. duplicated or obsolete files;
+10. artifacts referred to but not actually present.
+
+If an important artifact is referenced but absent, identify that explicitly.
+
+Do not silently treat missing evidence as verified evidence.
+
+---
+
+# 2. Establish the manuscript's actual contribution before judging it
+
+Reconstruct, independently, what the paper really proves.
+
+The current package appears to focus on exact oracle-query limitations in characteristic-two modal/linear computation. Among the manuscript's principal claims are approximately:
+
+- an exact Deutsch lower bound under the stated characteristic-two pointwise oracle model;
+- a matching two-query result for Deutsch under standard XOR/QXOR access;
+- a one-query Deutsch–Jozsa obstruction under the manuscript's stated oracle/readout contract;
+- an adaptive recorded-branch polynomial/monomial bound;
+- exact Bernstein–Vazirani query complexity \(n\) under standard XOR access, with the lower bound proved under a broader class of fixed pointwise invertible actions;
+- a distinction between the lower-bound oracle contract and the stronger assumptions needed for the displayed upper bounds;
+- a characteristic-two/ring-valued kickback example showing that nontrivial eigen-information need not provide an invertible Fourier analyzer;
+- a reproduction of known modal UNIQUE-SAT as a positive control;
+- bounded computational investigations concerning Deutsch, BV, Simon, oracle degeneracy, phase ranks, and description-readout ablations.
+
+Do **not** accept this characterization without checking the manuscript.
+
+Construct your own **claim inventory** containing every theorem, lemma, proposition, important corollary, significant negative assertion, computational claim, novelty claim, and interpretive claim.
+
+For each claim identify:
+
+- exact manuscript location;
+- formal assumptions;
+- quantifiers;
+- scalar domain;
+- state-space assumptions;
+- oracle model;
+- ancilla allowance;
+- adaptivity allowance;
+- instrument/readout assumptions;
+- exactness criterion;
+- lower-bound scope;
+- upper-bound scope;
+- whether the result is analytical or computational;
+- whether it is original, imported, reproduced, or background;
+- whether the proof actually establishes the stated conclusion.
+
+Compare this independently produced inventory to `FINAL_CLAIMS.md`, the theorem/proof/source crosswalk, and the novelty ledger.
+
+Report every disagreement.
+
+---
+
+# 3. Perform a theorem-by-theorem mathematical correctness audit
+
+This is the most important part of the review.
+
+Do not rely on the previous internal adversarial review.
+
+Re-prove or critically reconstruct the principal results yourself.
+
+For every theorem or lemma classify it as one of:
+
+- **Verified**
+- **Verified subject to minor clarification**
+- **Plausible but proof gap remains**
+- **Material gap**
+- **Incorrect as stated**
+- **Unable to verify from supplied material**
+
+Explain why.
+
+## 3.1 Exact discrimination lemma
+
+Audit the claimed criterion that exact linear discrimination of labelled state sets is equivalent to the corresponding spans forming a direct sum.
+
+Check:
+
+- necessity;
+- sufficiency;
+- whether the construction of the readout obeys the manuscript's definition of a complete instrument;
+- treatment of unused coordinates;
+- treatment of multiple states sharing a label;
+- distinction between pairwise trivial intersections and a genuine direct sum for more than two labels;
+- finite dimensionality;
+- whether any unstated assumptions are used.
+
+Determine how much of this is standard antecedent versus an elementary extension of a known singleton criterion.
+
+---
+
+## 3.2 Complete recorded evolution lemma
+
+Audit the finite-tree injectivity argument.
+
+Pay particular attention to:
+
+- adaptive branching;
+- zero branches;
+- injectivity of the stacked instrument;
+- branch-dependent continuation;
+- differing terminal state spaces;
+- whether concatenating/recording all branches genuinely yields an injective total map;
+- finite-tree assumptions;
+- early termination;
+- paths impossible for a particular secret;
+- paths included in worst-case query count;
+- appending ancillas;
+- retention of internal states;
+- whether the proof survives arbitrary finite ancillas.
+
+Determine whether this lemma fully supports the later adaptive lower bounds.
+
+---
+
+## 3.3 Deutsch theorem
+
+Audit the theorem under the **actual stated oracle contract**, not under an implicitly stronger or weaker model.
+
+Check the relation used between the four post-query states.
+
+Analyze separately the cases corresponding to the manuscript's \(w=0\) and \(w\neq0\) argument.
+
+Check:
+
+- whether the overlap argument establishes impossibility of exact discrimination;
+- arbitrary nonzero prequery states;
+- arbitrary target/ancilla dimensions;
+- arbitrary fixed invertible \(G_0,G_1\);
+- branch-dependent preprocessing;
+- adaptive algorithms with at most one query;
+- whether query-free postprocessing could invalidate the argument;
+- whether inverse access changes anything;
+- whether the QXOR two-query upper bound is correctly charged.
+
+Look for counterexamples outside small enumerated dimensions.
+
+Explicitly distinguish:
+
+> qualitative failure of the familiar one-query Deutsch advantage
+
+from
+
+> the exact contract-level theorem actually proved here.
+
+---
+
+## 3.4 Deutsch–Jozsa one-query obstruction
+
+This requires especially careful examination.
+
+Reconstruct the characteristic-two linear relation used among balanced and constant oracle actions.
+
+Check:
+
+- \(n\ge2\);
+- definition of the promise;
+- exact selection of the balanced functions used in the obstruction;
+- whether the relevant operator relation holds for the manuscript's full allowed oracle class;
+- arbitrary preparations;
+- ancillas;
+- complete instruments;
+- adaptivity insofar as meaningful with one query;
+- whether the argument proves only a one-query impossibility;
+- whether any language inadvertently suggests a general optimal query complexity that has not been established.
+
+The manuscript apparently leaves a gap between the lower and displayed upper bounds.
+
+Determine precisely what is known and unknown.
+
+Do not allow computational evidence at small \(n\) to close a quantified theoretical gap.
+
+---
+
+## 3.5 Recorded monomial / polynomial bound
+
+Give this proof an unusually adversarial reading because it appears central to the Bernstein–Vazirani result.
+
+Independently reconstruct the induction.
+
+Check whether, after \(q\) queries, every coefficient in every recorded branch really lies in the span of Boolean monomials of degree at most \(q\).
+
+Investigate:
+
+- branch-dependent gates;
+- branch-dependent oracle calls;
+- node-specific \(G_0,G_1\);
+- inverse queries;
+- arbitrary finite ancillas;
+- injection maps;
+- complete linear instruments;
+- early stopping;
+- differing histories;
+- zero histories;
+- reconvergence, if applicable;
+- concatenation into a recorded direct sum;
+- whether monomial degree can increase through hidden operations;
+- whether the argument depends critically on secret-independent inter-query transformations;
+- the use of \(s_j^2=s_j\) only because secret variables are Boolean;
+- any accidental assumptions of multilinearity;
+- whether the coefficient count is exactly
+  \[
+  \sum_{j=0}^{q}\binom{n}{j}
+  \]
+  under the claimed hypotheses.
+
+Try actively to construct a counterexample.
+
+Do not stop at reproducing the manuscript's induction.
+
+---
+
+## 3.6 Bernstein–Vazirani theorem
+
+Audit both lower and upper bounds.
+
+For the lower bound, verify the chain:
+
+1. exact recovery of \(2^n\) secrets;
+2. exact discrimination;
+3. direct-sum/linear-independence requirement;
+4. recorded-state coefficient space dimension;
+5. monomial-count bound;
+6. contradiction for \(q<n\).
+
+Check whether "independent records" is being used correctly.
+
+Check whether varying terminal spaces or recorded histories can artificially increase the apparent state-space dimension without increasing secret dependence.
+
+Check whether classical history labels themselves can carry information not accounted for by the polynomial argument.
+
+Check if branch structure could encode information in the identity or existence of branches rather than only their vector coefficients, and whether the direct-sum representation correctly handles this.
+
+For the QXOR upper bound, verify that \(n\) queries suffice under exactly the same output requirement used in the lower bound.
+
+Distinguish carefully between:
+
+- lower bound for broader fixed pointwise invertible actions;
+- matching upper bound for QXOR;
+- arbitrary \(G_0,G_1\), for which no matching upper bound is generally claimed.
+
+Determine whether the phrase **"exact Bernstein–Vazirani complexity \(n\)"** is unambiguous enough about the access model.
+
+---
+
+# 4. Audit the oracle/access/readout contract as a mathematical object
+
+A major part of the paper's value appears to be explicit contract discipline.
+
+Test whether that discipline is actually maintained.
+
+Create a **contract matrix** showing what is permitted and prohibited for each major result:
+
+- scalar field/ring;
+- finite-dimensional state spaces;
+- primitive/nonprimitive states if relevant;
+- invertible gates;
+- injections;
+- ancillas;
+- complete instruments;
+- classical histories;
+- adaptive branch-dependent operations;
+- postselection;
+- normalization;
+- probabilistic success;
+- coefficient-table inspection;
+- pointwise oracle form;
+- QXOR;
+- inverse access;
+- phase/cyclic oracle;
+- ring-valued target;
+- tensor base.
+
+Look for any point where the paper silently moves between models.
+
+In particular audit the statement:
+
+\[
+O_f=\bigoplus_x G_{f(x)}
+\]
+
+and determine precisely what is fixed and what may vary.
+
+Check whether allowing node-specific fixed pairs affects the theorem statement or proof.
+
+Check whether allowing \(G_0=G_1\) makes the general lower-bound class partly information-free, and whether the manuscript handles that fact correctly rather than deriving a misleading notion of "complexity" for arbitrary pairs.
+
+Evaluate whether the distinction between a **lower-bound class** and the **QXOR upper-bound interface** is made clearly enough for readers and referees.
+
+---
+
+# 5. Audit the ring-valued kickback section separately
+
+The manuscript deliberately changes scalar domains in its kickback section.
+
+Check whether this transition is mathematically clean and editorially safe.
+
+Audit:
+
+\[
+A=\mathbb F_2[u]/(u^4),\qquad R=1+u,\qquad z=R^2=1+u^2.
+\]
+
+Check the proposition involving:
+
+\[
+\chi=(1,z)^T,\qquad X\chi=z\chi,
+\]
+
+and
+
+\[
+H_z=
+\begin{pmatrix}
+1&1\\
+1&z
+\end{pmatrix}
+\sim
+\operatorname{diag}(1,u^2).
+\]
+
+Verify:
+
+- the elementary operations;
+- singularity;
+- the tensor-rank formula;
+- the stated binary rank \(4+2n\);
+- ambient binary dimension \(4\cdot 2^n\);
+- behavior of powers of \(u^2\);
+- regular representation assumptions;
+- shared \(A\)-scalar structure.
+
+Audit the claims concerning order-two characters in characteristic two.
+
+Audit the distinction between:
+
+- standard two-level target flip;
+- a four-level cyclic shift;
+- primitive eigenvalue behavior;
+- an oracle \(T^{f(x)}\);
+- standard XOR access.
+
+Check carefully the claim that synthesizing the cyclic/phase oracle through compute-control-uncompute changes query cost.
+
+Investigate the tensor-base warning:
+
+\[
+\otimes_A
+\quad\text{versus}\quad
+\otimes_{\mathbb F_2}.
+\]
+
+Determine whether this section genuinely strengthens the paper, is merely illustrative, or distracts from the exact-query core.
+
+If it belongs better in an appendix or companion note, say so.
+
+Do not assume its inclusion is justified merely because it is correct.
+
+---
+
+# 6. Audit all computational evidence and reproducibility claims
+
+Separate:
+
+> analytical theorem verification
+
+from
+
+> finite computational evidence.
+
+Inspect the actual computation records where possible.
+
+Determine whether:
+
+- code exists;
+- inputs exist;
+- outputs exist;
+- hashes agree;
+- commands are recorded;
+- environment information is sufficient;
+- table-generation provenance is reconstructible;
+- random seeds are relevant;
+- reruns are deterministic;
+- counts in the manuscript match actual results;
+- captions accurately state the computational scope.
+
+Audit individually the reported finite checks concerning:
+
+- Deutsch preparations;
+- oracle-contract degeneracy;
+- Bernstein–Vazirani identities;
+- UNIQUE-SAT reproduction;
+- Simon scanning;
+- phase-rank calculations;
+- primitive-eigenvector searches;
+- description-readout ablation.
+
+For every finite experiment specify exactly what it does and **what it does not establish**.
+
+Be alert for scope creep such as:
+
+- finite dimensions being interpreted as all dimensions;
+- no-ancilla scans being interpreted as ancillary impossibility results;
+- one-query scans being interpreted as arbitrary-query lower bounds;
+- small \(n\) checks being used as proof of a general theorem.
+
+If feasible, independently reproduce critical small cases or write fresh verification code rather than trusting supplied scripts.
+
+If independent reproduction cannot be performed, say so.
+
+---
+
+# 7. Conduct an independent prior-art and novelty investigation
+
+This portion must go beyond the bibliography and the supplied novelty ledger.
+
+Perform fresh literature searches.
+
+Search using **theorem content and mathematical synonyms**, not merely the manuscript's terminology.
+
+Relevant areas include at least:
+
+- modal quantum theory;
+- finite-field quantum theory;
+- modal computation;
+- quantum-like computation over characteristic-two fields;
+- exact query complexity;
+- algebraic query models;
+- polynomial-method lower bounds;
+- query complexity over finite fields and rings;
+- exact state discrimination without inner products;
+- reversible finite-field computation;
+- oracle identification;
+- Bernstein–Vazirani over non-complex scalar domains;
+- Deutsch and Deutsch–Jozsa over finite fields;
+- adaptive query algorithms;
+- branching linear computations;
+- algebraic decision trees where relevant;
+- group-character/Fourier degeneration in characteristic dividing group order;
+- modular computation;
+- nilpotent/ring-valued Fourier transforms;
+- black-box linear algebra if relevant.
+
+At minimum, independently investigate and inspect the relevant parts of works associated with the manuscript's presently cited antecedents, including where applicable:
+
+- Schumacher and Westmoreland / foundational modal quantum theory;
+- James, Ortiz and Sabry;
+- Willcock and Sabry;
+- Hanson and collaborators;
+- Tai;
+- Diamond and Schumacher;
+- Beals et al. on polynomial lower bounds;
+- de Beaudrap on modular/ring computation.
+
+Do not stop there.
+
+Use citation chaining:
+
+- references cited by these papers;
+- papers citing them;
+- papers using equivalent algebra under different terminology.
+
+Search exact theorem forms such as:
+
+- exact Deutsch complexity over \(\mathbb F_2\);
+- Deutsch under arbitrary pointwise invertible oracle actions;
+- one-query Deutsch–Jozsa impossibility in characteristic two;
+- exact Bernstein–Vazirani query complexity over characteristic-two fields;
+- adaptive polynomial degree lower bounds in modal computation;
+- direct-sum recording of modal branches;
+- finite-field exact oracle discrimination.
+
+For every principal contribution classify novelty as:
+
+- **Known result**
+- **Known result with a different proof**
+- **Known qualitative fact, new quantitative refinement plausible**
+- **Known technique specialized to a new contract**
+- **Apparently new theorem after substantial search**
+- **Priority unresolved**
+- **Likely not novel**
+
+Explain the distinction between:
+
+1. novelty of the mathematical result;
+2. novelty of the proof;
+3. novelty of the formal model/contract;
+4. novelty of combining known ingredients;
+5. expository usefulness.
+
+Do not equate "I did not find it" with "it is new."
+
+Give search terms, sources inspected, relevant passages/theorem numbers when possible, and confidence levels.
+
+---
+
+# 8. Audit the manuscript's relationship to prior reviews
+
+Treat every previous review as a hypothesis set.
+
+Create a review-resolution table containing:
+
+- prior criticism;
+- source of criticism;
+- whether criticism was valid;
+- manuscript response;
+- whether response actually resolves it;
+- residual issue;
+- severity.
+
+Examine especially the concerns already visible in the package regarding:
+
+- adaptive branch induction;
+- exact discrimination;
+- finite-tree assumptions;
+- allowed ancillas;
+- lower-bound versus upper-bound oracle contracts;
+- priority of the fully quantified Bernstein–Vazirani result;
+- priority of the generalized Deutsch–Jozsa obstruction;
+- finite evidence versus quantified theorems;
+- possible confusion between description-level access and operational readout;
+- ring kickback versus genuine Fourier analysis.
+
+Do not report an issue as "resolved" merely because a response file says it was resolved.
+
+Independently inspect the revised manuscript.
+
+Also identify **new issues none of the existing reviewers noticed**.
+
+---
+
+# 9. Search aggressively for counterexamples and hidden edge cases
+
+Adopt the position of a skeptical referee trying to break the paper.
+
+Test edge cases including:
+
+- \(n=1\);
+- \(n=2\);
+- trivial address sets;
+- one-dimensional target spaces where possible;
+- \(G_0=G_1\);
+- commuting versus noncommuting \(G_0,G_1\);
+- highly degenerate but invertible choices;
+- enlarged ancillas;
+- preparation supported in one address sector;
+- branches that vanish secret-dependently;
+- instruments with many output branches;
+- branch-specific future queries;
+- early termination;
+- inverse queries;
+- retained garbage/internal state;
+- arbitrary finite characteristic-two fields, not just \(\mathbb F_2\);
+- infinite characteristic-two fields if the theorem claims them;
+- scalar extension;
+- ring versus field transitions;
+- nonprimitive ring-valued states;
+- alternative tensor interpretations.
+
+If a theorem survives these attacks, say why.
+
+If assumptions need to be tightened, propose exact wording.
+
+---
+
+# 10. Audit internal consistency and notation
+
+Check all of the following against one another:
+
+- abstract;
+- introduction;
+- theorem statements;
+- proofs;
+- tables;
+- figure captions;
+- scope section;
+- conclusion/publication-status language;
+- supporting claim files;
+- novelty ledger;
+- theorem crosswalk;
+- bibliography;
+- computational records.
+
+Search for contradictions such as:
+
+- broader wording in the abstract than in the theorem;
+- a table presenting an optimum where only a lower bound is proved;
+- "arbitrary pointwise action" where QXOR is actually required;
+- field results silently exported to the ring example;
+- finite evidence described as proof;
+- claims of all-ancilla generality based on no-ancilla computation;
+- claims of general Deutsch–Jozsa optimality;
+- claims about Simon exceeding the stated experiment;
+- ambiguous uses of "query complexity";
+- ambiguous uses of "Fourier";
+- physical interpretations unsupported by the formal mathematics.
+
+Check symbols and definitions for stability.
+
+---
+
+# 11. Evaluate completeness of the manuscript
+
+Ask:
+
+### Mathematical completeness
+
+Are all required lemmas proved?
+
+Are there hidden assumptions?
+
+Are important cases omitted?
+
+Does every theorem have the machinery it needs?
+
+### Scholarly completeness
+
+Is the relevant literature represented?
+
+Are important antecedents missing?
+
+Does the paper distinguish established background from contribution?
+
+### Experimental completeness
+
+Are computations sufficiently documented for the modest role they play?
+
+### Expository completeness
+
+Could a competent reader reproduce the main reasoning without consulting unpublished companion projects?
+
+### Submission completeness
+
+Are metadata, author details, bibliography, source, figures, tables, supplements, and reproducibility materials in acceptable shape?
+
+Identify what is:
+
+- essential before preprint;
+- essential before journal submission;
+- strongly recommended;
+- optional.
+
+---
+
+# 12. Evaluate significance separately from novelty
+
+A theorem may be new but minor.
+
+A theorem may use known ingredients but still be a valuable clean result.
+
+Assess the significance of the paper's actual contribution.
+
+Questions include:
+
+- Does the exact-query result materially sharpen the qualitative modal-computation literature?
+- Is the Bernstein–Vazirani \(n\)-query result conceptually interesting?
+- Does including adaptivity and arbitrary finite ancillas substantially strengthen the statement?
+- Is the explicit oracle/readout contract itself a valuable clarification?
+- Does the Deutsch result add enough beyond known qualitative failure?
+- Is the one-query DJ obstruction worth retaining if the full optimum remains open?
+- Does the ring kickback section add conceptual value?
+- Does the positive UNIQUE-SAT control help establish that the paper studies specific obstructions rather than general modal weakness?
+- Is there enough here for a focused technical note?
+- Would removing weaker material make the core result more publishable?
+
+Distinguish:
+
+- mathematical validity;
+- novelty;
+- significance;
+- publishability.
+
+They are not the same thing.
+
+---
+
+# 13. Determine whether more research would materially improve the paper
+
+Identify the highest-value unresolved research problems.
+
+The package already suggests possibilities such as:
+
+### A. Closing the Deutsch–Jozsa gap
+
+Determine whether the current lower/upper gap looks approachable.
+
+Do not claim an optimum without proof.
+
+If you see a realistic mathematical route, outline it.
+
+### B. Promise-specific evaluation-rank bounds
+
+Investigate whether the recorded-monomial argument naturally generalizes to a promise set \(P\) through the restricted degree-\(q\) monomial evaluation matrix.
+
+Distinguish carefully:
+
+> a necessary rank condition
+
+from
+
+> an achievable query complexity characterization.
+
+Ask whether there is a publishable theorem here.
+
+### C. General secret-recovery problems
+
+Consider whether the BV theorem is an instance of a broader exact identification theorem for families whose restricted low-degree evaluation vectors have bounded dimension.
+
+Again, do not promote conjecture to theorem.
+
+### D. Access-model taxonomy
+
+Determine whether a concise formal comparison of:
+
+- XOR query;
+- phase/cyclic query;
+- description access;
+- classical point access
+
+would strengthen the manuscript.
+
+### E. Tightness versus realizability
+
+Investigate whether algebraic evaluation-rank lower bounds can be tight or whether allowed linear circuits impose additional realizability constraints.
+
+Rank alone is not automatically a constructive upper bound.
+
+For each research extension state:
+
+- likely value;
+- mathematical difficulty;
+- whether required for this paper;
+- whether better reserved for future work.
+
+Do not turn a focused technical note into an unfocused research program merely to make it longer.
+
+---
+
+# 14. Editorial and expository audit
+
+Review the paper as a journal referee and senior mathematical editor.
+
+Assess:
+
+- title;
+- abstract;
+- first-page clarity;
+- motivation;
+- definitions;
+- accessibility to query-complexity readers;
+- accessibility to modal-quantum readers;
+- theorem placement;
+- proof organization;
+- figures;
+- tables;
+- transitions;
+- notation;
+- redundancy;
+- length;
+- conclusion;
+- supplementary-material dependency.
+
+Ask whether the paper explains *why the result is interesting*, not merely *what is true*.
+
+Pay special attention to whether a reader can immediately understand the difference among:
+
+- ordinary quantum query complexity;
+- modal/finite-field computation;
+- characteristic-two scalar effects;
+- standard XOR oracle access;
+- more general pointwise invertible access;
+- exact all-branches-correct readout.
+
+Recommend concrete editorial changes where needed.
+
+Quote or locate the passage being criticized.
+
+---
+
+# 15. Citation audit
+
+Verify citations at the claim level.
+
+For each important citation ask:
+
+- Does the cited source actually support the statement?
+- Is the correct theorem, section, or page being cited?
+- Is the manuscript overstating what the source proves?
+- Is the source primary?
+- Is there an older or closer source?
+- Is a secondary citation being used where a primary source should be used?
+- Are historical claims appropriately cautious?
+
+Check the bibliography for:
+
+- incomplete metadata;
+- inaccurate titles/authors/dates;
+- arXiv-only entries where a published version exists;
+- duplicate entries;
+- missing DOIs where appropriate;
+- unstable or malformed URLs.
+
+Pay special attention to historical wording such as:
+
+- "known";
+- "established";
+- "first";
+- "previously";
+- "antecedent";
+- "refines";
+- "not previously quantified."
+
+Recommend conservative wording whenever priority is uncertain.
+
+---
+
+# 16. Reproducibility audit
+
+Rate the package as if it were supplementary material submitted with a paper.
+
+Determine whether another researcher could reproduce:
+
+- manuscript build;
+- finite computations;
+- generated tables;
+- stated counts;
+- hashes/provenance.
+
+Check whether the archive contains sufficient:
+
+- commands;
+- environment specification;
+- source code;
+- input data;
+- output data;
+- hashes;
+- provenance;
+- version information.
+
+Separate **reproducibility of computational evidence** from **verification of mathematical proof**.
+
+A reproducible computation is not a proof certificate.
+
+---
+
+# 17. Publication-format and venue analysis
+
+Determine the best scholarly form for the work in its current state:
+
+- focused research note;
+- technical note;
+- short communication;
+- full research article;
+- preprint only pending further results;
+- section of a larger paper;
+- companion note.
+
+Do not assume the archive's existing recommendation of a focused technical note is correct.
+
+Evaluate it yourself.
+
+Identify a small number of plausible venue **types**, and if confident, specific venues whose scope plausibly matches the paper.
+
+For each explain:
+
+- fit;
+- expected contribution level;
+- likely referee concerns;
+- changes needed before submission.
+
+Do not make acceptance predictions.
+
+---
+
+# 18. Mandatory scoring framework
+
+Give a **0–10 score** for each category below.
+
+Scores must be justified by evidence.
+
+Use the following interpretation:
+
+- **9–10:** publication-grade / unusually strong
+- **8:** strong with limited repair
+- **7:** broadly sound but meaningful revision remains
+- **6:** promising, substantial revision needed
+- **5:** borderline research draft
+- **3–4:** major deficiencies
+- **1–2:** fundamental problems
+- **0:** absent or invalid
+
+Also give a confidence level:
+
+- High
+- Moderate
+- Low
+
+### Weighted publication-readiness scorecard
+
+| Category | Weight |
+|---|---:|
+| Mathematical correctness | 20% |
+| Completeness of proofs/results | 8% |
+| Model and assumption discipline | 8% |
+| Novelty and priority | 12% |
+| Scientific significance | 8% |
+| Literature coverage and positioning | 8% |
+| Reproducibility | 7% |
+| Internal consistency | 6% |
+| Resolution of prior reviewer concerns | 5% |
+| Exposition and readability | 5% |
+| Scope and structural focus | 4% |
+| Evidence and citation quality | 4% |
+| Submission hygiene | 3% |
+| Venue/form fit | 2% |
+
+Calculate the weighted score.
+
+However:
+
+> **A high numerical average must never override a fatal mathematical or priority problem.**
+
+List all **hard blockers** separately.
+
+---
+
+# 19. Publication gates
+
+Give separate decisions for:
+
+## Gate A — Mathematical integrity
+
+Possible outputs:
+
+- PASS
+- PASS WITH MINOR REPAIRS
+- MAJOR REPAIR REQUIRED
+- FAIL
+
+## Gate B — Novelty/priority integrity
+
+Possible outputs:
+
+- SUFFICIENTLY DIFFERENTIATED
+- DIFFERENTIATED BUT PRIORITY WORDING MUST BE CAUTIOUS
+- MATERIAL PRIOR-ART UNCERTAINTY
+- SUBSTANTIALLY ANTICIPATED
+
+## Gate C — Evidence/reproducibility
+
+Possible outputs:
+
+- PUBLICATION-GRADE
+- ADEQUATE WITH REPAIRS
+- MATERIAL GAPS
+- INADEQUATE
+
+## Gate D — Preprint readiness
+
+Choose:
+
+- READY NOW
+- READY AFTER MINOR REPAIRS
+- NOT YET READY
+
+## Gate E — Peer-reviewed submission readiness
+
+Choose:
+
+- READY TO SUBMIT
+- READY AFTER TARGETED REVISION
+- MAJOR REVISION BEFORE SUBMISSION
+- NOT YET A VIABLE SUBMISSION
+
+Give a reasoned explanation for every gate.
+
+---
+
+# 20. Distinguish types of blockers
+
+Produce four lists.
+
+### Fatal blockers
+
+Issues that invalidate a principal result or destroy the paper's claimed contribution.
+
+### Submission blockers
+
+Issues that do not necessarily invalidate the mathematics but should be fixed before journal submission.
+
+### Preprint blockers
+
+Issues serious enough that public release should wait.
+
+### Nonblocking improvements
+
+Changes that would improve the work but should not prevent release.
+
+Rank items within each group by severity.
+
+---
+
+# 21. Produce a precise revision plan
+
+For every recommended change provide:
+
+- priority: Critical / High / Medium / Low;
+- manuscript location;
+- problem;
+- reason;
+- exact action;
+- whether new mathematics is required;
+- whether new literature research is required;
+- whether computational work is required.
+
+Organize revisions into:
+
+### Stage 1 — integrity repairs
+
+Anything affecting correctness or theorem scope.
+
+### Stage 2 — novelty and citation repairs
+
+Priority research and positioning.
+
+### Stage 3 — structural/editorial repairs
+
+Presentation, focus, definitions, theorem wording.
+
+### Stage 4 — submission polish
+
+Metadata, references, supplement, visual cleanup.
+
+Estimate effort qualitatively only:
+
+- small;
+- moderate;
+- substantial.
+
+---
+
+# 22. Required final deliverables
+
+Your final report must contain all of the following.
+
+## A. Executive verdict
+
+Approximately 1–2 pages.
+
+State clearly:
+
+- what the paper actually contributes;
+- whether the core results appear correct;
+- the strongest result;
+- the weakest result;
+- novelty status;
+- major risks;
+- preprint readiness;
+- journal-submission readiness;
+- recommended scholarly form.
+
+---
+
+## B. Publication-readiness scorecard
+
+Include all weighted categories, 0–10 scores, confidence, and concise justification.
+
+---
+
+## C. Complete claim ledger
+
+For every important claim:
+
+| Claim | Location | Type | Status | Novelty | Evidence | Required action |
+
+---
+
+## D. Theorem-by-theorem proof audit
+
+Give detailed reasoning for:
+
+- exact discrimination;
+- complete recorded evolution;
+- Deutsch;
+- Deutsch–Jozsa;
+- recorded monomial bound;
+- Bernstein–Vazirani;
+- ring-valued kickback proposition.
+
+---
+
+## E. Model/contract audit
+
+Explain precisely what the theorems do and do not cover.
+
+---
+
+## F. Counterexample/edge-case attack report
+
+Document all attacks attempted and their outcomes.
+
+---
+
+## G. Prior-art and novelty report
+
+Include:
+
+- literature searched;
+- exact source comparisons;
+- closest antecedents;
+- claim-by-claim novelty assessment;
+- remaining unresolved priority questions.
+
+---
+
+## H. Review reconciliation matrix
+
+Assess previous criticisms and whether manuscript changes resolved them.
+
+---
+
+## I. Computational/reproducibility audit
+
+State what can and cannot be independently reproduced.
+
+---
+
+## J. Editorial report
+
+Address exposition, structure, terminology, title, abstract, tables, figures, references, and scope.
+
+---
+
+## K. Research-extension report
+
+Identify only the highest-value directions that could materially improve this paper or produce a natural sequel.
+
+Do not pad the manuscript with unrelated results.
+
+---
+
+## L. Ranked revision plan
+
+Provide a concrete sequence of repairs.
+
+---
+
+## M. Final publication gates
+
+Give Gate A through Gate E decisions.
+
+---
+
+## N. Final bottom line
+
+End with a concise statement answering:
+
+> **What exactly must be done before this manuscript should be publicly released?**
+
+and separately:
+
+> **What exactly must be done before it should be submitted for peer review?**
+
+Do not replace these questions with a vague recommendation such as "more work is needed."
+
+---
+
+# 23. Special instructions concerning existing package conclusions
+
+The archive already contains conclusions approximately along the lines of:
+
+- keep the project on a publication track;
+- use a focused technical-note format;
+- treat the Deutsch qualitative obstruction as prior art;
+- regard theorem-level priority for the fully adaptive BV bound and generalized DJ obstruction as not fully certified;
+- obtain independent review of the recorded-branch proof;
+- distinguish QXOR upper bounds from broader lower-bound contracts;
+- do not promote small Simon computations into general theorems.
+
+These are **not instructions to you**.
+
+They are propositions to audit.
+
+You may agree with them, partially agree with them, or reject them.
+
+The same rule applies to every previous agent review, research assessment, novelty ledger, decision file, or issue register in the ZIP.
+
+---
+
+# 24. Standards of evidence
+
+Use the following hierarchy.
+
+### Strongest
+
+- complete independent proof;
+- explicit counterexample;
+- authoritative primary-source theorem matching the same assumptions;
+- independently reproducible computation with clear provenance.
+
+### Strong
+
+- detailed proof reconstruction;
+- multiple primary-source comparisons;
+- independently implemented finite check.
+
+### Moderate
+
+- supplied computational evidence;
+- supplied internal review;
+- plausible but incomplete literature search.
+
+### Weak
+
+- undocumented assertion;
+- search-result absence;
+- internal novelty label;
+- another agent saying "verified."
+
+Calibrate conclusions accordingly.
+
+---
+
+# 25. Do not commit these audit errors
+
+Do not:
+
+- equate absence in a search with novelty;
+- infer all-dimensional mathematics from finite enumeration;
+- infer an operational algorithm from classical inspection of a symbolic state description;
+- silently change oracle models;
+- silently change scalar domains;
+- apply field theorems to ring-valued models without proof;
+- treat pairwise disjointness as sufficient for a multi-label direct sum;
+- assume adaptivity is handled because the nonadaptive case works;
+- ignore zero branches;
+- ignore classical history as a potential information carrier;
+- ignore ancillas;
+- conflate QXOR upper bounds with arbitrary-\(G_0,G_1\) upper bounds;
+- claim a Deutsch–Jozsa optimum that has not been proved;
+- generalize the Simon scan;
+- describe reproduced prior art as original;
+- treat an internal agent review as independent peer review;
+- treat a reproducible program as a proof of a quantified theorem.
+
+---
+
+# 26. Referee mindset
+
+Approach the paper from several competing perspectives.
+
+### Referee 1 — algebra/query complexity
+
+Try to invalidate the polynomial and dimension arguments.
+
+### Referee 2 — modal quantum computation
+
+Check whether the computational model genuinely matches the relevant literature.
+
+### Referee 3 — quantum query complexity
+
+Check whether terminology invites false comparisons with ordinary quantum complexity.
+
+### Referee 4 — finite-field/ring algebra
+
+Audit characteristic-two and chain-ring arguments.
+
+### Referee 5 — foundations/model specification
+
+Attack the access/readout contract and hidden assumptions.
+
+### Referee 6 — prior-art specialist
+
+Try to show every claimed contribution was already known.
+
+### Referee 7 — reproducibility specialist
+
+Try to reproduce all computational evidence.
+
+### Referee 8 — journal editor
+
+Ask whether the surviving contribution is focused, consequential, and worth publishing.
+
+After these perspectives, synthesize a single report rather than simply reproducing eight independent opinions.
+
+Where they disagree, explain the disagreement.
+
+---
+
+# 27. The desired standard
+
+The goal is not to make the paper look publishable.
+
+The goal is to determine whether it **is** publishable.
+
+A negative finding is useful.
+
+A narrowed theorem is preferable to an incorrect broad theorem.
+
+A known theorem correctly attributed is preferable to an unsupported novelty claim.
+
+A short rigorous note is preferable to a longer manuscript padded with weak material.
+
+A genuine unresolved issue must remain unresolved until evidence settles it.
+
+The final report should therefore be **adversarial but constructive, mathematically explicit, source-driven, and suitable for guiding a final publication decision**.
+
+Proceed by reading the actual ZIP contents first, reconstructing the mathematics independently, and only then comparing your conclusions with the package's previous reviews and assessments.

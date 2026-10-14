@@ -1,0 +1,19 @@
+# P7B timing-endpoint correction
+
+The first P7B evaluation execution exposed an implementation error in `run_dispatch`: its reported `pipeline_ns` used an outer wrapper timer, so it accidentally included correctness conversion/reporting work that the direct and P6 `pipeline_ns` endpoints intentionally exclude.
+
+This contradicted the frozen preregistration, which defines dispatch time as **probe + selected backend fresh DAG construction + lowering**.
+
+The correction changes only the dispatch accounting to `probe_ns + selected_backend.pipeline_ns`. It does not change:
+
+- the preregistration;
+- the calibration corpus or objective;
+- the selected threshold T=17;
+- `P7B_FROZEN_GATE.json` or its hash;
+- the dispatch feature or decision on any case;
+- P6/direct implementations;
+- any folding/profitability rule.
+
+The selected threshold was originally fitted using the correctly defined predicted quantity `median_probe + selected_backend_median`, so threshold selection was not affected by this wrapper-timer bug. The validation summary embedded in the frozen gate file used the buggy wrapper endpoint and is retained only as an audit record; a corrected frozen-threshold validation is reported separately.
+
+All evaluation timings produced before this correction are discarded and not used in the final P7B report.

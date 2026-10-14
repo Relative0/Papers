@@ -1,0 +1,32 @@
+# Reviewer 4 - GF(2), matrix factorization, and tensors
+
+**Recommendation:** mathematical lemmas mostly accepted; return to Theory for significance and model positioning, and to Computation for the associated algorithmic test.
+**Confidence:** high on the reconstructed finite-dimensional mathematics.
+
+This is a disciplinary report within the audit, not an independently commissioned external review.
+
+## Main mathematical attack
+
+I attempted to break the rank-one/rank-two threshold at zero, on unequal cuts, and at full rank. It survives with p,q>=1 and a fixed cut. The zero matrix is detected by the total count; nonzero rank-one matrices are rectangles; opposite parity on the larger block gives sharpness. Global parity and its complement have rank exactly two across every nontrivial cut and agree on every proper marginal.
+
+The independent enumeration covers the relevant finite classes and supports, rather than substitutes for, these proofs. It is especially useful that the 4x4 rank<=2 class is exhaustively filtered rather than generated from a potentially incomplete family of factorizations.
+
+## Why the rank claim is not uniquely GF(2)
+
+The same two parity matrices are unions of two disjoint rectangles. They therefore have rank two under the relevant real, nonnegative, and Boolean-OR conventions as well. Rank-one binary matrices remain rectangles. The reconstruction threshold is driven by the query family and parity, not a field-specific phenomenon. S8 underscores why rank conventions must be kept separate even where this example happens to agree.
+
+The ordinary-real rank of a 0/1 inner-product matrix and the ordinary-real rank of its sign matrix are also not communication sign-rank. A matrix with small GF(2) rank need not have small real rank. Tensor results over integer or real arithmetic cannot automatically be transplanted to GF(2) cores.
+
+## Profile and recompression checks
+
+The count identity is correct: convert a bit to (1-sign)/2 and group factor states. The factor-only recompression proof is standard exact linear algebra and handles cancellation correctly when both factor ranks are considered. The complementary-row quotient bound follows from quotienting the row space by the all-ones line when that line is present.
+
+The practical difficulty is not the final Walsh pairing. It is obtaining and maintaining the correct coordinate-restricted histograms. Their entries are integers whose bit lengths grow with cube size. A statement of O(r2^r) arithmetic work after histograms exist is not a total query complexity theorem and not O(r2^r) bit work without qualification.
+
+## Representation attack
+
+The inner-product example separates two fixed-cut explicit formats. It does not establish a separation from the best variable order, from a disjoint XOR of paired products, or from every tensor representation. This must be in the theorem statement or immediately adjacent, not buried in a limitation section.
+
+## Disagreement and required repair
+
+I give the exact rank-threshold corollary somewhat more expository value than Reviewer 1 does: it sharply prevents one tempting intuition. But I agree it is not yet a strong theorem-first contribution. Retain it as a carefully qualified lemma, prove a new coordinate-aware persistence result, and account for factor-basis gauge equivalence before making minimal-state or canonical-representation claims.

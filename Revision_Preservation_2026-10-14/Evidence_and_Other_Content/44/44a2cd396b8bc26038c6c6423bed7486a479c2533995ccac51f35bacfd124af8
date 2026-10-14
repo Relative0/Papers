@@ -1,0 +1,389 @@
+[
+  {
+    "number": "2.1",
+    "kind": "proposition",
+    "title": "Unique binary representation",
+    "start": 171,
+    "end": 173,
+    "classification": "C/S",
+    "independent_audit": "The four assigned bits give a bijection; there are exactly 16 choices. No mathematical depth beyond the truth-table encoding is asserted."
+  },
+  {
+    "number": "2.2",
+    "kind": "proposition",
+    "title": "CM selection",
+    "start": 187,
+    "end": 193,
+    "classification": "C/S",
+    "independent_audit": "A one-hot row and column leave exactly one summand. The selected coefficient is the connective value."
+  },
+  {
+    "number": "2.3",
+    "kind": "remark",
+    "title": "Why XOR--AND rather than OR--AND?",
+    "start": 198,
+    "end": 208,
+    "classification": "C",
+    "independent_audit": "OR and XOR reductions agree only when surviving products are disjoint. The displayed two-term counterexample is correct."
+  },
+  {
+    "number": "2.4",
+    "kind": "proposition",
+    "title": "CM basis decomposition",
+    "start": 213,
+    "end": 219,
+    "classification": "C/S",
+    "independent_audit": "The four matrix units form the standard coefficient-space basis; coefficient linearity does not imply affine dependence on logical inputs."
+  },
+  {
+    "number": "3.1",
+    "kind": "theorem",
+    "title": "Binary LM frame normal form",
+    "start": 334,
+    "end": 346,
+    "classification": "C/S",
+    "independent_audit": "The four disjoint minterms prove the normal form; multiplying by the involutory frames proves the inverse. Arbitrary formula dependence is harmless."
+  },
+  {
+    "number": "3.2",
+    "kind": "theorem",
+    "title": "LM-to-CM valuation architecture",
+    "start": 361,
+    "end": 373,
+    "classification": "C",
+    "independent_audit": "Evaluation of each frame is I or the swap. Joint satisfiability is needed only for the special all-true valuation and is now stated."
+  },
+  {
+    "number": "4.1",
+    "kind": "theorem",
+    "title": "Logical-pairing identity",
+    "start": 400,
+    "end": 407,
+    "classification": "C/S",
+    "independent_audit": "Multiplying an external formula state by its reference frame gives the agreement state. Selection then proves the stated identity."
+  },
+  {
+    "number": "4.2",
+    "kind": "corollary",
+    "title": "Labelled basis reconstruction",
+    "start": 423,
+    "end": 432,
+    "classification": "C",
+    "independent_audit": "Agreement with a labelled reference or its complement is the corresponding constant bit. All four coefficients are recovered."
+  },
+  {
+    "number": "4.3",
+    "kind": "example",
+    "title": "Pairing an implication LM",
+    "start": 434,
+    "end": 446,
+    "classification": "C",
+    "independent_audit": "Both implication substitutions are correct, including the vacuous-antecedent case."
+  },
+  {
+    "number": "4.4",
+    "kind": "theorem",
+    "title": "Valuation commutes with logical pairing",
+    "start": 450,
+    "end": 457,
+    "classification": "C/S",
+    "independent_audit": "Valuation preserves every Boolean term used in the contraction. This is not restricted to independent operands."
+  },
+  {
+    "number": "4.5",
+    "kind": "theorem",
+    "title": "Partition-of-unity selector characterization",
+    "start": 473,
+    "end": 482,
+    "classification": "C/S",
+    "independent_audit": "Orthogonal weights remove cross terms and their sum is one. Conversely, coordinate idempotents force orthogonality and unitality. The F-linearity qualification is important."
+  },
+  {
+    "number": "5.1",
+    "kind": "theorem",
+    "title": "Aligned LM operator superposition and CM valuation",
+    "start": 516,
+    "end": 548,
+    "classification": "C/S",
+    "independent_audit": "Cellwise substitution proves the LM identity; valuation and one-hot selection give the numeric corollaries. The numeric result has direct prior art [S1]."
+  },
+  {
+    "number": "5.2",
+    "kind": "corollary",
+    "title": "Alignment before operator superposition",
+    "start": 553,
+    "end": 563,
+    "classification": "C/Q",
+    "independent_audit": "Correct for transports carrying the stated occurrence into the same semantic assignment frame. Specify the symbolic transport formula, not merely a shape match."
+  },
+  {
+    "number": "5.3",
+    "kind": "example",
+    "title": "Why the frame condition matters",
+    "start": 565,
+    "end": 577,
+    "classification": "C",
+    "independent_audit": "The second implication must be transposed. Its XOR with the first is XOR, whereas unaligned identical tables cancel incorrectly."
+  },
+  {
+    "number": "5.4",
+    "kind": "example",
+    "title": "LM operators as first-class operands",
+    "start": 579,
+    "end": 595,
+    "classification": "C/R",
+    "independent_audit": "The OR/AND/XOR identity is correct. It partly repeats the introductory numerical illustration and can become the running example."
+  },
+  {
+    "number": "5.5",
+    "kind": "theorem",
+    "title": "Matched-frame kernel composition",
+    "start": 603,
+    "end": 616,
+    "classification": "C/S",
+    "independent_audit": "The two copies of the same intermediate frame cancel. The resulting scalar kernel sums parity, not existential reachability."
+  },
+  {
+    "number": "6.1",
+    "kind": "definition",
+    "title": "Correspondence tensor",
+    "start": 648,
+    "end": 655,
+    "classification": "C/S",
+    "independent_audit": "This is the truth function indexed as an order-n Boolean tensor. It stores all 2^n coefficients."
+  },
+  {
+    "number": "6.2",
+    "kind": "definition",
+    "title": "Logical tensor and LM lift",
+    "start": 657,
+    "end": 672,
+    "classification": "C",
+    "independent_audit": "The canonical Boolean term is applied to every polarity tuple. Its codomain is the formula algebra generated by the declared free references."
+  },
+  {
+    "number": "6.3",
+    "kind": "remark",
+    "title": "The lift as a polarity pullback",
+    "start": 674,
+    "end": 681,
+    "classification": "C/S",
+    "independent_audit": "At a valuation the chosen polarity has value x XOR alpha XOR 1. The lift is a pullback, a useful exact reduction of the construction."
+  },
+  {
+    "number": "6.4",
+    "kind": "theorem",
+    "title": "General valuation theorem",
+    "start": 699,
+    "end": 709,
+    "classification": "C",
+    "independent_audit": "The one-triggered axis convention agrees with the valued polarity tuple. The earlier reversed-mask criticism no longer applies."
+  },
+  {
+    "number": "6.5",
+    "kind": "definition",
+    "title": "Pointwise lift",
+    "start": 716,
+    "end": 723,
+    "classification": "C",
+    "independent_audit": "Numeric tensors use g directly; formula tensors use its Boolean term extension. Those two interpretations must stay explicit."
+  },
+  {
+    "number": "6.6",
+    "kind": "theorem",
+    "title": "LM lift and superposition law",
+    "start": 725,
+    "end": 740,
+    "classification": "C/S",
+    "independent_audit": "Every polarity cell preserves substitution into the outer term; all-true evaluation proves injectivity in the free-reference setting."
+  },
+  {
+    "number": "6.7",
+    "kind": "corollary",
+    "title": "The LM image is a Boolean subalgebra",
+    "start": 745,
+    "end": 747,
+    "classification": "C/S/R",
+    "independent_audit": "Closure under the Boolean operations plus injectivity yields the isomorphism. This is a repackaging of Theorem 6.6, not another independent novelty."
+  },
+  {
+    "number": "6.8",
+    "kind": "remark",
+    "title": "Priority boundary for the orbit lift",
+    "start": 749,
+    "end": 751,
+    "classification": "C",
+    "independent_audit": "The stated priority boundary is mathematically justified: an equivariant orbit is determined by its identity/reference cell."
+  },
+  {
+    "number": "6.9",
+    "kind": "theorem",
+    "title": "Polarity-equivariance characterization",
+    "start": 758,
+    "end": 767,
+    "classification": "C/S",
+    "independent_audit": "Substitution by a polarity mask changes the cell index by that mask. Conversely the all-positive cell determines the tensor. Extra undeclared parameters are not allowed in the stated codomain."
+  },
+  {
+    "number": "6.10",
+    "kind": "remark",
+    "title": "Boolean clones and superposition",
+    "start": 774,
+    "end": 776,
+    "classification": "C",
+    "independent_audit": "The manuscript explicitly stops short of claiming a full cross-arity clone representation; that restraint is correct."
+  },
+  {
+    "number": "6.11",
+    "kind": "remark",
+    "title": "Valuation as an intertwining map",
+    "start": 778,
+    "end": 790,
+    "classification": "C/R",
+    "independent_audit": "Both intertwining identities follow from the valuation and pointwise laws. The terminology is justified, though the identities repeat prior results."
+  },
+  {
+    "number": "6.12",
+    "kind": "theorem",
+    "title": "CM/LM coherence under Boolean operator superposition",
+    "start": 792,
+    "end": 819,
+    "classification": "C/Q",
+    "independent_audit": "All four claims hold. The fourth uses a genuine partition selector, not distributivity of an arbitrary g. Make the simultaneous reference/index transport precise."
+  },
+  {
+    "number": "6.13",
+    "kind": "remark",
+    "title": "Output complement is a different symmetry",
+    "start": 824,
+    "end": 835,
+    "classification": "C",
+    "independent_audit": "The dual outer function is necessary. Output complement is not an unchanged-g automorphism of arbitrary pointwise superposition."
+  },
+  {
+    "number": "6.14",
+    "kind": "remark",
+    "title": "Pairing preserves the LM operator calculation",
+    "start": 855,
+    "end": 865,
+    "classification": "C/R",
+    "independent_audit": "This is a direct specialization of the coherence theorem to XOR and can be integrated into the running example."
+  },
+  {
+    "number": "6.15",
+    "kind": "theorem",
+    "title": "Higher-arity pairing and reconstruction",
+    "start": 877,
+    "end": 892,
+    "classification": "C/Q",
+    "independent_audit": "The general selector chooses the polarity tuple A at each valuation, producing the agreement tuple. The proof is valid but should write this step explicitly."
+  },
+  {
+    "number": "7.1",
+    "kind": "definition",
+    "title": "Correspondence-map flattening",
+    "start": 924,
+    "end": 932,
+    "classification": "C/S",
+    "independent_audit": "The ordered assembly map resolves noncontiguous and permuted blocks. The flattening is a bijective reindexing, not compression."
+  },
+  {
+    "number": "7.2",
+    "kind": "theorem",
+    "title": "Rectangular bra--map--ket selection",
+    "start": 949,
+    "end": 957,
+    "classification": "C/S",
+    "independent_audit": "The two grouped one-hot states select the unique assembled assignment, even for unequal dimensions."
+  },
+  {
+    "number": "7.3",
+    "kind": "remark",
+    "title": "Comparison with quantum terminology",
+    "start": 962,
+    "end": 964,
+    "classification": "C",
+    "independent_audit": "The distinction between a rectangular linear map and a same-space observable is sound. No physical structure is used in the proof."
+  },
+  {
+    "number": "7.4",
+    "kind": "remark",
+    "title": "Exact size boundary",
+    "start": 966,
+    "end": 968,
+    "classification": "C",
+    "independent_audit": "All flattenings retain 2^n entries. No efficiency conclusion follows from the reshape alone."
+  },
+  {
+    "number": "8.1",
+    "kind": "theorem",
+    "title": "Block-lift theorem",
+    "start": 1000,
+    "end": 1013,
+    "classification": "C/S",
+    "independent_audit": "The conditional hypothesis f(a,b)=g(a) Theta h(b) proves both displayed formulas entrywise. It is not a universal one-bit block decomposition."
+  },
+  {
+    "number": "8.2",
+    "kind": "theorem",
+    "title": "Rank and conjunctive/XOR separability",
+    "start": 1018,
+    "end": 1039,
+    "classification": "C/S/Q",
+    "independent_audit": "Ordinary F2 rank equals the minimum number of XOR-summed outer products. Nonzero rank-one factors are unique over F2. State k=0 with the empty XOR for the zero matrix."
+  },
+  {
+    "number": "8.3",
+    "kind": "example",
+    "title": "A $4\\times4$ correspondence map",
+    "start": 1046,
+    "end": 1069,
+    "classification": "C",
+    "independent_audit": "The two supplied truth vectors and all four rows of the implication lift are correct."
+  },
+  {
+    "number": "9.1",
+    "kind": "theorem",
+    "title": "Signed-frame action",
+    "start": 1084,
+    "end": 1092,
+    "classification": "C/S",
+    "independent_audit": "The numeric pullback and its right-action composition direction are correct. Faithfulness of the entire representation is compatible with nontrivial stabilizers of individual functions."
+  },
+  {
+    "number": "9.2",
+    "kind": "theorem",
+    "title": "Frame changes commute with pointwise composition",
+    "start": 1096,
+    "end": 1104,
+    "classification": "C/S/Q",
+    "independent_audit": "Any common index pullback commutes with cellwise g. The symbolic counterpart needs one explicit formula to eliminate double application of a polarity mask."
+  },
+  {
+    "number": "10.1",
+    "kind": "proposition",
+    "title": "Top ANF coefficient as correspondence parity",
+    "start": 1141,
+    "end": 1148,
+    "classification": "C/S",
+    "independent_audit": "Boolean Mobius inversion gives the full monomial coefficient as the parity of all truth values. The explicit n>=1 restriction is correct."
+  },
+  {
+    "number": "10.2",
+    "kind": "corollary",
+    "title": "Binary nonlinearity parity criterion",
+    "start": 1153,
+    "end": 1163,
+    "classification": "C/S/R",
+    "independent_audit": "The binary specialization is correct and is a useful visible invariant, but classical rather than an independent discovery."
+  },
+  {
+    "number": "13.1",
+    "kind": "proposition",
+    "title": "Core Boolean closure",
+    "start": 1285,
+    "end": 1287,
+    "classification": "C/Q",
+    "independent_audit": "Every listed operation stays in the scalar Boolean algebra. This means scalar closure, not closure of the special normalized formula-state family under arbitrary vector addition."
+  }
+]

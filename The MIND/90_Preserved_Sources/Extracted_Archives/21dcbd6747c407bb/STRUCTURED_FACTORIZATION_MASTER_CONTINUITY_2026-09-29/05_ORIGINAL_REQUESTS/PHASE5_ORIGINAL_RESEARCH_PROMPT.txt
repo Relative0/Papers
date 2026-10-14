@@ -1,0 +1,537 @@
+# Phase 5 — Carrier- and CM-Defect-Aware Vtree Adaptation for Exact Factor Exposure
+
+## Role
+
+You are acting as an independent research team specializing in:
+
+- Sentential Decision Diagrams (SDDs);
+- structured d-DNNF;
+- vtree design and optimization;
+- knowledge compilation;
+- Boolean function decomposition;
+- graph/hypergraph partitioning;
+- exact SAT-based decomposition;
+- Correspondence Matrices and four-corner rank certificates;
+- experimental algorithmics.
+
+This project is not to demonstrate that "a smart vtree helps."
+
+The aim is to determine whether the simplicial carrier and/or CM four-corner defect information can be used to construct or adapt a vtree that exposes substantially more of the true semantic prime AND-factorization directly.
+
+A theorem is desirable but not mandatory.
+
+A rigorous empirical result or a NO-GO result is acceptable.
+
+---
+
+# 1. Materials
+
+Use the attached:
+
+    STRUCTURED_FACTORIZATION_PHASE4_2026-09-29.zip
+
+The relevant Phase 4 baseline includes:
+
+- `docs/SDD_DIRECT_EXTRACTION.md`;
+- `docs/HYBRID_DIRECT_RESIDUAL_ALGORITHM.md`;
+- `docs/INCREMENTAL_SAT_COMPARATOR.md`;
+- `docs/PRIORITY_AUDIT.md`;
+- `docs/NEXT_RESEARCH_GATE.md`;
+- SDD validation code/data;
+- persistent four-corner SAT code/data.
+
+You may also use the Phase 3 package if supplied, particularly for the fixed-cut SAT baseline.
+
+Treat previous claims as hypotheses to verify, not axioms.
+
+---
+
+# 2. Baseline theorem
+
+For a compressed SDD at vtree split X | Y,
+
+    f(X,Y) = OR_i [ p_i(X) AND s_i(Y) ],
+
+Phase 4 established the exact cut criterion:
+
+    f(X,Y) = g(X) AND h(Y)
+
+iff the compressed decision has at most one nonfalse sub.
+
+Recursively applying this criterion yields the exact finest factorization whose blocks are vtree subtrees.
+
+If every true semantic prime factor is a vtree subtree, this becomes the unrestricted full semantic prime partition.
+
+Thus the key limitation is not correctness but VTree Alignment.
+
+---
+
+# 3. Baseline alignment problem
+
+The fixed balanced four-variable vtree
+
+    ((x0,x1),(x2,x3))
+
+was tested against all nonfalse four-variable Boolean functions.
+
+Among the decomposable functions, a large majority had unrestricted prime partitions strictly finer than the fixed-vtree-laminar partition.
+
+Therefore:
+
+    fixed arbitrary vtree
+        !=
+    reliable exposure of semantic prime factors.
+
+The task is to determine how much of this gap can be closed automatically.
+
+---
+
+# 4. Central research questions
+
+Investigate two increasingly strong goals.
+
+## Goal A — direct-factor exposure
+
+Construct/adapt a vtree T such that the compressed SDD exposes as much as possible of the true semantic prime factorization directly.
+
+Measure:
+
+- fraction of prime blocks exposed;
+- fraction of attributes resolved without SAT;
+- number and size of residual blocks;
+- number of residual four-corner SAT queries.
+
+## Goal B — prime alignment
+
+Identify a meaningful semantic class C and a computable vtree construction A such that
+
+    f in C
+        =>
+    every semantic prime factor of f is a subtree of A(f).
+
+This is the theorem-level target.
+
+If no meaningful class survives, document the boundary honestly.
+
+---
+
+# 5. Important upper-bound control
+
+For any known semantic prime partition
+
+    Pi_f = {B1,...,Bk},
+
+one can construct a binary vtree in which each Bi is represented as a subtree.
+
+Therefore an oracle given Pi_f can be made prime-aligned.
+
+Use this as an UPPER-BOUND CONTROL.
+
+The interesting problem is not existence of an aligned vtree.
+
+The interesting problem is recovering useful alignment WITHOUT already knowing Pi_f.
+
+---
+
+# 6. Algorithms to compare
+
+Implement and compare at least the following.
+
+## A. Carrier-initialized vtree
+
+Start from the simplicial carrier prime partition Pi_K.
+
+Construct a vtree in which each carrier block is contiguous/a subtree.
+
+Explore alternative arrangements of the carrier blocks:
+
+- balanced;
+- size weighted;
+- interaction weighted.
+
+Determine when the carrier helps and when it actively hides semantic factors.
+
+## B. Semantic interaction graph/hypergraph vtree
+
+Construct a variable interaction structure from the succinct semantic representation.
+
+Possible edges/hyperedges:
+
+- variables co-occurring in a CNF clause;
+- variables sharing a circuit gate/module;
+- ANF monomial co-occurrence where relevant;
+- minimal known semantic interactions.
+
+Use graph/hypergraph hierarchical clustering or separator methods to build the vtree.
+
+Do not assume syntactic interaction equals semantic prime dependence.
+
+## C. CM four-corner defect driven adaptation
+
+Use four-corner witnesses from the exact SAT oracle.
+
+A failed cut gives a nonzero rank-two defect.
+
+Investigate how such witnesses can guide:
+
+- vtree rotations;
+- subtree merges;
+- "must remain coupled" scores;
+- local cut replacement;
+- interaction-edge learning.
+
+Be careful:
+
+A failed cut proves that the whole cut is invalid; it does NOT automatically identify which particular variable pair caused the global failure.
+
+Determine what additional minimization/querying is needed to turn a cut defect into a sound pairwise or module-level constraint.
+
+## D. Carrier + semantic hybrid
+
+Combine:
+
+    carrier structure
+    +
+    syntactic semantic interactions
+    +
+    exact CM defect evidence.
+
+Test multiple weightings, but preregister the benchmark protocol before examining held-out results.
+
+## E. Local vtree rotations
+
+Starting from A-D, optimize by standard/local vtree rotations.
+
+Possible objectives:
+
+- number of direct factors exposed;
+- estimated residual SAT cost;
+- SDD size;
+- combination of compiled size and residual cost.
+
+Avoid using the ground-truth prime partition in the objective except for oracle controls.
+
+## F. Oracle prime-aligned vtree
+
+Construct directly from the known exact Pi_f.
+
+This is not an algorithmic competitor.
+
+It is the upper-bound control answering:
+
+"How much could vtree alignment help if it were perfect?"
+
+---
+
+# 7. Theorem attacks
+
+Attempt to prove guarantees for identifiable semantic classes.
+
+Candidates include, but are not limited to:
+
+1. positive irredundant CNF;
+2. formulas whose interaction-hypergraph components equal semantic prime factors;
+3. bounded-treewidth factor graphs;
+4. read-once formulas;
+5. the support-disjoint CM/LM operator-tree class from Phase 4;
+6. formulas composed from already certified independent modules;
+7. hierarchical/block decomposable functions;
+8. classes where all four-corner defects are localized to a known interaction graph.
+
+For each positive theorem, ask whether it is genuinely stronger than:
+
+"if you already know the factors, put them in vtree subtrees."
+
+A theorem must provide a computable construction from weaker information.
+
+---
+
+# 8. Defect-localization subproblem
+
+Treat this as a serious mathematical subproject.
+
+Given a cut A | B with
+
+    rank_F2 [f]_(A|B) > 1,
+
+the four-corner SAT solver returns assignments witnessing a nonzero 2x2 minor.
+
+Determine what can be inferred about the actual prime factor partition.
+
+Investigate exact questions such as:
+
+- Can a minimal subset of variables supporting the witness be recovered?
+- Can repeated SAT calls produce a sound "must-link" edge?
+- Can unsat/sat cores help?
+- Can group testing identify a prime block crossing the cut?
+- How many oracle queries are needed to localize the obstruction?
+- Can carrier blocks reduce this problem to block-level localization?
+
+A theorem of the form
+
+    O(log n), O(k log n), or F(w) poly(n)
+
+defect queries to identify a violated prime block would be especially interesting.
+
+But do not force such a result.
+
+---
+
+# 9. Exact hybrid algorithm
+
+The final algorithm should retain Phase 4's correctness discipline:
+
+1. build/adapt vtree;
+2. compile or emulate the compressed-SDD decomposition;
+3. directly extract every factor certified by SDD structure;
+4. combine with the carrier partition by exact LCC;
+5. divide the unresolved problem into independent residual blocks;
+6. invoke the persistent four-corner SAT oracle only inside unresolved blocks;
+7. return the exact canonical simultaneous finest partition.
+
+No heuristic vtree decision may cause an exact factor to be incorrectly discarded.
+
+Heuristics may affect efficiency only, never correctness.
+
+---
+
+# 10. Small exhaustive campaign
+
+Reproduce the four-variable Phase 4 universe first.
+
+For all 65,535 nonfalse four-variable Boolean functions, compare:
+
+- fixed balanced vtree;
+- all possible labelled binary vtrees, if computationally feasible;
+- carrier-aware constructions under generated carriers;
+- semantic-interaction construction;
+- CM-defect-adapted construction;
+- oracle prime-aligned vtree.
+
+Compute at minimum:
+
+- exact semantic prime partition;
+- finest T-laminar partition;
+- full-alignment indicator;
+- number of exposed prime blocks;
+- residual block sizes.
+
+This should answer much more precisely:
+
+- how often an aligned vtree exists — as control;
+- how often each automatic method finds one;
+- how far a method is from oracle alignment.
+
+Extend to five variables by sampling or canonical classes if exhaustive enumeration is too large.
+
+---
+
+# 11. Realistic benchmark campaign
+
+Do not stop with arbitrary truth tables.
+
+Create/gather benchmark families including:
+
+- factorable CNFs;
+- partially factorable CNFs;
+- bounded-treewidth CNFs;
+- random CNFs;
+- read-once/operator-tree functions;
+- repeated-module functions;
+- structured carrier/semantic pairs;
+- instances intentionally containing crossing carrier and semantic partitions;
+- instances with no nontrivial factorization.
+
+Separate:
+
+- training/tuning benchmarks;
+- validation;
+- HELD-OUT evaluation.
+
+Do not tune heuristic weights on the held-out set.
+
+---
+
+# 12. Required measurements
+
+For every algorithm record at least:
+
+- vtree construction time;
+- vtree width/balance descriptors;
+- compiled SDD size if an actual compiler is available;
+- number of direct prime factors exposed;
+- fraction of variables resolved directly;
+- number of residual blocks;
+- residual block size distribution;
+- number of four-corner SAT calls;
+- SAT conflicts/decisions/propagations if available;
+- total hybrid runtime;
+- peak memory.
+
+Compare against:
+
+1. fixed balanced/random vtree;
+2. fresh SAT factor recovery;
+3. persistent SAT factor recovery;
+4. direct-extraction + persistent residual SAT;
+5. oracle aligned vtree.
+
+Do not call an encoding-size reduction a solver speedup.
+
+---
+
+# 13. Industrial SDD tooling
+
+If a maintained SDD compiler/library is available in the environment, use it.
+
+If not, distinguish clearly between:
+
+- exact truth-table emulation of the compressed cofactor partition;
+- actual compiled SDD measurements.
+
+Do not report simulated compiled size as actual SDD size.
+
+If tooling installation/access is impossible, complete the exact small-universe mathematical experiment anyway.
+
+---
+
+# 14. Literature and priority audit through 2026
+
+Search current literature on:
+
+- SDD vtree search;
+- dynamic vtree optimization;
+- vtree rotations;
+- SDD minimization;
+- structured d-DNNF;
+- knowledge compilation;
+- dtree/vtree construction from graph decompositions;
+- treewidth/pathwidth-based compilation;
+- BDD variable ordering;
+- hypergraph partitioning for compilation;
+- factorized Boolean representations;
+- circuit decomposition;
+- independent component detection;
+- knowledge-compilation preprocessing;
+- compilation guided by separators/modules;
+- current 2025-2026 work on decomposing formulas before d-DNNF/SDD compilation.
+
+Determine whether:
+
+- carrier-guided vtree design has direct antecedents;
+- independent factor decomposition is already standard preprocessing;
+- defect/witness-driven vtree adaptation has precedent;
+- the proposed objective differs materially from ordinary SDD-size minimization.
+
+Produce a claim-by-claim priority matrix.
+
+---
+
+# 15. Hostile review
+
+After obtaining the strongest result, run at least these internal referees:
+
+1. SDD/knowledge-compilation specialist;
+2. Boolean-decomposition specialist;
+3. graph/treewidth/vtree specialist;
+4. hostile empirical-methods reviewer.
+
+They should specifically attack:
+
+- circular use of ground-truth prime factors;
+- leakage from held-out data;
+- confusing syntactic interaction with semantic dependence;
+- claiming an invalid cut witness identifies a particular pair;
+- SDD-size versus factor-exposure tradeoffs;
+- baselines;
+- benchmark representativeness;
+- novelty positioning.
+
+Revise based on valid criticism.
+
+---
+
+# 16. Success criteria
+
+A strong theorem-level outcome is:
+
+### A. Prime-alignment theorem
+
+A computable vtree construction provably prime-aligns a meaningful semantic class.
+
+or
+
+### B. Defect-localization theorem
+
+CM four-corner witnesses can be converted into exact structural information with a useful query/complexity bound.
+
+or
+
+### C. Hybrid complexity theorem
+
+The adaptive vtree/direct-extraction method provably reduces the residual exact factorization problem under a useful parameter.
+
+A strong empirical outcome is also acceptable:
+
+### D. Reproducible hybrid improvement
+
+On held-out instances, the method materially reduces a preregistered metric such as:
+
+- residual SAT calls;
+- residual variable volume;
+- total hybrid runtime;
+- or compiled size + residual solving cost,
+
+without sacrificing correctness.
+
+A valid negative outcome is:
+
+### E. NO-GO
+
+The tested vtree adaptation signals cannot reliably recover alignment beyond known decomposition/preprocessing techniques.
+
+---
+
+# 17. Deliverables
+
+Produce:
+
+1. `PHASE5_T2_MASTER_REPORT.md`
+2. `VTREE_ADAPTATION_FORMALISM.md`
+3. `DEFECT_LOCALIZATION_ANALYSIS.md`
+4. `VTREE_ALGORITHMS.md`
+5. `THEOREMS_AND_COUNTEREXAMPLES.md`
+6. `EXHAUSTIVE_SMALL_UNIVERSE_RESULTS.md`
+7. `BENCHMARK_RESULTS.md`
+8. `LITERATURE_PRIORITY_AUDIT.md`
+9. reproducible code
+10. JSON/CSV data
+11. benchmark manifests and random seeds
+12. theorem-status table
+13. research ledger
+14. LaTeX theorem-note/paper draft if theorem-level results survive
+15. `NEXT_RESEARCH_GATE.md`
+16. one ZIP containing the complete research package.
+
+---
+
+# 18. Final decision
+
+End with one of:
+
+A. PRIME-ALIGNMENT THEOREM ESTABLISHED
+B. DEFECT-LOCALIZATION THEOREM ESTABLISHED
+C. USEFUL HYBRID COMPLEXITY RESULT
+D. STRONG EMPIRICAL RESULT; NO THEOREM
+E. PRIOR-ART-DOMINATED
+F. NO-GO
+G. MORE RESEARCH REQUIRED
+
+State separately:
+
+- what is mathematically proved;
+- what is computationally observed;
+- what is known prior art;
+- what remains conjectural.
+
+Do not allow an attractive empirical result to be described as a theorem.

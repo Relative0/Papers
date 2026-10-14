@@ -1,0 +1,382 @@
+3 =====
+Bjørner, 2008]) or using one of the recently proposed, spe-
+cialized constraint solvers such as Planet [Ehlers, 2017] or
+Marabou [Katz et al., 2019]. If¬ψf,P is unsatisfiable, then
+ψf,P is valid, and—by construction—f satisfiesP . If¬ψf,P
+is satisfiable, on the other hand, then ψf,P is not valid, im-
+plying thatf violates the propertyP . In the latter case, most
+constraint solvers (including the ones mentioned above) can
+produce an assignment satisfying¬ψf,P , which can then be
+used to extract inputs tof that witness a violation ofP .
+Abstract interpretation is a mathematical framework for
+computing sound and precise approximations of the semantics
+of software and other complex systems [Cousot and Cousot,
+1977]. When applied to neural network verification, the basic
+idea is to over-approximate the computation of a deep neural
+network on an infinite set of inputs. Each such infinite set is
+symbolically represented by an element of a so-calledabstract
+domain, which consists of logical formulas capturing shapes
+such asn-dimensional boxes, polytopes, or zonotopes. To ap-
+proximate a network’s computation, an element of the abstract
+domain is propagated through the layers of the network. Since
+layers operate on concrete values and not abstract elements,
+this propagation requires replacing each layer with an abstract
+one (called abstract transformer) that computes the effects of
+the layer on abstract elements. Thus, when given an abstract
+elementA in the input space of a networkf (e.g., representing
+the neighborhood of a fixed input ⃗ x⋆), the result of abstract
+interpretation is an abstract element A′ in the output space
+over-approximating all outputsf (x) of concrete inputsx∈A.
+To verify that a propertyP holds, it is then enough to check
+whetherA′ is included in an abstract element representing all
+outputs satisfyingP . Since abstract interpretation computes
+over-approximations of the actual input-output behavior of a
+network, the propertyP typically describes a safety condition.
+While neural network verification is a vibrant and highly
+active field, virtually all existing research suffers from three
+substantial shortcomings:
+1. Existing research focuses on verifying “simple” proper-
+ties that can be formalized using quantifier-free first-order
+constraints on the inputs and outputs of a network. Ex-
+amples of such properties include adversarial robustness
+and fairness, illustrated by Properties (1) and (2) above.
+However, the overwhelming majority of relevant correct-
+ness properties cannot be expressed in this simple way.
+As an example, consider a neural network controlling an
+autonomous car and the property that the car needs to
+decelerate as soon as a stop sign appears in the front view.
+It is clear that formalizing this property is extremely hard:
+it would require us to mathematically capture all essen-
+tial features of all possible stop signs, including their
+position, shape, angle, color, etc.
+2. Virtually all properties considered in neural network veri-
+fication today are either local (referring to inputs in the
+neighborhood of an a priori fixed input ⃗ x⋆) or global
+(referring to all inputs). Adversarial robustness is an ex-
+ample of the former type, while fairness illustrates the
+latter. However, a more natural and helpful approach
+would be to restrict the verification to inputs from the
+underlying data distribution since we do typically not
+expect our networks to process out-of-distribution data.
+Again, such a restriction is very hard to capture logically
+and, therefore, not featured by current methods.
+3. A fundamental problem, especially when verifying global
+properties, is that counterexamples (i.e., inputs witness-
+ing the violation of the property) are often out of distri-
+bution and, hence, of little value. Again, restricting the
+verification to inputs originating from the underlying data
+distribution would mitigate this issue but is not supported
+by current approaches.
+In the next section, we address these drawbacks by introducing
+a neuro-symbolic framework for neural network verification.
+4 A Neuro-Symbolic Verification Framework
+As illustrated by Properties (1) and (2), the primary obstacle
+in today’s neural network verification is that correctness prop-
+erties have to be formalized in a suitable—often relatively
+simple—logical formalism that relates inputs and outputs of
+a neural network (e.g., the quantifier-free fragment of real
+arithmetic). This requirement fundamentally limits current
+verification approaches to only a few different types of correct-
+ness properties, arguably making them ill-equipped to tackle
+real-world AI verification tasks.
+As a first step towards overcoming this severe practical
+limitation, we propose a neuro-symbolic approach to neural
+network verification. Our main idea is seemingly simple yet
+powerful: we propose the use of highly specialized deep neu-
+ral networks, named specification networks, as proxy objects
+for capturing semantic correctness properties. We introduce
+the concept of specification networks and possible ways of
+how to obtain them in Section 4.1. In Section 4.2, we then pro-
+pose a fragment of quantifier-free first-order logic to formalize
+correctness properties involving specification networks. We
+call this type of properties neuro-symbolic and the resulting
+assertion language NESAL. In an extended version of this pa-
+per [Xie et al., 2022], we demonstrate how checking NESAL
+properties can be reduced to traditional deductive verifica-
+tion of deep neural networks. This reduction allows utilizing
+any existing deductive verifier (e.g., Planet [Ehlers, 2017] or
+Marabou [Katz et al., 2019 ]), making our neuro-symbolic
+verification framework easily accessible to researchers and
+practitioners alike. The key idea is that—on the level of logic
+formulas—it does not matter whether a verification condition
+involves one or multiple deep neural networks.
+4.1 Specification Networks
+Generally speaking, a specification network is a highly spe-
+cialized deep neural network trained for a specific task (e.g.,
+perception, anomaly detection, recognizing the underlying
+data distribution, etc.). We use one (or multiple) of such net-
+works as proxy objects to capture correctness properties. Their
+precise architecture does not matter at this point, but might
+influence the choice of which verification engine to use.
+Let us illustrate the concept of specification networks using
+the autonomous vehicle example from Section 3. For the sake
+of simplicity, let us assume that we are given
+Proceedings of the Thirty-First International Joint Conference on Artiﬁcial Intelligence (IJCAI-22)
+3624
+
+
+4 =====
+• a deep neural network f that takes pictures ⃗ xfrom the
+front camera as input and outputs the steering commands
+“left”, “right”, “accelerate”, and “decelerate”; and
+• a propertyP stating “f has to issue a deceleration com-
+mand as soon as a stop sign appears in the front camera”.
+Instead of trying to formalize all characteristics of stop signs
+in logic (i.e., their possible positions, shapes, colors, etc.),
+we now train a second deep neural networkg for the specific
+perception task of recognizing stop signs. Assuming that g
+is a binary-class network (outputting “yes” if it detects a stop
+sign in the image⃗ xand “no” otherwise), one can then express
+the propertyP above straightforwardly as
+ifg(⃗ x) = yes, thenf (⃗ x) = decelerate. (3)
+Note that our original property P now amounts to a simple
+constraint over the inputs and outputs of the networksf andg.
+An essential requirement of our framework is the availabil-
+ity of adequate specification networks. We here sketch three
+conceivable ways of how to obtain them:
+1. The perhaps simplest way of obtaining specification net-
+works is to train them explicitly. To avoid systematic
+errors, it is crucial to train a specification network on a
+dataset that is different from the one used to train the
+network under verification. Preferably, one should addi-
+tionally use a different architecture and hyperparameters.
+2. Similar to standard datasets such as MNIST [LeCun et
+al., 2010], researchers and interested companies might
+create public repositories for specification networks (such
+as Hugging Face1). To boot-strap such efforts, we have
+made the specification networks used in our experimental
+evaluation available on GitHub.2
+3. Regulatory or notified bodies might provide specification
+networks as references for future AI-enabled systems.
+Such an approach can be used, for instance, to guarantee
+minimum standards for the correctness and reliability of
+deep neural networks in safety-critical applications.
+4.2 A Neuro-Symbolic Assertion Language
+Inspired by neuro-symbolic reasoning [d’Avila Garcez et al.,
+2019; De Raedt et al., 2020 ], we now describe how to use
+specification networks to formalize correctness properties of
+neural networks. Specifically, we introduce an assertion lan-
+guage, named Neuro-Symbolic Assertion Language, which
+is inspired by the Hoare logic used in software verification
+and adapts the notation introduced by Albarghouthi [Albargh-
+outhi, 2021]. This language is a fragment of the quantifier-free
+first-order logic over the reals and allows formalizing com-
+plex correctness properties—involving multiple specification
+networks—in an interpretable and straightforward manner.
+Throughout the remainder of this paper, we assume that
+we are given k∈ N specification networks g1,...,g k with
+gi : Rmi→ Rni fori∈{ 1,...,k }. Moreover, let us assume
+that we want to formalize a correctness property for a single
+deep neural networkf : Rm0→ Rn0, which we call the net-
+work under verification (NUV). Note that the latter assumption
+1https://huggingface.co
+2https://github.com/LebronX/Neuro-Symbolic-Verification
+is not a restriction of our framework, but it simplifies the fol-
+lowing presentation. Our framework can easily be extended to
+multiple networks under verification.
+Let us now turn to the definition of our Neuro-Symbolic
+Assertion Language ( NESAL ). Formally, N ESAL is the
+quantifier-free fragment of first-order logic over the reals that
+contains all logic formulas of the form
+{
+φpre(⃗ x1,...,⃗ xℓ)
+}
+⃗ y1←h1(⃗ x)∧···∧ ⃗ yℓ←hℓ(⃗ xℓ){
+φpost(⃗ x1,...,⃗ xℓ,⃗ y1,...,⃗ yℓ)
+}
+,
+where
+• hi ∈ {f,g 1,...,g k} for i ∈ {1,...,ℓ } are function
+symbols representing the given neural networks, one of
+which is the NUVf;
+• ⃗ x1,...,⃗ xℓ are vectors of real variables representing the
+input values of the networkshi∈{f,g 1,...,g k};
+• ⃗ y1,...,⃗ yℓ are vectors of real variables representing the
+output values of the networkshi∈{f,g 1,...,g k};
+• the expressions⃗ yi←hi(⃗ xi) store the results of the com-
+putationshi(⃗ xi) in the variables ⃗ yi, where we assume
+that ⃗ xi and ⃗ yi match the dimensions of the input and
+output space ofhi, respectively;
+• φpre is a quantifier-free first-order formula over the free
+variables ⃗ x1,...,⃗ xℓ, called pre-condition, expressing
+constraints on the inputs to the networksf,g 1,...,g k;
+• φpost is a quantifier-free first-order formula over the
+free variables ⃗ x1,...,⃗ xℓ and ⃗ y1,...,⃗ yℓ, called post-
+condition, expressing desired properties off while con-
+sidering the computations ofg1,...,g k.
+We call each such formula a neuro-symbolic property to em-
+phasize that correctness properties are no longer restricted to
+simple first-order constraints on the inputs and outputs of the
+NUV but can also depend on other networks.
+The intuitive meaning of a neuro-symbolic property is that
+if the inputs ⃗ x1,...,⃗ xℓ satisfy φpre and the output of the
+networks on these inputs is ⃗ y1,...,⃗ yℓ, then φpost has to be
+satisfied as well. Let us illustrate this definition with our
+example of Section 4.1. In this example, we are given a
+NUVf : Rm×m→
+{
+left, right, accelerate, decelerate
+}
+map-
+pingm×m pixel images to steering commands and a single
+specification networkg : Rm×m→
+{
+yes, no
+}
+detecting stop
+signs. Then, Property (3) can be formalized in N ESAL as
+{
+⃗ x1 =⃗ x2
+}
+y1←f (⃗ x1)∧y2←g(⃗ x2){
+y2 = yes→y1 = decelerate
+}
+.
+This neuro-symbolic property is a prototypical example of
+how our approach mitigates the first shortcoming of classical
+neural network verification discussed in Section 3. To address
+the second and third shortcomings, we can train an autoen-
+coderg : Rm→ Rm to capture the distribution underlying
+the training data. To restrict the verification of a network
+Proceedings of the Thirty-First International Joint Conference on Artiﬁcial Intelligence (IJCAI-22)
+3625
+
+
+5 =====
+f : Rm→ Rn to the underlying data distribution, we can use
+the neuro-symbolic property
+{
+true
+}
+⃗ y1←f (⃗ x)∧⃗ y2←g(⃗ x){d (⃗ x,⃗ y2)≤ε→P (⃗ x,⃗ y1)}
+whereP is the original property we want to verify and the
+condition d (⃗ x,⃗ y2)≤ε for someε≥ 0 follows the usual idea
+of using autoencoders to detect out-of-distribution data [Saku-
+rada and Yairi, 2014 ]. As a byproduct, we obtain that any
+counterexample to this new property violates the original prop-
+ertyP and originates from the underlying data distribution.
+It is not hard to verify that “simple” properties, such as
+adversarial robustness and fairness, can easily be expressed as
+neuro-symbolic properties as well. For instance, adversarial
+robustness can be formalized in NESAL as
+{
+d (⃗ x⋆,⃗ x)≤ε
+}
+⃗ y⋆←f (⃗ x⋆)∧⃗ y←f (⃗ x)
+{
+⃗ y⋆ =⃗ y
+}
+where⃗ x⋆∈ Rm is a fixed input, ϵ≥ 0, and assuming that
+the distance function d can be expressed in the quantifier-
+free fragment of first-order logic over the reals. Note that
+individual networks can appear multiple times in a neuro-
+symbolic property.
+Given a neuro-symbolic property{φpre}φassign{φpost}
+with φassign := ⋀ℓ
+i=1⃗ yi ← hi(⃗ xi), the overall goal is to
+check whether the logic formula
+ψ :=
+(
+φpre∧φassign
+)
+→φpost
+is valid (i.e., whether ∀⃗ x,⃗ y: ψ is a tautology). In analogy
+to software verification, we call this task the neuro-symbolic
+verification problemand the formulaψ a neuro-symbolic verifi-
+cation condition. The supplementary material shows how this
+verification problem can be reduced to deductive verification.
+5 Empirical Evaluation
+We have implemented a Python3 prototype based on the
+state-of-the-art deductive verifier Marabou [Katz et al., 2019],
+named Neuro-Symbolic Verifier (NSV ). Since the original
+Marabou tool does not support N ESAL properties—or any
+verification query with multiple networks—, we have modified
+it as described in the extended version of this paper [Xie et
+al., 2022]. Our code and all experimental data can be found at
+https://github.com/LebronX/Neuro-Symbolic-Verification.
+In our experimental evaluation, we have considered two
+widely used datasets:
+1. The MNIST dataset [LeCun et al., 2010 ], containing
+60,000 training images and 10.000 test images of hand-
+written digits.
+2. The German Traffic Sign Recognition Benchmark
+(GTSRB) [Stallkamp et al., 2011 ], containing 39,209
+training images and 12,630 test images with 43 types of
+German traffic signs. To not repeat similar experiments
+over and over, we restrict ourselves to the first ten classes.
+It is paramount to stress that we are not interested in the
+absolute performance of NSV, how well it scales to huge net-
+works, or how it compares to other verification techniques on
+non-neuro-symbolic properties. Instead, our goals are twofold:
+(1) we demonstrate that our neuro-symbolic approach can be
+implemented on top of existing verification infrastructure for
+deep neural networks and is effective in verifying neuro-sym-
+bolic properties; and (2) we showcase that our neuro-symbolic
+framework can find more informative counterexamples than
+a purely deductive verification approach. Note that the for-
+mer makes it possible to leverage future progress in neural
+network verification to our neuro-symbolic setting, while the
+latter greatly improves the debugging of learning systems.
+5.1 Effectiveness in Verifying N ESAL Properties
+For both the GTSRB and the MNIST datasets, we considered
+the following three prototypical neuro-symbolic properties. By
+convention, we usef to denote the network under verification
+(NUV) andg to denote a specification network. Moreover, we
+use theL∞-norm as distance function d.
+P1: “If the input image is of classc, then the NUV outputsc”,
+expressed in NESAL as
+{
+true
+}
+⃗ y1←f (⃗ x)∧y2←g(⃗ x){
+y2 = 1→ arg max (⃗ y1) = c
+}
+.
+Here, the NUV f is a multi-class deep neural network
+mapping images to their class (i.e., one of the 43 traffic
+signs or ten digits), while the specification networkg is a
+deep neural network specifically trained by an authority
+to detect the specific class c (outputting 0 or 1). This
+property is a simplified version of Property (3) on Page 4.
+P2: “If the input follows the distribution of the underlying
+data, then the NUV classifies the input correctly with
+high confidence”, expressed in NESAL as
+{
+true
+}
+⃗ y1←f (⃗ x)∧⃗ y2←g(⃗ x){
+(d (⃗ y2,⃗ x)≤ε∧ arg max (⃗ y1) = c)→ conf >δ
+}
+,
+whereε,δ ≥ 0 and conf := (|⃗ y1|·yi−P
+j̸=i yj )/|⃗ y1| is the
+confidence of the NUV that the input⃗ xis of classc. Here,
+the NUVf is a multi-class deep neural network mapping
+images to their class, while the specification networkg is
+an autoencoder used to detect out-distribution data (via
+d (⃗ y2,⃗ x)>ε ) [Sakurada and Yairi, 2014].
+P3: “Two deep neural networks (of different architecture)
+compute the same function up to a maximum error ofε”,
+expressed in NESAL as
+{
+true
+}
+⃗ y1←f (⃗ x)∧⃗ y2←g(⃗ x)
+{
+d (⃗ y1,⃗ y2)≤ε
+}
+,
+where ε≥ 0. Here, the NUV f and the specification
+networkg have the same dimensions of the input and
+output space but potentially distinct architectures.
+For each benchmark suite, each class (remember that we
+have only considered ten classes of GTSRB), and each of the
+three properties, we have trained one NUV and one specifi-
+cation network with the architectures shown in Table 1 (all
+using ReLU activation functions). We have resized the MNIST
+images for propertyP2 to 14× 14 and the GTSRB images to
+16× 16 for all properties to keep the verification tractable. For
+propertyP2, we have chosen 0.05≤ε≤ 0.14 with step size
+Proceedings of the Thirty-First International Joint Conference on Artiﬁcial Intelligence (IJCAI-22)
+3626
+

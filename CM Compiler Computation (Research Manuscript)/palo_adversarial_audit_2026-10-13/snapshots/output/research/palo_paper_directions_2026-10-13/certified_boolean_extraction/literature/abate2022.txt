@@ -1,0 +1,1121 @@
+
+===== PDF PAGE 1 =====
+Neural Abstractions
+Alessandro Abate∗
+Department of Computer Science
+University of Oxford, UK
+Alec Edwards∗
+Department of Computer Science
+University of Oxford, UK
+Mirco Giacobbe∗
+School of Computer Science
+University of Birmingham, UK
+Abstract
+We present a novel method for the safety veriﬁcation of nonlinear dynamical models
+that uses neural networks to represent abstractions of their dynamics. Neural net-
+works have extensively been used before as approximators; in this work, we make
+a step further and use them for the ﬁrst time as abstractions. For a given dynamical
+model, our method synthesises a neural network that overapproximates its dynam-
+ics by ensuring an arbitrarily tight, formally certiﬁed bound on the approximation
+error. For this purpose, we employ a counterexample-guided inductive synthesis
+procedure. We show that this produces a neural ODE with non-deterministic distur-
+bances that constitutes a formal abstraction of the concrete model under analysis.
+This guarantees a fundamental property: if the abstract model is safe, i.e., free from
+any initialised trajectory that reaches an undesirable state, then the concrete model
+is also safe. By using neural ODEs with ReLU activation functions as abstractions,
+we cast the safety veriﬁcation problem for nonlinear dynamical models into that
+of hybrid automata with afﬁne dynamics, which we verify using SpaceEx. We
+demonstrate that our approach performs comparably to the mature tool Flow* on
+existing benchmark nonlinear models. We additionally demonstrate and that it is
+effective on models that do not exhibit local Lipschitz continuity, which are out of
+reach to the existing technologies.
+1 Introduction
+Dynamical models describe processes that are ubiquitous in science and engineering. They are widely
+used to model the behaviour of cyber-physical system designs, whose correctness is crucial when they
+are deployed in safety-critical domains [10, 13, 49]. To guarantee that a dynamical model satisﬁes a
+safety speciﬁcation, simulations are useful but insufﬁcient because they are inherently non-exhaustive
+and they suffer from numerical errors, which may leave unsafe behaviours unidentiﬁed. Formal
+veriﬁcation of continuous dynamical models tackles the question of determining with formal certainty
+whether every possible behavior of the model satisﬁes a safety speciﬁcation [45, 51, 112]. In this
+paper, we present a method to combine machine learning and symbolic reasoning for a sound and
+effective safety veriﬁcation of nonlinear dynamical models.
+The formal veriﬁcation problem for continuous-time and hybrid dynamical models is unsolvable in
+general and, even for models with linear dynamics, complete procedures are available under stringent
+conditions [11, 12, 72, 86, 87]. For most practical models that contain nonlinear terms [81, 105],
+∗The authors are listed alphabetically
+36th Conference on Neural Information Processing Systems (NeurIPS 2022).
+arXiv:2301.11683v1  [cs.LO]  27 Jan 2023
+
+===== PDF PAGE 2 =====
+methods for formal veriﬁcation with soundness guarantees involve laborious safety and reachability
+procedures whose efﬁcacy can only be demonstrated in practice. Formal veriﬁcation of nonlinear
+models require ingenuity, and has involved sophisticated analysis techniques such as mathematical
+relaxations [27, 34–36, 48, 103, 104], abstract interpretation [52, 53, 56, 82, 96], constraint solving [19,
+39, 85], and discrete abstractions [5, 9, 30, 37]. Notwithstanding recent progress, both scalability
+and expressivity remain open challenges for nonlinear models: the largest model used in the annual
+competition has 7 variables [66]. In addition, existing formal approaches rely on symbolic reasoning
+techniques that explicitly leverage the structure of the dynamics. This results in veriﬁcation procedures
+that are bespoke to restricted classes of models. For example, it is common for formal veriﬁcation
+procedures to require the input model to be Lipschitz continuous. Yet, dynamical models with vector
+ﬁelds that violate this assumption are abundant in literature, and a wide variety of models of natural
+phenomena are non-Lipschitz, from ﬂuid dynamics to n-body orbits and chaotic systems, as well
+as in engineering, from electrical circuits and hydrological systems [50, 55]. Our approach makes
+progress in expressivity, showing that usingneural networks as abstractions of dynamical systems
+enables an effective formal veriﬁcation of nonlinear dynamical models, including models that do not
+exhibit local Lipschitz continuity.
+Abstraction is a standard process in formal veriﬁcation that aims at translating the model under
+analysis—the concrete model—into a model that is simpler to analyse—the abstract model—such
+that veriﬁcation results from the abstract model carry over to the concrete model [20, 40, 41]. In
+veriﬁcation of systems with continuous time and space, an abstraction usually consists of a partitioning
+of the state space of the concrete model into a ﬁnite set of regions that deﬁne the states of an
+abstract, ﬁnite-state machine with a corresponding behaviour. Our method follows an approach that
+constructs abstract, ﬁnite-state machines whose states are augmented with continuous linear dynamics
+and non-deterministic drifts. Finite-state machines with continuous, possibly non-deterministic
+dynamics are known as hybrid automata [71], and the process of abstracting dynamical nonlinear
+models into hybrid automata is called hybridisation; this process has been widely applied in formal
+veriﬁcation [8, 15, 16, 21, 46, 58, 65, 73, 91, 94, 99, 100, 102].
+Hybridising involves partitioning the state space and computing a local overapproximation of the
+concrete model within each region of the partition. Common approaches for hybridisation partition the
+state space by tuning the granularity of rectangular or simplicial meshes, until a desired approximation
+error is attained. This may yield abstract hybrid automata that are too large in the number of discrete
+states to be effectively veriﬁed. Notably, modern tools for the veriﬁcation of hybrid automata are
+designed for models that rarely have over hundred discrete states [7], while arbitrary meshes grow
+exponentially as the granularity increases. Explosion in discrete states has been mitigated using
+deductive approaches that construct an appropriate partitioning from the expressions that deﬁne the
+concrete model and, unlike our method, rely on syntactic restrictions [14, 26, 30, 47, 70, 80, 83, 84, 98].
+We propose an inductive approach to abstraction that combines the tasks of partitioning the state
+space and overapproximating the dynamics into the single task of training a neural network. We
+leverage the approximation capability of neural networks with ReLU activation functions to partition
+the state space into arbitrary polyhedral regions, where each region and local afﬁne approximation
+correspond to a combinatorial conﬁguration of the neurons. We show that this ultimately enables
+verifying nonlinear dynamical models using efﬁcient safety veriﬁers for hybrid automata with afﬁne
+dynamics (cf. Figure 1).
+Our abstraction procedure synthesises abstract models by alternating a learner, which proposes
+candidate abstractions, and a certiﬁer, which formally assures (or disproves) their validity, in a
+counterexample-guided inductive synthesis (CEGIS) loop [108, 109]. First, the learner uses gradient
+descent to train a neural network that approximates the concrete model over a ﬁnite set of sample
+observations of its dynamics; then, the certiﬁer uses satisﬁability modulo theories (SMT) to check the
+validity of an upper-bound on the approximation error over the entire continuous domain of interest.
+If the latter disproves the bound, then it produces a counterexample which its added to the set of
+samples and the loop is repeated. If it certiﬁes the bound, then the procedure returns a neural network
+approximation and a sound upper-bound on the error. Altogether, neural network and error bound
+deﬁne a neural ODE with bounded additive non-determinism that overapproximates the concrete
+model, which we call a neural abstraction.
+We demonstrate the efﬁcacy of our method over multiple dynamical models from a standard bench-
+mark set for the veriﬁcation of nonlinear systems [66], as well as additional locally non-Lipschitz
+2
+
+===== PDF PAGE 3 =====
+1
+ 0 1
+1
+0
+1
+Concrete nonlinear system
+x
+...
+˙x
+ReLU
+Neural abstraction
+1
+ 0 1
+1
+0
+1
+Abstract hybrid automaton
+Flowpipe propagation
+Abstraction
+synthesis
+Model
+translation
+Safety
+veriﬁcation
+Figure 1: Overview of our workﬂow on a non-Lipschitz dynamical model (cf. Section 5, NL2). The
+concrete dynamics are abstracted by a neural ODE with ReLU activation functions and a certiﬁed
+upper-bound on the approximation error. This characterises a polyhedral partitioning and deﬁnes a
+hybrid automaton with afﬁne dynamics and additive non-deterministic drift. Flowpipe propagation is
+ﬁnally performed through a region of non-Lipschitz continuity.
+models, and compare our approach with Flow*, the state-of-the-art veriﬁcation tool for nonlinear
+models [34, 35, 37]. We instantiate our approach on top of SpaceEx [62], which is a state-of-the-art
+tool specialised to linear hybrid models [59, 61, 88]. We evaluate both approaches in safety veriﬁ-
+cation using ﬂowpipe propagation, which computes the set of reachable states from a given set of
+initial states up to a given time horizon. Our experiments demonstrate that our approach performs
+comparably with Flow* for Lipschitz continuous model, and succeeds with non-Lipschitz models
+that are out of range for Flow* and violate the working assumptions of many veriﬁcation tools. These
+outcomes suggest that neural abstractions are a promising technology, also in view of recent results
+on direct methods for the safety veriﬁcation for neural ODEs [68, 69, 95].
+We summarise our contributions in the following points:
+• we introduce the novel idea of leveraging neural networks to represent abstractions in formal
+veriﬁcation, and we instantiate it in safety veriﬁcation of nonlinear dynamical models;
+• we present a CEGIS procedure for the synthesis of neural ODEs that formally overapproxi-
+mate the dynamics of nonlinear models, which we call neural abstractions;
+• we deﬁne a translation from neural abstractions deﬁned using ReLU activation functions to
+hybrid automata with afﬁne dynamics and additive non-determinism;
+• we implement our approach2 and demonstrate its comparable performance w.r.t. the state-of-
+the-art tool Flow* in safety veriﬁcation of Lipschitz-continuous models, and even superior
+efﬁcacy on models that do not exhibit local Lipschitz continuity.
+We consider there to be no signiﬁcant negative societal impact of our work.
+2The code is available at https://github.com/aleccedwards/neural-abstractions-nips22.
+3
+
+===== PDF PAGE 4 =====
+2 Neural Abstractions of Dynamical Models
+We study the formal veriﬁcation question of whether ann-dimensional, continuous-time, autonomous
+dynamical model with possibly uncertain (bounded) disturbances, considered within a region of
+interest, is safe with respect to a region of bad states when initialised from a region of initial states.
+Deﬁnition 1 (Dynamical Model). A dynamical modelF deﬁned over a region of interestX⊆ Rn
+consists of a nonlinear function f : Rn→ Rn and a possibly null disturbance radius δ≥ 0. Its
+dynamics are given by the system of nonlinear ODEs
+˙x =f(x) +d, ‖d‖≤ δ, x ∈X , (1)
+where‖·‖ denotes a norm operator (unless explicitly stated, we assume the norm operator to be
+given the same semantics across the paper). A trajectory ofF deﬁned over time horizonT >0 is
+a functionξ : [0,T ]→ Rn that admits derivative at each point in [0,T ] such that, for allt∈ [0,T ],
+it holds true that ξ(t)∈X and ˙ξ(t) = f(ξ(t)) +dt for some‖dt‖ < δ. Notably, symbol d in
+Equation (1) is interpreted as a non-deterministic disturbance that at any time can take any possible
+value within the bound provided byδ.
+Let the setsX0⊂X be a region of initial states andXB⊂X be a region of bad states. We say that a
+trajectoryξ deﬁned over time horizonT is initialised ifξ(0)∈X 0; additionally, we say that it is safe
+ifξ(t)⁄∈X B for allt∈ [0,T ]; dually, we say that it is unsafe ifξ(t)∈X B for somet∈ [0,T ]. The
+safety veriﬁcation question for consists of determining whether all initialised trajectories are safe. If
+this is the case, then we say that the model is safe with respect toX0 andXB. If there exist at least
+one initialised trajectory that is unsafe, then we say that the model is unsafe.
+We tackle safety veriﬁcation by abstraction, that is, we construct an abstract dynamical model that
+captures all behaviours of the concrete nonlinear model. This implies that if the abstract model is safe
+then the concrete model is necessarily safe too, and we can thus apply a veriﬁcation procedure over the
+abstraction to determine whether the concrete model is safe. Notably, the converse may not hold: lack
+of safety of the abstract model does not carry over to the concrete model, because our abstraction is
+an overapproximation. We ultimately obtain a sound (but not complete) safety veriﬁcation procedure.
+Our approach synthesises an abstract dynamical model deﬁned in terms a feed-forward neural network
+with ReLU activation functions and endowed with a bounded non-deterministic disturbance. This
+can be seen as a neural ODEs [33] augmented with an additive non-deterministic drift that ensures
+the abstract model to overapproximate the concrete model. To the best of our knowledge, this is the
+ﬁrst work to consider neural ODEs with non-deterministic semantics.
+Our feed-forward neural network consists of an n-dimensional input layer y0, k hidden layers
+y1,...,y k with dimensionsh1,...,h k respectively, and ann-dimensional output layeryk+1. Each
+hidden or output layer with indexi are respectively associated matrices of weightsWi∈ Rhi×hi−1
+and a vectors of biasesbi∈ Rhi. Upon a valuation of the input layer, the value of every subsequent
+hidden layer is given by the following equation:
+yi = ReLU(Wiyi−1 +bi). (2)
+Whereas many activation functions exist, we focus our study on ReLU activation functions, applying
+function max{x, 0} to every elementx∈ R of itshi-dimensional argument. Finally, the value of the
+output layer is given by the afﬁne mapyk+1 =Wk+1xk +bk+1. Altogether, the network results in a
+functionN whose output isN (x) =yk+1 for every given inputy0 =x.
+Deﬁnition 2 (Neural Abstraction). LetF be a dynamical model given by functionf : Rn→ Rn and
+disturbance radiusδ≥ 0 and letX⊆ Rn be a region of interest. A feed-forward neural network
+N : Rn→ Rn deﬁnes a neural abstraction ofF with error boundϵ> 0 overX , if it holds true that
+∀x∈X :‖f(x)−N (x)‖≤ ϵ−δ. (3)
+Then, the neural abstraction consists of the dynamical model A deﬁned byN and disturbance ϵ,
+whose dynamics are given by the following neural ODE with bounded additive disturbances:
+˙x =N (x) +d, ‖d‖≤ ϵ, x ∈X . (4)
+Theorem 1 (Soundness of Neural Abstractions). IfA is a neural abstraction of a dynamical system
+F over a region of interestX⊆ Rn, then every trajectory ofF is also a trajectory ofA.
+4
+
+===== PDF PAGE 5 =====
+Abstraction
+SynthesisLearner Certiﬁer
+Counterexamplescex
+CandidateN
+Valid neural
+abstraction
+AF,X ,ϵF,S,ϵ Safety
+Veriﬁcation
+F,X,S,ϵ
+X,X0,XB
+Figure 2: Architecture for the safety veriﬁcation of nonlinear dynamical models using neural abstrac-
+tions. The inputs to our architecture are a concrete modelF and its domain of interestX , a ﬁnite set
+of initial datapointsS, a desired approximation errorϵ, and regions of initialX0 and bad statesXB.
+Proof of Theorem 1. Letξ be a trajectory ofF andT be the time horizon over whichξ is deﬁned.
+Then, let t∈ [0,T ]. By deﬁnition of trajectory we have that (i) ξ(t)∈X and there exists dt s.t.
+(ii)‖dt‖≤ δ and (iii) ˙ξ(t) =f(ξ(t))+dt. By (i) and condition(3) we have that‖f(ξ(t))−N (ξ(t))‖+
+δ≤ ϵ. Then, by (ii) we have that ‖f(ξ(t))−N (ξ(t))‖ +‖dt‖≤ ϵ which, by triangle inequality,
+implies that‖f(ξ(t)) +dt−N (ξ(t))‖≤ ϵ. Using (iii), we rewrite it into ‖ ˙ξ(t)−N (ξ(t))‖≤ ϵ.
+Finally, we deﬁned′
+t = ˙ξ(t)−N (ξ(t)). As a result, we have that‖d′
+t‖≤ ϵ and ˙ξ(t) =N (ξ(t)) +d′
+t
+which, together with (i), shows thatξ is a trajectory ofA.
+Corollary 1. LetX0⊂X be a region of initial states andXB⊂X and region of bad states. It holds
+true that ifA is safe with respect toX0 andXB then alsoF is safe with respect toX0 andXB.
+Proof of Corollary 1. By Theorem 1, if there exists an initialised trajectory ofF that is unsafe, then
+the same is an initialised trajectory ofA that is unsafe. The statement follows by contraposition.
+Remark 1 (Existence of Neural Abstractions) . LetF be a dynamical model deﬁned by function
+f and disturbance radius δ≥ 0, and letX ⊆Rn be a domain of interest. A neural abstraction
+ofF with arbitrary error boundϵ> 0 overX exists if a neural network that approximatesf with
+error boundϵ−δ (cf. condition (3)) exists over the same domain. In this work, we do not prescribe
+conditions on either width or depth of the network to ensure existence of a neural abstraction. Such
+conditions are given by universal approximation theorems for neural networks with ReLU activation
+functions, which have been developed in seminal work in machine learning [25, 42, 63, 74, 90, 93].
+Altogether, we deﬁne the neural abstraction of a non-linear dynamical systemF as a neural ODE with
+an additive disturbanceA that approximates the dynamics while also accounting for the approximation
+error. Notably, we place no assumptions on the vector ﬁeld f. In particular, Theorem 1 does not
+requiref to be Lipschitz continuous: the soundness of a neural abstraction relies on condition (3),
+whose certiﬁcation we ofﬂoad to an SMT solver (cf. Section 3.2). The resulting neural abstraction is
+to a hybrid automaton with afﬁne dynamics and non-deterministic disturbance (cf. Section 4), which
+does not rely on the Picard-Lindelof theorem to ensure uniqueness or existence of a solutions.
+3 Formal Synthesis of Neural Abstractions
+Our approach to abstraction synthesis follows two phases—a learning phase and acertiﬁcation phase—
+that alternate each other in a CEGIS loop [1, 3, 43, 78, 101, 108, 109] (cf. Figure 2, left). Our learning
+phase trains the parameters of a neural networkN to approximate the system dynamics over a ﬁnite
+set of samplesS⊂X of the domain of interest. Learning uses gradient descent algorithms, which can
+possibly scale to large amounts of samples. Then, our certiﬁcation phase either conﬁrms the validity
+of condition (3) or produces a counterexample which we use to sample additional states and repeat the
+loop. Certiﬁcation is based on SMT solving, which reasons symbolically over the continuous domain
+X and assures soundness. As a consequence, when certiﬁcation conﬁrms condition (3) formally valid,
+then as per Theorem 1 our neural abstractionA is a sound overapproximation of the concrete model
+F and is thus passed to safety veriﬁcation (cf. Figure 2, right).
+Neural networks have been used in the past as representations of formal certiﬁcates for the correctness
+of systems such as Lyapunov neural networks, neural barrier certiﬁcates, neural ranking functions
+5
+
+===== PDF PAGE 6 =====
+and supermartingales [1, 2, 4, 31, 32, 44, 67, 89, 97, 111, 117–119]. In the present work, we use
+neural networks for the ﬁrst time as abstractions, and we instantiate this idea in safety veriﬁcation
+of nonlinear models. We shall now present the components of our abstraction synthesis procedure:
+learner (cf. Section 3.1) and certiﬁer (cf. Section 3.2).
+3.1 Learning Phase
+As with many machine learning-based algorithm, learning neural abstractions hinges on the loss
+function used as part of the gradient descent scheme for optimising parameters. The task is that of a
+regression problem, so the choice of loss function to be minimised is simple, namely,
+L =
+∑
+s∈S
+‖f(s)−N (s)‖2, (5)
+where‖·‖ 2 represents the 2− norm of its input, and S⊂X is a ﬁnite set of data points that are
+sampled from the domain of interest. In other words, the neural abstractions are synthesised using a
+scheme based on gradient descent to ﬁnd the parameters that minimise the mean square error overS.
+The main inputs to the learning procedure are the vector ﬁeld f of the concrete dynamical model,
+an initial set of pointsS sampled uniformly from the domain of interestX . Additional parameters
+include the hyper-parameters for the learning scheme such as the learning rate, and a stopping
+criterion for the learning procedure. For the latter, there are two possible options: a target error which
+all data points must satisfy, or a bound on the value of the loss function.
+If a target error smaller than ϵ−δ is provided, this is when all points in the data set S satisfy the
+speciﬁcation (3) and certiﬁcation subsequently check that this generalises over the entireX . If an
+alternative loss-based stopping criterion is provided, then an error bound on the approximation is
+estimated using the maximum approximation error over the data setS for use in certiﬁcation. This
+estimated bound is conservative, i.e., greater than the maximum, to allow for successful certiﬁcation
+to be more likely.
+After learning, the networkN is translated to symbolic form and passed to the certiﬁcation block,
+which checks condition (3) as described in Section 3.2. The certiﬁer either determines condition (3)
+valid, and thus the CEGIS loop terminates, or computes a counterexample that falsiﬁes the condition.
+The counterexample is returned to the learning procedure and augmented by sampling for additional
+points nearby in order to maximise the efﬁciency of learning and the overall synthesis.
+3.2 Certiﬁcation Phase
+The purpose of the certiﬁcation is to check that at no point in the domain of interestX is the maximum
+error greater than the upper bound ϵ−δ, as per the speciﬁcation in condition (3). Therefore, the
+certiﬁer is provided with the negation of the speciﬁcation, namely
+∃x: x∈X∧‖ f(x)−N (x)‖>ϵ −δ| {z }
+φ
+. (6)
+The certiﬁer seeks an assignment scex of the variable x such that the quantiﬁer-free formula φ
+is satisﬁable, namely that the speciﬁed bound is violated. If this search is successful, then the
+networkN has not achieved the speciﬁed accuracy overX , and is thus not a valid neural abstraction.
+The corresponding assignmentscex forms the counterexample that is provided back to the learner
+(the machine learning procedure from Section 3.1). Alternatively, if no assignment is found then
+speciﬁcation (3) is proven valid; networkN and error boundϵ are then passed to the safety veriﬁcation
+procedure (cf. Section 4).
+Certiﬁcation of the accuracy of the neural abstractions is performed by an SMT solver. Several
+options exist for the selection of the SMT solver, with the requirement that the solver should reason
+over quantiﬁer-free nonlinear real arithmetic formulae [57,64]. This is because the vector ﬁeld f may
+contain nonlinear terms. In our experiments, we employ dReal [64], which supports polynomial and
+non-polynomial terms such as transcendental functions like trigonometric or exponential ones.
+A successful veriﬁcation process allows for the full abstraction to be constructed using the achieved
+errorϵ and neural networkN . CEGIS has been shown to perform well and terminate successfully
+across a wide variety of problems. We demonstrate the robustness of our procedure in Appendix B.
+6
+
+===== PDF PAGE 7 =====
+x
+y
+X1
+X2
+X3
+˙x =f1(x)
+x∈X 1
+˙x =f3(x)
+x∈X 3
+˙x =f2(x)
+x∈X 2
+x∈X 1
+x∈X 3
+x∈X 2
+x∈X 3
+Figure 3: A hybrid automaton corresponding to a state-space partitioning. Each of the three discrete
+modes corresponds to a unique partitionXi and vector ﬁeldfi(x). Discrete transitions are denoted by
+the edges of the directed graph with a transition between two modes if the corresponding partitions
+Xi andXj are adjacent and a trajectory fromfi ‘crosses’ the corresponding partition.
+4 Safety Veriﬁcation of Neural Abstractions
+Neural abstractions are dynamical models expressed in terms of neural ODEs with additive distur-
+bances (cf. Equation 4). Corollary 1 ensures the fact for which concluding that a neural abstraction is
+safe sufﬁces to assert that the concrete dynamical model is also safe. Consequently, once a neural
+ODE is formally proven to be an abstraction for the concrete dynamical model, which is entirely
+delegated to our synthesis procedure (cf. Section 3), our deﬁnition of neural abstractions enables any
+procedure for the safety veriﬁcation of neural ODEs with disturbances to be a valid safety veriﬁcation
+procedure for the corresponding dynamical model.
+Safety veriﬁcation approaches for dynamical systems controlled by neural networks solve a similar
+problem [18,54,75,77,106,113,114,116], yet with a subtle difference: neural network controllers take
+control actions at discrete points in time. Instead, neural ODEs characterise dynamics over continuous
+time. Some procedures for the direct veriﬁcation of neural ODEs have been introduced very recently,
+and this currently an area under active development [68, 69, 95]. Yet, existing approaches do not
+consider the case of a neural ODE with a non-deterministic drift. Therefore, in order to obtain a
+veriﬁcation procedure for neural abstractions, we build upon the observation that a neural ODEs
+with ReLU activation functions and non-deterministic drift deﬁnes a hybrid automaton with afﬁne
+dynamics.
+Hybrid automata (cf. Figure 3) model the interaction between continuous dynamical systems and
+ﬁnite-state transition systems [71, 115]. A hybrid automaton consists of a ﬁnite set of variables and a
+ﬁnite graph, whose vertices we call discrete modes and edges we call discrete transitions. Every mode
+is associated with an invariant condition and a ﬂow condition over the variables, which determine the
+continuous dynamics of the systems on the speciﬁc mode. Every discrete transition is associated with
+a guard condition, which determines the effect on discrete transitions between modes. While we refer
+the reader to seminal work for a general deﬁnition of hybrid automata [71], we present a translation
+from neural abstractions to hybrid automata.
+4.1 Translation of Neural Abstractions Into Hybrid Automata
+We begin with the observation that each neuron within a given hidden layer of a neural network with
+ReLU activation functions induces a hyperplane in the vector space associated with the previous layer
+This hyperplane results in two half-spaces, one corresponding to the neuron being active and one to it
+being inactive. For thejth neuron in theith layer, these two halfspaces are respectively the two parts
+of the hyperplane given by
+{yi−1|Wi,jyi−1 +bi,j = 0}, (7)
+whereWi,j is the jth row of the weight matrix Wi andbi,j is the jth element of the bias bi (cf.
+Section 2). Therefore, every combinatorial conﬁguration of the neural network deﬁnes an intersection
+of halfspaces that deﬁnes a polyhedral region in the vector space of the input neurons. Moreover, every
+7
+
+===== PDF PAGE 8 =====
+conﬁguration also deﬁnes a linear function from input to output neurons. The space of conﬁgurations
+thus deﬁnes a partitioning of the input space, where each region is associated with an afﬁne function.
+A neural abstraction casts into a hybrid automaton, where every mode is determined by a conﬁguration
+of the hidden neurons and each of these conﬁgurations induces a system of afﬁne ODEs (cf. Figure 3).
+Discrete Modes We represent a conﬁguration of a neural network as a sequenceC = (c1,...,c k)
+of Boolean vectorsc1∈{ 0, 1}h1,...,c k∈{ 0, 1}hk, wherek denotes the number of hidden layers
+andh1,...,h k denote the number neurons in each of them (cf. Section 2). Every vectorci represents
+the conﬁguration of the neurons at the ith hidden later, and the jth element of ci represent the
+activation status of thejth neuron at theith later, which equals to 1 is the neuron is active and 0 if it
+is inactive. Every mode of the hybrid automaton corresponds to exactly one conﬁguration of neurons.
+Invariant Conditions We deﬁne the invariant of each mode as a restriction of the domain of
+interest to a regionXC⊆X , which denotes the maximal set of states that enables conﬁgurationC.
+To constructXC, we deﬁne a higher-dimensional polyhedron on the space of valuation of the neurons
+that enable conﬁgurationC, i.e.,
+YC =
+{
+(y0,...,y k)
+⏐⏐⏐ ∧k
+i=1yi = diag(ci)(Wiyi−1 +bi)∧
+diag(2ci− 1)(Wiyi−1 +bi)≥ 0
+}
+. (8)
+Note that diag(v) denotes the square diagonal matrix whose diagonal takes its coefﬁcients from
+vectorv; in our case, this results in a square diagonal matrix whose coefﬁcients are either 0 or 1.
+Then, we projectYC onto the input neurons y0, denotedYC ↾y0. Since the input neurons y0 are
+equivalent to the state variables of the dynamical model, the invariant condition of modeC results in
+XC = (YC ↾y0)∩X . (9)
+A projection can be computed using the Fourier-Motzkin algorithm or by projecting the vertices
+of the polyhedron in a double description method. However, even though this is effective in our
+experiments, it has worst-case exponential time complexity. A polynomial time construction can
+be obtained by propagating halfspaces backwards along the network, similarly to methods used in
+abstraction-reﬁnement [29, 60]. We outline the alternative construction in Appendix C.1.
+Flow Conditions The dynamics of each mode C can be seen itself as a dynamical system with
+bounded disturbance:
+˙x =ACx +bC +d, ‖d‖≤ ϵ, x ∈X C. (10)
+The matrixAC∈ Rn×n and the vector of drifts bC∈ Rn determine the linear ODE of the mode,
+whereasϵ> 0 is the error bound derived from the neural abstraction.
+The coefﬁcients of the system are given by the weights and biases of the neural network as follows:
+AC =Wk+1
+∏k
+i=1 diag(ci)Wi, (11)
+bC =bk+1 +∑k
+i=1(Wk+1
+∏k
+j=i+1 diag(cj)Wj) diag(ci)bi. (12)
+Discrete Transitions and Guard Conditions A discrete transition exists between any two given
+modes if the two polyhedra that deﬁne their invariant conditions share a facet and the dynamics pass
+through at some point along the facet. This can be checked by considering the sign of the Lie derivative
+between the dynamics and the corresponding facet, that is, the inner product between the dynamics
+and the normal vector to the facet. In practice, we take a faster but more conservative approach by
+considering that a transition exists between two modes when the corresponding polyhedral regions
+share at least a vertex. The guard condition of a discrete transition is simply the invariant of the
+destination mode.
+4.2 Enumeration of Feasible Modes
+A given conﬁgurationC exists in the hybrid automaton if and only if the corresponding setXC, which
+is a convex polyhedron in Rn, is nonempty; this consists of verifying that the linear program (LP)
+constructed from the polyhedron is feasible. Finding all modes of the hybrid automaton therefore
+consists of solving 2H linear programs, where H = h1 +··· +hk is the total number of hidden
+neurons in the network. However, this exponential scaling with the number of neurons is limiting
+8
+
+===== PDF PAGE 9 =====
+in terms of network size. Therefore, we propose an approach that works very well in practice to
+determine all valid neuron conﬁgurations.
+The approach relies on the observation that within a bounded polyhedronP, a given neuron has two
+modes (ReLU enabled or disabled) only if the induced hyperplane intersectsP. If it does not, only
+one of the two possible half-spaces contributes to any possible active conﬁguration, and the other
+neuron mode can be disregarded. Therefore, this approach involves iterating through each neuron in
+turn and constructing two LPs—one for each halfspace intersected with the domain of interest X . If
+only one LP is valid, we can ﬁx the neuron to this mode, i.e., from this point onward only consider
+the intersection with the halfspace corresponding to the feasible LP, and construct a new polyhedron
+from the intersection ofX and the feasible half-space.
+In short, we consider the neurons of the network as a binary tree, with the branches representing
+the enabled and disabled state of this neuron. We perform a depth-ﬁrst tree search through this
+tree by intersecting with the corresponding half-spaces. Upon reaching an end node, we store this
+conﬁguration (branches taken) and revert back to the most recent unexplored branch and continue.
+We include a more detailed description of this algorithm in Appendix C.2. This approach is inspired
+by that presented in [23], which similarly enumerates through the path of neurons using sets to
+determine the output range of a network.
+5 Experimental Results
+5.1 Safety Veriﬁcation Using Neural Abstractions
+We benchmark the results obtained by the safety veriﬁcation algorithm proposed in Section 4 against
+Flow* [35] (available under GPL), which is a mature tool for computing reachable regions of
+hybrid automata. It relies on computing ﬂowpipes, i.e., sets of reachable states across time, which
+are propagated from a given set of initial states. The ﬂowpipes are generated from Taylor series
+approximations of the model’s vector ﬁeld in (1), over subsequent discrete time steps. Crucially,
+the use of a higher-order Taylor series, or of smaller time steps, leads to more precise computation
+of reachable sets. Since Flow*, like SpaceEx (available under GPLv3) is able to calculate over-
+approximations of ﬂowpipes, it is suitable for use in safety veriﬁcation, and is a state-of-the-art tool
+for verifying safety of nonlinear models.
+Making a fair comparison around metrics for accuracy between Flow* and SpaceEx is challenging,
+as they represent ﬂowpipes differently [22,38]. We ask them to perform safety veriﬁcation for a given
+pair of initial and bad states, on a collection of different nonlinear models. These models, and their
+parameters, are detailed in Appendix A. As described in Section 2, the task of safety veriﬁcation
+consists of ensuring that no trajectory starting within the set of initial states enters the set of bad
+states, within a given time horizon.
+Our setup is as follows. Firstly, for a given benchmark model we deﬁne a ﬁnite time horizon T ,
+a region of initial statesX0 and a region of bad states XB. Then, we run ﬂowpipe computations
+with Flow* using high-order Taylor models. Similarly we run the procedure described in Section 3,
+and construct a hybrid automaton as described in Section 4 to perform ﬂowpipe computations using
+SpaceEx. We present the results in Table 1. In the table, we show the Taylor model order (TM)
+and time step used within Flow*, as well as the structure of the neural networks used for neural
+abstractions. For example, we denote a network with two hidden layers withh1 neurons in the ﬁrst
+layer andh2 neurons in the second hidden layer as [h1,h2]. We note that while Flow*, much like
+SpaceEx, can perform ﬂowpipe computation on the constructed hybrid automaton, it is not specialised
+to linear models like SpaceEx is and in practice struggles with the number of modes.
+Notably, Flow* is unable to handle the two models that do not exhibit local Lipschitz continuity. Flow*
+constructs Taylor models that incorporate the derivatives of the dynamics: as expected, unbounded
+derivatives will cause issues for this approach. Meanwhile, Ariadne [24] a is an alternative tool
+for over-approximating ﬂowpipes of nonlinear systems. While Ariadne does not explicitly require
+Lipschitz continuity, it is also unable to perform analysis on tools withnth root terms at zero, due to
+numerical instability. Instead, our abstraction method works directly on the dynamics themselves,
+rather than their derivatives, in order to construct simpler, abstract models that are amenable to be
+veriﬁed. By formally quantifying how different an abstract model is through the approximation error,
+we are able to formally perform safety veriﬁcation on such challenging concrete models.
+9
+
+===== PDF PAGE 10 =====
+Table 1: Comparison of safety veriﬁcation between Flow* and the combination of Neural Abstractions
+plus SpaceEx. Here,T : time horizon, TM: Taylor model order,δ: time-step,t: total computation time
+(better times denoted by bold),W : network neural structure,M: total number of modes in resulting
+hybrid automaton, Blw: blowup in the error beforeT is reached, and -: no results unobtainable.
+Model T Flow* Neural Abstractions
+TM δ Safety Ver. t W M Safety Ver. t
+Jet Engine 1.5 10 0.1 Yes 1.3 [10, 16] 8 Yes 215
+Steam Governor 2.0 10 0.1 Yes 62 [12] 29 Yes 219
+Exponential 1.0 30 0.05 Blw 1034 [14, 14] 12 Yes 308
+Water Tank 2.0 - - No - [12] 6 Yes 49
+Non-Lipschitz 1 1.4 - - No - [10] 12 Yes 19
+Non-Lipschitz 2 1.5 - - No - [12, 10] 32 Yes 59
+Notice that we additionally outperform Flow* on a Lipschitz-continuous model (Exponential in Table
+1), where the composition of functions that make up the model’s dynamics result in high errors in
+Flow* before the ﬂowpipe can be calculated across the given time horizon. We highlight that despite
+relying on afﬁne approximations (i.e., 1st order models), neural abstractions are able to compete with,
+and even outperform, methods that use much higher order functions (10th and 30th in the benchmarks)
+for approximation.
+5.2 Limitations
+Our approach is limited in terms of scalability, both with regards to the dimension of the models and
+to the size of the utilised neural networks. The causes of this limitation are twofold: ﬁrstly we are
+bound by the computational complexity of SMT solving - known to be NP-hard - which can struggle
+with complex formaulae with many variables. The certiﬁcation step requires the largest amount of
+time (cf. Appendix B), indicating that improvements in the veriﬁcation of neural networks can lead
+to a large performance increase for our abstractions.
+Secondly, we are limited in terms of the complexity of our abstractions by SpaceEx. While SpaceEx
+is a highly efﬁcient implementation of LGG [88], the presence of a large number of discrete modes
+poses a signiﬁcant computational challenge. It future work, we hope to investigate the balance
+between abstraction complexity and accuracy. The efﬁcacy of neural abstraction on further tools for
+hybrid automata with afﬁne dynamics also remains to be investigated [6, 24, 28, 107].
+6 Conclusion
+We have proposed a novel technique that leverages the approximation capabilities of neural networks
+with ReLU activation functions to synthesise formal abstractions of dynamical models. By combining
+machine learning and SMT solving algorthms in a CEGIS loop, our method computes abstract neural
+ODEs with non-determinism that overapproximate the concrete nonlinear models. This guarantees the
+property for which safety of the abstract model carries over to the concrete model. Our method casts
+these neural ODEs into hybrid automata with afﬁne dynamics, which we have veriﬁed using SpaceEx.
+We have demonstrated that our method is not only comparable to Flow* in safety veriﬁcation on
+existing nonlinear benchmarks, but also shows superior effectiveness on models that do not exhibit
+local Lipschitz continuity, which is a hard problem in formal veriﬁcation. Yet, our experiments are
+limited to low-dimensional models and scalability remains an open challenge. Our approach has
+advanced the state of the art in terms of expressivity, which is the ﬁrst step toward obtaining a general
+and efﬁcient veriﬁer based on neural abstraction. Obtaining scalability to higher dimensions will
+require a synergy of efﬁcient SMT solvers for neural networks and safety veriﬁcation of neural ODEs,
+which are both novel and actively researched questions in formal veriﬁcation [68,69,76,79,92,95,114].
+Acknowledgements
+We thank the anonymous reviewers for their helpful suggestions. Alec was supported by the EPSRC
+Centre for Doctoral Training in Autonomous Intelligent Machines and Systems (EP/S024050/1).
+10
+
+===== PDF PAGE 11 =====
+References
+[1] Abate, A., Ahmed, D., Edwards, A., Giacobbe, M., Peruffo, A.: FOSSIL: a software tool for
+the formal synthesis of Lyapunov functions and barrier certiﬁcates using neural networks. In:
+HSCC. pp. 24:1–24:11. ACM (2021)
+[2] Abate, A., Ahmed, D., Giacobbe, M., Peruffo, A.: Formal synthesis of Lyapunov neural
+networks. IEEE Control. Syst. Lett. 5(3), 773–778 (2021)
+[3] Abate, A., David, C., Kesseli, P., Kroening, D., Polgreen, E.: Counterexample guided inductive
+synthesis modulo theories. In: CA V (1). Lecture Notes in Computer Science, vol. 10981, pp.
+270–288. Springer (2018)
+[4] Abate, A., Giacobbe, M., Roy, D.: Learning probabilistic termination proofs. In: CA V (2).
+Lecture Notes in Computer Science, vol. 12760, pp. 3–26. Springer (2021)
+[5] Althoff, M.: Reachability analysis of nonlinear systems using conservative polynomialization
+and non-convex sets. In: HSCC. pp. 173–182. ACM (2013)
+[6] Althoff, M.: An introduction to CORA 2015. In: ARCH@CPSWeek. EPiC Series in Comput-
+ing, vol. 34, pp. 120–151. EasyChair (2015)
+[7] Althoff, M., Ábrahám, E., Forets, M., Frehse, G., Freire, D., Schilling, C., Schupp, S.,
+Wetzlinger, M.: ARCH-COMP21 category report: Continuous and hybrid systems with linear
+continuous dynamics. In: ARCH@ADHS. EPiC Series in Computing, vol. 80, pp. 1–31.
+EasyChair (2021)
+[8] Althoff, M., Stursberg, O., Buss, M.: Reachability analysis of nonlinear systems with uncertain
+parameters using conservative linearization. In: CDC. pp. 4042–4048. IEEE (2008)
+[9] Alur, R., Henzinger, T., Lafferriere, G., Pappas, G.: Discrete abstractions of hybrid systems.
+Proceedings of the IEEE 88(7), 971–984 (2000)
+[10] Alur, R.: Principles of cyber-physical systems. MIT press (2015)
+[11] Alur, R., Courcoubetis, C., Halbwachs, N., Henzinger, T.A., Ho, P., Nicollin, X., Olivero, A.,
+Sifakis, J., Yovine, S.: The algorithmic analysis of hybrid systems. Theor. Comput. Sci.138(1),
+3–34 (1995)
+[12] Alur, R., Dill, D.L.: A theory of timed automata. Theor. Comput. Sci. 126(2), 183–235 (1994)
+[13] Alur, R., Giacobbe, M., Henzinger, T.A., Larsen, K.G., Mikucionis, M.: Continuous-time
+models for system design and analysis. In: Computing and Software Science, Lecture Notes in
+Computer Science, vol. 10000, pp. 452–477. Springer (2019)
+[14] Asarin, E., Dang, T.: Abstraction by projection and application to multi-afﬁne systems. In:
+HSCC. Lecture Notes in Computer Science, vol. 2993, pp. 32–47. Springer (2004)
+[15] Asarin, E., Dang, T., Girard, A.: Reachability analysis of nonlinear systems using conservative
+approximation. In: HSCC. Lecture Notes in Computer Science, vol. 2623, pp. 20–35. Springer
+(2003)
+[16] Asarin, E., Dang, T., Girard, A.: Hybridization methods for the analysis of nonlinear systems.
+Acta Informatica 43(7), 451–476 (2007)
+[17] Aylward, E.M., Parrilo, P.A., Slotine, J.J.E.: Stability and robustness analysis of nonlinear
+systems via contraction metrics and SOS programming. Autom. 44, 2163–2170 (2008)
+[18] Bacci, E., Giacobbe, M., Parker, D.: Verifying reinforcement learning up to inﬁnity. In: IJCAI.
+pp. 2154–2160. ijcai.org (2021)
+[19] Bae, K., Gao, S.: Modular SMT-based analysis of nonlinear hybrid systems. In: FMCAD. pp.
+180–187. IEEE (2017)
+[20] Baier, C., Katoen, J.: Principles of model checking. MIT Press (2008)
+[21] Bak, S., Bogomolov, S., Henzinger, T.A., Johnson, T.T., Prakash, P.: Scalable static hybridiza-
+tion methods for analysis of nonlinear systems. In: HSCC. pp. 155–164. ACM (2016)
+[22] Bak, S., Bogomolov, S., Johnson, T.T.: HYST: a source transformation and transla-
+tion tool for hybrid automaton models. In: Girard, A., Sankaranarayanan, S. (eds.)
+Proceedings of the 18th International Conference on Hybrid Systems: Computation
+and Control, HSCC’15, Seattle, WA, USA, April 14-16, 2015. pp. 128–133. ACM
+11
+
+===== PDF PAGE 12 =====
+(2015). https://doi.org/10.1145/2728606.2728630, https://doi.org/10.1145/2728606.
+2728630
+[23] Bak, S., Tran, H., Hobbs, K., Johnson, T.T.: Improved geometric path enumeration for
+verifying relu neural networks. In: CA V (1). Lecture Notes in Computer Science, vol. 12224,
+pp. 66–96. Springer (2020)
+[24] Balluchi, A., Casagrande, A., Collins, P., Ferrari, A., Villa, T., Sangiovanni-Vincentelli, A.:
+Ariadne: A framework for reachability analysis of hybrid automata. In: MTNS. pp. 1267–1269
+(2006)
+[25] Barron, A.R.: Approximation and estimation bounds for artiﬁcial neural networks. Machine
+Learning 14(1), 115–133 (1994)
+[26] Batt, G., Belta, C., Weiss, R.: Temporal logic analysis of gene networks under parameter
+uncertainty. IEEE Trans. Autom. Control. 53, 215–229 (2008)
+[27] Ben Sassi, M.A., Testylier, R., Dang, T., Girard, A.: Reachability analysis of polynomial
+systems using linear programming relaxations. In: ATV A. Lecture Notes in Computer Science,
+vol. 7561, pp. 137–151. Springer (2012)
+[28] Bogomolov, S., Forets, M., Frehse, G., Potomkin, K., Schilling, C.: Juliareach: a toolbox for
+set-based reachability. In: HSCC. pp. 39–44. ACM (2019)
+[29] Bogomolov, S., Frehse, G., Giacobbe, M., Henzinger, T.A.: Counterexample-guided reﬁnement
+of template polyhedra. In: TACAS (1). Lecture Notes in Computer Science, vol. 10205, pp.
+589–606 (2017)
+[30] Bogomolov, S., Giacobbe, M., Henzinger, T.A., Kong, H.: Conic abstractions for hybrid
+systems. In: FORMATS. Lecture Notes in Computer Science, vol. 10419, pp. 116–132.
+Springer (2017)
+[31] Chang, Y ., Roohi, N., Gao, S.: Neural Lyapunov control. In: NeurIPS. pp. 3240–3249 (2019)
+[32] Chen, S., Fazlyab, M., Morari, M., Pappas, G.J., Preciado, V .M.: Learning Lyapunov functions
+for hybrid systems. In: HSCC. pp. 13:1–13:11. ACM (2021)
+[33] Chen, T.Q., Rubanova, Y ., Bettencourt, J., Duvenaud, D.: Neural ordinary differential equa-
+tions. In: NeurIPS. pp. 6572–6583 (2018)
+[34] Chen, X., Ábrahám, E., Sankaranarayanan, S.: Taylor model ﬂowpipe construction for non-
+linear hybrid systems. In: RTSS. pp. 183–192. IEEE Computer Society (2012)
+[35] Chen, X., Ábrahám, E., Sankaranarayanan, S.: Flow*: An analyzer for non-linear hybrid
+systems. In: CA V. Lecture Notes in Computer Science, vol. 8044, pp. 258–263. Springer
+(2013)
+[36] Chen, X., Mover, S., Sankaranarayanan, S.: Compositional relational abstraction for nonlinear
+hybrid systems. ACM Trans. Embed. Comput. Syst. 16(5s), 187:1–187:19 (2017)
+[37] Chen, X., Sankaranarayanan, S.: Decomposed reachability analysis for nonlinear systems. In:
+RTSS. pp. 13–24. IEEE Computer Society (2016)
+[38] Chen, X., Sankaranarayanan, S., Ábrahám, E.: Flow* 1.2: More effective to play with hybrid
+systems. In: ARCH@CPSWeek. EPiC Series in Computing, vol. 34, pp. 152–159. EasyChair
+(2015)
+[39] Cimatti, A., Mover, S., Tonetta, S.: A quantiﬁer-free SMT encoding of non-linear hybrid
+automata. In: FMCAD. pp. 187–195. IEEE (2012)
+[40] Clarke, E.M., Grumberg, O., Kroening, D., Peled, D.A., Veith, H.: Model checking, 2nd
+Edition. MIT Press (2018)
+[41] Cousot, P., Cousot, R.: Abstract interpretation: A uniﬁed lattice model for static analysis of
+programs by construction or approximation of ﬁxpoints. In: POPL. pp. 238–252. ACM (1977)
+[42] Cybenko, G.: Approximation by superpositions of a sigmoidal function. Mathematics of
+Control, Signals and Systems 2(4), 303–314 (1989)
+[43] Dai, H., Landry, B., Pavone, M., Tedrake, R.: Counter-example guided synthesis of neural
+network Lyapunov functions for piecewise linear systems. In: CDC. pp. 1274–1281. IEEE
+(2020)
+12
+
+===== PDF PAGE 13 =====
+[44] Dai, H., Landry, B., Yang, L., Pavone, M., Tedrake, R.: Lyapunov-stable neural-network
+control. In: Robotics: Science and Systems (2021)
+[45] Dang, T., Frehse, G., Girard, A., Le Guernic, C.: Tools for the analysis of hybrid models. In:
+Communicating Embedded Systems, pp. 227–251. Wiley (2013)
+[46] Dang, T., Maler, O., Testylier, R.: Accurate hybridization of nonlinear systems. In: HSCC. pp.
+11–20. ACM (2010)
+[47] Dang, T., Testylier, R.: Hybridization domain construction using curvature estimation. In:
+HSCC. pp. 123–132. ACM (2011)
+[48] Dang, T., Testylier, R.: Reachability analysis for polynomial dynamical systems using the
+bernstein expansion. Reliab. Comput. 17, 128–152 (2012)
+[49] Derler, P., Lee, E.A., Sangiovanni-Vincentelli, A.L.: Modeling cyber-physical systems. Proc.
+IEEE 100(1), 13–28 (2012)
+[50] Diacu, F.: The solution of then-body problem. The Mathematical Intelligencer 18(3), 66–70
+(Jun 1996). https://doi.org/10.1007/BF03024313
+[51] Doyen, L., Frehse, G., Pappas, G.J., Platzer, A.: Veriﬁcation of hybrid systems. In: Handbook
+of Model Checking, pp. 1047–1110. Springer (2018)
+[52] Dreossi, T.: Sapo: Reachability computation and parameter synthesis of polynomial dynamical
+systems. In: HSCC. pp. 29–34. ACM (2017)
+[53] Dreossi, T., Dang, T., Piazza, C.: Reachability computation for polynomial dynamical systems.
+Formal Methods Syst. Des. 50(1), 1–38 (2017)
+[54] Dutta, S., Chen, X., Sankaranarayanan, S.: Reachability analysis for neural feedback systems
+using regressive polynomial rule inference. In: HSCC. pp. 157–168. ACM (2019)
+[55] Eyink, G.L., Drivas, T.D.: Spontaneous stochasticity and anomalous dissipation for burgers
+equation. Journal of Statistical Physics 158(2), 386–432 (2015)
+[56] Fan, C., Qi, B., Mitra, S., Viswanathan, M., Duggirala, P.S.: Automatic reachability analysis
+for nonlinear hybrid models with C2E2. In: CA V (1). Lecture Notes in Computer Science,
+vol. 9779, pp. 531–538. Springer (2016)
+[57] Fränzle, M., Herde, C., Teige, T., Ratschan, S., Schubert, T.: Efﬁcient solving of large non-
+linear arithmetic constraint systems with complex boolean structure. J. Satisf. Boolean Model.
+Comput. 1(3-4), 209–236 (2007)
+[58] Frehse, G.: Phaver: Algorithmic veriﬁcation of hybrid systems past hytech. In: HSCC. Lecture
+Notes in Computer Science, vol. 3414, pp. 258–273. Springer (2005)
+[59] Frehse, G.: Reachability of hybrid systems in space-time. In: EMSOFT. pp. 41–50. IEEE
+(2015)
+[60] Frehse, G., Giacobbe, M., Henzinger, T.A.: Space-time interpolants. In: CA V (1). Lecture
+Notes in Computer Science, vol. 10981, pp. 468–486. Springer (2018)
+[61] Frehse, G., Kateja, R., Le Guernic, C.: Flowpipe approximation and clustering in space-time.
+In: HSCC. pp. 203–212. ACM (2013)
+[62] Frehse, G., Le Guernic, C., Donzé, A., Cotton, S., Ray, R., Lebeltel, O., Ripado, R., Girard,
+A., Dang, T., Maler, O.: SpaceEx: scalable veriﬁcation of hybrid systems. In: CA V. Lecture
+Notes in Computer Science, vol. 6806, pp. 379–395. Springer (2011)
+[63] Funahashi, K.I.: On the approximate realization of continuous mappings by neural networks.
+Neural Networks 2(3), 183–192 (1989)
+[64] Gao, S., Kong, S., Clarke, E.M.: dReal: an SMT solver for nonlinear theories over the reals.
+In: CADE, Lecture Notes in Computer Science, vol. 7898, pp. 208–214. Springer (2013)
+[65] García Soto, M., Prabhakar, P.: Hybridization for stability veriﬁcation of nonlinear switched
+systems. In: RTSS. pp. 244–256. IEEE (2020)
+[66] Geretti, L., Sandretto, J.A.D., Althoff, M., Benet, L., Chapoutot, A., Collins, P., Duggirala, P.S.,
+Forets, M., Kim, E., Linares, U., Sanders, D.P., Schilling, C., Wetzlinger, M.: ARCH-COMP21
+category report: Continuous and hybrid systems with nonlinear dynamics. In: ARCH@ADHS.
+EPiC Series in Computing, vol. 80, pp. 32–54. EasyChair (2021)
+13
+
+===== PDF PAGE 14 =====
+[67] Giacobbe, M., Kroening, D., Parsert, J.: Neural termination analysis. In: ESEC/SIGSOFT
+FSE. pp. 633–645. ACM (2022)
+[68] Gruenbacher, S., Hasani, R.M., Lechner, M., Cyranka, J., Smolka, S.A., Grosu, R.: On the
+veriﬁcation of neural ODEs with stochastic guarantees. In: AAAI. pp. 11525–11535. AAAI
+Press (2021)
+[69] Gruenbacher, S., Lechner, M., Hasani, R., Rus, D., Henzinger, T.A., Smolka, S., Grosu, R.:
+Gotube: Scalable stochastic veriﬁcation of continuous-depth models. In: AAAI (2022)
+[70] Habets, L.C.G.J.M., Kloetzer, M., Belta, C.: Control of rectangular multi-afﬁne hybrid systems.
+In: CDC. pp. 2619–2624. IEEE (2006)
+[71] Henzinger, T.A.: The theory of hybrid automata. In: LICS. pp. 278–292. IEEE Computer
+Society (1996)
+[72] Henzinger, T.A., Kopke, P.W., Puri, A., Varaiya, P.: What’s decidable about hybrid automata?
+J. Comput. Syst. Sci. 57(1), 94–124 (1998)
+[73] Henzinger, T.A., Wong-Toi, H.: Linear phase-portrait approximations for nonlinear hybrid
+systems. In: Hybrid Systems. Lecture Notes in Computer Science, vol. 1066, pp. 377–388.
+Springer (1995)
+[74] Hornik, K., Stinchcombe, M., White, H.: Multilayer feedforward networks are universal
+approximators. Neural Networks 2(5), 359–366 (1989)
+[75] Huang, C., Fan, J., Li, W., Chen, X., Zhu, Q.: Reachnn: Reachability analysis of neural-
+network controlled systems. ACM Trans. Embed. Comput. Syst. 18(5s), 106:1–106:22 (2019)
+[76] Huang, X., Kwiatkowska, M., Wang, S., Wu, M.: Safety veriﬁcation of deep neural networks.
+In: CA V (1). Lecture Notes in Computer Science, vol. 10426, pp. 3–29. Springer (2017)
+[77] Ivanov, R., Carpenter, T.J., Weimer, J., Alur, R., Pappas, G.J., Lee, I.: Verisig 2.0: Veriﬁcation
+of neural network controllers using taylor model preconditioning. In: CA V (1). Lecture Notes
+in Computer Science, vol. 12759, pp. 249–262. Springer (2021)
+[78] Kapinski, J., Deshmukh, J.V ., Sankaranarayanan, S., Aréchiga, N.: Simulation-guided Lya-
+punov analysis for hybrid dynamical systems. In: HSCC. pp. 133–142. ACM (2014)
+[79] Katz, G., Huang, D.A., Ibeling, D., Julian, K., Lazarus, C., Lim, R., Shah, P., Thakoor, S.,
+Wu, H., Zeljic, A., Dill, D.L., Kochenderfer, M.J., Barrett, C.W.: The Marabou framework for
+veriﬁcation and analysis of deep neural networks. In: CA V (1). Lecture Notes in Computer
+Science, vol. 11561, pp. 443–452. Springer (2019)
+[80] Kekatos, N., Forets, M., Frehse, G.: Constructing veriﬁcation models of nonlinear simulink
+systems via syntactic hybridization. In: CDC. pp. 1788–1795. IEEE (2017)
+[81] Khalil, H.K.: Nonlinear Systems. Prentice Hall, Upper Saddle River, N.J, 3rd ed edn. (2002)
+[82] Kim, E., Bak, S., Duggirala, P.S.: Automatic dynamic parallelotope bundles for reachability
+analysis of nonlinear systems. In: FORMATS. Lecture Notes in Computer Science, vol. 12860,
+pp. 50–66. Springer (2021)
+[83] Kloetzer, M., Belta, C.: Reachability analysis of multi-afﬁne systems. In: HSCC. Lecture
+Notes in Computer Science, vol. 3927, pp. 348–362. Springer (2006)
+[84] Kong, H., Bartocci, E., Bogomolov, S., Grosu, R., Henzinger, T.A., Jiang, Y ., Schilling, C.:
+Discrete abstraction of multiafﬁne systems. In: HSB. Lecture Notes in Computer Science,
+vol. 9957, pp. 128–144 (2016)
+[85] Kong, S., Gao, S., Chen, W., Clarke, E.M.: dreach:δ-reachability analysis for hybrid systems.
+In: TACAS. Lecture Notes in Computer Science, vol. 9035, pp. 200–205. Springer (2015)
+[86] Lafferriere, G., Pappas, G.J., Sastry, S.: O-minimal hybrid systems. Math. Control. Signals
+Syst. 13(1), 1–21 (2000)
+[87] Lafferriere, G., Pappas, G.J., Yovine, S.: A new class of decidable hybrid systems. In: HSCC.
+Lecture Notes in Computer Science, vol. 1569, pp. 137–151. Springer (1999)
+[88] Le Guernic, C., Girard, A.: Reachability analysis of hybrid systems using support functions.
+In: CA V, Lecture Notes in Computer Science, vol. 5643, pp. 540–554. Springer (2009)
+14
+
+===== PDF PAGE 15 =====
+[89] Lechner, M., Zikelic, D., Chatterjee, K., Henzinger, T.A.: Stability veriﬁcation in stochastic
+control systems via neural network supermartingales. In: AAAI. pp. 7326–7336. AAAI Press
+(2022)
+[90] Leshno, M., Lin, V .Y ., Pinkus, A., Schocken, S.: Multilayer feedforward networks with
+a nonpolynomial activation function can approximate any function. Neural Networks 6(6),
+861–867 (1993)
+[91] Li, D., Bak, S., Bogomolov, S.: Reachability analysis of nonlinear systems using hybridization
+and dynamics scaling. In: FORMATS. Lecture Notes in Computer Science, vol. 12288, pp.
+265–282. Springer (2020)
+[92] Liu, C., Arnon, T., Lazarus, C., Strong, C.A., Barrett, C.W., Kochenderfer, M.J.: Algorithms
+for verifying deep neural networks. Found. Trends Optim. 4(3-4), 244–404 (2021)
+[93] Lu, Z., Pu, H., Wang, F., Hu, Z., Wang, L.: The expressive power of neural networks: A view
+from the width. In: NIPS. pp. 6231–6239 (2017)
+[94] Majumdar, R., Zamani, M.: Approximately bisimilar symbolic models for digital control
+systems. In: CA V. Lecture Notes in Computer Science, vol. 7358, pp. 362–377. Springer
+(2012)
+[95] Manzanas Lopez, D., Musau, P., Hamilton, N., Johnson, T.T.: Reachability analysis of a
+general class of neural ordinary differential equations. In: FORMATS. Lecture Notes in
+Computer Science, vol. 13465, pp. 258–277. Springer (2022)
+[96] Mover, S., Cimatti, A., Griggio, A., Irfan, A., Tonetta, S.: Implicit semi-algebraic abstraction
+for polynomial dynamical systems. In: CA V (1). Lecture Notes in Computer Science, vol.
+12759, pp. 529–551. Springer (2021)
+[97] Peruffo, A., Ahmed, D., Abate, A.: Automated and formal synthesis of neural barrier certiﬁ-
+cates for dynamical models. In: TACAS (1). Lecture Notes in Computer Science, vol. 12651,
+pp. 370–388. Springer (2021)
+[98] Pola, G., Girard, A., Tabuada, P.: Approximately bisimilar symbolic models for nonlinear
+control systems. Autom. 44(10), 2508–2516 (2008)
+[99] Prabhakar, P., Dullerud, G.E., Viswanathan, M.: Stability preserving simulations and bisimula-
+tions for hybrid systems. IEEE Trans. Autom. Control. 60(12), 3210–3225 (2015)
+[100] Prabhakar, P., García Soto, M.: Abstraction based model-checking of stability of hybrid
+systems. In: CA V. Lecture Notes in Computer Science, vol. 8044, pp. 280–295. Springer
+(2013)
+[101] Ravanbakhsh, H., Sankaranarayanan, S.: Learning control Lyapunov functions from coun-
+terexamples and demonstrations. Auton. Robots 43(2), 275–307 (2019)
+[102] Roohi, N., Prabhakar, P., Viswanathan, M.: Hybridization based CEGAR for hybrid automata
+with afﬁne dynamics. In: TACAS. Lecture Notes in Computer Science, vol. 9636, pp. 752–769.
+Springer (2016)
+[103] Sankaranarayanan, S.: Automatic abstraction of non-linear systems using change of bases
+transformations. In: HSCC. pp. 143–152. ACM (2011)
+[104] Sankaranarayanan, S., Tiwari, A.: Relational abstractions for continuous and hybrid systems.
+In: CA V. Lecture Notes in Computer Science, vol. 6806, pp. 686–702. Springer (2011)
+[105] Sastry, S.: Nonlinear Systems, Interdisciplinary Applied Mathematics, vol. 10. Springer New
+York, New York, NY (1999)
+[106] Schilling, C., Forets, M., Guadalupe, S.: Veriﬁcation of neural-network control systems by
+integrating taylor models and zonotopes. In: AAAI (2022)
+[107] Schupp, S., Ábrahám, E., Makhlouf, I.B., Kowalewski, S.: Hypro: A C++ library of state set
+representations for hybrid systems reachability analysis. In: NFM. Lecture Notes in Computer
+Science, vol. 10227, pp. 288–294 (2017)
+[108] Solar-Lezama, A.: Program Synthesis by Sketching. Ph.D. thesis, University of California at
+Berkeley, USA (2008)
+[109] Solar-Lezama, A., Tancau, L., Bodík, R., Seshia, S.A., Saraswat, V .A.: Combinatorial sketch-
+ing for ﬁnite programs. In: ASPLOS. pp. 404–415. ACM (2006)
+15
+
+===== PDF PAGE 16 =====
+[110] Sotomayor, J., Mello, L., Braga, D.: Bifurcation analysis of the watt governor system. Compu-
+tational and Applied Mathematics 26 (Jul 2006)
+[111] Sun, D., Jha, S., Fan, C.: Learning certiﬁed control using contraction metric. In: CoRL.
+Proceedings of Machine Learning Research, vol. 155, pp. 1519–1539. PMLR (2020)
+[112] Tabuada, P.: Veriﬁcation and Control of Hybrid Systems - A Symbolic Approach. Springer
+(2009)
+[113] Tran, H., Cai, F., Manzanas Lopez, D., Musau, P., Johnson, T.T., Koutsoukos, X.D.: Safety
+veriﬁcation of cyber-physical systems with reinforcement learning control. ACM Trans. Embed.
+Comput. Syst. 18(5s), 105:1–105:22 (2019)
+[114] Tran, H., Yang, X., Manzanas Lopez, D., Musau, P., Nguyen, L.V ., Xiang, W., Bak, S., Johnson,
+T.T.: NNV: the neural network veriﬁcation tool for deep neural networks and learning-enabled
+cyber-physical systems. In: CA V (1). Lecture Notes in Computer Science, vol. 12224, pp.
+3–17. Springer (2020)
+[115] Van Der Schaft, A.J., Schumacher, H.: An introduction to hybrid dynamical systems, vol. 251.
+Springer (2007)
+[116] Xiang, W., Tran, H., Rosenfeld, J.A., Johnson, T.T.: Reachable set estimation and safety
+veriﬁcation for piecewise linear systems with neural network controllers. In: ACC. pp. 1574–
+1579. IEEE (2018)
+[117] Zhao, H., Zeng, X., Chen, T., Liu, Z.: Synthesizing barrier certiﬁcates using neural networks.
+In: HSCC. pp. 25:1–25:11. ACM (2020)
+[118] Zhao, H., Zeng, X., Chen, T., Liu, Z., Woodcock, J.: Learning safe neural network controllers
+with barrier certiﬁcates. Formal Aspects Comput. 33(3), 437–455 (2021)
+[119] Zhou, R., Quartz, T., Sterck, H.D., Liu, J.: Neural Lyapunov control of unknown nonlinear
+systems with stability guarantees. In: NeurIPS (2022)
+16
+
+===== PDF PAGE 17 =====
+Checklist
+1. For all authors...
+(a) Do the main claims made in the abstract and introduction accurately reﬂect the paper’s
+contributions and scope? [Yes]
+(b) Did you describe the limitations of your work? [Yes] Please see Section 5.2
+(c) Did you discuss any potential negative societal impacts of your work? [Yes] See 1
+(d) Have you read the ethics review guidelines and ensured that your paper conforms to
+them? [Yes]
+2. If you are including theoretical results...
+(a) Did you state the full set of assumptions of all theoretical results? [Yes] See 2
+(b) Did you include complete proofs of all theoretical results? [Yes] See 2
+3. If you ran experiments...
+(a) Did you include the code, data, and instructions needed to reproduce the main experi-
+mental results (either in the supplemental material or as a URL)? [Yes] The code and
+data generation will be part of the supplementary material. Reproducing the results
+will be possible from this but is not the intention of the authors.
+(b) Did you specify all the training details (e.g., data splits, hyperparameters, how they
+were chosen)? [Yes] The hyper-parameters for the learning procedure are chosen
+heuristically, but we include the relevant conﬁguration ﬁles in the supplementary
+material.
+(c) Did you report error bars (e.g., with respect to the random seed after running experi-
+ments multiple times)? [N/A]
+(d) Did you include the total amount of compute and the type of resources used (e.g., type
+of GPUs, internal cluster, or cloud provider)? [Yes] See Table 1.
+4. If you are using existing assets (e.g., code, data, models) or curating/releasing new assets...
+(a) If your work uses existing assets, did you cite the creators? [Yes] We have cited all
+used tools.
+(b) Did you mention the license of the assets? [Yes] See Section 5
+(c) Did you include any new assets either in the supplemental material or as a URL? [Yes]
+The code will be included in the supplementary material.
+(d) Did you discuss whether and how consent was obtained from people whose data you’re
+using/curating? [N/A]
+(e) Did you discuss whether the data you are using/curating contains personally identiﬁable
+information or offensive content? [N/A]
+5. If you used crowdsourcing or conducted research with human subjects...
+(a) Did you include the full text of instructions given to participants and screenshots, if
+applicable? [N/A]
+(b) Did you describe any potential participant risks, with links to Institutional Review
+Board (IRB) approvals, if applicable? [N/A]
+(c) Did you include the estimated hourly wage paid to participants and the total amount
+spent on participant compensation? [N/A]
+17
+
+===== PDF PAGE 18 =====
+A Benchmark Nonlinear Dynamical Models
+For each dynamical model, we report the vector ﬁeld f : Rn→ Rn and the spatial domain X
+over which the abstraction is performed and which, unless otherwise stated, is taken to be the
+hyper-rectangle [−1, 1]n.
+Water Tank 
+
+
+˙x = 1.5−√x
+X0 = [0, 0.01]
+XB ={x|x≥ 2}
+(13)
+Jet Engine [17]
+
+
+
+˙x =−y− 1.5x2− 0.5x3− 0.1,
+˙y = 3x−y,
+X0 = [0.45, 0.50]× [−0.60,−0.55]
+XB = [0.3, 0.35]× [0.5, 0.6]
+(14)
+Steam Governor [110]
+
+
+
+˙x =y,
+˙y =z2 sin(x) cos(x)− sin(x)− 3y,
+˙z =−(cos(x)− 1),
+X0 = [0.70, 0.75]× [−0.05, 0.05]× [0.70, 0.75]
+XB = [0.5, 0.6]× [−0.4,−0.3]× [0.7, 0.8]
+(15)
+Exponential 
+
+
+˙x =− sin(exp(y3 + 1))−y2
+˙y =−x,
+X0 = [0.45, 0.5]× [0.86, 0.91]
+XB = [0.3, 0.4]× [0.5, 0.6]
+(16)
+Non-Lipschitz Vector Field 1 (NL1)
+
+
+
+˙x =y
+˙y =√x
+X = [0, 1]× [−1, 1],
+X0 = [0, 0.05]× [0, 0.1]
+XB = [0.35, 0.45]× [0.1, 0.2]
+(17)
+Non-Lipschitz Vector Field 2 (NL2)
+
+
+
+˙x =x2 +y
+˙y =
+3√
+x2−x,
+X0 = [−0.025, 0.025]× [−0.9,−0.85]
+XB = [−0.05, 0.05]× [−0.8,−0.7]
+(18)
+B Additional Experimental Results and Figures
+B.1 Experimental Comparison Against Afﬁne Simplical Meshes
+In this section, we present some supplementary empirical results on neural abstractions. Firstly, we
+note that hybridisation-based abstraction of nonlinear models have been studied previously, such as
+in [16], which describes a type of hybridisation-based abstractions that is similar to those constructed
+in this work. The approach relies ﬁrst on partitioning the state space using a simplicial mesh grid, and
+18
+
+===== PDF PAGE 19 =====
+Table 2: A comparison between abstractions constructed using an afﬁne simplicial mesh and neural
+abstractions. Here,W represents the neural structure used for neural abstraction,NP : total number of
+partitions,ϵ: the calculated upper bound on the approximation error, ¯NP : average (mean) number of
+partitions, ¯ϵ: average (mean) approximation error bound,ϵ+ : the maximum approximation error,ϵ−:
+the minimum approximation error, Success Ratio: the ratio of repeated experiments that terminated
+successfully (i.e., an error of 0.5 was reached within the ﬁrst timeout of 300s). Note, we only
+include successful experiments when calculating the average, min and max (since no error exists for
+unsuccessful experiments). All reported errors use the 2-norm.
+Benchmark Afﬁne Simplicial Mesh Neural Abstractions
+Np ϵ W ¯NP ¯ϵ ϵ + ϵ− Success Ratio
+Jet Engine 8 1.33 [10] 9 0.11 0.22 0.040 1.0
+32 0.33 [10, 10] 27 0.077 0.17 0.040 1.0
+128 0.083 [15, 15] 61 0.058 0.071 0.053 1.0
+Steam 24 3.58 [10] 27 0.27 0.37 0.21 1.0
+192 0.89 [20] 236 0.18 0.27 0.15 1.0
+Exponential 8 13.7 [10] 9 0.29 0.40 0.22 0.5
+32 3.44 [20] 30 0.19 0.22 0.13 0.9
+128 0.86 [20, 20] 75 0.15 0.22 0.071 1.0
+then allowing the dynamics in each mesh to be calculated from an afﬁne interpolation between the
+vertices of the simplex. This afﬁne simplicial mesh (ASM) based approach constructs abstractions
+of the same expressivity as neural abstractions (ﬁrst order approximations) with partitions deﬁned
+by afﬁne inequalities. An approximation-error bound for ASM can be calculated for systems which
+have bounded second order derivatives using the model dynamics and the size of each simplex (all
+simplices are assumed to be the same size), as described in [16]. In Table 2 we compare between
+abstractions constructed using an afﬁne simplicial mesh and neural abstractions. We run our procedure
+to synthesise certiﬁed abstractions using selected network structures and an initial target error of
+0.5. If a successful abstraction is synthesised, we reduce the error by some multiplicative factor and
+repeat. This iterative procedure continues until no success is reached within a time of 300s. We report
+the results from 10 repeated experiments over different initial random seeds for neural abstractions,
+reporting the average (mean), minimum and maximum results obtained. In contrast, we report the
+approximation-error bound for ASM for different numbers of partitions.
+The results reported in Table 2 illustrate that neural abstractions outperform ASM based abstractions
+in terms of error for similar numbers of partitions. Furthermore, neural abstractions generally require
+signiﬁcantly fewer partitions for signiﬁcantly lower approximation-error bounds. In practice this
+means neural abstractions will outperform ASM-based abstractions for safety veriﬁcation both in
+terms of speed and accuracy. We also note the success ratio of our experiments, i.e., the ratio of all
+experiments which achieve an approximation-error bound of 0.5 or less. These results suggest that in
+general or procedure is robust and terminates successfully with high probability for reasonable target
+errors.
+We note that since ASM based abstractions are constructive and are able to deterministically increase
+the number partitions and consequently reduce the error, for very large numbers of partitions they
+would achieve lower errors than neural abstractions. However, in practice these abstractions would
+be too large in complexity to use with SpaceEx for safety veriﬁcation.
+B.2 Computation Run-time Proﬁling
+In Table 3 we show a breakdown of the runtimes of our procedure shown in the main text. In
+particular, we present the total time spent during learning, certiﬁcation of the abstraction and ﬁnally
+in safety veriﬁcation.
+19
+
+===== PDF PAGE 20 =====
+Table 3: Breakdown of the timings shown in Table 1. Shown are the timings in the constituent
+component shown in Figure 2: time spent during learning, time spent during certiﬁcation of the
+neural abstraction, and time spent during safety veriﬁcation. Remaining time is spent in overheads,
+such as converting from neural network to hybrid automaton.
+Model Learner Certiﬁer Safety Veriﬁcation
+Jet Engine 19 194 1.8
+Steam Governor 42 177 0.5
+Exponential 27 278 3.3
+Water-tank 48 0.001 0.05
+Non-Lipschitz 1 13 0.50 5.5
+Non-Lipschitz 2 31 15 5.1
+C Improved Translation from Neural Abstractions to Hybrid Automata
+C.1 Computing Invariant Conditions
+Invariant conditions are computed from the conﬁguration of a neural network denoted as the sequence
+C = (c1,...,c k) of Boolean vectorsc1∈{ 0, 1}h1,...,c k∈{ 0, 1}hk, wherek denotes the number
+of hidden layers andh1,...,h k denote the number neurons in each of them (cf. Section 2). Every
+vectorci represents the conﬁguration of the neurons at theith hidden later, and itsjth elementci,j
+represents the activation status of thejth neuron at theith layer. Every mode of the hybrid automaton
+corresponds to exactly one conﬁguration of neurons. In turn, every conﬁguration of neurons C
+restricts the neural networkN into a linear function. More precisely, we inductively deﬁne the linear
+restriction at theith hidden layer as follows:
+N (i)
+C (x) = diag(ci)(WiN (i−1)
+C (x) +bi), fori = 1,...,k, N (0)
+C (x) =x. (19)
+We deﬁne the invariant of each mode as a restriction of the domain of interest to a regionXC⊆X ,
+which denotes the maximal set of states that enables conﬁguration C. To constructXC, we begin
+with the observation that the activation conﬁgurationci at everyith hidden layer induces a halfspace
+on the vector space of the previous layer of the neural network. Then, the pre-image of this
+halfspace backward along the previous layers of the linear restriction of the network characterises
+a corresponding halfspace on its input neurons. Since the input neurons are equivalent to the state
+variables of the dynamical model, the halfspace induced by layeri projected onto state variablesx is
+H(i)
+C = pre-image of{yi−1| diag(2ci− 1)(Wiyi−1 +bi)≥ 0}| {z }
+halfspace induced byith layer onto (i− 1)th layer
+underN (i−1)
+C (20)
+The pre-image of a set Y under a function g is deﬁned as{x| g(x)∈Y} and can be generally
+computed by quantiﬁer elimination or, in the linear case, double description methods. However, these
+methods have worst-case exponential time complexity. To obtainXC efﬁciently, we can leverage the
+fact that the pre-image of any halfspace{y|cTy≤d} under any afﬁne functiong(x) =Ax+b equals
+to the set{x|cTy≤d∧y =Ax +b}, which in turn deﬁnes the halfspace{x|cTAx≤d−cTb}.
+Therefore, sinceN (i−1)
+C is an afﬁne function, every halfspace can be projected backward through the
+afﬁne functionsN (i−1)
+C ,..., N (1)
+C usingO(k) linear algebra operations. Finally, the entire invariant
+condition for conﬁgurationC is deﬁned as the following polyhedron:
+XC =∩{H(i)
+C |i = 1,...,k }∩X . (21)
+An invariant condition thus results in a polyhedron deﬁned as the intersection ofk halfspaces together
+with the constrains that deﬁne the domain of interest. Notably, under the deﬁnition in this appendix,
+the dynamics of modeC given in Equation 10 correspond to the afﬁne dynamical model
+˙x =N (k+1)
+C (x) +d, ‖d‖≤ ϵ, x ∈X C, (22)
+whose dynamics are governed by the afﬁne function
+N (k+1)
+C (x) =Wk+1N (k)
+C (x) +bk+1. (23)
+20
+
+===== PDF PAGE 21 =====
+N1
+N2X =∅
+N3N3
+EndEnd End X =∅
+C = (1, 0, 1) C = (1, 1, 1)C = (1, 0, 0)
+X←X∩ h+
+1 ,
+X⁄ =∅X←X∩ h−
+1
+X←X∩ h+
+2 ,
+X⁄ =∅
+X←X∩ h+
+3 ,
+X⁄ =∅X←X∩ h−
+3
+X←X∩ h−
+2 ,
+X⁄ =∅
+X←X∩ h+
+3
+X←X∩ h−
+3
+Figure 4: Example Tree search to determine the active conﬁgurations for a neural network consisting
+of a single hidden layer with 3 neurons. Here,h+
+i denotes the positive half-space ({x :wix+bi≥ 0})
+andh−
+i denotes the negative half-space ({x :wix +bi≤ 0}) of theith neuron;wi represents theith
+row of the weight matrix corresponding to the hidden layer, andbi represents theith element of the
+bias vector of the hidden layer. Notably, when the setX becomes empty, it is no longer necessary to
+continue along that path. Once we reach the end of the tree, we have an active conﬁgurationC, and
+backtrack to the last node that was not fully explored.
+C.2 Enumerating Feasible Modes
+Determining whether a modeC exists in the hybrid automaton amounts to determining the linear
+program (LP) associated to polyhedron XC is feasible. Finding all modes therefore consists of
+solving 2H linear programs, whereH =h1 +··· +hk is the total number of neurons. This scales
+exponentially in the number of neurons. Here, we elaborate on the tree search algorithm described in
+Section 4.2 using a diagram; the purpose of this algorithm is to efﬁciently determine all active neuron
+conﬁgurations within a bounded domain of interestX .
+We consider an example tree in Figure 4, which depicts an example search for a neural network with
+a single hidden layer consisting of three neurons. The tree illustrates the construction ofXC through
+repeated intersections of half-spaces as paths are taken through the tree structure. Nodes represent
+each neuron, labelledNi,i = 1, 2, 3 and each edge represents one of two possible half-spaces for the
+neuron it leaves from (ReLU enabled, solid line, and disabled, dashed line). This approach allows
+us to prune neurons and overall solve signiﬁcantly fewer linear programs than simply enumerating
+through all possible conﬁgurations.
+21

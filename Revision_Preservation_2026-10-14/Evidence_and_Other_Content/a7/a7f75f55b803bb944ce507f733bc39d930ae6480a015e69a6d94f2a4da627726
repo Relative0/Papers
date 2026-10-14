@@ -1,0 +1,143 @@
+# Computation validity and reproducibility audit
+
+## 1. Verdict
+
+**Correctness baseline:** reproduced, with strong finite coverage.
+**New theory validation:** direct missing tests added by this audit and passed.
+**Performance conclusion:** the narrow negative result reproduces; no broader practical advantage or general impossibility is established.
+**Convergence status:** RETURN TO COMPUTATION FOR SPECIFIC REPAIRS as part of the overall RETURN TO BOTH THREADS decision.
+
+This document distinguishes archived results, faithful reruns, independently authored checks, and experiments not performed. The evidence directory contains the actual machine-readable outputs rather than only claimed pass counts.
+
+## 2. Source identity and integrity
+
+The uploaded computation archive is a frozen 26 September baseline repackaged on 28 September. Its handoff explicitly disclaims new Q_k work. All 523 manifest entries passed size and SHA-256 validation. The recovered three-draft package's verifier checked 630 entries, all passing. These checks prove that the delivered bytes agree with the supplied manifests, not that the manifests were externally authenticated or that the programs are correct.
+
+The clean correctness replay records the hashes of the executed source files. They match the original receipt. The regenerated dataset matches its frozen SHA-256:
+
+`04e0a7bd92b6a731a41472fbbd4e56b45d1c4e3387780ab7a3aa77cadb5ec41c`
+
+The pinned external BLIF file has SHA-256:
+
+`59b209caf863b2c6a9739777ae0a60a37cc4480c2e0d72fcbfcdddeb9a49be08`
+
+The timing protocol hash is recorded in the environment receipt. A byte-hashed source snapshot is sufficient to rerun this exact code; it is not a fully documented upstream Git/toolchain history. Future studies should additionally pin external tool commits, compilation flags, and all configurations.
+
+Runtime for this audit: Python 3.13.5, Linux 6.18.44 x86_64, glibc 2.41. The baseline requires only the standard library. The original Theory verifier used SymPy 1.14.0. Logs use the actual UTC runtime timestamp, while this package uses the project's 28 September audit date.
+
+## 3. Original clean correctness replay
+
+The authoritative receipt is `EVIDENCE/clean_correctness_replay.json`. The original runner copies the necessary program, test, data, and legacy files into a new temporary directory, removes user PYTHONPATH, and launches eight separate child processes. All returned zero. An observer wrapper recorded progress without changing the algorithms. An initial outer execution attempt hit the tool timeout with no useful receipt; the subsequent observed run completed. No passing result was selected from different source revisions.
+
+| Component | Reproduced coverage | What the check establishes |
+|---|---|---|
+| Dataset construction | 38 cases, 26 external outputs; frozen dataset hash | Deterministic regeneration of these inputs. |
+| Core artifacts | All 278 Boolean functions for n=0,...,3; 3,988 artifacts; 105,292 conditioning/count comparisons | Correctness of enumerated artifacts and restrictions against explicit truth data. |
+| Serialization and rejection | 3,988 serialization checks and 3,988 reported corruption rejections | Roundtrips and detection against the changed external truth oracle in those tests. |
+| Matrix/profile extension | All 65,536 binary 4x4 matrices | Enumerated rank, prototype, and profile identities in that suite. |
+| Conditioning composition | 3,020 sequential/fused comparisons | Agreement on the chosen inputs and sequences. |
+| Factor-only recompression | 2,000 seeded examples at n=4,6,8,10,12 | Correctness on sampled examples, not exhaustive those sizes. |
+| Binary codec | 151 roundtrips and 151 trailing-data rejects | Selected codec properties; not a full parser-security proof. |
+| Field ranks | Inner-product family r=1,...,5 with exact rational elimination | The stated ordinary-real and GF(2) ranks on this family. |
+| Legacy adapter | 675 selected artifacts; 6,750 query comparisons | Compatibility with those bounded candidate sets. |
+| Fresh persistence | 278 fresh three-backend roundtrips; 7,070 query triples | Queries from newly loaded representations in the specified process. |
+| Spike and semantic tests | 510 single-spike rank checks plus profile/refinement counterexamples | The finite witness cases used in the lower-bound and contract discussion. |
+| Large-integer boundary | Dense n=14 and n=16 | Decimal JSON guard failure and successful binary roundtrips, not timed performance at those sizes. |
+
+The non-timing results agree with the original receipt. The program's 'corruption_rejections' label must not be promoted to a claim of 3,988 adversarial malformed-serialization fuzz tests: the relevant core test changes the external truth oracle and checks semantic rejection. Parser security, denial-of-service resistance, and a complete malformed-input grammar are outside this audit.
+
+The legacy sample comprises 240 rank, 269 cofactor, 162 product/Kronecker, and four XOR artifacts, with at most 16 candidate partitions and n=2,...,10. This is not exhaustive legacy behavior.
+
+## 4. Historical defects versus current contracts
+
+The six historical observations were reproduced: unchecked factor_bits metadata; declared width not necessarily minimal rank; a self-supplied digest not authenticating the source; shallow mutability despite a frozen dataclass; and unsupported n=0/n=1 inputs in the old loader. These are observations about the archived code path. They must not be described as six newly discovered defects in every repaired backend.
+
+A checksum verifies byte agreement with a reference only when the reference is independently trusted. A self-consistent artifact-plus-digest does not establish agreement with the intended source formula. Conversely, the black-box point-query lower bound does not prohibit certificate-based verification or a trusted compilation chain; see S15.
+
+## 5. Theory verifier and independently added validation
+
+### Original program
+
+The original `verify_qk.py` ran successfully, and its JSON result is byte-semantically identical after JSON parsing to the submitted result. It checks 21 query-rank parameter pairs through n=5, ten all-Boolean fibre cases through n=3, 21 parity-witness cases through n=6, and six minimum-collision cases through n=3.
+
+It hardcodes `/mnt/data/theory_work/` as its output directory and has no output-path CLI. I provisioned that directory and ran the original program without modifying its mathematics. It has no pinned dependency file; the execution used SymPy 1.14.0. A portable wrapper is included in this audit with only the output-directory constant redirected and an explicit patch record. The audit result itself came from the unmodified source.
+
+Crucially, the submitted verifier does not directly enumerate the headline rank-one/rank-two class injectivity claims. That gap is real but is now partly repaired by the audit program below.
+
+### Independent standard-library program
+
+`EVIDENCE/independent_math_audit.py` is a separate implementation. It imports no project module and no submitted verifier. It uses explicit compatible-assignment masks, independent Walsh butterflies, exact integer row elimination, and GF(2) row-basis factorization. Coordinate names are LSB-first in this program; cuts use the high p bits for rows and low q bits for columns. This is a declared relabeling, not a claim of serialized interchangeability with the original code.
+
+All checks passed:
+
+- Both at-most-k and exactly-k query matrix ranks for all 0<=k<=n<=6: 28 parameter pairs, 56 matrices.
+- Exhaustive equality of Fourier and conditioned-count fibre partitions for every Boolean function through n=4; forward numerical formulas additionally checked throughout the smaller domains specified in the source.
+- Complete rank<=1 and rank<=2 classes for six cuts through n=4; complete rank-one classes on cuts (2,3) and (3,3).
+- All 7,576 rank-at-most-two 4x4 Boolean matrices, all 3^4=81 restrictions each: 613,656 profile/count comparisons with direct counting.
+- Explicit parity indistinguishability, reset-horizon failure, and one-bit class-encoding witnesses for n=2,...,10.
+
+The 4x4 rank distribution is 1, 225, 7,350, 37,800, 20,160 for ranks 0 through 4. Thus the rank<=2 coverage count is independently checkable as 1+225+7,350=7,576.
+
+The new tests are excellent regression material. They do not prove historical priority, optimal state size, a fast update algorithm, or practical low-rank incidence. Larger truth spaces were not exhaustively enumerated; an explicit parity family is not an exhaustive counterexample search.
+
+## 6. Full timing replay
+
+I ran the original `run_benchmark_copy.py` on a new output directory, leaving the frozen results unchanged. The receipt is `EVIDENCE/benchmark_audit_replay.json`. It includes all 38 cases, all three methods, all five repetitions, and all 128 query answers per trial. That is 570 complete trials and 72,960 timed query evaluations. Query hashes and selected artifact kinds match the original campaign.
+
+| Quantity | Audit replay |
+|---|---:|
+| Cases | 38 |
+| External outputs | 26 |
+| Distinct external source-design hashes | 1 |
+| Synthetic controls | 12 |
+| Artifact per-case median wins versus packed | 0 / 38 |
+| Artifact per-case median wins versus reference ROBDD | 1 / 38 |
+| Selected kinds: flat / product / rank / cofactor / XOR | 15 / 17 / 2 / 2 / 2 |
+| Artifact files smaller than raw packed payload floor | 7 / 38 |
+| Minimum artifact/packed median lifecycle ratio | 1.6247 |
+| Median of the 38 case ratios | 77.9236 |
+| Maximum case ratio | 5908.1983 |
+
+The ratios describe this run, not a stable population effect. The strongest reproducible finding is the qualitative 0/38 result under the declared endpoint. It is not meaningful to turn the large ratio on tiny instances into a universal complexity conclusion. No confidence interval or significance claim is supplied: five timing repetitions on correlated outputs do not establish independent benchmark-population sampling.
+
+The selected compression results are real. Their comparison is **full artifact file bytes versus a raw packed truth payload floor**, not a claim that metadata-inclusive representations use equal headers, and not a measurement of live heap size. The packed backend actually persists through decimal JSON while the artifact backend uses binary; a next campaign should include a matched binary packed baseline.
+
+## 7. What is actually included in the lifecycle
+
+For each method the timed path constructs its representation, performs the specified checks, serializes it, deletes the live instance, deserializes into a new instance, validates as specified, constructs any required query helper, and executes the 128-query batch. The artifact path charges discovery across at most 16 candidate partitions and chooses by binary serialized size. It is not an optimal partition search or an optimizer for query latency.
+
+The source truth table and the oracle query answers are prepared before that timed path. The truth integer remains available as the verifier reference. Thus the experiment is a genuine **fresh-representation, same-process persistence replay**; it is not a measurement starting from raw CNF/BLIF parsing, nor a secure protocol erasing every source copy.
+
+Imports remain warm. There is no process restart, cold disk I/O, cache flush, network transfer, or resident-memory measurement. A new Python object is not evidence of a cold machine. Construction of the frozen dataset, BLIF extraction, and any discovery before the timed case would require separate accounting in an end-to-end workload.
+
+The benchmark's flat artifact is validated using immutable truth-integer equality. Other artifacts are checked against the explicit truth source. This is a defined implementation choice, not an algorithm-independent certificate cost. Different trusted/untrusted deployment settings can justify different checking endpoints, but they must be declared rather than mixed after observing performance.
+
+## 8. Workload and comparator validity
+
+The external cases are 26 outputs of one pinned EPFL control design. The remaining 12 are deliberately structured controls at n=4,8,12. Treating outputs as independent designs would be pseudoreplication. The common source and overlapping subcircuits matter even though each output defines a different Boolean function.
+
+Query batches use seed 202609260000+i for case index i. Each coordinate is independently fixed with probability one half, with a random fixed value. Therefore the number fixed is binomially distributed; it is not a controlled k-stratified workload. Five repetitions rotate three method orders using rep modulo three; this reduces one fixed ordering bias but is not a fully balanced random block design.
+
+The packed baseline uses native integer masks/popcounts. The ROBDD is a small custom Python fixed-order reference, not CUDD, not a variable-order search, and not an industrial knowledge compiler. The returned artifacts do not establish an executed optimized DSD, ACD, tensor-train, or d-DNNF comparison. A failed historical dependency-install attempt does not become a comparator result.
+
+The correct scientific comparison is between methods meeting the **same output and query contract**. A logic-synthesis mapper optimizing LUT delay is not automatically a runtime comparator for conditioned counting. However, established decomposition algorithms remain required prior-art/discovery baselines when the claimed novelty is the decomposition mechanism itself. Likewise S7 is a direct warning that a tensor/KC comparison must declare arithmetic, coordinate order, and supported queries.
+
+## 9. Version history and continuation
+
+Drafts 1 and 2 used different persistence endpoints. Some earlier code parsed the serialized representation but continued querying a pre-existing object. Draft 3 corrected this by deleting and reloading the representation. The older records should remain labeled historical rather than pooled as repeat measurements of the new endpoint.
+
+Earlier Q=1000 claims include extrapolation from a 128-query base batch; the final replay directly executes 128 queries. It should not be described as a new 1,000-query experiment. The recorded v2 binary arm timed out after 37 cases and resumed the remaining case; this is disclosed continuation, not 38 new independent cases. These historical details do not invalidate the corrected v3 replay.
+
+No Runpod execution receipt is needed for the experiments actually claimed and rerun here. The presence of historical remote-run/client files does not prove a new remote job ran. Any future Runpod-backed claim must return the executed revision, image/toolchain, command line, input/query hashes, complete raw logs and results, resource configuration, and failure/continuation records.
+
+## 10. Required next experiment
+
+First integrate the independent threshold/profile checks; do not call their presence a new performance study. Then freeze a campaign around one actual theory prediction.
+
+Record the declared cut, actual GF(2) rank rather than stored width alone, row/column counts, k, total cumulative restriction budget, number of queries, and fresh-versus-reused state for each instance. Measure coordinate-sensitive histogram construction and update costs, not only the final Walsh arithmetic. Include rank-one, rank-two, parity, and unstructured negative controls to separate identifiability from execution cost.
+
+Use a corpus of independent source designs, a design-disjoint held-out selection, and explicit incidence rates for the claimed favorable regime. A concrete starting design is at least ten distinct designs across two application families, but that is an experimental planning recommendation, not a statistical theorem or a guarantee of adequate power. Report missing, unsupported, timed-out, and failed cases as outcomes.
+
+Compare matched binary packed persistence and at least one credible compiled-counting backend. For representation claims, include an appropriate structural-decomposition comparator and state the ordering search budget. Charge source acquisition/compilation, checking, serialization, load, indexing, and queries separately and in their relevant totals. Keep same-process fresh-load, process-cold load, and warm repeated-query experiments separate. Report serialized bytes and measured resident memory separately.
+
+The exact task list and acceptance evidence are in `REPAIR_TASKS.md`, C1-C4.

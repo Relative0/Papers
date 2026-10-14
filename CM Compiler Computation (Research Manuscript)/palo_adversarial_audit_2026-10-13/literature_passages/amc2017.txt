@@ -1,0 +1,301 @@
+PDF PAGE 11
+idempotent and
+general⊗ consistency-pres. (⊗,α )
+neutral non-neutral neutral non-neutral
+(⊕,α ) (⊕,α ) (⊕,α ) (⊕,α )
+DNNF s-DNNF NNF s-NNF
+idempotent⊕ (Th. 5) (Th. 3) (Th. 7) (Th. 7)
+SAT, S-Path, MPE, Fuzzy, Bool,
+W-Path kWeight OBDD<
+d-DNNF sd-DNNF d-NNF sd-NNF
+non-idempotent⊕ (Th. 4) (Th. 2) (Th. 7) (Th. 6)
+Prob, Sens, Grad #SAT, WMC
+Table 2: Semiring characteristics and corresponding circuits that allow for correct AMC eval-
+uation, with example tasks from Table 1.
+Algorithm 1 Evaluating an NNF circuit N for a commutative semiring
+(A,⊕,⊗,e⊕,e⊗) and labeling function α.
+1: function Eval(N,⊕,⊗,e⊕,e⊗,α )
+2: if N is a true node ⊤ then return e⊗
+3: if N is a false node ⊥ then return e⊕
+4: if N is a literal node l then return α(l)
+5: if N is a disjunction ⋁m
+i=1Ni then
+6: return⨁m
+i=1 Eval(Ni,⊕,⊗,e⊕,e⊗,α )
+7: if N is a conjunction ⋀m
+i=1Ni then
+8: return⨂m
+i=1 Eval(Ni,⊕,⊗,e⊕,e⊗,α )
+evaluates an NNF circuit for a commutative semiring (A,⊕,⊗,e⊕,e⊗) and label-
+ing function α.
+Consider for example #SAT for the two circuits in Figure 1, which both
+represent an exclusive OR of two variables. Evaluation of the sd-DNNF in Fig-
+ure 1a, which in fact is aMODS representation, assigns label 1 to each leaf, 1·1 = 1
+to each conjunction node, and 1 + 1 = 2 to the disjunction node at the root
+and thus the entire circuit, which is correct. On the other hand, evaluation on
+the general NNF in Figure 1b assigns 1 + 1 = 2 to each disjunction node and
+2·2 = 4 to the conjunction node at the root. This overestimation is due to mod-
+els shared by the children of the same disjunction node and variables shared by
+the children of the conjunction node, as we will see in more detail in Section 3.2
+and 3.3.
+Deﬁnition 10 (Correctness). Evaluating an NNF representationNT of a propo-
+sitional theory T for a semiring (A,⊕,⊗,e⊕,e⊗) and labeling function α is a
+correct AMC computation iﬀ Eval(NT,⊕,⊗,e⊕,e⊗,α ) = A(T ).
+In the following, we establish a general correctness result for AMC evalu-
+ation on sd-DNNF circuits as well as properties of AMC tasks that guarantee
+11
+
+PDF PAGE 12
+correctness for various other subclasses of NNF. Given correctness, we inherit
+the polynomial complexity results of the knowledge compilation map (Darwiche
+& Marquis, 2002) for semiring operators with constant cost, cf. also Section 3.4.
+Note however that there are semirings with more expensive operators. For in-
+stance, labels in OBDD< may grow exponentially in the circuit size.
+3.1. sd-DNNF Evaluation
+We show that AMC evaluation is correct on sd-DNNF circuits. As these are
+strictly more succinct than MODS representations, they allow for more eﬃcient
+inference.
+Theorem 2 (sd-DNNF Evaluation). Evaluating an sd-DNNF representation of
+the propositional theory T is a correct AMC computation.
+Proof. We show that Eval(NT,⊕,⊗,e⊕,e⊗,α ) for an sd-DNNF representation
+NT of the theory T computes A(T ) with respect to all variables in NT :
+1. Line 2: A(⊤) =⨁
+I∈{∅}
+⨂
+l∈Iα(l) =e⊗
+2. Line 3: A(⊥) =⨁
+I∈{}
+⨂
+l∈Iα(l) =e⊕
+3. Line 4: A(l) =⨁
+I∈{{l}}
+⨂
+k∈Iα(k) =α(l)
+Due to associativity and commutativity of the semiring operators, operands of
+each summation and each multiplication can be evaluated in arbitrary order.
+We therefore restrict ourselves to binary disjunction and conjunction nodes here.
+In the following, we assume we have already correctly evaluated the two subcir-
+cuits φ1 and φ2 over sets of variablesV1 andV2, respectively. Let the circuits’
+sets of models with respect to those variables be M1 andM2. We now obtain:
+4. Lines 5-6: Disjunction node φ1∨φ2: Forφ1 =⊥, we have A(⊥)⊕A(φ2) =
+e⊕⊕ A(φ2) = A(φ2) = A(⊥∨ φ2) by neutrality of e⊕ (and similarly for
+φ2 =⊥ by commutativity). As the circuit is deterministic, the φi cannot
+be⊤. We now consider the case where none of the φi is⊥ or⊤. As the
+circuit is smooth, we haveV1 =V2, and this is also the set of variables used
+by the circuit rooted at the disjunction. The set of models of this circuit is
+thusM(φ1∨φ2) =M1∪M2, which is a disjoint union due to determinism.
+Therefore, A(φ1)⊕A(φ2) =
+(⨁
+I∈M1
+⨂
+l∈Iα(l)
+)
+⊕
+(⨁
+I∈M2
+⨂
+l∈Iα(l)
+)
+=⨁
+M1∪M2
+⨂
+l∈Iα(l) = A(φ1∨φ2).
+5. Lines 7-8: Conjunction node φ1∧φ2: For the case ofφ1 =⊤ (or symmetri-
+callyφ2 =⊤), we have A(⊤)⊗A(φ2) =e⊗⊗A(φ2) = A(φ2) = A(⊤∧φ2)
+by neutrality of e⊗. For the case of φ1 =⊥ (or symmetrically φ2 =⊥),
+we have A(⊥)⊗ A(φ2) = e⊕⊗ A(φ2) = e⊕ = A(⊥) = A(⊥∧ φ2) as e⊕
+is an annihilator for⊗. We now consider the case involving neither ⊤ nor
+⊥ as one of the disjuncts. As V1∩V 2 =∅ due to decomposability, we
+obtain all models of the conjunction by combining each model of φ1 with
+each model of φ2, that is,M(φ1∧φ2) ={I1∪I2|I1∈M 1,I 2∈M 2}. To-
+gether with distributivity, we get A(φ1)⊗A(φ2) =
+(⨁
+I∈M1
+⨂
+l∈Iα(l)
+)
+⊗(⨁
+I∈M2
+⨂
+l∈Iα(l)
+)
+=⨁
+M(φ1∧φ2)
+⨂
+l∈Iα(l) = A(φ1∧φ2).
+12
+
+PDF PAGE 13
+Clearly, the correctness of AMC evaluation on sd-DNNF depends on all three
+properties of this subclass of NNF. On the other hand, circuits without these
+properties may be exponentially smaller and thus allow for more eﬃcient infer-
+ence. In the following, we therefore analyze evaluation in the absence of these
+properties, which allows us to identify characteristics of the semiring and la-
+beling function that ensure correct evaluation on the corresponding classes of
+circuits.
+3.2. Evaluation on other Decomposable Circuits
+If a circuit is not deterministic, children of a disjunction node may have
+common models, in which case evaluation sums over such shared models multiple
+times. For instance, consider the circuit in Figure 1b with Prob, α(a) = 0.6
+andα(b) = 0.3. Evaluation on this circuit results in 0.6 + 0.3 = 0.9 for the right
+disjunction node, while A(a∨b) = 0.6·0.3+(1−0.6)·0.3+0.6·(1−0.3) = 0.72.
+Deﬁnition 11 (Idempotent Operator) . A binary operator ⊙ over a set A is
+idempotent iﬀ∀a∈A :a⊙a =a.
+Theorem 3 (s-DNNF Evaluation). Evaluating an s-DNNF representation of the
+propositional theory T for a semiring with idempotent ⊕ (a dioid) is a correct
+AMC computation.
+Proof. Reconsider point (4) of the proof of Theorem 2. Without determinism,
+φ1 =⊤ is possible, and with smoothness, we have φ2 =⊤ in this case. Then,
+A(⊤)⊕ A(⊤) = e⊗⊕e⊗ = e⊗ = A(⊤) = A(⊤∨⊤ ) as ⊕ is idempotent.
+The proof for φ1 =⊥ still holds. If both subformulae involve variables, with
+smoothness, but without determinism, M1(φ1)∪M 2(φ2) is no longer a union
+of disjoint sets, and A(φ1)⊕ A(φ2) = ⨁
+i=1,2
+⨁
+Mi
+⨂
+l∈Iα(l) sums over the
+models in M1(φ1)∩M 2(φ2) twice. Due to associativity and commutativity,
+this is correct for idempotent ⊕.
+If a circuit is not smooth, the children of a disjunction node may use diﬀerent
+sets of variables. Each model of a child node corresponds to a set of models
+for the full set of variables, but evaluation on a non-smooth circuit ignores the
+labels of unmentioned variables. For instance, consider the circuit in Figure 1b
+with MPE, α(a) = 0.6 and α(b) = 0.3. Evaluating the right disjunction node
+of this circuit results in max(0.6, 0.3) = 0.6, while A(a∨b) = max(0.6· 0.3, (1−
+0.6)· 0.3, 0.6· (1− 0.3)) = 0.42.
+Deﬁnition 12 (Neutral (⊕,α )). A semiring addition and labeling function pair
+(⊕,α ) is neutral iﬀ∀v∈V :α(v)⊕α(¬v) =e⊗.
+For instance, the semiring addition and labeling function of theProb task in
+Table 1 are neutral, as for allv∈V , we haveα(v)⊕α(¬v) =α(v)+(1−α(v)) =
+1 =e⊗ in this case.
+13
+
+PDF PAGE 14
+Theorem 4 (d-DNNF Evaluation). Evaluating a d-DNNF representation of the
+propositional theory T for a semiring and labeling function with neutral (⊕,α )
+is a correct AMC computation.
+Proof. Reconsider point (4) of the proof of Theorem 2. The cases involving ⊤
+or⊥ still hold. For the remaining case of both subformulae involving variables
+to be correct, the sum of the AMCs computed by the children over their sets of
+variablesVi has to be equal to the AMC of the entire disjunction over the full
+set of variablesV1∪V 2. Given the child AMC AVi(φi), adding a variable v to
+Vi replaces each model I ofφi by two models I + =I∪{v} andI− =I∪{¬v}.
+Due to distributivity, commutativity and the neutral sum property, the algebraic
+sum of these two models equals the AMC of the original model:
+AVi∪{v}(I) = AVi∪{v}(I +)⊕ AVi∪{v}(I−)
+= (α(v)⊕α(¬v))⊗
+⨂
+l∈I
+α(l)
+=
+⨂
+l∈I
+α(l) = AVi(I)
+Evaluation therefore computes AV1(φ1)⊕AV2(φ2) = AV1∪V2(φ1)⊕AV1∪V2(φ2),
+which due to determinism is equal to AV1∪V2(φ1∨φ2).
+Note that from a complexity point of view, non-neutral ( ⊕,α ) does not
+inﬂuence the tractability of inference, as any NNF can be smoothed in polytime
+preserving determinism and decomposability (Darwiche & Marquis, 2002).
+The previous two results can directly be combined for DNNF circuits that are
+neither smooth nor deterministic.
+Theorem 5 (DNNF Evaluation). Evaluating a DNNF representation of the propo-
+sitional theory T for a semiring and labeling function with idempotent and neu-
+tral (⊕,α ) is a correct AMC computation.
+Proof. Reconsider point (4) of the proof of Theorem 2. Due to neutral ( ⊕,α ),
+values for all children of a disjunction node (including⊤) are correct with respect
+to the full set of variables (cf. proof of Theorem 4). Due to idempotent ⊕,
+multiple occurrences of the same model do not inﬂuence the result (cf. proof of
+Theorem 3).
+This completes the left part of Table 2, where no conditions are imposed on
+semiring multiplication.
+3.3. Evaluation on Non-Decomposable Circuits
+If a circuit is not decomposable, the children of a conjunction node may
+share variables. In this case, simply combining results for all pairs of their
+models may produce results corresponding to (multi-)sets of literals that are not
+models, because they either contain contradicting literals, or several copies of
+the same literal, which results in erroneous extra multiplications. For instance,
+14
+
+PDF PAGE 15
+in Figure 1b, {¬a,b} is a model of both disjunction nodes, and {a,b} of the
+right one only. The conjunction node sums among others the products α(¬a)⊗
+α(b)⊗α(a)⊗α(b), which does not correspond to a model, and α(¬a)⊗α(b)⊗
+α(¬a)⊗α(b), where labels of both literals are multiplied twice.
+Deﬁnition 13 (Consistency-Preserving (⊗,α )). A semiring multiplication and
+labeling function pair (⊗,α ) is consistency-preserving iﬀ∀v∈V :α(v)⊗α(¬v) =
+e⊕.
+For instance, Boolean evaluation (BOOL) is consistency-preserving, asα(v)∧
+¬α(v) = false =e⊕.
+Theorem 6 (sd-NNF Evaluation). Evaluating an sd-NNF representation of the
+propositional theoryT for a semiring and labeling function with idempotent and
+consistency-preserving (⊗,α ) is a correct AMC computation.
+Proof. Reconsider point (5) of the proof of Theorem 2. The set of models
+of φ1∧φ2 contains exactly all pairwise combinations of models of its parts
+that agree on all shared variables. The circuit evaluates the AMC of φ1∧φ2
+as A(φ1)⊗ A(φ2), which due to distributivity is the sum over all pairwise
+combinations of models. Without decomposability, each such combination I
+contains two literals for each v∈V 1∩V 2. As ⊗ is associative, commutative
+and idempotent, repeated occurrences of a literal l in⊗i∈Iα(i) do not aﬀect the
+result. If {l,¬l}⊆ I,⊗i∈Iα(i) includes a multiplication by α(l)⊗α(¬l) = e⊕,
+which in a semiring means ⊗i∈Iα(i) = e⊕. Such inconsistent I thus do not
+contribute to the semiring sum.
+Theorem 6 aﬀects only conjunction nodes, whereas Theorems 3, 4 and 5
+only aﬀect disjunction nodes. Their combination thus extends our results to
+non-decomposable circuits that do not satisfy (one of) the other two properties
+either:
+Theorem 7 (s-NNF, d-NNF, and NNF Evaluations). For a semiring and label-
+ing function with idempotent and consistency preserving (⊗,α ), evaluating the
+following representation of the propositional theory T is a correct AMC compu-
+tation:
+• s-NNF if⊕ is idempotent
+• d-NNF if (⊕,α ) is neutral
+• NNF if (⊕,α ) is idempotent and neutral
+This completes the right part of Table 2, where using non-decomposable
+circuits is possible as a consequence of restrictions on semiring multiplication.
+Given a new AMC instance, this table allows one to immediately choose the
+appropriate type of circuit for eﬃcient evaluation. Table 2 provides this classi-
+ﬁcation for the examples discussed earlier, cf. Table 1.
+15
+
+PDF PAGE 18
+path in the graph represented as its sequence of edges, e.g., ( e2,e 3) represents
+the path from s to t via r. The ADC of the set of all paths from s to t in the
+graph is then given by
+D({(e1), (e2,e 3)}) =δ(e1)⊕ (δ(e2)⊗δ(e3)) (8)
+For instance, if δ assigns a cost to every edge, we could use the S-Path or W-
+Pathsemirings to compute the cost of the shortest or widest path, respectively.
+As a second example, consider the following context free grammar, where we
+add the variable we will use to refer to an application of the rule in a derivation
+in parentheses:
+S→ aS ( s1) A → AA ( a1)
+S→ AA ( s2) A → a ( a2)
+S→ϵ (s3)
+The word aa has two leftmost derivations in this grammar: S→aS→aaS→
+aa, using the rule sequence ( s1,s 1,s 3), and S → AA → aA → aa, using
+(s2,a 2,a 2). The ADC of this set of derivations is given by
+D({(s1,s 1,s 3), (s2,a 2,a 2)}) = (δ(s1)⊗δ(s1)⊗δ(s3))⊕(δ(s2)⊗δ(a2)⊗δ(a2)) (9)
+For instance, using the probability semiring, this corresponds to computing the
+probability of aa in a probabilistic context free grammar with these rules. 4
+While both ADC and AMC are semiring sums over semiring products, their
+key diﬀerence is that computing ADC is based on the structure of a set of
+sequences of positive variables, whereas computing the AMC is based on the
+models of a propositional theory represented as an arbitrary NNF. Nevertheless,
+it is possible to map each of the tasks onto the other, as we will show now.
+Reducing AMC to ADC. Reducing an AMC task to an ADC task is straightfor-
+ward. The set of variables in the ADC task contains one variable for each literal
+in the AMC task, labeled with that literal’s label. For each model of the AMC
+theoryT , the ADC derivation set S contains one sequence enumerating exactly
+the variables corresponding to the literals in the model. Then, Equation (7)
+and Equation (2) have the same structure, and the ADC of the translation thus
+equals the original AMC.
+However, this reduction is clearly not desirable from a complexity point of
+view, as it requires bringing T into MODS form. Alternatively, one could adapt
+the semiring used. For instance, Baras & Theodorakopoulos (2010) provide
+an ADC encoding of network reliability under probabilistic edge failure, that
+is, the Prob AMC task for a positive propositional formula. They essentially
+modify multiplication to ﬁlter repeated literals from derivations (i.e., repeated
+edges from cyclic paths), and addition to subtract shared models of its operands
+4Note that the input to ADC is a set of ﬁnite derivations, not the grammar, i.e., ADC does
+not solve the parsing problem.
+18

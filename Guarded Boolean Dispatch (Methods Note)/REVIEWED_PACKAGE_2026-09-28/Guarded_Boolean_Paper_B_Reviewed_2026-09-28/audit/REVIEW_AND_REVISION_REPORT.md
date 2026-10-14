@@ -1,0 +1,275 @@
+---
+title: "Guarded Boolean Operators: Review, Revision, and Submission Gate"
+author: "Assistant-conducted specialist and adversarial review"
+date: "28 September 2026"
+---
+
+# Executive determination
+
+**Decision: conditional GO as a focused mathematical methods note; not an unqualified GO as a substantial new-theory research article.** The revised manuscript is mathematically coherent under its explicit contracts, self-contained where it needs to be, and accompanied by runnable evidence. The largest remaining uncertainty is contribution size and theorem-level priority, not a known surviving proof error.
+
+The supplied package already contained a September 24 adversarial report and a September 26 research-viability assessment. However, the first primarily attacks the immediately preceding zero-aware/Walsh-centered version, and its copies are duplicates rather than additional independent reviews. The second was a selected-proof viability assessment, not certification by an external panel. The current restricted-dispatch revision therefore needed its own review.
+
+This report records five specialist passes and two explicitly hostile passes conducted by the same assistant. Their separation helps expose different failure modes, but does not create independent expert testimony. No outside mathematician was recruited, no journal referee was contacted, and no formal proof assistant was used. Literature searches and bounded computations are evidence, not guarantees of correctness or originality.
+
+The deliverable is a genuine revision of the supplied Paper B, not a replacement by the separate CM/LM foundations paper or the exact-query paper appearing in the user's example scorecard. The old 18-page manuscript becomes the 14-page **Guarded Boolean Operators: Exact Dispatch and a Polynomial Guard-Degree Tradeoff**. Its best result is now the exact degree-versus-number-of-tests calculation for one complete nonlinear example.
+
+# 1. Materials, provenance, and coverage
+
+The outer archive contains 27 file entries and 26 unique file hashes. Nested releases were extracted and compared rather than counted as independent evidence. The authoritative input is:
+
+Directory: `01_CURRENT_MANUSCRIPT_AND_REVIEW_20260924/`
+
+File: `guarded_boolean_operator_atlases_restricted_dispatch.tex`
+
+Its SHA-256 begins `9bd663f95fb8505b`; the full hash is in `evidence/source_inventory.json`. The original uploaded archive is retained unchanged in `history/`, and the source-to-revision diff is in `audit/manuscript_revision.diff`.
+
+The package was inspected for the current manuscript, prior critiques, revision notes, claim and uniqueness statements, historical releases, implementation scripts, recorded outputs, and the September 26 viability assessment. The claims and formal arguments of the current manuscript were reconstructed rather than accepted because of favorable review prose. The supplied scripts were read before execution.
+
+The duplicate September 24 report has SHA-256 beginning `a2fc83811b9bc413`. Its position in both a current folder and a review folder does not make it a review of every later edit. The September 26 assessment itself warned that a small four-operator case, an original-coordinate affine obstruction, and a three-coordinate probe count did not automatically establish a substantial standalone research contribution. This audit agrees with that reservation.
+
+Some historical documents mention sibling portfolio files or Windows-path supplements that are not included in this upload. Those materials were not silently treated as read or independently verified. The revised note does not depend on them. The separate unpublished CM/LM manuscript is cited for terminology only; necessary representation facts are now proved directly here.
+
+# 2. Specialist review passes
+
+## 2.1 Mathematical analysis and real algebraic geometry
+
+**Attack:** Rebuild the four-region classification, examine connectedness rather than infer it from a picture, and try to defeat the affine and polynomial lower bounds using extra guard components, arbitrary coefficients, or nonconstant signatures inside a fiber.
+
+**Finding:** The original score algebra is sound, but connectedness deserves a direct proof. The substitution $u=1/a$, $v=1/b$ converts all relevant score signs to affine signs. In the positive reciprocal quadrant the four regions are intersections of open half-planes. Thus they are convex there and connected in the original coordinates. This proves connectedness and also limits the meaning of the claimed nonlinearity.
+
+The stronger exact guard-degree result survives a boundary-factor reconstruction. The three score-zero arcs are associated with pairwise nonassociate primitive irreducible quadratics. A finite sign library must vanish along every switching arc somewhere among its defining polynomials. Rational parametrization forces one polynomial to vanish identically along an arc, so the corresponding quadratic divides it. This establishes the lower bound over arbitrary real coefficients, not merely an enumerated candidate library.
+
+For two tests, the four labels exhaust all four binary signatures. Therefore each label has exactly one signature, even though the general definition permits signatures to vary within a label. Each bit differs from the AND-center bit on exactly two leaves. Its polynomial must consequently contain two quadratic factors. Both tests therefore have degree at least four. Two explicit quartics attain the bound.
+
+**Disposition:** Accept with the stronger proof incorporated as Lemma 3.1 and Theorem 3.2. The universal assertion is proved analytically, not inferred from finite tests. The reciprocal-coordinate limitation is stated beside the result.
+
+## 2.2 Formal semantics and certification
+
+**Attack:** Test vacuous guards, reachable all-zero cells, boundary inputs, incomplete dictionaries, and solver uncertainty. Ask whether three binary tests actually certify a total output.
+
+**Finding:** Two real contract gaps required correction. First, every universal sign assertion is vacuously true on an empty guard. The statement that such a guard carries a unique semantically determined operator therefore needs a nonemptiness assumption. Second, the predicates $h_i>0$ identify operators only on a promised zero-free domain. At $(a,b)=(1,1/2)$ the four scores are $(2,0,-1,-1)$, but all three binary predicates are false, just as for AND. A decoder that silently treats the zero as a negative sign is not an exact strict-sign dispatcher.
+
+The revised certificate propositions require nonempty guards and explicit zero-free coverage. Reduced observation uses a previously certified complete dictionary and a zero-free promise. Reachability, a genuine zero, mixed signs, and an analysis returning UNKNOWN are kept distinct. The reference implementation uses exact trichotomy and returns BOUNDARY rather than inventing a Boolean value.
+
+**Disposition:** Accept after repair. No general certificate-producing nonlinear solver is claimed. Exact rational evaluation certifies a point; uniform signs over a whole guard are established here by the paper's analytic proofs, not by sampling.
+
+## 2.3 Discrete algorithms and observation complexity
+
+**Attack:** Try two tests instead of three, query adaptively, allow predicates other than truth-table coordinates, use target-specific certificates, or hide feature computation inside one nominal test.
+
+**Finding:** The original three-probe conclusion was defensible only with the correct quantifiers. It is the unique minimum fixed truth-table-coordinate basis, and three is also the deterministic adaptive worst case because the AND transcript leaves an unqueried leaf possible. A leaf, however, has a one-coordinate positive certificate. An early-stop order has depths $1,2,3,3$, so its uniform expected query count is $9/4$, not three.
+
+Allowing arbitrary polynomial observations changes the contract: two quartic signs encode all four labels. These are not two queries to the original coordinate oracle. The general finite selection problem is the classical differently-labelled-pair hitting formulation of minimum test set, with established antecedents [P1, P2]. A weighted fixed basis does not automatically optimize shared arithmetic, expected path length, or adaptive depth.
+
+**Disposition:** Accept with all four notions separated: fixed predicate basis, fixed coordinate basis, adaptive coordinate identification, and target-specific certification. No new generic combinatorial invariant or solver algorithm is claimed.
+
+## 2.4 Boolean representation and CM/LM algebra
+
+**Attack:** Remove the unpublished companion citation and ask whether the claimed lift remains defined, faithful, and compatible with arbitrary pointwise Boolean connectives. Try a constrained physical predicate frame instead of free Boolean generators.
+
+**Finding:** A short self-contained proof is available. Define the lift by minterm substitution into independent formal Boolean generators. All-true evaluation recovers the truth table, proving injectivity. Boolean evaluation commutes with pointwise connective application, proving superposition. The same parameter-side distinction problem therefore persists for truth tables, numeric CMs, and fixed-frame symbolic LMs.
+
+The free-frame hypothesis matters: all-true valuation is available for formal generators, not necessarily for physically constrained predicates. The paper now says so. Representation invariance concerns exact distinctions under the same observation contract; it does not imply equal output construction cost or a computational speedup.
+
+The historical LM check was a literal self-comparison, `truth[alpha_idx] == truth[alpha_idx]`. Its PASS message did not test an implementation of the lift. The fresh suite evaluates minterms, signed substitutions, all valuations, and superposition instead.
+
+**Disposition:** Accept with direct Proposition 5.2 and a worked projection example. CM/LM notation remains an optional endpoint, not the source of the guard lower bound.
+
+## 2.5 Reproducibility and evidence integrity
+
+**Attack:** Execute the delivered historical program without repairing its environment first; compare recorded results; move the new program; inspect whether test counts describe actual independent comparisons.
+
+**Finding:** The old nonlinear script fails unmodified because it writes to an absent hardcoded `/mnt/data/Restricted_Guard_CM_LM_Research_2026-09-24/` directory. Changing only the output location allows execution, and parsed output matches the historical JSON exactly. This is a portability failure, not a discovered false classification count. Both failure and repaired-run logs are retained.
+
+The historical Walsh script also runs to completion. It depends on NumPy and uses floating-point rank/SVD, so describing the entire historical verifier as standard-library-only or fully exact would be inaccurate. Its constructive Walsh sign witnesses are genuinely checked, but its LM subsection is tautological. The fresh verifier replaces those weak points with exact integer witnesses and actual formula evaluation.
+
+The new code ran successfully both in the bundle and from an unrelated working directory after relocation to a path containing spaces. The semantic result JSON was byte-identical. This tests relocation in the same environment, not all operating systems or Python versions. Runtime records are verification-run timings, not dispatcher benchmarks.
+
+**Disposition:** Accept for the delivered reference implementation and bounded verification suite. General continuous inputs, floating measurement uncertainty, CAD/SMT integration, and performance comparisons are outside scope.
+
+# 3. Two hostile passes
+
+## 3.1 Hostile mathematical referee: "Your contracts are doing hidden work"
+
+This pass attempted to break claims with empty sets, a boundary masquerading as AND, a singleton dictionary containing an excluded zero input, an omitted coordinate, constrained LM variables, tangencies, oscillatory crossings, and extra polynomial zero curves.
+
+The first two attacks succeeded against overbroad formulations and prompted explicit repairs. The omitted-coordinate attack demonstrates the star lower bound rather than contradicting it. A singleton operator family can have a zero-size distinguishing set only after totality on the domain has already been established. The revised example with scores $1$ and $t^2$ shows why this promise cannot be dropped.
+
+A continuous score that merely takes both signs near zero need not have a single well-defined crossing; fixed signs on the two punctured sides are now required. A polynomial zero event can be an even-multiplicity touch and need not change an operator. Trajectory intervals are relatively open in $[0,T]$, so endpoint-containing pieces are allowed.
+
+The strongest attempted attack was to make the two polynomial tests vary inside a chamber. It fails because four labels require all four signatures, leaving no spare signature for a label to use. This finite coding observation closes a genuine possible gap in the stronger degree theorem. Additional zero components likewise do not avoid the necessary irreducible boundary factors.
+
+**Final recommendation:** Mathematical acceptance under the repaired and explicitly limited contracts. This is not a formal proof certificate; a further independent human referee may still find an oversight.
+
+## 3.2 Hostile handling editor: "Where is the research contribution?"
+
+The exact quotient is essentially the partition into fibers of a finite-valued map. The minimum-test formulation is standard. Walsh geometry is classical. A numeric CM is a truth table in matrix form, and the needed LM facts follow from substitution. None of these become new theorems merely because the manuscript gives them new notation.
+
+The nonlinear model is also less intrinsically nonlinear than its appearance suggests: reciprocals turn its three boundaries into lines. A reviewer could reasonably regard the exact degree tradeoff as a small illustrative exercise using standard divisibility, polynomial descriptions [P8], and four-codeword combinatorics. Positive coefficient rescaling adds no independent structural difficulty. The existence of two quartic observations does not establish reduced arithmetic cost, robustness, or practical superiority.
+
+These criticisms were not dismissed. The title, abstract, opening claims, theorem placement, appendix role, and conclusion now present a focused methods note. The new contribution is the self-contained complete worked analysis of three distinct observation contracts and their certification requirements, including an exact degree threshold. It is not asserted to replace DSGRN, establish a new abstract interpretation theory, or solve general guard synthesis.
+
+**Final recommendation:** Conditional consideration as a methods/expository note. A venue expecting a substantial original structural theorem, a new general algorithm, or an application with demonstrated impact could still reject it for insufficient contribution. The revision reduces overclaiming; it does not eliminate that legitimate editorial judgment.
+
+# 4. Proof ledger for the revised manuscript
+
+All 12 numbered theorem/lemma/proposition statements were reconstructed. Remark 2.3 is additional, separately checked algebra. The unnumbered finite-selection equivalence and information bounds were also checked.
+
+**Proposition 2.1, exact quotient.** Finite strict-sign intersections give open fibers; complementary fibers make them clopen in the zero-free domain. Local path-connectedness of open Euclidean sets justifies open components. A finite number of fibers need not imply finitely many continuous-score chambers. The polynomial semialgebraic finiteness statement is attributed to sign-condition theory [P6].
+
+**Theorem 2.2, four chambers.** The sums $h_1+h_2=-2ab$, $h_1+h_3=-2b$, and $h_2+h_3=-2a$ prohibit two positive entries. Four interior witnesses establish realizability. Reciprocal normalization proves connectedness and the three-leaf star adjacency. **Remark 2.3** checks $Ax+By+Cxy=(AB/C)(x'+y'+x'y')$ with $x'=Cx/B$, $y'=Cy/A$ for positive coefficients.
+
+**Lemma 3.1, boundary factors.** Coprime coefficient pairs make each linear-in-$b$ quadratic primitive and irreducible over the polynomial ring via Gauss's lemma. Rational parametrization and finiteness of zeros force a factor for each covered arc. Constant tests are explicitly discarded. The boundary argument uses nearby promised inputs, not a value assigned on the boundary.
+
+**Theorem 3.2, exact tradeoff.** Degrees at most one cannot cover a quadratic arc. Degrees two or three can cover at most one distinct arc per polynomial. Two quartics give the full four-label code. Any two-test solution makes each polynomial carry two quadratic factors. No bounded enumeration is used to infer this universal minimum.
+
+**Propositions 4.1 and 4.2, certificates.** Nonemptiness prevents vacuous uniqueness. A complete dictionary and certified zero-free domain justify unobserved signs. Guard coverage is explicit. No existence of a general effective certifier for arbitrary continuous inputs is asserted.
+
+**Proposition 4.3, collecting semantics.** A reachable cell has an everywhere-defined constant strict output exactly for the singleton sign sets $\{-1\}$ and $\{+1\}$. Unreachable cells require a completion choice; zero and mixed signs remain distinct.
+
+**Proposition 5.1, coordinate costs.** Each AND/leaf pair forces its unique differing coordinate. The all-zero AND transcript supplies the adaptive adversary. Each leaf has a one-coordinate target-specific certificate. This does not lower-bound arbitrary predicates in the magnitude parameters.
+
+**Proposition 5.2, LM faithfulness.** All-true evaluation in a free Boolean frame returns the numeric table. Substitution commutes with every pointwise Boolean connective. Therefore the semantic equality classes agree across the representations under the same observation model.
+
+**Proposition A.1, crossings.** Fixed signs on punctured sides, or a simple zero with the other scores nonzero, imply exactly one changed entry. Oscillation and simultaneous zeros are excluded by hypotheses.
+
+**Proposition A.2, trajectories.** A closed discrete subset of a compact interval is finite; complementary intervals are relative intervals. The polynomial root bound counts discriminant events, not guaranteed switches. An identically zero polynomial is excluded from that bound.
+
+**Proposition A.3, Walsh calibration.** The simplex Gram identity identifies the score image with the zero-sum subspace. Explicit coefficients realize every nonconstant sign pattern. Regular facet witnesses prove Hamming-one adjacency for $n\ge2$. The coincident-hyperplane unary case is stated separately. Classical antecedents are credited rather than treated as cleared novelty.
+
+# 5. The strengthened result and its limits
+
+For the real model $F(x,y)=x+y+xy$, put
+
+$$h_1=a-b-ab,\qquad h_2=-a+b-ab,\qquad h_3=-a-b+ab.$$
+
+Let $m_d$ be the smallest number of fixed binary tests of the form $H(a,b)>0$, each with total polynomial degree at most $d$, whose joint signature identifies the induced operator on the entire zero-free positive quadrant. The revised theorem is
+
+$$m_1=\infty,\qquad m_2=m_3=3,\qquad m_d=2\quad(d\ge4).$$
+
+The two tests can be $h_1h_3<0$ and $h_2h_3<0$. They encode AND, $X$, $Y$, XNOR as $00,10,01,11$. Each polynomial in every exact two-test solution must have degree at least four. The same statement holds after positive linear coefficient rescaling, but not unchanged under arbitrary coordinate changes.
+
+This is stronger than merely saying that affine guards fail and three score probes work. It establishes a complete threshold for this degree-constrained library model. It does **not** establish a general polynomial dispatch complexity theory, a new asymptotic lower bound, or a runtime advantage. When boundary rejection is included without a promise, the implementation uses ternary product signs; those are not the binary outputs counted by $m_d$.
+
+# 6. Executed evidence
+
+The six fresh verification modules all returned PASS. Their semantic output is retained in `evidence/fresh_run/verification_results.json`; environment and timing details are separate. The following counts refer to precisely bounded loops, not independent empirical trials or universal proofs.
+
+| Verification task | Actual scope and result |
+|:--|:--|
+| Rational dispatch | 181 distinct positive rationals, all 32,761 ordered pairs; direct signed-input evaluation agrees with both dispatchers and reciprocal normalization. |
+| Outcome counts | AND 9,185; $X$ 5,176; $Y$ 5,176; XNOR 13,043; BOUNDARY 181. |
+| Boundary tests | 181 parametrized samples on each of three arcs: 543 boundary sample cases, each rejected by both modes. These may overlap grid points. |
+| Historical grid | All 400 original grid points: AND 99, $X$ 43, $Y$ 43, XNOR 206, BOUNDARY 9. |
+| Fixed-test formulation | All 65,535 nonempty families of two-input Boolean functions, each against all 16 coordinate subsets: 1,048,560 signature-versus-hitting comparisons. |
+| LM semantics | 2,120 minterm all-true recovery cases; 16,656 all-valuation entry cases; 65,536 binary-connective superposition entry cases. |
+| Walsh witnesses | All 65,804 nonconstant labelings through arity four; exact integer arithmetic. Regular-facet witnesses: 24 at arity two and 1,008 at arity three. |
+| Symbolic and negative checks | Reciprocal identities, pair sums, primitive factors, quartic degree, all 24 bijective two-bit codes, coefficient rescaling, all eight collecting-sign sets, and six invalid-input cases. |
+| Relocation | Same semantic JSON, byte for byte, after moving scripts to a path containing spaces and running from an unrelated directory. |
+
+The fresh dispatcher uses only Python's standard library. The verification suite additionally uses SymPy 1.14.0. The tested interpreter is Python 3.13.5. The historical Walsh rerun uses NumPy; it is not a dependency of the new suite. These computations test exact arithmetic and implementation consistency, not measurement robustness, global numerical conditioning, or a formal proof of continuous geometry.
+
+# 7. Prior-art and priority determination
+
+The review used primary papers, author-hosted manuscripts, publisher records, and arXiv records. It checked current 2026 entries instead of assuming that a pre-cutoff bibliography was sufficient. The search ledger records concrete queries, source locations, comparisons, and access limitations. No finite search establishes that no antecedent exists.
+
+**Minimum test set is not new.** Moret and Shapiro's original formulation [P1] explicitly minimizes tests without losing discrimination. Berman, DasGupta, and Kao [P2] give the differently-paired-object set-cover formulation and approximation results. The manuscript's finite optimization is an instance, not a new algorithm or generic invariant.
+
+**Continuous-to-logical parameter organization is not new.** DSGRN [P4] builds a computable finite parameter decomposition carrying substantially richer dynamical information. Its regulatory-network hypotheses differ from this note's arbitrary finite scores. The comparison should neither deny the close conceptual precedent nor falsely identify the two mathematical settings. The 2026 Boolean/DSGRN preprint [P5] is relevant current context, not evidence that the present bilinear degree calculation has been duplicated.
+
+**Global separation is not per-target specification.** Anthony's 2026 threshold-function paper [P7] develops target-specific specification numbers and chamber geometry. The revised manuscript explicitly distinguishes its single fixed separating basis from those quantifiers and from adaptive identification.
+
+**Polynomial descriptions are an important adjacent antecedent.** Averkov and Brocker [P8] study minimum polynomial-inequality descriptions of polyhedra and special semialgebraic sets. Their set-description question is not automatically the same as simultaneous four-label decoding with a fixed degree cap and promise domain. Nevertheless, it makes a sweeping claim that fewer high-degree polynomial tests are a new general phenomenon untenable.
+
+**The remaining novelty uncertainty is narrow but real.** This search did not locate the exact $m_d$ statement for this exact signed-magnitude example. That absence is insufficient to certify priority. The elementary proof could be known, implicit in broader description theory, or simply too small to carry a research article. The revised paper therefore presents the calculation and synthesis accurately without a first-ever claim.
+
+# 8. Publication-readiness scorecard
+
+The weights are exactly those supplied by the user and sum to 100%. Scores are editorial judgments for the delivered version, not acceptance probabilities. Before scores assess the uploaded restricted-dispatch manuscript; revised scores assess the delivered manuscript and evidence. A serious correctness, false-priority, or evidence-integrity defect would override the mean.
+
+| Category | Weight | Before | Revised | Confidence |
+|:--|--:|--:|--:|:--|
+| Mathematical correctness | 20% | 8.2 | 9.2 | High |
+| Completeness of proofs/results | 8% | 7.8 | 9.0 | High |
+| Model and assumption discipline | 8% | 7.0 | 9.3 | High |
+| Novelty and priority | 12% | 5.5 | 6.1 | Moderate |
+| Scientific significance | 8% | 5.8 | 6.5 | Moderate |
+| Literature coverage and positioning | 8% | 7.1 | 8.5 | Moderate |
+| Reproducibility | 7% | 4.8 | 9.3 | High |
+| Internal consistency | 6% | 7.1 | 9.2 | High |
+| Resolution of prior reviewer concerns | 5% | 6.8 | 8.6 | Moderate |
+| Exposition and readability | 5% | 7.1 | 8.7 | Moderate |
+| Scope and structural focus | 4% | 6.8 | 9.0 | High |
+| Evidence and citation quality | 4% | 6.7 | 8.8 | Moderate-high |
+| Submission hygiene | 3% | 6.0 | 8.5 | High |
+| Venue/form fit | 2% | 6.1 | 7.6 | Moderate |
+
+
+**Weighted assessment: 6.82/10 before revision; 8.42/10 after revision.** The improvement comes mainly from sharper contracts, stronger complete proofs, coherent scope, and reproducibility. It does not mean novelty is 8.42/10.
+
+**Mathematical correctness (9.2/10).** All 12 numbered formal results were reconstructed; the degree theorem now has a universal factor-divisibility proof. No remaining counterexample found under the stated contracts.
+
+**Completeness of proofs/results (9.0/10).** Complete proofs include connectedness, both quartic degree lower bounds, fixed/adaptive coordinate costs, and direct LM faithfulness. Remark 2.3 is checked separately.
+
+**Model and assumption discipline (9.3/10).** Nonempty guards, zero-free promises, predicate libraries, fixed coordinates, adaptive access, and arithmetic costs are now distinguished.
+
+**Novelty and priority (6.1/10).** The exact case-study tradeoff is a candidate distinctive calculation, not priority-cleared new theory. General ingredients have explicit antecedents.
+
+**Scientific significance (6.5/10).** A coherent worked example demonstrates observation-contract dependence; no broader application or asymptotic algorithmic benefit is established.
+
+**Literature coverage and positioning (8.5/10).** Primary-source comparisons include test sets, predicate minimization, sign geometry, polynomial descriptions, DSGRN, and two verified 2026 preprints.
+
+**Reproducibility (9.3/10).** Exact rational and integer tests, symbolic prerequisites, historical reruns, portable commands, and a relocated byte-identical run are delivered.
+
+**Internal consistency (9.2/10).** Abstract, theorem hypotheses, implementation behavior, observation counts, and evidence descriptions now agree.
+
+**Resolution of prior reviewer concerns (8.6/10).** The supplied prior objections are mapped individually. Portability and contract gaps are repaired; the demand for a substantial new research contribution remains conditional.
+
+**Exposition and readability (8.7/10).** One nonlinear example now carries the argument; a worked CM-to-LM endpoint and explicit failure cases make the contracts concrete.
+
+**Scope and structural focus (9.0/10).** The degree tradeoff is central. Walsh and trajectory results are supporting classical appendices, not competing headline claims.
+
+**Evidence and citation quality (8.8/10).** Claims have matching proofs or clearly bounded tests; classical claims have primary references. Literature search remains finite and some publisher full texts were inaccessible.
+
+**Submission hygiene (8.5/10).** Clean, buildable 14-page PDF with metadata and resolved citations; author identity/contact details and venue-specific declarations still require author confirmation.
+
+**Venue/form fit (7.6/10).** Conditionally suitable as a focused mathematical methods/expository note, not justified as a broad new-theory or performance paper.
+
+# 9. Resolved, retained, and outstanding objections
+
+The useful requested repairs were accepted: direct connectedness, nonempty guard semantics, explicit zero-free coverage, portable verification, genuine LM tests, direct representation proofs, precise coordinate and adaptive contracts, current prior-art comparison, appendix demotion of classical results, and a concrete worked example. The degree result was strengthened rather than left as an empirical suggestion.
+
+Two possible objections were rejected as too broad. First, the fact that DSGRN has close aims does not show that every arbitrary-score statement is literally its theorem; the correct response is attribution and scope separation. Second, demanding a general CAD/SMT implementation is not necessary for this explicitly analytic methods note, provided no such implementation is claimed. It would become necessary for a paper marketed as a general certified synthesis system.
+
+Three issues remain outside the completed repair: exact priority clearance, evidence of wider application significance, and a specific journal's willingness to publish this kind of note. No nonexistent experiment, outside referee, solver certificate, or public artifact deposit has been fabricated to close those gaps.
+
+# 10. Final submission gate
+
+**Public preprint:** technically ready after the author confirms the byline and any required acknowledgments/disclosures. All proof dependencies needed by the note are included. The bounded evidence is reproducible within its stated environment.
+
+**Peer-reviewed submission:** conditionally ready as a focused mathematical methods/expository note. The author should choose a venue and article category that actually accepts this form, and present the exact worked degree tradeoff and certification distinctions without calling the whole framework new. No specific venue has been selected or verified here, so this is a form-fit assessment rather than journal-specific approval.
+
+**Broad new-theory, major algorithms, or validated application article:** not ready on the current evidence. That would require a genuinely broader theorem or motivated application family, a corresponding contribution-level literature comparison, and an implementation study if computational benefit is claimed.
+
+Before submission, confirm the inherited name "Brian Theory," affiliation or independent-researcher designation, contact address, author-approved acknowledgment and AI-assistance language required by the chosen venue, and licensing of the code. No such facts or permissions were invented. The package includes no fabricated stable repository URL. Supply the code as supplementary material or deposit it using an author-controlled account as appropriate.
+
+There is no identified mathematical blocker requiring another generic assistant review loop. A genuinely independent human review of Lemma 3.1/Theorem 3.2 and the contribution positioning would add more independence than repeating the same internal panel exercise. Submission still invites precisely that scrutiny; it does not presume acceptance.
+
+# Primary sources cited in this report
+
+[P1] B. M. E. Moret and H. D. Shapiro, *On Minimizing a Set of Tests* (1985), DOI [10.1137/0906067](https://doi.org/10.1137/0906067). Publisher abstract, metadata, and reference record inspected; the accessible abstract directly supports the classical minimum-test objective.
+
+[P2] P. Berman, B. DasGupta, and M.-Y. Kao, *Tight Approximability Results for Test Set Problems in Bioinformatics* (2005). [Author-hosted full manuscript](https://bdasgup.github.io/resume/publ/papers/barcode-journal.pdf), especially the test-set definition and pair-to-set-cover reduction. Journal DOI [10.1016/j.jcss.2005.02.001](https://doi.org/10.1016/j.jcss.2005.02.001); the publisher full-text redirect was inaccessible, so the author manuscript was used.
+
+[P3] S. Chaki, E. Clarke, A. Groce, and O. Strichman, *Predicate Abstraction with Minimum Predicates* (2003), DOI [10.1007/978-3-540-39724-3_5](https://doi.org/10.1007/978-3-540-39724-3_5), [author-hosted manuscript](https://agroce.github.io/charme03.pdf). Relevant for predicate minimization, not an identity of all optimization specifications.
+
+[P4] B. Cummins et al., *Combinatorial Representation of Parameter Space for Switching Networks* (2016), DOI [10.1137/15M1052743](https://doi.org/10.1137/15M1052743), [published paper on an author's institutional site](https://chomp.rutgers.edu/papers/DSGRN_paper.pdf). The published title says "Networks"; the arXiv version says "Systems." The revised bibliography uses the published title.
+
+[P5] B. Cummins, M. Gameiro, T. Gedeon, K. Mischaikow, and B. Rivas, *Boolean Models Coarsely Sample Continuous Dynamics of Regulatory Networks*, [arXiv:2606.14925](https://arxiv.org/abs/2606.14925), June 2026. Preprint status is explicit.
+
+[P6] S. Basu, R. Pollack, and M.-F. Roy, *An Asymptotically Tight Bound on the Number of Semi-Algebraically Connected Components of Realizable Sign Conditions*, [arXiv:math/0603256](https://arxiv.org/abs/math/0603256), Combinatorica 29 (2009), 523--546, DOI [10.1007/s00493-009-2357-x](https://doi.org/10.1007/s00493-009-2357-x). Together with their textbook, supports the established sign-condition setting.
+
+[P7] M. Anthony, *Chamber Geometry and Specification Numbers of Boolean Threshold Functions*, [arXiv:2606.29477](https://arxiv.org/abs/2606.29477), June 2026. The target-specific specification definition and geometric comparison were inspected.
+
+[P8] G. Averkov and L. Brocker, *Minimal Polynomial Descriptions of Polyhedra and Special Semialgebraic Sets*, [arXiv:1002.0921](https://arxiv.org/abs/1002.0921), 2010. The manuscript cites this verified preprint record rather than unverified publisher metadata.

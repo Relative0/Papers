@@ -1,0 +1,36 @@
+# N2/P5 Reproducibility README
+
+This bundle contains the frozen P5 preregistration, frozen harness, raw chunk outputs, combined JSON, per-case CSVs, independent verifier, post-hoc diagnostics, and the frozen P1-P4/N1 dependencies required by the harness.
+
+## Frozen hashes
+
+- `N2_P5_PREREGISTRATION.md`: `c91961a3665c2ec0a87b3e7da47c38cd39f5c62def3f68ce911733d1c6621ff8`
+- `n2_p5_harness.py`: `2829424b0d70516f10409fc10e04adc3fdf68c01e1f6a1c36a5787401b800d0b`
+
+## Main reproduction
+
+From the bundle root, use Python 3.13+ and run:
+
+```bash
+python cm_n2_p5_run/n2_p5_harness.py --mode fuzz --out cm_n2_p5_run/chunks/fuzz.json
+python cm_n2_p5_run/n2_p5_harness.py --mode selection --out cm_n2_p5_run/chunks/selection.json
+python cm_n2_p5_run/n2_p5_harness.py --mode gatep --out cm_n2_p5_run/chunks/gatep.json
+```
+
+For natural cases, run `--mode natural-case --case-id <id>` for the ten frozen ids in `chunks/selection.json`. `cavlc:35` is computationally long; `run_p5_nat_chunk.py` reproduces the same frozen randomized schedule in deterministic slices without changing any benchmark rule.
+
+Then run:
+
+```bash
+python cm_n2_p5_run/combine_p5_results.py
+python cm_n2_p5_run/independent_verify.py
+```
+
+The independent verifier should report `PASS`.
+
+## Notes
+
+- P5's fold decisions and symbolic work are required to match P4-propagated exactly.
+- The natural set is structurally frozen; it is not selected for fold incidence or timing.
+- Timing excludes BLIF parsing/oracle creation exactly as described in the preregistration.
+- `P5_POSTHOC_PROFILE.txt` and `P5_POSTHOC_BUILD_MEMORY.json` are explicitly post-hoc diagnostics and are not part of the preregistered pass/fail criteria.

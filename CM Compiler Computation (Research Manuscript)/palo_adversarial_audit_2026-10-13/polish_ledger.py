@@ -1,0 +1,82 @@
+"""Readable precise descriptions for the generated ledger; edits only audit outputs."""
+from pathlib import Path
+import csv,json,re
+OUT=Path(__file__).resolve().parent
+with (OUT/'claim_audit.csv').open(encoding='utf-8-sig',newline='') as f:rows=list(csv.DictReader(f))
+updates={
+'B07':('M = S_X C S_Y; Boolean valuation gives signed frame permutations.','256 normal-form valuations and Boolean switch involutions pass.','An all-true specialization of compound references requires joint satisfiability.'),
+'B08':('Logical pairing and Boolean valuation preserve aligned Boolean operations.','256 binary pairing valuations pass; disjoint partition weights prove preservation.','Fractional expectation weights are not Boolean partition selectors.'),
+'B09':('Matched-intermediate-frame LM matrix composition is sound.','The intermediate S_Y squared cancels to I in the Boolean ring.','This is XOR–AND parity contraction, not functional cascade or relational OR–AND composition.'),
+'B16':('Final thresholding of a soft conjunction differs from conjunction of crisp atoms.','At p=q=3/5, final threshold is zero; crisp conjunction is one.','Declare threshold placement and equality/strict-zero policies.'),
+'G01':('x+y+xy induces exactly AND, X, Y and XNOR on its positive-magnitude zero-free domain.','Negative pair sums forbid two positive scores; witnesses and reciprocal convex regions prove completeness.','Require a,b>0 and the declared signed-representative frame.'),
+'G02':('The fixed binary polynomial test minimum is infinity,3,3,2 for degree1,2,3,>=4.','Boundary divisibility supplies quadratic factors; degree packing and quartic coding attain the bounds.','Count library size in original coordinates under a zero-free promise, separately from arithmetic and certification.'),
+'G03':('Each polynomial in every exact two-test solution has degree at least four.','Four labels exhaust four signatures; each bit changes across two quadratic boundaries.','The saturation argument does not cover spare-signature cases.'),
+'G04':('Three truth-coordinate queries are necessary in the deterministic adaptive worst case.','On AND, each unqueried leaf remains consistent with the zero answers.','Coordinate queries, leaf certificates and arbitrary parameter predicates have different contracts.'),
+'G05':('Uniform strict signs on a nonempty guard certify one operator.','Nonemptiness realizes the label; signs exclude zeros; coverage and reachability remain separate obligations.','Keep empty, mixed, tie, unreachable and solver-unknown outcomes distinct.'),
+'G06':('A uniform gamma margin and L-Lipschitz bound preserve signs for distances strictly below gamma/L.','The boundary radius can reach zero; a measured derivative at one point is insufficient.','State the norm, neighborhood and input-versus-parameter domain.'),
+'G07':('A genuine parameter probability measure induces operator and boundary masses.','Measurable fibers plus the boundary partition the domain; optimization frequencies need a sampling justification.','Retain unresolved/boundary mass and cross-entry dependence; do not call a mean real table Boolean.'),
+'F01':('A nonflat smooth whole-orthant score has an affine parity sign law.','The least nonzero jet inherits weak signs along rays; factor multiplicity and chamber adjacency force parity.','Require a centered ball, nonvanishing on every open orthant and the common corner in the smooth domain.'),
+'F02':('Finite-order rigidity requires a first nonzero jet within the available differentiability order.','A finite Taylor expansion proves parity; non-affine C^k scores have a zero k-jet.','Finite differentiability does not by itself imply parity; infinite-order flatness needs smoothness.'),
+'F03':('Global arrangement rigidity requires nonflatness at every point of the walls.','Local incident arrangements and overlapping transverse pairs propagate crossing bits along connected affine hyperplanes.','One chosen nonflat corner is insufficient; retain distinct proper affine hyperplanes and the global domain.'),
+'F04':('Zero N-jets at points depending on N do not establish one flat point.','The finite-order and smooth theorems have different quantifier orders.','Retain the separate smooth proof rather than passing to an unjustified limit.'),
+'F05':('The normalized Roumieu class has the stated quasianalytic/non-quasianalytic realization dichotomy.','W_k=k!M_k matches the criterion; products/primitives support the integral-of-f-squared selector construction.','The conclusion concerns the full function classes; it does not count finite neural architectures.'),
+'F06':('The full classes realize exactly 2^(m+1) parity laws or all 2^r chamber labelings.','Generic facets recover every parity bit; chamber selectors realize arbitrary labels without cancellation.','Unary and parallel-hyperplane cases can have equal counts.'),
+'F07':('Finite affine/polynomial sigmoid/tanh compositions are real analytic for finite real parameters.','Analytic closure and threshold subtraction make the FJ application immediate under a whole-orthant specification.','Check score regularity and corner reachability; maxima, ReLU and semantic attachments can change the premises.'),
+'F08':('Fixed-arity non-affine sign-only degree is Theta(log(1/delta)); parity degree is its support size.','A non-affine two-face reduces to AND; odd-N majority substitution supplies the lower bound; positive denominator clearing supplies the upper.','Coefficients and normalized margin are unrestricted; constants depend on fixed arity/law.'),
+'F09':('A score bounded by one on the whole cube with fixed guarded margin needs Theta(1/delta) degree for every nonconstant law.','A changing Boolean edge gives the Bernstein lower bound; Jackson approximation of a clipped ramp gives the upper bound.','Require fixed arity and 0<gamma<1; the amplitude bound includes the excluded region.'),
+'F10':('C^(k,alpha) zero-jet corner magnitude has an r^(k+alpha) bound and matching angular-cutoff examples.','The Taylor beta integral gives the constant; homogeneity controls the kth derivative Holder seminorm.','Use the specified operator norm, dimension/cutoff constants and balanced-corner margin; not an arbitrary whole-guard margin.'),
+'F11':('A fixed Denjoy–Carleman derivative budget bounds flat-score corner margins by the associated function.','Taylor factorial cancellation gives inf_j M_j(B*r)^j; coordinate derivative norms require dimension factors.','Matching optimal cutoff rates for arbitrary weights need stronger hypotheses; no training theorem follows.'),
+'F12':('Finite fitting, guarded analytic realization, nonsmooth exact realization and flat whole-orthant realization differ.','The signed-magnitude polynomial varies by magnitude; min/ReLU realizes AND; punctured OR lacks the common corner.','State domain, corner, wall and regularity assumptions for each conclusion.'),
+'E01':('For label-constant tests, the weighted star optimum is the injective-code maximum row load.','Changed bits force determining boundary factors; products of those factors implement the code.','Require exclusive positive leaves, nonempty labels, distinct irreducibles and determining regular real patches.'),
+'E02':('At 2^k labels and k binary tests, every label has one signature and each test needs degree e*2^(k-1).','Signature saturation forces constancy; each row cuts half the leaves and the product construction attains the bound.','Spare signatures invalidate the constancy step; the circle construction is synthetic.'),
+'E03':('Multi-affine scores attain range extrema at vertices of independent compact boxes.','Tensor interpolation gives a convex combination; connectedness and continuity give intermediate values.','This backend requires nonempty boxes and a multi-affine score; arbitrary polynomials or constrained cells need other methods.'),
+'E04':('Two continuous AND boxes certify where natural interval arithmetic is inconclusive.','The copied demo passes 3,587 assertions; true h1 range is [-11/25,-1/25] versus natural [-14/25,1/25].','This is a precision comparison on two examples, not a speed or trained-network result.'),
+'E05':('All sixteen binary tables have coefficient-perturbation certificates at signed unit representatives.','Inverse Walsh coefficients and total perturbation at most 4/20 leave margin 4/5.','Inputs are singleton representatives; parameter-box certification is not whole-orthant certification.'),
+'E06':('Boolean certificates compose on domain intersections; continuous cascades additionally need intermediate image inclusion.','Pointwise substitution is sound; x and 100x have equal signs but outer z-10 distinguishes their magnitudes.','Check nonempty intersection, actual shared inputs, reachability, frame and threshold compatibility.'),
+'E07':('Zero-free path components carry constant operators, but matching endpoint tables does not imply persistence.','The polynomial (t-1/2)(t-3/2) has positive endpoints and a negative interior.','Root counts need polynomial nonzero time pullbacks; checkpoint interpolation is an extra assumption.'),
+'C01':('A recursive score equals its Boolean function multilinear expectation iff it is separately affine after cancellation.','Corner agreement determines multilinear reduction; the independent bounded composition census reproduces the criterion.','Scope to finite pure bilinear-gate expressions on the full free-input cube.'),
+'C02':('Boolean-equivalent residuals have Boolean-ideal decompositions and known-degree grids give complete identity rejection.','Telescoping reduction reconstructs the residual; coordinate degree d_i requires d_i+1 distinct grid values.','Expansion and grids may be exponential; free-input counterexamples need not be attainable neural inputs.'),
+'C03':('1,880 of 4,096 same-frame folds change soft semantics; all disjoint-support folds preserve it.','Independent census: same-frame 2,216/1,880; overlap 2,656/1,440; disjoint 4,096/0 preserved/changed.','These are bounded two-layer families including constants and projections, not natural-workload frequencies.'),
+'C04':('The final semantic checker passes 42,918 assertions over 12,288 compositions.','The copied final checker reproduces 42,918; 42,881 was a provisional development count.','Bind counts to the script version and keep them separate from theorem coverage.'),
+'C05':('All-joint-law expectation equality characterizes Boolean equality; fixed-model equal marginals are not a contextual congruence.','Point masses prove the characterization; fair X,Y have equal marginals but P(XX)=1/2 and P(XY)=1/4.','Keep the common event universe and all-law versus fixed-model quantifiers explicit.'),
+'C06':('Joint-law equality with declared boundary variables preserves all finite Boolean boundary contexts.','Integration proves sufficiency; indicators of each joint state prove necessity.','Preserve evidence, conditioning, parameter-law domain and boundary identity.'),
+'C07':('Exact C1 equality under a common parameter map preserves ordinary mathematical gradients.','The chain rule applies; q=1 can make a restricted rewrite safe even when universal free-input equality fails.','Declare the actual parameter map and custom backward/tie policies.'),
+'C08':('p squared replaced by p has value error at most 0.0099 but input-derivative error up to one on [0,0.01].','p-p squared is increasing there; absolute derivative residual has maximum one at zero.','For an open interval use supremum; model-parameter gradients also involve the parameter Jacobian.'),
+'C09':('Smooth downstream bounds and strict margins transfer selected value, Jacobian and threshold contracts.','Mean-value and chain-rule splitting give M*epsilon_v and M*epsilon_J+H*B*epsilon_v.','Require compatible norms, a convex C2 context domain and Jacobian bounds; nonsmooth or log contexts need extra premises.'),
+'C10':('Probability loss, circuit evaluation and typed compilation have substantial prior work.','Xu Definition1/Proposition2; AMC Theorems2–7; SPL contracts; Vehicle4.2.4; gradient semirings and distinct QLL adequacy results.','Do not identify PALO probabilistic OR with semiring addition or claim full implementation equivalence.'),
+'Q01':('The chain-ring support classification is local for r=1, logical for r>=2/h=1 and strong for h>=2.','The selected source states this under complete primitive projective bases and nonzero-amplitude support.','Full classification proof is outside independent coverage; retain its measurement contract.'),
+'Q02':('Strong contextuality excludes probabilities over compatible deterministic global assignments.','There are no compatible global sections to carry such a distribution.','It does not exclude all context-indexed probability models or identify contextuality with covariance.'),
+'Q03':('No multiplicative possibility predicate can accept every nonzero scalar over F2[u]/(u^4).','u cubed and u are nonzero while their product is zero; the scalar checker reproduces the obstruction.','The unit predicate changes the outcome contract; this is not a PALO probability model.'),
+'Q04':('The binary modal completion changes tensor semantics and uses spans for forgetting/discard.','The companion defines F2 subspaces and tensors; its coarse support lift is not strong monoidal.','Only the narrow coarse support comparison is endorsed; general process theorems are not recertified.'),
+'P01':('The compiler reports a generic-optimizer tie and negative synthetic/natural producer comparisons.','Source ratios: synthetic median0.248; natural median0.0376 over70 complete cases; one retained calibration failure.','Retain endpoints, cohort and cache conditions; timings and historical runtime closure were not rerun.'),
+'P02':('The synthesis reports 40,668 passing rational assertions for elementary bounded bridges.','The isolated copied checker reproduces that count and its family breakdown.','Repeated grid endpoints are not additional proof coverage; no general proof, learning, novelty or performance claim follows.'),
+'P03':('The reviewed artifacts contain no completed PALO integration, training benchmark or CM-specific speedup.','Only exact/synthetic diagnostics are delivered; later experiments are explicitly conditional.','Keep proposed experiments separate from completed evidence.')
+}
+for row in rows:
+    cid=row['claim_id']
+    if cid in updates:
+        claim,evidence,repair=updates[cid]
+        row['original_claim']=claim;row['evidence']=evidence;row['repair']=repair
+        # Exact primary locators are retained in location; avoid cramped duplicate prose.
+        if cid[0] in 'FECQ':
+            row['provenance']='Primary source / derivation identified in the location and evidence fields; see matching coverage discussion in adversarial_audit.md.'
+            row['downstream_impact']='Retain the scoped result; it does not establish a separate paper, general neural capability or performance advantage.'
+        if cid.startswith('F'):
+            row['status']='Informal argument reconstructed; any classical theorem input is attributed rather than independently re-proved.'
+        if cid.startswith('E'):
+            row['status']='Scoped argument checked and bounded diagnostics reproduced; general extraction remains unimplemented.'
+        if cid.startswith('C'):
+            row['status']='Elementary contract/diagnostic checked within the specified fragment; broader integration or priority remains unestablished.'
+        if cid in ('Q01','Q04'):
+            row['status']='Faithfully attributed to the specified source; full theorem not independently proof-audited.'
+        if cid in ('Q02','Q03'):
+            row['status']='Elementary consequence or counterexample independently checked.'
+        if cid in ('P01','P02','P03'):
+            row['status']={'P01':'Source-reported empirical numbers checked for faithful interpretation; timings not rerun.',
+                           'P02':'Copied bounded script rerun; count reproduced.',
+                           'P03':'Artifact inventory checked; no completed integration or training claimed.'}[cid]
+    for key in row:
+        row[key]=re.sub(r'(?<=\d)(?=[A-Za-z])',' ',row[key]) if key not in ['claim_id','artifact_version'] else row[key]
+with (OUT/'claim_audit.csv').open('w',encoding='utf-8-sig',newline='') as f:
+    w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
+print(f'Polished {len(updates)} of {len(rows)} audit rows.')

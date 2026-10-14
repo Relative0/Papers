@@ -1,0 +1,11 @@
+# Logic, dynamics and readout
+
+The three layers answer different questions.
+
+1. **What function is computed?** An arbitrary Boolean source function f can be represented by CMs/LMs and embedded reversibly as (x,y)->(x,y XOR f(x)). Nonlinear label logic is allowed. A T-gate Boolean source circuit has a standard O(T)-workspace compute-copy-uncompute construction; this is a conventional implementation statement, not a quantum speedup.
+2. **How do amplitudes evolve?** The resulting basis permutation extends linearly over the selected scalar field or ring. Optional rotation-equivariant maps are GL_m(A), not all literal binary maps. The word 'linear' at this layer does not say that f has ANF degree1.
+3. **What information can an observer obtain?** A modal basis readout returns one possible outcome, not the entire vector or support. Exact distinguishability is a direct-sum requirement. A symbolic backend that can print all coefficients has stronger classical access and must pay its computation/output cost.
+
+The query lower bounds concern layer3 after restricted oracle access at layer1. They are not consequences of the visual similarity of gates to complex quantum gates. The compiler benchmark concerns costs of representing and evaluating layer1; it does not acquire quantum readout power by using matrix notation.
+
+A phase may be invisible to a chosen coarse readout yet visible to a finer one. Therefore 'phase group' is relative to the measurement family. A-module kickback transfers a shared scalar algebraically; literal independent phase registers require explicit interaction or correlation to implement the analogous effect.

@@ -1,0 +1,204 @@
+INDEPENDENT HOSTILE MATHEMATICAL REFEREE REPORT
+Review date: 14 October 2026
+
+Manuscript: Finite-Jet Sign Rigidity on Hyperplane Arrangements and Denjoy--Carleman Realization
+Author: Brian Theory
+Manuscript date: 13 October 2026
+Source reviewed in full: C:\Users\brian\Documents\Math Latex etc\Papers for Publication\Finite Jet Sign Rigidity (Research Manuscript)\REVISED_PACKAGE_2026-10-13\MANUSCRIPT\finite_jet_sign_laws_REVISED_2026-10-13.tex
+Source length: 811 lines.
+Source SHA256, checked before and after reconstruction:
+3E4D0419D3089069AE66FBFCEF1CF44268C2D7092E927174938667B18C8E2CA5
+
+This is an independent first-pass report. I did not consult earlier reviews, package verdicts, reassessment documents, or earlier mathematical findings before completing this reconstruction. I reviewed the complete current TeX source, including all quantitative additions and the scope section, and checked the principal external inputs in primary sources. I made no manuscript edits. Source line numbers below refer to the exact file identified above.
+
+1. REFEREE DISPOSITION
+
+No false theorem, missing essential hypothesis, invalid reduction, or counterexample was found in the current statements. In particular, the new finite-order assertions, the precise corner estimate, and all three parts of the fixed-dimensional polynomial degree theorem survive scrutiny. I find no mathematical blocker requiring a major revision of the present claims.
+
+The substantial reservation is the size and nature of the research contribution. The smooth arrangement obstruction is already covered by the cited signature-flatness theory; the Denjoy--Carleman dichotomy follows from that obstruction and classical positive-flat existence; and the quantitative degree theorem combines standard approximation with an existing deep lower bound. The paper explicitly acknowledges these facts. Its surviving contribution is an accessible unified presentation, the finite-order formulation, explicit selectors and counts, and the reduction that organizes the fixed-dimensional degree alternatives. These are worthwhile expository or synthesis contributions, but they should not be presented as a newly discovered rigidity phenomenon or new approximation machinery.
+
+For a journal demanding a substantial new theorem, a hostile referee could reasonably object to insufficient novelty despite mathematical correctness. That is a venue-fit and contribution assessment, not a mathematical error and not something repaired by adding more elementary corollaries. No target journal or novelty threshold was supplied, so this report does not infer acceptance or rejection at a particular venue.
+
+2. PER-MAJOR-CLAIM DISPOSITIONS AND PROOF RECONSTRUCTION
+
+2.1 Definitions and elementary closure: Definition 2.1 and Lemma 2.2, lines 123-192.
+Disposition: sound under the stated normalized, compactwise Roumieu convention.
+
+The factorial is outside M throughout. W_k=k!M_k is positive, normalized and log-convex, and W_k^(1/k) tends to infinity because M_k>=1 and (k!)^(1/k) tends to infinity. Its reciprocal quotient is precisely M_k/((k+1)M_{k+1}), so there is no missing factorial in the quasianalytic criterion.
+
+For products, log-convexity implies M_j M_{k-j}<=M_k. In a multi-index Leibniz expansion, summing terms of a given total derivative order uses sum_{|beta|=j,beta<=alpha} binom(alpha,beta)=binom(k,j), where k=|alpha|. The remaining geometric factors can be absorbed by a larger Roumieu radius. Thus this closure argument does not silently require moderate growth or derivative stability.
+
+For the primitive, derivative order k>=1 invokes g^(k-1), and monotonicity of M supplies the required bound. Its order-zero bound on each compact interval follows directly by integration on the interval joining that compact set to zero. Affine substitution has only fixed coefficient factors and compact images. The zero-jet definition of a Taylor-quasianalytic class is sufficient for the two generic corollaries; no unjustified analytic continuation or sheaf property is used.
+
+2.2 Polynomial weak-sign lemma: Lemma 3.1, lines 198-229.
+Disposition: sound, including the allowance of polynomial zeros inside chambers.
+
+Write P=ell_j^{a_j}Q_j with maximal a_j. The residual polynomial cannot vanish identically on H_j, since that would make ell_j divide Q_j. On every relatively open facet there is therefore a point where Q_j is nonzero and no other arrangement hyperplane is present. At such a point the crossing ratio is (-1)^{a_j}. This gives the same ratio on every adjacency across H_j; it is not merely a generic statement about one chosen facet. Dividing by the product of these parity factors leaves a constant on the connected adjacency graph.
+
+The weak inequality cannot make an entire chamber's label arbitrary: a nonzero real polynomial cannot vanish on that chamber's open interior. Hyperplane dependencies also do not destroy uniqueness. A generic crossing of H_j changes only its own defining sign, so it determines e_j independently of every linear dependence between the affine forms. The proof covers one-dimensional arrangements and the empty arrangement with the usual empty-product convention.
+
+2.3 Orthant finite-jet rigidity and finite regularity: Theorems 4.1 and 4.3, lines 239-281; Corollary 4.4, lines 283-289.
+Disposition: sound.
+
+If d is the first nonzero Taylor order, F(tv)/t^d tends to a nonzero homogeneous polynomial P_d(v). Because t>0, the sign constraint yields h(sign v)P_d(v)>=0 for every direction off the coordinate walls. The polynomial lemma then applies. Vanishing of P_d in some directions is harmless: that is exactly why the lemma uses weak signs.
+
+No uniform ray remainder estimate is required for this inference; each fixed v suffices. C^d regularity supplies the Peano remainder used here, including d=0 by continuity. A hypothetical nonzero derivative of any order <=k for a non-affine C^k realization has a least such order and is ruled out. The quasianalytic corollary only needs that a zero Taylor jet implies a zero germ, contradicted by the local off-wall nonvanishing.
+
+2.4 Global arrangement propagation: Theorem 4.5, lines 293-315; finite-order Theorem 4.7, lines 325-331; Corollary 4.9, lines 337-343.
+Disposition: sound; the multiple-intersection step is adequately justified.
+
+At p, a ball excluding all nonincident hyperplanes reduces the problem to a central arrangement. Every local chamber is a convex cone intersected with a ball, so continuity and off-wall nonvanishing give its fixed sign. Its first nonzero Taylor polynomial therefore yields a local crossing bit for every incident hyperplane, including configurations that are not normal crossings.
+
+For p' near p in H_j, the ball around p' can be chosen inside the first ball and avoiding all hyperplanes not containing p'. A generic point q in H_j inside that ball avoids all remaining hyperplanes. A sufficiently short transverse pair at q gives the same two actual signs when interpreted in either ball. Consequently e_j(p)=e_j(p'). This proves local constancy through intersection strata, rather than assuming it. Connectedness of the full affine hyperplane then proves global constancy.
+
+The finite-order version only replaces the existence of a finite first Taylor order by d(p)<=N; its propagation argument is unchanged. The text correctly warns at lines 333-334 that letting N grow cannot by itself produce a common flat point. The smooth theorem proves its stronger conclusion directly, so there is no exchange of quantifiers here.
+
+The generic quasianalytic corollary does not require an identity theorem on an arbitrary class: if a wall point were flat, zero germ there would already contradict nonvanishing at off-wall points arbitrarily nearby.
+
+2.5 Historical reduction: Remark 4.6, lines 317-323.
+Disposition: verified; no omitted normal-crossing assumption or compactness obstruction was found.
+
+The multiplier G=F product_j ell_j^2 has exactly the arrangement as its zero set and preserves every chamber sign. At a wall point its first nonzero homogeneous term is the first term of F multiplied by the squared incident linear forms and nonzero constants from the other forms. This polynomial is nonzero, so the multiplication does preserve nonflatness.
+
+Broglia--Tognoli's Section 4 explicitly includes R^n. Their Theorem 4.2 has an extra arc-analytic connectivity condition in the non-normal-crossing situation. Affine hyperplanes satisfy it via straight analytic segments. For n>=2 the homology condition stated in the manuscript is automatic; the separately handled n=1 case is elementary. Their admissible signatures on the hyperplane components are precisely the products of the component signs and a global sign. Thus this prior-work implication is real, not just a loose analogy. See source A below.
+
+2.6 One-sided selector and whole-orthant realization: Lemma 5.1 and Theorem 5.3, lines 349-419; Gevrey Corollary 5.4, lines 421-431.
+Disposition: sound without any extra stability assumption on the weight.
+
+Start with a nonzero compactly supported real f and translate the left endpoint of its support to zero. Continuity gives f(0)=0. Every interval (0,t) contains a nonzero value, even if the support has gaps or disconnected pieces accumulating at zero; otherwise zero would not be its left endpoint. The primitive of f^2 is therefore exactly zero on (-infinity,0] and strictly positive everywhere on (0,infinity). No assumption that f itself is nonnegative or supported on a single interval is needed.
+
+In the selector sum, exactly one orthant product is positive and all others vanish at every off-wall point. This prevents cancellation, and the elementary closure lemma gives membership in the original class. All affine laws are realized by polynomials in the quasianalytic regime. For Gevrey growth the ratio becomes (k+1)^(-s), giving the stated s=1 versus s>1 boundary.
+
+The classical positive-flat alternative at lines 376-377 is also legitimate. Multiplying a positive function flat on the closed arrangement by independently assigned chamber signs gives a smooth function: its derivatives on the complement are the corresponding signed derivatives, and all of them extend by zero to the arrangement. Their absolute values obey the original derivative estimates. This is an established antecedent rather than an independent new existence result; see source B.
+
+2.7 Arrangement realization and exact counts: Theorem 6.1, lines 441-471; example and count remark, lines 473-483.
+Disposition: sound for arbitrary finite collections of distinct proper affine hyperplanes.
+
+A fixed nonempty sign cell is convex, so two distinct chambers cannot share a sign vector. This validates the selector discrimination without requiring a central, essential, simple or generic arrangement. Every parity parameter is detected by a generic crossing of its own hyperplane; therefore the count is genuinely 2^(m+1), even for dependent or parallel hyperplanes.
+
+The requirement that hyperplanes be distinct matters for this count and is explicitly imposed. Each added hyperplane splits at least one chamber, proving r>=m+1. For parallel hyperplanes the chamber adjacency graph is a path and every labeling is a parity labeling, agreeing with r=m+1. The three-concurrent-line example gives r=6 and counts 16 versus 64, as claimed. The table and abstract use the full normalized classes rather than an arbitrary subclass, so their existence statements do not overreach the hypotheses.
+
+2.8 Corner estimate: Proposition 7.1, lines 509-528.
+Disposition: sound, including its explicit Gamma factor and k=0 endpoint.
+
+The finite-order theorem forces every derivative through k at zero to vanish. For x=rv and k>=1, the kth directional derivative satisfies |D^kF(tv)[v,...,v]|<=H t^alpha. Hence
+
+  |F(rv)| <= H/(k-1)! integral_0^r (r-t)^(k-1)t^alpha dt
+           = H Gamma(alpha+1)/Gamma(k+alpha+1) r^(k+alpha).
+
+The beta integral therefore gives precisely the stated constant; there is no missing factorial. For k=0 it reduces to the Holder condition from F(0)=0. Substituting r=sqrt(n) delta proves the corner-margin assertion. The ball is convex, so the full radial segment needed in the integral stays in the stated domain.
+
+2.9 Associated-function bound: Remark 7.2, lines 530-540.
+Disposition: sound under the explicitly fixed derivative budget.
+
+Flatness and the order-j integral remainder give |F(x)|<=A M_j(B||x||)^j for every j>=1, with the amplitude bound giving j=0. Taking the infimum is justified and cancels exactly the displayed factorial. To pass from coordinate bounds to multilinear operator bounds, sum over the j coordinate indices and use product_l ||v_l||_1 <=n^(j/2) product_l ||v_l||_2. This explains the replacement B by B sqrt(n). Optimizing (j!)^(s-1)t^j gives the stated Gevrey stretched exponential upper bound. No optimal-cutoff theorem for arbitrary weights is claimed.
+
+2.10 Guarded polynomial degree, parity: Theorem 7.3(i), lines 560-576.
+Disposition: sound.
+
+The monomial gives degree |S| for every delta. On the Boolean vertices in S, a polynomial of lower total degree has zero correlation with parity, even before multilinearization: every monomial omits at least one of the |S| variables to odd degree. Strict sign agreement would make this correlation positive. Fixing the other coordinates at vertices preserves both the degree bound and guarded-domain membership. Constants give degree zero as stated.
+
+2.11 Guarded polynomial degree, non-affine laws: Theorem 7.3(ii), lines 578-608.
+Disposition: sound. The lower bound is genuinely quantitative and correctly invokes external machinery.
+
+Upper bound reconstruction: write D=2L(m+1). The roots of p(t) and p(-t) are strictly negative and strictly positive, respectively, and all their exponents are even. Thus q is positive on the whole real line. For t between consecutive dyadic scales one factor of p(-t)/p(t) is at most 3^(-2L); all other factors have absolute ratio at most one. The rational r is bounded by one and has error at most epsilon=2*3^(-2L) on the guarded intervals.
+
+The expectation extension has |H_h|<=1. If each randomized sign has error probability <=epsilon/2, the probability any input differs is <=n epsilon/2 and the loss in the signed expectation is at most twice that, giving 1-n epsilon. Clearing the positive denominators yields a polynomial with degree at most nD, since each coordinate contributes at most one numerator or denominator. Thus L can be fixed once n is fixed and the total degree is O_n(log(1/delta)). There is no hidden exponentiation in the degree when expanding the 2^n terms.
+
+Lower bound reconstruction: if all two-dimensional coordinate faces were affine over F_2, every mixed second difference of the truth function would vanish. In its multilinear F_2 representation that removes all monomials of degree at least two. Therefore a non-affine law has a non-affine binary face. Such a binary face has an odd number of true vertices; input sign flips move its exceptional vertex to (+,+), and output negation changes the three-true case to one-true. This gives AND with no degree increase.
+
+For sufficiently small delta choose the largest odd N<=1/delta. Then N is comparable to 1/delta and every normalized odd Boolean sum has magnitude >=1/N>=delta. Substituting two independent such sums into the binary representing polynomial preserves total degree and supplies a sign representation of two independent majorities. Sherstov's actual Theorem 1.10 gives Omega(log N); the input/output sign convention is easily reconciled. The reduction has the correct inequality direction for N and does not rely on a margin or coefficient restriction. See source C.
+
+Independent stress check: even without that quantitative input, a fixed-degree counterexample sequence as delta tends to zero cannot exist. Normalize coefficient vectors, pass to a nonzero polynomial limit, and obtain weak signs on every local orthant. Its first nonzero homogeneous term would violate Lemma 3.1. This separately confirms divergence, although it does not prove the logarithmic rate and must not replace the cited lower bound.
+
+2.12 Guarded polynomial degree, bounded margin: Theorem 7.3(iii), lines 610-623; endpoint discussion, lines 626-628.
+Disposition: sound. The global cube amplitude assumption is essential and is correctly stated.
+
+A nonconstant Boolean labeling changes along some cube edge. Freeze the other coordinates at that edge's vertices. The resulting univariate polynomial has opposite signed values of magnitude >=gamma at -delta and delta, so the mean-value slope has magnitude >=gamma/delta. Since the slice is bounded on the entire interval, Bernstein gives |p'(xi)|<=d/sqrt(1-xi^2)<=d/sqrt(1-delta^2). This proves the explicit lower bound with the stated direction of its square-root factor.
+
+For the upper bound, the clipped ramp is 1/delta-Lipschitz. Its composition with cosine has that same Lipschitz upper bound and is even and periodic. Jackson approximation, even symmetrization and Chebyshev conversion give an algebraic polynomial with uniform error C/(k delta). Dividing by 1+eta puts the approximation inside [-1,1] everywhere and gives guarded error <=2eta/(1+eta). The expectation extension then provides margin gamma by choosing eta small enough once n and gamma are fixed. Degree at most nk is O_(n,gamma)(1/delta). The cited Jackson and Bernstein theorem numbers match the source; see D.
+
+The logarithmic sign-degree bound and reciprocal bounded-margin bound do not contradict each other. For example, the parity score x has degree one and amplitude one, but its minimum signed margin is delta, which fails a fixed positive gamma as delta tends to zero. Likewise denominator clearing need not retain a margin after global amplitude normalization. At gamma=1 the identity theorem for polynomials applied to an open guarded box rules out every nonconstant law. These limitations are explicitly acknowledged.
+
+2.13 Scope examples and regularity sharpness: Section 8, lines 630-692.
+Disposition: sound.
+
+The example xy(x^2+y^2) does have exactly the coordinate axes as its real zero set, and its residual factor after the maximal coordinate factors is not a unit at zero. It correctly refutes a unit-times-monomial conclusion in the original coordinates, without purporting to refute resolution after modification.
+
+On the punctured plane, x+y+sqrt(x^2+y^2) has exactly the claimed OR signs: the mixed-sign inequality follows from (x+y)^2<x^2+y^2, and the negative-negative inequality is reversed. It is analytic on the punctured plane, which genuinely removes the point needed for the orthant argument.
+
+For F_k=r^k(x+y-r), the positive homogeneous degree is k+1 and the angular factor is smooth. Off zero its jth derivatives scale as r^(k+1-j). Induction therefore extends derivatives through order k by zero. Its kth derivative is Lipschitz: for points separated by a fixed fraction of their radii, the O(r) bound suffices; otherwise the segment remains away from zero and its bounded next derivative gives the estimate. If F_k were C^(k+1), Taylor expansion and homogeneity would identify it with a homogeneous polynomial of that degree, impossible for an AND law. Its positive diagonal value is exactly the value printed at line 670. Thus the exponent k+1 at alpha=1 really is unimprovable under a fixed Holder budget after rescaling. The underlying R-function formula is already classical; source E confirms the attribution.
+
+The delta-dependent analytic formula x+y-sqrt(x^2+y^2+delta^2) is strictly increasing in each positive coordinate, has minimum (2-sqrt(3))delta on the positive guarded box, and is strictly negative when either input is <=-delta. Its negative value at the origin makes its failure near the common corner explicit. There is no hidden claim that it is a polynomial or that its degree should fall under Theorem 7.3.
+
+3. ERRORS, SCOPE LIMITATIONS AND EDITORIAL PREFERENCES
+
+Confirmed mathematical errors requiring correction: none found.
+
+Confirmed essential hypotheses missing from the stated results: none found.
+
+Mandatory proof repairs: none identified. In particular, the two-dimensional face reduction, local propagation through singular arrangement strata, cutoff-to-selector step, and Taylor remainder constants are sufficiently justified for the stated level of exposition.
+
+Justified scope limitations, not defects:
+  - The arrangement is finite, affine, and consists of distinct proper hyperplanes.
+  - The rigidity is about signs on complete local orthants or full arrangement chambers, with nonvanishing off the walls.
+  - The finite-order global theorem assumes a common finite N; it does not claim to derive the smooth flat-point conclusion by a limit in N.
+  - The existence and counting claims concern the full normalized compactwise Roumieu class, without prescribed common constants for all realizing functions.
+  - Quantitative degree constants may depend on dimension and the fixed margin. No arity-uniform, coefficient-size or evaluation-cost bound is proved.
+  - Bounded-margin degree is constrained by amplitude on the excluded strips as well as the retained domain.
+  - The sharpness example addresses alpha=1. No optimal constant or general-weight optimal-cutoff result is asserted.
+
+Editorial preferences: none is elevated here to a required revision. An extra sentence identifying the arc-analytic connectivity condition by name in Remark 4.6 would make the historical comparison slightly easier to audit, but straight affine segments already verify the stated "required connectivity." Expanding the two-dimensional-face argument into a separate lemma would be a stylistic choice; the existing explanation is mathematically sufficient.
+
+4. ORIGINALITY AND INTERACTION BETWEEN OLD AND ADDED MATERIAL
+
+The additions are logically consistent with the earlier qualitative arguments. The finite-order statements expose the precise amount of differentiability already used by the leading-term proof. The corner estimate then applies those finite-order statements and an explicit integral remainder. The degree comparison studies a different domain with a fixed positive gap from the walls, and it correctly uses independent approximation results rather than claiming the qualitative rigidity supplies its rate.
+
+The most significant external novelty constraints are concrete:
+
+  A. Broglia--Tognoli already provide a general smooth signature-flatness obstruction. Their first example also explicitly uses the first nonzero Taylor coefficient to obstruct AND-type signs. The manuscript's reduction to their theorem is valid. Thus neither smooth flatness nor the leading-term idea is new.
+
+  B. Classical non-quasianalytic positive-flat existence already permits arbitrary chamber sign assignments. The manuscript's explicit selector formula is a convenient elementary realization, not a new existence principle.
+
+  C. The hard lower-bound ingredient in the logarithmic degree result is Sherstov's majority-conjunction theorem. The passage from a non-affine fixed-arity law to a binary face and then to normalized sums is short and correct. It organizes a useful classification, but it does not constitute a new lower-bound method.
+
+  D. The reciprocal-width estimate is an elementary Bernstein lower bound and Jackson upper bound, with a multilinear expectation extension. The corner estimate is similarly a direct Taylor consequence.
+
+  E. The finite-smoothness AND family is explicitly present in the R-function literature. Its use as a sharpness illustration here is valid, but the family itself cannot support a novelty claim.
+
+The current abstract, introduction, and conclusion already reflect most of this boundary. I would not demand rewriting mathematically correct results simply because they are consequences. I would require maintaining the current modest positioning in any submission letter and selecting a venue that values elementary proofs, unification or exposition. I have not established a publication-priority claim for the exact combined formulation of Theorem 7.3, nor does the manuscript claim one.
+
+5. PRIMARY SOURCES CHECKED
+
+A. F. Broglia and A. Tognoli, Approximation of C-infinity-functions without changing their zero-set, Annales de l'Institut Fourier 39 (1989), 611-632.
+https://aif.centre-mersenne.org/article/AIF_1989__39_3_611_0.pdf
+https://doi.org/10.5802/aif.1178
+Checked: introductory Example 1 and remark (printed pp. 611-612), admissible signatures and Proposition 2.4 (pp. 615-617), Section 4 hypotheses and Theorem 4.2 (pp. 628-629). These support the historical priority assessment in 2.5 and 4A.
+
+B. A. Rainer, Ultradifferentiable extension theorems: a survey, Expositiones Mathematicae 40 (2022), 679-757; author version dated 30 December 2021.
+https://www.mat.univie.ac.at/~armin/publ/survey-UET.pdf
+https://doi.org/10.1016/j.exmath.2021.12.001
+Checked: Theorem 3.6, Corollary 3.12 and Remark 3.13. The normalized total-weight version supplies the exact criterion, the cutoff input, and the positive-flat antecedent. Remark 3.13 cites Langenbruch's 1999 and 2003 works; the manuscript's Langenbruch 2003 citation is one of those references.
+
+C. A. A. Sherstov, The intersection of two halfspaces has high threshold degree, SIAM Journal on Computing 42 (2013), 2329-2374.
+https://www.cs.cmu.edu/~odonnell/hits09/sherstov-threshold-degree-of-ltf-intersections.pdf
+https://arxiv.org/abs/0910.1862
+https://doi.org/10.1137/100785260
+Checked: Theorem 1.10 on two independent majorities and Theorem 2.4 on Newman's rational sign approximation. The former is the exact lower bound needed; the latter supports the manuscript's description of its explicit dyadic construction as Newman type. The accessible full text checked is a preprint, rather than a page-by-page comparison with the final typeset journal edition.
+
+D. K. A. Kopotun, A. V. Prymak and I. O. Shevchuk, Introduction to Approximation Theory, study guide, 24 January 2018.
+https://mathanalysis.knu.ua/wp-content/uploads/2020/07/at-study-guide-january-22-2018-1-1.pdf
+Checked: Theorem 21.1 and its Jackson k=1 remark, and Theorem 24.1 (printed pp. 53 and 56). They give the exact trigonometric approximation and algebraic derivative inequalities used in the manuscript.
+
+E. V. Shapiro, Semi-analytic geometry with R-functions, Acta Numerica 16 (2007), 239-303.
+https://ftp.cs.wisc.edu/pub/users/prem/rfuns.pdf
+https://doi.org/10.1017/S096249290631001X
+Checked: Sections 3.3 and 3.6, especially equations (3.4)-(3.5) and the discussion of vanishing derivatives at the origin. These contain the root conjunction/disjunction and the r^k regularization used in Section 8. The same discussion credits an earlier Rvachev obstruction to constructing a logically complete system using only polynomial operations; I did not examine that older Russian-language source directly.
+
+6. LIMITATIONS AND FINAL RECOMMENDATION
+
+This is a mathematical referee reconstruction, not formal proof-assistant certification. I checked all assertions in the manuscript source and the principal cited inputs; I did not audit the complete proofs of every external theorem, exhaust the historical literature, verify every bibliography entry, or compare every rendered PDF page against TeX. In particular, references serving only as broader context for resolution, monomialization, sign distributions and chamber algebras were not used as premises of the reconstructed arguments. Numerical experiments would not certify the universal sign assertions, and none were substituted for proofs.
+
+There are no mathematical blockers in this report. No major mathematical revision is presently justified by an identified error. Preserve the precise hypotheses and the modest contribution statement. If the intended venue requires a major new research theorem, resolve that venue-fit issue before investing in additional cosmetic revisions; a genuinely new research direction would be a separate substantive task, not a necessary repair of these theorems.
+
+No further mathematical review run is required solely to repeat these checks. Parent synthesis and any narrowly identified follow-up should remain in the existing review task because they reuse the exact version and evidence. A new thread or model run is unnecessary for this completed independent pass.

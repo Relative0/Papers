@@ -1,0 +1,17 @@
+# Counterexample Ledger — Theory Phase 2
+
+**Date:** 2026-09-28
+
+| ID | Claim attacked | Counterexample / result | Consequence | Regression |
+|---|---|---|---|---|
+| CX-1 | \(\kappa(\mathcal C)\) lower-bounds storage bits | \(\mathcal C=\{\mathrm{PARITY}_n,1-\mathrm{PARITY}_n\}\): \(\kappa=n\), but one class-ID bit selects the source under the known two-element promise. | \(\kappa\) is identifiability depth only; no generic bit/time lower bound. | PASS, \(n=1,\dots,5\) |
+| CX-2 | \(Q_k\) remains closed after a destructive restriction with a fresh depth-\(k\) horizon | Complementary parity on \(k+1\) variables has equal \(Q_k\); after fixing one coordinate the residual complementary parity functions on \(k\) variables differ on full residual assignments. | Q16 must use cumulative distinct-coordinate budget; reset-horizon version is false. | PASS, \(k=1,\dots,5\) |
+| CX-3 | One realized adaptive transcript is equivalent to the whole \(Q_k\) family | Any protocol that follows only one restriction path observes only the queries on that path; other branches are not observed. | Q16 universal quantifier must be “every possible continuation/protocol,” not “a transcript.” | logical boundary test |
+| CX-4 | Unordered factor-state histograms persist under named coordinate restrictions | \(f=xy\), \(g=(1-x)y\), with \(U_f=[0,1]\), \(U_g=[1,0]\), \(W=[0,1]\). Same unordered U-profile multiset, same W, same total count 1; after \(x=0\), counts are 0 and 1. | Coordinate/index information is necessary inside the permutation-invariant profile-multiset representation class. | PASS |
+| CX-5 | Low GF(2) ANF degree implies shallow count-identifiability | Parity has GF(2) ANF degree 1 but complementary parity remains indistinguishable through depth \(n-1\). | Algebraic degree over GF(2) is not the relevant reconstruction-depth parameter. | prior phase |
+| CX-6 | Small fixed-cut matrix rank forces shallow identifiability | Complementary global parity matrices have rank at most 2 (GF(2), real, nonnegative, binary-factor, Boolean-OR) but collide through \(Q_{n-1}\). | The rank-2 class threshold is \(n\); more importantly, low rank alone does not imply persistent computational ease. | proof + prior finite checks |
+| CX-7 | The T3 degree-\(k\) moment state supports reset-horizon updates | After one update it intentionally retains only degree \(k-1\), and CX-2 shows no generic \(Q_k\)-summary can supply a fresh \(k\) horizon. | T3 is cumulative-budget only. | implied by CX-2 |
+
+## Scope discipline
+
+CX-4 is **not** a lower bound on every encoding. It only rules out coordinate-blind states invariant under row-assignment permutations / unordered row-profile multisets. Likewise, CX-1 does not show that every class has a one-bit state; it shows that identifiability depth cannot be reinterpreted as a storage lower bound without an additional representation/access theorem.

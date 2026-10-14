@@ -1,0 +1,886 @@
+<PARSED TEXT FOR PAGE: 1 / 19>
+Operator-Level Boolean Computation with Correspondence Matrices
+Brian Theory
+Abstract
+Correspondence matrices (CMs) encode binary logical connectives as 2 × 2 Boolean operators
+in a declared operand frame. Their purpose is not merely to reshape the four values of a
+truth table. Once the operand encoding and scalar algebra are fixed, a CM can be evaluated,
+transformed to account for operand order and polarity, and fused with other operator matrices
+before the operands themselves are evaluated. We define CM evaluation as an XOR–AND
+contraction over GF(2): conjunction replaces arithmetic multiplication and exclusive-or, written
+⇕, replaces arithmetic addition. True-first one-hot bras and kets make this contraction select
+exactly the connective value associated with the two operands. We then distinguish linearity in
+the operator coefficients from linearity of a Boolean function in its inputs, derive the row, column,
+and transpose transformations induced by signed operand changes, and state the condition under
+which pointwise operator fusion is sound. A formula-valued logical matrix (LM) provides a
+symbolic lift: positive valuation produces the corresponding numeric CM, and valuation commutes
+with Boolean operations and the LM pairing. This separates LMs from algebraic-normal-form
+coefficients and from semi-tensor-product logical structure matrices. Together, these results
+provide the typed foundation for a compiler method that normalizes compatible operand frames
+and performs verified operator-level fusion. The empirical part of the study is specified as a
+frozen evaluation of when this rewrite saves total work after compilation, memory, and interface
+costs are included; no performance result is claimed before that campaign is completed.
+1 Introduction
+Boolean computation is usually written as a sequence of operations on truth values or as a symbolic
+expression whose internal nodes are logical connectives. Either view makes the operands prominent
+and leaves each connective as a small instruction attached to an expression node. A correspondence
+matrix reverses that emphasis. It packages a binary connective as a 2 × 2 operator whose rows and
+columns are indexed by the states of its two operands. Once those axes are declared consistently,
+the operator can be evaluated, transformed, and combined as an object in its own right.
+This operator interpretation is the essential point of the construction. A CM contains the same
+four output bits as a binary truth table, so its information content is not new. What changes is how
+those bits participate in computation. A true-first bra for the left operand, a CM in the middle, and
+a true-first ket for the right operand form a Boolean contraction. Because both states are one-hot,
+the contraction selects exactly one matrix entry. The matrix therefore acts as the connective rather
+than merely displaying it.
+The same view becomes useful before evaluation. Transposition exchanges the operands, row
+or column permutations absorb input negations, and entrywise complement negates the output.
+These transformations can place two operator occurrences into an identical operand frame: the
+same variables, axis order, polarity, and truth-state convention. When the frames agree, an outer
+Boolean connective can be applied entrywise to the two CMs. The resulting CM replaces the two
+subexpressions without changing their value. The compiler question is therefore not whether a truth
+1
+<PARSED TEXT FOR PAGE: 2 / 19>
+table can be reshaped, but whether operator normalization and fusion can remove repeated work
+often enough to repay their preparation and representation costs.
+Matrix treatments of logic have a substantial history. Boolean matrix algebras were developed for
+computer manipulation of logical functions well before CMs [Edwards, 1972]. Matrix logic and vector
+logic treat logical connectives as operators, including outer-product operator bases and matrices
+acting on Kronecker products of truth vectors [Stern, 1988, Mizraji, 1992, 2008]. Semi-tensor-product
+work gives numeric logical structure matrices for Boolean functions and network dynamics [Cheng
+and Qi, 2010, Zhao et al., n.d.], while Cheng et al. [2011] explicitly uses Boolean matrix operations
+with XOR as addition and AND as multiplication. Accordingly, this paper does not claim that
+truth tables, Boolean matrix products, logical matrix operators, or pointwise combination of truth
+values are new.
+The contribution sought here is narrower and computationally testable: a typed pipeline that
+represents a binary connective as a compact CM, records its operand frame, aligns signed variable
+pairs through explicit matrix transformations, fuses only exact compatible frames, and exposes
+a fallback when structural fusion is unavailable. The mathematical identities are elementary or
+antecedented; their role is to make the compiler transformation precise enough to prove and measure.
+The paper makes the following contributions.
+1. It defines CM evaluation as XOR–AND contraction over GF(2) and separates this algebra
+from ordinary real or integer matrix multiplication.
+2. It gives a typed operand-frame calculus for exchange, input polarity, output negation, and
+sound same-operands fusion.
+3. It separates and proves the structural alignment/fusion rule, exact four-assignment retabulation,
+and the top-level admitted compiler path.
+4. It defines formula-valued LMs and proves that valuation produces a CM in the corresponding
+frame and commutes with logical pairing.
+5. It separates LMs and CMs from external ANF and STP coordinate representations, preventing
+several superficially similar objects from being treated as the same mathematical type.
+6. It specifies an empirical boundary question: when do normalization and fusion reduce total
+work after preparation, compilation, memory, kernel, and interface costs are all counted?
+An earlier public manuscript introduced Correspondence Matrices under the author’s former
+name [Droncheff, 2018]. The present work is a substantial revision rather than a republication of
+that text. It narrows the novelty claim, makes the scalar algebra and basis order explicit, replaces
+the earlier higher-dimensional size formulas with the correct 2
+n
+entry count, removes the proposed
+equivalence with ordinary modulo, and treats measurement and superposition only as nonphysical
+Boolean operations. It also adds the operand-alignment compiler rule, a versioned correctness
+argument, and a new evaluation designed to report positive, neutral, and negative performance
+regions.
+The remainder of the paper first defines CM operators and their evaluation semantics, then
+presents operand alignment, fusion, and the compiler invariant before the denser symbolic mate￾rial. It next compares the construction with matrix logic, STP, ANF, and small-function logic
+synthesis, develops the formula-valued LM as a secondary symbolic extension, and specifies the
+empirical boundary. Most formal proofs and exhaustive finite checks are placed in the appendix
+and reproducibility supplement.
+2
+<PARSED TEXT FOR PAGE: 3 / 19>
+2 Correspondence matrices as Boolean operators
+2.1 States, axes, and scalar algebra
+Let B = {0, 1}. We write conjunction as ∧, negation as ¬, and exclusive-or as ⇕.
+1 When bits are
+regarded as elements of GF(2), multiplication is conjunction and addition is exclusive-or. Every
+displayed CM contraction uses this algebra. It is not an arithmetic matrix product over the integers,
+reals, or complex numbers.
+For x ∈ B, define the true-first state
+|x⟩ =
+"
+x
+¬x
+#
+, ⟨x| =
+h
+x ¬x
+i
+. (1)
+The first component represents truth and the second represents falsity. CM rows are ordered by the
+left operand X = 1, 0, and columns by the right operand Y = 1, 0. This declared order is part of
+the type of the representation; a software array using another order must be converted explicitly.
+For a binary operator Θ : B
+2 → B, define
+[Θ] := "
+Θ11 Θ10
+Θ01 Θ00#
+=
+"
+1 Θ 1 1 Θ 0
+0 Θ 1 0 Θ 0#
+. (2)
+Thus Θxy := x Θ y denotes one matrix entry. The bare bracketed operator, such as [⇕], names a
+particular CM; [Θ] is the generic form. There is no function subscript on the whole matrix in the
+main-text notation because the operator itself already supplies the needed identity.
+2.2 XOR–AND contraction
+For any C ∈ B
+2×2
+, define χx(r) = 1 when r = x and χx(r) = 0 otherwise. The row and column
+state encodings have this same component function. Then
+EC(x, y) := ⟨x| C |y⟩ := ⇕
+r,s∈{1,0}
+χx(r) ∧ Crs ∧ χy(s). (3)
+Equation (3) is a Boolean contraction: AND forms each term and XOR reduces the four terms. The
+compact bra–operator–ket notation suppresses those mechanics after they have been declared.
+Proposition 1 (CM selection). For every binary Boolean operator Θ and x, y ∈ B,
+⟨x| [Θ] |y⟩ = x Θ y. (4)
+Proof. Each state in (1) has exactly one nonzero component. In the four-term contraction, every
+term except the one indexed by (x, y) therefore contains a zero factor. The surviving term is
+1 ∧ Θxy ∧ 1 = Θxy.
+For XOR, the operator matrix is
+[⇕] = "
+0 1
+1 0#
+. (5)
+1The paper uses ⇕ (\Updownarrow) rather than a circled-plus glyph. In the declared true-first frame, the XOR
+CM is a 90◦
+rotation and the entrywise complement of the XNOR CM. Rotating the XNOR glyph visually gives the
+chosen XOR glyph, and overlaying the two motivates the Impax glyph used below.
+3
+<PARSED TEXT FOR PAGE: 4 / 19>
+Figure 1: A binary truth value is encoded as a true-first bra or ket, and [Θ] acts between them
+through XOR–AND contraction. The XOR CM [⇕] is a 90◦
+rotation and entrywise complement of
+the XNOR CM [⇔]. Their entrywise Boolean superposition is the tautological Impax CM [⇔⇕ ].
+Taking x = 1 and y = 0 gives
+⟨1| [⇕] |0⟩ =
+h
+1 0i
+"
+0 1
+1 0# "0
+1
+#
+= 1, (6)
+where the displayed products and reduction retain the AND/XOR meaning of (3). Figure 1 presents
+the same evaluation visually and introduces the geometric notation used below.
+2.3 Coefficient-space linearity
+The contraction is linear in the four operator coefficients over GF(2). For fixed x and y and matrices
+A, B ∈ B
+2×2
+,
+EA⇕B(x, y) = EA(x, y) ⇕ EB(x, y), E0(x, y) = 0, (7)
+where A ⇕ B is entrywise XOR. This statement is deliberately narrow. It does not say that the
+Boolean function represented by a CM is linear in x and y. Nor does it make the state encoding
+linear: the map x 7→ [x, ¬x]
+T is affine because it sends 0 to [0, 1]T rather than the zero vector. If
+the contraction is extended to arbitrary vectors in GF(2)2
+, it is separately linear in the bra, the
+matrix coefficients, and the ket; that multilinearity remains distinct from the algebraic degree of the
+represented Boolean function.
+Let Ers contain a one at position (r, s) and zeros elsewhere. The four matrices E11, E10, E01, E00
+form the standard basis of GF(2)2×2
+, and
+[Θ] = ⇕
+r,s∈{1,0}
+ΘrsErs. (8)
+4
+<PARSED TEXT FOR PAGE: 5 / 19>
+Equation (4) extracts the corresponding coefficient. This is a minterm-indicator or operator-basis
+expansion, not the algebraic normal form of Θ in uncomplemented variables.
+2.4 XNOR, XOR, and Impax
+The true-first XNOR and XOR matrices are
+[⇔] = "
+1 0
+0 1#
+, [⇕] = "
+0 1
+1 0#
+. (9)
+Consequently, define the clockwise rotation of a displayed 2 × 2 array by
+rot90◦
+"
+a b
+c d#
+:= "
+c a
+d b#
+.
+For this particular pair of operators,
+[⇕] = rot90◦ ([⇔]) = ¬[⇔]. (10)
+The Impax operator is the tautological operator represented by the centered overlay glyph ⇔⇕ .
+Entrywise Boolean XOR gives
+[⇔⇕ ] = [⇔] ⇕ [⇕] = "
+1 1
+1 1#
+, ⟨x| [⇔⇕ ] |y⟩ = 1 (x, y ∈ B). (11)
+Here superposition refers only to the entrywise Boolean operation in (11); it does not denote a
+quantum state.
+3 Operand transformations and aligned fusion
+A CM occurrence is typed by an operand frame: its row variable, column variable, input polarities,
+and truth-state order. Let P =
+"
+0 1
+1 0#
+. With the true-first axes of (2), operand exchange, input
+negation, and output negation act as
+[Θ(Y, X)] = [Θ]T
+, [Θ(¬X, Y )] = P[Θ], (12)
+[Θ(X, ¬Y )] = [Θ]P, [¬Θ] = 1 ⇕ [Θ]. (13)
+The matrix products involving P are XOR–AND products; here they simply permute rows or
+columns. They are not a general NPN canonicalizer. Their role is to rewrite an admitted signed
+pair into one explicitly declared operand frame.
+For a binary outer operator Φ, define entrywise fusion by
+([Θ1] Φ [Θ2])rs := (Θ1)rs Φ (Θ2)rs. (14)
+If both matrices act on the same ordered operands in the same frame, then
+(X Θ1 Y ) Φ (X Θ2 Y ) = ⟨X|([Θ1] Φ [Θ2])|Y ⟩. (15)
+Both sides select position (X, Y ), so the identity holds for every binary Φ without requiring Φ to
+distribute over XOR. Pointwise truth-table combination is established prior art; the compiler-specific
+claim is the typed admission rule that first proves frame agreement and otherwise refuses this fusion.
+5
+<PARSED TEXT FOR PAGE: 6 / 19>
+Figure 2: Two operator occurrences are first rewritten into one declared operand frame and are
+then fused entrywise. The transformed bra–operator–ket expression records the operand exchange
+explicitly; fusion is not applied while the frames differ.
+3.1 Compiler rule and soundness boundary
+Fix distinct declared variables R and C in disjoint row and column layout sets. A structural pair
+result Pair(R, C, t) is admitted only for a signed binary primitive, the negation of an admitted pair,
+or the fusion of two admitted children carrying identical (R, C) metadata. Its four-bit token satisfies
+Et(r, c) = e[r/R, c/C] for all r, c ∈ B, (16)
+after any fixed substitutions, which may not include R or C on a returned pair path. Expressions
+with one live row variable and one live column variable may instead use an explicitly labeled four￾assignment retabulation. Repeated- variable expressions such as X Θ X, overlapping row/column
+layouts, compound operands treated as opaque, and different variable pairs are outside the structural
+rule.
+Theorem 1 (Structural alignment-and-fusion soundness). If the structural rules return Pair(R, C, t)
+for e, then (16) holds.
+Proof. Use structural induction over an admitted construction. A signed primitive is correct by
+(13); complementing a correct child represents negation; and fusing correct children with identical
+metadata is sound by (15).
+Lemma 1 (Exact pair retabulation). If the live support after fixed substitution is exactly one
+distinct row variable R and one distinct column variable C, evaluating e at the four assignments
+(1, 1),(1, 0),(0, 1),(0, 0) produces the unique token satisfying (16).
+Theorem 2 (Soundness of the admitted pair compiler). Whether produced structurally or by exact
+pair retabulation, every returned Pair(R, C, t) satisfies (16). If neither path is admitted, the ordinary
+CM IR evaluates the unchanged expression.
+6
+<PARSED TEXT FOR PAGE: 7 / 19>
+4 Compiler method
+4.1 Five artifacts, not one
+The implementation contains several objects that can all appear informally as “a CM”. Treating
+them as interchangeable would make both correctness and timing claims ambiguous. Table 1 fixes
+the terminology used in the remainder of the paper.
+Artifact Meaning Size/order Role
+CM operator token One binary truth function packed into
+four bits
+(11, 10, 01, 00); true￾first
+Constant-size
+transform and
+fusion
+Pair surrogate Token plus canonical row and column
+variable names
+One ordered variable
+pair
+Carries the
+operand-frame
+invariant
+CM IR Interned Boolean expression DAG False-first array axes General symbolic
+fallback and com￾pilation
+Flat program Instruction sequence compiled from
+the CM IR
+Backend-dependent Repeated packed
+or array evaluation
+Explicit CM Dense truth-relation array over de￾clared row/column variables
+2
+n entries; false-first User-visible mate￾rialized output
+Table 1: Implementation artifacts and their declared semantic boundaries. Only the first is the
+constant-size binary operator of Section 2.
+The token is the paper’s compact binary operator. The pair surrogate gives that token a frame.
+The IR and flat program preserve expression structure for more general formulas, whereas an explicit
+CM materializes the complete requested truth relation. Each benchmark endpoint therefore names
+the artifact it returns; a token-only endpoint cannot be reported as though it had already paid for
+an explicit 2
+n
+-entry output.
+4.2 Signed-pair implementation
+The implementation enforces the disjoint-layout and distinct-variable admissibility conditions stated
+in Section 3. For a valid request it constructs a result satisfying (16) through the following ordered
+cases.
+1. A supported binary connective over two signed literals is recognized. Finite negation chains
+determine each literal’s polarity. Operand exchange becomes transpose, and negative row or
+column literals become the corresponding permutations from (13).
+2. Negation of an already compiled pair complements the four token bits.
+3. Two child pairs are combined only when both canonical row/column names agree. Their outer
+connective is then applied through a fixed entrywise lookup table, implementing (15).
+4. If structural construction stops but the remaining subtree has exactly one live row variable and
+one live column variable, the compiler evaluates its four assignments and places the results in
+true-first token order. This is direct pair retabulation, reported separately rather than counted
+as structural fusion.
+7
+<PARSED TEXT FOR PAGE: 8 / 19>
+5. If none of these cases applies, the expression remains on the ordinary CM-IR path.
+The supported primitive connectives are AND, OR, XOR, implication, and equivalence. Primitive
+operands may have any finite stack of negations and may arrive in row/column or column/row
+order. Recursive pair construction supports negation and the same five connectives when the child
+metadata match. The structural claim does not cover two arbitrary compound formulas treated
+as opaque operands, equivalence discovery between compound operands, or fusion across different
+row/column partitions.
+Every recursive pair call receives a strict AST child, so structural compilation terminates for
+finite expressions. Retabulation performs four finite evaluations. For fixed R, C, and true-first order,
+the returned four-bit token is canonical for its binary truth function; neither the source syntax nor
+the surrounding IR is claimed to be globally canonical.
+4.3 Layout conversion, ownership, and cost
+The compact token and dense array deliberately use different historical orders. Before lifting a
+token, the implementation reverses both token axes: if T is true-first and D is the false-first 2 × 2
+view, then
+Dab = T1−a,1−b, a, b ∈ {0, 1}. (17)
+Axes absent from the pair are then broadcast into the requested variable layout. The returned dense
+array is an owned copy; it does not expose a writable broadcast view. Expression nodes and pair
+surrogates are immutable, tokens are integers, and caller-owned layout and fixed-assignment inputs
+are read-only under the pair compiler’s contract.
+Let N be the number of AST occurrences, U the number of unique DAG nodes, H the AST
+height, S the number of occurrences in a subtree sent to retabulation, D that subtree’s evaluation
+depth, k the length of a signed literal’s negation chain, and n the number of requested unfixed
+Boolean output axes. Inspecting a signed literal costs O(k), followed by an O(1) four-bit alignment
+transform; token fusion itself is O(1). One retabulation uses O(4S) time and O(D) evaluation-stack
+space. A fully successful structural pair tree is ordinarily O(N) time and O(H) stack space, although
+the current support-discovery implementation can rescan nested rejected subtrees and has an O(N2
+)
+worst case. A sharing-aware evaluator may instead scale with U, which is why it is a required
+comparator. Most importantly, lifting any method to a complete explicit result costs Θ(2n
+) time
+and output space. Constant-time token fusion is therefore a kernel property, not an end-to-end
+complexity claim.
+The compiler records primitive tokens, signed alignments, token negations, token fusions,
+direct retabulations, visited nodes, pair attempts, and pair collapses. These counters describe the
+mechanism and permit workload stratification. They are not substitutes for elapsed time, peak
+memory, or a comparison with a sharing-aware representation.
+4.4 Verification boundary
+The current finite suite covers all 16 tokens in all eight signed operand frames, all five primitive
+connectives in those frames, recursive fusion after alignment, direct retabulation, true-first constants,
+250 seeded random two-variable formulas, public token-only behavior, and input nonmutation.
+The focused pair, optimization, and output-budget suites contain 105 passing tests. Independent
+exhaustive checks also cover 1,048,576 signed-alignment/fusion cases. These checks strengthen
+implementation assurance; they do not replace the soundness proof, prove unbounded complexity
+claims, or establish a speed advantage.
+8
+<PARSED TEXT FOR PAGE: 9 / 19>
+5 Related work and representation boundaries
+Several representations considered in this paper carry the same four truth values, but they are not
+the same mathematical object. The distinction matters both for novelty and for correct use of the
+operations.
+The numeric CM [Θ] is a 2×2 Boolean operator in a declared row/column frame. Its vectorization
+vec([Θ]) = (Θ11, Θ10, Θ01, Θ00) (18)
+is the ordered truth vector, carrying the same four bits in a one-dimensional layout. To make the STP
+comparison reproducible, adopt the common delta encoding 1 7→ δ
+1
+2 = [1, 0]T and 0 7→ δ
+2
+2 = [0, 1]T,
+with Kronecker columns ordered (11, 10, 01, 00). If t = vec([Θ]), the corresponding binary-output
+structure matrix is then
+MΘ =
+"
+t
+¬t
+#
+. (19)
+Other source conventions require an explicit row or column permutation [Cheng and Qi, 2010, Zhao
+et al., n.d.]. The 2 × 4 STP matrix is an external representation, not a component of a CM.
+ANF coefficients are farther removed. For two variables, an algebraic normal form has the shape
+X Θ Y = a∅ ⇕ (aX ∧ X) ⇕ (aY ∧ Y ) ⇕ (aXY ∧ X ∧ Y ). (20)
+In the paper’s true-first storage order, the Boolean Möbius conversion is unambiguous when written
+componentwise:
+a∅ = Θ00, aX = Θ00 ⇕ Θ10, (21)
+aY = Θ00 ⇕ Θ01, aXY = Θ00 ⇕ Θ10 ⇕ Θ01 ⇕ Θ11. (22)
+Thus aΘ = (a∅, aX, aY , aXY ) is a polynomial coordinate representation, not the entries of the
+formula-valued LM introduced in Section 8. The relevant STP treatment uses Kronecker products
+of vectors [1, xi
+]
+T to enumerate the square-free monomial basis and gives a conversion from truth
+values to those coefficients [Zhao et al., n.d.]; it does not identify the coefficients with a CM or LM.
+Figure 3 summarizes these relationships. Solid boxes on the left are native to the present
+construction. The truth vector is the explicit bridge to the dashed external comparison boxes; the
+arrows are declared maps, not claims that all objects have the same type.
+This map also separates three senses of linearity. CM evaluation is linear in the operator
+coefficients over GF(2) for fixed operands (7). ANF calls a Boolean function linear or affine when
+terms of degree greater than one are absent. Matrix and STP formalisms may additionally be
+linear in their chosen vector space. None of these statements implies the others without an explicit
+conversion and its domain.
+5.1 Closest operational antecedents
+Small truth functions are routinely stored and manipulated as packed bit strings in logic synthesis.
+In the ABC AIG rewriter, for example, four-input cut functions are stored as 16-bit truth tables,
+classified up to input negation, input permutation, and output negation (NPN), and matched to
+precomputed replacement DAGs [Mishchenko et al., 2006]. Modern NPN work likewise defines
+equivalence by exactly those transformations and uses canonical or semicanonical representatives in
+synthesis and technology mapping [Zhou et al., 2019]. These precedents mean that CM transposition,
+row/column permutation, complementation, and packed four-bit storage are not individually new
+operations.
+9
+<PARSED TEXT FOR PAGE: 10 / 19>
+Figure 3: The formula-valued LM is valued into the numeric CM [Θ]. Vectorization exposes the
+ordered truth values used to compare the CM with ANF coordinates and an STP logical structure
+matrix. ANF and STP are external representations rather than CM components. The symbols aΘ
+and MΘ are local, operator-indexed labels; source-specific notation varies.
+Logic-synthesis practice also supplies the strongest comparison for the compiler claim. AIG
+rewriting preserves and exploits DAG sharing rather than only the final truth function [Mishchenko
+et al., 2006]; broader synthesis flows move among truth tables, graph networks, and exact or heuristic
+optimization according to support size and task [Testa et al., 2019]. Bit-parallel simulation packs
+many assignments into machine words and evaluates a network over those patterns at once [Lee
+et al., 2022]. The present compiler therefore does not claim a new NPN classifier, LUT mapper,
+AIG rewriter, or bit-parallel evaluator. Its candidate contribution is narrower: an explicitly typed
+two-operand frame used as an admission certificate for local operator fusion, with a measured
+fallback boundary.
+10
+<PARSED TEXT FOR PAGE: 11 / 19>
+Family Operator/data shape Scalar algebra Transform or composition
+role
+Relation to this work
+Stern/Mizraji ma￾trix logic
+Truth vectors, tensor
+inputs, matrix gates
+Primarily ordinary
+real/vector algebra
+Logical operators and op￾erator bases
+Establishes the opera￾tor viewpoint and outer￾product antecedents
+Cheng/Zhao STP
+and Boolean ma￾trices
+2 × 2
+n structure matri￾ces and Boolean matri￾ces
+STP plus explicit XOR–
+AND Boolean products
+Swap/negation matrices
+and pointwise truth￾function combination
+Direct overlap with
+Boolean matrix algebra
+and fusion identities
+ANF Square-free monomial
+coefficient vector
+GF(2) polynomial algebra Möbius coordinate conver￾sion
+Different map and type
+from a formula-valued LM
+NPN/LUT/AIG
+synthesis
+Packed truth tables
+and shared Boolean
+DAGs
+Bit operations and graph
+rewrites
+Input/output phase, per￾mutation, cut matching,
+and shared replacement
+Closest operational prior
+art; mandatory baseline
+family
+CM pair compiler Four-bit token plus
+declared row/column
+frame
+XOR–AND contraction
+and entrywise outer con￾nective
+Typed signed-frame align￾ment followed by admit￾ted local fusion
+Candidate contribution is
+the typed integration and
+measured boundary
+Table 2: Claim boundary against the closest representation and compiler families. No row alone
+establishes novelty; the empirical question concerns the integrated typed CM compiler path.
+6 Experimental method
+The confirmatory evaluation is designed around a conditional question: where, if anywhere, does
+operand-aligned token compilation reduce user-visible cost? All arms consume the same immutable
+AST and declared variable order. The structural-pair arm is compared with (i) a retabulation-only
+ablation that derives the token by four scalar evaluations, (ii) the ordinary CM IR under the
+same materialization policy, (iii) a direct sharing-aware packed evaluator of the source AST, (iv) a
+lowered sharing-aware packed program for prepared reuse, (v) an ROBDD with declared variable
+order [Bryant, 1986], and, for translatable circuit workloads, (vi) an external AIG flow. A four-bit
+LUT query is also reported after both the packed evaluator and CM compiler have produced the
+same truth token. NPN canonicalization is measured only where it is actually invoked by the
+synthesis baseline; it is not charged to CM or presented as an evaluation algorithm. Backend-native
+preprocessing is allowed but is timed and reported.
+For the direct two-variable packed arm, assignment bit positions are (00, 01, 10, 11) from least
+to most significant. The row and column masks are therefore 11002 and 10102, respectively. One
+memoized traversal applies the source connectives as machine-bit operations and returns a four-bit
+truth word; read most-significant bit first, that word is exactly the CM token order (11, 10, 01, 00).
+This baseline does not construct a 2 × 2 array, perform four separate scalar traversals, or use CM
+alignment rules. It is consequently the closest direct test of whether structural pair recognition
+saves work over ordinary bit-parallel truth-table evaluation [Lee et al., 2022].
+6.1 Workloads and endpoints
+The generated corpus separates exact-frame formulas, signed or swapped frames, two-variable
+retabulation cases, formulas involving multiple operand pairs, compound-operand cases outside
+the structural claim, and untouched natural formulas or circuits. Generated strata cross AST
+sizes 15, 63, 255, 1023, 4095, balanced and skewed tree shapes, all five supported outer connectives,
+and reuse counts 1, 10, 100, 1000. Requested outputs include the compact token, scalar evaluation,
+packed batches, and explicit dense CMs where the output budget permits them.
+The primary endpoints are one-shot end-to-end time, prepared repeated- evaluation time, and
+peak process memory above a pre-run baseline. Each arm uses a named timing boundary: structural
+recognition plus token construction; four complete scalar traversals for retabulation; one packed
+11
+<PARSED TEXT FOR PAGE: 12 / 19>
+AST traversal; lowering plus packed-program execution; token/LUT query after preparation; and
+conversion plus allocation for any explicit dense result. Preparation and query time are never pooled
+silently. In particular, once either method has the same four-bit token, its LUT query is identical;
+any advantage must arise before that common endpoint or from a measured reuse policy.
+Endpoints are reported separately by workload stratum, output type, and reuse count. Mechanism
+diagnostics include token-only compilation, support discovery, conversion and allocation, all pair
+counters, representation size, explicit output bytes, exceptions, timeouts, and budget rejections.
+Break-even reuse is computed from measured preparation and per-evaluation costs rather than
+extrapolated from the four-bit kernel alone.
+6.2 Correctness and sampling
+Correctness is checked before performance results are summarized. Completed arms must agree with
+an independent truth-table oracle whenever exhaustive evaluation fits the output budget; larger
+cases use a frozen random assignment set and an independent equivalence check where available.
+Inputs must remain unchanged. Every disagreement, exception, timeout, or rejection remains in the
+raw results with its case identifier and disposition.
+Measurements run in isolated processes on a recorded software and hardware environment.
+Correctness and one untimed warm-up precede sampling. Arm order is randomized within each
+case using a recorded schedule seed. Generated cells receive at least 30 valid repetitions and natural
+cases at least 15 unless the predeclared 60-second timeout intervenes. Timed inner loops last at least
+100 milliseconds when repeated evaluation is semantically appropriate. Peak memory is measured
+in a fresh process without subtracting undeclared caches.
+For paired comparisons, the analysis reports median absolute time, competitor- to-CM time
+ratio, median memory difference, case-level distributions, and a 95% hierarchical bootstrap interval
+resampling cases and repetitions. A practical positive region requires zero correctness disagreements;
+at least a 20% median structural-over-retabulation improvement in the exact and signed pair strata
+with the interval above one; and at least one predeclared cell with the same end-to-end improvement
+over a sharing-aware external baseline without more than a 10% median peak-memory increase.
+Falling below that rule narrows the result; it does not justify selecting a more favorable endpoint
+after the fact.
+The protocol, source state, corpus, seeds, arm configuration, schedule, environment, test output,
+and append-only raw observations are content-hashed before the first confirmatory run. Any
+substantive change produces a new protocol version. This freeze keeps the empirical claim separate
+from the examples used to develop the compiler.
+7 Results and evidence status
+The formal and implementation evidence currently clears the following pre-performance gates:
+exhaustive token and signed-frame checks, exhaustive signed alignment/fusion enumeration, ran￾domized two-variable differential checks, and public-API tests for structural, retabulation, fallback,
+output, and input-ownership behavior. These results support correctness of the tested implementa￾tion surface; they do not establish a runtime or memory advantage.
+No confirmatory performance table or Figure 5 appears in this working draft. The corpus and
+run manifest have not yet been frozen and the campaign has not been executed. Quantitative speed,
+memory, break-even, prevalence, and failure- region claims therefore remain open. Kernel-only
+timings and previously superseded headline speedups will not be reused as end-to-end results. This
+is an explicit evidence boundary rather than a missing positive result: the final section will report
+12
+<PARSED TEXT FOR PAGE: 13 / 19>
+every frozen arm and stratum, including ties, losses, timeouts, and cases in which pair recognition
+falls back.
+8 Formula-valued logical matrices
+8.1 Symbolic lift and positive valuation
+Let F be the Boolean algebra of formulas modulo logical equivalence. Define the polarity orbit
+X1 = X, X2 = ¬X, Y1 = Y, Y2 = ¬Y. (23)
+Let b1 = 1 and b2 = 0, and reserve Θxy for truth assignments x, y ∈ B. Define the position-indexed
+LM coefficients by
+cij := Θbibj
+, i, j ∈ {1, 2}. (24)
+Thus (c11, c12, c21, c22) denotes the same four values as (Θ11, Θ10, Θ01, Θ00) without overloading one
+subscript system. For Boolean coefficients cij , define the formula-valued logical matrix by the XOR
+sum of its four polarity outer products:
+[MXΘY ] := ⇕
+i,j∈{1,2}
+cij |Xi⟩⟨Yj | . (25)
+Here |Xi⟩⟨Yj | is the formula-valued outer product
+|Xi⟩⟨Yj | =
+"
+Xi ∧ Yj Xi ∧ ¬Yj
+¬Xi ∧ Yj ¬Xi ∧ ¬Yj
+#
+. (26)
+Multiplication by cij means entrywise conjunction. Expanding the XOR sum gives
+[MXΘY ] = "
+⇕i,j Xi ∧ cij ∧ Yj ⇕i,j Xi ∧ cij ∧ ¬Yj
+⇕i,j ¬Xi ∧ cij ∧ Yj ⇕i,j ¬Xi ∧ cij ∧ ¬Yj
+#
+=
+"
+X Θ Y X Θ ¬Y
+¬X Θ Y ¬X Θ ¬Y
+#
+. (27)
+Thus every cell in (27) is itself a complete XOR-reduced formula; the four displayed cells are not
+four separate terms of one formula. The entries lie in F, not in a numeric vector space. We use
+formula-valued LM to distinguish this object from the numeric “logical matrix” and logical structure
+matrix of the STP literature.
+A valuation v : F → B acts entrywise and preserves ¬, ∧, and ⇕. Let vT be the positive valuation
+with vT (X) = vT (Y ) = 1. Then
+vT ([MXΘY ]) = [Θ]. (28)
+Under a general valuation v(X) = x and v(Y ) = y, the result is the same CM with the row and
+column permutations determined by x and y. If P =
+"
+0 1
+1 0#
+, then
+v([MXΘY ]) = P
+1−x
+[Θ]P
+1−y
+. (29)
+The LM is therefore a symbolic polarity-orbit matrix whose valuations produce numeric CMs in
+declared operand frames. It is not an ANF coefficient vector: positive valuation, rather than a
+Möbius transform, is the map from this LM to [Θ].
+13
+<PARSED TEXT FOR PAGE: 14 / 19>
+8.2 Logical pairing
+Figure 4: A formula-valued LM is paired with logical expressions before or after valuation. Because
+valuation is a Boolean-algebra homomorphism, both paths give the same truth value. Logical pairing
+denotes algebraic relationship extraction, not a physical measurement process.
+For a formula A ∈ F, define
+|A⟩ =
+"
+A
+¬A
+#
+, ⟨A| =
+h
+A ¬A
+i
+. (30)
+The XOR–AND contraction of two such states gives logical equivalence:
+⟨A| |B⟩ = (A ∧ B) ⇕ (¬A ∧ ¬B) = (A ⇔ B). (31)
+For arbitrary formulas L1 and L2, define the logical pairing
+P := ⟨L1| [MXΘY ] |L2⟩ (32)
+= ⇕
+i,j∈{1,2}
+cij ∧ (L1 ⇔ Xi) ∧ (Yj ⇔ L2). (33)
+The output P ∈ F has an exact semantic form.
+Proposition 2 (Logical-pairing identity). For every A, B ∈ F,
+⟨A| [MXΘY ] |B⟩ ≡ (A ⇔ X) Θ (Y ⇔ B). (34)
+For example, setting A = X and B = Y makes both equivalence factors true, so the pairing
+evaluates the declared coefficient 1 Θ 1 = Θ11. More generally, the equivalence factors state which
+polarities of the two operands are presented to Θ; the full proof is in the appendix.
+14
+<PARSED TEXT FOR PAGE: 15 / 19>
+Theorem 3 (Valuation commutes with LM pairing). For every Boolean-algebra valuation v,
+v(P) = ⟨v(L1)| v([MXΘY ])|v(L2)⟩. (35)
+Proof. The finite pairing in (33) is built only from negation, conjunction, and exclusive-or. A
+Boolean valuation preserves each of these operations, so it can be moved through every term and
+through the finite XOR reduction.
+The primary term in this paper is logical pairing. The historical word measurement refers only
+to extracting a coefficient or relationship from a symbolic operator. No amplitudes, Hilbert-space
+observable, Born probability, physical state collapse, entanglement, or quantum speedup is asserted.
+Operator and bra–ket notation also appears in explicitly quantum-adjacent logical formalisms such
+as Eigenlogic [Toffano, 2015, Dubois and Toffano, 2016]; those formalisms include mathematical
+structures that are absent here. Figure 4 makes the nonphysical interpretation explicit.
+9 Discussion and limitations
+The explicit representation of an arbitrary n-variable Boolean function contains 2
+n
+truth values. It
+may be written as an order-n tensor of side two, a length-2
+n vector, or, after an even split of 2m
+variables, a 2
+m × 2
+m matrix. No reshape removes this worst-case output size. Compression and
+symbolic sharing must therefore be evaluated separately.
+Operator fusion also depends on repeated, alignable operands. When compatible pairs are rare,
+when normalization dominates, or when another representation preserves substantially more sharing,
+the CM path may tie or lose. These are expected boundary cases, not failures to be hidden. The
+final discussion will interpret them together with preparation cost, memory traffic, reuse count,
+variable ordering, and fallback frequency.
+10 Conclusion
+Correspondence matrices are best understood as typed Boolean operators rather than as a novelty
+claim about reshaped truth tables. XOR–AND contraction lets one-hot operand states evaluate
+those operators; matrix transformations align signed operand frames; and exact compatible frames
+can be fused before evaluation. Formula-valued logical matrices add a symbolic layer whose valuation
+recovers numeric CMs and whose logical pairing remains within Boolean algebra. The remaining
+empirical question is deliberately practical: which workloads permit this operator-level rewrite to
+reduce total computation after all costs are counted?
+A Proof details
+This appendix collects the typed arguments supporting the concise statements in the main text. All
+scalar sums are XOR reductions and all scalar products are conjunctions unless another algebra is
+named explicitly.
+A.1 Representation and selection
+Proposition 3 (Unique binary representation). The map from a binary Boolean operator Θ to [Θ]
+is a bijection between functions B
+2 → B and matrices in B
+2×2 once the row, column, and truth-state
+order is fixed.
+15
+<PARSED TEXT FOR PAGE: 16 / 19>
+Proof. A binary Boolean function is determined by its four values on (1, 1),(1, 0),(0, 1),(0, 0). These
+are exactly the four entries of [Θ]. Conversely, any four-bit matrix assigns one output to each binary
+input pair and therefore defines one such function. Both sets contain 2
+4 = 16 elements.
+For completeness, expand the contraction as
+E[Θ](x, y) = ⇕
+r,s∈{1,0}
+χx(r) ∧ Θrs ∧ χy(s), χz(q) := (
+1, q = z,
+0, q ̸= z.
+(36)
+The two one-hot states make χx(r) ∧ χy(s) equal to one only at (r, s) = (x, y). This proves selection
+without a cancellation or distributivity assumption beyond the declared Boolean algebra. It also
+explains why OR–AND selection would return the same scalar on one-hot states, although OR does
+not supply the same coefficient-space algebra for arbitrary vectors.
+A.2 Coefficient linearity and basis
+For fixed x, y, distribute conjunction over XOR:
+EA⇕B(x, y) = ⇕
+r,s
+χx(r) ∧ (Ars ⇕ Brs) ∧ χy(s) (37)
+= EA(x, y) ⇕ EB(x, y). (38)
+Thus evaluation is a coordinate projection and hence a linear functional on GF(2)2×2
+. Let Ers be
+the matrix with a one only at position (r, s). Evaluating
+[Θ] = ⇕
+r,s
+ΘrsErs (39)
+at any position selects Θrs, proving the basis decomposition and coefficient extraction. This proof
+concerns the coefficient matrix. The affine truth-state encoding prevents it from implying that every
+represented Boolean function is linear in its logical inputs.
+A.3 Signed operand transformations
+Let P =
+"
+0 1
+1 0#
+. The row-x, column-y entry of P[Θ] is the row-¬x, column-y entry of [Θ] and
+is therefore (¬x) Θ y. Similarly, right multiplication by P exchanges the column assignment and
+transposition exchanges the two input assignments. Hence
+[Θ(Y, X)] = [Θ]T
+, [Θ(¬X, Y )] = P[Θ], (40)
+[Θ(X, ¬Y )] = [Θ]P, [Θ(¬X, ¬Y )] = P[Θ]P. (41)
+Negating every output flips every bit, which is entrywise XOR with the all-ones matrix. Products
+with P are XOR–AND products, but only one entry survives in each output position, so they can
+equivalently be implemented as direct permutations.
+For XNOR, [⇔] is the identity matrix. Under the explicit clockwise convention rot90◦
+"
+a b
+c d#
+=
+"
+c a
+d b#
+, its ones move to the antidiagonal, giving [⇕]. (For this particular symmetric matrix,
+counterclockwise rotation gives the same result.) The two supports are disjoint and cover all four
+positions, so their entrywise XOR is the all-ones [⇔⇕ ].
+16
+<PARSED TEXT FOR PAGE: 17 / 19>
+A.4 Operand-aligned fusion
+Let Φ be any binary Boolean operator and define
+Frs := (Θ1)rs Φ (Θ2)rs. (42)
+When both inner operators use the same operand frame, selection gives
+(x Θ1 y) Φ (x Θ2 y) (43)
+= (Θ1)xy Φ (Θ2)xy = Fxy = ⟨x| F |y⟩. (44)
+No general distributive law for Φ over XOR is used. If the original operators differ by signed operand
+order, the preceding transformations first translate each one into the target frame; applying the
+same argument after that translation proves fusion after alignment.
+For structural compilation, proceed by induction on the admitted expression tree. A primitive
+signed-literal pair is sound by the transformations above. For the unary step, complementing all
+four token bits implements logical negation. For the binary step, the induction hypotheses give two
+sound child pairs in the same typed frame, and the preceding entry-selection calculation proves their
+entrywise outer-connective fusion. Every recursive call visits a strict AST child, proving termination.
+This establishes the structural soundness theorem in Section 3 without using retabulation.
+For exact pair retabulation, evaluate the subtree independently at (1, 1),(1, 0),(0, 1),(0, 0) and
+store the four observed bits in that order. Selection at any assignment returns the stored value by
+construction. The top-level compiler is therefore sound because it returns only a structurally proved
+pair, an exactly retabulated pair, or the ordinary IR result. The ordinary IR retains responsibility
+for every expression not admitted by the first two cases.
+A.5 Formula-valued LMs
+Let Bij (X, Y ) = |Xi⟩⟨Yj |. The upper-left cell of
+[MXΘY ] = ⇕
+i,j∈{1,2}
+cijBij (X, Y ), cij := Θbibj
+, b1 = 1, b2 = 0, (45)
+is the disjoint-minterm expansion
+c11XY ⇕ c12X¬Y ⇕ c21¬XY ⇕ c22¬X¬Y. (46)
+Under the declared position-to-assignment map, this is X Θ Y . Exchanging the Y components gives
+X Θ ¬Y ; exchanging the X components gives ¬X Θ Y ; and exchanging both gives the lower-right
+formula. This proves the polarity-orbit form in (27).
+If v(X) = x and v(Y ) = y, applying v to those four formulas either preserves or exchanges the
+two row and column assignments. It follows that
+v([MXΘY ]) = P
+1−x
+[Θ]P
+1−y
+. (47)
+The positive case x = y = 1 yields [Θ].
+For formulas A, B,
+⟨A| |B⟩ = (A ∧ B) ⇕ (¬A ∧ ¬B) = (A ⇔ B), (48)
+because the two conjunctions are disjoint. Substituting the LM basis expansion between ⟨L1| and
+|L2⟩ and using this identity on both sides of each outer product gives
+⇕
+i,j
+cij ∧ (L1 ⇔ Xi) ∧ (Yj ⇔ L2). (49)
+17
+<PARSED TEXT FOR PAGE: 18 / 19>
+For each valuation of A, B, X, Y , exactly one i satisfies A ⇔ Xi and exactly one j satisfies Yj ⇔ B. If
+these positions are i
+∗
+, j∗
+, the XOR therefore selects ci
+∗j
+∗ = Θbi∗ bj∗ . By the definitions of the polarity
+orbit and bi
+, bi
+∗ = A ⇔ X and bj
+∗ = Y ⇔ B. Hence the selected coefficient is (A ⇔ X) Θ (Y ⇔ B),
+proving (34).
+Finally, a Boolean valuation is a homomorphism for negation, conjunction, and XOR. Moving it
+through this finite expression term by term proves (35).
+A.6 ANF conversion is a different map
+For n variables, identify a valuation with its support S ⊆ {1, . . . , n} and let tS be the corresponding
+truth value. If
+f(x1, . . . , xn) = ⇕
+T ⊆{1,...,n}
+aT
+^
+i∈T
+xi
+, (50)
+then evaluation on support S gives
+tS = ⇕
+T ⊆S
+aT . (51)
+Boolean Möbius inversion gives the converse relation
+aT = ⇕
+S⊆T
+tS. (52)
+Thus ANF coefficients arise by an invertible coordinate transform of the truth vector. By contrast,
+positive valuation maps the formula-valued polarity orbit directly to a numeric CM. The two
+maps have different domains and purposes even though both ultimately describe the same Boolean
+function.
+A.7 Higher-arity size
+An arbitrary function of n Boolean variables has one output for each of 2
+n valuations. Its explicit
+operator therefore has 2
+n bits. The same data can be placed in an order-n tensor with side length
+two, a length-2
+n vector, or, after splitting 2m variables into equal row and column groups, a 2
+m ×2
+m
+matrix. These are layout choices with the same entry count, not compression results.
+B Finite verification scope
+The accompanying checker exhaustively verifies the 16 binary tokens, 16,384 same-frame fusion cases,
+512 signed alignments, 1,048,576 signed alignment/fusion cases, the XOR/XNOR/Impax identities,
+LM positive and general valuations, 256 LM coefficient extractions, 16,384 LM valuation/fusion cases,
+and 64 two-variable ANF round trips. Finite enumeration catches convention and implementation
+errors but is not used as a proof of an unbounded theorem or a runtime bound.
+References
+Randal E. Bryant. Graph-based algorithms for boolean function manipulation. IEEE Transactions
+on Computers, C-35(8):677–691, 1986. doi: 10.1109/TC.1986.1676819.
+Daizhan Cheng and Hongsheng Qi. A linear representation of dynamics of boolean networks. IEEE
+Transactions on Automatic Control, 55(10):2251–2258, 2010. doi: 10.1109/TAC.2010.2043294.
+18
+<PARSED TEXT FOR PAGE: 19 / 19>
+Daizhan Cheng, Yin Zhao, and Xiangru Xu. Matrix approach to boolean calculus. In Proceedings
+of the 50th IEEE Conference on Decision and Control and European Control Conference, pages
+6950–6955, 2011. doi: 10.1109/CDC.2011.6160289.
+Brian Droncheff. Correspondence matrices; algorithms for propositional logic, May 2018. URL
+https://doi.org/10.13140/RG.2.2.28036.37764. ResearchGate preprint, version 1.0.1.
+François Dubois and Zeno Toffano. Eigenlogic: A quantum view for multiple-valued and fuzzy
+systems, 2016. URL https://arxiv.org/abs/1607.03509.
+C. R. Edwards. The logic of boolean matrices. The Computer Journal, 15(3):247–253, 1972. doi:
+10.1093/comjnl/15.3.247.
+Winston Lee, Heinz Riener, Alan Mishchenko, Robert K. Brayton, and Giovanni De Micheli. A
+simulation-guided paradigm for logic synthesis and verification. IEEE Transactions on Computer￾Aided Design of Integrated Circuits and Systems, 41(8):2573–2586, 2022. doi: 10.1109/TCAD.
+2021.3108704.
+Alan Mishchenko, Satrajit Chatterjee, and Robert K. Brayton. DAG-aware AIG rewriting: A fresh
+look at combinational logic synthesis. In Proceedings of the 43rd Annual Design Automation
+Conference, pages 532–536, 2006. doi: 10.1145/1146909.1147048.
+Eduardo Mizraji. Vector logics: The matrix–vector representation of logical calculus. Fuzzy Sets
+and Systems, 50(2):179–185, 1992. doi: 10.1016/0165-0114(92)90216-Q.
+Eduardo Mizraji. Vector logic: A natural algebraic representation of the fundamental logical gates.
+Journal of Logic and Computation, 18(1):97–121, 2008. doi: 10.1093/logcom/exm057.
+August Stern. Matrix Logic: Theory and Applications. North-Holland, 1988. doi: 10.1016/
+C2009-0-14445-8.
+Eleonora Testa, Mathias Soeken, Luca Gaetano Amarù, and Giovanni De Micheli. Logic synthesis
+for established and emerging computing. Proceedings of the IEEE, 107(1):165–184, 2019. doi:
+10.1109/JPROC.2018.2869760.
+Zeno Toffano. Eigenlogic in the spirit of george boole, 2015. URL https://arxiv.org/abs/1512.
+06632.
+Yin Zhao, Xu Gao, and Daizhan Cheng. Semi-tensor product approach to boolean functions.
+Unpublished preprint, n.d. URL https://lsc.amss.ac.cn/~dcheng/preprint/bf01.pdf.
+Xuegong Zhou, Lingli Wang, and Alan Mishchenko. Fast adjustable NPN classification using
+generalized symmetries. ACM Transactions on Reconfigurable Technology and Systems, 12(2):7,
+2019. doi: 10.1145/3313917.
+19

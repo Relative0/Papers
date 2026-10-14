@@ -1,0 +1,132 @@
+# N2/P8 Results - Zero-Pass Dispatch from Source-Builder Telemetry
+
+## Status
+
+P8 is complete. The preregistered Gate-P source-inclusive PASS criterion was **not met**.
+
+Correctness gates passed before timing interpretation:
+
+- 1,000/1,000 fresh fuzz cases passed.
+- All Gate-P and natural timed rows were correct.
+- P8 bypass work matched direct work; annotated work matched P6 work.
+- The independent verifier reports `PASS`.
+
+Frozen hashes:
+
+- preregistration: `7be7224825d29b81441864ec8c251a6c4e50624b350bcdd0db7f3a153b7c53f3`
+- harness: `c3cd5ee43448d75b43d23f6027d89eef687f6f5e53d42e28f979969d923a0aa5`
+- EPFL train/validation selection: `01b966bf3a2b9050cae2787beb431c8c6fa8ebb3a62d2ed291059a885accf16d`
+- frozen gate: `ebc2de96f8219043da66db02bd3bcd38b8455594d5684a1756c7ed13fb4cd64f`
+
+## Frozen P8 policy
+
+P8 accumulates source statistics only while the ordinary source DAG is constructed. It performs no separate dispatch traversal. A frozen depth-3 regression tree predicts P6/direct compiler-pipeline cost and dispatches to P6 only when the predicted ratio is at most the frozen cutoff.
+
+Training/validation were disjoint from the 36 Gate-P evaluation cases and from the ten frozen EPFL evaluation roots.
+
+- training cases: 188
+- validation cases: 98
+- selected cutoff: `0.80`
+- tree features actually used: `binary_density`, `max_depth`, `max_pair_shells`, `pair_repeat_density`, `reuse_density`
+- selected validation source-inclusive geomean ratio: `1.223847`
+- selected validation workload-weighted ratio: `1.063285`
+- validation annotated cases: 4
+
+The cutoff was selected by the preregistered conservative tie rule and was not retuned after evaluation.
+
+## Gate-P primary: source-inclusive
+
+Primary endpoint includes source-DAG construction, compiler DAG construction, and sparse-ANF lowering.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P8 / direct | **1.141292** | **1.062175-1.196624** | **1.102416** | 2/36 |
+| P8 / always-P6 | 1.071587 | 1.029307-1.119132 | 1.083592 | 9/36 |
+| always-P6 / direct | 1.065049 | 0.978723-1.141712 | 1.017371 | 7/36 |
+
+Therefore P8 is about 14.1% slower than direct case-balanced and 10.2% slower workload-weighted on the preregistered primary endpoint. The predeclared source-inclusive PASS criterion is `false`.
+
+## Gate-P secondary: compiler-only
+
+This endpoint starts from an already-built telemetry-compatible source root. It isolates the frozen dispatch decision plus the selected compiler backend from the telemetry-construction tax.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P8 / direct | **0.976949** | **0.901320-1.029178** | **0.928557** | 10/36 |
+| P8 / always-P6 | **0.918035** | **0.867820-0.975211** | **0.929133** | 27/36 |
+| always-P6 / direct | 1.064175 | 0.959444-1.160189 | 0.999380 | 8/36 |
+
+Thus the frozen P8 dispatch policy is close to a compiler-only crossover: about 2.3% faster case-balanced, with a confidence interval crossing 1, and about 7.1% faster workload-weighted.
+
+A post-hoc zero-incremental-telemetry diagnostic, using the measured plain source-build cost plus the frozen P8 compiler path, is `0.978428x` direct case-balanced and `0.941415x` workload-weighted. This is not a preregistered endpoint; it estimates the best case if telemetry were effectively free.
+
+## Gate-P dispatch behavior
+
+P8 annotated only 5/36 cases. All five annotated cases consumed a P6 fold.
+
+- P6 beats direct source-inclusive on 7/36 cases.
+- P8 annotated 3 of those 7 P6 wins.
+- P8 annotated 2 cases where P6 itself was slower than direct.
+- P8 bypassed 4 P6-winning cases.
+- total P8 fold-consuming cases: 5
+- total P8 folds consumed: 5
+
+So the gate is conservative and avoids most annotation, but it is not yet an accurate classifier of end-to-end P6 profitability.
+
+## Gate-P Boolean work
+
+P8 relative to direct, pooled across the 36 cases:
+
+| Work metric | Geomean ratio |
+|---|---:|
+| multiplications | **0.812451** |
+| pair terms | **0.570459** |
+| peak monomials | **0.978577** |
+| ANF nodes evaluated | **0.873553** |
+
+Even though only five cases were annotated, P8 removes about 43% of pair-term work in the pooled geometric mean. This confirms that the selected folds remain computationally substantial when activated.
+
+## Source telemetry cost
+
+The incremental telemetry implementation is still expensive in Python:
+
+- Gate-P telemetry source build / plain source build geomean: **1.852346x**
+- median ratio: **1.933899x**
+- median plain source build: about **48.9 us**
+- median telemetry source build: about **94.1 us**
+
+A post-hoc diagnostic charging only the incremental telemetry source cost plus the P8 compiler path, relative to direct compiler cost, is `1.178966x` case-balanced and `1.123218x` workload-weighted. This isolates the remaining dispatch overhead more directly than the full source-inclusive endpoint.
+
+## Natural EPFL control
+
+The exact frozen ten natural evaluation cones were replayed. P8 annotated **0/10** and consumed **0 folds**. These results are therefore overhead/abstention controls, not natural-folding speed evidence.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P8 / direct, source-inclusive | **1.032056** | **1.013398-1.051890** | **1.026753** | 2/10 |
+| P8 / always-P6, source-inclusive | 0.976848 | 0.964007-0.988667 | 1.001466 | 9/10 |
+| always-P6 / direct, source-inclusive | 1.056516 | 1.032874-1.082270 | 1.025250 | 0/10 |
+| P8 / direct, compiler-only | 0.984667 | 0.967834-0.999729 | 1.000055 | 7/10 |
+
+Because P8 always bypassed to direct on these cases, the apparent compiler-only difference is scheduling/noise; the executed compiler algorithm is direct. The source-inclusive 3.2% overhead is the important natural control result.
+
+Natural telemetry source build / plain source build:
+
+- geomean: **1.697004x**
+- median: **1.784956x**
+
+## Measurement counts
+
+Final timed evaluation rows:
+
+- Gate-P source-inclusive: 2,160
+- Gate-P compiler-only: 2,160
+- natural source-inclusive: 450
+- natural compiler-only: 450
+- total timed rows: **5,220**
+
+The long `cavlc:35` natural schedule was executed in deterministic chunks because of the execution-environment per-command limit, then merged without changing the frozen repetition order, arms, gate, or endpoint.
+
+## Conclusion
+
+P8 improves the scientific picture but does not yet deliver an end-to-end case-balanced win. The separate P7B profitability traversal was removed successfully: the frozen gate itself is close to useful once telemetry already exists. The remaining dominant cost is now the Python bookkeeping needed to accumulate the full telemetry feature set during source-DAG construction.

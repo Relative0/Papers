@@ -1,0 +1,4188 @@
+PAGE 1
+JoCG 14(1), 78–143, 2023 78
+Journal of Computational Geometry jocg.org
+THE GROMOV-HAUSDORFF DISTANCE BETWEEN ULTRAMETRIC
+SPACES: ITS STRUCTURE AND COMPUTATION ∗
+Facundo Mémoli,†Zane Smith,‡and Zhengchao Wan§
+Abstract. The Gromov-Hausdorﬀ distance (dGH) provides a natural way of quantifying
+the dissimilarity between two given metric spaces. It is known that computingdGH between
+two ﬁnite metric spaces is NP-hard, even in the case of ﬁnite ultrametric spaces which are
+highly structured metric spaces in the sense that they satisfy the so-calledstrong trian-
+gle inequality. Ultrametric spaces naturally arise in many applications such as hierarchical
+clustering, phylogenetics, genomics, and even linguistics. By exploiting the special struc-
+tures of ultrametric spaces, (1) we identify a one parameter family{d
+(p)
+GH}p∈[1,∞] of distances
+deﬁned in a ﬂavor similar to the Gromov-Hausdorﬀ distance on the collection of ﬁnite ul-
+trametric spaces, and in particulard
+(1)
+GH = dGH. The extreme case whenp = ∞, which we
+also denote byuGH, turns out to be an ultrametric on the collection of ultrametric spaces.
+Whereas for all p ∈ [1, ∞), d
+(p)
+GH yields NP-hard problems, we prove that surprisinglyuGH
+can be computed in polynomial time. The proof is based on a structural theorem foruGH
+established in this paper; (2) inspired by the structural theorem foruGH, and by carefully
+leveraging properties of ultrametric spaces, we also establish a structural theorem fordGH
+when restricted to ultrametric spaces. This structural theorem allows us to identify special
+families of ultrametric spaces on whichdGH is computationally tractable. These families are
+determined by properties related to the doubling constant of metric space. Based on these
+families, we devise a ﬁxed-parameter tractable (FPT) algorithm for computing the exact
+value of dGH between ultrametric spaces. We believe ours is the ﬁrst such algorithm to be
+identiﬁed.
+1 Introduction and main results
+Edwards [14] and Gromov [17] independently introduced a notion nowadays called the
+Gromov-Hausdorﬀ distance dGH for comparing metric spaces. This distance enjoys many
+pleasing mathematical properties: if we let M denote the collection of all compact met-
+ric spaces, then modulo isometry,(M, dGH) is a complete and separable metric space [35,
+Proposition 43], with rich pre-compact classes [18]. It has also recently been proved that
+∗This work was partially supported by the NSF through grants CCF-1740761, and CCF-1526513, and
+DMS-1723003.
+†Department of Mathematics and Department of Computer Science and Engineering, The Ohio State
+University, Columbus, OH, USA, facundo.memoli@gmail.com
+‡Department of Computer Science and Engineering, University of Minnesota, Minneapolis, MN, USA,
+smit9474@umn.edu
+§Halıcıoğlu Data Science Institute, University of California San Diego, La Jolla, CA, USA ,
+zcwan@ucsd.edu
+PAGE 2
+JoCG 14(1), 78–143, 2023 79
+Journal of Computational Geometry jocg.org
+this space is geodesic [20, 9]. This distance has been widely used in diﬀerential geometry
+[35], as a model for shape matching procedures [29, 5], and applied algebraic topology [8]
+for establishing stability properties of invariants.
+Despite admitting many lower bounds which can be computed in polynomial time
+[8, 30], computingdGH itself between arbitrary ﬁnite metric spaces leads to solving certain
+generalized quadratic assignment problems [30] which have been shown to be NP-hard [39,
+40, 2]. In fact, in [40] Schmiedl proved the following stronger result (see however [28] for
+the case of point sets on the real line where the authors describe a poly time approximation
+algorithm):
+Theorem 1([40, Corollary 3.8]). The Gromov-Hausdorﬀ distance cannot be approximated
+within any factor less than 3 in polynomial time, unlessP = N P.
+Theproofofthisresultrevealsthattheclaimstillholdseveninthecaseof ultrametric
+spaces. An ultrametric space (X, dX) is a metric space which satisﬁes thestrong triangle
+inequality:
+∀x, x′, x′′ ∈ X, one has dX(x, x′) ≤ max
+(
+dX(x, x′′), dX(x′′, x′)
+)
+.
+In this paper, we will henceforth useuX instead of dX to represent an ultrametric. Ultra-
+metric spaces appear in many applications: they arise in statistics as a geometric encoding
+of dendrograms[21, 7], in taxonomy and phylogenetics [41] as representations of phylogenies,
+and in linguistics [38]. In theoretical computer science, ultrametric spaces arise as building
+blocks for the probabilistic approximation of ﬁnite metric spaces [4].
+In many of the aforementioned applications (including phylogenetics), in order to
+characterize the diﬀerence between relevant objects, it is important to compare ultrametric
+spaces via meaningful metrics. This is one of the main motivations behind our study of the
+Gromov-Hausdorﬀ distance between ultrametric spaces.
+Being a well understood and highly structured type of metric spaces, we are particu-
+larly interested in exploiting possible advantages associated to eitherrestricting or adapting
+dGH to the collectionUﬁn of all ﬁnite ultrametric spaces. In this paper, we provide positive
+answers to the following two questions naturally arising from trying to bypass/overcome the
+hardness result in Theorem 1:
+(Q1) Is there any suitable variant of the Gromov-Hausdorﬀ distance on the collection
+of ﬁnite ultrametric spaces which can be approximated/computed in polynomial
+time?
+(Q2) Is there any subcollection of ultrametric spaces on which the Gromov-Hausdorﬀ
+distance can be approximated/computed in polynomial time?
+PAGE 3
+JoCG 14(1), 78–143, 2023 80
+Journal of Computational Geometry jocg.org
+In this paper we provide positive answers to these two questions and in the course
+of answering these questions, we establish structural theorems for bothdGH and a suitable
+ultrametric variant uGH which in each case allow us to convert the problem of comparing
+two given spaces into instances of the problem on strictly smaller spaces.
+Related work The Gromov-Hausdorﬀ ultrametric, which we denote byuGH, on the collec-
+tion U of compact ultrametric spaces was ﬁrst introduced by Zarichnyi [43] in 2005 as an
+ultrametric counterpart todGH. Moreover, the author proved that(U , uGH) is a complete
+but not separable (ultra) metric space, whereU denotes the collection of all compact ultra-
+metric spaces. uGH was further studied by Qiu in [37] where the author established several
+characterizations of uGH similar to the classical ones fordGH (cf. [6, Chapter 7]) such as
+those arising via the notions ofε-isometry and (ε, δ)-approximation. Qiu has also found a
+suitable version of Gromov’s pre-compactness theorem for(U , uGH).
+Phylogenetic tree shapes (unlabled rooted trees) are closely related to ultrametric
+spaces. In [11], Colijn and Plazzotta studied a metric between tree shapes to compare
+evolutionary trees of inﬂuenza. In [27], Liebscher studied a class of metrics analogous to
+dGH between unrooted phylogenetic trees. In [26], Lafond et al. extended diﬀerent types
+of metrics on phylogenetic trees to metrics between tree shapes via optimization over per-
+mutations of labels. They studied the computational aspect of these metric extensions. In
+particular, they proved that computing the extension of the path distance is NP-complete
+via a similar argument used for proving that approximatingdGH between merge trees in
+NP-complete [2]. Moreover, they devised an FPT algorithm which computes the extension
+of the so-called Robinson-Foulds distances. Their FPT algorithm is a recursive algorithm
+comparing subtrees of nodes at each iteration, which is of similar ﬂavor to our algorithms
+(Algorithms 2 and 4) for computingdGH between ultrametric spaces.
+In [15], Touli and Wang devised FPT algorithms for the computation of the interleav-
+ing distancedI between merge trees [32]. Since any ﬁnite ultrametric space can be naturally
+represented by a merge tree (see for example [16]) it turns out thatdI between ultrametric
+spaces as merge trees is a 2-approximation ofdGH between the ultrametric spaces (see [31,
+Corollary 6.13]). Thus, one could potentially adapt the algorithm from [15] for computing a
+2-approximation fordGH between ultrametric spaces, which is FPT. In this paper we obtain
+essentially the same time complexity for theexact computation of dGH (see Remark 49) via
+algorithms speciﬁcally tailored for ultrametric spaces.
+1.1 Our results
+In this section, we summarize our main results obtained in the course of answering the two
+major questions mentioned above.
+1.1.1 Polynomial time computable variant of dGH
+Let (X, dX) and (Y, dY ) be two metric spaces. Acorrespondence R between the underlying
+sets X and Y isanysubsetof X×Y suchthattheimagesof Runderthecanonicalprojections
+PAGE 4
+JoCG 14(1), 78–143, 2023 81
+Journal of Computational Geometry jocg.org
+pX : X × Y → X and pY : X × Y → Y are full: pX(R) = X and pY (R) = Y. Then, the
+Gromov-Hausdorﬀ distance dGH between X and Y is deﬁned as follows [29]:
+dGH(X, Y ) := 1
+2 inf
+R
+sup
+(x,y),(x′,y′)∈R
+|dX(x, x′) − dY (y, y′)|, (1)
+where the inﬁmum is taken over all correspondencesR between X and Y.
+We modify Equation (1) to obtain a one-parameter family of related quantities:
+Deﬁnition 2(p-Gromov-Hausdorﬀ distance). Given p ∈ [1, ∞) and any two metric spaces
+X and Y, we deﬁne a quantityd
+(p)
+GH(X, Y ) which we call thep-Gromov-Hausdorﬀ distance
+as follows:
+d
+(p)
+GH(X, Y ) := 2− 1
+p inf
+R
+sup
+(x,y),(x′,y′)∈R
+⏐⏐(dX(x, x′))p − (dY (y, y′))p⏐⏐
+1
+p . (2)
+In this way, asp increases, the discrepancy between large distance values is more
+heavily penalized. It turns out that for eachp ∈ [1, ∞), d
+(p)
+GH is a metric on the collectionU of
+all compact ultrametric spaces and this justiﬁes the name “p-Gromov-Hausdorﬀ distance”.
+Moreover, we will later show as a consequence of Theorem 1 the following as one of our
+motivations of considering d
+(p)
+GH (recall that Uﬁn below denotes the collection of allﬁnite
+ultrametric spaces):
+Corollary 3. For each p ∈ [1, ∞) and for any X, Y ∈ U ﬁn, d
+(p)
+GH(X, Y ) cannot be approxi-
+mated within any factor less than3
+1
+p in polynomial time, unlessP = N P.
+Note that the factor3
+1
+p approaches 1 as p → ∞. This suggests us consideringd
+(∞)
+GH :=
+limp→∞ d
+(p)
+GH, whichcouldpotentiallybeacomputationallytractablequantity. Beforestating
+our computational result for d
+(∞)
+GH, it is worth mentioning that d
+(∞)
+GH turns out to be an
+ultrametric on U. Moreover, it actually coincides with the Gromov-Hausdorﬀ ultrametric
+deﬁned by Zarichnyi [43], which we denote byuGH; see Equation (11) for the deﬁnition of
+uGH and see Theorem 29 for the equivalence betweenuGH and d
+(∞)
+GH. In this paper, we will
+hence use the two notationsuGH and d
+(∞)
+GH interchangeably.
+Oneofourmaincontributionsinthepaperisthefollowingstructuralcharacterization
+of uGH. This structural result eventually leads to a polynomial time computable algorithm
+for computing uGH which we will state later.
+Theorem 4(Structural theorem foruGH). For any X, Y ∈ U ﬁn one has that
+uGH(X, Y ) = min
+{
+t ≥ 0 :
+(
+Xc(t), uXc(t)
+)
+is isometric to
+(
+Yc(t), uYc(t)
+)}
+.
+Here
+(
+Xc(t), uXc(t)
+)
+is the t-closed quotient of X where x and x′ are identiﬁed if
+uX(x, x′) ≤ t (cf. Deﬁnition 10). In terms of dendrograms (cf. Section 2.2), intuitively,
+Xc(t) is obtained by coarsening the dendrogram ofX below height t. See Figure 1 for an
+illustration of both the closed quotient operation and Theorem 4.
+PAGE 5
+JoCG 14(1), 78–143, 2023 82
+Journal of Computational Geometry jocg.org
+Figure 1: Illustration of Theorem 4.We represent two ultrametric spacesX and Y as
+dendrograms (see Theorem 15 for more details) on the ﬁrst row. Imagine that we move
+a vertical dotted line fromright to left (r > s > t ) to obtain successive quotient spaces
+(shown on the second row) according to the parameter indicated by the line, as described
+in Deﬁnition 10. It is obvious from the ﬁgure that (∼= denotes isometry) Xc(r) ∼= Yc(r),
+Xc(s) ∼= Yc(s), Xc(t) ∼= Yc(t), and thatt is the minimum value such that the resulting quotient
+spaces are isometric. Thus,uGH(X, Y ) = t.
+Based on Theorem 4, we devise an algorithm for computinguGH as follows. For a
+ﬁnite ultrametric spaceX, the isometry type ofXc(t) only changes ﬁnitely many times along
+0 ≤ t < ∞. In fact, the set of all ts when Xc(t) changes its isometry type is exactly the
+spectrum spec(X) := {uX(x, x′) : x, x′ ∈ X} of X. Then, in order to computeuGH(X, Y ),
+we simply check whetherXc(t) ∼= Yc(t), starting from the largestt and progressively scanning
+all possible ts until reaching the smallestt in spec(X) ∪ spec(Y ); the smallest t such that
+Xc(t) ∼= Yc(t) will be uGH(X, Y ). Since ultrametric spaces can be regarded as weighted trees
+(cf. Section A.1), determining whether two ultrametric spaces are isometric is equivalent to
+determining whether two weighted trees are isomorphic, which can be achieved in polynomial
+time on the number of vertices involved.
+We prove that computing uGH can be done in time O(n log(n)) where n is the
+maximum of the cardinalities ofX and Y (cf. Theorem 32 and Remark 33). See Section 4 for
+the pseudocode (cf. Algorithm 1) of the algorithm described above and a detailed complexity
+analysis, and also see Appendix B for an extension ofuGH to the case of ultra-dissimilarity
+spaces. We also remark that our computational results regarding the determination ofuGH
+(between ﬁnite ultrametric spaces) can be interpreted as providing a novel computationally
+tractable instance of the well known quadratic assignment problem (cf. Remark 34).
+In the end, we summarize our complexity results in Figure 2.
+1.1.2 Polynomial time computable family with respect to dGH
+Inspired by the usefulness of Theorem 4 foruGH, we exploit special properties of ultrametric
+spaces and establish a structural theorem fordGH between ultrametric spaces (Theorem 5).
+PAGE 6
+JoCG 14(1), 78–143, 2023 83
+Journal of Computational Geometry jocg.org
+Figure 2: Complexity of d
+(p)
+GH. Computing/approximating d
+(p)
+GH is NP-hard for eachp ∈
+[1, ∞) whereas computing d
+(∞)
+GH can be done in polynomial time.
+X1
+X2
+X3
+Y1
+Y2
+X1
+Y1 Y2
+X1
+X2
+X3
+X2 ∪ X3
+R1
+R2
+0
+0
+=: R
+Y1
+Y2
+[3] [2] 
+Figure 3: Illustration of the claim in Theorem 5.Note that here δ0 is a shorthand
+notation for δ0(Y ) = diam(Y ) and similarly,δε := δε(Y ).
+See also Figure 3 for an illustration of Theorem 5.
+Below, Xo(t) denotes the t-open partitionof X where x and x′ belong to the same
+block if uX(x, x′) < t (cf. Deﬁnition 12). Intuitively speaking, this partition is obtained by
+slicing the dendrogram ofX (cf. Section 2.2 and Figure 5) at a height suﬃciently close to but
+strictly smaller thant. We call any correspondenceR between X and Y with 1−distortion
+(cf. Section 3) bounded above by ε ≥ 0 an ε-correspondence (see Deﬁnition 18). Given
+a metric space X and ε ≥ 0, we let δε(X) := diam( X) − ε, where diam(X) denotes the
+diameter of X. With this notation, δ0(X) = diam( X). Sometimes we will writediam(X)
+instead of δ0(X) in order to avoid cumbersome superscripts/subscripts.
+Theorem 5(Structural theorem fordGH). Let X, Y ∈ U ﬁn and ε ≥ 0 be such that
+|diam(X) − diam(Y )| ≤ ε < diam(Y ). (3)
+Consider the following open partitions
+Xo(δε(Y )) := {Xi}NX
+i=1 and Yo(δ0(Y )) := {Yj}NY
+j=1 .
+PAGE 7
+JoCG 14(1), 78–143, 2023 84
+Journal of Computational Geometry jocg.org
+Then, there exists anε-correspondence betweenX and Y if and only if:
+(1) there exists a surjectionΨ : [NX] ↠ [NY ] and, with this surjection,
+(2) for everyj ∈ [NY ] there exists anε-correspondence between
+(
+XΨ−1(j), uX |XΨ−1(j)×XΨ−1(j)
+)
+and
+(
+Yj, uY |Yj×Yj
+)
+where for eachj ∈ [NY ], XΨ−1(j) := ⋃
+i∈Ψ−1(j) Xi.
+Remark 6 (Interpretation of Equation (3)). Note that for any correspondenceR between
+X and Y, the relations|diam(X) − diam(Y )| ≤ dis1(R) ≤ max(diam(X), diam(Y )) always
+hold (here dis1(R) denotes the 1-distortion of R; see Section 3 for its deﬁnition and see
+Proposition 24 for the proof of these inequalities.). Therefore, (1) If|diam(X) −diam(Y )| >
+ε, then there exists noε-correspondence betweenX and Y; (2) Ifmax(diam(X), diam(Y )) ≤
+ε, then every correspondenceR between X and Y is an ε-correspondence. In this way, in
+order to analyze existence ofε-correspondence we only need to consider the case when
+|diam(X) − diam(Y )| ≤ ε < max(diam(X), diam(Y )). (4)
+Therefore, Equation (3) is simply an asymmetric variant of Equation (4).
+Remark 7. In the course of proving Theorem 5 (cf. Section 5.1), we actually establish
+the following result: under the assumption that a surjectionΨ : [ NX] ↠ [NY ] and an ε-
+correspondence Rj between XΨ−1(j) and Yj for each j ∈ [NY ] as above all exist, the set
+R :=
+⋃
+j∈[NY ]
+Rj
+is an explicitε-correspondence betweenX and Y. This fact will be used in Algorithms 2 and
+4.
+The structural theorem fordGH is ‘anatomically’ similar to the structural theorem
+for uGH in that, in some sense, it converts the problem related to comparing two spaces
+into smaller problems related to comparing subspaces. This naturally suggests considering
+a divide-and-conquer strategyfor devising a recursive algorithm (Algorithm 2) for (asserting
+the existence of and) ﬁnding anε-correspondence between two given ultrametric spaces. It
+turns out that the recursive algorithm performs many repetitive computations, so we further
+improve this strategy via a dynamic programming (DP) idea to obtain a more eﬃcient
+algorithm (Algorithm 4). See Section 5 for a detailed description of both algorithms.
+One key factor which will inﬂuence the complexity of either the recursive or the
+DP algorithm is thesize of the subproblems. By exploiting the inherent tree-like structure
+of ultrametric spaces, we identify in Deﬁnition 35 the ﬁrst(ε, γ)-growth condition (FGC)
+which suitably quantiﬁes the structural complexity of ultrametric spaces and thus controls
+the size of the subproblems in our recursive algorithm. When two ultrametric spaces satisfy
+the FGC for some ﬁxed parameters, the recursive algorithm (Algorithm 2) is proved to run
+in polynomial time (Theorem 37).
+A similar but more general second (ε, γ)-growth condition (SGC) is identiﬁed in
+Deﬁnition 42 for the DP algorithm (Algorithm 4). If we denote byU2(ε, γ) the collection
+PAGE 8
+JoCG 14(1), 78–143, 2023 85
+Journal of Computational Geometry jocg.org
+of all ﬁnite ultrametric spaces satisfying the second(ε, γ)-growth condition, then for any
+X, Y ∈ U 2(ε, γ), we can determine whetherdGH(X, Y ) ≤ ε
+2 in time O
+(
+n2 log(n)2γγγ+2)
+,
+where n := max(#X, #Y ) (cf. Theorem 46); and under the assumption2dGH(X, Y ) ≤ ε,
+we can compute the exact value ofdGH(X, Y ) in time O
+(
+n4 log(n)2γγγ+2)
+(cf. Theorem
+47). In particular, this implies that our DP algorithm isﬁxed-parameter tractable(FPT)
+with respect to the parameters given in the SGC.
+Based on our algorithms for computingdGH between ultrametric spaces, we further
+establish an FPT algorithm to additively approximatedGH between arbitrary doubling (non
+necessary ultra) metric spaces which are themselves quantitatively close to being ultrametric
+spaces (cf. Corollary 57). One of the key observations leading to this approximation algo-
+rithm is the ‘transfer’ of the doubling condition on a metric space into the satisfaction of the
+second growth condition by its corresponding single-linkage ultrametric space (cf. Lemma
+54).
+Implementations The GitHub repository [1] provides implementations of some of our al-
+gorithms as well as an experimental demonstration.
+1.2 Organization of the paper
+In Section 2 we review facts about ultrametric spaces and dendrograms, and introduce
+the quotient operations mentioned above. In Section 3 we discuss thep-Gromov-Hausdorﬀ
+distance d
+(p)
+GH and connectd
+(∞)
+GH with the Gromov-Hausdorﬀ ultrametricuGH. In Section 4 we
+prove Theorem 4 and provide details of an algorithm (Algorithm 1) for computinguGH. In
+Section 5 we prove Theorem 5 and discuss how to utilize Theorem 5 for devising algorithms
+(Algorithms 2 and 4) computing dGH. In Appendix A we specify the data structure for
+ultrametric spaces used in algorithms throughout the paper. In Appendix B we provide
+details for generalizing uGH to the so-called ultra-dissimilarity spaces. Some proofs are
+relegated to Appendix C.
+List of Symbols
+The list below describes several symbols that will be used in the article.
+dGH The Gromov-Haussdorﬀ distance; page 17.
+uGH The Gromov-Haussdorﬀ ultrametric; page 17.
+d
+(p)
+GH p-Gromov-Hausdorﬀ distance; page 14.
+disp p-distortion; page 13.
+Λp Absolute p-diﬀerence; page 13.
+U The collection of all compact ultrametric spaces.
+Uﬁn The collection of all ﬁnite ultrametric spaces.
+PAGE 9
+JoCG 14(1), 78–143, 2023 86
+Journal of Computational Geometry jocg.org
+(X, uX) An ultrametric space.
+[x]X
+c(t) The equivalence class of the closed equivalence relation; page 10.
+[x]X
+o(t) The equivalence class of the open equivalence relation; page 11.
+(
+Xc(t), uXc(t)
+)
+The t-closed quotient of the ultrametric spaceX; page 10.
+Xo(t) The t-open partition of the ultrametric spaceX; page 11.
+[x]θX
+t The block inθX(t) containing x; page 12.
+#X The cardinality of setX.
+δε(X) A convenient symbol representingδε(X) := diam(X) − ε; page 6.
+δ+
+2ε(X) A convenient symbol representingδ+
+2ε(X) := max(δ2ε(X), 0) = max(diam (X) −
+2ε, 0); page 26.
+U1(ε, γ) The collection of all ﬁnite ultrametric spaces satisfying the ﬁrst (ε, γ)-growth
+condition; page 23.
+U2(ε, γ) The collection of all ﬁnite ultrametric spaces satisfying the second(ε, γ)-growth
+condition; page 28.
+sep(X) The separation ofX; page 32.
+spec(X) The spectrum of a metric spaceX: spec(X) := {dX(x, x′) : x, x′ ∈ X}; page 4.
+θX The dendrogram corresponding to the ultrametric spaceX; page 11.
+B(ε) The set ofε-maximal unions of closed balls of the ballB; page 26.
+TX The weighted rooted tree corresponding toX and also its associated TDS; page
+41.
+VX The set of all closed balls in the ultrametric spaceX; page 26.
+2 Ultrametric spaces
+Ultrametric spaces, as deﬁned in the introduction, are metric spaces which satisfy the strong
+triangle inequality. The following basic properties of ultrametric spaces are direct conse-
+quences of the strong triangle inequality.
+Proposition 8 (Basic properties of ultrametric spaces). Let X be an ultrametric space.
+Then, X satisﬁes the following basic properties:
+1. (Isosceles triangles) Any three distinct pointsx, x′, x′′ ∈ X constitute an isosceles
+triangle, i.e., two ofuX(x, x′), uX(x, x′′) and uX(x′, x′′) are the same and are greater
+than the rest.
+PAGE 10
+JoCG 14(1), 78–143, 2023 87
+Journal of Computational Geometry jocg.org
+2. (Center of closed balls) Let Bt(x) := {x′ ∈ X : uX(x, x′) ≤ t} denote the closed
+ball centered atx ∈ X with radius t ≥ 0. Then, for any x′ ∈ Bt(x) we have that
+Bt(x′) = Bt(x).
+3. (Relationbetweenclosedballs ) For any two closed ballsB and B′ in X, ifB∩B′ ̸= ∅,
+then either B ⊆ B′ or B′ ⊆ B.
+4. (Cardinality of spectrum) Suppose X is a ﬁnite space. Then,#spec(X) ≤ #X.
+Proof. The ﬁrst three items are well known (and easy to prove) and we omit their proof. As
+for the fourth item, see for example [19, Corollary 3].
+Next, we introduce two important notions for ultrametric spaces: quotient operations
+and dendrograms.
+2.1 Quotient operations
+There are two special equivalence relations on ultrametric spaces whose respectively induced
+quotient operations will be helpful in revealing the structure of bothuGH and dGH.
+A ‘closed’ equivalence relation Foranyultrametricspace (X, uX), weintroducearelation
+∼c(t) on X such that x ∼c(t) x′ iﬀ uX(x, x′) ≤ t. Due to the strong triangle inequality,
+∼c(t) is an equivalence relation which we call the closed equivalence relation. For each
+x ∈ X and t ≥ 0, denote by [x]X
+c(t) the equivalence class ofx under ∼c(t). We abbreviate
+[x]X
+c(t) to [x]c(t) whenever the underlying set is clear from the context. Consider the set
+Xc(t) := {[x]c(t) : x ∈ X} of all ∼c(t) equivalence classes.
+Remark 9(Relationship with closed balls). Note that for eachx ∈ X, the equivalence class
+[x]X
+c(t) satisﬁes [x]X
+c(t) = {x′ ∈ X : uX(x, x′) ≤ t}. This implies that[x]c(t) coincides with the
+closed ball Bt(x) := {x′ ∈ X : uX(x, x′) ≤ t}. We will henceforth use both notation[x]c(t)
+and Bt(x) to represent closed balls interchangeably.
+Now, we introduce a functionuXc(t) : Xc(t) × Xc(t) → R≥0 as follows:
+uXc(t)
+(
+[x]c(t), [x′]c(t)
+):=
+{ uX(x, x′) if [x]c(t) ̸= [x′]c(t)
+0 if [x]c(t) = [x′]c(t). (5)
+It is clear thatuXc(t) is an ultrametric onXc(t).
+Deﬁnition 10 (t-closed quotient). For any ultrametric space(X, uX) and t ≥ 0, we call(
+Xc(t), uXc(t)
+)
+the t-closed quotient ofX.
+For each t ≥ 0, the t-closed quotient gives rise to a map which we call thet-closed
+quotient operator Qc(t) : Uﬁn → U ﬁn sending X ∈ U ﬁn to Xc(t) ∈ U ﬁn.
+PAGE 11
+JoCG 14(1), 78–143, 2023 88
+Journal of Computational Geometry jocg.org
+An ‘open’ equivalence relation Given an ultrametric space X and t > 0, let ∼o(t) be
+such that x ∼o(t) x′ if uX(x, x′) < t. Due to the strong triangle inequality again,∼o(t) is an
+equivalence relation on X which we call theopen equivalence relation. Its diﬀerence with
+the closed equivalence relation∼c(t) is that we now require astrict inequality for deﬁning
+the equivalence relation. Denote by[x]X
+o(t) the equivalence class ofx ∈ X under ∼o(t). We
+will use the simpler notation[x]o(t) instead of [x]X
+o(t) when the underlying set is clear from
+the context.
+Remark 11(Relation with open and closed balls). In the same way that[x]c(t) is the closed
+ball centered atx with radius t, when t > 0 [x]o(t) = {x′ ∈ X : uX(x, x′) < t} is actually the
+open ball centered atx with radius t. If X is ﬁnite, then each open ball is actually a closed
+ball: for any open ball[x]o(t), we have[x]o(t) = [x]c(t′), where t′ := diam([x]o(t)).
+Now in analogy with Equation (5), we introduce an ultrametricuXo(t) on Xo(t) as
+follows:
+uXo(t)
+(
+[x]o(t), [x′]o(t)
+):=
+{ uX(x, x′) if [x]o(t) ̸= [x′]o(t)
+0 if [x]o(t) = [x′]o(t). (6)
+Deﬁnition 12(t-open quotient). For any ultrametric space(X, uX) and any t > 0, we call
+(Xo(t), uXo(t)) the t-open quotient ofX. When t = 0, by deﬁnition we let∼o(0):=∼c(0) and
+let (Xo(0), uXo(0)) := (X, uX) be the 0-open quotient ofX.
+Given a ﬁnite setX, a setP = {B1, . . . , Bn} of non-empty subsets ofX is called a
+partition of X if ⋃n
+i=1 Bi = X and Bi ∩Bj = ∅ if i ̸= j. It is well known that any equivalence
+relation on a given set induces a partition of that set. For the open equivalence relation,
+instead of the metricuXo(t) we will mainly focus on the partition induced by∼o(t), i.e., the
+partition
+{
+[x]o(t) : x ∈ X
+}
+. We call this partition thet-open partitionof X.
+Example 13(t-closed and open quotients whent = diameter). Let X be a ﬁnite ultrametric
+space with at least two points and letδ := diam( X). Then, Xc(δ) = {X} is the one point
+space whereas#Xo(δ) > 1. Indeed, for any pointx ∈ X, X = [x]c(δ) and thus Xc(δ) = {X};
+since X is ﬁnite and #X ≥ 2, there exist x, x′ ∈ X such that uX(x, x′) = diam( X) = δ,
+then [x]o(δ) ̸= [x′]o(δ) and thus #Xo(δ) ≥ #{[x]o(δ), [x′]o(δ)} > 1.
+2.2 Dendrograms
+One essential mental picture to evoke when thinking about ultrametric spaces is that of a
+dendrogram(see Figure 4). To proceed with the deﬁnition of dendrograms, we ﬁrst introduce
+some related terminology.
+Partitions Given any ﬁnite set X and a partition P = {B1, . . . , Bn} of X, we call each
+Bi ∈ P a block of P. We denote byPart(X) the collection of all partitions ofX. Given two
+partitions P1, P2 ∈ Part(X), we say thatP1 is areﬁnement of P2, or equivalently, thatP2
+is coarser than P1, if every block inP1 is contained in some block inP2.
+Deﬁnition 14 (Dendrograms, [7]). A dendrogram θX over a ﬁnite set X is any function
+θX : [0, ∞) → Part(X) satisfying the following conditions:
+PAGE 12
+JoCG 14(1), 78–143, 2023 89
+Journal of Computational Geometry jocg.org
+(1) θX(0) = {{x1}, . . . ,{xn}}.
+(2) For any s < t, θX(s) is a reﬁnement ofθX(t).
+(3) There exists tX > 0 such that θX(tX) = {X}.
+(4) For any r ≥ 0, there existsε > 0 such that θX(r) = θX(t) for t ∈ [r, r + ε].
+There exists a close relationship between dendrograms and ultrametric spaces. Fix
+a ﬁnite set X, by U(X) denote the collection of all ultrametrics over X and by D(X)
+denote the collection of all dendrograms overX. We deﬁne a map ∆X : U(X) → D (X)
+by sending uX to a dendrogram θX as follows via the closed quotient: givent ≥ 0, we let
+θX(t) := Xc(t) = {[x]c(t) : x ∈ X}. It turns out that the map ∆X is bijective. In fact,
+the inverse ΥX : D(X) → U (X) of ∆X is the following map: for any dendrogram θX,
+uX := Υ( θX) is deﬁned by uX(x, x′) := inf {t ≥ 0 : [ x]θX
+t = [ x′]θX
+t } for any x, x′ ∈ X,
+where [x]θX
+t ∈ θX(t) denotes the block containingx. It turns out that[x]θX
+t coincides with
+the equivalence class[x]c(t) of the closed equivalence relation with respect touX = ΥX(θX).
+Hence, we also use either[x]X
+c(t) or [x]c(t) to represent the block containingx in a dendrogram
+θX at level t. We summarize our discussion above into the following theorem.
+1 2
+2 2
+1
+Ultrametric space Dendrogram
+Figure 4:Transforming ultrametric spaces into dendrograms.
+Theorem 15 (Dendrograms as ultrametric spaces, [7, Theorem 9]). Given a ﬁnite setX,
+then ∆X : U(X) → D(X) is bijective with inverseΥX : D(X) → U (X).
+Theorem 15 above establishes that dendrograms and ultrametric spaces are equiva-
+lent concepts – a point of view which helps to formulate subsequent ideas in this paper.
+Example 16(t-closed/open quotient in terms of dendrograms). It is helpful to understand
+both the open and closedt-quotients by viewing ultrametric spaces as dendrograms: botht-
+quotients simply forget the details of a given dendrogram strictly below scalet. Whereas thet-
+open equivalence relation retains the partition information at scalet, the t-closed equivalence
+does not. See Figure 5 for an illustration.
+PAGE 13
+JoCG 14(1), 78–143, 2023 90
+Journal of Computational Geometry jocg.org
+Figure 5:Illustration of open and closed equivalence relations.The leftmost ﬁgure is
+a dendrogram representing a 7-point ultrametric spaceX. The middle ﬁgure is the dendro-
+gram corresponding toXo(t) whereas the rightmost ﬁgure is the dendrogram corresponding
+to Xc(t).
+3 Gromov-Hausdorﬀ distances between ultrametric spaces
+For convenience, we adopt the following notation to represent theabsolute p-diﬀerence (for
+p ∈ [1, ∞]) between two non-negative numbersa, b ∈ R≥0:
+Λp(a, b) := |ap − bp|
+1
+p , for p ∈ [1, ∞);
+Λ∞(a, b) :=
+{
+max(a, b), a ̸= b
+0, a = b , for p = ∞.
+Notethat Λ1(a, b) = |a−b|istheusualEuclideandistanceandthat limp→∞ Λp(a, b) =
+Λ∞(a, b). In particular, we have the following obvious characterization ofΛ∞:
+Proposition 17. For any a, b ≥ 0, we have that
+Λ∞(a, b) = inf{c ≥ 0 : a ≤ max(b, c) and b ≤ max(a, c)}. (7)
+Proof. We have the following two cases.
+1. If a = b, then Λ∞(a, b) = 0 ≤ c.
+2. If a ̸= b, we assume without loss of generality thata > b . Then, a ≤ max(b, c)
+implies that Λ∞(a, b) = max(a, b) = a ≤ c.
+Now, givenp ∈ [1, ∞] and two ultrametric spaces(X, uX) and (Y, uY ), for any non-
+empty subset S ⊆ X × Y, we deﬁne itsp-distortion with respect touX and uY as follows:
+disp (S, uX , uY ) := sup
+(x,y),(x′,y′)∈S
+Λp(uX(x, x′), uY (y, y′)). (8)
+PAGE 14
+JoCG 14(1), 78–143, 2023 91
+Journal of Computational Geometry jocg.org
+We abbreviate disp (S, uX , uY ) to disp(S) whenever clear from the context. In particular,
+for a mapϕ : X → Y, we deﬁne itsp-distortion by
+disp(ϕ) := disp(graph(ϕ)) = sup
+x,x′∈X
+Λp
+(
+uX(x, x′), uY (ϕ(x), ϕ(x′))
+)
+,
+where graph(ϕ) := {(x, ϕ(x)) ∈ X × Y : x ∈ X}.
+Recall from the introduction that a correspondenceR between the underlying sets
+X and Y is any subset ofX × Y such that the images ofR under the canonical projections
+pX : X × Y → X and pY : X × Y → Y are full: pX(R) = X and pY (R) = Y. The following
+terminology regarding correspondences will be used frequently in later sections.
+Deﬁnition 18 (ε-correspondence). Let R be any correspondence betweenX and Y. For
+any ε ≥ 0 and p ∈ [1, ∞], we call R an (ε, p)-correspondence ifdisp(R) ≤ ε. When p = 1,
+we call an(ε, 1)-correspondence simply anε-correspondence.
+Example 19.Let X = {x1, x2} and Y = {y1, y2} be a pair of two-point spaces. Assume two
+ultrametrics uX and uY on X and Y, respectively, such thatuX(x1, x2) = 1 and uY (y1, y2) =
+2. Let R := {(x1, y1), (x2, y2)}. Then, R is a correspondence betweenX and Y. For any
+p ∈ [1, ∞], it is clear that
+disp(R, uX , uY ) = Λp
+(
+uX(x1, x2), uY (y1, y2)
+)
+=
+{
+|1p − 2p|
+1
+p p ∈ [1, ∞)
+2 p = ∞
+.
+Now, for anyp ∈ [1, ∞], we deﬁned
+(p)
+GH as follows, which is an extension of Equation
+(2) deﬁned only forp ∈ [1, ∞):
+d
+(p)
+GH(X, Y ) := 2− 1
+p inf
+R
+disp(R), (9)
+where the inﬁmum is taken over all correspondences betweenX and Y. Here we adopt the
+convention that 1
+∞ = 0. Note that d
+(1)
+GH = dGH, and as a consequence of our convention
+d
+(∞)
+GH(X, Y ) = inf
+R
+dis∞(R).
+As already mentioned in the introduction, when only consideringﬁnite ultrametric
+spaces, we easily have the following property of the family{d
+(p)
+GH}p∈[1,∞]:
+Proposition 20. Given any X, Y ∈ U ﬁn, the function p ↦→ d
+(p)
+GH(X, Y ) is continuous and
+increasing with respect top ∈ [1, ∞]. In particular,limp→∞ d
+(p)
+GH(X, Y ) = d
+(∞)
+GH(X, Y ).
+Remark 21. Note that d
+(p)
+GH(X, Y ) in Equation (9) is actually well-deﬁned for any two
+metric spaces X and Y, i.e., X and Y are not restricted to be ultrametric spaces. See
+Section 3.3 for alternative deﬁnitions ofd
+(p)
+GH(X, Y ) on classes of metric spaces larger than
+U.
+Example 22(Distance to the one point space). Since there exists a unique correspondence
+R∗ := X × ∗ between a given ﬁnite set X and the one point space ∗, we have for each
+p ∈ [1, ∞] that
+d
+(p)
+GH(X, ∗) = 2− 1
+p disp(R∗) = 2− 1
+p diam(X).
+PAGE 15
+JoCG 14(1), 78–143, 2023 92
+Journal of Computational Geometry jocg.org
+3.1 Computing d
+(p)
+GH is NP-hard when p ∈ [1, ∞)
+Given an ultrametric space(X, uX) and any positive real numberα, the function(x, x′) ↦→
+(uX(x, x′))α is still an ultrametric onX so that the space(X, (uX)α) is still an ultrametric
+space. We letSα(X) denote the ultrametric space(X, (uX)α). Then, we have the following
+transformation between d
+(p)
+GH and dGH for all p ∈ [1, ∞). The proof of the following result is
+relegated to Appendix C.
+Proposition 23. Given 1 ≤ p < ∞ and any two ultrametric spacesX and Y, one has
+d
+(p)
+GH(X, Y ) =
+(
+dGH(Sp(X), Sp(Y ))
+)1
+p .
+Conversely,
+dGH(X, Y ) =
+(
+d
+(p)
+GH
+(
+S 1
+p
+(X), S1
+p
+(Y )
+))p
+.
+Therefore, solving an instance ofd
+(p)
+GH is equivalent to solving an instance ofdGH.
+Since it is NP-hard to computedGH between ﬁnite ultrametric spaces [40], it is also NP-hard
+to compute d
+(p)
+GH between ﬁnite ultrametric spaces for everyp ∈ [1, ∞).
+Moreover, combining Proposition 23 with Theorem 1, we have the following more
+precise statement:
+Corollary 3. For each p ∈ [1, ∞) and for any X, Y ∈ U ﬁn, d
+(p)
+GH(X, Y ) cannot be approxi-
+mated within any factor less than3
+1
+p in polynomial time, unlessP = N P.
+Proof. Suppose otherwise that there exist ﬁnite ultrametric spaces X and Y such that
+d
+(p)
+GH(X, Y ) can be approximated within a factorc
+1
+p < 3
+1
+p in polynomial time. Then, Propo-
+sition 23 implies that one can approximate
+(
+dGH(Sp(X), Sp(Y ))
+)1
+p within a factorc
+1
+p < 3
+1
+p
+in polynomial time. This implies that one can approximate dGH(Sp(X), Sp(Y )) within a
+factor c < 3 in polynomial time which contradicts with Theorem 1.
+As mentioned in the introduction, the factor 3
+1
+p in Corollary 3 approaches 1 as
+p → ∞. This suggests that d
+(∞)
+GH could be a computationally tractable quantity; later in
+Section 4.2 we will illustrate this point.
+3.2 An estimate of d
+(p)
+GH via diameters of input spaces
+The following result shows how the Gromov-Hausdorﬀ distance interacts with the diameters
+of the input spaces.
+Proposition 24([30, Theorems 3.3 and 3.4]). For any ﬁnite metric spacesX and Y, let R
+be a correspondence between them. Then, we have
+|diam(X) − diam(Y )| ≤ dis1(R) ≤ max(diam(X), diam(Y )).
+In particular,
+1
+2 |diam(X) − diam(Y )| ≤ dGH(X, Y ) ≤ 1
+2 max(diam(X), diam(Y )).
+PAGE 16
+JoCG 14(1), 78–143, 2023 93
+Journal of Computational Geometry jocg.org
+Invoking Proposition 23, we immediately have the following analogue to the second
+part of Proposition 24 ford
+(p)
+GH:
+Proposition 25. For any p ∈ [1, ∞) and ﬁnite ultrametric spacesX and Y, we have that
+2− 1
+p Λp(diam(X), diam(Y )) ≤ d
+(p)
+GH(X, Y ) ≤ 2− 1
+p max(diam(X), diam(Y )).
+Note that limp→∞ 2− 1
+p Λp(diam(X), diam(Y )) = Λ ∞(diam(X), diam(Y )). When
+diam(X) ̸= diam(Y ), limp→∞ 2− 1
+p Λp(diam(X), diam(Y )) = max(diam(X), diam(Y )). Then,
+by continuity ofd
+(p)
+GH with respect top ∈ [1, ∞] (cf. Proposition 20), we have the following
+property for d
+(∞)
+GH:
+Proposition 26.Let X and Y be any two ﬁnite ultrametric spaces with diﬀerent diameters,
+then
+d
+(∞)
+GH(X, Y ) = max(diam(X), diam(Y )).
+This proposition indicates that, whenX and Y have diﬀerent diameters,d
+(∞)
+GH(X, Y )
+is determined by the diameter values of the input spaces, which suggests thatd
+(∞)
+GH is more
+rigid than otherd
+(p)
+GH when p < ∞ and as a consequence,d
+(∞)
+GH exhibits a distinct computa-
+tional behavior in comparison tod
+(p)
+GH when p < ∞.
+Example 27 (Distance between homothetic spaces). Let X be a ﬁnite ultrametric space
+and let λ > 0. Then, for anyp ∈ [1, ∞] we have
+d
+(p)
+GH((X, uX), (X, λ · uX)) = 2− 1
+p Λp(λ, 1) · diam(X).
+Indeed, sincediam(X, λ · uX) = λ · diam(X), by Proposition 25 and Proposition 26 we have
+that
+d
+(p)
+GH((X, uX), (X, λ · uX)) ≥ 2− 1
+p Λp(λ · diam(X), diam(X)) = 2− 1
+p Λp(λ, 1) · diam(X).
+For the converse, consider the identity correspondenceRid := {(x, x) ∈ X × X : x ∈ X}.
+Then,
+d
+(p)
+GH((X, uX), (X, λ · uX)) ≤ 2− 1
+p disp
+(
+Rid, uX , λ · uX
+)
+= 2− 1
+p Λp(λ, 1) · diam(X).
+3.3 d
+(∞)
+GH exactly coincides with the Gromov-Hausdorﬀ ultrametric uGH
+Recall that on a metric spaceZ, theHausdorﬀ distance dZ
+H between two subsetsA, B ⊆ Z
+is deﬁned as
+dZ
+H(A, B) := max
+(
+sup
+a∈A
+inf
+b∈B
+dZ(a, b), sup
+b∈B
+inf
+a∈A
+dZ(a, b)
+)
+.
+Given two metric spacesX and Y, we say a mapϕ : X → Y is anisometric embeddingfrom
+X to Y if for everyx, x′ ∈ X, dX(x, x′) = dY (ϕ(x), ϕ(x′)). We usually use the symbol↪→
+(instead of →) to represent isometric embeddings. Then, the Gromov-Hausdorﬀ distance
+can be characterized as follows:
+PAGE 17
+JoCG 14(1), 78–143, 2023 94
+Journal of Computational Geometry jocg.org
+Theorem 28(Duality formula fordGH, [6, Theorem 7.3.25]). The Gromov-Hausdorﬀ dis-
+tance dGH between two compact metric spacesX and Y satisﬁes the following:
+dGH(X, Y ) = inf dZ
+H(ϕX(X), ϕY (Y )), (10)
+where the inﬁmum is taken over all metric spacesZ and isometric embeddingsϕX : X ↪→ Z
+and ϕY : Y ↪ → Z.
+In fact, Equation (10) is the original deﬁnition of the Gromov-Hausdorﬀ distance
+given by Gromov in [17]. In the spirit of Equation (10), Zarichnyi deﬁnes in [43] theGromov-
+Hausdorﬀ ultrametric, which we denote byuGH, betweencompact ultrametric spacesX and
+Y as follows:
+uGH(X, Y ) := inf dZ
+H(ϕX(X), ϕY (Y )), (11)
+where the inﬁmum is taken over allultrametric spaces Z and isometric embeddings ϕX :
+X ↪→ Z and ϕY : Y ↪ → Z. It turns out thatuGH agrees with d
+(∞)
+GH as deﬁned by Equation
+(9).
+Theorem 29(Duality formula ford
+(∞)
+GH). Given two compact ultrametric spacesX and Y,
+we have that
+d
+(∞)
+GH(X, Y ) = uGH(X, Y ). (12)
+See Appendix C for the proof.
+Zarichnyi proved in [43] thatuGH (and thusd
+(∞)
+GH) is an ultrametric on the collection
+of all compact ultrametric spaces. Similar metric properties also hold ford
+(p)
+GH, forp ∈ [1, ∞);
+see the following remark.
+Remark 30(Duality formula ford
+(p)
+GH). An alternative formulation similar to Equation(12)
+via the Hausdorﬀ distance exists ford
+(p)
+GH for every p ∈ [1, ∞]. For p ∈ [1, ∞), we call a
+metric space X a p-metric spaceif it satisﬁes thep-triangle inequality:
+∀x, x′, x′′ ∈ X, dX(x, x′) ≤
+(
+dp
+X(x, x′′) + dp
+X(x′′, x′)
+)1
+p .
+In that case, we refer todX as a p-metric. Note that the above inequality reduces to
+the strong triangle inequality asp approaches ∞. So we also will refer to the strong triangle
+inequality as the∞-triangle inequality and an ultrametric space as an∞-metric space. Then,
+for any p ∈ [1, ∞] and any two compactp-metric spaces, we have that
+d
+(p)
+GH(X, Y ) = inf dZ
+H(ϕ(X), ϕY (Y )),
+where the inﬁmum is taken over allp-metric spaces Z and isometric embeddingsϕX : X ↪→
+Z and ϕY : Y ↪ → Z. Moreover, d
+(p)
+GH is actually a p-metric on the collection of all isometry
+classes of compact metric spaces and in particular, is ap-metric on the collection of all
+isometry classes of compactp-metric spaces. See [31, Theorem 4.2] for more details.
+PAGE 18
+JoCG 14(1), 78–143, 2023 95
+Journal of Computational Geometry jocg.org
+4 Structural results for uGH and computational implications
+In this section, we ﬁrst prove our central observation regardinguGH, the structural theorem
+for uGH (Theorem 4). Then, we utilize this theorem to devise a poly-time algorithm for
+computing uGH. We remark that the distance uGH as well as Theorem 4 and Algorithm
+1 can be extended to the so-called ultra-dissimilarity spaces, which can be regarded as
+generalization of ultrametric spaces. See Appendix B for details.
+4.1 Proof of Theorem 4
+Recall the statement of the structural theorem foruGH:
+Theorem 4(Structural theorem foruGH). For any X, Y ∈ U ﬁn one has that
+uGH(X, Y ) = min
+{
+t ≥ 0 :
+(
+Xc(t), uXc(t)
+)
+is isometric to
+(
+Yc(t), uYc(t)
+)}
+.
+Proof. We ﬁrst prove the following weaker version of Theorem 4 (withinf instead ofmin):
+uGH(X, Y ) = inf
+{
+t ≥ 0 :
+(
+Xc(t), uXc(t)
+)
+∼=
+(
+Yc(t), uYc(t)
+)}
+. (13)
+Suppose ﬁrst that Xc(t) ∼= Yc(t) for some t ≥ 0, i.e. there exists an isometry ft :
+Xc(t) → Yc(t). Deﬁne
+Rt :=
+{
+(x, y) ∈ X × Y : [ y]Y
+c(t) = ft
+(
+[x]X
+c(t)
+)}
+.
+That Rt is a correspondence betweenX and Y is clear since: ft is bijective, everyx ∈ X
+belongs to exactly one block in Xc(t) and every y ∈ Y belongs to exactly one block in
+Yc(t). For any (x, y), (x′, y′) ∈ Rt, if uX(x, x′) ≤ t, then we already have uX(x, x′) ≤
+max(t, uY (y, y′)). Otherwise, if uX(x, x′) > t, then we have [x]X
+c(t) ̸= [ x′]X
+c(t). Since ft is
+bijective, we have that[y]Y
+c(t) = ft([x]X
+c(t)) ̸= ft([x′]X
+c(t)) = [y′]Y
+c(t). Then,
+uY (y, y′) = uYc(t)
+(
+[y]Y
+c(t), [y′]Y
+c(t)
+)
+= uXc(t)
+(
+[x]X
+c(t), [x′]X
+c(t)
+)
+= uX(x, x′).
+Therefore, uX(x, x′) ≤ max(t, uY (y, y′)). Similarly, uY (y, y′) ≤ max(t, uX(x, x′)). Then, by
+Equation (7), Λ∞(uX(x, x′), uY (y, y′)) ≤ t and thusdis∞(Rt) ≤ t. This implies that
+uGH(X, Y ) ≤ inf
+{
+t ≥ 0 : Xc(t) ∼= Yc(t)
+}
+.
+Conversely, let R be any correspondence between X an Y and let t := dis∞(R).
+Consider any (x, y), (x′, y′) ∈ R such that [x′]X
+c(t) = [ x]X
+c(t) (i.e. uX(x′, x) ≤ t). We deﬁne
+a map ft : Xc(t) → Yc(t) as follows: for each [x]X
+c(t) ∈ Xc(t), suppose y ∈ Y is such that
+(x, y) ∈ R, then we letft
+(
+[x]X
+c(t)
+)
+:= [y]Y
+c(t).
+PAGE 19
+JoCG 14(1), 78–143, 2023 96
+Journal of Computational Geometry jocg.org
+We claim that the mapft is well-deﬁned. Indeed, if[x]X
+c(t) = [x′]X
+c(t) and y, y′ ∈ Y are
+such that(x, y), (x′, y′) ∈ R, then
+Λ∞(uX(x, x′), uY (y, y′)) ≤ dis∞(R) = t.
+This implies that uY (y′, y) ≤ t which is equivalent to [y]Y
+c(t) = [ y′]Y
+c(t). Similarly, there
+is a well-deﬁned map gt : Yc(t) → Xc(t) sending [y]Y
+c(t) ∈ Yc(t) to [x]X
+c(t) whenever (x, y) ∈
+R. It is clear that gt is the inverse of ft and thus ft is bijective. Now suppose that
+uXc(t)
+(
+[x]X
+c(t), [x′]X
+c(t)
+)
+= s > t , which implies that uX(x, x′) = s. Let y, y′ ∈ Y be such
+that (x, y), (x′, y′) ∈ R. Then, since Λ∞(uX(x, x′), uY (y, y′)) ≤ dis∞(R) = t < s , uY (y, y′)
+is forced to be equal touX(x, x′) = s. Therefore,
+uYc(t)
+(
+ft
+(
+[x]X
+c(t)
+)
+, ft
+(
+[x′]X
+c(t)
+))
+= uYc(t)
+(
+[y]Y
+c(t), [y′]Y
+c(t)
+)
+= s = uXc(t)
+(
+[x]X
+c(t), [x′]X
+c(t)
+)
+.
+This proves thatft is an isometry and thus
+uGH(X, Y ) ≥ inf
+{
+t ≥ 0 : Xc(t) ∼= Yc(t)
+}
+.
+Since X and Y areﬁnite, foreach t ≥ 0, thereexists ε > 0suchthatforall s ∈ [t, t+ε]
+Xc(t) ∼= Xc(s) and Yc(t) ∼= Yc(s). This implies that the inﬁmum in Equation (13) is attained
+and thus we obtain the claim.
+Remark 31. Theorem 4 actually holds for compact ultrametric spaces; see [31] for details.
+4.2 A poly-time algorithm for computing uGH
+In Algorithm 1 below we provide pseudocode for computinguGH and in Theorem 32 we
+prove that Algorithm 1 runs in timeO(n2); see also Remark 33 for details about improving
+this time complexity toO(n log(n)).
+Recall that the spectrumspec(X) of the metric spaceX is the set of values deﬁned
+by spec(X) := {uX(x, x′) : ∀x, x′ ∈ X}. The pseudocode for the functionClosedQuotient
+implementing the closed quotient operation is given in Algorithm 6 in Appendix A. The
+function is_iso determines whether two ultrametric spaces are isometric, for which we
+adapt the algorithm in [3, Example 3.2].
+Algorithm 1 uGH(X, Y )
+1: spec ← sort(spec(X) ∪ spec(Y ), ‘descend’)
+2: for i = 1 : length(spec) do
+3: t = spec(i)
+4: if ∼ is_iso(ClosedQuotient(X, t), ClosedQuotient(Y, t)) then returnspec(i −
+1)
+5: end if
+6: end for
+7: return 0
+PAGE 20
+JoCG 14(1), 78–143, 2023 97
+Journal of Computational Geometry jocg.org
+Complexity analysis of Algorithm 1 Let n := max(#X, #Y ). ByProposition8, #spec(X) ≤
+#X. Then,
+#spec = # (spec(X) ∪ spec(Y )) = O(n).
+Thus, it takes time O(n log(n)) to construct and to sort the sequencespec := spec( X) ∪
+spec(Y ) (cf. Lemma 70). Now, for eacht ∈ spec, we need timeO(n) for running Algorithm
+ClosedQuotient (Algorithm 6) with input(X, t) and (Y, t).
+Following AppendixA and Lemma 71, sincemax(#Xc(t), #Yc(t)) ≤ max(#X, #Y ) =
+O(n), the functionis_iso with input(Xc(t), Yc(t)) runs in timeO(n) as well (cf. Lemma 71).
+Thus, the time complexity associated to computinguGH(X, Y ) via Algorithm 1 is
+O(n log(n)) + length(spec) · O(n) = O(n log(n)) + O(n) · O(n) = O(n2).
+In this way we have proved the following theorem.
+Theorem 32(Time complexity of AlgorithmuGH (Algorithm 1)). Let X and Y be ﬁnite
+ultrametric spaces. Then, algorithmuGH(X, Y ) (Algorithm 1) runs in timeO
+(
+n2)
+, where
+n := max(#X, #Y ).
+Remark 33 (Acceleration via binary search). By replacing the for-loop over i = 1 :
+length(spec) in uGH (Algorithm 1) with binary search, the total complexity will drop to
+O(n log(n)) + O(log(n)) · O(n) = O(n log(n)).
+Remark 34 (A novel poly time solvable instance of the quadratic assignment problem).
+Given p ∈ [1, ∞] and two ﬁnite ultrametric spacesX = {x1, . . . , xnX } and Y = {y1, . . . , ynY },
+we formulate the computation ofd
+(p)
+GH(X, Y ) as the followinggeneralized1 bottleneck quadratic
+assignment problem (GQBAPp) as in [30, Remark 3.4] (cf. Equation (9)):
+GQBAPp(a, b) := 2
+1
+p d
+(p)
+GH(X, Y ) = min
+R
+max
+i,j,k,l
+Λp(aik, bjl) Rij Rkl,
+where a = (aik) is an nX × nX matrix such thataik := uX(xi, xk), b = (bjl) is an nY × nY
+matrix such thatbjl := uY (yj, yl), and R is a correspondence, which is regarded as(Rij), an
+nX × nY matrix such thatRij ∈ {0, 1} and
+1. ∑nX
+i=1 Rij ≥ 1 for all j;
+2. ∑nY
+j=1 Rij ≥ 1 for all i.
+Then, by Corollary 3 and Theorem 32, whereas solvingGQBAPp is NP-hard for
+each p ∈ [1, ∞), the problem GQBAP∞ can be solved in time O(n log(n)) where n :=
+max(nX , nY ).
+In general, quadratic assignment problems are NP-hard [34]. This includes instances
+such as GQBAPp in the case when p < ∞. However, by the above ‘cost’ matrices of the
+form of (Λ∞(aik, bjl)) yield computationally tractable instances.
+1Here, ‘generalized’ refers to the fact that we are allowing matchings more general than permutations.
+PAGE 21
+JoCG 14(1), 78–143, 2023 98
+Journal of Computational Geometry jocg.org
+5 Structural results for dGH and computational implications
+In this section, we ﬁrst prove the structural theorem fordGH (Theorem 5), and then develop
+eﬃcient algorithms for computingdGH based on Theorem 5.
+5.1 Proof of Theorem 5
+Recall the structural theorem for the Gromov-Hausdorﬀ distance:
+Theorem 5(Structural theorem fordGH). Let X, Y ∈ U ﬁn and ε ≥ 0 be such that
+|diam(X) − diam(Y )| ≤ ε < diam(Y ). (3)
+Consider the following open partitions
+Xo(δε(Y )) := {Xi}NX
+i=1 and Yo(δ0(Y )) := {Yj}NY
+j=1 .
+Then, there exists anε-correspondence betweenX and Y if and only if:
+(1) there exists a surjectionΨ : [NX] ↠ [NY ] and, with this surjection,
+(2) for everyj ∈ [NY ] there exists anε-correspondence between
+(
+XΨ−1(j), uX |XΨ−1(j)×XΨ−1(j)
+)
+and
+(
+Yj, uY |Yj×Yj
+)
+where for eachj ∈ [NY ], XΨ−1(j) := ⋃
+i∈Ψ−1(j) Xi.
+Proof. First suppose that there exists anε-correspondence R between X and Y. Then, we
+deﬁne a map Ψ : [ NX] → [NY ] as follows: for anyi ∈ [NX], pick an arbitraryx ∈ Xi and
+assume that (x, y) ∈ R for some y ∈ Y; further assume that y ∈ Yj for some j ∈ [NY ],
+then we letΨ(i) := j. Now, we verify that this mapΨ is well-deﬁned, i.e.,Ψ is independent
+of choice of x ∈ Xi and choice of (x, y) ∈ R. For any i ∈ [NX] and x, x′ ∈ Xi, we have
+by assumption thatuX(x, x′) < δε(Y ). Suppose y, y′ ∈ Y are such that(x, y), (x′, y′) ∈ R.
+Then,
+uY (y, y′) ≤ uX(x, x′) + dis1(R) ≤ uX(x, x′) + ε < δε(Y ) + ε = diam(Y ).
+Therefore, there exists a commonj ∈ [NY ] such that bothy ∈ Yj and y′ ∈ Yj. This implies
+that Ψ is well-deﬁned. Since R is a correspondence, Ψ must be surjective. Then, for each
+j ∈ [NY ], we deﬁne the set
+Rj := R ∩ (XΨ−1(j) × Yj)
+It can be checked thatRj is a correspondence betweenXΨ−1(j) and Yj. Moreover,dis1(Rj) ≤
+dis1(R) ≤ ε for each j ∈ [NY ]. Therefore, for each j ∈ [NY ], Rj is an ε-correspondence
+between XΨ−1(j) and Yj.
+Conversely, suppose that there exist a surjectionΨ : [ NX] ↠ [NY ] and for each
+j ∈ [NY ] an ε-correspondence Rj between XΨ−1(j) and Yj. Then, deﬁne R := ⋃
+j∈[NY ] Rj.
+It is clear thatR is a correspondence betweenX and Y because
+pX
+
+ ⋃
+j∈[NY ]
+Rj
+
+ =
+⋃
+j∈[NY ]
+pX(Rj) =
+⋃
+j∈[NY ]
+XΨ−1(j) = X
+PAGE 22
+JoCG 14(1), 78–143, 2023 99
+Journal of Computational Geometry jocg.org
+and
+pY
+
+ ⋃
+j∈[NY ]
+Rj
+
+ =
+⋃
+j∈[NY ]
+pY (Rj) =
+⋃
+j∈[NY ]
+Yj = Y,
+where pX : X × Y → X and pY : X × Y → Y are the canonical coordinate projections.
+Given any (x, y), (x′, y′) ∈ R, suppose (x, y) ∈ Rj and (x′, y′) ∈ Rj′ for some j, j′ ∈ [NY ].
+Then, we verify that|uX(x, x′) − uY (y, y′)| ≤ ε in the following two cases:
+1. if j = j′, then |uX(x, x′) − uY (y, y′)| ≤ dis1(Rj) ≤ ε;
+2. if j ̸= j′, thenx and x′ belong to diﬀerent blocks ofXo(δε(Y )), andy and y′ belong to
+diﬀerent blocks ofYo(δ0(Y )). Then, uX(x, x′) ≥ δε(Y ) = diam(Y ) − ε and uY (y, y′) =
+δ0(Y ) = diam(Y ). So, uX(x, x′) ≥ uY (y, y′)−ε. By the assumption that|diam(X)−
+diam(Y )| ≤ ε, we have thatuX(x, x′) ≤ diam(X) ≤ diam(Y ) + ε = uY (y, y′) + ε.
+Therefore, |uX(x, x′) − uY (y, y′)| ≤ ε.
+Therefore, dis1(R) ≤ ε and thus R is an ε-correspondence between X and Y. This also
+proves Remark 7.
+5.2 Algorithms for computing dGH based on Theorem 5
+The main goal of this section is to develop an eﬃcient algorithm for computing the exact
+value ofdGH between ultrametric spaces. To achieve the goal, we ﬁrst consider the following
+decision problem:
+Decision ProblemGHDU-dec (dGH distance computation between ﬁnite ultra-
+metric spaces)
+Inputs: Finite ultrametric spacesX and Y, as well asε ≥ 0.
+Question: Is there anε-correspondence between X and Y?
+5.2.1 Strategy for solving GHDU-dec
+Base cases for Problem GHDU-dec Proposition 24 shows how the Gromov-Hausdorﬀ
+distance dGH interacts with the diameters of the input spaces. This theorem then implies
+that GHDU-dec is solved immediately in the following two base cases:
+Base Case 1:If |diam(X) − diam(Y )| > ε, then there exists noε-correspondence between
+X and Y.
+Base Case 2:If max(diam(X), diam(Y )) ≤ ε, then every correspondence R between X
+and Y is an ε-correspondence.
+PAGE 23
+JoCG 14(1), 78–143, 2023 100
+Journal of Computational Geometry jocg.org
+Base Case 1 justiﬁes our assumption that|diam(X) − diam(Y )| ≤ ε in Theorem 5 since
+otherwise we would be in one of the two base cases. Note that the situation when one of
+the two spaces is the one point space will automatically fall in either of the above two base
+cases.
+Application of Theorem 5 Suppose that we are given two ultrametric spacesX and Y
+and ε ≥ 0 not falling in either of the two base cases mentioned above. This implies that one
+of diam(X) or diam(Y ) must be strictly larger thanε.
+Suppose diam(Y ) > ε (otherwise we swap the roles ofX and Y) and apply the open
+partitionoperationto X and Y toobtain Xo(δε(Y )) := {Xi}i∈[NX] and Yo(δ0(Y )) := {Yj}j∈[NY ].
+Here we use the same notation as in Theorem 5 that for eachi ∈ [NX], Xi denotes an open
+equivalence class[xi]o(δε(Y )) for some xi ∈ X and similarly for notationYj.
+If there is no surjection from[NX] to [NY ], i.e., NX < NY, then we conclude from
+Theorem 5 that there is noε-correspondence between X and Y. Otherwise, for each sur-
+jection Ψ : [ NX] ↠ [NY ] and for each j ∈ [NY ], we solve one instance of the decision
+problem GHDU-dec with input (XΨ−1(j), Yj, ε). If for some surjection Ψ, there exist ε-
+correspondences Rj between XΨ−1(j) and Yj for all j ∈ [NY ], then the union of allRjs is an
+ε-correspondence between X and Y (cf. Remark 7). Otherwise, by Theorem 5 again, there
+exists no ε-correspondence between X and Y.
+For each pair(XΨ−1(j), Yj) as described above, it is easy to see that#XΨ−1(j) < #X
+and #Yj < #Y. So, if we repeatedly apply the open partition operation as in Theorem 5,
+we will eventually reduce the problem to one of the two base cases.
+5.2.2 A recursive algorithm
+From the analysis above we identify a recursive algorithmFindCorrRec (Algorithm 2)
+which takes as input two ultrametric spacesX and Y and a parameter ε ≥ 0. If there
+exists an ε-correspondence between X and Y, then FindCorrRec(X, Y, ε) returns such an
+ε-correspondence. If there exists noε-correspondence, FindCorrRec(X, Y, ε) returns 0.
+Complexity analysis To analyze the complexity of this recursive algorithm, we need to
+control the size of subproblems, i.e., the sizes of the blocks of the partitions produced by the
+open equivalence relations. The following structural condition on ultrametric spaces serves
+this purpose.
+Deﬁnition 35 (First (ε, γ)-growth condition). For ε ≥ 0, and γ > 1, we say that an
+ultrametric space(X, uX) satisﬁes the ﬁrst (ε, γ)-growth condition(FGC) if for allx ∈ X,
+and t ≥ ε,
+#[x]c(t) ≤ γ · #[x]o(t−ε).
+Note that on the left-hand side of the inequality above we consider a ‘closed’ equivalence class
+whereas on the right-hand side we consider an ‘open’ equivalence class. We denote byU1(ε, γ)
+the collection of all ﬁnite ultrametric spaces satisfying the ﬁrst(ε, γ)-growth condition. See
+Figure 6 for an illustration and Remark 36 for an interpretation.
+PAGE 24
+JoCG 14(1), 78–143, 2023 101
+Journal of Computational Geometry jocg.org
+Algorithm 2 FindCorrRec(X, Y, ε)
+1: BoolSwap ← FALSE
+2: if diam(X) > diam(Y ) then
+3: Swap X and Y; BoolSwap ← TRUE
+4: end if
+Phase 1 – Base Cases
+5: if max (diam(X), diam(Y )) ≤ ε then
+6: R ← ones (#X, #Y )
+7: if BoolSwap then
+8: Transpose R
+9: end if
+10: return R
+11: end if
+12: if |diam(X) − diam(Y )| > ε then return0
+13: end if
+Phase 2 – Recursion
+14: {Xi}i∈[NX] = OpenPartition(X, δε(Y ))
+15: {Yj}j∈[NY ] = OpenPartition(Y, δ0(Y ))
+16: for Each surjection Ψ : [NX] ↠ [NY ] do
+17: for j ∈ [NY ] do
+18: Rj ← FindCorrRec
+(
+XΨ−1(j), Yj, ε
+)
+19: if ((Rj ! = 0) ∀j) then
+20: R ← ⋃NY
+j=1 Rj
+21: if BoolSwap then
+22: Transpose R
+23: end if
+24: return R
+25: end if
+26: end for
+27: end for
+28: return 0
+Remark 36(Interpretation of the FGC). The main idea behind the ﬁrst(ε, γ)-growth condi-
+tion is that for eacht > 0 we want to have some degree of control over both the cardinalities
+of and the number of descendants of each[x]c(t) in Xc(t), where we say that[x′]o(s) is an
+(open) descendant of [x]c(t), or conversely that [x]c(t) is a (closed) ancestor of [x′]o(s), if
+[x′]o(s) ⊆ [x]c(t).
+More precisely, we write explicitly the (t − ε)-open partition of [x]c(t) as follows:
+[x]c(t) = ⊔N
+i=1[xi]o(t−ε) for some xi ∈ [x]c(t), i = 1, . . . , N.
+First, we note that[x]c(t) = [xi]c(t) for each i = 1, . . . , N and thus the FGC implies
+PAGE 25
+JoCG 14(1), 78–143, 2023 102
+Journal of Computational Geometry jocg.org
+Figure 6: Illustration of Deﬁnition 35. X and Y are two 4-point ultrametric spaces.
+Suppose s = t − ε for some ε > 0. It is easy to see thatY ∈ U 1(ε, 2). Since 2 #[x4]o(s) =
+2 < 4 = #[x4]o(t), it is easy to see that, in contrast,X /∈ U1(ε, 2). This example illustrates
+that the FGC prevents a given equivalence class inXo(t) from containing most of the points
+of X and thus its dendrogram will tend to split ‘evenly’.
+that
+#[xi]o(t−ε) ≥ #[xi]c(t)
+γ = #[x]c(t)
+γ .
+This means that each descendant at scalet − ε of a given block[x]c(t) contains at least a ﬁxed
+proportion 1
+γ of the number of points in its ancestor[x]c(t).
+Moreover, we have
+#[x]c(t) =
+N∑
+i=1
+#[xi]o(t−ε) ≥ N
+γ #[x]c(t).
+Therefore N ≤ γ, which implies that each[x]c(t) has at most γ many descendants at scale
+t − ε.
+By invoking the master theorem [12] we now prove the following theorem which
+provides an upper bound on the complexity of Algorithm 2. See Section C.2.1 for its proof.
+Theorem 37 (Time complexity of Algorithm FindCorrRec (Algorithm 2)). Fix some
+ε ≥ 0 and γ ≥ 2. Then, for any X, Y ∈ U 1(ε, γ), FindCorrRec(X, Y, ε) (Algorithm 2)
+runs in timeO
+(
+n(γ+1) logb(γ)γ
+)
+, where n := max(#X, #Y ) and b(γ) := γ2
+γ2−1.
+Under the FGC, our recursive algorithmFindCorrRec (Algorithm 2) exhibits time
+complexity O
+(
+n(γ+1) logb(γ)γ
+)
+. Since the exponent ofn depends on γ, this is only partially
+satisfactory. In other words, Algorithm 2 is not yet ﬁxed-parameter tractable, a notion
+which requires the exponent to be independent of the parameters involved. This motivates
+us to further examine and improve Algorithm 2 in order to develop an FPT algorithm. Note
+that in the for-loop over surjections in Algorithm 2, for diﬀerent surjectionsΨ1, Ψ2 : [NX] ↠
+[NY ], there could be somej0 ∈ [NY ] such that Ψ−1
+1 (j0) = Ψ−1
+2 (j0). This would result in
+repetitive computations of FindCorrRec
+(
+XΨ−1
+1 (j0), Yj0, ε
+)
+. With the goal of eliminating
+such repetitions, in the next section we devise adynamic programming algorithm which
+eventually turns out to be FPT.
+PAGE 26
+JoCG 14(1), 78–143, 2023 103
+Journal of Computational Geometry jocg.org
+5.2.3 A dynamic programming algorithm
+In this section, we introduce a dynamic programming algorithmFindCorrDP for solving
+the decision problem GHDU-dec for which we provide pseudocode in Algorithm 4. To
+proceed with the description of Algorithm 4, we ﬁrst introduce some notation.
+We let VX denote the set of all closed balls inX. For each closed ball B ∈ VX,
+recall the notation δ2ε(B) = diam( B) − 2ε. We further cap this number by zero and let
+δ+
+2ε (B) := max (δ2ε(B), 0). We then write theδ+
+2ε (B)-open partition ofB as:
+Bo(δ+
+2ε(B)) :=
+{
+[xi]B
+o(δ+
+2ε(B))
+}NB
+i=1
+where xi ∈ B for each i = 1 , . . . , NB. Here recall that for any t ≥ 0, [xi]B
+o(t) denotes the
+equivalence class of xi in the ultrametric space (B, uX |B×B) under the open equivalence
+relation ∼o(t) (cf. Section 2.1). For notational simplicity, we letBi := [xi]B
+o(δ+
+2ε(B)) for each
+i = 1 , . . . , NB. By standard properties of ultrametric spaces, it can be checked that each
+[x]B
+o(δ+
+2ε(B)) = [x]X
+o(δ+
+2ε(B)) is actually a closed ball inX. Then, Bi ∈ VX for all i = 1, . . . , NB.
+Note that for anyI ⊆ {1, . . . , NB}, diam(⋃
+i∈I Bi) ≤ diam (B) . If the equality is achieved,
+we call ⋃
+i∈I Bi an ε-maximal union of closed ballsof B. Denote by B(ε) the set of allε-
+maximal unions of closed ballsin B. Then, deﬁne a new setV (ε)
+X := ⋃
+B∈VX B(ε) by replacing
+each B ∈ VX with the setB(ε). We use the notationUX to represent a generic element in
+V (ε)
+X . See Figure 7 for an illustration ofV (ε)
+X .
+Figure 7: Illustration of V (ε)
+X from Section 5.2.3. Note that VX =
+{{a}, {b}, {c}, {a, b}, {a, b, c}}. For the ball B := {a, b, c}, we have B(ε) =
+{{a, c}, {b, c}, {a, b, c}}. For other balls B′ in VX, we have B′
+(ε) = {B′}. For ex-
+ample, {a, b}o(δ+
+2ε({a,b})) = {{a}, {b}}, so {a, b}(ε) = {{a, b}}. Therefore, V (ε)
+X =
+{{a}, {b}, {c}, {a, b}, {a, c}, {b, c}, {a, b, c}}.
+Remark 38. The value δ+
+2ε(X) originates from Theorem 5 as a lower bound forδε(Y ):
+when |diam(X) − diam(Y )| ≤ ε and diam(Y ) > ε, we have that δε(Y ) = diam( Y ) − ε ≥
+max(diam(X)−2ε, 0) = δ+
+2ε(X). This inequality results in the following favorable property of
+V (ε)
+X : for anyUX ∈ V (ε)
+X and BY ∈ VY, if|diam
+(
+UX )
+−diam
+(
+BY )
+| ≤ ε and diam
+(
+BY )
+> ε,
+then each block of the open partitionUX
+o(δε(BY )) belongs to V (ε)
+X . See Appendix C.2.3 for a
+proof of this property.
+PAGE 27
+JoCG 14(1), 78–143, 2023 104
+Journal of Computational Geometry jocg.org
+Fix an input triple(X, Y, ε). It is clear that the pair(X, Y ) belongs toV (ε)
+X ×VY. We
+sort V (ε)
+X and VY according to ascending diameter values and denote byLX(ε) and LY the
+respective sorted arrays (with details provided in Appendix A.4). In particular, we require
+that X and Y are at the end of listsLX(ε) and LY, respectively. We devise our DP algo-
+rithm FindCorrDP (Algorithm 4) so that it maintains a binary variableDYN
+(
+UX , BY )
+for each pair
+(
+UX , BY )
+∈ LX(ε) × LY, such that DYN
+(
+UX , BY )
+= 1 if there exists an
+ε-correspondence between UX and BY, and DYN
+(
+UX , BY )
+= 0, otherwise. Now, we elab-
+orate the main idea behind AlgorithmFindCorrDP (Algorithm 4).
+Algorithm 4 starts by looping over all BY ∈ LY. Inside the loop, it computes
+DYN
+(
+UX , BY )
+by looping over allUX ∈ LX(ε). Most pairs
+(
+UX , BY )
+fall in the base cases
+and DYN
+(
+UX , BY )
+is determined by comparing diameters. For non base cases, we have
+the following two situations:
+1. If diam
+(
+BY )
+> ε, we determineDYN
+(
+UX , BY )
+by (1) computing the open partition
+of UX and BY, respectively, to obtainUX
+o(δε(BY )) =
+{
+UX
+i
+}
+i∈[NUX ] and BY
+o(δ0(BY )) =
+{
+BY
+j
+}
+j∈[NBY ]
+and (2) by exploiting the precomputed values
+{
+DYN
+(
+UX
+Ψ−1(j), BY
+j
+)}
+j∈[NBY ],surjection Ψ:[NUX ]→[NBY ]
+2
+via the strategy discussed in Section 5.2.1. That
+(
+UX
+Ψ−1(j), BY
+j
+)
+∈ V (ε)
+X × VY follows
+from Remark 38 and that the values DYN
+(
+UX
+Ψ−1(j), BY
+j
+)
+for all j ∈ [NBY ] are
+pre-computed follows from the fact thatdiam(BY
+j ) < diam(BY ) and LY is ordered
+according to increasing diameter values.
+2. If diam
+(
+BY )
+≤ ε, we determineDYN
+(
+UX , BY )
+directly by applying Algorithm 3
+(which arises from Proposition 40 below).
+Remark 39 (Interpretation of situation 2). In order to reduce redundant computations,
+Algorithm FindCorrDP (Algorithm 4) only inspects pairs inV (ε)
+X × VY instead of the much
+larger symmetric setV (ε)
+X × V (ε)
+Y . Due to the asymmetry ofV (ε)
+X × VY, the exceptional case
+in item 2 above may arise. This case is dealt with in the recursive algorithmFindCorrRec
+(Algorithm 2) by swapping the roles ofUX and BY. However, this swapping technique is
+not feasible forFindCorrDP. We now further elaborate on this point. Suppose we replace
+line 10 in Algorithm 4 with a swapping betweenUX and BY. Subsequently, we obtain open
+partitions of BY and UX as follows:
+BY
+o(δε(UX)) =
+{
+BY
+i
+}
+i∈[NBY ] and UX
+o(δ0(UX)) =
+{
+UX
+j
+}
+j∈[NUX ] .
+Then, for each surjectionΨ : [NBY ] ↠ [NUX], we need to inspect values ofDYN
+(
+UX
+j , BY
+Ψ−1(j)
+)
+.
+Being a union of closed balls inBY, BY
+Ψ−1(j) does not necessarily belong toVY, the set of
+closed balls inY. This implies that the valueDYN
+(
+UX
+j , BY
+Ψ−1(j)
+)
+does not necessarily exist
+for which Algorithm 4 may fail to continue.
+2Here UX
+Ψ−1(j) :=∪i∈Ψ−1(j)UX
+i
+PAGE 28
+JoCG 14(1), 78–143, 2023 105
+Journal of Computational Geometry jocg.org
+Proposition 40.Let ﬁnite ultrametric spacesX and Y and ε ≥ 0 be such that the following
+two conditions hold:
+1. diam(X) > ε, and
+2. diam(Y ) ≤ ε
+Then, there exists an ε-correspondence between X and Y if and only if there exists an
+injective map ϕ : Xc(ε) → Y such that dis1(ϕ) ≤ ε.
+See Appendix C.2.2 for a proof.
+Algorithm 3 FindCorrSmall(X, Y, ε)
+1: Assert diam(X) > ε and diam(Y ) ≤ ε
+2: if |diam(X) − diam(Y )| > ε then return0
+3: end if
+4: Xc(ε) = ClosedQuotient(X, ε)
+5: for Each injective mapΦ : Xc(ε) → Y do
+6: Compute dis1(Φ)
+7: if dis1(Φ) ≤ ε then return1
+8: end if
+9: end for
+10: return 0
+Eventually, AlgorithmFindCorrDP(Algorithm4)willcompute DYN(X, Y )through
+a bottom-up approach and thus solve the decision problemGHDU-dec with the given input
+triple (X, Y, ε). The correctness of Algorithm 4 is stated in the following theorem; see Ap-
+pendix C.2.4 for its proof. Note that, the given pseudocode of Algorithm 4 only determines
+the existence ofε-correspondence without actually constructing a correspondence. However,
+it is clear that one can inspect theDYN matrix to produce anε-correspondence whenever
+it exists.
+Theorem 41 (Correctness of Algorithm FindCorrDP (Algorithm 4)). There exists an
+ε-correspondence betweenX and Y if and only ifFindCorrDP(X, Y, ε) = 1.
+Complexity analysis To analyze the complexity of AlgorithmFindCorrDP (Algorithm
+4), we consider the following growth condition in a similar spirit to the FGC:
+Deﬁnition 42 (Second (ε, γ)-growth condition). For ε ≥ 0, and γ ∈ N, we say that an
+ultrametric space(X, uX) satisﬁes thesecond (ε, γ)-growth condition(SGC) if for allx ∈ X,
+and t ≥ 2ε,
+#
+{
+[x′]o(t−2ε) : x′ ∈ [x]c(t)
+}
+≤ γ. (14)
+Note that both closed and open equivalence classes appear on the left-hand side of the rela-
+tionship above.
+PAGE 29
+JoCG 14(1), 78–143, 2023 106
+Journal of Computational Geometry jocg.org
+Algorithm 4 FindCorrDP(X, Y, ε)
+1: Build LX(ε) and LY
+2: DYN = zeros(#LX(ε), #LY)
+3: for BY ∈ LYdo
+4: for k = 1 to #LX(ε) do
+5: UX = LX(ε)(k)
+6: if
+⏐⏐diam
+(
+UX )
+− diam
+(
+BY )⏐⏐ > ε then
+7: DYN
+(
+UX , BY )
+= 0
+8: else if max
+(
+diam
+(
+UX )
+, diam
+(
+BY ))
+≤ ε then
+9: DYN
+(
+UX , BY )
+= 1
+10: else if diam
+(
+UX )
+> ε and diam
+(
+BY )
+≤ ε then
+11: DYN
+(
+UX , BY )
+= FindCorrSmall(UX , BY , ε)
+12: else
+13:
+{
+UX
+i
+}
+i∈[NUX ] = OpenPartition
+(
+UX , δε(BY )
+)
+14:
+{
+BY
+j
+}
+j∈[NBY ]
+= OpenPartition
+(
+BY , δ0(BY )
+)
+15: for Each surjection Ψ : [NUX] ↠ [NBY ] do
+16: if DYN
+(
+UX
+Ψ−1(j), BY
+)
+= 1, ∀j = 1, . . . , Mthen
+17: DYN
+(
+UX , BY )
+= 1
+18: Continue in line 4
+19: end if
+20: end for
+21: end if
+22: end for
+23: end for
+24: return DYN(END, END)
+We denote by U2(ε, γ) the collection of all ﬁnite ultrametric spaces satisfying the
+second (ε, γ)-growth condition. Note that for any0 ≤ ε′ < ε, U2(ε, γ) ⊆ U2(ε′, γ).
+Remark 43 (Relation with the notion of degree bound from [15]). If we let γε(X) be the
+supremum over allx ∈ X and t ≥ 0 of the quantity on the left-hand side of Equation(14),
+then for anyγ ≥ γε(X), X ∈ U2(ε, γ). The information captured byγε is in a similar spirit
+to the concept called degree bound of merge trees as considered in [15]: theε-degree bound
+τε(MX) of a merge treeMX is the largest sum of degrees of all tree vertices inside any closed
+ε balls in MX 3. See Appendix A.1 for a detailed comparison betweenγε(X) and τε.
+Remark 44(Interpretation of the SGC and its relation with the FGC). The second(ε, γ)-
+growth condition is equivalent to saying for anyx ∈ X and t > 2ε, the number of descendants
+of [x]c(t) at level t − 2ε is bounded above byγ. Note that ifX ∈ U1(ε, γ), then for anyt > ε,
+the number of descendants of any class[x]c(t) at t − ε is bounded above byγ (cf. Remark
+36). This implies that X ∈ U 2
+(ε
+2 , γ
+)
+. In other words,U1(ε, γ) ⊆ U 2
+(ε
+2 , γ
+)
+, which indicates
+3In [15], the degree bound is actually deﬁned for two merge trees: for two merge treesMX and MY, the
+numberτε(MX,MY ) := max(τε(MX ),τε(MY ))is called theε-degree bound of(MX,MY ).
+PAGE 30
+JoCG 14(1), 78–143, 2023 107
+Journal of Computational Geometry jocg.org
+that the second growth condition isless rigid than the ﬁrst growth condition.
+Remark 45 (Relation between the SGC and the doubling constant). Recall that given
+K > 0, a metric space(X, dX) is said to beK-doubling if for eachr > 0, a closed ball with
+radius r can be covered by at mostK closed balls with radiusr
+2. The SGC is related to the
+doubling constant as follows: (1) if a ﬁnite ultrametric spaceX ∈ U 2(ε, γ) for some ε > 0
+and γ ≥ 1, then X is Kγ,ε-doubling for Kγ,ε := γ⌊ diam(X)
+4ε ⌋+1; (2) conversely, aK-doubling
+ultrametric space satisﬁes the second(0, K)-growth condition. See Appendix C.2.5 for the
+proof of the fact. See Lemma 54 for a generalization of the latter fact in the case of ﬁnite
+metric spaces.
+Under the SGC, Algorithm FindCorrDP (Algorithm 4) runs in polynomial time
+and moreover, AlgorithmFindCorrDP is FPT with respect to parameters in the SGC.
+Theorem46 (TimecomplexityofAlgorithm FindCorrDP(Algorithm4)). Fix someε ≥ 0
+and γ ≥ 1. Then, for anyX, Y ∈ U2(ε, γ), Algorithm FindCorrDP(X, Y, ε) (Algorithm 4)
+runs in timeO
+(
+n2 log(n)2γγγ+2)
+, where n := max(#X, #Y ).
+See Appendix C.2.6 for its proof.
+5.2.4 Computing the exact value of dGH
+Given two ﬁnite ultrametric spacesX and Y, we compute the exact value ofdGH(X, Y ) in
+the following way. Deﬁne
+E(X, Y ) := {|uX(x, x′) − uY (y, y′)| : ∀x, x′ ∈ X and ∀y, y′ ∈ Y }.
+Then, for any correspondenceR between X and Y, we havedis1(R) ∈ E (X, Y ) by ﬁniteness
+of X and Y and by Equation (8). Therefore, in order to computedGH(X, Y ), we ﬁrst sort
+the elements inE(X, Y ) in ascending order asε0 < ε1 < · · · < εM. If i is the smallest integer
+such that FindCorrDP(X, Y, εi) = 1, then dGH(X, Y ) = εi
+2. We summarize the process in
+Algorithm 5 and analyze its complexity in Theorem 47.
+Theorem 47 (Time complexity of Algorithm dGH (Algorithm 5)). Fix some ε ≥ 0
+and γ ≥ 1. Let X, Y ∈ U 2(ε, γ) and assume that ε ≥ 2 dGH(X, Y ). Then, the algo-
+rithm dGH (Algorithm 5) with input (X, Y ) runs in time O
+(
+n4 log(n)2γγγ+2)
+, where
+n = max(#X, #Y ).
+Remark 48.Though the complexity in Theorem 47 depends on inherent structures of input
+spaces, it never means that we to ﬁgure out parametersε and γ beforehand in order to apply
+our algorithm.
+Proof of Theorem 47.By Proposition 8, we have that#E(X, Y ) = O(n2). Then, sorting
+E(X, Y ) takes time O(n2 log(n2)) = O(n2 log(n)) in average. For each εi ∈ E (X, Y ) such
+that εi ≤ ε, we need to invoke once AlgorithmFindCorrDP (Algorithm 4) with inputs
+(X, Y, εi). For all suchεis, X, Y ∈ U2(εi, γ) and thus AlgorithmFindCorrDP with inputs
+PAGE 31
+JoCG 14(1), 78–143, 2023 108
+Journal of Computational Geometry jocg.org
+(X, Y, εi) runs in time O
+(
+n2 log(n)2γγγ+2)
+(cf. Theorem 46). Therefore, the total time
+complexity of AlgorithmdGH is bounded by
+O(n2) × O
+(
+n2 log(n)2γγγ+2)
+= O
+(
+n4 log(n)2γγγ+2)
+.
+Algorithm 5 dGH(X, Y )
+1: E ← sort(E(X, Y ), ‘ascend’)
+2: for i=1 to #E do
+3: if FindCorrDP(X, Y, E(i)) then returnE(i)
+2
+4: end if
+5: end for
+Remark 49(Comparison to [15]). Whereas methods from [15] can be adapted to obtain a 2-
+approximation ofdGH between two ﬁnite ultrametric spaces, our algorithmdGH (Algorithm
+5) can obtain the exact valuein the same time complexity. We now elaborate upon this
+statement.
+As illustrated in Remark 65, each ﬁnite ultrametric space naturally maps into a merge
+tree. In this way, we deﬁne theε-degree bound of an ultrametric space as theε-degree bound
+of its corresponding merge tree. By Remark 66, if any ultrametric spaceX has ε-degree
+bound τε, it automatically satisﬁes the second(ε, τε)-growth condition.
+Now consider the case where two merge treesMX and MY arise from ﬁnite ultra-
+metric spacesX and Y such that dGH(X, Y ) = ε
+2. In this case, ifdI denotes the interleaving
+distance between merge trees of [32], by [31, Corollary 6.13], then
+1
+2 dI(MX , MY ) ≤ dGH(X, Y ) ≤ dI(MX , MY ). (15)
+Let τ := τε(MX , MY ) denote the ε-degree bound of(MX , MY ), then by above arguments we
+have that X, Y ∈ U 2(ε, τ). Let δ := dI(MX , MY ). Since δ = dI(MX , MY ) ≤ ε, by mono-
+tonicity of the degree bound, theδ-degree bound τδ := τδ(MX , MY ) of (MX , MY ) satisﬁes
+that τδ ≤ τ. Then, it is shown in [15] that one can computeδ = dI(MX , MY ) in time
+O
+(
+n4 log(n)2τδ ττδ+2
+δ
+)
+= O
+(
+n4 log(n)2τ ττ+2)
+,
+which by Equation (15) is a 2-approximation of dGH(X, Y ). Note that, in contrast, by
+Theorem 47, with the same time complexity, our algorithm can compute theexact value of
+dGH(X, Y ).
+Remark 50(Improved time complexity for computingdGH). Following essentially the same
+strategy used for proving [15, Theorem 5], we can improve the time complexity for computing
+dGH to O
+(
+n2 log3(n)22γ(2γ)2γ+2)
+under the same assumptions in Theorem 47. We provide
+details in Appendix C.2.7.
+PAGE 32
+JoCG 14(1), 78–143, 2023 109
+Journal of Computational Geometry jocg.org
+5.2.5 Additive approximation of dGH between arbitrary ﬁnite metric spaces
+For any ﬁnite metric space (X, dX), we introduce the following notion ofabsolute ultra-
+metricity which quantiﬁes how farX is being an ultrametric space:
+Deﬁnition 51 (Absolute ultrametricity). For a ﬁnite metric space(X, dX), we deﬁne the
+absolute ultrametricity ofX by
+ultabs(X) = inf
+u
+∥dX − u∥∞
+where the inﬁmum is over all possible ultrametrics onX.
+Note that X ∈ U ﬁn iﬀ ultabs(X) = 0.
+The notion of absolute ultrametricity is related to a more involved notion simply
+called ultrametricity; see [10] for a detailed study.
+One natural ultrametric onX which can be used to approximatedX is the so-called
+single-linkage ultrametric(or maximal subdominant)u∗
+X [7]. The ultrametricu∗
+X is deﬁned
+as follows:
+u∗
+X(x, x′) := inf
+x=x1,x2,...,xn=x′
+max
+i=1,...,n−1
+dX(xi, xi+1),
+where the inﬁmum is taken over all ﬁnite chains x1, x2, . . . , xn ∈ X such that x1 = x
+and xn = x′. It turns out that the single-linkage ultrametric is a fairly good ultrametric
+approximation of dX:
+Proposition 52([25, Theorem 3.3]). For any ﬁnite metric space(X, dX),
+∥dX − u∗
+X ∥∞ = 2 ultabs(X).
+Remark 53. 1. Proposition 52 implies that if(X, uX) is already an ultrametric space,
+then u∗
+X = uX.
+2. The time complexity of computing u∗
+X from dX is bounded above by O(n2) where
+n := #X, cf. [33].
+For a metric space(X, dX), itsseparation is deﬁned assep(X) := inf{dX(x, x′)| x ̸=
+x′}. The following result illustrates how to transfer a doubling condition on a given metric
+space (X, dX) to a SGC on its corresponding single-linkage ultrametric space(X, u∗
+X).
+Lemma 54(Transfer from the doubling property ondX to the SGC onu∗
+X). Let (X, dX)
+be a ﬁnite metric space. LetK be a doubling constant forX and let δ := 2 ultabs(X). Let
+s := sep(X) denote the separation ofX. Then, for anyε ≥ 0, we have that(X, u∗
+X) satisﬁes
+the second
+(
+ε, max
+(
+K, Klog2( 2δ+4ε
+s )+1
+))
+-growth condition.
+The proof is postponed to Appendix C.2.8. By Remark 53, when(X, uX) is itself
+an ultrametric space,u∗
+X = uX and thus X ∈ U2
+(
+ε, max
+(
+K, Klog2( 4ε
+s )+1
+))
+. In particular,
+if ε = 0, we have thatX ∈ U2 (0, K), which coincides with the second claim of Remark 45.
+Now, let Mﬁn denote the collection of all ﬁnite metric spaces. We denote byH :
+Mﬁn → U ﬁn the single-linkage mapsending (X, dX) ∈ Mﬁn to H(X) := (X, u∗
+X) ∈ U ﬁn.
+PAGE 33
+JoCG 14(1), 78–143, 2023 110
+Journal of Computational Geometry jocg.org
+Proposition 55. Let X, Y ∈ Mﬁn and let δ := max(ultabs(X), ultabs(Y )). Then,
+dGH(H(X), H(Y )) ≤ dGH(X, Y ) ≤ dGH(H(X), H(Y )) + 2δ.
+Proof. The leftmost inequality follows directly from the stability result of the single-linkage
+map, cf. [7, Proposition 2]. For the rightmost inequality, we ﬁrst have the following obvious
+observation:
+Claim 56. Given a ﬁnite setX and two metricsd1, d2 on the setX, we have that
+dGH((X, d1), (X, d2)) ≤ ∥d1 − d2∥∞.
+Then, we have that
+dGH((X, dX), (Y, dY )) ≤ dGH((X, dX), (X, u∗
+X)) + dGH((X, u∗
+X), (Y, u∗
+Y )) + dGH((Y, dY ), (Y, u∗
+Y ))
+≤ δ + dGH((X, u∗
+X), (Y, u∗
+Y )) + δ ≤ dGH((X, u∗
+X), (Y, u∗
+Y )) + 2δ.
+This implies thatdGH(X, Y ) ≤ dGH(H(X), H(Y )) + 2δ.
+This proposition indicates thatdGH(H(X), H(Y )) is a 2δ-additive approximation to
+dGH(X, Y ). Applying Theorem 47 to computingdGH(H(X), H(Y )), this immediately gives
+rise to the following time complexity result for computing an additive approximation of
+dGH(X, Y ).
+Corollary 57(Computing an additive approximation todGH(X, Y )). Let X and Y be two
+K-doubling ﬁnite metric spaces for some K > 0. Let δ := 2 max(ult abs(X), ultabs(Y )).
+Let s := min(sep( X), sep(Y )). Then, the 2δ-additive approximation dGH(H(X), H(Y )) of
+dGH(X, Y ) =: ε
+2 can be computed in timeO
+(
+n4 log(n)2γγγ+2)
+, where n = max(# X, #Y )
+and γ := max
+(
+K, Klog2( 2δ+4ε
+s )+1
+)
+.
+Proof. By Remark 53, the time complexity of computingu∗
+X from dX and computing u∗
+Y
+from dY is bounded above byO(n2) where n := max(#X, #Y ).
+Note that ε = 2 dGH(X, Y ). Then, by Lemma 54, H(X) and H(Y ) both sat-
+isfy the second (ε, γ)-growth condition, where γ := max
+(
+K, Klog2( 2δ+4ε
+s )+1
+)
+. Let εu :=
+2 dGH(H(X), H(Y )). Note that εu ≤ ε by Proposition 55. Then,H(X) and H(Y ) both sat-
+isfythesecond (εu, γ)-growthcondition. Therefore, byTheorem47, εu
+2 = dGH(H(X), H(Y )),
+whichisa 2δ additiveapproximationof ε
+2 = dGH(X, Y ), canbecomputedintime O
+(
+n4 log(n)2γγγ+2)
+,
+where γ := max
+(
+K, Klog2( 2δ+4ε
+s )+1
+)
+.
+Therefore, the total time complexity is bounded by
+O(n2) + O
+(
+n4 log(n)2γγγ+2)
+= O
+(
+n4 log(n)2γγγ+2)
+.
+PAGE 34
+JoCG 14(1), 78–143, 2023 111
+Journal of Computational Geometry jocg.org
+6 Discussion
+It is well known that computingdGH between ﬁnite metric spaces leads to NP-hard prob-
+lems. This hardness result holds even in the context of ultrametric spaces, which are highly
+structured metric spaces appearing in many practical applications.
+In contrast to the hardness results fordGH, by exploiting the ultrametric structure
+of the input spaces we ﬁrst devised a polynomial time algorithm for computinguGH, an
+ultrametric variant of dGH, on the collection of all ﬁnite ultrametric spaces. Indeed, as
+a consequence of being more rigid than dGH, we proved that uGH can be computed in
+O(n log(n)) time via Algorithm 1, which we also extended to the case of ultra-dissimilarity
+spaces.
+From a diﬀerent angle, but also with the goal of taming the NP-hardness associated
+to computingdGH on the collection of all ﬁnite ultrametric spaces, as a second contribution,
+we ﬁrst devised a recursive algorithm (Algorithm 2) and then based on this, a dynamic
+programming FPT-algorithm (Algorithm 4) for computingdGH.
+We provide implementations of Algorithm 1 foruGH and Algorithm 2 fordGH in our
+GitHub repository [1].
+We leave for future work ﬁnding extensions of Algorithms 2 and 4 to the case of
+ultra-dissimilarity spaces and eventually general tree metric spaces.
+References
+[1] GitHub repository. https://github.com/ndag/ultrametrics, 2019.
+[2] Pankaj K Agarwal, Kyle Fox, Abhinandan Nath, Anastasios Sidiropoulos, and Yusu
+Wang. Computing the Gromov-Hausdorﬀ distance for metric trees.ACM Transactions
+on Algorithms (TALG), 14(2):24, 2018.
+[3] Alfred V Aho and John E Hopcroft.The design and analysis of computer algorithms.
+Pearson Education India, 1974.
+[4] Yair Bartal. Probabilistic approximation of metric spaces and its algorithmic applica-
+tions. In Proceedings of 37th Conference on Foundations of Computer Science, pages
+184–193. IEEE, 1996.
+[5] Alexander M Bronstein, Michael M Bronstein, Ron Kimmel, Mona Mahmoudi,
+and Guillermo Sapiro. A Gromov-Hausdorﬀ framework with diﬀusion geometry for
+topologically-robust non-rigid shape matching.International Journal of Computer Vi-
+sion, 89(2-3):266–286, 2010.
+[6] Dmitri Burago, Yuri Burago, and Sergei Ivanov. A course in metric geometry, vol-
+ume 33. American Mathematical Soc., 2001.
+[7] Gunnar Carlsson and Facundo Mémoli. Characterization, stability and convergence of
+hierarchical clustering methods. Journal of machine learning research, 11(Apr):1425–
+1470, 2010.
+PAGE 35
+JoCG 14(1), 78–143, 2023 112
+Journal of Computational Geometry jocg.org
+[8] Frédéric Chazal, David Cohen-Steiner, Leonidas J Guibas, Facundo Mémoli, and
+Steve Y Oudot. Gromov-hausdorﬀ stable signatures for shapes using persistence. In
+Proceedings of the Symposium on Geometry Processing, pages 1393–1403, 2009.
+[9] Samir Chowdhury and Facundo Mémoli. Explicit geodesics in Gromov-Hausdorﬀ space.
+Electronic Research Announcements, 25:48, 2018.
+[10] Samir Chowdhury, Facundo Mémoli, and Zane T Smith. Improved error bounds for
+tree representations of metric spaces. InAdvances in Neural Information Processing
+Systems, pages 2838–2846, 2016.
+[11] Caroline Colijn and Giacomo Plazzotta. A metric on phylogenetic tree shapes.System-
+atic biology, 67(1):113–126, 2018.
+[12] Thomas H Cormen, Charles E Leiserson, Ronald L Rivest, and Cliﬀord Stein.Intro-
+duction to algorithms. MIT press, 2009.
+[13] Oleksiy Dovgoshey and Evgeniy Petrov. From isomorphic rooted trees to isometric
+ultrametric spaces.p-Adic Numbers, Ultrametric Analysis and Applications, 10(4):287–
+298, 2018.
+[14] David A Edwards. The structure of superspace. InStudies in topology, pages 121–133.
+Elsevier, 1975.
+[15] Elena Farahbakhsh Touli and Yusu Wang. FPT-algorithms for computing Gromov-
+Hausdorﬀ and interleaving distances between trees. In27th Annual European Sympo-
+sium on Algorithms (ESA 2019). Schloss Dagstuhl-Leibniz-Zentrum fuer Informatik,
+2019.
+[16] Ellen Gasparovic, Elizabeth Munch, Steve Oudot, Katharine Turner, Bei Wang,
+and Yusu Wang. Intrinsic interleaving distance for merge trees. arXiv preprint
+arXiv:1908.00063, 2019.
+[17] Mikhail Gromov. Groups of polynomial growth and expanding maps (with an appendix
+by Jacques Tits).Publications Mathématiques de l’IHÉS, 53:53–78, 1981.
+[18] Mikhail Gromov. Metric structures for Riemannian and non-Riemannian spaces.
+Springer Science & Business Media, 2007.
+[19] Vladimir Gurvich and Mikhail Vyalyi. Characterizing (quasi-) ultrametric ﬁnite spaces
+in terms of (directed) graphs.Discrete Applied Mathematics, 160(12):1742–1756, 2012.
+[20] Alexandr Ivanov, Nadezhda Nikolaeva, and Alexey Tuzhilin. The Gromov-Hausdorﬀ
+metric on the space of compact metric spaces is strictly intrinsic. arXiv preprint
+arXiv:1504.03830, 2015.
+[21] NicholasJardineandRobinSibson. Mathematical Taxonomy. Wileyseriesinprobability
+and mathematical statistics. Wiley, 1971.
+[22] Brian W Kernighan and Dennis M Ritchie.The C programming language. 2006.
+PAGE 36
+JoCG 14(1), 78–143, 2023 113
+Journal of Computational Geometry jocg.org
+[23] Woojin Kim and Facundo Mémoli. Formigrams: Clustering summaries of dynamic
+data. In CCCG, pages 180–188, 2018.
+[24] Benoît R Kloeckner. A geometric study of Wasserstein spaces: ultrametrics.Mathe-
+matika, 61(1):162–178, 2015.
+[25] Mirko Křivánek. The complexity of ultrametric partitions on graphs. Information
+processing letters, 27(5):265–270, 1988.
+[26] Manuel Lafond, Nadia El-Mabrouk, Katharina T Huber, and Vincent Moulton. The
+complexity of comparing multiply-labelled trees by extending phylogenetic-tree metrics.
+Theoretical Computer Science, 760:15–34, 2019.
+[27] Volkmar Liebscher. New Gromov-inspired metrics on phylogenetic tree space.Bulletin
+of mathematical biology, 80(3):493–518, 2018.
+[28] Sushovan Majhi, Jeﬀrey Vitter, and Carola Wenk. Approximating gromov-hausdorﬀ
+distance in euclidean space.arXiv preprint arXiv:1912.13008, 2019.
+[29] Facundo Mémoli. On the use of Gromov-Hausdorﬀ distances for shape comparison. In
+M. Botsch, R. Pajarola, B. Chen, and M. Zwicker, editors,Eurographics Symposium on
+Point-Based Graphics. The Eurographics Association, 2007.
+[30] Facundo Mémoli. Some properties of Gromov-Hausdorﬀ distances.Discrete & Compu-
+tational Geometry, 48(2):416–440, 2012.
+[31] Facundo Mémoli and Zhengchao Wan. Onp-metric spaces and thep-Gromov-Hausdorﬀ
+distance. p-Adic Numbers, Ultrametric Analysis and Applications, 14(3):173–223, 2022.
+[32] Dmitriy Morozov, Kenes Beketayev, and Gunther Weber. Interleaving distance between
+merge trees. Discrete and Computational Geometry, 49(22-45):52, 2013.
+[33] Daniel Müllner. Modern hierarchical, agglomerative clustering algorithms. arXiv
+preprint arXiv:1109.2378, 2011.
+[34] Panos M Pardalos, Henry Wolkowicz, et al.Quadratic Assignment and Related Prob-
+lems: DIMACS Workshop, May 20-21, 1993, volume 16. American Mathematical Soc.,
+1994.
+[35] Peter Petersen, S Axler, and KA Ribet.Riemannian geometry, volume 171. Springer,
+2006.
+[36] Evgenii A Petrov and Aleksei A Dovgoshey. On the Gomory–Hu inequality.Journal of
+Mathematical Sciences, 198(4):392–411, 2014.
+[37] Derong Qiu. Geometry of non-archimedean Gromov-Hausdorﬀ distance.P-Adic Num-
+bers, Ultrametric Analysis, and Applications, 1(4):317, 2009.
+[38] Mark D. Roberts. Ultrametric distance in syntax.The Prague Bulletin of Mathematical
+Linguistics, 103(1):111 – 130, 2015.
+PAGE 37
+JoCG 14(1), 78–143, 2023 114
+Journal of Computational Geometry jocg.org
+[39] Felix Schmiedl. Shape matching and mesh segmentation. PhD thesis, Technische Uni-
+versität München, 2015.
+[40] Felix Schmiedl. Computational aspects of the Gromov–Hausdorﬀ distance and its ap-
+plication in non-rigid shape matching.Discrete & Computational Geometry, 57(4):854–
+880, 2017.
+[41] Charles Semple and Mike Steel.Phylogenetics. Oxford lecture series in mathematics
+and its applications. Oxford University Press, 2003.
+[42] Zane Smith, Samir Chowdhury, and Facundo Mémoli. Hierarchical representations of
+network data with optimal distortion bounds. In2016 50th Asilomar Conference on
+Signals, Systems and Computers, pages 1834–1838. IEEE, 2016.
+[43] Ihor Zarichnyi. Gromov-Hausdorﬀ ultrametric.arXiv preprint math/0511437, 2005.
+PAGE 38
+JoCG 14(1), 78–143, 2023 115
+Journal of Computational Geometry jocg.org
+A Data structure for ultrametric spaces and implementation details
+Whereas dendrograms are helpful for our theoretical development, we found a certain rooted
+tree structure associated to ultrametric spaces to be extremely helpful for designing our
+algorithms. In this section, we provide a detailed description of such rooted tree structure.
+A.1 Tree structure for ultrametric spaces
+Tree structures for ultrametric spaces are thoroughly studied in the literature [36, 24, 13].
+Following thelabeled rooted treelanguage used in [13], we provide a description of aweighted
+rooted treerepresentation of any ﬁnite ultrametric space.
+A node weighted rooted tree is a tupleT = ( V, E, w, r) where (V, E) denotes an
+undirected tree withV being the vertex set andE being the edge set,w : V → R≥0 denotes
+a node weight function andr ∈ V is a speciﬁed vertex called the root ofT. Two weighted
+rooted treesT1 = (V1, E1, w1, r1) and T2 = (V2, E2, w2, r2) are said to beisomorphic, if there
+exists a bijectionf : V1 → V2 such that
+1. for every x, y ∈ V1, {x, y} ∈ E1 iﬀ {f(x), f(y)} ∈ E2;
+2. for every x ∈ V1, w1(x) = w2(f(x));
+3. f(r1) = r2.
+Remark 58(Standard terminology for rooted trees). Given any weighted rooted treeT =
+(V, E, w, r), we call a collection of distinct verticesx0, x1, . . . , xk ∈ V a path if for each
+i = 0, . . . , k− 1 we have {xi, xi+1} ∈ E. If for any given distinctx, y ∈ V there exists a path
+x0 = r, x1, . . . , xk = y such that x = xi for some i = 0, . . . , k − 1, then we say thatx is an
+ancestor of y and y is a descendant of x. If furthermore {x, y} ∈ E, then we say thatx is
+the parent of y and also thaty is a child of x.
+The following useful fact will be utilized multiple times in the sequel.
+Lemma 59. Given a weighted rooted treeT = (V, E, w, r), we denote bykx the number of
+children of any givenx ∈ V. Then,
+∑
+x∈V
+kx = O(#V ).
+Proof. Note that ∑
+x∈V deg(x) = 2 · #E. Since T is a tree, we have that#E = #V − 1.
+Moreover, deg(x) = kx + 1 − δrx. Therefore,
+∑
+x∈V
+kx = O
+(∑
+x∈V
+deg(x)
+)
+= O(#E) = O(#V ).
+PAGE 39
+JoCG 14(1), 78–143, 2023 116
+Journal of Computational Geometry jocg.org
+A dendrogram automatically induces a weighted rooted tree as one can deduce from
+its graphic representation (see Figure 8). We describe this relationship between dendrograms
+and weighted rooted trees as follows. Let(X, uX) be a ﬁnite ultrametric space and letθX be
+its corresponding dendrogram. Following the notation from Section 5.2.3 we letVX denote
+the collection of all closed balls inX. It is then clear thatVX is a ﬁnite set. Furthermore,
+VX contains X and all singletons {x} for x ∈ X. Deﬁne a collection EX of two-element
+subsets of VX as follows: for any two diﬀerentB, B′ ∈ VX, {B, B′} ∈ EX iﬀ B′ (resp. B)
+is the smallest (under inclusion) ball diﬀerent from but containingB (resp. B′). Then, it
+is easy to see from the dendrogram that(VX , EX) is a combinatorial tree, i.e., a connected
+graph without cycles (see Figure 8 for an illustration), a fact which we record for later use:
+Lemma 60. (VX , EX) is an undirected tree with vertex setVX and edge setEX.
+Lemma 61. Let X be a ﬁnite ultrametric space. Then,
+spec(X) = {diam(B) : B ∈ VX }.
+Now, we deﬁne aweighted rooted tree TX associated to the ultrametric spaceX.
+Deﬁnition62 (Weightedrootedtreeassociatedto X). Deﬁne wX : VX → R≥0 by wX(B) :=
+diam(B) for eachB ∈ VX. Let rX := X ∈ VX. Then, we call the tupleTX := (VX , EX , wX , rX)
+the weighted rooted tree associated toX.
+1 2
+Dendrogram Weighted tree 
+1
+2
+0
+0
+0
+Node {c}
+Rep:   c
+Children: Φ
+Diameter: 0
+Node {c}
+Node {b}
+Rep:   b
+Children: Φ
+Diameter: 0
+Node {a}
+Rep:   a
+Children: Φ
+Diameter: 0
+Node {a}
+Node {a,b,c} 
+Rep:   a 
+Children:  [p c,p ab ]
+Diameter: 2 
+Node {a,b,c} Node {a,b,c} 
+Node {a,b}
+Rep:   a
+Children:  [pb,p a]
+Diameter: 1
+Node {a,b}
+Tree data structure (TDS) 
+Figure8: Treestructureofdendrograms. Theleftmostﬁgurerepresentsthedendrogram
+θX of a three-point ultrametric spaceX. The middle ﬁgure represents the weighted rooted
+tree TX associated to X. The numbers beside the nodes represent the weight values given
+by wX. Note that the tree structure ofTX is inherited directly from the tree structure of
+θX. The rightmost ﬁgure shows the TDS associated toTX.
+Remark 63.It is obvious that the set of singletons{{x} ∈ VX : x ∈ X} coincides with the
+set of leaves ofTX. Since for every rooted tree#vertices = O(#leaves) (indeed, #leaves ≤
+#vertices ≤ 2#leaves), we have that #VX = O(n) where n := # X. Moreover, since
+#EX = #VX − 1 = O(VX), we have that#EX = O(n) as well.
+Proposition 64 ([13, Theorem 1.10]). For any two ﬁnite ultrametric spacesX and Y, let
+TX and TY denote their corresponding weighted rooted trees. Then,X is isometric toY iﬀ
+TX is isomorphic toTY.
+PAGE 40
+JoCG 14(1), 78–143, 2023 117
+Journal of Computational Geometry jocg.org
+Remark 65 (Relation to merge trees). For the precise deﬁnition of merge trees, see for
+example [32]. LetX be a ﬁnite ultrametric space and letTX be its associated weighted rooted
+tree. We ﬁrst transform TX into a topological/metric tree by replacing each edge{B, B′}
+with an interval with length|diam(B)−diam(B′)|. We then attach to the rootrX the half line
+[0, ∞) to obtain the topological spaceMX. We then deﬁne the height functionhX : MX → R
+as follows:
+1. hX(B) = wX(B) = diam(B) for each B ∈ VX;
+2. for each edge, inside its corresponding interval,hX is deﬁned as the linear interpo-
+lation between the function values at the end points;
+3. for t on the half line[0, ∞), hX(t) := hX(rX) + t.
+In this way, each ﬁnite ultrametric spaceX canonically induces the merge tree(MX , hX).
+Remark 66(Detailed comparison betweenγε(X) and τε(MX)). Recall that forε ≥ 0, the
+ε-degree boundτε(MX) of a merge treeMX is the maximum over all closedε balls the sum of
+degrees of all vertices inside the ball (cf. Remark 43). By Remark 65, each ﬁnite ultrametric
+space X canonically induces the merge tree(MX , hX). Then, we call τε(X) := τε(MX) the
+ε-degree bound of the ultrametric spaceX. It is easy to see that for any ultrametric space
+X, we have that
+γε(X) ≤ τε(X) ≤ 2γε(X).
+See Figure 9 for an illustration and a sketch of the proof of this fact. In particular, this
+implies that X ∈ U2(ε
+2 , γ) for all γ ≥ τε(X).
+A.2 Data structure for ultrametric spaces and algorithms for fundamental operations
+Given a ﬁnite ultrametric space(X, uX), let TX be its corresponding weighted rooted tree
+as described in Deﬁnition 62. We utilize a special self-referential tree structure to represent
+TX; for a description of self-referential tree data structures, we refer readers to [22, Chapter
+6.5]. In order to represent vertices ofTX, we design a special classNode with three ﬁelds:
+Representative, Diameter and Children. Recall that each vertex ofTX represents a closed
+ball of X. Then, for each vertex/ballB ∈ VX, its corresponding Node object, which will
+still be denoted byB, contains the following ﬁelds:
+1. Representative: an elementx ∈ B;4
+2. Diameter: the diameter ofB;
+3. Children: a list of pointers to allNode objects representing the children ofB in TX.
+In what follows, we will sometimes call aNode object simply anode and we will for instance
+write B.Diameter to extract the diameter value of a nodeB.
+4Any choice ofx∈B will do.
+PAGE 41
+JoCG 14(1), 78–143, 2023 118
+Journal of Computational Geometry jocg.org
+Figure 9: Illustration of Remark 66. In this ﬁgure, we draw part of the dendrogram
+of an ultrametric spaceX and its corresponding merge treeMX. Pick any z ∈ MX with
+height t. Then, z corresponds to [x]c(t) for some point x ∈ X (cf. Remark 65). Consider
+the closed ballBMX
+ε (z) ⊆ MX highlighted in red in the ﬁgure. Considering a small closed
+neighborhood of the highlighted part inMX, we obtain the rooted treeTz in the top right
+corner of the ﬁgure. It is obvious that the number of leaves ofTz inside the dotted box
+equals γε(x, t+ ε) := #
+{
+[x′]o(t−ε) : x′ ∈ [x]c(t+ε)
+}
+. On the other hand, the sum of degrees of
+vertices of the treeMX contained in the ballBMX
+ε (z), denoted byτε(z), equals the number
+of edges in Tz. Therefore, by the standard relationship between the number of leaves and
+the number of edges in a rooted tree, we have thatγε(x, t+ ε) ≤ τε(z) ≤ 2 γε(x, t+ ε). From
+this observation, we conclude thatγε(X) ≤ τε(X) ≤ 2 γε(X).
+Now, for a given ultrametric spaceX, thetree data structure(TDS) which we will
+use to representTX consists of a collection of nodes stored in memory, one for each vertex
+B ∈ VX. This TDS is held by aNode pointer referencing the node representing the root
+rX = X. We call this pointer (to aNode object) the root pointerof the TDS. The role of
+the root pointer of a TDS is analogous to the role of the head pointer of a linked list. See
+Figure 8 for an illustration.
+Note. In the sequel, we will overload the symbolTX and will use it to denote both the
+weighted rooted tree corresponding toX and to also represent its associated TDS (both
+in the sense of its root pointer and in the sense of the collection of its nodes). The symbol
+B for representing any ballB ∈ VX is also overloaded to represent its corresponding
+Node object in TX. In all our algorithms, every ultrametric space is understood as a
+Node object.
+Remark 67(Relationship with the distance matrix data structure). Starting from the root
+PAGE 42
+JoCG 14(1), 78–143, 2023 119
+Journal of Computational Geometry jocg.org
+node rX of TX, one can progressively trace all nodes inTX to completely reconstruct the
+distance matrix of the ultrametric spaceX. It is clear that the reconstruction process takes
+time at most O(n2) where n := #X. Conversely, given the distance matrix ofX, one can
+construct the TDS TX in the same time complexity O(n2) (one can use for example the
+single-linkage algorithm [33] to ﬁrst obtain the dendrogram induced by the distance matrix
+(see Figure 8)). If the ultrametric spaces are given in terms of distance matrices, we ﬁrst need
+to convert them into TDSs before applying the algorithms described in this paper. The time
+complexity O(n2) due to this preprocessing is not counted when analyzing our algorithms.
+Remark 68 (Subtree rooted at a ball). Given the TDS TX associated to the ultrametric
+space X, it is easy to induce a TDSTB for each closed ball B ∈ VX (which is itself an
+ultrametric space). Such TB consists of all descendant nodes ofB in TX and is held by a
+pointer to B, i.e., ∗(TB) = B. Here ∗p denotes the datum referenced by a pointerp.
+Remark69 (Findingparentnodes) . Given any non-root nodeB in TX, we letParent(B, TX)
+denote its parent node inTX. To actually ﬁnd the nodeParent(B, TX) given the node B,
+one can start from the root noderX and recursively searchTX for the parent ofB. Such a
+search process takes at most timeO(#TX) = O(n) where n := #X.
+One major advantage of adopting the above-mentioned TDS is that it allows us to
+eﬃciently implement certain fundamental operations on ultrametric spaces. For example, it
+allows to eﬃciently obtain the spectrum of an ultrametric space:
+Lemma 70. Given an ultrametric spaceX, determining and sortingspec(X) can be done
+in time O(n log(n)) where n := #X.
+Proof. Note that, by Lemma 61, we only need to inspect each node inTX which takes
+time O(n). Since #spec(X) = O(n) (cf. Proposition 8), the sorting process takes time
+O(n log(n)).
+Next, we introduce algorithms for other three fundamental operations on ultrametric
+spaces.
+Closed quotient InAlgorithm6weintroducearecursivealgorithmforthe t-closedquotient
+operation. In the algorithm, the notation← represents variable assignment and the notation
+&Z denotes the memory address of the variableZ. In line 6 of the algorithm, theone point
+tree data structure consists of a single node such thatDiameter = 0 and Children is an
+empty list. Note that in the worst-case scenario, Algorithm 6 inspects all nodes ofTX during
+the recursion process. At the recursion call with input(B, t) where B is a node ofTX, the
+main computational cost lies in line 1 for copying theNode object B (in the place ofX). If
+we let kB := length(B.Children), it then costs timeO(kB) to copy B and it takes at most
+time O(kB) to update B.Children according to the for-loop in line 2. Therefore, the total
+time complexity of Algorithm 6 is bounded above by∑
+B∈VX O(kB). By Lemma 59 and
+Remark 63, we have that ∑
+B∈VX
+O(kB) = O(VX) = O(n),
+where n := #X. Therefore, the time complexity of Algorithm 6 is bounded above byO(n).
+PAGE 43
+JoCG 14(1), 78–143, 2023 120
+Journal of Computational Geometry jocg.org
+Algorithm 6 ClosedQuotient(X, t)
+1: Y ← X
+2: for Each p ∈ Y.Children do
+3: if ∗p.Diameter > t then
+4: p ← &ClosedQuotient(∗p, t)
+5: else
+6: Z ← the one point tree with the same representative in∗p
+7: p ← &Z
+8: end if
+9: end for
+10: return Y
+Open partition In Algorithm 7 we give pseudocode for constructing thet-open partition
+of an ultrametric space. In order to implement the ‘append’ operation (appearing in line 3
+and line 6) in constant time, we use a doubly linked listP to represent the open partition.
+Algorithm 7 will recursively inspect all nodes corresponding to balls inXo(t) as well as all of
+their ancestor nodes. For each inspected nodeB in TX, if we letkB := length(B.Children),
+it then takes timeO(kB) to update the listP. Then, following a similar argument as in the
+complexity analysis of Algorithm 6, if we letk be the cardinality ofP (i.e., k = #Xo(t)),
+then Algorithm 7 will inspect at mostO(k) nodes in TX and thus it generatesP in at most
+O(k) steps.
+Algorithm 7 OpenPartition(X, t)
+1: P = [ ]
+2: if X.Diameter < t then
+3: P.append(&X)
+4: else
+5: for Each pi ∈ X.Children do
+6: P.append(OpenPartition(∗pi, t))
+7: end for
+8: end if
+9: return P
+Isometry between ultrametric spaces By Proposition 64, two ultrametric spacesX and
+Y are isometric iﬀ their corresponding weighted rooted treesTX and TY are isomorphic. By
+adapting the algorithm in [3, Example 3.2], determining isomorphism between rooted trees
+can be done in timeO(#vertices); see also [3, Theorem 3.3] (and its corollary). Then, by
+Remark 63, we have the following result:
+Lemma 71. We can determine whetherX and Y are isometric inO(n) time.
+PAGE 44
+JoCG 14(1), 78–143, 2023 121
+Journal of Computational Geometry jocg.org
+A.3 Subspace tree data structure and union of non-intersecting subspaces
+In this section, we explain how to utilize the TDS described in the previous section to
+eﬃciently perform the union operation (under the conditions speciﬁed by Equation (16)
+below).
+First of all, we introduce a TDS for representing subspaces of a given ultrametric
+space X. We assume that the distance matrixuX is available and assume that a TDSTX
+representing X has already been computed.
+Deﬁnition 72(Subspace tree data structure). For any non-empty subspaceU ⊆ X, we say
+that a tree data structureTU representing the ultrametric space(U, uX |U×U) is a subspace
+treedatastructuresubordinateto TX, if each vertex (i.e., each ball) inVU ∩VX is represented
+by a Node object belonging to the tree data structureTX.
+Remark 73(Construction of subspace TDSs). For any nodeB ∈ TX (which represents a
+ball in X), the TDSTB described in Remark 68 is obviously a subspace TDS subordinate to
+TX representing the subspaceB. However, for an arbitrary subsetU the situation is diﬀerent
+from the case of a ball. First, it is easy to verify that any suchU can be written as a union
+of non-intersecting balls{Bi}k
+i=1 satisfying the condition in Equation(16) (see also Lemma
+74 below). Then, a subspace TDS representingU subordinate to X can be constructed by
+applying the union process which we describe below to the set of balls{Bi}k
+i=1.
+Consider a set of non-empty and non-intersecting subspaces{U1, . . . , Uk} of a given
+ultrametric space X such that for any distincti, j = 1, . . . , k, we have
+min
+xi∈Ui,xj∈Uj
+uX(xi, xj) > max(diam(Ui), diam(Uj)). (16)
+This condition is compatible with the sets obtained by taking a slice of the dendrogram
+θX, which is in turn equivalent to considering open/closed equivalence classes of ultrametric
+spaces (see the discussion below Deﬁnition 14). We assume that eachUi is represented by
+a subspace TDSTUi subordinate to TX.
+Now given the above data, we describe how to construct a subspace TDSTU subor-
+dinate to TX representing the unionU := ∪k
+i=1Ui. The whole process is organized through
+the following three steps.
+(I) Constructing a TDS induced by representatives For each i = 1, . . . , klet xi be the
+representative of Ui as given in the TDSTUi and let Xk := {x1, . . . , xk}. We ﬁrst consider
+the ultrametricuXk := uX |Xk×Xk on Xk induced by the restriction ofuX to Xk × Xk. Then,
+we construct a new TDSTXk to represent (Xk, uXk) (cf. Remark 67). This construction is
+possible due to the fact that(Xk, uXk) is itself an ultrametric space.
+It takes time at mostO(k2) to both construct the metricuXk and create the new
+TDS TXk (cf. Remark 67).
+(II) Constructing the preliminary union of Uis Recall that up to this point, we have at
+our disposal the following TDSs:TU1, . . . , TUk, and TXk. Based on these data, we progres-
+sively modify leaf nodes of TXk and utilize TU1, . . . , TUk to ﬁnd a TDS representation for
+PAGE 45
+JoCG 14(1), 78–143, 2023 122
+Journal of Computational Geometry jocg.org
+the union U. For pedagogical reasons, we refer to the outcome TDS as˜TU. ˜TU may not
+be subordinate toTX, and we thus name it thepreliminary unionof Uis. The modiﬁcation
+process can be summarized as simply replacing each leaf node inTXk with the root node
+of certain TUi as shown in Figure 10. More precisely, we traverse all nodesB in TXk and,
+if for such a nodeB there exists an index i0 such that ∗(B.Children(i0)).Diameter = 0
+(which means B is the parent of a leaf node), then we let j0 be the index such that
+∗(B.Children(i0)).Representative = xj0 ∈ Xk, andmodify B byassigning B.Children(i0) =
+TUj0 (andofcoursewefreethememoryusedforstoringtheoriginalnode ∗(B.Children(i0))).
+Figure 10:Illustration of the process for producing the preliminary union˜TU.
+For the modiﬁcation process described above, we need to modify at mostO(k) point-
+ers, and for each such pointer it takes timeO(k) to search forUj0 with the desired represen-
+tative as described above. So, the time needed for constructing the preliminary union˜TU is
+at most O(k2).
+(III) Taming process for ˜TU The TDS ˜TU may not be a subspace TDS subordinate to
+TX, i.e., ˜TU may contain Node objects representing balls inVX which do not belong to the
+TDS TX. We will thus furthertame ˜TU so that the outcome TDS is subordinate toTX. For
+pedagogical reasons, we use the symbolTU (which is our ﬁnal TDS representation forU) to
+refer to the tamed˜TU.
+To accomplish this, we ﬁrst create an arrayL consisting of pointers to all nodes in
+˜TU \ ∪k
+i=1 TUi, i.e., all modiﬁed nodes fromTXk. We sortL according to increasingDiameter
+values of the nodes referenced by its pointers. There areO(k) such nodes and thus building
+and sorting L takes time O(k log(k)). Let ℓ := length(L) = O(k). For each i = 1 , . . . , ℓ,
+we compare ∗(L(i)) with each node inTX as described next. If for someB ∈ TX, the sets
+B.Children and ∗(L(i)).Children agree, we then replace the node∗(L(i)) in ˜TU with B.
+There are two cases which can arise during this replacement:
+1. if ∗(L(i))isnottherootnodeof ∗( ˜TU), weﬁndtheparentnodeof ∗(L(i))(cf. Remark
+69) in ˜TU and let i0 be the index such thatParent
+(
+∗(L(i)), ˜TU
+)
+.Children(i0) =
+L(i). Then, wereplaceParent
+(
+∗(L(i)), ˜TU
+)
+.Children(i0)withapointerto B ∈ TX;
+PAGE 46
+JoCG 14(1), 78–143, 2023 123
+Journal of Computational Geometry jocg.org
+2. otherwise if ∗(L(i)) is the root node ∗( ˜TU), we free the memory used for storing
+∗( ˜TU), and then assign˜TU = &B.
+For each i = 1 , . . . , ℓ let ki := length( ∗(L(i)).Children). Determining whether
+B.Children = ∗(L(i)).Children takes time O(ki). Therefore, the time complexity of the
+replacement process mentioned above can be bounded as follows:
+ℓ∑
+i=1
+O(#TX) × ki =
+ℓ∑
+i=1
+O(nki) = O
+(
+n
+ℓ∑
+i=1
+ki
+)
+= O(nk),
+where n := # X (we used Lemma 59 in the rightmost equality). The time incurred when
+ﬁnding and accessing the parent node of a given node inL is at mostO(k) (cf. Remark 69).
+So the total time required for taming˜TU is at mostO(nk).
+Therefore by following steps (I), (II) and (III), the total time complexity of the union
+operation can be bounded byO(k2) + O(nk) = O(nk).
+A.4 Implementation details for Algorithm 4
+In this section, we provide details for one possible implementation of Algorithm 4.
+A.4.1 Preprocessing
+To achieve an actual implementation of Algorithm 4, some preprocessing is needed in order
+to construct the arrays LX(ε) and LY deﬁned in Section 5.2.3. Here, for completeness
+we describe one possible implementation of these preprocessing steps. We ﬁrst construct
+subspace TDSs for subspaces inLX(ε) and LY. We then construct arrayspLX(ε) and pLY
+of Node pointers referencing subspaces inLX(ε) and LY, respectively. For this purpose, we
+augment the classNode by incorporating an integer ﬁeld calledOrder and a Boolean ﬁeld
+called IsBall. For each node B in TX, Order is initially set to −1 and IsBall is set to
+True. We initialize nodes inTY in the same way.
+Construction of pLY Given the TDSTY, we ﬁrst create an arraypLYcontaining pointers
+to all nodes in TY. Then, we sort pLY according to increasing Diameter values of the
+Node objects referenced by its pointers. This ﬁnalizes constructing the arraypLY. For each
+i = 1, . . . ,#pLY, we set∗(pLY(i)).Order = i. In this way, each element inTY is such that
+its ﬁeld Order is diﬀerent from−1.
+By Lemma 91, #TY = #VY = O(n). So building and sorting the listpLY can be
+done in timeO(n log(n)). The above process for settingBY .Order for all BY ∈ pLYcan be
+done in timeO(n).
+Construction of pLX(ε) Unlike the case ofLY, the arrayLX(ε) can contain subspaces not
+belonging to VX. In order to constructpLX(ε), we follow the three steps that we describe
+next:
+PAGE 47
+JoCG 14(1), 78–143, 2023 124
+Journal of Computational Geometry jocg.org
+1. Create subspace TDSs subordinate toTX for representing each of the subspaces in
+LX(ε)\LX;
+2. Create alist pLX(ε) of pointers referencing the root nodes representing each of the
+subspaces in LX(ε).
+3. Transform thelist pLX(ε) into anarray (still denoted bypLX(ε)). In this way, the
+random access time to elements inpLX(ε) is O(1).
+Whereas the third step is clear, we will provide a detailed description for the ﬁrst
+and second steps. In fact, these two steps are accomplished at the same time: We ﬁrst
+construct pLX via a process analogous to the one used above for constructingpLY. This
+step can be done in timeO(n log(n)). Then, we follow two substeps: (a) for eachBX ∈ LX,
+we will ﬁrst construct subspace TDSs subordinate toTX for all subspaces in BX
+(ε)\{BX };
+we then construct the listpBX
+(ε) of pointers referencing all subspaces inBX
+(ε); (b) we will use
+these constructions from (a) for allBX to complete step 1 and step 2. Below, we describe
+substep (a) and substep (b) in detail.
+(a) Constructions regarding a single BX We set pBX
+(ε) to be an empty list. Ap-
+plying OpenPartition (Algorithm 7) to BX we obtain the open partitionBX
+o(δ+
+2ε(BX)) =
+{Bi}
+NBX
+i=1 . By the SGC,NBX ≤ γ so that the open partition process takes time at mostO(γ).
+For each non-empty index setI ⊆ [NBX] (there areO(2γ) such Is), we apply the union oper-
+ation (described in Appendix A.3) to obtain the TDSTUI for the unionUI := ∪i∈I Bi which
+takes time at mostO(n ×#I) = O(nγ). For the new nodes thus created, i.e., for nodesU in
+TUI \TX, we setU.IsBall = False and set U.Order = −1. If UI .Diameter = BX .Diameter,
+we ﬁrst set UI .Order = BX .Order and then update pBX
+(ε) by appending TUI (which is a
+pointer to the nodeUI) to it. Otherwise, we delete all nodes inTUI \TX.
+In summary, the time complexity for both constructing subspace TDSs subordinate
+to TX for all elements inBX
+(ε)\{BX } and constructing the listpBX
+(ε) is bounded byO(n2γγ2).
+(b) Completing step 1 and step 2 Finally, we apply the constructions described
+above to all BX ∈ LX and assemble the corresponding outputs to complete step 1 and
+step 2 concurrently. More speciﬁcally, we ﬁrst sort LX according to increasing values of
+Order. Then, we apply the above constructions over all BX ∈ LX with respect to this
+order. After this, subspace TDSs for all elements inLX(ε)\LX have been constructed and
+stored in memory. Finally, we merge all the resulting listspBX
+(ε)s together to obtain the list
+pLX(ε). Since #LX = O(n) and since for eachBX, length(pBX
+(ε)) = O(2γ), the time needed
+for constructing subspace TDSs for elements inLX(ε)\LX is bounded by O(n22γγ2), and
+the merging process takes time at mostO(n2γ) (the complexity can be reduced toO(n) if
+each pBX
+(ε) is represented by a doubly linked list).
+Therefore, step 1 and step 2 together can be accomplished in time
+O
+(
+n log(n) + n22γγ2 + n2γ)
+= O
+(
+n2 log(n)2γγ2)
+.
+PAGE 48
+JoCG 14(1), 78–143, 2023 125
+Journal of Computational Geometry jocg.org
+Since #pLX(ε) = O(n2γ), the time for transformingpLX(ε) into an array is bounded by
+O(n2γ). So, thetotaltimecomplexityforbuildingthearray pLX(ε) isatmost O
+(
+n2 log(n)2γγ2)
+.
+Data structure for storing and accessing indices of elements in LX(ε) Given any UX ∈
+LX(ε), there exists a unique integerind such that UX = ∗(pLX(ε)(ind)) and we refer to
+ind as the index of UX in LX(ε). Now, given any UX in the form of a subspace TDS
+subordinate to TX, in order to access the index ofUX in LX(ε) eﬃciently, we construct
+a (1 + #VX) × · · · × (1 + #VX)  
+γ terms
+dimensional multi-array INDX for storing all such indices.
+Each dimension of INDX is indexed by integers in the range{−1} ∪ { 1, . . . ,#VX }. The
+following lemma gives rise to our strategy for indexing this multi-array.
+Lemma 74. For any subset UX ⊆ X, there is aunique maximal set of non-intersecting
+closed balls {B1, . . . , Bk} ⊆ VX such that UX = ∪k
+i=1Bi. Here ‘maximal’ means that if there
+exists another set of non-intersecting closed balls{B′
+1, . . . , B′
+l} ⊆ VX such thatUX = ∪l
+i=1B′
+i,
+then for each i = 1 , . . . , l, there exists some j = 1 , . . . , k such that B′
+i ⊆ Bj. We call the
+unique maximal set{B1, . . . , Bk} ⊆ VX the ball decomposition ofUX.
+Now, given UX ∈ LX(ε), let ind denote its index inLX(ε). Let {B1, . . . , Bk} be the
+ball decomposition ofUX whose elements are labeled such that
+B1.Order < · · · < Bk.Order.
+We then storeind, the index ofUX, in INDX as follows
+INDX(B1.Order, B2.Order, . . . , Bk.Order, −1, . . . ,−1)  
+γ−k terms
+= ind.
+Computation of the ball decomposition Given UX ∈ LX(ε), we proceed to compute its
+balldecompositionasfollows. If UX .Order ̸= −1, thenUX ∈ LX, i.e.,UX alreadyrepresents
+a ball inX. In this case,{UX } is the ball decomposition ofUX. Otherwise, we traverse all
+nodes of TUX to create the listpUX consisting of pointers to all nodes{B1, . . . , Bk} ⊆ TUX
+such that: for each i = 1 , . . . , k, Bi.IsBall = True but the parent node of Bi satisﬁes
+Parent (Bi, TUX) .IsBall = False. Then, {B1, . . . , Bk} is the desired ball decomposition of
+UX.
+The computation of the ball decomposition ofUX ∈ LX(ε) described above can be
+done in timeO(γ log(γ)) (including the sorting time). Therefore, the total time complexity
+for storing the indices of allUX ∈ LX(ε) into INDX is bounded byO(n2γγ log(γ)) and the
+time needed for ﬁnding the index ofUX into LX(ε) is bounded byO(γ log(γ)). We remark
+that the space complexity of the multi-arrayINDX is O(nγ). The actual size of LX(ε) is
+however O(n2γ). To reduce the space complexity, one could consider a sparse multi-array
+data structure or binary search trees.
+PAGE 49
+JoCG 14(1), 78–143, 2023 126
+Journal of Computational Geometry jocg.org
+A.4.2 A reﬁned union operation via an improved taming process
+In line 16 of Algorithm 4 we need to construct the union spaceUX
+Ψ−1(j) := ∪i∈Ψ−1(j)UX
+i
+where all UX
+i s are subspaces ofUX. By the SGC,#Ψ−1(j) = O(γ). Therefore, by results
+in Section A.3, it takes timeO(nγ) to construct a subspace TDS (subordinate toTX) for
+representing UX
+Ψ−1(j) given the subspace TDSs (subordinate toTX) for UX
+i s.
+Recall from Appendix A.3 that the union operation consists of three steps where
+the ﬁnal step, i.e., the taming process, has the leading time complexity. In this section, we
+provide areﬁned union operationvia animproved taming processfor constructing UX
+Ψ−1(j)
+such that the time complexity of this reﬁned union operation is thus reduced toO(γ2). In
+the sequel, we use the shorthandU := UX
+Ψ−1(j) and also letk := #Ψ−1(j) = O(γ).
+Note that in Appendix A.3, the taming process for the preliminary union˜TU requires
+pairwise comparisons between all nodes in˜TU \ ∪k
+i=1 TUi and all nodes inTX. The fact that
+#TX = O(n) explains the n factor in the time complexity bound O(nk) for the taming
+process. However, to tame˜TU, we only need to compare every node in˜TU \ ∪k
+i=1 TUi with a
+certain subset of nodes in TX. We obtain the improved taming process for˜TU by restrict-
+ing the pairwise comparisons in this way and by keeping the rest of the taming process
+unchanged.
+Now, we explain how to restrict the pairwise comparison. Leti0 := UX .Order and let
+BX := LX(i0). Since UX ∈ LX(ε), we have thatUX ∈ BX
+(ε), i.e., the set ofε-maximal unions
+of closed balls inBX (cf. Section 5.2.3). Starting from the nodeBX, we traverse all of its
+descendants B in order to identify all those for whichB.Diameter ≥ BX .Diameter − 2ε.
+We letLBX denote the set of all such descendants. Then, in the improved taming process
+of ˜TU, we only compare all nodes in˜TU \ ∪k
+i=1 TUi with all nodes inLBX.
+By the SGC,#LBX = O(γ) and thus the time complexity of the improved taming
+process described above is at most O(γk) = O(γ2). Therefore, constructing TU via this
+taming process has cost at mostO(γ2).
+B Extension of uGH to ultra-dissimilarity spaces
+In this section, we will consider the collectionUdis of ﬁnite ultra-dissimilarity spaces, which
+are generalizations of ultrametric spaces (see also [42] for a more general notion called ultra-
+network).
+Deﬁnition 75(Ultra-dissimilarity space). An ultra-dissimilarity space is any pair(X, uX)
+where X is a ﬁnite set and uX : X × X → R≥0 satisﬁes, for all x, x′, x′′ ∈ X:
+(1) Symmetry: uX(x, x′) = uX(x′, x),
+(2) Strong triangle inequality:uX(x, x′′) ≤ max (uX(x, x′), uX(x′, x′′)) ,
+(3) Deﬁniteness: max (uX(x, x), uX(x′, x′)) ≤ uX(x, x′), and the equality takes place
+if and only ifx = x′.
+PAGE 50
+JoCG 14(1), 78–143, 2023 127
+Journal of Computational Geometry jocg.org
+We refer to uX as the ultra-dissimilarity on X. It is obvious that any ﬁnite ultrametric
+space is an ultra-dissimilarity space. Then,Uﬁn ⊆ U dis, where Uﬁn denotes the collection of
+ﬁnite ultrametric spaces.
+We say two ultra-dissimilarity spaces(X, uX) and (Y, uY ) are isometric if there exists
+a bijective functionf : X → Y such that for anyx, x′ ∈ X
+uY (f(x), f(x′)) = uX(x, x′).
+Such an f is called anisometry.
+Remark 76 (Informal interpretation). For each x ∈ X, the value uX(x, x) is regarded as
+the ‘birth time’ of the pointx; when uX is an actual ultrametric onX, all points are born
+at time 0. The value uX(x, x′) for diﬀerent pointsx and x′ encodes the time when the two
+points ‘merge’. Note that then condition (3) above can be informally interpreted as encoding
+the property that two points cannot merge before their respective birth times, and that if they
+merge at the same time they are born, then they are actually thesame point.
+Given two ultra-dissimilarity spacesX and Y and any correspondence R between
+them, without any obstacle, we deﬁnedis∞(R) in exactly the same way by Equation (8),
+i.e.,
+dis∞(R) := sup
+(x,y),(x′,y′)∈R
+Λ∞(uX(x, x′), uY (y, y′)).
+Deﬁnition 77(uGH between ultra-dissimilarity spaces). For two ultra-dissimilarity spaces
+X and Y, we deﬁne uGH(X, Y ) by
+uGH(X, Y ) := inf
+R
+dis∞(R). (17)
+Given an ultra-dissimilarity spaceX, as we did in Section 2.1, we consider a notion
+of closed equivalence classes[x]X
+c(t) := {x′ ∈ X : uX(x, x′) ≤ t} for any x ∈ X and t ≥ 0.
+Furthermore, let
+[ [x] ]X
+c(t) :=
+{ [x]X
+c(t) if uX(x, x) ≤ t
+{x} if uX(x, x) > t (18)
+In words, if the ‘birth time’ ofx is no larger thant, i.e.,uX(x, x) ≤ t, then[ [x] ]X
+c(t) is the same
+as [x]X
+c(t). Otherwise, [ [x] ]X
+c(t) denotes the singleton {x}. We let Xc(t) := {[ [x] ]X
+c(t) : ∀x ∈ X}
+and deﬁne byuXc(t) an ultra-dissimilarity onXc(t) given by:
+uXc(t)
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+:=
+{ uX(x, x′) if [ [x] ]X
+c(t) ̸= [ [x′] ]X
+c(t), or x = x′ and uX(x, x) > t
+0 otherwise.
+(19)
+Deﬁnition 78(Closed quotient on ultra-dissimilarity spaces). Given an ultra-dissimilarity
+space (X, uX) and t ≥ 0, Then, we call
+(
+Xc(t), uXc(t)
+)
+the closed quotientof X at level t.
+PAGE 51
+JoCG 14(1), 78–143, 2023 128
+Journal of Computational Geometry jocg.org
+We are still using the notationXc(t) to denote the resulting quotient space as we did
+in the case of ultrametric spaces (Deﬁnition 10) because if(X, uX) is actually an ultrametric
+space, then the new deﬁnition agrees with the one given previously.
+It is obvious that for any ultra-dissimilarity spaceX and any t ≥ 0, Xc(t) is still an
+ultra-dissimilarity space. Then, the closed quotient gives rise to a map which we call the
+t-closed quotient operatorQc(t) : Udis → U dis sending X ∈ U dis to Xc(t) ∈ U dis.
+Theorem 79(Structural theorem foruGH on ultra-dissimilarity spaces). For any two ﬁnite
+ultra-dissimilarity spacesX and Y one has that
+uGH(X, Y ) = min
+{
+t ≥ 0 :
+(
+Xc(t), uXc(t)
+)
+∼=
+(
+Yc(t), uYc(t)
+)}
+.
+Proof. We ﬁrst prove a weaker version (withinf instead of min):
+uGH(X, Y ) = inf
+{
+t ≥ 0 : ( Xc(t), uXc(t)) ∼= (Yc(t), uYc(t))
+}
+. (20)
+Suppose ﬁrst thatXc(t) ∼= Yc(t) for some t ≥ 0, i.e. that there exists an isometryft : Xc(t) →
+Yc(t). Then, we deﬁne
+Rt :=
+{
+(x, y) ∈ X × Y : [ [y] ]Y
+c(t) = ft([ [x] ]X
+c(t))
+}
+.
+Since ft is bijective, Rt is a correspondence betweenX and Y.
+Then, we show thatdis∞(Rt) ≤ t, which will imply thatuGH(X, Y ) ≤ t. Choose
+any (x, y), (x′, y′) ∈ Rt. If uX(x, x′) ≤ t, then uX(x, x′) ≤ max(t, uY (y, y′)). Otherwise, if
+uX(x, x′) > t, we have the following two cases:
+1. x = x′. Then, [ [x] ]X
+c(t) = [ [x′] ]X
+c(t) = {x}. Thus, [ [y] ]Y
+c(t) = ft([ [x] ]X
+c(t)) = ft([ [x′] ]X
+c(t)) =
+[ [y′] ]Y
+c(t). Since ft is isometry, we have that
+uYc(t)
+(
+[ [y] ]Y
+c(t), [ [y] ]Y
+c(t)
+)
+= uXc(t)
+(
+[ [x] ]X
+c(t), [ [x] ]X
+c(t)
+)
+) = uX(x, x) > 0.
+This implies that
+uY (y, y) = uYc(t)
+(
+[ [y] ]Y
+c(t), [ [y] ]Y
+c(t)
+)
+= uX(x, x) > t,
+and thus [ [y] ]Y
+c(t) = {y}. Similarly, [ [y′] ]Y
+c(t) = {y′} and thus {y} = [ [y] ]Y
+c(t) = [ [y′] ]Y
+c(t) =
+{y′}. Then, we have thaty = y′ and thus uY (y, y′) = uX(x, x′).
+2. x ̸= x′. Then, [ [x] ]X
+c(t) ̸= [ [x′] ]X
+c(t). Since ft is an isometry, we have that
+[ [y] ]Y
+c(t) = ft
+(
+[ [x] ]X
+c(t)
+)
+̸= ft
+(
+[ [x′] ]X
+c(t)
+)
+= [ [y′] ]Y
+c(t)
+and thus uY (y, y′) = uYc(t)
+(
+[ [y] ]Y
+c(t), [ [y′] ]Y
+c(t)
+)
+= uXc(t)
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+= uX(x, x′).
+PAGE 52
+JoCG 14(1), 78–143, 2023 129
+Journal of Computational Geometry jocg.org
+Therefore, uX(x, x′) ≤ max(t, uY (y, y′)). Similarly, uY (y, y′) ≤ max(t, uX(x, x′)).
+Then, we have thatdis∞(Rt) ≤ t and thus uGH(X, Y ) ≤ inf
+{
+t ≥ 0 : Xc(t) ∼= Yc(t)
+}
+.
+Conversely, letR be a correspondence betweenX an Y and lett := dis∞(R). Deﬁne
+a map f : X → Y by taking x ∈ X to an arbitrary y ∈ Y such that (x, y) ∈ R. Consider
+the induced quotient mapft : Xc(t) → Yc(t), deﬁned by ft
+(
+[ [x] ]X
+c(t)
+)
+= [ [f(x)] ]Y
+c(t). We now
+show that ft is well-deﬁned. For any(x, y), (x′, y′) ∈ R such that [ [x′] ]X
+c(t) = [ [x] ]X
+c(t), we have
+the following two cases:
+1. uX(x, x′) ≤ t. Then, sincedis∞(R) = t, wehavethat uY (y′, y) ≤ max (t, uX(x, x′)) ≤
+t.
+2. uX(x, x) > t and x = x′. Then, since dis∞(R) = t, uY (y, y′) = uX(x, x′) =
+uX(x, x) > t. Similarly, uY (y, y) = uX(x, x) = uX(x′, x′) = uY (y′, y′). Therefore,
+y = y′ by condition (3) of the deﬁnition of ultra-dissimilarity spaces (cf. Deﬁnition
+75).
+Therefore, [ [y] ]Y
+c(t) = [ [y′] ]Y
+c(t), which implies that ft is well-deﬁned. Similarly, the quotient
+map gt : Yc(t) → Xc(t) induced by a mapg : Y → X such that g(y) = x where x ∈ X is
+chosen such that(x, y) ∈ R is well-deﬁned. It is clear thatgt is the inverse offt and thus
+ft is bijective. Now we show thatft is an isometry. Choose [ [x] ]X
+c(t), [ [x′] ]X
+c(t) ∈ Xc(t) and let
+y = f(x) and y′ = f(x′). Let s := uXc(t)
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+. If [ [x] ]X
+c(t) ̸= [ [x′] ]X
+c(t), then s > t and
+thus uX(x, x′) = s. Since dis∞(R) = t < s, uY (y, y′) is forced to be equal tos and thus
+uYc(t)
+(
+[ [f(x)] ]Y
+c(t), [ [f(x′)] ]Y
+c(t)
+)
+= uYc(t)
+(
+[ [y] ]Y
+c(t), [ [y′] ]Y
+c(t)
+)
+= s = uXc(t)
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+.
+If [ [x] ]X
+c(t) = [ [x′] ]X
+c(t), then we have the following two cases.
+1. uX(x, x) ≤ t. Then, [ [x] ]X
+c(t) = [ [x′] ]X
+c(t) impliesthat uX(x, x′) ≤ tand uXc(t)
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+=
+0. Since(x, f(x)) ∈ Rand dis∞(R) ≤ t, wehavethat uY (f(x), f(x)) ≤ max(t, uX(x, x)) ≤
+t. Then,
+uYc(t)
+(
+[ [f(x)] ]Y
+c(t), [ [f(x′)] ]Y
+c(t)
+)
+= uYc(t)
+(
+[ [f(x)] ]Y
+c(t), [ [f(x)] ]Y
+c(t)
+)
+= 0 = uX
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+.
+2. uX(x, x) > t . Then, x = x′ and uXc(t)
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+= uX(x, x) > t . Since
+(x, f(x)) ∈ R and dis∞(R) ≤ t, we haveΛ∞(uX(x, x), uY (f(x), f(x))) ≤ t, which
+implies that uY (f(x), f(x)) = uX(x, x) > t. Then,
+uYc(t)
+(
+[ [f(x)] ]Y
+c(t), [ [f(x′)] ]Y
+c(t)
+)
+= uYc(t)
+(
+[ [f(x)] ]Y
+c(t), [ [f(x)] ]Y
+c(t)
+)
+= uX(x, x)
+=uXc(t)
+(
+[ [x] ]X
+c(t), [ [x] ]X
+c(t)
+)
+= uXc(t)
+(
+[ [x] ]X
+c(t), [ [x′] ]X
+c(t)
+)
+.
+Therefore, ft is an isometry and thusuGH(X, Y ) ≥ inf
+{
+t ≥ 0 : Xc(t) ∼= Yc(t)
+}
+.
+Now, since X is ﬁnite, it is obvious that for eacht ≥ 0, there existsε > 0 such that
+whenever s ∈ [t, t + ε], we have thatXc(t) ∼= Xc(s). Therefore, the inﬁmum of Equation (20)
+is attained which concludes the proof.
+PAGE 53
+JoCG 14(1), 78–143, 2023 130
+Journal of Computational Geometry jocg.org
+Analogously to the case of ultrametric spaces, the structural theorem (Theorem 79)
+for uGH on the collection Udis of all ﬁnite ultra-dissimilarity spaces allows us to devise an
+algorithm similar to Algorithm 1 for computinguGH between ultra-dissimilarity spaces. The
+argument for the complexity analysis of Algorithm 1 can be adapted to show that the time
+complexity of computinguGH on Udis is still O(n log(n)).
+Graphical representations of ultra-dissimilarity spaces As shown in Theorem 15, ultra-
+metric spaces are equivalent to dendrograms. Analogously, ultra-dissimilarity spaces can
+be viewed as certain objects namedtreegrams. To deﬁne treegrams, we ﬁrst introduce a
+notion called subpartitions: given a setX, a partition P′ of a subset X′ ⊆ X is called a
+subpartition. We denote by SubPart(X) the collection of all subpartitions ofX. For any
+subpartitions P1 and P2, we say P1 is coarser than P2 if any block in P2 is contained in
+some block inP1.
+Example 80(Examples of subpartitions). 1. Note that the empty setP = ∅ is a sub-
+partition of any setX.
+2. Given a ﬁnite setX, let P = {B1, . . . , Bn} be a partition. Then, for any non-empty
+subset X′ ⊆ X, we obtain a subpartition P |X′ by restricting P to X′ as follows:
+P |X′ = {B1 ∩ X′, . . . , Bn ∩ X′}\{∅}.
+Deﬁnition 81(Treegrams). A treegramθX over a ﬁnite setX is a functionθX : [0, ∞) →
+SubPart(X) satisfying the following conditions:
+(1) For 0 ≤ s < t, θX(t) is coarser thanθX(s).
+(2) There exists tX > 0 such that θX(tX) = {X}.
+(3) For any r ≥ 0, there existsε > 0 such that θX(r) = θX(t) for t ∈ [r, r + ε].
+(4) For eachx ∈ X, there existst ≥ 0 such that {x} ∈ θX(t) is a block.
+Our deﬁnition is a slight modiﬁcation of treegrams deﬁned in [42, 23] where the
+domain of treegrams is the entire real lineR instead of R≥0.
+2 2
+1
+1 2
+a b
+c
+a
+b
+c
+0
+0.5 0.3
+0.50.3
+Figure 11:Treegrams and ultra-dissimilarity spaces.
+Fix a ﬁnite setX, denote by Udis(X) the collection of all ultra-dissimilarities over
+X and denote by T (X) the collection of all treegrams over X. We deﬁne a map ∆X :
+PAGE 54
+JoCG 14(1), 78–143, 2023 131
+Journal of Computational Geometry jocg.org
+Figure 12:Illustration of Deﬁnition 78.We represent a 4-point ultra-dissimilarity space
+X as a treegram in the ﬁrst row of the ﬁgure. The second row shows the treegrams corre-
+sponding to Xc(t) at diﬀerent levelst.
+Udis(X) → T (X) by sending uX to a treegramθX as follows: for eacht ≥ 0, let ˆXt := {x ∈
+X : uX(x, x) ≤ t} and let θX(t) :=
+{
+[x]X
+c(t) : x ∈ ˆXt
+}
+. Note in particular thatθX satisﬁes
+condition (4) of Deﬁnition 81 due to the deﬁniteness ofuX (cf. condition (3) in Deﬁnition
+75). Conversely, we deﬁne a mapΥX : T (X) → U dis(X) as follows. LetθX ∈ T (X). Then,
+we deﬁne an ultra-dissimilarityuX := ΥX(θX) on X by:
+uX(x, x′) := inf
+{
+t ≥ 0 : [ x]θX
+t = [x′]θX
+t
+}
+, ∀x, x′ ∈ X,
+where [x]θX
+t ∈ θX(t) denotes the block containingx. Note that deﬁniteness of uX follows
+from condition (4) of Deﬁnition 81. Then, in analogy to Theorem 15, we have the following
+theorem. See Figure 11 for an illustration.
+Theorem 82. Given any ﬁnite set X, ∆X : Udis(X) → T (X) is bijective with inverse
+ΥX : T (X) → U dis(X).
+It is obvious that the collection of dendrogramsD(X) over X is a proper subset of
+T (X) and that the collection of ultrametricsU(X) over X is a proper subset ofUdis(X).
+Then, Theorem 82 is actually an extension/generalization of Theorem 15.
+Via Theorem 82, one can easily represent an ultra-dissimilarity space via a treegram.
+In particular, see Figure 12 for an illustration of the closed quotient operator via treegrams.
+PAGE 55
+JoCG 14(1), 78–143, 2023 132
+Journal of Computational Geometry jocg.org
+C Relegated proofs
+C.1 Proofs from Section 3
+Proof of Proposition 23.For any correspondenceR between X and Y, we have
+dis1(R, uX , uY ) = sup
+(x,y),(x′,y′)∈R
+|uX(x, x′) − uY (y, y′)|
+= sup
+(x,y),(x′,y′)∈R
+⏐⏐⏐
+(
+(uX)
+1
+p (x, x′)
+)p
+−
+(
+(uY )
+1
+p (y, y′)
+)p⏐⏐⏐
+=
+(
+disp
+(
+R, (uX)
+1
+p , (uY )
+1
+p
+))p
+Therefore, by Equation (1) and Equation (9), we have
+dGH(X, Y ) =
+(
+d
+(p)
+GH
+(
+S 1
+p
+(X), S1
+p
+(Y )
+))p
+.
+Similarly, disp (R, uX , uY ) = (dis1 (R, (uX)p, (uY )p))
+1
+p andthus d
+(p)
+GH(X, Y ) = (dGH(Sp(X), Sp(Y )))
+1
+p .
+Proof of Theorem 29.Let Z be an ultrametric space such that there exist isometric embed-
+dings ϕX : X ↪→ Z and ϕY : Y ↪ → Z. Let η := dZ
+H(X, Y ), where we identifyX and Y with
+ϕX(X), ϕY (Y ) ⊆ Z, respectively. DeﬁneR := {(x, y) ∈ X × Y : uZ(x, y) ≤ η}. That R is a
+correspondence between X and Y follows from the condition thatdZ
+H(X, Y ) = η and com-
+pactnessof X and Y. Now, considerany(x, y), (x′, y′) ∈ R. Withoutlossofgenerality, weas-
+sume thatuX(x, x′) ≥ uY (y, y′). If uX(x, x′) = uY (y, y′), thenΛ∞(uX(x, x′), uY (y, y′)) = 0.
+So we further assume thatuX(x, x′) > uY (y, y′). Then,
+Λ∞(uX(x, x′), uY (y, y′)) = uX(x, x′) = uZ(x, x′)
+≤ max(uZ(x, y), uZ(y, y′), uZ(y′, x′))
+≤ max(uZ(x, y), uZ(x′, y′)) ≤ η.
+In the second inequality we used the assumption that uX(x, x′) > u Y (y, y′). Thus, by
+taking supremum over all pairs(x, y), (x′, y′) ∈ R, one has dis∞(R) ≤ η. Then, we obtain
+that uGH(X, Y ) = infR dis∞(R) ≤ d
+(∞)
+GH(X, Y ).
+For the reverse inequality, letR be an arbitrary correspondence betweenX and Y.
+Let η := dis∞(R). Deﬁne a functionu : X ⊔ Y × X ⊔ Y → R≥0 as follows:
+1. u|X×X := uX and u|Y×Y := uY;
+2. for any (x, y) ∈ X × Y, u(x, y) := inf(x′,y′)∈R max(uX(x, x′), uY (y′, y), η);
+3. for any (y, x) ∈ Y × X, u(y, x) := u(x, y).
+Now we show thatu is an ultrametric on the disjoint unionX ⊔Y. Because of the symmetric
+roles of X and Y, we only need to verify the following two cases:
+PAGE 56
+JoCG 14(1), 78–143, 2023 133
+Journal of Computational Geometry jocg.org
+Case 1: ∀x, x′ ∈ X and ∀y ∈ Y, u(x, y) ≤ max(u(x, x′), u(x′, y));
+Case 2: ∀x, x′ ∈ X and ∀y ∈ Y, u(x, x′) ≤ max(u(x, y), u(x′, y)).
+For Case 1,
+max(u(x, x′), u(x′, y)) = max
+(
+u(x, x′), inf
+(x1,y1)∈R
+max(uX(x′, x1), uY (y1, y), η)
+)
+= inf
+(x1,y1)∈R
+max
+(
+u(x, x′), uX(x′, x1), uY (y1, y), η
+)
+≥ inf
+(x1,y1)∈R
+max (uX(x, x1), uY (y1, y), η)
+= u(x, y).
+For Case 2,
+max
+(
+inf
+(x1,y1)∈R
+max (uX(x, x1), uY (y1, y), η) , inf
+(x2,y2)∈R
+max
+(
+uX(x2, x′), uY (y2, y), η
+))
+= inf
+(x1,y1),(x2,y2)∈R
+max
+(
+uX(x, x1), uY (y1, y), η, uX(x2, x′), uY (y2, y), η
+)
+≥ inf
+(x1,y1),(x2,y2)∈R
+max
+(
+uX(x, x1), uX(x2, x′), uY (y1, y2), η
+)
+≥ inf
+(x1,y1),(x2,y2)∈R
+max
+(
+uX(x, x1), uX(x2, x′), uX(x1, x2)
+)
+≥ uX(x, x′) = u(x, x′).
+Thesecondinequalityabovefollowsfromthefactthat Λ∞(uX(x1, x2), uY (y1, y2)) ≤ dis∞(R) =
+η and Equation (7).
+Notethat u(x, y) = η forevery (x, y) ∈ R. Therefore, d
+(∞)
+GH(X, Y ) ≤ d(X⊔Y,u)
+H (X, Y ) =
+η. This implies thatd
+(∞)
+GH(X, Y ) ≤ infR dis∞(R) = uGH(X, Y ).
+C.2 Proofs from Section 5
+C.2.1 Proof of Theorem 37 (Time complexity of Algorithm FindCorrRec (Algorithm
+2))
+Lemma 83 (Inheritance of the FGC). Let X and Y be ﬁnite ultrametric spaces such that
+X, Y ∈ U 1(ε, γ). Assume that 0 ≤ diam(Y ) − diam(X) ≤ ε and that diam(Y ) > ε. Write5
+Xo(δε(Y )) = {Xi}i∈[NX] and Yo(δ0(Y )) = {Yj}j∈[NY ]. Then, given any surjectionΨ : [NX] ↠
+[NY ], for eachj ∈ [NY ], we have thatXΨ−1(j) ∈ U1(ε, γ) and Yj ∈ U1(ε, γ).
+Proof. We ﬁrst prove thatYj ∈ U 1(ε, γ). For any y ∈ Yj, note thatYj = [y]Y
+o(δ0(Y )). Given
+any t ≥ ε, if t ≤ δ0(Y ), then we easily see that[y]Yj
+o(t−ε) = [y]Y
+o(t−ε). Then,
+#[y]Yj
+c(t) ≤ #[y]Y
+c(t) ≤ γ · #[y]Y
+o(t−ε)
+  
+FGC
+= γ · #[y]Yj
+o(t−ε).
+5Recall thatδε(Y ) := diam(Y )−ε and in particular,δ0(Y ) = diam(Y ).
+PAGE 57
+JoCG 14(1), 78–143, 2023 134
+Journal of Computational Geometry jocg.org
+Otherwise, if t > δ 0(Y ), we then have that[y]Yj
+c(t) = Yj = [y]Yj
+c(δ0(Y )). Then,
+#[y]Yj
+c(t) = #[y]Yj
+c(δ0(Y )) ≤ γ · #[y]Yj
+o(δ0(Y )−ε) ≤ γ · #[y]Yj
+o(t−ε),
+where the ﬁrst inequality follows from the previous caset ≤ δ0(Y ). Therefore, Yj ∈ U1(ε, γ).
+We then prove thatXΨ−1(j) ∈ U 1(ε, γ). For XΨ−1(j), we choose any x ∈ XΨ−1(j)
+and any t ≥ ε. If t ≤ δ0(X), then it is easy to see that t − ε < δ ε(Y ). Therefore,
+[x]
+XΨ−1(j)
+o(t−ε) = [x]X
+o(t−ε) and thus
+#[x]
+XΨ−1(j)
+c(t) ≤ #[x]X
+c(t) ≤ γ · #[x]X
+o(t−ε)
+  
+FGC
+= γ · #[x]
+XΨ−1(j)
+o(t−ε) .
+If t > δ 0(X), then we have that[x]
+XΨ−1(j)
+c(t) = XΨ−1(j) = [x]
+XΨ−1(j)
+c(δ0(X)). Then,
+#[x]
+XΨ−1(j)
+c(t) = #[x]
+XΨ−1(j)
+c(δ0(X)) ≤ γ · #[x]
+XΨ−1(j)
+o(δ0(X)−ε) ≤ γ · #[x]
+XΨ−1(j)
+o(t−ε) ,
+where the ﬁrst inequality follows from the previous caset ≤ δ0(X). Therefore, XΨ−1(j) ∈
+U1(ε, γ).
+In this way, the inputs to each subproblem encountered while running Algorithm
+2 will satisfy the ﬁrst(ε, γ)-growth condition. This justiﬁes the analysis presented below
+regarding the number and the size of subproblems.
+Proof of Theorem 37.We are going to invoke the master theorem [12] in order to analyze
+the complexity of our recursive algorithm (Algorithm 2).
+Number of subproblems By the FGC (or Remark 36), we have thatmax(NX , NY ) ≤ γ.
+There will be at mostγγ surjections Ψ : [NX] ↠ [NY ]. For each such a surjection, Algorithm
+2 inspects NY (≤ γ) subproblems. Therefore, there are at mostγγ+1 subproblems.
+Size of a subproblem Fix a surjection Ψ : [ NX] ↠ [NY ]. For each k ∈ [NY ], we write
+Yk := [yk]Y
+o(δ0(Y )) for some yk ∈ Y. Then, for a ﬁxedj ∈ [NY ], we have that
+#Y = #[yj]Y
+o(δ0(Y )) +
+∑
+k∈[NY ]\{j}
+#[yk]Y
+o(δ0(Y )) ≥ #Yj + M − 1
+γ · #Y,
+where the last inequality follows from the FGC and the fact that[yk]Y
+δ0(Y )+ε = Y for each
+k ∈ [NY ]. Therefore, #Yj ≤
+(
+1 − M−1
+γ
+)
+· #Y. Now, regarding XΨ−1(j), since Ψ is a
+surjection and M ≥ 2, there exists i /∈ Ψ−1(j) such that Xi ∩ XΨ−1(j) = ∅. Assume
+Xi = [xi]X
+o(δε(Y )) for some xi ∈ X. Then,
+#[xi]X
+o(δε(Y )) ≥
+#[xi]X
+c(δε(Y )+ε)
+γ ≥
+#[xi]X
+o(δε(Y )+ε)
+γ ≥
+#[xi]X
+c(δε(Y )+2ε)
+γ2 = #X
+γ2 ,
+PAGE 58
+JoCG 14(1), 78–143, 2023 135
+Journal of Computational Geometry jocg.org
+where the last equality follows from the fact thatδε(Y ) + 2ε = diam( Y ) + ε > diam(X).
+Therefore,
+#XΨ−1(j) ≤ #X − #Xi
+(
+1 − 1
+γ2
+)
+#X.
+When γ ≥ 1, we have that1 − 1
+γ2 ≥ 1 − M−1
+γ . So, max(#XΨ−1(j), #Yj) ≤
+(
+1 − 1
+γ2
+)
+n and
+thus the size of a subproblem is bounded above by
+(
+1 − 1
+γ2
+)
+n.
+Base case complexity and other work If (X, Y, ε) is one of the base cases, it takes time at
+most O(n2) in order to either directly generate a correspondence or 0. In order to utilize the
+results from the subproblems, we need at mostO(n2) time to construct distance matrices
+uX and uY from TDSs in order to implement the unionsXΨ−1(j) (cf. Appendix A). It then
+takes time at mostO(n2) in total to construct all the unionsXΨ−1(j), Rj and R, and to
+transpose R when/if needed.
+Conclusion Denoteby W (n)thetimecomplexityofthealgorithmwhere n = max(#X, #Y ).
+Then,
+W (n) ≤ γγ+1 · W
+( n
+γ2/(γ2 − 1)
+)
++ O
+(
+n2)
+.
+Since by assumption thatγ ≥ 2, the critical exponentlog γ2
+γ2−1
+γγ+1 is strictly greater
+than 2. Therefore, by the master theorem we have thatW (n) = O
+(
+n(γ+1) logb(γ)γ
+)
+. This
+concludes the proof.
+C.2.2 Proof of Proposition 40
+In the following lemmas,we will always assume thatX and Y are ﬁnite ultrametric spaces
+and that there existsε ≥ 0 such that diam(X) > ε and diam(Y ) ≤ ε.
+Lemma 84. There exists anε-correspondence betweenX and Y if and only if there exists
+an ε-correspondence betweenXc(ε) and Y.
+Proof. Suppose that R is an ε-correspondence between X and Y. Then, we deﬁne the set
+Rε ⊆ Xc(ε) × Y as follows:
+Rε :=
+{(
+[x]X
+c(ε), y
+)
+∈ Xc(ε) × Y : ( x, y) ∈ R
+}
+.
+It is easy to verify thatRε is a correspondence betweenXc(ε) and Y. Now, for any two pairs
+PAGE 59
+JoCG 14(1), 78–143, 2023 136
+Journal of Computational Geometry jocg.org
+(
+[x]X
+c(ε), y
+)
+,
+(
+[x′]X
+c(ε), y′
+)
+∈ Rε, we have the following:
+⏐⏐⏐uXc(ε)
+(
+[x]X
+c(ε), [x′]X
+c(ε)
+)
+− uY (y, y′)
+⏐⏐⏐ =
+{
+|uX(x, x′) − uY (y, y′)| if [x]X
+c(ε) ̸= [x′]X
+c(ε)
+uY (y, y′) if [x]X
+c(ε) = [x′]X
+c(ε)
+≤
+{
+dis1(R) if [x]X
+c(ε) ̸= [x′]X
+c(ε)
+diam(Y ) if [x]X
+c(ε) = [x′]X
+c(ε)
+≤ ε
+Therefore, dis1(Rε) ≤ ε and thus Rε is an ε-correspondence between Xc(ε) and Y.
+Now for the converse, suppose that there exists anε-correspondence Rε between
+Xc(ε) and Y. Then, we deﬁneR ⊆ X × Y as follows:
+R :=
+{
+(x, y) ∈ X × Y :
+(
+[x]X
+c(ε), y
+)
+∈ R
+}
+.
+Itiseasytoverifythat Risacorrespondencebetween X and Y. Then, forany(x, y), (x′, y′) ∈
+R, if [x]X
+c(ε) ̸= [x′]X
+c(ε), we have
+|uX(x, x′) − uY (y, y′)| ≤
+⏐⏐⏐uXc(ε)
+(
+[x]X
+c(ε), [x′]X
+c(ε)
+)
+− uY (y, y′)
+⏐⏐⏐ ≤ dis1(Rε) ≤ ε.
+If [x]X
+c(ε) = [ x′]X
+c(ε), then uX(x, x′) ≤ ε. Moreover, uY (y, y′) ≤ diam(Y ) ≤ ε. Then,
+|uX(x, x′) − uY (y, y′)| ≤ ε. Therefore, dis1(R) ≤ ε and thus R is an ε-correspondence
+between X and Y. This concludes the proof.
+Lemma 85. For any ε-correspondence Rε between Xc(ε) and Y, there exists a surjectionψ
+from Y to Xc(ε) such that Rε = {(ψ(y), y) : y ∈ Y }.
+Proof. We ﬁrst show that if
+(
+[x]X
+c(ε), y
+)
+, ([x′]X
+c(ε), y) ∈ Rε, then [x]X
+c(ε) = [x′]X
+c(ε). Otherwise,
+suppose that[x]X
+c(ε) ̸= [x′]X
+c(ε), which is equivalent to the condition thatuX(x, x′) > ε. Then,
+ε ≥ dis1(Rε) ≥
+⏐⏐uXc(ε)
+(
+[x]X
+c(ε), [x′]X
+c(ε)
+)
+− uY (y, y)
+⏐⏐ = uX(x, x′) > ε,
+which is a contradiction! Then, Rε naturally induces a well-deﬁned map ψ : Y → Xc(ε)
+taking y ∈ Y to [x]X
+c(ε) such that
+(
+[x]X
+c(ε), y
+)
+∈ Rε. It is easy to check thatψ is surjective
+and that Rε = {(ψ(y), y) : y ∈ Y }.
+Recall from Section 5.2.5 that sep(X) := min {dX(x, x′) : x, x′ ∈ X and x ̸= x′}
+denotes theseparation of a ﬁnite metric space(X, dX).
+Lemma 86.Assume thatsep(X) > ε. Then any injective mapϕ : X → Y with dis1(ϕ) ≤ ε
+induces an ε-correspondence betweenX and Y.
+Proof. Suppose X = {x1, . . . , xn} and im(ϕ) = {y1, . . . , yn} where yi = ϕ(xi) for every
+i = 1, . . . , n. For anyy ∈ Y, deﬁne
+iy := min
+{
+argmin
+j=1,...,n
+uY (y, yj)
+}
+.
+PAGE 60
+JoCG 14(1), 78–143, 2023 137
+Journal of Computational Geometry jocg.org
+Obviously, iyj = j. Then, we deﬁneR ⊆ X × Y as follows:
+R := {(xiy , y) ∈ X × Y : ∀y ∈ Y }.
+It is easy to check that R is a correspondence. Now, we verify that dis1(R) ≤ ε. Let
+(xi, y), (xj, y′) ∈ R, where i = iy and j = iy′. If i = j, then |uX(xi, xi) − uY (y, y′)| =
+uY (y, y′) ≤ diam(Y ) ≤ ε. Now assumei ̸= j. It is obvious that(xi, yi), (xj, yj) ∈ R and thus
+uX(xi, xj) − uY (yi, yj) ≤ dis1(ϕ) ≤ ε. Since uX(xi, xj) − uY (y, y′) ≥ sep(X) −diam(Y ) ≥ 0,
+the inequality |uX(xi, xj) − uY (y, y′)| ≤ ε follows from the following observation:
+Claim 87. For y, y′ ∈ Y, if iy ̸= iy′, then uY (y, y′) ≥ uY (yi, yj) where i := iy and j := iy′.
+Proof of Claim 87.Suppose otherwise that uY (y, y′) < uY (yi, yj). If uY (yi, y) ≤ uY (y, y′),
+then
+uY (y′, yi) ≤ max(uY (y, y′), uY (y, yi)) ≤ uY (y, y′).
+By deﬁnition ofj = iy′, we have thatuY (yj, y′) ≤ uY (yi, y′) ≤ uY (y, y′). Then, uY (yi, yj) ≤
+max(uY (yi, y′), uY (y′, yj)) ≤ uY (y, y′), which is a contradiction. Therefore, uY (yi, y) >
+uY (y, y′) and similarly uY (yj, y′) > uY (y, y′). Then, by the strong triangle inequality we
+have that uY (y, yi) = uY (y′, yi) and uY (y, yj) = uY (y′, yj). By deﬁnition of i = iy and
+j = iy′, we have that
+uY (y, yj) = uY (y′, yj) ≤ uY (y′, yi) = uY (y, yi),
+which implies thatj ∈ argmink=1,...,n uY (y, yk) and thus j > i . However, we can similarly
+prove that i > j, which is a contradiction. Therefore,uY (y, y′) ≥ uY (yi, yj).
+Proof of Proposition 40.By Lemma 84, we only need to prove that there exists an ε-
+correspondencebetween Xc(ε) and Y ifandonlyifthereexistsaninjectivemap ϕ : Xc(ε) → Y
+with dis1(ϕ) ≤ ε.
+Assuming the existence of such a correspondence Rε, then by Lemma 85, there
+exists a surjection ψ : Y ↠ Xc(ε) such that Rε = {(ψ(y), y) : y ∈ Y }. Then, we construct
+an injective mapϕ : Xc(ε) → Y by mapping each[x]X
+c(ε) ∈ Xc(ε) to y, where y is arbitrarily
+chosen from ψ−1
+(
+[x]X
+c(ε)
+)
+. Then, dis1(ϕ) ≤ dis1(ψ) ≤ ε.
+Now, assume that there exists an injective mapϕ : Xc(ε) → Y with dis1(ϕ) ≤ ε.
+Obviously, we havesep(Xc(ε)) > ε, and thus, by Lemma 86, there exists a correspondence
+Rε between Xc(ε) and Y with dis1(Rε) ≤ ε.
+C.2.3 Proof of Remark 38
+We ﬁrst establish the following characterization of elements inV (ε)
+X .
+Lemma 88. Let X be a ﬁnite ultrametric space and letε ≥ 0. Then, a subset UX ⊆ X
+belongs toV (ε)
+X if and only ifUX contains allx ∈ X such thatuX
+(
+x, UX )
+< diam
+(
+UX )
+−2ε,
+where uX
+(
+x, UX ):= min
+{
+uX(x, x′) : x′ ∈ UX }
+.
+PAGE 61
+JoCG 14(1), 78–143, 2023 138
+Journal of Computational Geometry jocg.org
+Proof. If UX ∈ V (ε)
+X , thenUX is anε-maximal union of closed balls inBX ⊆ X (cf. Section
+5.2.3): write BX
+o(δ+
+2ε(BX)) = {BX
+1 , . . . , BX
+N }, where δ+
+2ε
+(
+BX ):= max
+(
+diam
+(
+BX )
+− 2ε, 0
+)
+;
+then, UX = ⋃
+i∈I BX
+i forsomenon-empty I ⊆ {1, . . . , N}and UX satisﬁesthat diam
+(
+UX )
+=
+diam
+(
+BX )
+. Without loss of generality, we assume that diam
+(
+UX )
+− 2ε > 0. Given
+any x ∈ X such that uX
+(
+x, UX )
+< diam
+(
+UX )
+− 2ε, there exists x′ ∈ UX such that
+uX(x, x′) < diam
+(
+UX )
+− 2ε = diam(BX) − 2ε. Since x′ ∈ UX ⊆ BX, x′ ∈ BX
+i for some
+i ∈ I. Then,
+BX
+i = [x′]X
+o(δ+
+2ε(BX)) = {x′′ ∈ X : uX(x′, x′′) < diam(BX) − 2ε}.
+Therefore, x ∈ BX
+i ⊆ UX.
+Now, let UX ⊆ X be a subset containing all x ∈ X such that uX
+(
+x, UX )
+<
+diam
+(
+UX )
+− 2ε. For anyx ∈ UX, consider the ballBX := [x]X
+c(δ), whereδ := diam
+(
+UX )
+. It
+is obvious thatUX ⊆ BX and diam(UX) = diam(BX). If diam
+(
+UX )
+≤ 2ε, thenδ+
+2ε(BX) =
+0. Therefore, BX
+o(δ+
+2ε(BX)) = {{x} : x ∈ BX } and thus obviously,UX ∈ BX
+(ε) ⊆ V (ε)
+X . Now,
+assume that diam
+(
+UX )
+> 2ε. Then, δ+
+2ε(BX) = diam( BX) − 2ε = diam
+(
+UX )
+− 2ε. By
+assumption we have that for eachx ∈ UX
+[x]X
+o(δ+
+2ε(BX)) = {x′ ∈ X : uX(x, x′) < diam
+(
+UX )
+− 2ε} ⊆ UX .
+This implies that
+UX =
+⋃
+x∈UX
+[x]X
+o(δ+
+2ε(BX)).
+So UX is the union of some elements inBX
+o(δ+
+2ε(BX)) and thus UX ∈ BX
+(ε) ⊆ V (ε)
+X .
+Proof of Remark 38.Let UX ∈ V (ε)
+X andlet BY ∈ VY besuchthat |diam
+(
+UX )
+−diam
+(
+BY )
+| ≤
+ε and diam
+(
+BY )
+> ε . Let UX
+o(δε(BY )) =
+{
+UX
+1 , . . . , UX
+NUX
+}
+. For any subset I ⊆ [NUX]
+(which can be a singleton), we will prove next that the unionUX
+I := ⋃
+i∈I UX
+i belongs
+to V (ε)
+X . For any x ∈ X, suppose that there is x′ ∈ UX
+i ⊆ UX
+I such that uX(x, x′) <
+diam(UX
+I ) − 2ε ≤ diam
+(
+UX )
+− 2ε. Then, x ∈ UX since UX ∈ V (ε)
+X (cf. Lemma 88). Now,
+uX(x, x′) < diam(UX
+I ) − 2ε ≤ diam
+(
+UX )
+− 2ε ≤ δε
+(
+BY )
+. So x and x′ belong to the same
+block in UX
+o(δε(BY )) and thus x ∈ UX
+i . Therefore, x ∈ UX
+I and thus by Lemma 88 we have
+that UX
+I ∈ V (ε)
+X .
+C.2.4 Proof of Theorem 41 (correctness of Algorithm FindCorrDP (Algorithm 4))
+Proof. Weproveamoregeneralresult, namelythatforany
+(
+UX , BY )
+∈ V (ε)
+X ×VY, DYN
+(
+UX , BY )
+=
+1 if and only if there exists anε-correspondence between UX and BY.
+If
+(
+UX , BY )
+belongs to one of the base cases, the statement is obviously true. For
+non-base cases, we prove the claim by induction ondiam
+(
+BY )
+∈ spec(Y ). For this, we
+PAGE 62
+JoCG 14(1), 78–143, 2023 139
+Journal of Computational Geometry jocg.org
+exploit the fact that the spectrumspec(Y ) = {0 = t0 < · · · < tM = diam(Y )} is a ﬁnite set.
+When diam
+(
+BY )
+= t0 = 0, for anyUX,
+(
+UX , BY )
+belongs to one of the base cases, so the
+statement holds true trivially. Let1 < i 0 ≤ M and suppose that the claim holds true for
+all ti when i < i 0 and all DYN
+(
+UX , BY )
+are known wheneverdiam
+(
+BY )
+< ti0. Then, the
+induction step follows directly from Theorem 5 and Proposition 40. We elaborate this via
+the two cases described in page 27 as follows:
+1. If diam
+(
+BY )
+> ε , Algorithm FindCorrDP partitions UX and BY to obtain
+UX
+o(δε(BY )) = {UX
+i }i∈[NUX ] and BY
+o(δ0(BY )) = {BY
+j }j∈[NBY ], respectively. It is ob-
+vious thatBY
+j ∈ VY for eachj ∈ [NBY ], and by Remark 38 we know thatUX
+i ∈ V (ε)
+X
+for each i ∈ [NUX]. Since diam(BY
+j ) < diam
+(
+BY )
+= ti0 for each j ∈ [NBY ], by the
+induction assumption, the valueDYN
+(
+UX
+Ψ−1(j), BY
+j
+)
+has already been computed for
+any surjection Ψ : [ NUX] → [NBY ] so we already know whether or not there exists
+any ε-correspondence between UX
+Ψ−1(j) and BY
+j . DYN
+(
+UX , BY )
+is then determined
+via Theorem 5: this value is 1 if there exists anε-correspondence between UX and
+BY, and is 0 otherwise.
+2. If diam
+(
+BY )
+≤ ε, AlgorithmFindCorrDPassignsthevalue FindCorrSmall(UX , BY , ε)
+to DYN
+(
+UX , BY )
+. Then, due to Proposition 40,DYN
+(
+UX , BY )
+= 1 if and only if
+there exists anε-correspondence between UX and BY.
+Since we know thatX and Y are at the end of the arraysLX(ε) and LY, respectively,
+then DYN(END, END) = 1 if and only if there exists anε-correspondence between X and
+Y.
+C.2.5 Proof of Remark 45
+Proof. Let X be a ﬁnite ultrametric space such thatX ∈ U2(ε, γ) for someε ≥ 0 and γ ≥ 1.
+For any x ∈ X and any r > diam(X), we have that Br(x) = X = Bdiam(X)(x). So if
+Bdiam(X)(x) can be covered byK many balls with radius diam(X)
+2 , then it is obvious that
+Br(x) can also be covered byK balls with radiusr
+2 > diam(X)
+2 . Therefore, to determine the
+doubling constant ofX, we only need to consider a radiusr within the range(0, diam(X)].
+Let k = ⌊ r
+4ε ⌋ + 1, then k is the unique integer such thatr − 2ε · k < r
+2 ≤ r − 2ε · (k − 1).
+We assume thatr − 2ε · k ≥ 0 (the case whenr − 2ε · k < 0 can be proved similarly and we
+omit the details). Then, by the SGC we have that
+#
+{
+[x′]c(r
+2) : x′ ∈ [x]c(r)
+}
+≤ #
+{
+[x′]c(r−2ε·k) : x′ ∈ [x]c(r)
+}
+≤ #
+{
+[x′]o(r−2ε·k) : x′ ∈ [x]c(r)
+}
+≤ γ · #
+{
+[x′]c(r−2ε·(k−1)) : x′ ∈ [x]c(r)
+}
+≤ γ · #
+{
+[x′]o(r−2ε·(k−1)) : x′ ∈ [x]c(r)
+}
+≤ · · · ≤ γk−1 · #
+{
+[x′]c(r−2ε) : x′ ∈ [x]c(r)
+}
+≤ γk.
+Since Br(x) = [x]c(r) and Br
+2
+(x′) = [x′]c(r
+2), we have thatBr(x) can be covered by a union
+of at most γk balls with radius r
+2: [x]c(r) = ∪x′∈[x]c(r)[x′]c(r
+2). Since k ≤ ⌊ diam(X)
+4ε ⌋ + 1 for
+each r ∈ (0, diam(X)], we have thatX is γ⌊ diam(X)
+4ε ⌋+1-doubling.
+PAGE 63
+JoCG 14(1), 78–143, 2023 140
+Journal of Computational Geometry jocg.org
+Conversely, suppose thatX is K-doubling. Then, for any x ∈ X and t > 0, there
+exist x1, . . . , xn such that n ≤ K and Bt(x) ⊆ ∪ n
+i=1Bt
+2
+(xi). Without loss of generality,
+we assume that Bt
+2
+(xi) ∩ Bt(x) ̸= ∅ for each i = 1 , . . . , n. Then, by Proposition 8, we
+have that [xi]c(t
+2) = Bt
+2
+(xi) ⊆ Bt(x) = [ x]c(t). Therefore, [xi]c(t
+2) ⊆ [xi]o(t) ⊆ [x]c(t). Since
+[x]c(t) ⊆ ∪n
+i=1[xi]c(t
+2) ⊆ ∪n
+i=1[xi]o(t), we have that
+#
+{
+[x′]o(t) : x′ ∈ [x]c(t)
+}
+≤ n ≤ K.
+This implies thatX ∈ U2(0, K).
+C.2.6 Proof of Theorem 46 (Time complexity of Algorithm FindCorrDP (Algorithm
+4))
+Lemma 89(Time complexity of AlgorithmFindCorrSmall (Algorithm 3)). Algorithm 3
+runs in timeO(n2nn) where n := max(#X, #Y ).
+Proof. ClosedQuotient(X, ε) runs in timeO(n) (cf. Appendix A). There are at mostnn
+injective maps and for each injective mapΦ : Xc(ε) → Y, we needO(n2) time to compute
+dis1(Φ). Therefore, Algorithm 3 runs in time bounded byO(n2nn).
+Lemma 90(Inheritance of the SGC). If X satisﬁes the second(ε, γ)-growth condition, then
+so does eachUX ∈ V (ε)
+X and in particular, so does each ballBX ∈ VX.
+Proof. Let UX ∈ V (ε)
+X . Fix a t ≥ 2ε and x ∈ UX. Note that for two distinct points
+x′, x′′ ∈ [x]UX
+c(t), [x′]UX
+o(t−2ε) ̸= [x′′]UX
+o(t−2ε) if and only ifuUX(x′, x′′) = uX(x′, x′′) ≥ t − 2ε. This
+is then also equivalent to the condition[x′]X
+o(t−2ε) ̸= [x′′]X
+o(t−2ε). Then, we have that
+#
+{
+[x′]UX
+o(t−2ε) : x′ ∈ [x]UX
+c(t)
+}
+≤ #
+{
+[x′]X
+o(t−2ε) : x′ ∈ [x]X
+c(t)
+}
+≤ γ.
+This concludes the proof thatUX ∈ U2(ε, γ).
+Lemma 91. Let X and Y be two ﬁnite ultrametric spaces. Then, #VX = O(#X) and
+#VY = O(#Y ). If X ∈ U2(ε, γ), then #V (ε)
+X = O(#X · 2γ).
+Proof. By Remark 63, we have that#VX = O(#X) and #VY = O(#Y ).
+V (ε)
+X is deﬁned in Section 5.2.3 as:V (ε)
+X := ⋃
+BX∈VX BX
+(ε). For notational simplicity,
+we let δ+
+2ε := δ+
+2ε
+(
+BX )
+. Each BX
+(ε) is a collection of unions of elements inBX
+o(δ+
+2ε) and thus
+BX
+(ε) is a subset of the power set2
+BX
+o(δ+
+2ε). Since BX is a closed ball inX, BX = [x]X
+c(δ0(BX))
+for some x ∈ X. By the second(ε, γ)-growth condition, we have that
+#BX
+o(δ+
+2ε) = #
+{
+[x′]X
+o(δ+
+2ε) : x′ ∈ [x]X
+c(δ0(BX))
+}
+≤ γ
+and thus#2
+BX
+o(δ+
+2ε) ≤ 2γ. Then, by#VX = O(#X), we have#V (ε)
+X = O(#X · 2γ).
+PAGE 64
+JoCG 14(1), 78–143, 2023 141
+Journal of Computational Geometry jocg.org
+Proof of Theorem 46.Preprocessing. In order to implement the union operation (cf. Ap-
+pendix A.3) eﬃciently, we will reconstruct the distance matricesuX and uY from the TDSs
+TX and TY, respectively. This process takes time at mostO(n2) (cf. Remark 67). LX(ε)
+and LY can be constructed in timeO
+(
+n2 log(n)2γγ2)
+(cf. Appendix A.4). We create an
+all-zero matrix DYN of size #LX(ε) × #LY in time O(n22γ).
+Main part of the algorithm.For eachBY ∈ LY, we have the following cases for
+UX ∈ LX(ε):
+1. |diam
+(
+UX )
+− diam
+(
+BY )
+| > ε or max(diam
+(
+UX )
+, diam
+(
+BY )
+) ≤ ε: It takes con-
+stant time to assign either 0 or 1 toDYN(UX , BY ) based on this.
+2. diam
+(
+BY )
+≤ ε < diam
+(
+UX )
+: In this case, both diam
+(
+UX )
+and diam
+(
+BY )
+are
+bounded above by2ε (since the pair
+(
+UX , BY )
+does not satisfy the condition in the
+ﬁrst case). Then, by the SGC and Lemma 90, it is easy to check that#UX , #BY ≤
+γ. Thus, by Lemma 89, AlgorithmFindCorrSmall with input(UX , BY , ε) runs in
+time O(γ2γγ).
+3. diam
+(
+BY )
+> ε: In this case, by the SGC and Lemma 90, it takes at mostO(γ)
+time to partition both UX and BY via Algorithm OpenPartition (Algorithm 7)
+into at mostγ blocks, respectively. We then have at mostγγ surjections to consider.
+Given any such surjectionΨ, for eachj ∈ [NY ] let kj := #{UX
+i }i∈Ψ−1(j). Then, it
+takes time at most O(k2
+j + γkj) = O(γkj) to construct the union UX
+Ψ−1(j) via the
+reﬁned union operation discussed in Appendix A.3 (see also Appendix A.4.2). It
+takes time at mostO(γ log(γ)) to ﬁnd the index ofUX
+Ψ−1(j) in LX(ε) and constant
+time to ﬁnd the index ofBY
+j in LY (cf. Appendix A.4.1). Therefore, accessing the
+value DYN
+(
+UX
+Ψ−1(j), BY
+j
+)
+has cost at mostO(γ log(γ)). Then, the time complexity
+for accessing values inDYN for the surjectionΨ is at most
+∑
+j
+O(γkj log(γ)) = O(γ2 log(γ)),
+where we use the fact that∑
+j kj = O(γ). Therefore, the total time complexity of
+this case is bounded byO(γγ+2 log(γ))
+Therefore for a single BY ∈ LY, completing all the operations taking place be-
+tween line 4 and line 22 of Algorithm 4 requires at most timeO(n2γ) × O(γγ+2 log(γ)) =
+O
+(
+n2γγγ+2 log(γ)
+)
+. Then, completing the for-loop in line 3 of Algorithm 4 requires requires
+at most time
+O(n) × O
+(
+n2γγγ+2 log(γ)
+)
+= O
+(
+n22γγγ+2 log(γ)
+)
+operations to ﬁll out the matrixDYN.
+Total time complexity.By combining the time complexity of the preprocessing
+part, we have that the total time complexity of Algorithm 4 is bounded by
+O
+(
+n2 log(n)2γγ2)
++ O(n22γ) + O
+(
+n22γγγ+2 log(γ)
+)
+= O
+(
+n2 log(n)2γγγ+2)
+.
+This concludes the proof.
+PAGE 65
+JoCG 14(1), 78–143, 2023 142
+Journal of Computational Geometry jocg.org
+C.2.7 Proof of Remark 50
+Let E(X, Y ) = {ε0 < ε 1 < . . . < ε M }. Observe that for each εi, since the number of all
+vertices in TX or TY are bounded above by 2n, γεi(X, Y ) := max( γεi(X), γεi(Y )) takes
+values in {1, 2, . . . ,2n}. It is obvious that for eachk ∈ { 1, 2, . . . ,2n}, the set of εis such
+that γεi(X, Y ) = k is an interval, i.e., a consecutive subsequence ofE(X, Y ), denoted by
+[εℓk , . . . , εrk]. Note that ε := 2dGH(X, Y ) ∈ E (X, Y ). Then, there exists i ∈ { 0, 1, . . . , M}
+such that εi = ε. It is obvious that i is the smallest index such that there exists aεi-
+correspondence between X and Y. In order to ﬁnd the index i (and thus to compute
+dGH(X, Y )), we apply the same procedure as in the proof of [15, Theorem 5] to search in
+{1, . . . ,2n} for the smallest numberk∗ such that{εℓk∗ , . . . , εrk∗ } ∩[ε, ∞) is non-empty. This
+k∗ satisﬁes the condition k∗ = γε(X, Y ) and ℓk∗ ≤ i ≤ rk∗. Then, we apply binary search
+to ﬁnd the index i. Via an argument similar to the one stated in [15, Theorem 5], this
+whole process for ﬁnding i can be completed in timeO
+(
+n2 log3(n)22k∗
+(2k∗)2k∗+2)
+. Since
+X, Y ∈ U 2(ε, γ), we have thatγ ≥ γε(X, Y ) = k∗. Therefore, we conclude that the exact
+value dGH(X, Y ) can be computed in time complexity at mostO
+(
+n2 log3(n)22γ(2γ)2γ+2)
+.
+C.2.8 Proof of Lemma 54
+Proof. Pick any positive real numbert ≥ 2ε. By Proposition 52 we have that∥dX −u∗
+X ∥∞ =
+δ. Then, B
+u∗
+X
+t (x) ⊆ BdX
+t+δ(x) for anyx ∈ X and t ≥ 0. Here Bd
+t (x) := {x′ ∈ X : d(x, x′) ≤ t}
+represents the closed ball centered atx with radius t with respect to the metricd. For later
+use, we letBd
+o(t)(x) := {x′ ∈ X : d(x, x′) < t} denote an open ball. Sinceu∗
+X ≤ dX, we have
+that BdX
+t (x) ⊆ B
+u∗
+X
+t (x).
+We ﬁrst assume that t+δ
+2 < t − 2ε. Since (X, dX) is K-doubling, there exist
+x1, . . . , xK ∈ X such that BdX
+t+δ(x) ⊆ ⋃K
+i=1 BdX
+t+δ
+2
+(xi). For eachxi, we have that
+BdX
+t+δ
+2
+(xi) ⊆ B
+u∗
+X
+t+δ
+2
+(xi) ⊆ B
+u∗
+X
+o(t−2ε)(xi),
+where the last inclusion follows from the assumption thatt+δ
+2 < t − 2ε. Then, we have that
+B
+u∗
+X
+t (x) ⊆ BdX
+t+δ(x) ⊆
+K⋃
+i=1
+BdX
+t+δ
+2
+(xi) ⊆
+K⋃
+i=1
+B
+u∗
+X
+o(t−2ε)(xi).
+Using the notation for open and closed equivalence relations for ultrametric spaces, we
+conclude that [x]c(t) ⊆ ⋃K
+i=1[xi]o(t−2ε) which implies that
+#
+{
+[x′]o(t−2ε) : x′ ∈ [x]c(t)
+}
+≤ K.
+Now, we assume that t+δ
+2 ≥ t − 2ε (equivalently t ≤ δ + 4ε). First note that
+s := sep(X, dX) = sep( X, uX). Then, if t + δ < s , we have thatB
+u∗
+X
+t (x) = BdX
+t (x) = {x}.
+Hence,
+#
+{
+[x′]o(t−2ε) : x′ ∈ [x]c(t)
+}
+≤ 1.
+PAGE 66
+JoCG 14(1), 78–143, 2023 143
+Journal of Computational Geometry jocg.org
+Otherwise, we assume thatt + δ ≥ s. Then, we let k ∈ N be such that t+δ
+2k < s ≤ t+δ
+2k−1.
+Equivalently, we have
+k − 1 ≤ log2
+(t + δ
+s
+)
+< k.
+By theK-doubling property of(X, dX), we have thatBdX
+t+δ(x) can be covered by at mostKk
+many balls with radiust+δ
+2k . Since t+δ
+2k < s, these balls are singletons and thus#BdX
+t+δ(x) ≤
+Kk. Therefore,
+#B
+u∗
+X
+t (x) ≤ #BdX
+t+δ(x) ≤ Kk ≤ Klog2(t+δ
+s )+1 ≤ Klog2( 2δ+4ε
+s )+1,
+where we use the assumptiont ≤ δ + 4ε in the last inequality. Consequently,
+#
+{
+[x′]o(t−2ε) : x′ ∈ [x]c(t)
+}
+≤ Klog2( 2δ+4ε
+s )+1.
+In conclusion, for anyx ∈ X and any r ≥ 2ε we have that
+#
+{
+[x′]o(t−2ε) : x′ ∈ [x]c(t)
+}
+≤ max
+(
+K, Klog2( 2δ+4ε
+s )+1
+)
+,
+and thus(X, u∗
+X) ∈ U2
+(
+ε, max
+(
+K, Klog2( 2δ+4ε
+s )+1
+))
+.

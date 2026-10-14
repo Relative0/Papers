@@ -1,0 +1,401 @@
+## 2. Unified carrier-level calculus
+
+Let \(\Omega\) be a finite world/valuation carrier, \(S\subseteq\Omega\) the current support, and \(\Phi\) a finite family of Boolean observations.
+
+For one observation \(\theta\), define its two-level preorder
+
+\[
+x\preceq_\theta y
+\iff
+\theta(x)\le\theta(y).
+\]
+
+Then
+
+\[
+\preceq_{\Phi,S}
+=
+(S\times S)\cap\bigcap_{\phi\in\Phi}\preceq_\phi.
+\]
+
+### U1. Unified preorder-thinning theorem
+
+For \(\Phi\subseteq\Psi\) and \(T\subseteq S\),
+
+\[
+\preceq_{\Psi,S}\subseteq\preceq_{\Phi,S},
+\qquad
+\preceq_{\Phi,T}=\preceq_{\Phi,S}\cap(T\times T),
+\]
+
+and
+
+\[
+\preceq_{\Psi,T}
+=
+\preceq_{\Psi,S}\cap(T\times T)
+=
+\bigl(\preceq_{\Phi,S}\cap(T\times T)\bigr)
+\cap \preceq_{\Psi\setminus\Phi,T}.
+\]
+
+**Proof.** Coordinatewise inclusion under a larger observation family adds inequalities that must be satisfied; hence relations can only be deleted. Restricting the world set deletes vertices and all incident ordered pairs. Intersections of binary relations are associative and commutative. \(\square\)
+
+### Interpretation
+
+- **Pre-\(T_0\) splitting** = deletion of symmetric relations inside an old equivalence class.
+- **Post-\(T_0\) thinning** = deletion of asymmetric/strict relations between already distinct states.
+- **Conditioning** = vertex deletion in the same preorder.
+
+This is the cleanest single calculus found in the investigation.
+
+### A globally monotone relation count
+
+Define
+
+\[
+C(S,\Phi)
+=
+|\{(x,y)\in S^2:x\neq y,\ x\preceq_\Phi y\}|.
+\]
+
+Then \(C\) is nonincreasing under both observation refinement and support restriction. It remains informative on both sides of the \(T_0\) boundary, unlike the partition ambiguity \(A_2\), which becomes zero at \(T_0\).
+
+For interpretation it is better to retain two components:
+
+\[
+A_{\rm eq}(S,\Phi)
+=
+\sum_{C\in S/\!\equiv_\Phi}{|C|\choose2},
+\]
+
+which counts indistinguishable unordered pairs, and the residual directed-comparability data of \(\preceq_\Phi\). Refinement can convert an indistinguishable pair into a one-way comparable pair or an incomparable pair; after \(T_0\), only the latter order-thinning mechanism remains.
+
+---
+
+## 3. Quotient layer and the \(T_0\) phase transition
+
+Let
+
+\[
+P_{\Phi,S}=S/{\equiv_\Phi}\cong o_\Phi(S)
+\]
+
+with the induced coordinatewise order. This is the realized-signature poset / Kolmogorov quotient.
+
+### U2. Quotient interpretation theorem
+
+The passage
+
+\[
+(S,\preceq_{\Phi,S})\longmapsto P_{\Phi,S}
+\]
+
+turns a single relation-thinning operation into two visible effects:
+
+1. if \(\equiv_\Phi\) strictly refines, quotient vertices split;
+2. among the resulting quotient vertices, some old comparabilities can disappear.
+
+The state is relatively \(T_0\) on \(S\) iff \(\equiv_\Phi\) is equality on \(S\), equivalently iff \(o_\Phi|_S\) is injective. At such a state, later refinement cannot split quotient vertices.
+
+### Important consequence for adaptive protocols
+
+\(T_0\) should be treated **branch-locally**. A global interface may fail to be \(T_0\) on \(\Omega\), while after several outcomes the restricted interface can already be \(T_0\) on the surviving support \(S_h\). From that node onward, no further observation can increase Boolean distinguishability among the surviving worlds; further refinement can only alter the positive observation order/topology.
+
+This produces a natural **branch-local \(T_0\) frontier** in an adaptive decision tree.
+
+---
+
+## 4. Canonical factorization: fiber expansion followed by descent thinning
+
+Let \(\Psi=(\Phi,\Theta)\) where \(\Theta\) is a block of new Boolean observations. Write
+
+\[
+P=P_{\Phi,S}.
+\]
+
+For each coarse signature \(p\in P\), let
+
+\[
+C_p=\{x\in S:o_\Phi(x)=p\}
+\]
+
+and define the new-coordinate fiber profile
+
+\[
+B_p
+=
+\{\alpha_\Theta(x):x\in C_p\}
+\subseteq\{0,1\}^{\Theta}.
+\]
+
+The refined signature poset is
+
+\[
+Q=P_{\Psi,S}
+\cong
+\{(p,a):p\in P,\ a\in B_p\},
+\]
+
+with
+
+\[
+(p,a)\le_Q(q,b)
+\iff
+p\le_P q\ \text{and}\ a\le b.
+\]
+
+Now define the **fiber-expansion poset**
+
+\[
+F=\sum_{p\in P} B_p,
+\]
+
+the lexicographic sum of the fiber-profile posets over \(P\). Explicitly,
+
+\[
+(p,a)\le_F(q,b)
+\iff
+\begin{cases}
+a\le b,&p=q,\\
+\text{true},&p<q,\\
+\text{false},&p\parallel q.
+\end{cases}
+\]
+
+### U3. Canonical refinement factorization theorem
+
+There is a canonical factorization
+
+\[
+Q\xhookrightarrow{\;j\;}F\xrightarrow{\;\pi\;}P,
+\]
+
+where:
+
+- \(j\) is identity on vertices and deletes exactly the cross-fiber comparisons for which the new labels fail \(a\le b\);
+- \(\pi(p,a)=p\) is a surjective monotone projection;
+- the ordinary refinement projection \(r:Q\to P\) satisfies
+  \[
+  r=\pi\circ j.
+  \]
+
+**Proof.** \(Q\) and \(F\) have the same vertex set. Every relation in \(Q\) is a relation in \(F\): for \(p=q\) both use the fiber order; for \(p<q\), \(F\) keeps every cross-fiber pair while \(Q\) keeps only those with \(a\le b\). Projection to \(p\) is therefore monotone and surjective. \(\square\)
+
+### Why this matters
+
+This factorization precisely separates the two quotient-level mechanisms:
+
+- \(F\to P\): **fiber expansion / point splitting**;
+- \(Q\hookrightarrow F\): **descent thinning**.
+
+If the coarse state is \(T_0\) on \(S\), every coarse class \(C_p\) is a singleton, so every \(B_p\) is a singleton and \(F\cong P\). The expansion stage disappears and the refinement is exactly same-vertex order thinning.
+
+If there are no incompatible cross-fiber labels, then \(Q=F\) and the refinement is pure fiber expansion.
+
+The standard object \(F\) is a lexicographic sum of posets; what is project-specific here is using it as the canonical intermediate object for the ProLT fiber-profile refinement.
+
+---
+
+## 5. Homological decomposition of a general refinement
+
+Apply the order-complex functor and simplicial chains:
+
+\[
+\Delta Q\xrightarrow{\Delta j}\Delta F\xrightarrow{\Delta\pi}\Delta P.
+\]
+
+Let
+
+\[
+D^{\rm thin}_*=H_*\operatorname{Cone}(C_*(\Delta j)),
+\]
+
+\[
+D^{\rm exp}_*=H_*\operatorname{Cone}(C_*(\Delta\pi)),
+\]
+
+and
+
+\[
+D^{\rm tot}_*=H_*\operatorname{Cone}(C_*(\Delta r)).
+\]
+
+Because \(j\) is a simplicial inclusion,
+
+\[
+D^{\rm thin}_*\cong H_*(\Delta F,\Delta Q)
+\]
+
+up to the standard cone/relative indexing convention.
+
+### U4. Cone decomposition / octahedral sequence
+
+The standard mapping-cone triangle for composable chain maps yields
+
+\[
+\operatorname{Cone}(j)
+\longrightarrow
+\operatorname{Cone}(r)
+\longrightarrow
+\operatorname{Cone}(\pi)
+\longrightarrow
+\operatorname{Cone}(j)[1],
+\]
+
+and hence a long exact sequence
+
+\[
+\cdots\to
+D^{\rm thin}_k
+\to
+D^{\rm tot}_k
+\to
+D^{\rm exp}_k
+\to
+D^{\rm thin}_{k-1}
+\to\cdots.
+\]
+
+This is a standard homological-algebra construction applied to the canonical ProLT factorization. It gives a principled way to separate and then recombine splitting and thinning defects.
+
+### Post-\(T_0\) recovery
+
+After \(T_0\), \(F\cong P\), so \(D^{\rm exp}=0\) and
+
+\[
+D^{\rm tot}\cong D^{\rm thin}\cong H_*(\Delta P,\Delta Q),
+\]
+
+recovering the existing post-\(T_0\)/non-splitting relative-homology picture.
+
+---
+
+## 6. Conditioning prism and the exact interaction criterion
+
+Let \(T\subseteq S\). Construct the coarse, expansion, and refined posets at both supports:
+
+\[
+Q_T\hookrightarrow F_T\to P_T,
+\]
+
+\[
+Q_S\hookrightarrow F_S\to P_S.
+\]
+
+Support inclusion gives a commuting prism
+
+\[
+\begin{array}{ccccc}
+Q_T&\hookrightarrow&F_T&\to&P_T\\
+\downarrow&&\downarrow&&\downarrow\\
+Q_S&\hookrightarrow&F_S&\to&P_S.
+\end{array}
+\]
+
+For \(p\in P_T\), write \(B_p^S\) and \(B_p^T\) for the fine label profiles realized before and after conditioning.
+
+### U5. Cartesian fiber-saturation theorem
+
+The right-hand expansion square
+
+\[
+\begin{array}{ccc}
+F_T&\to&P_T\\
+\downarrow&&\downarrow\\
+F_S&\to&P_S
+\end{array}
+\]
+
+is a pullback in finite posets iff
+
+\[
+B_p^T=B_p^S
+\qquad\text{for every }p\in P_T.
+\]
+
+Equivalently: whenever the conditioned support still touches a coarse observational class, it must still realize **every refined signature** that was present over that coarse class.
+
+The left-hand thinning square is always a pullback: it is simply restriction of the same-vertex suborder \(Q_S\subseteq F_S\) to the surviving fine-signature vertices.
+
+### Fiber-completion defect
+
+Define
+
+\[
+\mathfrak D_{\rm fib}(T\mid S;\Psi/\Phi)
+=
+\pi^{-1}(P_T)\setminus F_T.
+\]
+
+Its cardinality is
+
+\[
+d_{\rm fib}
+=
+\sum_{p\in P_T}
+\bigl(|B_p^S|-|B_p^T|\bigr).
+\]
+
+It vanishes exactly when the expansion square is cartesian.
+
+A topological version is available because
+
+\[
+F_T\subseteq \pi^{-1}(P_T):
+\]
+
+\[
+D^{\rm fib}_k
+:=
+H_k\bigl(\Delta\pi^{-1}(P_T),\Delta F_T\bigr).
+\]
+
+This distinguishes exact cartesian failure from its weaker homological effect.
+
+---
+
+## 7. Measurement availability becomes a cartesianity theorem
+
+Let \(E\subseteq S\) be an outcome event and \(T=E\). Let
+
+\[
+\mathcal A_{\Phi,S}
+\]
+
+be the Boolean algebra generated by the current observation-signature cells on \(S\). Thus \(E\in\mathcal A_{\Phi,S}\) iff \(E\) is a union of coarse signature fibers.
+
+Assume the outcome is available after refinement:
+
+\[
+E\in\mathcal A_{\Psi,S}.
+\]
+
+### U6. Newly-enabled measurement / non-cartesianity theorem
+
+Under the above assumption, the following are equivalent:
+
+1. \(E\in\mathcal A_{\Phi,S}\) (the measurement was already available);
+2. the expansion-conditioning square is cartesian;
+3. \(d_{\rm fib}=0\).
+
+Consequently,
+
+\[
+E\in\mathcal A_{\Psi,S}\setminus\mathcal A_{\Phi,S}
+\]
+
+iff the expansion-conditioning square is non-cartesian.
+
+**Proof.** Since \(E\) is fine-measurable, it contains either all or none of every fine-signature class. The cartesian condition says that if \(E\) meets a coarse class, it retains all fine classes over that coarse class. Together these say precisely that \(E\) contains either all or none of each coarse class, which is coarse measurability. \(\square\)
+
+This gives a precise categorical version of the earlier "measurement enabled by refinement" idea. It is not quantum noncommutativity. It is failure of saturation with respect to the coarser quotient.
+
+After relative \(T_0\), every coarse class is a singleton, \(\mathcal A_{\Phi,S}=2^S\), and this obstruction disappears.
+
+---
+
+## 8. Worked four-world example: splitting, thinning, and conditioning in one diagram
+
+Let
+

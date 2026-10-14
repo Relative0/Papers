@@ -1,0 +1,69 @@
+# N2/P9 Results - Minimal Frozen-Tree Source Telemetry
+
+## Status
+
+P9 is complete. The P8 dispatch policy was held exactly fixed while the telemetry implementation was reduced to the seven primitive counters needed by the five features actually used by the frozen P8 tree.
+
+Mandatory invariance passed on all **332** frozen P8 cases: 188 training, 98 validation, 36 Gate-P evaluation, and 10 natural evaluation cases. P9 reproduced every used tree input, predicted leaf, and annotate/bypass decision exactly. Fresh fuzz also passed **1000/1000**.
+
+## Gate-P primary endpoint
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P9 / direct, source-inclusive | **1.106541x** | **1.034811-1.159492** | **1.067348x** | 2/36 |
+| P9 / P8-full, source-inclusive | **0.964811x** | **0.954716-0.975904** | **0.964833x** | 31/36 |
+| P9 / direct, source build | **1.631368x** | **1.585519-1.673336** | **1.651915x** | 0/36 |
+| P9 / P8-full, source build | **0.876356x** | **0.865314-0.888531** | **0.871656x** | 36/36 |
+| P9 / direct, selected compiler path | **0.991496x** | **0.886491-1.076060** | **0.838809x** | 4/36 |
+
+The preregistered direct-crossover criterion **FAILED**: P9 remained about **10.7% slower** than direct case-balanced. However, P9 was **3.5% faster than simultaneous P8-full** source-inclusive, with the entire 95% interval below 1.
+
+The narrow telemetry-engineering criterion also failed because source build improved by **12.4%**, short of the preregistered 25% target, even though the source-inclusive P9/P8 target was satisfied.
+
+Median Gate-P source-build time was approximately 47.8 us direct, 81.2 us P9, and 94.3 us P8-full.
+
+## Dispatch and Boolean work
+
+P9 necessarily made the same dispatches as frozen P8: **5/36** cases annotated, all **5** consuming a fold, for **5** total consumed folds. Against simultaneous always-P6 profitability, 3 annotations were P6 wins, 2 were P6 losses, and 4 P6-winning cases were bypassed.
+
+Relative to direct across all 36 cases, the frozen selective policy retained the same P8 work reductions:
+
+- multiplications: **0.812451x**;
+- pair terms: **0.570459x**;
+- peak monomials: **0.978577x**;
+- ANF nodes evaluated: **0.873553x**.
+
+Because dispatch was held invariant, these are not new folding gains; P9 tests only whether the same gains can be exposed more cheaply.
+
+## Memory
+
+Gate-P traced peak allocation P9/direct was **1.008331x** and P9/P8-full was **0.955404x**. Thus P9 is approximately memory-neutral versus direct and modestly leaner than P8-full.
+
+## Natural EPFL control
+
+P9 annotated **0/10** frozen natural cases and consumed **0 folds**, so the natural corpus remains strictly an abstention/overhead control.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P9 / direct, source-inclusive | **1.017325x** | **1.002868-1.033205** | **0.998778x** | 3/10 |
+| P9 / P8-full, source-inclusive | **0.973550x** | **0.944433-0.997133** | **0.998445x** | 7/10 |
+
+The case-balanced natural overhead is therefore only about **1.7%**, while the workload-weighted result is essentially parity. This is a substantial improvement in abstention cost, but it is not evidence of natural CM folding because no fold was taken.
+
+## Post-hoc diagnostic
+
+Keeping the exact frozen P9 decisions and compiler timings but replacing P9 source-build cost by measured direct source-build cost gives **0.974497x** direct case-balanced and **0.890509x** workload-weighted. This is not a preregistered endpoint; it estimates the remaining opportunity if telemetry could be fused into ordinary construction at negligible incremental cost.
+
+## Measurement counts
+
+- Gate-P timed rows: 2,880
+- natural timed rows: 600
+- total timed rows: **3,480**
+- independent dispatch-invariance cases: **332**
+- fresh fuzz cases: **1,000**
+
+The long `cavlc:35` natural timing schedule was executed in deterministic ten-position chunks because of the execution-environment command limit, then merged without changing the frozen schedule, repetitions, arms, or policy.
+
+## Conclusion
+
+P9 improves P8 in the intended direction but does not reach the full direct crossover. Reducing telemetry from sixteen features to the seven primitives actually used by the frozen tree cut Gate-P source construction by about **12.4% relative to P8-full** and the full pipeline by about **3.5%**, while preserving every dispatch decision exactly. The remaining bottleneck is still source-time bookkeeping itself, not fold recognition or the selected compiler path.

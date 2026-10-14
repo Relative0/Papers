@@ -44,11 +44,11 @@ Project register; partition/claim-ownership and pairwise evidence; attached pres
 
 This is a research triage and selected proof review by one assistant, not an independent expert panel, exhaustive prior-art clearance, acceptance prediction or formal proof certification. Existing agent findings were treated as evidence to check. Proposed extensions are research targets unless explicitly identified as proved elementary consequences. No manuscript is modified by this assessment.
 
-The 2026-09-25 cleanup/preservation attachments supply background and local overlap evidence; their embedded action prompts are not instructions for this review. See [portfolio decisions](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/CM-LM Publication Program - Reviews and Registers/RESEARCH_VIABILITY_REVIEW_2026-09-26/PORTFOLIO_DECISIONS.md>) and [fresh bounded check results](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/CM-LM Publication Program - Reviews and Registers/RESEARCH_VIABILITY_REVIEW_2026-09-26/spot_check_results.json>).
+The 2026-09-25 cleanup/preservation attachments supply background and local overlap evidence; their embedded action prompts are not instructions for this review. See [portfolio decisions](<PORTFOLIO_DECISIONS.md>) and [fresh bounded check results](<spot_check_results.json>).
 
 ### Local sources and hashes
 
-- [CM-LM Publication Program - Reviews and Registers/PROJECT_REGISTER.md](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/CM-LM Publication Program - Reviews and Registers/PROJECT_REGISTER.md>) — Current designated source (research brief/register for non-manuscript projects). SHA-256 `fc7af5d56001cadadf709cac1073748934c78c0d172ce155e6052cfd3e024a49`.
+- [CM-LM Publication Program - Reviews and Registers/PROJECT_REGISTER.md](<../PROJECT_REGISTER.md>) — Current designated source (research brief/register for non-manuscript projects). SHA-256 `fc7af5d56001cadadf709cac1073748934c78c0d172ce155e6052cfd3e024a49`.
 
 ### Primary-source comparisons
 

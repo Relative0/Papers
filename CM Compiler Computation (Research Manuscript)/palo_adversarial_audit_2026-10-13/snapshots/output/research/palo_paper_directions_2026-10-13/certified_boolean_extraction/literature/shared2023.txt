@@ -1,0 +1,1399 @@
+
+===== PDF PAGE 1 =====
+Available
+CAV
+Evaluation
+Artifact
+Reusable
+CAV
+Evaluation
+Artifact
+Shared Certificates for
+Neural Network Verification†
+Marc Fischer1,⋆ , Christian Sprecher 2,⋆,‡,
+Dimitar Iliev Dimitrov 1 , Gagandeep Singh 3 , and Martin Vechev1
+1 ETH Zurich, Switerland, marc.fischer@inf.ethz.ch,
+dimitar.iliev.dimitrov@inf.ethz.ch, martin.vechev@inf.ethz.ch
+2 Nostic Solutions AG, Switzerland, christian.sprecher@nostic.ch
+3 University of Illinois at Urbana-Champaign & VMware Research, USA,
+ggnds@illinois.edu
+Abstract. Existing neural network verifiers compute a proof that each
+input is handled correctly under a given perturbation by propagating
+a symbolic abstraction of reachable values at each layer. This process
+is repeated from scratch independently for each input (e.g., image) and
+perturbation (e.g., rotation), leading to an expensive overall proof ef-
+fort when handling an entire dataset. In this work, we introduce a new
+method for reducing this verification cost without losing precision based
+on a key insight that abstractions obtained at intermediate layers for dif-
+ferent inputs and perturbations can overlap or contain each other. Lever-
+aging our insight, we introduce the general concept of shared certificates,
+enabling proof effort reuse across multiple inputs to reduce overall verifi-
+cation costs. We perform an extensive experimental evaluation to demon-
+strate the effectiveness of shared certificates in reducing the verification
+cost on a range of datasets and attack specifications on image classifiers
+including the popular patch and geometric perturbations. We release our
+implementation at https://github.com/eth-sri/proof-sharing.
+Keywords: Neural Network Verification · Local Verification · Adver-
+sarial Robustness
+1 Introduction
+The success of neural networks across a wide range of application domains [23,33]
+has led to their widespread application and study. Despite this success, neural
+networks remain vulnerable to adversarial attacks [9,25] which raises concerns
+over their trustworthiness in safety-critical settings such as autonomous driving
+and medical devices. To overcome this barrier, formal verification of neural net-
+works has been proposed as a key technology in the literature [44]. As a result,
+† Extended version of our CAV’22 paper. First published as Fischer et al. [15].
+⋆ equal contribution
+‡ work performed while at ETH Zurich
+arXiv:2109.00542v4  [cs.LG]  23 Nov 2023
+
+===== PDF PAGE 2 =====
+recent years have witnessed a growing interest in verifying critical safety proper-
+ties of neural networks (e.g., fairness, robustness) [16,19,20,34,35,45,47] specified
+using pre and post conditions over network inputs and outputs respectively. Con-
+ceptually, existing verifiers propagate sets of inputs in the precondition captured
+in symbolic form (e.g., convex sets) through the network, an expensive process
+that produces over-approximations of all possible values at intermediate layers.
+The final abstraction of the output can then be used to check postconditions.
+The key technical challenge all existing verifiers aim to address is speeding up
+and scaling the certification process, i.e, faster and more efficient propagation of
+symbolic shapes while reducing the overapproximation error.
+This work: accelerating certification via proof sharing. In this work, we propose a
+new, complementary method for accelerating neural network verification based
+on the key observation that instead of treating each certification attempt in
+isolation as existing verifiers do, we can reuse proof effort among multiple such
+attempts, thus obtaining significant overall speed-ups without losing precision.
+Fig. 1 illustrates both, standard verification and the concept of proof sharing.
+In standard verification an input regionI1(x) (orange square) is propagated
+from left to right, obtaining intermediate shapes at each intermediate layer (here
+the goal is to verify all points in the input region are classified as “cat” by
+the neural network N). We observe that the abstraction obtained for a new
+regionI2(x) (e.g., blue shapes) can be contained inside existing abstractions
+fromI1(x), an effect we term proof subsumption. This effect can be observed
+both between abstractions obtained from different specifications (e.g., ℓ∞ and
+adversarial patches) for the same data point and between proofs for the same
+property but different, yet semantically similar inputs. Building on this obser-
+vation, we introduce the notion of proof sharing via templates. Proof sharing
+works in two steps: first, we leverage abstractions from existing proofs in order
+to create templates, and second, we augment the verifier with these templates,
+stopping the expensive propagation at an intermediate layer as soon as the newly
+generated abstraction is included inside an existing template. Key technical in-
+gredients to the effectiveness of our approach are fast template generation and
+inclusion checking techniques. We experimentally demonstrate that proof shar-
+ing can achieve significant speed-ups in challenging scenarios including proving
+robustness to adversarial patches [11] and geometric perturbations [4] across
+different neural network architectures.
+Main Contributions Our key contributions are:
+– An introduction and formalization of the concept of proof sharing in neural
+network verification: the idea that some proofs capture others ( §3).
+– A general framework leveraging the above concept, enabling proof effort
+reuse via proof templates ( §4).
+– A thorough experimental evaluation involving verification of neural network
+robustness against challenging adversarial patch and geometric perturba-
+tions, demonstrating that our methods can achieve proof match rates of up
+95% as well as provide non-trivial end-to-end certification speed-ups ( §5).
+
+===== PDF PAGE 3 =====
+Fig. 1: Visualization of neural network verification. The input regions
+I1(x),I2(x) are propagated layer by layer through a neural networkN. The high-
+dimensional convex shapes are visualized in 2d. While initially I1(x) andI2(x)
+only slightly overlap, at layer k, N1:k(I2(x)) is fully contained in N1:k(I1(x)).
+2 Background
+Here we formally introduce the necessary background for proof sharing.
+Neural Network A neural network N is a function N : Rdin→ Rdout, commonly
+built from individual layers N =NL◦NL−1◦···◦ N1. Throughout this text, we
+consider feed-forward neural networks, where each layerNi(x) = max(Ax+b, 0)
+consists of an affine transformation ( Ax + b) as well as a rectified linear unit
+(ReLU), that applies the max with 0 elementwise. A neural network, classifying
+inputs intoc classes, outputsdout :=c scores, one for each class, and assigns the
+class with the highest score as the predicted one. While, as is common in the
+neural network verification literature, we use image classification as a proxy task,
+many other applications work analogously. Our approach also naturally extends
+to other types of neural networks, if verifiers exist for these architectures. We
+discuss the challenges and limitations of such generalizations in §4.5. In the
+following, for k<L , we let N1:k denote the application of the first k layers and
+Nk+1:L denote the last L−k layers respectively.
+(Local) Neural Network Verification Given a set of inputs and a postcondition
+ψ, the goal of neural network verification is to prove thatψ holds over the output
+of the neural network corresponding to the given set of inputs. In this work, we
+focus on local verification, proving that ψ holds for the network output for a
+given regionI(x)⊆ Rdin formed around the input x. Formally, we state this as:
+Problem 1 (Local neural network verification). For a regionI(x)⊆ Rdin, neural
+network N, and postcondition ψ, verify that ∀z∈I (x). N(z)|= ψ. We write
+I(x)|=ψ if∀z∈I (x).N (z)|=ψ.
+Here, we restrict ourselves to verifiers based on abstract interpretation [12,16]
+as they achieve state-of-the-art precision and scalability [35,34]. Further, many
+other popular verifiers [43,47] can be formulated using abstract interpretation.
+
+===== PDF PAGE 4 =====
+These verifiers propagate I(x) symbolically through the network N layer-by-
+layer using abstract transformers, which overapproximate the effect of applying
+the transformations defined in the different layers on symbolic shapes. The prop-
+agation yields an abstraction of the exact shape at each layer. The verifiers finally
+check if the abstracted output implies ψ. This is showcased in Fig. 1, where the
+input regionsI1(x) andI2(x) are propagated layer-by-layer through N.
+For a verifier V , we let V (I(x),N ) denote the abstraction obtained after
+the propagation ofI(x) through the networkN. We declutter notation by over-
+loading N and writing N(I(x)) for the same if V is clear from context, i.e.,
+V (I(x),N ) =N(I(x)).
+We consider robustness verification, where the goal is to prove that the net-
+work classification does not change within an input region. A common input
+region is theℓ∞-bounded additive noise, defined asIϵ(x) :={z|∥ x− z∥∞≤ϵ}.
+Here, ϵ defines the size of the maximal perturbation to x. The postcondition ψ
+denotes classification to the same class as x. Throughout this paper, we consider
+different instantiations forI(x) but assume that ψ denotes classification invari-
+ance (although other choices would work analogously). Due to this, we refer to
+I(x) as input region and specification interchangeably. For example, in Fig. 1,
+the goal is to verify that all points contained in N(I1(x)) are classified as “cat”.
+3 Proof Sharing with Templates
+Before introducing our framework for proof sharing, we further expand the mo-
+tivation example discussed in Fig. 1.
+3.1 Motivation: Proof Subsumption
+As stated earlier, we empirically observed that for many input regionsIi(x) and
+Ij(x), the abstraction corresponding to one region at some intermediate layer k
+contains that of another. Formally:
+Definition 1 (Proof Subsumption). For specificationsIi(x),Ij(x), we say
+that the proof ofIi(x) subsumes that ofIj(x) if at some layer k, N1:k(Ij(x))⊆
+N1:k(Ii(x)), which we denote as Ij(x)⊆N,kIi(x).
+18
+21
+Fig. 2: Example of
+an MNIST image.
+I 18,21
+5×5 (x) signifies
+arbitrary change in
+the outlined area.
+While not formally required, particularly interesting
+are cases where proof subsumption occurs despiteIi(x)̸⊆
+Ij(x). This form of proof subsumption is showcased in
+Fig. 1, whereI1(x) andI2(x) have only a small overlap,
+yetI2(x)⊆N,k I1(x). For another example, consider a
+neural networkN trained as a hand-written digit classifier
+for the MNIST dataset [24] (example shown in Fig. 2) and
+the following two specifications:
+– ℓ∞-bounded perturbations: all the pixels in an input
+image can arbitrarily be changed independently by a
+small amountIϵ(x) :={z|∥ x− z∥∞≤ϵ},
+
+===== PDF PAGE 5 =====
+Table 1: Proof subsumption on a robust MNIST
+classifier with 94 % accuracy. Verif. acc. denotes
+the percentage of verifiable inputs from the test
+set for ℓ∞-perturbations (Iϵ).
+ϵ verif. acc.
+forIϵ [%]
+Ii,j
+2×2(x)⊆N,kIϵ(x) at layer k [%]
+1 2 3 4 5
+0.1 89.74 61.40 72.85 77.65 81.75 82.70
+0.2 81.40 62.85 77.05 82.40 86.05 86.60
+Fig. 3: The abstraction ob-
+tained forIϵ(x) (blue) con-
+tains that for Ii,j
+2×2(x) (or-
+ange) (projected to d = 2).
+– adversarial patches [11]. A p×p patch inside which the pixel intensity can
+vary arbitrarily is placed on an image at coordinates ( i,j ), for which we
+writeIi,j
+p×p. We showcase a patch in Fig. 2 and formally define them in §4.3.
+ClearlyIi,j
+p×p(x) ̸⊆ Iϵ(x) (unless ϵ = 1). In Table 1, we show that for a
+classifier (5 layers with 100 neurons each) we indeed observe proof subsumption.
+We report the accuracy, i.e., the rate of correct predictions on the unperturbed
+test data, as well as the certified accuracy, i.e., the rate of samples x for which
+the prediction is correct andI(x)|=ψ is verified, forIϵ withϵ = 0.1 and 0.2 over
+the whole test set. We also show the percentage of Ii,j
+2×2(x) contained in Iϵ(x)
+at layerk. To this end, we pick 1000 random x for whichIϵ(x) is verifiable and
+sample 2 (i,j ) pairs each. We utilize a Box domain verifier and a robustly trained
+network [26]. Fig. 3 shows a patch specification Ii,j
+2×2(x) (in orange) contained
+in the ℓ∞ specificationIϵ (in blue) projected to 2 dimensions via PCA.
+Reasons for Proof Subsumption In Table 1, we observe that the rate of proof
+subsumption increases with larger ϵ andk. These observations give an intuition
+as to why we observe proof subsumption. First, as input regions pass through the
+neural network, in each layer the abstractions become more imprecise. While this
+fundamentally limits verification, it makes the subsumption of abstractions more
+probable. This effect increases, when increasingϵ forIϵ. Second, and more funda-
+mentally, while passing through the layers of a neural network, we observed that
+semantically similar yet distinct image inputs, e.g., two similar-looking hand-
+written digits, have activation vectors that grow closer in ℓ2 norm as they pass
+through the layers of the neural network [23,37]. This effect is a consequence of
+the neural network distilling low-level information (e.g., individual pixel values)
+into high-level concepts (e.g., the classes of digits). As specifications (and their
+proofs) correspond to sets of concrete inputs, a similar effect may apply. We
+conjecture that these two effects drive the observed proof subsumption.
+3.2 Proof Sharing with Templates
+Leveraging this insight, we introduce the idea of proof sharing via templates,
+showcased in Fig. 4. We use an abstraction obtained from a robustness proof
+
+===== PDF PAGE 6 =====
+(a) We generate a (verifiable) template T from
+the abstraction obtained by propagating the or-
+ange input.
+(b) We shortcut the verifica-
+tion if intermediate abstrac-
+tion are contained in the T .
+Fig. 4: Conceptualization of proof sharing with templates. In (a) we create a ver-
+ifiable template T (black-dashed border) from specification N1:k(I1(x)). When
+verifying new specificationsI2,..., I5, shown in (b), we can shortcut the verifi-
+cation of all but I5 by subsuming them in T .
+N1:k(I1(x)) at layer k to create a template T . After ensuring that T is ver-
+ifiable, it can be used to shortcut the verification of other regions, e.g., of
+I2(x),..., I5(x). Formally we decompose proof sharing into two sub-problems:
+(i) the generation of proof templates and (ii) the matching of abstractions cor-
+responding to other properties to these templates. For simplicity, here we only
+consider templates at a single layer k of the neural network and we show an
+extension to multiple layers in §4.3.
+Our goal is to construct a templateT at layerk that implies the postcondition
+and captures abstractions at layer k obtained from propagating several Ii(x).
+As it is challenging to find a single T that captures abstractions corresponding
+to many input regions, yet remains verifiable, we allow a set of templatesT . We
+state this formally as:
+Problem 2 (Template Generation). For a given neural network N, input x and
+set of specificationsI1,..., Ir, layer k and a postcondition ψ, find a set of tem-
+platesT with|T|≤ m such that:
+arg max
+T
+rX
+i=1
+" _
+T∈T
+N1:k(Ii(x))⊆T
+#
+(1)
+s.t.∀T∈T .Nk+1:L(T )|=ψ .
+Intuitively, Eq. (1) aims to find a setT of templates T at layerk, such that the
+maximal amount (via the sum) of specificationsI1,..., Ir is contained in at least
+one templateT (via the disjunction) while ensuring that the individualT are still
+verifiable (via the constraint on the second line). As neural network verification
+required by the constraints of Eq. (1), is NP-complete [19], computing an exact
+solution to Problem 2 is computationally infeasible. Therefore, we compute an
+approximate solution to Eq. (1). In general, Problem 2 does not necessarily
+require that the templatesT are created from previous proofs. However, building
+on proof subsumption, as discussed in §3.1, in §4 we will infer the templates from
+previously obtained abstractions.
+
+===== PDF PAGE 7 =====
+To leverage proof sharing once the templates T are obtained, we need to be
+able to match an abstraction S = N1:k(I(x)) verified using proof transfer to a
+template inT :
+Problem 3 (Template Matching). Given a set of templates T at layer k of a
+neural networkN, and a new input regionI(x), determine whether there exists
+a T∈T such that S⊆T , where S =N1:k(I(x)).
+Together, Problems 2 and 3 outline a general framework for proof sharing,
+permitting many instantiations. We note that Problems 2 and 3 present an
+inherent precision vs. speed trade-off: Problem 3 can be solved most efficiently
+for small values of m =|T| and simpler representations of T (allowing faster
+checking of S ⊆ T ) at the cost of lower proof matching rates. Alternatively,
+Eq. (1) can be maximized by largem andT represented by complex abstractions,
+thus attaining high precision but expensive template generation and matching.
+Beyond proof sharing on the same input In this section, we focused on proof
+sharing for different specifications of the same input x. However, we observed
+that proof sharing is even possible between specifications defined on different
+inputs x and x′. To facilitate the use of templates in this setting, Eq. (1) in
+Problem 2 can be adapted to consider an input distribution. We provide an
+investigation along these lines in Appendix A.
+4 Efficient Verification via Proof Sharing
+We now consider an instantiation of proof sharing where we are given an inputx
+and propertiesI1,..., Ir to verify. Our general approach, based on Problems 2
+and 3, is shown in Algorithm 1. In this section, we first discuss Algorithm 1 in
+general. We then describe the possible choices of abstract domains and their im-
+plications on the algorithm, followed by a discussion on template generation for
+two different specific problems. Finally, we conclude the section with a discussion
+on the conditions for effective proof sharing verification.
+In Algorithm 1, we first create the set of templates T (Line 1, discussed
+shortly) and subsequently verify I1,..., Ir usingT . Here, we consider two, po-
+tentially identical, verifiersVT andVS, where VT is used to create the templates
+T andVS is used to propagate input regions up to the template layerk. For each
+Ii we propagate it up to layer k (Line 4) to obtain S = N1:k(Ii(x)) and check
+if we can match it to a template Tj∈T (Line 6) using an inclusion check. If
+a match is found, then we conclude that N(Ii(x))|=ψ and set the verification
+output vi to True. If this is not the case (Line 11) we verify N(Ii(x))|= ψ di-
+rectly by checkingVS(S,Nk+1:L)|=ψ. If the template generation fails, we revert
+to verifyingIi by applying VS in the usual way (omitted in Algorithm 1).
+Soundness As long as the templates T are sound, this procedure is sound, i.e
+Algorithm 1 only returns vi = True if∀z∈I i(x).N (z)|=ψ holds. Formally:
+Theorem 1. Algorithm 1 is sound if ∀T∈T , z∈T.N k+1:L(z)|=ψ and VS is
+sound.
+
+===== PDF PAGE 8 =====
+Algorithm 1: Neural Network Verifi-
+cation Utilizing Proof Templates
+Input: x,I1,..., Ir,k,ψ , verifiersVS,VT
+Result: v1,...,v r indicating
+vi := (N(Ii(x))|=ψ)
+1 T← gen templates(x,N,k,ψ,V S,VT )
+2 v1,...,v r← False
+3 for i← 1 to r do
+4 S←VS(Ii(x),N 1:k)
+5 for Tj∈T do
+6 if S⊆Tj then
+7 vi← True
+8 break
+9 end
+10 end
+11 if¬vi then
+12 vi← (VS(S,Nk+1:L)|=ψ)
+13 end
+14 end
+15 return v1,...,v r
+This holds by the con-
+struction of the algorithm:
+Proof. For a given x and
+Ii, Algorithm 1 only claims
+vi = True if either the
+check in (i) Line 6 or (ii)
+Line 11 succeeds. Since VS is
+sound, we know that ∀z ∈
+Ii(x). N1:k(z) ∈ S. There-
+fore in case (i) by our re-
+quirement on T as well as
+S ⊆ T it follows that ∀z∈
+Ii(x).N (z)|=ψ. In case (ii)
+we execute Line 12 and the
+same property holds due to
+the soundness of VS.
+Importantly, Theorem 1
+shows that the generation
+process of T does not affect
+the overall soundness as long
+as the set of templatesT ful-
+fills the condition in Theorem 1. In particular, that means that when solving
+Problem 2, it suffices to show the side condition ( ∀ T ∈T .Nk+1:L(T )|= ψ)
+holds, while heuristically approximating the actual optimization criteria. We let
+VT denote the verifier used to ensure this property in gen templates.
+Precision We say a verifier V1 is more precise than another verifier V2 on N if
+out of a set of specifications it can verify some that V2 can not.
+Theorem 2. If VS(VS(Ii(x),N 1:k),Nk+1:L) = VS(Ii(x),N ), then Algorithm 1
+is at least as precise as VS.
+Proof. Since, even if the inclusion check in Line 6 fails, due to Line 12 we out-
+put vi =VS(VS(Ii(x),N 1:k),Nk+1:L)|=ψ (Line 12), which by our requirement
+equals vi =VS(Ii(x),N )|=ψ. Therefore we have at least the precision of VS.
+The required property holds for any verifier VS for which the abstractions
+of all network layers depends only on the abstractions from previous layers and
+is fulfilled for all verifiers considered in this paper. For verifiers VS that do not
+fulfill the required property, potential losses in precision can be remedied (at
+the cost of runtime) by using VS(Ii(x),N 1:L) in Line 12. Interestingly, it is even
+possible to increase the precision of Algorithm 1 over VS by creating templates
+T that are verified with a more precise verifier VT . However, in this discussion,
+we restrict ourselves to speed gains. We believe that obtaining precision gains
+requires instantiating our framework with a significantly different approach than
+that taken for improving speed which is the main focus of our work. We leave
+this as an interesting item for future work.
+
+===== PDF PAGE 9 =====
+Run-Time Here, we aim to characterize the run-time of Algorithm 1 as well as
+its speed-up over conventional verification. For an input x, (keeping the other
+parameters fixed), the expected run time is
+tPS =tT +r(tS +t⊆ + (1−ρ)tψ) (2)
+wheretT is the expected time required to generate the templates at Line 1, r is
+the number of specifications to be verified, tS is the expected time to compute
+S (Line 4), t⊆ is the time to check S⊆ T for T ∈T until a match is found
+(Line 5 to Line 10), ρ∈ [0, 1] is the rate of specifications where a template is
+found andtψ is the time required to check ψ on the network output correspond-
+ing to S (Line 12). This time is minimized if the individual expected run times
+tT,tS,tψ are minimal and ρ is large (i.e., close to 1). Unfortunately, computing
+the template match rateρ analytically is challenging and requires global reason-
+ing over the neural network for all valid inputs, which are not clearly defined.
+However, our empirical analysis (in §5) shows that ρ is higher when templates
+are created at later layers (as in §3.1).
+To determine the speed-up compared to a baseline standard verifier, we make
+the simplifying assumption that there is a single verifier V =VS =VT that has
+expected run-time ν for each layer. Thus, the expected run-time for the con-
+ventional verifier is tBL = rLν. We have tT = λmLν, tS = kν, tψ = (L−k)ν,
+t⊆ = ηm and ultimately tPS = (m +r(1−ρ))Lν +rρkν +rηm for constants
+λ∈ R>0, which indicates the overhead in generating one template over just
+verifying it, and η∈ R>0 which denotes the time required to perform an inclu-
+sion check for one template. As this phrasing shows, Algorithm 1 has the same
+asymptotic runtime as the base verifierV . Further, this formulation allows us to
+write our expected speed-up as tBL
+tP S
+= r
+λm+ηrm/Lµ+rρk/L+r(1−ρ). This speed-up
+is maximized when k is small compared to L, i.e., templates are placed early in
+the neural network, the matching rate ρ is close to 1, and m,λ,η are small, i.e.,
+generation and matching are fast. Unfortunately, these requirements are at odds
+with each other: as we show in §5, higher m leads to higher matching rate ρ and
+ρ is naturally higher for templates later in the neural network (higher k). Thus
+high speed-ups require careful hyper-parameter choices.
+To showcase how we can achieve good templates as well as fast matching,
+we next discuss the choice of the abstract domain to be used in the propagation
+and the representation of the templates. Then we discuss the template genera-
+tion procedure and instantiate it for the verification of robustness to adversarial
+patches and geometric perturbations.
+4.1 Choice of Abstract Domain
+To solve Problems 2 and 3 in a way that minimizes the expected runtime and
+maximizes the overall precision, the choice of abstract domain is crucial. Here we
+briefly review common choices of abstract domains for neural network verification
+and how they are suited to our problem. Geometrically these domains can be
+thought of as a convex abstraction of the set of vectors representing reachable
+
+===== PDF PAGE 10 =====
+values at each layer of the neural network. We say that an abstractiona1 is more
+precise than another abstraction a2, if and only if a1⊆ a2, i.e, all points in a1
+occur in a2. Similarly, we say that a domain is more precise than another if it
+can express all abstractions in the other domain.
+The Box (or Interval) domain [16,26,18] abstracts sets in d dimensions as
+B ={a + diag(d)e| e∈ [−1, 1]d} with center a∈ Rd and width d∈ Rd
+≥0. The
+Zonotope domain [17,16,34,45,26] uses relaxations Z of the form
+Z ={a + Ae| e∈ [−1, 1]q}, (3)
+parametrized with a∈ Rd and A∈ Rd×q. T
+B Z α(Z) P
+S
+B ✓ ✗ ✓ (✓)
+Z ✓ ✗ ✓ ✗
+P ✓ ✗ ✓ (✓)
+Table 2: Feasibility of S ⊆
+T for Box B, Zonotope Z
+(with order reduction) and
+DP Polyhedra P .
+A third common choice are (restricted) convex
+PolyhedraP [13,35,47]. Here, we considerP to be
+in the DeepPoly (DP) domain [35,47]. Generally,
+Boxes are less precise, i.e. certify fewer properties,
+than Zonotopes or Polyhedra.
+For efficient proof sharing, we require a fast
+inclusion checkS⊆T , which is challenging in our
+context due to the high dimensionalityd of the in-
+termediate neural network layers. While we point
+the interested reader to [32] for a detailed discus-
+sion, we summarize the key results in Table 2.
+There, ✓ denotes feasibility, i.e. low polynomial
+runtime (usually 2d comparisons, sometimes with
+an additional matrix multiplication), ✗ denotes infeasibility, e.g. exponential run
+time. IfT is a Box all checks are simple as it suffices to compute the outer bound-
+ing box ofS and compare the 2d constraints. IfT is a DP Polyhedra these checks
+require a linear program (LP) to be solved. While the size of this LP permits a
+low theoretical time complexity, in caseS is a Box or DP Polyhedra, in practice,
+we consider calling an LP solver too expensive (denoted as ( ✓)). For Zonotopes
+these checks are generally infeasible, as they require enumeration of the faces or
+corners, which is computationally expensive for large d andP . While Zonotopes
+can be encoded as Polyhedra (but not necessarily DP Polyhedra) and the same
+LP inclusion check as for P could be used, the resulting LP would require expo-
+nentially many variables due to the previously mentioned enumeration. However,
+by placing constraints on the matrix A in Eq. (3) these inclusion checks can be
+performed efficiently. The mapping of a Zonotope to such a restricted Zonotope
+is called order reduction via outer-approximation [32,21].
+In particular, for a Zonotope Z we consider the order reduction αBox to its
+outer bounding box (where A is diagonal) and note that other choices of α are
+possible (e.g. the reduction to affine transformations of a hyperbox).
+For a general Zonotope Z its outer bounding box Z′ = αBox(Z) can be
+easily obtained. The center of Z′ is a, the center of Z. The width d∈ Rd
+≥0 is
+given asdi = Pq
+j=1|Ai,j|.Z′ is represented as either a Box or a Zonotope (with
+A = diag( d)). To check S ⊆ Z′ for a general Zontope S it suffices to check
+αBox(S)⊆Z′ which reduces to the simple inclusion check for boxes.
+
+===== PDF PAGE 11 =====
+Based on the above discussion we will use the Zonotope domain to represent
+all abstractions, and use verifiers VS =VT that propagate these zonotopes using
+the state-of-the-art DeepZ transformers [34]. To permit efficient inclusion checks
+we applyαBox on the resulting zonotopes to obtain the Box templates T , which
+we treat as a special case of Zonotopes.
+4.2 Template Generation
+We now discuss instantiations for gen templates in Algorithm 1. Recall from
+§3.1 the idea of proof subsumption, i.e. that abstractions for some specifica-
+tion contain abstractions for other specifications. Building on this, we relax the
+Problem 2 in order to create m templates Tj from intermediate abstractions
+N1:k(ˆIi(x)) for some ˆI1,..., ˆIm. Note that ˆIj are not necessarily directly re-
+lated to the specifications I1,..., Ir that we want to verify. For a chosen layer
+k, input x, number of templates m and verifiers VS and VT we optimize
+arg max
+ˆI1,..., ˆIm
+rX
+i=1
+
+
+m_
+j=1
+VS(Ii(x),N 1:k)⊆Tj
+
+
+whereTj =αBox(VT (ˆIj(x),N 1:k))
+s.t.VT (Tj,Nk+1:L)|=ψ forj∈ 1,...,m.
+(4)
+As originally in Problem 2 (Eq. (1)) we aim to find a set of templates such
+that the intermediate shapes at layerk for most of ther specifications are covered
+by at least one template T . In contrast to Eq. (1), we tie Tj to the specifications
+ˆIj. This alone does not make the problem easier to tackle. However, next, we
+will discuss how to generate application-specific parametric ˆIj and solve Eq. (4)
+by optimizing over their parameters, allowing us to solve template generation
+much more efficiently than in Eq. (1).
+4.3 Robustness to Adversarial Patches
+We now instantiate the above scheme in order to verify the robustness of image
+classifiers against adversarial patches [11]. Consider an attacker that is allowed
+to arbitrarily change anyp×p patch of the image, as showcased earlier in Fig. 2.
+For such a patch over pixel positions ([i,i +p−1]×[j,j +p−1]), the corresponding
+perturbation is
+Ii,j
+p×p(x) :={z∈ [0, 1]h×w| zπC
+i,j
+= xπC
+i,j
+}
+withπi,j =
+n
+(k,l )| k∈i,...,i+p−1
+l∈j,...,j+p−1
+o
+where h and w denote the height and width of the input x. Here πi,j denotes
+the parts of the image affected by the patch, and πC
+i,j its complement, i.e., the
+unaffected part of the image. To prove robustness for an arbitrarily placed p×p
+
+===== PDF PAGE 12 =====
+µ1
+(a) ℓ∞
+µ1
+µ2
+(b) Center + Border
+µ1 µ2
+µ3 µ4
+(c) 2x2 Grid
+Fig. 5: Example splits µ for 10× 10 pixels.
+N1:k( ˆIi(x,ϵi))
+Tk =αBox(N1:k( ˆIi(x,ϵi)))
+βkTk
+Fig. 6: Example Template.
+patch, however, one must consider the perturbation setIp×p(x) :=∪i,jIi,j
+p×p(x).
+To prove robustness forIp×p, existing approaches [11] separately verifyIi,j
+p×p(x)
+for all i∈{ 1,...,h −p + 1},j ∈{ 1,...,w −p + 1}. For example, with p = 2
+and a 28× 28 MNIST image, this approach requires 729 individual proofs. Be-
+cause the different proofs for Ip×p share similarities, this is an ideal candidate
+for proof sharing. We utilize Algorithm 1 and check ∧ivi at the end to speed up
+this process. For template generation, we solve Eq. (4) for m templates with an
+input perturbation ˆIi per template.
+We empirically found that (recall Table 1) setting ˆIi to an ℓ∞ regionIϵi
+to work particularly well to capture a majority of patch perturbations Ii,j
+p×p
+at intermediate layers. Specifically, we found that setting ϵi to the maximally
+verifiable value for this input to work particularly well.
+To further increase the number of specifications contained in a set of tem-
+platesT , we use m template perturbations of the form
+ˆIi(x) :={z|∥ xµi− zµi∥∞≤ϵi∧ xµC
+i
+= zµC
+i
+},
+whereµi denotes a subset of pixels of the input image andµC
+i its complement and
+we maximize ϵi in a best-effort manner. In particular, we consider µ1,...,µ m,
+such that they partition the set of pixels in the image (e.g., in Fig. 5).
+As noted earlier, this generation procedure needs to be fast, yet obtain T to
+which many abstractions match in order to obtain speed-ups. Thus, we consider
+small m, and fixed patterns µ1,...,µ m. For each ˆIi, we aim to find the largest
+ϵi which can still be verified in order to maximize the number of matches. Note
+that for m = 1, this is equivalent to the ℓ∞ input perturbation Iϵ with the
+maximally verifiable ϵ for the given image.
+Concretely, we can perform binary search over ϵi in order find a large ϵi,
+still satisfying Nk+1:L(αBox(N1:k(ˆIi)))|=ψ. Verification with our chosen DeepZ
+Zonotopes is not monotonous in ϵi due to the non-monotonic transformers used
+for non-linearities (e.g., ReLU). This renders the application of binary search a
+best-effort approximation. As we don’t require a formal maximum but rather
+aim to solve a surrogate for Problem 2, this still works well in practice. Further
+note that, applying αBox to templates introduces imprecision, i.e. VT might not
+
+===== PDF PAGE 13 =====
+be able to prove properties over templates that it could without the application
+ofαBox. However, Theorem 2 (which only requires properties ofVS) still applies.
+Algorithm 2: Online Template
+Generation for Patches
+Input: x,N,µ 1,...,µ m,K,ψ,V T
+Result:Tk for k∈K
+1 Tk←{} for k∈K
+2 for i← 1 to m do
+3 ˆIi(x,ϵ ) :={z|∥ xµi− zµi∥≤ ϵ
+4 ∧ xµC
+i
+= zµC
+i
+}
+5 f(ϵ) :=VT (ˆIi(x,ϵ ),N )|=ψ
+6 ϵi← bin search(ϵ,f (ϵ))
+7 for k∈K do
+8 Tk←αBox(VT (ˆIi(x,ϵi),N 1:k))
+9 g(βk) :=VT (βTk,Nk+1:L)|=ψ
+10 βk← bin search(β,g (β))
+11 Tk←T k∪{βkTk}
+12 end
+13 end
+14 returnTk for k∈K
+Templates at multiple layers We
+can extend this approach to ob-
+tain templates at multiple layers
+without a large increase in com-
+putational cost. With templates
+at multiple layers, we first try
+to match the propagated shape
+against the earliest template layer
+and upon failure propagate it fur-
+ther to the next, where we again
+attempt to match the template. In
+Algorithm 1, this means repeating
+the block from Line 4 to Line 10 for
+each template layer before going on
+to the check on Line 11.
+The full template generation
+procedure is given in Algorithm 2.
+First, we perform a binary search
+over ϵi (Line 6) to find the largest
+ϵi, for which the specification is ver-
+ifiable. Then for each layerk in the set of layersK at which we are creating tem-
+plates we create a box Tk from the Zonotope. As this Tk may not be verifiable,
+due to the imprecision added in αBox, we then perform another binary search
+for the largest scaling factor βk (Line 10), which is applied to the matrix A in
+Eq. (3). We denote this operation as βkTk. We show an example for a single
+layerk in Fig. 6. The blue area outlines the Zonotope found via Line 6, which
+is verifiable as it is fully on one side of the decision boundary (red, dashed). Af-
+ter applying αBox (orange), however, is not (crosses the decision boundary). By
+scaling it with βk the shape is verifiable again (green) and used as a template.
+4.4 Geometric Robustness
+Geometric robustness verification [30,35,4,14] aims to verify the robustness of
+neural networks against geometric transformations such as image rotations or
+translations. These transformations typically include an interpolation operation.
+For example consider rotation Rγ of an image by γ∈Γ degrees for an interval
+Γ (e.g., γ∈ [−5, 5]), for which we consider the specification IΓ (x) :={Rγ(x)|
+γ∈Γ}. We note that, unlikeℓ∞ and patch verification, the input regions for ge-
+ometric transformations are non-linear and have no closed-form solutions. Thus,
+an overapproximation of the input region must be obtained [4]. For large Γ , the
+approximate input region IΓ (x), can be too coarse resulting in imprecise veri-
+fication. Hence, in order to assert ψ onIΓ , existing state-of-the-art approaches
+
+===== PDF PAGE 14 =====
+[4], split Γ intor smaller ranges Γ1,...,Γ r and then verify the resulting r spec-
+ifications (IΓi,ψ ) for i∈ 1,...,r . These smaller perturbations share similarities
+facilitating proof sharing. We instantiate our approach similar to §4.3. A key
+difference to §4.3 is that while x∈I i,j
+p×p(x) for all i,j in patches, here in gen-
+eral x̸∈ IΓi(x) for most i. Therefore, the individual perturbations Ii(x) do
+not overlap. To account for this, we consider m templates and split Γ into m
+equally sized chunks (unrelated to the r splits) obtaining the angles γ1,...,γ m
+at the center of each chunk. Form templates we then consider the perturbations
+ˆIi :=Iϵi(Rγi(x)), denoting the ℓ∞ perturbation of size ϵi around the γi degree
+rotated x. To find the template we employ a procedure analogous to Algorithm 2.
+4.5 Requirements for Proof Sharing
+Now, we discuss the requirements on the neural network N such that proof
+sharing via templates works well. For simplicity, we discuss simple per-dimension
+box bounds propagation forVS andVT . However, similar arguments can be made
+for more complex relational abstractions such as Zonotopes or Polyhedra.
+In order for an abstraction S to match to a template T , we need to show
+interval inclusion for each dimension. For a particular dimensioni this can occur
+in two ways: (i) when both S and T are just a point in that dimension and
+these points coincide, e.g., aS
+i = aT
+i , or (ii) when aS
+i ±dS
+i ⊆ aT
+i ±dT
+i . While
+particularly in ReLU networks, the first case can occur after a ReLU layer sets
+values to zero, we focus our analysis here on the second case as it is more com-
+mon. In this case, the width of T in that dimension dT
+i must be sufficient to
+cover S. Ignoring case (i) and letting supp( T ) denote the dimensions in which
+dT
+i > 0, we can pose that supp(S)⊆ supp(T ) as a necessary condition for inclu-
+sion. While it is in general hard to argue about the magnitudes of these values,
+this approach still provides an intuition. When starting from input specifications
+supp(I)̸⊆ supp(ˆI), supp(S)⊆ supp(T ) can only occur if during propagation
+through the neural network N1:k the mass in supp( ˆI) can ”spread out” suffi-
+ciently to cover supp(S). In the fully connected neural networks that we discuss
+here, the matrices of linear layers provide this possibility. However, in networks
+that only read part of the input at a time such as recurrent neural networks,
+or convolutional neural networks in which only locally neighboring inputs feed
+into the respective output in the next layer, these connections do not necessarily
+exist. This makes proof sharing hard until layers later in the neural network,
+that regionally or globally pool information. As this increases the depth of the
+layerk at which proof transfer can be applied, this also decreases the potential
+speed-up of proof transfer. This could be alleviated by different ways of creating
+templates, which we plan to investigate in the future.
+5 Experimental Evaluation
+We now experimentally evaluate the effectiveness of our algorithms from §4.
+
+===== PDF PAGE 15 =====
+Table 3: Rate ofIi,j
+2×2 matched to templatesT forI2×2 patch verification for dif-
+ferent combinations of template layersk, 7x200 networks,usingm = 1 template.
+template at layer k 1 2 3 4 5 6 7 patch verif. [%]
+MNIST 18.6 85.6 94.1 95.2 95.5 95.7 95.7 97.0
+CIFAR 0.1 27.1 33.7 34.4 34.2 34.2 34.3 42.2
+Table 4: Average verification time in seconds per image for I2×2 patchs for dif-
+ferent combinations of template layersk, 7x200 networks,usingm = 1 template.
+Proof Sharing, template layer k
+Baseline 1 2 3 4 1+3 2+3 2+4 2+3+4
+MNIST 2.10 1.94 1.15 1.22 1.41 1.27 1.09 1.10 1.14
+CIFAR 3.27 2.98 2.53 2.32 2.47 2.35 2.49 2.42 2.55
+5.1 Experimental Setup
+We consider the verification of robustness to adversarial patch attacks and ge-
+ometric transformations in §5.2 and §5.3, respectively. We define specifications
+on the first 100 test set images each from the MNIST [24] and the CIFAR-10
+dataset [22] (”CIFAR”) as with repetitions and parameter variations the over-
+all runtime becomes high. We use DeepZ [34] as the baseline verifier as well as
+for VS and VT [34]. Throughout this section, we evaluate proof sharing for two
+networks on two common datasets: We use a seven layer neural network with
+200 neurons per layer (”7x200”) and a nine layer network with 500 neurons per
+layer (”9x500”) for both the MNIST[24] and CIFAR datasets [22], both utilizing
+ReLU activations. These architectures are similar to the fully-connected ones
+used in the ERAN and Mnistfc VNN-Comp categories [3].
+For MNIST, we train 100 epochs, enumerating all patch locations for each
+sample, and for CIFAR we train for 600 with 10 random patch locations, as
+outlined in [11] with interval training [26,18]. On MNIST the 7x200 and the 9x500
+achieve a natural accuracy of of 98.3% and 95.3% respectively. For CIFAR, these
+values are 48.8% and 48.1% respectively. Our implementation utilizes PyTorch
+[27] and is evaluated on Ubuntu 18.04 with an Intel Core i9-9900K CPU and 64
+GB RAM. For all timing results, we provide the mean over three runs.
+5.2 Robustness against adversarial patches
+For MNIST, containing 28× 28 images, as outlined in §4.3, in order to verify in-
+puts to be robust against 2×2 patch perturbations, 729 individual perturbations
+must be verified. Only if all are verified, the overall property can be verified for
+a given image. Similarly, for CIFAR, containing 32× 32 color images, there are
+961 individual perturbations (the patch is applied over all color channels).
+
+===== PDF PAGE 16 =====
+Table 5:I2×2 patch verification with templates at the 2nd & 3rd layer of the
+7x200 networks for different masks.
+Method/Mask m patch matched [%] t [s]
+Baseline - - 2.14
+L-infinity 1 94.1 1.11
+Center + Border 2 94.6 1.41
+2x2 Grid 4 95.0 3.49
+Table 6: I2×2 patch verification with templates generated on the second and
+third layer using the ℓ∞-mask. Verification times are given for the baseline tBL
+and for applying proof sharing tPS in seconds per image.
+Dataset Net verif. acc. [%] tBL tPS patch mat. [%] patch verif. [%]
+MNIST 7x200 81.0 2.10 1.10 94.1 97.0
+9x500 66.0 2.70 1.32 93.0 95.3
+CIFAR 7x200 29.0 3.28 2.45 33.7 42.2
+9x500 28.0 5.48 4.48 34.2 46.2
+We now investigate the two main parameters of Algorithm 2: the masks
+µ1,...,µ m and the layers k ∈ K. We first study the impact of the layer k
+used for creating the template. To this end, we consider the 7x200 networks,
+use m = 1 (covering the whole image; equivalent to ˆIϵ). Table 3 shows the
+corresponding template matching rates, and the overall percentage of individual
+patches that can be verified “patches verif.”. (The overall percentage of images
+for which I2×2 is true is reported as “verf.” in Table 6.) Table 4 shows the
+corresponding verification times (including the template generation). We observe
+that many template matches can already be made at the second or third layer.
+As creating templates simultaneously at the second and third layer works well
+for both datasets, we utilize templates at these layers in further experiments.
+Next, we investigate the impact of the pixel masks µ1,...,µ m. To this end,
+we consider three different settings, as showcased in Fig. 5 earlier: (i) the full
+image (ℓ∞-mask as before; m = 1), (ii) ”center + border” ( m = 2), where we
+consider the 6× 6 center pixel as one group and all others as another, and (iii)
+the 2× 2 grid (m = 4) where we split the image into equally sized quarters.
+As we can see in Table 5, for higher m more patches can be matched to the
+templates, indicating that our optimization procedure is a good approximation
+to Problem 2, which only considers the number of templates matched. Yet, for
+m > 1 the increase in matching rate p does not offset the additional time in
+template generation and matching. Thus, m = 1 results in a better trade-off.
+This result highlights the trade-offs discussed throughout sections §3 and §4.
+Based on this investigation we now, in Table 6, evaluate all networks and datasets
+
+===== PDF PAGE 17 =====
+usingm = 1 and template generation at layers 2 and 3. In all cases, we obtain a
+speed up between 1.2 to 2× over the baseline verifier. Going from 2× 2 to 3× 3
+patches speed ups remain around 1.6 and 1.3 for the two datasets respectively.
+Table 7: Speed-ups achievable in the setting of Table 3. tBL the baseline.
+speedup at layer k
+Layerk 1 2 3 4
+realized tBL/tPS 1.08 1.83 1.72 1.49
+optimal tBL/(tT +rtS +rt⊆) 3.75 2.51 1.92 1.56
+optimal, no⊆ tBL/(tT +rtS) 4.02 2.68 2.01 1.62
+optimal, no genT ., no⊆ tBL/rtS 4.57 2.90 2.13 1.69
+Comparison with theoretically achievable speed-up Finally, we want to determine
+the maximal possible speed-up with proof sharing and see how much of this po-
+tential is realized by our method. To this end we investigate the same setting
+and network as in Table 3. We let tBL and tPS denote the runtime of the base
+verifier without and with proof sharing respectively. Similar to the discussion
+in §4 we can break down tPS into tT (template generation time), tS (time to
+propagate one input to layerk),t⊆ (time to perform template matching) and tψ
+(time to verify S if no match). Table 7 shows different ratios of these quantities.
+For all, we assume a perfect matching rate at layerk and calculate the achievable
+speed-up for patch verification on MNIST. Comparing the optimal and realized
+results, we see that at layers 3 and 4 our template generation algorithm, de-
+spite only approximately solving Problem 2 achieves near-optimal speed-up. By
+removing the time for template matching and template generation we can see
+that, at deeper layers, speeding up t⊆ and tT only yield diminishing returns.
+5.3 Robustness against geometric perturbations
+For the verification of geometric perturbations, we take 100 images from the
+MNIST dataset and the 7x200 neural network from §5.2. In Table 8, we consider
+an input region with ±2° rotation,±10% contrast and±1% brightness change,
+inspired by [4]. To verify this region, similar to existing approaches [4], we choose
+to split the rotation into r regions, each yielding a Box specification over the
+input. Here we usem = 1, a single template, with the largest verifiableϵ found via
+binary search. We observe that as we increase r, the verification rate increases,
+but also the speed ups. Proof sharing enables significant speed-up between 1 .6
+to 2.9×.
+Finally, we investigate the impact of the number of templatesm. To this end,
+we consider a setting with a large parameter space:±40° rotation generated input
+
+===== PDF PAGE 18 =====
+Table 8:±2° rotation,±10% contrast and ±1% brightness change split into r
+perturbations on 100 MNIST images. Verification rate, rate of splits matched
+and verified along with the run time of Zonotope tBL and proof sharing tPS .
+r verif. [%] splits verif. [%] splits matched [%] tBL tPT
+4 73.0 87.3 73.1 3.06 1.87
+6 91.0 94.8 91.0 9.29 3.81
+8 93.0 95.9 94.2 20.64 7.48
+10 95.0 96.5 94.9 38.50 13.38
+Table 9:±40° rotation split into 200 perturbations evaluated on MNIST. The
+verification rate is just 15 %, but 82.1 % of individual splits can be verified.
+Method m splits matched [%] t [s]
+Baseline - - 11.79
+Proof Sharing
+1 38.0 9.15
+2 41.1 9.21
+3 58.5 8.34
+region with r = 200. In Table 9, we evaluate this for m templates obtained from
+the ℓ∞ input perturbation around m equally spaced rotations, where we apply
+binary search to find ϵi tailored for each template. Again we observe that m> 1
+allows more templates matches. However, in this setting the relative increase is
+much larger than for patches, thus making m = 3 faster than m = 1.
+5.4 Discussion
+We have shown that proof sharing can achieve speed-ups over conventional exe-
+cution. While the speed-up analysis (see §4 and Table 7) put a ceiling on what is
+achievable in particular settings, we are optimistic that proof sharing can be an
+important tool for neural network robustness analysis. In particular, as the size
+of certifiable neural networks continues to grow, the potential for gains via proof
+sharing is equally growing. Further, the idea of proof effort reuse can enable
+efficient verification of larger disjunctive specifications such as the patch or geo-
+metric examples considered here. Besides the immediately useful speed-ups, the
+concept of proof sharing is interesting in its own right and can provide insights
+into the learning mechanisms of neural networks.
+6 Related Work
+Here, we briefly discuss conceptually related work:
+
+===== PDF PAGE 19 =====
+Incremental Model Checking The field of model checking aims to show whether
+a formalized model, e.g. of software or hardware, adheres to a specification. As
+neural network verification can also be cast as model checking, we review incre-
+mental model checking techniques which utilize a similar idea to proof sharing:
+reuse partial previous computations when checking new models or specifications.
+Proof sharing has been applied for discovering and reusing lemmas when proving
+theorems for satisfiability [7], Linear Temporal Logic [8], and modal µ-calculus
+[36]. Similarly, caching solvers [38] for Satisfiability Modulo Theories cache ob-
+tained results or even the full models used to obtain the solution, with assign-
+ments for all variables, allowing for faster verification of subsequent queries. For
+program analysis tasks that deal with repeated similar inputs (e.g. individual
+commits in a software project) can leverage partial results [46], constraints [41]
+precision information [5,6] from previous runs.
+Proof Sharing Between Networks In neural network verification, some approaches
+abstract the network to achieve speed-ups in verification. These simplifications
+are constructed in a way that the proof can be adapted for the original neural
+network [1,48]. Similarly, another family of approaches analyzes the difference
+between two closely related neural networks by utilizing their structural similar-
+ity [28,29]. Such approaches can be used to reuse analysis results between neural
+network modifications, e.g. fine-tuning [10,42].
+In contrast to these works, we do not modify the neural network, but achieve
+speed-ups rather by only considering the relaxations obtained in the proofs. [42]
+additionally consider small changes to the input, however, these are much smaller
+than the difference in specification we consider here.
+7 Conclusion
+We introduced the novel concept of proof sharing in the context of neural network
+verification. We showed how to instantiate this concept, achieving speed-ups of
+up to 2 to 3 x for patch verification and geometric verification. We believe that
+the ideas introduced in this work can serve as a solid foundation for exploring
+methods that effectively share proofs in neural network verification.
+References
+1. Ashok, P., Hashemi, V., Kret´ ınsk´ y, J., Mohr, S.: Deepabstract: Neural network
+abstraction for accelerating verification. In: Proc of. Automated Technology for
+Verification and Analysis (ATVA). vol. 12302 (2020)
+2. Bak, S., Duggirala, P.S.: Simulation-equivalent reachability of large linear systems
+with inputs. In: Proc. of Computer Aided Verification (CAV). Springer (2017)
+3. Bak, S., Liu, C., Johnson, T.T.: The second international verification of neural
+networks competitio. ArXiv preprint abs/2109.00498 (2021)
+4. Balunovic, M., Baader, M., Singh, G., Gehr, T., Vechev, M.T.: Certifying geometric
+robustness of neural networks. In: Neural Information Processing Systems (NIPS)
+(2019)
+
+===== PDF PAGE 20 =====
+5. Beyer, D., L¨ owe, S., Novikov, E., Stahlbauer, A., Wendler, P.: Precision reuse for
+efficient regression verification. In: Symposium on the Foundations of Software
+Engineering (SIGSOFT) (2013)
+6. Beyer, D., Wendler, P.: Reuse of verification results - conditional model checking,
+precision reuse, and verification witnesses. In: Proc. of Model Checking Software.
+vol. 7976 (2013)
+7. Bradley, A.R.: Sat-based model checking without unrolling. In: Proc. of Verifica-
+tion, Model Checking, and Abstract Interpretation (VMCAI). vol. 6538 (2011)
+8. Bradley, A.R., Somenzi, F., Hassan, Z., Zhang, Y.: An incremental approach to
+model checking progress properties. In: International Conf. on Formal Methods in
+Computer-Aided Design (FMCAD) (2011)
+9. Brown, T.B., Man´ e, D., Roy, A., Abadi, M., Gilmer, J.: Adversarial patch. ArXiv
+preprint abs/1712.09665 (2017)
+10. Cheng, C., Yan, R.: Continuous safety verification of neural networks. In: Design,
+Automation & Test in Europe Conf. & Exhibition (2021)
+11. Chiang, P., Ni, R., Abdelkader, A., Zhu, C., Studer, C., Goldstein, T.: Certified
+defenses for adversarial patches. In: Proc. of International Conf. on Learning Rep-
+resentations (ICLR) (2020)
+12. Cousot, P., Cousot, R.: Abstract interpretation: A unified lattice model for static
+analysis of programs by construction or approximation of fixpoints. In: Proc. of
+Principles of Programming Languages (POPL) (1977)
+13. Cousot, P., Halbwachs, N.: Automatic discovery of linear restraints among variables
+of a program. In: Proc. of Principles of Programming Languages (POPL) (1978)
+14. Fischer, M., Baader, M., Vechev, M.T.: Certified defense to image transformations
+via randomized smoothing. In: Neural Information Processing Systems (NIPS)
+(2020)
+15. Fischer, M., Sprecher, C., Dimitrov, D.I., Singh, G., Vechev, M.: Shared certificates
+for neural network verification. In: Computer Aided Verification: 34th International
+Conference, CAV 2022, Haifa, Israel, August 7–10, 2022, Proceedings, Part I. pp.
+127–148. Springer (2022)
+16. Gehr, T., Mirman, M., Drachsler-Cohen, D., Tsankov, P., Chaudhuri, S., Vechev,
+M.T.: AI2: safety and robustness certification of neural networks with abstract
+interpretation. In: Symposium on Security and Privacy (S&P) (2018)
+17. Goubault, E., Putot, S.: A zonotopic framework for functional abstractions. Formal
+Methods Syst. Des. 47(3) (2015)
+18. Gowal, S., Dvijotham, K., Stanforth, R., Bunel, R., Qin, C., Uesato, J., Arand-
+jelovic, R., Mann, T.A., Kohli, P.: On the effectiveness of interval bound prop-
+agation for training verifiably robust models. ArXiv preprint abs/1810.12715
+(2018)
+19. Katz, G., Barrett, C.W., Dill, D.L., Julian, K., Kochenderfer, M.J.: Reluplex: An
+efficient SMT solver for verifying deep neural networks. In: Proc. of Computer
+Aided Verification (CAV). vol. 10426 (2017)
+20. Katz, G., Huang, D.A., Ibeling, D., Julian, K., Lazarus, C., Lim, R., Shah, P.,
+Thakoor, S., Wu, H., Zelji´ c, A., Dill, D.L., Kochenderfer, M.J., Barrett, C.: The
+marabou framework for verification and analysis of deep neural networks. In: Proc.
+of Computer Aided Verification (CAV) (2019)
+21. Kopetzki, A., Sch¨ urmann, B., Althoff, M.: Methods for order reduction of zono-
+topes. In: Conf. on Decision and Control (CDC) (2017)
+22. Krizhevsky, A., Hinton, G., et al.: Learning multiple layers of features from tiny
+images (2009)
+
+===== PDF PAGE 21 =====
+23. Krizhevsky, A., Sutskever, I., Hinton, G.E.: Imagenet classification with deep con-
+volutional neural networks. In: Neural Information Processing Systems (NIPS)
+(2012)
+24. LeCun, Y., Boser, B.E., Denker, J.S., Henderson, D., Howard, R.E., Hubbard,
+W.E., Jackel, L.D.: Handwritten digit recognition with a back-propagation net-
+work. In: Neural Information Processing Systems (NIPS) (1989)
+25. Madry, A., Makelov, A., Schmidt, L., Tsipras, D., Vladu, A.: Towards deep learning
+models resistant to adversarial attacks. In: Proc. of International Conf. on Learning
+Representations (ICLR) (2018)
+26. Mirman, M., Gehr, T., Vechev, M.T.: Differentiable abstract interpretation for
+provably robust neural networks. In: Proc. of International Conf. on Machine
+Learning (ICML). vol. 80 (2018)
+27. Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., Killeen, T.,
+Lin, Z., Gimelshein, N., Antiga, L., Desmaison, A., K¨ opf, A., Yang, E., DeVito, Z.,
+Raison, M., Tejani, A., Chilamkurthy, S., Steiner, B., Fang, L., Bai, J., Chintala, S.:
+Pytorch: An imperative style, high-performance deep learning library. In: Neural
+Information Processing Systems (NIPS) (2019)
+28. Paulsen, B., Wang, J., Wang, C.: Reludiff: differential verification of deep neural
+networks. In: International Conf. on Software Engineering (ICSE) (2020)
+29. Paulsen, B., Wang, J., Wang, J., Wang, C.: NEURODIFF: scalable differential
+verification of neural networks using fine-grained approximation. In: Conf. on Au-
+tomated Software Engineering (ASE) (2020)
+30. Pei, K., Cao, Y., Yang, J., Jana, S.: Towards practical verification of machine
+learning: Th. ArXiv preprint abs/1712.01785 (2017)
+31. Roth, V., Laub, J., Kawanabe, M., Buhmann, J.M.: Optimal cluster preserving
+embedding of nonmetric proximity data. IEEE Trans. Pattern Anal. Mach. Intell.
+25(12) (2003)
+32. Sadraddini, S., Tedrake, R.: Linear encodings for polytope containment problems.
+In: Conf. on Decision and Control (CDC) (2019)
+33. Silver, D., Schrittwieser, J., Simonyan, K., Antonoglou, I., Huang, A., Guez, A.,
+Hubert, T., Baker, L., Lai, M., Bolton, A., et al.: Mastering the game of go without
+human knowledge. Nature 550(7676) (2017)
+34. Singh, G., Gehr, T., Mirman, M., P¨ uschel, M., Vechev, M.T.: Fast and effective
+robustness certification. In: Neural Information Processing Systems (NIPS) (2018)
+35. Singh, G., Gehr, T., P¨ uschel, M., Vechev, M.T.: An abstract domain for certifying
+neural networks. PACMPL 3(POPL) (2019)
+36. Sokolsky, O., Smolka, S.A.: Incremental model checking in the modal mu-calculus.
+In: Proc. of Computer Aided Verification (CAV). vol. 818 (1994)
+37. Szegedy, C., Zaremba, W., Sutskever, I., Bruna, J., Erhan, D., Goodfellow, I.J.,
+Fergus, R.: Intriguing properties of neural networks. In: Proc. of International Conf.
+on Learning Representations (ICLR) (2014)
+38. Taljaard, J., Geldenhuys, J., Visser, W.: Constraint caching revisited. In: Proc. of
+NASA Formal Methods (NFM). vol. 12229 (2020)
+39. Tjeng, V., Xiao, K.Y., Tedrake, R.: Evaluating robustness of neural networks with
+mixed integer programming. In: Proc. of International Conf. on Learning Repre-
+sentations (ICLR) (2019)
+40. Tran, H.D., Lopez, D.M., Musau, P., Yang, X., Nguyen, L.V., Xiang, W., Johnson,
+T.T.: Star-based reachability analysis of deep neural networks. In: International
+Symposium on Formal Methods (FME). Springer (2019)
+
+===== PDF PAGE 22 =====
+41. Visser, W., Geldenhuys, J., Dwyer, M.B.: Green: reducing, reusing and recycling
+constraints in program analysis. In: Symposium on the Foundations of Software
+Engineering (SIGSOFT) (2012)
+42. Wei, T., Liu, C.: Online verification of deep neural networks under domain or
+weight shift. ArXiv preprint abs/2106.12732 (2021)
+43. Weng, T., Zhang, H., Chen, H., Song, Z., Hsieh, C., Daniel, L., Boning, D.S.,
+Dhillon, I.S.: Towards fast computation of certified robustness for relu networks.
+In: Proc. of International Conf. on Machine Learning (ICML). vol. 80 (2018)
+44. Wing, J.M.: Trustworthy ai. Commun. ACM 64(10) (2021)
+45. Wong, E., Kolter, J.Z.: Provable defenses against adversarial examples via the
+convex outer adversarial polytope. In: Proc. of International Conf. on Machine
+Learning (ICML). vol. 80 (2018)
+46. Yang, G., Dwyer, M.B., Rothermel, G.: Regression model checking. In: Interna-
+tional Conf. on Software Maintenance (ICSM) (2009)
+47. Zhang, H., Weng, T., Chen, P., Hsieh, C., Daniel, L.: Efficient neural network
+robustness certification with general activation functions. In: Neural Information
+Processing Systems (NIPS) (2018)
+48. Zhong, Y., Ta, Q., Luo, T., Zhang, F., Khoo, S.: Scalable and modular robustness
+analysis of deep neural networks. In: Proc. of Asian Symposium on Programming
+Languages and Systems (APLAS) (2021)
+
+===== PDF PAGE 23 =====
+A Offline Proof Sharing
+In contrast to the online setting in the main paper, here we discuss an offline
+setting where we generate templates offline on a training dataset Ttrain and use
+them to speed up the verification process on an unobserved data from a test set
+Ttest. Therefore, we consider a modified version of Problem 2 that, instead of
+Eq. (1), optimizes
+arg max
+T
+Ex∼D
+" _
+T∈T
+N1:k(I(x))⊆T
+#
+(5)
+s.t.∀T∈T .Nk+1:L(T )⊢ψ,
+now with a fixedI but x∼D , drawn from the data distributionD. As standard
+in machine learning, we assume that the training and test sets, Ttrain and Ttest,
+are sampled from D. An important challenge in the offline setting is that we
+require the set of templates T to be general enough to generalize to unseen
+inputs from the test set. To this end, in Appendix A.1 we describe offline-specific
+template generation algorithm for solving the optimization in Eq. (5). We note
+that once we obtain the set of templates T , we use the same procedure as in
+Algorithm 1 for utilizing the templates to speed up verification.
+A.1 Template Generation on Training Data
+We first outline the template generation process in general and then show an
+instantiation for ℓ∞-robustness verification in Appendix A.2.
+Template Generation In order to optimize Eq. (5) under our constraints, we
+attempt to find the set of templates T with|T|≤ m that contains the most ab-
+straction at layerk obtained fromTtrain. While this is generally computationally
+hard, we approximate this with a clustering-based approach. To this end, we
+first compute the abstractions N1:k(I(x)) for all x∈Ttrain and then cluster and
+merge them. Subsequently, we further merge the obtained templates until we
+obtain a setT ofm templates. We formalize the template generation procedure
+in Algorithm 3 and showcase it in Fig. 7.
+Similarly to the online template generation, discussed in §4.2, we rely on
+two different verifiers — the original verifier used to verify inputs VS, and the
+verifier used to verify our templates VT . We can choose VT to be more precise
+and but slower thanVS as the run-time ofVT does not impact the runtime of the
+inference procedure. We first (Line 1,Fig. 7a) compute the set V of abstraction
+computed by VS at layer k, that can be verified. In theory any other verifier
+could be used for this. Next, we cluster the abstractions in V into n groups
+{Gi| i = 1,...,n } of similar abstractions using the function cluster shapes
+(which we will instantiate in Appendix A.2), showcased by different colors in
+Fig. 7b. For each groupGi, we compute its convex hull Ti via the join operatorF
+D (Line 5). The join returns a (usually the tightest) expressible shape in the
+
+===== PDF PAGE 24 =====
+domain D that includes all its inputs. If we are able to show the post-condition
+ψ forTi, then we add the tuple (Ti,Gi), the template along with all abstractions
+it covers, to the set H, shown in Fig. 7c (Line 7).
+As depicted in Fig. 7d, we then attempt to merge pairs of these templates. To
+this end, we traverse the template pairs according to a priority queue Q ordered
+by a chosen distance d between them (Line 12). Here, we use the Euclidean
+distance between the centers ofTi andTj ford(Ti,Tj). In order to merge (Ti,Gi)
+and (Tj,Gj), we first compute the set of shapes G′ =Gi∪Gj contained in either
+of them (Line 13) and then again compute the join T′ = F
+D(G′) (Line 14). We
+compue the join this way, as this is likely to result in a tigher overall shape than
+joining Ti and Tj. If T′ can be verified, we replace ( Ti,Gi) and ( Tj,Gj) with
+the single pair (T′,G′) inH and we update Q accordingly (Line 15 to 22). This
+procedure is repeated until no templates can be merged. Finally, T is obtained
+as the set of the m templates with the most associated abstractions (e.g., the
+largest|G|) inH.
+Algorithm 3: Template generation overTtrain
+Input: layer numberk, training set Ttrain, specificationI, verifiers VS, VT
+Result: SetT of templates,|T|≤ m
+1 V←{ VS(I(x),N 1:k)| x∈Ttrain,N (I(x))⊢ψ}
+2 G1,..., Gn← cluster shapes(V)
+3 H←∅
+4 for i← 1 to n do
+5 Ti← F
+D(Gi)
+6 if VT (Ti,Nk+1:L)⊢ψ then
+7 H←H∪{ (Ti,Gi)}
+8 end
+9 end
+10 P←{ ((Ti,Gi), (Tj,Gj))|i̸=j, (Ti,Gi)∈H , and (Tj,Gj)∈H}
+11 Q← priority queue over the pairs in P, ordered by d(Ti,Tj)
+12 foreach pair ((Ti,Gi), (Tj,Gj)) in Q do
+13 G′ =Gi∪Gj
+14 T′ = F
+D(G′)
+15 if (VT (T′,Nk+1:L)⊢ψ then
+16 H←H\{ (Ti,Gi), (Tj,Gj)}
+17 remove elements containing (Ti,Gi) from Q
+18 remove elements containing (Tj,Gj) from Q
+19 P′←{ ((T,G), (T′,G′))| (T,G)∈H}
+20 add all pairs from P′ to Q
+21 H←H∪{ (T′,G′)}
+22 end
+23 end
+24 T ←T for (T,G)∈H for the m largest|G|
+25 returnT
+
+===== PDF PAGE 25 =====
+(a) (b)
+(c) (d)
+Fig. 7: Visualization of Algorithm 3. First, in (a) the abstractions at layer k for
+input regions in the training set are obtained, and restricted to the verifiable
+ones (green). These are then clustered and their convex hulls in domain D are
+obtained. (b) shows different clusters in different colors. The convex hulls are
+then verified (c), and restricted to the verifiable ones (green). Finally in (d),
+these regions are further merged, if possible, to obtain the set of templates.
+A.2 Dataset templates for ℓ∞ robustness
+We now instantiate the template generation algorithm in Appendix A.1 for
+speeding up ℓ∞-robustness verificationIϵ. As in §4, we rely on verifier VS based
+on Zonotopes and represent the templates as Boxes (with possible additional
+half-space constraints as outlined below). For the verification of the templates
+(lines 6 and 15) we perform exact verification via Mixed-Integer Linear Program-
+ming (MILP) [39] via verifier VT . The box-encoded templates can be directly
+verified by the exact verifier. We note that since exact verification is strictly
+more precise than Zonotope propagation, the use of templates can potentially
+allow for higher certification rates than directly employing Zonotope propaga-
+tion. While we did not observe this experimentally, it presents an interesting
+target for further investigation.
+We instantiate the join F
+D with the join in the Box domain F
+B. For a set
+of Zonotopes G = {V1,..., Vn}, we compute the bounding box αBox(Vi) for
+all Zonotopes and then compute the joined bounding Box (which again can be
+represented as a Zonotope).
+
+===== PDF PAGE 26 =====
+Exact verification We now briefly outline the properties of exact verification
+via MILP, as we require these in the following discussion. The framework from
+[39], proves classification to the correct label l by maximizing the error term
+e = maxi̸=l ni− nl and asserting that e < 0, where n denotes the output
+of the neural network (e.g. its logits) over the considered input region. If no
+counterexample to that assertion can be found, it certifies the specification, else
+it returns a set of counterexamples {zV,i} (concrete points in the input region),
+utilized later, for which this error is maximal. In both cases we can access value
+e of the error function.
+Shape clustering Next, we describe how we instantiate the clustering method
+cluster shapes in this setting. We base cluster shapes on k-means clus-
+tering for which we provide a similarity matrix computed as follows. For each
+pair of Zonotopes in {(Vi,Vj)|V i,Vj∈V} , we compute the joined Box Bi,j =
+αBox(Vi)⊔BαBox(Vj), where⊔B denotes the Box join operator. We then set the
+distance betweenVi andVj to exp(e), where e∈ R is the error obtained from
+exact verification when attempting to verify ψ for Bi,j. To obtain a similarity
+matrix from these distances, we apply a constant shift embedding [31]. As invok-
+ing exact verification on each boxBi,j is expensive, we only consider thet closest
+neighbors (in ℓ2 distance between the Zonotope centers) and set all others to a
+maximal distance.
+Half-space constraints To allow for templates T covering more volume, e.g.,
+those that allow to optimize Eq. (5) further by containing more abstractions, we
+extend the template representation from Boxes to Boxes with additional half-
+space constraints, formally called Stars [40,2]. As the Star domain is more precise
+than the Box domain (by allowing to cut some of the box volume), using Stars
+enables us to generate templates with higher volume that are still verifiable by
+VT . Further, the Star domain allows efficient containment checksS⊆T similarly
+to the Box domain. Formally a Star B∗ over a Box B is denoted as:
+B∗(C, c) :={z∈ Rd| z∈B∧Cz≤ c} (6)
+with C∈ Rc×d, c∈ Rc.
+Here each half-space constraint is described by a hyperplane parameterized
+by Ci,· and ci.
+The containment check S ⊆ B∗(C, c) between an abstraction S and the
+Star B∗(C, c) consists of: (i) a containment for the underlying box S⊆B, and
+(ii) checking if for each constraint Ci·z≤ci, maximizing the linear expression
+Ci·z with respect to S yields an objective ≤ ci. For a Zonotope S as given in
+Eq. (3), in §4.1 we showed how to perform step (i) efficiently and step (ii) can
+be performed efficiently by checking the condition Ca + Pp
+j=1|CA|j≤ c.
+A star encoded as in Eq. (6) can be directly verified using exact verification
+(MILP) by adding the half-space constraints as further LP constraints.
+
+===== PDF PAGE 27 =====
+Obtaining half-space contraints In the template generation process we uti-
+lize Boxes as before. However, whenever we fail to verify a template (e.g.,
+lines 6 and 15 in Algorithm 3), we attempt to add a half-space constraint. We
+repeat this up to nhs times resulting in as many constraints. We leverage the
+exact verifier for obtaining half-space constraints. Recall, that it either verifies a
+region or provides a set of counterexamples{zV,i}. Since we only add additional
+half-space constraints, if the verification fails we utilize these counterexamples.
+In the following we assume a single zV , and derive a hyperplane that separates
+zV from the abstraction we are trying to verify. If there are multiple zV,i, we
+iterate over them and perform the described procedure for each zV,i, that is
+not already cut by the hyperplane found for a previous counterexample. These
+hyperplanes directly yield the new constraints.
+We showcase this in Fig. 8, where the green shaded area T shows the Box
+join over three abstraction T = F
+B({P1,P 2,P 3}) The individual Pi, shown in
+blue, are zonotopes, that can be verified individually.
+The verification of the green area fails, with the counterexample zV (red dot)
+shown in the top right corner. To find a hyperplane that separates zV from the
+rest ofT , we consider the line from the center a (green dot) ofT to the point zV
+and a hyperplane orthogonal to it (shown as the dashed line). Thus, adding a row
+i to the matrix C of the star: Ci = (zV− a)T . To find offset h =λa+ (1−λ)zV
+(forλ∈ [0, 1]) along this line to, we consider the value attained for Cix for x in
+the verified area (P1,P 2,P 3):
+cp :=max x∈P
+P∈{P1,P2,P3}
+Cix.
+Then, the constant ci of the new hyperplane is given by ci = κcp + (1−κ)cz
+for a hyper-parameter κ and cz := CizV .
+A high κ puts the hyperplane close to zV , removes only little volume from
+the template, while lowκ puts it closer to a. Since zV is only the counterexample
+with the largest violation, but not necessarily the whole region preventing certi-
+fication, the half-space constraint obtained from a high κ might not be sufficient
+to separate this region from T . Thus, in a subsequent iteration, another half-
+space constraint for the same region may be added. For low κ, fewer constraints
+are required, but more verifiable volume of T is lost.
+A.3 Template Expansion
+To further improve the generalization of our templates from the training set to
+the test set, we introduce an operation called template expansion, outlined in
+Algorithm 4. We apply the template expansion to the result of the template
+generation presented in Algorithm 3 and we use the resulting widened templates
+for our offline proof transfer algorithm. Algorithm 4 tries to expand each of the
+templates Ti separately, by repeatedly scaling the template’s associated Box by
+a diagonal scaling matrix D := diag(f1,...,f d) (Line 9) until Ti is no longer
+verifiable by the template verifier VT (Line 4). Here, fj ≥ 1 acts as a scaling
+factor for the j-th dimension of the template Boxes.
+
+===== PDF PAGE 28 =====
+a
+zV
+T
+P1 P2
+P3 h
+Ci
+ci
+Fig. 8: The algorithm used to find half-space constraints, by cutting counterex-
+ample zV from the template T with a hyperplane ( Ci, ci). The normal of the
+hyperplane (specified by Ci) is given by the vector between a (the center of T )
+and zV . The threshold ci is chosen such that the hyperplane remove zV but
+does not intersect any relaxations P1,P 2,P 3 the template T was created from.
+Template Expansion for Stars When we encode templates as Stars, the
+scaling matrix is only applied on the Star’s underlying Box, but not on the
+half-space constraints, since these have already been selected to be close to the
+decision boundary. Thus for the new extened templateTi we copy the constraints
+from Tw
+i (Line 11). If the resulting template fails to verify, we generate up to
+nte
+hs additional constraints, in the same way as for Algorithm 3, and add them
+to Ti (Line 13).
+A.4 Experimental Evaluation
+In this section, we instantiate our offline proof transfer to the MNIST dataset. We
+consider templates both in the Box and Star domains both with and without
+template expansion (Appendix A.3) and 5x100 fully-connected network with
+ReLU activations. We generate templates individually for every label at both
+the third and fourth layer. For technical details see the end of this section. We
+allow up to m = 25 templates for each combination. We experiment with two
+different values for ϵ: 0.05 and 0.1.
+Table 10 shows the results. We provide the fraction of input regions that could
+be successfully matched to templates as well as the overall verification time. If
+an input cannot be matched with any of the templates, then we propagate the
+standard Zonotope abstraction through the rest of the network to verify it.
+We observe that templates can subsume up to 57.6% of input regions in the
+test set with ϵ = 0.05, and up to 45.8% for the higher ϵ = 0.1 when expressed in
+the Box domain (at layer 4). Additionally enabling template expansion increases
+these rates to 59.0% and 47.7% respectively. Combining template at multiple lay-
+ers gives more matched templates as many inputs can be matched in the third
+layer, while unmatched ones can again be considered at the fourth layer for a
+total of up to 60.6% and 49.2% respecitvely. We observe that improvements in
+matching rate directly lead to speed ups over standard verification. Additionally
+allowing half-space constraints, i.e., using Stars instead of Boxes as templates,
+allows us to increase the matching rate up to 65.2 % and 54.5 % for the two ϵ
+
+===== PDF PAGE 29 =====
+Algorithm 4: Template expansion
+Input: layer numberk, templatesT ={Ti}m
+i=1 at layer k, scaling matrix D,
+verifierVT
+Result: SetTw of expanded templates,|Tw| =m
+1 for i← 1 to m do
+2 Tw
+i ←Ti
+3 Ti← D·Ti
+4 while VT (Ti,Nk+1:L)⊢ψ do
+5 Tw
+i ←Ti
+6 if Ti is Star then
+7 Ti← remove planes(Ti)
+8 end
+9 Ti← D·Ti
+10 if Ti is Star then
+11 Ti← copy planes(Tw
+i )
+12 if VT (Ti,Nk+1:L)̸⊢ψ then
+13 Ti← add planes(Ti,n te
+hs)
+14 end
+15 end
+16 end
+17 end
+18 returnTw ={Tw
+i }m
+i=1
+respectively when using TE. However, as checking matches for Stars is compu-
+tationally more expensive the resulting final verification time is slightly worse
+compared to Box templates.
+To summarize, these results highlight that with the algorithm outlined in
+Appendix A.2, a set of templates T can be obtained that generalize remarkably
+well to new unseen input regions (e.g., up to 65.2 % containment). More precise
+abstractions such as Stars allow templates that capture a far higher rate of
+containment for new input regions, the added cost of their containment check
+makes the obtained speedups smaller. Finally, we see that Template Expansion
+(Appendix A.3) uniformly leads to a higher matching rate and speed-ups.
+Technical Details We use a feed forward neural network with five linear layers
+of size 100 and ReLU activations, trained with DiffAI [26]. The network has an
+accuracy of 0.94 and a certified accuracy of 0.93 and 0.92 forϵ = 0.1 andϵ = 0.2
+respectively.
+For a cluster proofs we set an initial cluster size depending on the num-
+ber of verifiable images per label, in order that the clusters contain on average
+50 images. For the verification of a cluster’s union, we allow up to nhs = 30
+half-space constraints and set κ of 0.05. Taking a low value leads to a larger
+truncation, but reduces the number of half-space constraints, which speeds up
+the template generation as well as the containment check at inference. We take
+the same values also for verifying unions after merging two clusters. For expand-
+
+===== PDF PAGE 30 =====
+Table 10: Template matching rate and verification time of the whole MNIST test
+set t in seconds for the 5x100 using up to m templates per label and layer pair.
+The baseline verification 292 .13± 1.77 and 291.80± 2.36 seconds for ϵ = 0.05
+and ϵ = 0.10 respectively. +TE indicates the use of Template Expansion.
+Box shapes matched [%] verification time [s]
+k m = 1 m = 3 m = 25 m = 1 m = 3 m = 25
+ϵ = 0.05
+3 07.5 14.4 28.4 282 .60± 2.18 275 .32± 1.34 259 .87± 0.68
+4 19.5 38.0 57.6 279 .87± 0.07 270 .08± 0.81 258 .06± 1.23
+3+4 20.7 39.3 59.2 274 .86± 0.31 259 .19± 0.91 243 .11± 0.81
+ϵ = 0.10
+3 05.1 10.2 19.4 286 .67± 1.17 280 .45± 1.03 272 .01± 0.68
+4 15.0 29.6 45.8 283 .06± 1.49 275 .39± 1.04 268 .05± 1.04
+3+4 15.8 30.7 47.4 281 .14± 1.12 272 .17± 1.18 257 .92± 0.97
+Box+TE shapes matched [%] verification time [s]
+k m = 1 m = 3 m = 25 m = 1 m = 3 m = 25
+ϵ = 0.05
+3 7.8 15.0 30.5 284 .27± 0.63 274 .26± 1.78 257 .77± 1.21
+4 20.1 38.9 59.0 280 .44± 1.66 268 .97± 1.13 258 .02± 1.38
+3+4 21.3 36.0 60.6 275 .31± 2.62 260 .95± 0.70 241 .36± 1.34
+ϵ = 0.10
+3 5.4 10.6 21.2 285 .76± 0.71 278 .94± 1.12 266 .85± 2.07
+4 15.6 30.5 47.7 285 .15± 0.47 274 .82± 1.41 266 .62± 0.45
+3+4 16.3 31.5 49.2 280 .49± 0.70 269 .90± 0.34 257 .82± 3.01
+Star shapes matched [%] verification time [s]
+k m = 1 m = 3 m = 25 m = 1 m = 3 m = 25
+ϵ = 0.05
+3 10.8 25.2 40.4 281 .33± 1.44 269 .24± 1.30 254 .41± 0.87
+4 25.8 40.3 62.7 282 .51± 2.10 281 .68± 0.60 271 .63± 0.89
+3+4 27.9 45.1 64.3 277 .89± 1.38 266 .55± 0.93 246 .39± 0.31
+ϵ = 0.10
+3 7.9 18.2 29.0 284 .31± 2.19 277 .96± 0.60 267 .72± 0.85
+4 20.2 31.9 51.0 285 .68± 2.10 286 .16± 0.79 278 .29± 1.30
+3+4 21.7 35.8 52.9 283 .43± 0.91 278 .00± 0.60 262 .96± 1.04
+Star+TE shapes matched [%] verification time [s]
+k m = 1 m = 3 m = 25 m = 1 m = 3 m = 25
+ϵ = 0.05
+3 11.1 25.8 41.8 282 .99± 0.45 271 .34± 1.89 254 .62± 1.05
+4 25.9 40.6 63.6 282 .98± 1.46 281 .51± 0.23 270 .44± 0.30
+3+4 28.3 45.6 65.2 278 .00± 0.36 269 .08± 0.80 247 .43± 0.09
+ϵ = 0.10
+3 8.1 18.7 30.3 285 .82± 1.91 280 .71± 2.99 267 .55± 0.77
+4 20.3 32.3 52.8 285 .49± 1.04 286 .34± 0.79 276 .14± 0.30
+3+4 22.0 36.2 54.5 284 .39± 2.29 278 .90± 0.34 262 .60± 1.71
+
+===== PDF PAGE 31 =====
+ing the templates, we use up to 10 iterations, in which we widen by 5% in each
+dimension and then allow up to 10 hyperplanes to verify the expanded template.
+To avoid truncating previously verified volume, we increase κ linearly by 0.02
+for each expansion step, starting with an initial κ of 0.4

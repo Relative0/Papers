@@ -1,0 +1,15 @@
+# N2/P2 Reproducibility Bundle
+
+- Preregistration: `N2_P2_PREREGISTRATION.md`
+- Frozen selector/execution harness: `n2_p2_harness.py`
+- Chunk runner: `run_p2_chunk.py`
+- Result combiner: `combine_p2_chunks.py`
+- Full result payload: `n2_p2_results.json`
+- Main report: `N2_P2_RESULTS.md`
+- Interpretation: `N2_P2_INTERPRETATION.md`
+- Per-case summaries: `N2_P2_NATURAL_CASE_SUMMARY.csv`, `N2_P2_GATEP_CASE_SUMMARY.csv`
+- Independent verification: `N2_P2_INDEPENDENT_VERIFY.json`
+- EPFL snapshot: `epfl/`
+- Raw chunk outputs: `chunks/`
+
+The P2 selector thresholds were frozen before benchmark execution and are identical to P1. The full one-process run exceeded the execution-call time limit, so the frozen harness was replayed case-by-case with `run_p2_chunk.py`; no selector or execution rule was changed. The combiner recomputes the frozen source selection and derives the reported comparisons from the persisted raw chunks.

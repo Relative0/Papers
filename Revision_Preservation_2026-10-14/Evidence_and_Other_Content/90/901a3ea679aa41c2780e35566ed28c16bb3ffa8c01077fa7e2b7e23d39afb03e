@@ -1,0 +1,536 @@
+# Astra Pro Research Prompt: Novelty, Generalization, and Paper Architecture for the CM Rotation Theory
+
+You are acting as a senior mathematical researcher, literature-review specialist, and journal-paper architect.
+
+I need a rigorous, adversarial deep dive into the novelty, mathematical significance, prior art, generalizations, and publication strategy for a new body of work derived from Correspondence Matrices (CMs), but **excluding material already covered in a separate manuscript titled _Operator-Level Boolean Computation with Correspondence Matrices_ (Paper B).**
+
+You will receive Paper B separately if it is not physically included in this archive, together with the 2018 CM manuscript and the audit/reproducibility materials in this package.
+
+## 0. Overall goal
+
+Determine what is genuinely new, potentially new, merely a new synthesis, already known under another name, or mathematically routine in the post-Paper-B theory. Then design the strongest scientifically defensible new paper around the surviving contributions.
+
+Do **not** assume novelty because terminology differs. Do **not** search only for “Correspondence Matrices.” Translate every claim into conventional abstract mathematics and search for equivalents in other literatures. Be actively skeptical.
+
+The goal is not to maximize novelty claims. It is to identify precisely what contribution remains after all relevant prior art is credited.
+
+## 1. Hard scope boundary: do not republish Paper B
+
+Treat the following as imported background, not new-paper contributions unless a result substantially extends them:
+
+- 2x2 binary CMs representing binary Boolean connectives.
+- Complement-paired logical operand vectors.
+- XOR/AND row-by-column Boolean contraction.
+- Coefficient-space linearity over F2.
+- Operand-frame transformations already developed in Paper B.
+- Output negation moved onto the operator.
+- Same-frame operator fusion.
+- Operator-on-operator Boolean computation already proved there.
+- Compiler/folding ideas already developed there.
+- Formula-valued Logical Matrices (LMs).
+- CM as valuation of an LM.
+- Logical pairing / LM measurement-like contraction.
+- ANF/STP comparisons already in Paper B.
+- Evidence boundaries already discussed there.
+
+Refer to these because the new theory starts from them, but do not count them as the primary novelty of the new paper.
+
+The new paper should begin approximately where the geometry/symmetry of a CM itself is lifted into a larger Boolean operator theory.
+
+## 2. Core new construction to investigate
+
+Use F2={0,1}, with XOR as field addition and AND as field multiplication.
+
+Let V=F2^4 with ordered basis e0,e1,e2,e3 corresponding to the four cells / atomic truth positions of a binary CM in a fixed cyclic ordering.
+
+Define the order-four cyclic rotation operator
+
+    R e_j = e_(j+1 mod 4)
+
+so R^4=I and R^T=R^-1.
+
+For a=(a0,a1,a2,a3) in F2^4, define
+
+    Lambda(a) = a0 I XOR a1 R XOR a2 R^2 XOR a3 R^3.
+
+Define
+
+    N = I XOR R.
+
+This is the central construction.
+
+A major conceptual question is whether a nontrivial phase/interference/modal operator theory can be **derived from the geometric rotation symmetry of an independently motivated Boolean logical-operator representation**, rather than postulated as a finite-field quantum state theory at the outset.
+
+## 3. Critical terminology / typing rule
+
+Do not use P for the 4x4 rotation operator in the final paper if Paper B already uses P for another 2x2 operator. Prefer R, R_CM, or P_rot.
+
+Maintain strict typing between:
+
+1. Original 2x2 CMs.
+2. 4-component CM coefficient vectors.
+3. 4x4 Boolean rotation operators Lambda(a).
+4. Block operators built from them.
+5. Shared-module multipartite models.
+6. Literal independent-register tensor models.
+
+A large portion of earlier confusion came from conflating these object types.
+
+## 4. Theorem-by-theorem novelty audit
+
+For each theorem below:
+
+- independently verify it;
+- state the strongest correct general form;
+- find the most general known mathematical formulation;
+- search for equivalent prior theorems under different vocabulary;
+- identify earliest antecedents where possible;
+- classify as: (A) known exactly, (B) known in equivalent form, (C) straightforward corollary of known results, (D) new synthesis/interpretation, (E) no prior equivalent located, or (F) unproved/false/needs modification.
+
+### T1. Centralizer of the four-cycle
+
+Investigate
+
+    Cent_M4(F2)(R)
+      = {a0 I XOR a1 R XOR a2 R^2 XOR a3 R^3}
+
+and
+
+    F2[R] ~= F2[x]/(x^4-1) ~= F2[u]/(u^4),  u -> I XOR R.
+
+The algebra itself is expected to be classical. Search circulants, centralizers of cyclic shifts, group algebras, modular representations of C4, finite chain rings, local group algebras.
+
+The novelty question is not whether the algebra is new, but whether deriving it specifically from geometric rotation of the logical CM truth positions is new or mathematically useful.
+
+### T2. Boolean degree <-> lifted-operator reversibility
+
+For f:F2^2->F2 with truth vector a and ANF
+
+    f(x,y) = c0 XOR cx x XOR cy y XOR cxy xy,
+
+investigate the equivalence
+
+    Lambda(a) invertible
+      iff a0 XOR a1 XOR a2 XOR a3 = 1
+      iff cxy = 1
+      iff degree(f) = 2.
+
+Equivalently, a binary Boolean function is genuinely nonlinear iff its CM-rotation lift is reversible.
+
+This is a high-priority novelty candidate. Search Boolean-function theory, Möbius/ANF transforms, algebraic degree, circulants over F2, invertible cyclic convolution, group rings, cellular automata, cryptography, and reversible Boolean dynamics.
+
+Then investigate higher-arity generalizations: n-variable Boolean functions, 2^n truth positions, cyclic/group actions, top ANF coefficients, Möbius spectra, invertibility of induced convolution operators, and whether degree or finite-difference structure controls unit/filtration structure.
+
+### T3. Operand reversal <-> phase reversal
+
+Let K e_j=e_(-j mod 4). Then K R K=R^-1 and
+
+    K Lambda(a) K = Lambda(a^vee) = Lambda(a)^T.
+
+If a^vee is the coefficient transformation induced by f(x,y)->f(y,x), then logical operand reversal becomes cyclic phase reversal.
+
+Search circulant transpose involutions, dihedral group actions, NPN symmetry, logic rotations, categorical dagger/phase inversion, and reversible logic. Separate the classical algebra from the semantic bridge.
+
+### T4. Complement as terminal-filtration translation
+
+With N=I XOR R, verify
+
+    N^3 = I XOR R XOR R^2 XOR R^3
+
+and
+
+    Lambda(NOT f) = Lambda(f) XOR N^3.
+
+Ask whether Boolean output negation represented as translation by the deepest nonzero element of this nilpotent filtration appears in finite-chain-ring, group-algebra, or Boolean-function literature.
+
+### T5. Rotational-difference filtration
+
+Verify
+
+    N^4=0,
+    rank(N^k)=4-k, k=0,...,4,
+
+and the ideal chain
+
+    0 < (N^3) < (N^2) < (N) < A.
+
+Every nonzero a has valuation a=N^nu u for a unit u, with rank(a)=4-nu.
+
+The abstract algebra is expected to be known. Investigate whether interpreting N as a discrete rotational difference and the nilpotent filtration as successive loss of rotational information has precedent or useful analogues in finite differences, augmentation ideals, modular representation theory, Jordan/nilpotent theory, cellular automata, coding, or finite-group signal processing.
+
+### T6. Boolean rotation interferometer
+
+Let
+
+    W=[[I,0],[I,I]],
+    D_k=diag(I,R^k).
+
+Then W^2=I and
+
+    W D_k W (v,0)^T = (v, v XOR R^k v)^T.
+
+For k=0 the second branch cancels; other relative rotations can leave distinguishable patterns.
+
+Search finite-field interference, modal quantum theory, XOR interference, reversible circuits, semiring/ring interferometers and phase-group formalisms. Do not claim XOR interference itself as novel; investigate the CM-derived relative-phase mechanism.
+
+### T7. Restricted modal subtheory induced by the rotation algebra
+
+Rather than beginning with all of GL(n,2), define states, gates and measurements from the operator family inherited from A=F2[R] and suitable block/tensor constructions over it.
+
+Question: is there prior work where a restricted modal/finite-field quantum-like theory is derived from a pre-existing Boolean logical operator and its symmetry group, rather than simply postulated as a finite-field quantum theory?
+
+Search Schumacher-Westmoreland MQT; James-Ortiz-Sabry finite-field quantum computing; categorical quantum mechanics; phase-group subtheories; stabilizer subtheories; Spekkens; linear relational/process theories; semiring quantum theory; quantum theory over finite rings.
+
+### T8. Complete contextuality classification over A=F2[u]/(u^4)
+
+Let D_(a,b)=diag(u^a,u^b), 0<=a<=b<=4, u^4=0. Let the local measurement universe be the complete family of unordered projective reversible bases of A^2 induced from GL_2(A), quotienting row multiplication by units and outcome exchange. There are 192 such bases.
+
+Outcome (i,j) is possible iff r_i D_(a,b) s_j^T != 0.
+
+Investigate/prove:
+
+    a=b<4      -> strongly contextual;
+    a<b<4      -> logically contextual but not strongly contextual;
+    a<4,b=4    -> relationally local;
+    a=b=4      -> zero/empty model.
+
+This is a high-priority theorem-level novelty candidate. Search contextuality over rings, finite chain rings, Smith normal forms, Abramsky-Brandenburger sheaf contextuality, logical/strong contextuality, Hardy contextuality, Mermin configurations over finite rings, projective lines over quotient rings, Saniga/Planat/Minarovjech, and modal quantum contextuality.
+
+Search for stronger generalizations over F_q[u]/(u^s), arbitrary finite local principal ideal rings, and higher dimensions.
+
+### T9. Uniform nilpotent Hardy family
+
+For a<b<4 with p=u^a, q=u^b, c=u^(b-a), investigate the fixed small family of reversible local bases producing a Hardy-style logical-contextuality witness for every off-diagonal normal form.
+
+Search Hardy paradox over finite fields/rings, contextuality over chain rings, nilpotent contextuality, and logical contextuality parameterized by valuation. Attempt generalization to F_q[u]/(u^s) or arbitrary finite local principal ideal rings.
+
+### T10. Shared-module tensor vs literal field tensor
+
+For a ring A with zero divisors, nonzero a,b may satisfy a tensor_A b=0 while a tensor_F2 b != 0. Example: u^3 tensor_A u=0 but u^3 tensor_F2 u!=0.
+
+Investigate operational consequences for separability, resource classes, activation, teleportation, and translation between coefficient-ring models and independent-register models. The tensor fact is standard; ask whether its operational consequences have been systematically analyzed in modal/finite-ring quantum information or logic-derived process theories.
+
+### T11. Restricted-versus-unrestricted orbit collapse
+
+Under GL_2(A)xGL_2(A), Smith pair (a,b) is invariant. After embedding into ordinary F2-linear maps, unrestricted GL_8(F2)xGL_8(F2) local equivalence retains only ordinary rank. Thus distinct A-linear classes such as (0,2) and (1,1) can become equivalent in the enlarged field-linear theory.
+
+Search resource theories, orbit stratifications, local-equivalence classifications, module-vs-field embeddings, and effects of enlarging the free-operation group.
+
+### T12. Same unrestricted rank but different restricted contextuality
+
+Investigate the theorem that resources with equal F2-rank and the same unrestricted orbit may nevertheless have different contextuality classes relative to the full restricted A-linear measurement family. Candidate example:
+
+    D_(0,2): logical-not-strong,
+    D_(1,1): strong,
+
+although both have rank 6.
+
+Search contextuality relative to restricted measurement sets, contextuality under subtheories, stabilizer contextuality, and resource-theoretic restrictions.
+
+### T13. Even-dimensional binary-orthogonal operator-basis obstruction
+
+Let O(n,2)={U in GL_n(F2): U^T U=I}, n even. Every column has odd Hamming weight, so each U has even total weight. Thus all vec(U) lie in the codimension-one even-parity hyperplane of F2^(n^2), and no n^2 transpose-orthogonal matrices can form a basis of M_n(F2).
+
+Search aggressively for exact equivalents in binary orthogonal groups, spans of orthogonal matrices, unitary/nice error bases, Bell bases, self-dual bases, coding theory, and finite geometry. It may be folklore because the proof is short.
+
+Also investigate alternate characteristic-two notions of unitarity: symplectic/alternating forms, quadratic forms, Hermitian forms over F4/F_(2^m), Clifford groups, and dagger structures.
+
+### T14. Rank criterion for exact finite-field teleportation
+
+For literal F2^d state spaces with invertible measurement branch R_m and resource M,
+
+    T_m=M^T R_m^T,
+    rank(T_m)=rank(M),
+
+and universal exact linear correction exists iff M is full rank.
+
+Search finite-field/generalized teleportation. This is probably prior art or a straightforward linear-algebra consequence and should be used mainly to position the CM-derived model correctly.
+
+### T15. Multi-copy rank activation
+
+For rank-r resource M,
+
+    rank(M^tensor k)=r^k.
+
+If r^k>=d, unrestricted linear filters can extract a d-dimensional full-rank resource. Search entanglement concentration, rank concentration, SLOCC, conclusive teleportation, finite-field analogues, and module-theoretic activation. Again, probably not central novelty, but important to correctness boundaries.
+
+## 5. Required prior literature lineages
+
+At minimum investigate and accurately credit:
+
+### Logic / matrix logic
+- August Stern, _Matrix Logic_ and _Matrix Logic and Mind_.
+- William Bricken, especially “Notes on Matrix Techniques for Logic” (1997).
+- Eduardo Mizraji, vector logic and square roots of NOT.
+- Eigenlogic / Dubois / Toffano.
+- Boolean matrix theory.
+- Matrix representations of logic and relation algebra.
+- Semi-tensor-product literature (Cheng et al.).
+- NPN equivalence / Boolean-function symmetries.
+- Algebraic normal form and Möbius transforms.
+
+### Rotation / algebra
+- Circulant matrices and cyclic permutation matrices.
+- F2[C4] and modular group algebras.
+- F2[u]/(u^4) and finite chain rings.
+- Augmentation ideals.
+- Centralizers of cyclic/regular representations.
+- Modular representation theory.
+- Dihedral actions.
+- Finite differences.
+
+### Quantum-like / modal
+- Schumacher & Westmoreland, modal quantum theory.
+- Schumacher & Westmoreland on non-contextuality / probability limitations.
+- James, Ortiz & Sabry, quantum computing over finite fields.
+- Quantum theory over finite rings/semirings.
+- Relational and categorical process theories.
+
+### Phases / contextuality
+- Coecke, Edwards & Spekkens on phase groups/nonlocality.
+- Abramsky & Brandenburger.
+- Abramsky & Hardy.
+- Hardy paradox literature.
+- Mermin/GHZ contextuality.
+- Saniga, Planat & Minarovjech on finite quotient rings and Mermin structures.
+- Contextuality over projective lines / finite geometries.
+
+### Codes / finite rings
+- Quantum codes over F2[u]/(u^s).
+- Smith normal form over finite chain rings.
+- Finite local principal ideal rings.
+
+### Orthogonal / error bases
+- MacWilliams and later binary orthogonal-matrix literature.
+- Unitary/nice error bases.
+- Generalized Bell bases.
+- Finite-field Clifford / symplectic groups.
+
+### Post-2018 comparisons
+Identify later work that is not priority-threatening but independently convergent or useful for comparison, including rotational-logic work.
+
+## 6. Search strategy
+
+For every theorem:
+
+1. Strip all CM terminology away.
+2. Write the claim in conventional algebra/logic/contextuality language.
+3. Search the abstract statement.
+4. Search weaker and stronger generalizations.
+5. Search synonyms and adjacent fields.
+6. Search references of close papers backward.
+7. Search citations forward where useful.
+8. Identify earliest known source for each known component.
+9. Record whether the exact combination appears anywhere.
+10. Do not infer novelty merely because exact keywords do not match.
+
+Keep a reproducible search log: query, database/search engine, close hit, date, and why the hit is or is not equivalent.
+
+## 7. Paper architecture task
+
+After the novelty audit, design the new paper. Do not simply include every result.
+
+Recommend what should be central theorem, secondary theorem, background, example, computational validation, appendix, or omitted.
+
+A framing to assess is:
+
+**“From Logical Rotation to a Boolean Modal Subtheory: An Operator Algebra Induced by Correspondence Matrices.”**
+
+Possible flow:
+
+1. Motivation and explicit relation to Paper B.
+2. Definition of coefficient-space rotation R.
+3. Rotation lift Lambda.
+4. Classical algebraic identification with F2[C4].
+5. Semantic bridges: logical reversal <-> phase reversal; complement <-> terminal filtration; Boolean degree <-> operator reversibility.
+6. Nilpotent rotational-difference hierarchy.
+7. Definition of the restricted rotation-compatible modal theory.
+8. Gate and measurement families.
+9. Contextuality classification / Hardy theorem.
+10. Comparison to unrestricted literal finite-field theory.
+11. Bell/GHZ/interference/teleportation only as diagnostic phenomena.
+12. Limitations and physical non-claims.
+13. Generalizations and research directions.
+
+Assess whether this is optimal and suggest better organization/titles if warranted.
+
+## 8. Higher-arity generalization — major task
+
+For n variables, truth-table dimension is 2^n. Investigate natural symmetries: hypercube automorphisms, Gray-code cycles, cyclic assignment permutations, affine transformations, Walsh and Möbius transforms.
+
+Questions:
+
+- Is there a natural order-2^n rotation/group action on truth assignments that extends the CM geometry?
+- Does invertibility of the induced operator detect algebraic degree, the top ANF coefficient, parity, nonlinearity, correlation immunity, bentness, or Walsh-spectrum properties?
+- Do augmentation-ideal filtrations correspond to finite differences, algebraic degree, Reed-Muller hierarchy, or Boolean derivatives?
+- Is N=I+R a discrete derivative in a broader sense?
+- Does N^k filtration correspond to degree filtration?
+- Is the degree/reversibility theorem a small-n case of something larger?
+
+Investigate Reed-Muller codes carefully.
+
+## 9. Alternative algebras / symmetries
+
+Do not assume C4 is the only useful symmetry. Investigate C_n, C_(2^m), dihedral groups, hypercube symmetry groups, affine general linear groups, Gray-code cycles, multiple commuting rotations, direct products such as C2^n, group algebras over F2, and semidirect products.
+
+Ask whether alternative truth-space symmetries yield multidimensional phase, richer interference, stabilizer-like structures, or error-correction structures.
+
+## 10. Alternative “unitarity” in characteristic two
+
+The current work found that U^T U=I is too restrictive for a complete Bell/error basis in even dimension. Investigate more appropriate analogues:
+
+- symplectic transformations;
+- alternating bilinear forms;
+- quadratic forms;
+- Hermitian forms over F4/F_(2^m);
+- Clifford groups;
+- pseudo-unitary/unitary groups over finite fields/rings;
+- dagger structures in categorical quantum mechanics.
+
+Ask whether R preserves a natural bilinear, alternating, quadratic, or Hermitian structure, and whether the interferometer/Bell analyzer/contextuality measurements preserve it.
+
+## 11. Applications to investigate without overselling
+
+### Logic synthesis / compilation
+Operator folding, frame normalization, pre-expansion simplification, LUT/FPGA synthesis, BDD/AIG comparison, Boolean matrix rewriting, symbolic model checking.
+
+### Cryptography
+ANF degree, S-boxes, permutation Boolean functions, circulant diffusion layers, branch number, finite differences, algebraic attacks. No security claims without evidence.
+
+### Coding theory
+F2[u]/(u^4), chain-ring codes, Reed-Muller, cyclic/convolutional/quantum codes, valuation/rank filtration.
+
+### Reversible computation
+Canonical reversible embeddings, gate libraries, decomposition rules, finite-state reversible automata.
+
+### Cellular automata / dynamical systems
+Cyclic shifts and circulants naturally occur here.
+
+### Formal verification
+Finite exhaustive state spaces as theorem-testing/model-checking examples.
+
+### Quantum foundations
+Use the model to separate superposition, interference, contextuality, nonseparability, probabilities, unitarity, and tensor assumptions.
+
+### Education
+Transparent finite examples of phase/interference/Bell/Hardy/GHZ logic.
+
+### Hardware
+Only cautiously investigate XOR/AND circuits, FPGAs, reversible hardware or optical logic. Do not call it quantum hardware absent physical evidence.
+
+## 12. Physical and conceptual limitations
+
+Explicitly distinguish:
+
+- modal possibility from probability;
+- algebraic nonseparability from physical entanglement;
+- XOR cancellation from complex-amplitude interference;
+- exact Boolean transfer from physical quantum teleportation;
+- GL(n,2) reversibility from complex unitarity;
+- shared coefficient-ring tensors from literal subsystem tensors.
+
+Include the known probability limitation: some modal Bell support tables do not admit normalized nonnegative no-signalling probabilities with every modal-possible event assigned positive probability.
+
+Do not imply the model replaces standard quantum mechanics.
+
+## 13. Computational reproducibility
+
+Audit all exhaustive computations in the supplied reproducibility package. At minimum verify centralizer size, gate/unit counts, measurement basis counts, contextuality classifications, Hardy witnesses, Bell/GHZ searches, teleportation identities, rank classifications, orthogonal-span obstruction, and shared/literal comparisons.
+
+For every exhaustive claim give search-space cardinality, exact algorithm, runtime/environment where useful, machine-readable output, and an analytic proof where feasible. Keep theorem, exhaustive verification and empirical observation distinct.
+
+## 14. Required novelty table
+
+Produce a table with:
+
+1. Claim.
+2. Exact formal statement.
+3. Closest prior work.
+4. Earliest located source.
+5. Equivalent / stronger / weaker?
+6. What remains distinctive.
+7. Novelty confidence: High candidate / Moderate candidate / New synthesis / Known / Not novel.
+8. Publication recommendation: Main theorem / Secondary / Background / Appendix / Omit.
+9. Additional searches needed.
+
+## 15. Publication-safe claim wording
+
+Avoid “we are the first” unless priority is exceptionally well established. Prefer wording such as:
+
+- “We are not aware of a prior construction that...”
+- “A bounded literature search located no equivalent formulation...”
+- “The underlying circulant algebra is classical; the contribution here is its derivation from...”
+- “The phenomenon itself is known in modal quantum theory; our result concerns its realization within the restricted operator family induced by...”
+
+Make prior credit explicit.
+
+## 16. Contribution list
+
+After the research, propose the smallest strong list of contributions. Do not force a fixed number. Three strong contributions are better than fifteen weak ones.
+
+Rank by mathematical novelty, conceptual novelty, proof strength, generalizability, likely reviewer interest, and practical relevance. Identify exciting results that should **not** be advertised as novel.
+
+## 17. Future-paper map
+
+Determine whether the work should split into multiple papers, for example:
+
+- rotation algebra and Boolean logical consequences;
+- contextuality and the restricted modal subtheory;
+- higher-arity / Boolean degree / Reed-Muller generalization;
+- characteristic-two unitarity / symplectic model;
+- compiler / logic-synthesis applications.
+
+Recommend whether combining all of these would make the principal paper too diffuse.
+
+## 18. Venue assessment
+
+Suggest realistic journals/conferences in mathematical logic, algebraic logic, theoretical CS, Boolean-function theory, quantum foundations, quantum-information foundations, categorical/process theories, finite algebra, or reversible computation. Explain fit, likely reviewer objections, and additional evidence needed.
+
+## 19. Required deliverables
+
+Return:
+
+A. Executive research verdict.
+B. Prior-art / novelty matrix for every theorem.
+C. Deep literature review organized by research lineage.
+D. Corrected/generalized formal theorem set.
+E. Proof audit (proved / exhaustive / conjectural / false).
+F. Section-by-section paper blueprint.
+G. Publication-ready contribution paragraph.
+H. Draft related-work section with appropriate credit.
+I. Claim-safety table.
+J. Generalization roadmap.
+K. Applications assessment distinguishing demonstrated from speculative.
+L. Full bibliography with DOI/arXiv where possible and note of why each source matters.
+M. Reproducible search log.
+
+## 20. Be adversarial
+
+Actively try to defeat the thesis. Ask:
+
+- Is this merely circulant algebra in unusual notation?
+- Is “phase” mathematical structure or only renaming a cyclic shift?
+- Does the contextuality theorem reduce to a known local-ring theorem?
+- Is degree <-> reversibility an n=2 coincidence?
+- Is the restricted gate/measurement set principled?
+- Are distinctions artifacts of restricting the operation set?
+- Is the tensor model operationally closed?
+- Are finite-field/modal results being confused with physical QM?
+- Are no-go results already folklore in coding/group theory?
+- Can the main results be stated more generally without CMs?
+
+Prefer stronger general theorems when available. Report failures and negative results clearly.
+
+## 21. Final synthesis question
+
+At the end answer:
+
+> After all known mathematics and prior art are stripped away, what is the genuinely distinctive research object?
+
+A candidate thesis to test, not assume, is:
+
+> A Boolean logical-operator representation has a native four-position geometric rotation. Lifting that rotation generates a restricted rotation-equivariant algebra. The logical semantics of the original truth-function representation then induce nontrivial correspondences between Boolean properties and operator properties, and the resulting restricted algebra supports a finite modal measurement theory whose contextuality/resource structure differs from the unrestricted finite-field theory.
+
+Determine whether that thesis survives rigorous scrutiny. If so, formulate the strongest defensible version. If not, identify the narrower thesis that does.
+
+Optimize for correctness, priority accuracy, and a publishable mathematical result rather than for flattering conclusions.

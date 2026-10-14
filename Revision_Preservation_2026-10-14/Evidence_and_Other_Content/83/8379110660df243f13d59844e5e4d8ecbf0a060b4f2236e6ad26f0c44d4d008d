@@ -1,0 +1,94 @@
+# N2/P1 Profitability-Aware Folding — Frozen Replay
+
+Run date: 2026-09-17T18:05:07Z
+Preregistration SHA-256: `ab1f5e6d698b0130c768ef78ac0d1e912af3c19cd3a8c260e90444765a6a6e6a`
+Frozen natural selection SHA-256: `3c5b2f8c789fa8b3717ff9f83119a7b3766cd11b196cbb75e0b63c18321ec8ad`
+
+## Critical qualification
+
+The preregistered natural P1-vs-generic criterion passes, but **P1 accepted 0 of 28 natural fold candidates**. The natural timing win over generic is therefore an **abstention/optimizer-overhead result, not a demonstrated CM-fold speedup**. P1 is **9.34% slower than direct sparse ANF** on the pooled case-median geometric mean, and its traced Python peak allocation is **21.1% higher than direct**. See `N2_P1_INTERPRETATION.md`.
+
+## Frozen P1 rule
+
+- Saturating ANF-size structural estimator cap: 4096.
+- Minimum estimated pair-term benefit: 16.
+- Minimum relative benefit: 10% unshared, 20% when either child is shared.
+- No tuning was performed after results; see `N2_P1_PREREGISTRATION.md`.
+
+## Natural corpus
+
+- EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`.
+- Frozen circuits: adder, bar, cavlc, int2float, priority, router.
+- Selected cases: **10** across **5** circuits.
+
+| circuit | candidates | selected roots |
+|---|---:|---|
+| adder | 2 | f[4], f[5] |
+| bar | 0 | none |
+| cavlc | 23 | 17, 35 |
+| int2float | 19 | e4, y6 |
+| priority | 4 | new_n130, new_n174 |
+| router | 2 | 105, 92 |
+
+## Natural end-to-end timing (case medians pooled by geometric mean)
+
+| comparison | cases | P1/other | bootstrap 95% CI |
+|---|---:|---:|---:|
+| p1_over_generic_2support_sparse | 10 | 0.9180 | 0.8908 – 0.9441 |
+| p1_over_direct_sparse_anf | 10 | 1.0934 | 1.0351 – 1.1600 |
+| p1_over_cm_frontend_sparse | 10 | 0.9645 | 0.9435 – 0.9846 |
+| p1_over_cm_frontend_guarded_sparse | 10 | 0.9685 | 0.9511 – 0.9882 |
+
+Per-circuit P1/generic ratios:
+- adder: 0.8817 (n=2)
+- bar: n/a (n=0)
+- cavlc: 0.9541 (n=2)
+- int2float: 0.8913 (n=2)
+- priority: 0.9693 (n=2)
+- router: 0.8973 (n=2)
+
+## Natural symbolic / allocation ratios: P1 over generic
+
+| metric | n | geomean ratio | median ratio |
+|---|---:|---:|---:|
+| multiplications | 10 | 0.9863 | 0.9895 |
+| pair_terms | 10 | 0.9712 | 0.9937 |
+| peak_monomials | 10 | 1.0000 | 1.0000 |
+| output_unique_nodes | 10 | 1.0490 | 1.0366 |
+| python_peak_bytes | 10 | 0.7438 | 0.7460 |
+
+Lost-sharing regression counts versus direct sparse ANF:
+
+- `cm_frontend_sparse`: multiplications worse on 9 cases; pair terms worse on 9 cases; >5% pair-term regression on 2 cases.
+- `cm_frontend_guarded_sparse`: multiplications worse on 0 cases; pair terms worse on 0 cases; >5% pair-term regression on 0 cases.
+- `cm_profit_sparse`: multiplications worse on 0 cases; pair terms worse on 0 cases; >5% pair-term regression on 0 cases.
+
+P1 natural selector totals: selector_candidates=28, selector_accepted=0, selector_accepted_shared=0, selector_rejected_nonpositive=27, selector_rejected_min_benefit=1, selector_rejected_fraction=0, selector_estimated_benefit=0.
+
+**Predeclared natural speed-win criterion: PASS.**
+
+## Gate-P replay
+
+| comparison | cases | P1/other | bootstrap 95% CI |
+|---|---:|---:|---:|
+| p1_over_generic_2support_sparse | 36 | 0.9881 | 0.9515 – 1.0252 |
+| p1_over_cm_frontend_sparse | 36 | 1.2059 | 1.1571 – 1.2566 |
+| p1_over_cm_frontend_guarded_sparse | 36 | 1.0143 | 0.9649 – 1.0623 |
+
+P1 Gate-P folds: accepted 110 of 264 candidates; accepted-shared 97.
+
+## Correctness
+
+- Natural arm checks: 50; failures: 0.
+- Gate-P arm checks: 180; failures: 0.
+- Fresh P1 fuzz: 500 cases; failures: 0.
+
+## Interpretation boundary
+
+This test asks whether a **frozen cost heuristic** can preserve useful CM folding without blindly discarding DAG reuse. It does not establish that the local identity is uniquely CM-specific: the generic two-support arm remains the strong artifact-equivalent comparator. Any speed result is therefore a result for this implementation/representation path, not a claim that generic Boolean optimizers cannot implement the same cost-aware idea.
+
+The natural selection is structural and was frozen before any arm ran. Gate-P remains deliberately fold-rich; the multi-circuit EPFL set is the main check against overfitting to that synthetic family.
+
+## Execution/orchestration note
+
+The frozen harness was executed in case/chunk orchestration because the container enforces a short per-command wall limit. The selector, arms, schedules, repetition counts, seeds, and success criterion were unchanged. Structural selection was deterministic; debug orchestration re-emitted its JSON timestamp only, without changing selected roots.

@@ -1,0 +1,13 @@
+# Execution notes
+
+The main correctness receipt uses the frozen runner with an outer progress observer. The observer logs child-process start/end and retains the original commands, source files and outputs. An initial unobserved attempt hit the outer tool time limit before producing a useful receipt; the observed replay completed and passed.
+
+The full 570-trial timing replay was completed on a fresh copy, with original frozen results left unchanged. No timing case was substituted from the later harness checks.
+
+The independently authored mathematical program was rerun after removing an inert dead-code expression. Its final shipped source and complete passing output are included. No mathematical test was removed.
+
+The portable Theory wrapper was checked separately: only its literal output path was changed; results match the unmodified original run. Two additional direct attempts to validate the portable baseline wrapper were interrupted by outer tool time limits before producing final receipts. Execution was then launched as a detached local process during this same audit, awaited to completion, and all eight commands passed. No work remains running or promised for a later session. The separate portability receipt is included; it is not counted as a new independently sampled benchmark.
+
+A metadata-collection helper initially assumed every test printed a JSON object; one prints a JSON list. The helper was corrected to remove timing fields recursively from either type before comparing outputs. This was postprocessing, not a change to the tested code or results. The final source/output comparisons all pass.
+
+No Runpod job, optimized external comparator, resident-memory test, or new natural-design campaign was executed. These remain explicit next-step tasks.

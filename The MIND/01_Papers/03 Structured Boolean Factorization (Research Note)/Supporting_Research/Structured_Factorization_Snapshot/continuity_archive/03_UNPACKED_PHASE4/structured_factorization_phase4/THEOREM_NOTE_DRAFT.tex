@@ -1,0 +1,98 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newcommand{\F}{\mathbb F}
+\title{Direct and Residual Factor Extraction for Carrier-Constrained Boolean Structures}
+\author{Research draft}
+\date{29 September 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study a structured factorization problem in which a simplicial carrier and a Boolean semantic function must factor across the same partition of attributes.  Building on the fixed-cut correspondence-matrix criterion that conjunctive separability is equivalent to rank at most one over $\F_2$, we isolate two semantic representation classes admitting direct exact extraction and give a persistent SAT fallback for the residual case.  For compressed SDDs we characterize factorability across a vtree split by the presence of at most one nonfalse sub and obtain the finest factorization whose blocks are vtree subtrees.  For support-disjoint read-once operator trees, a signed local CM-rank recursion recovers the full semantic prime AND-factor partition: rank-one essential gates split as signed conjunctions, while rank-two gates fuse their child supports by a four-corner minor argument.  A carrier-block selector encoding realizes all residual four-corner cut tests in one fixed CNF under assumptions.  The results are positioned as a carrier/CM synthesis; SDD canonicity, read-once factorization, and incremental SAT bi-decomposition have substantial prior art.
+\end{abstract}
+
+\section{Problem}
+Let $K$ be a simplicial complex and $f:\{0,1\}^V\to\{0,1\}$.  We seek the finest partition $\Pi$ satisfying
+\[
+K=*_{B\in\Pi}K|_B,
+\qquad
+f(x)=\bigwedge_{B\in\Pi}f_B(x_B).
+\]
+If $\Pi_K$ and $\Pi_f$ are the corresponding prime partitions of the two layers, the simultaneous partition is their least common coarsening.
+
+For a fixed bipartition $A\mid B$, write $[f]_{A\mid B}$ for the Boolean correspondence flattening.  The basic semantic criterion is
+\[
+f(a,b)=g(a)\land h(b)
+\quad\Longleftrightarrow\quad
+\operatorname{rank}_{\F_2}[f]_{A\mid B}\le 1.
+\]
+
+\section{Compressed SDD extraction}
+At a vtree split $X\mid Y$, let a compressed SDD node represent
+\[
+f(X,Y)=\bigvee_{i=1}^m p_i(X)\land s_i(Y),
+\]
+where the primes form a partition of the $X$ assignments and the subs are pairwise distinct.
+
+\begin{theorem}[Vtree-cut criterion]
+For nonfalse $f$, the cut $X\mid Y$ is conjunctively separable if and only if the compressed decision has at most one nonfalse sub.
+\end{theorem}
+\begin{proof}
+For every assignment $x$ exactly one prime is true, hence the corresponding sub is the right cofactor $f_x(Y)$.  If $f=g(X)\land h(Y)$, every right cofactor is either $0$ or $h$.  Conversely, if all nonzero cofactors are $h$, disjoining the primes associated with $h$ yields $g$.  Compression makes the nonzero $h$ syntactically unique.
+\end{proof}
+
+A recursive application yields the finest factor partition whose blocks are vtree-subtree leaf sets.  If the unrestricted prime factors are all vtree subtrees, this recursion is the full prime factorization.
+
+\section{CM rank recursion on read-once operator trees}
+Consider a binary operator tree in which each variable appears once and every internal connective is essential in both inputs.  For node $u$ and output polarity $\epsilon\in\{0,1\}$, let $M_u^{(\epsilon)}$ be its $2\times2$ CM, complemented entrywise when $\epsilon=1$.
+
+\begin{theorem}[Signed CM-rank recursion]
+Let $u$ have children with disjoint supports $A,B$.
+\begin{enumerate}
+\item If $\operatorname{rank}_{\F_2}M_u^{(\epsilon)}=1$, the requested output is a signed conjunction $g^{(\sigma)}\land h^{(\tau)}$ and its prime partition is the union of the recursively computed signed child partitions.
+\item If $\operatorname{rank}_{\F_2}M_u^{(\epsilon)}=2$, the requested output has the single prime block $A\cup B$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+An essential rank-one binary truth matrix has exactly one $1$, hence is one of the four signed conjunction minterms.  For rank two, every descendant variable is essential.  Fix any $x\in A$, $y\in B$ and assign the other variables so that toggling $x$ toggles the left child and toggling $y$ toggles the right child.  The induced $2\times2$ truth slice is $M_u^{(\epsilon)}$ up to row/column permutation, so it has nonzero determinant.  Any AND factorization separating $x$ and $y$ would force all such minors to vanish.  Thus no cross pair is separable and all of $A\cup B$ is one prime block.
+\end{proof}
+
+\begin{corollary}
+For this operator-tree class, the exact simultaneous carrier/semantic prime partition is obtained in linear tree time followed by the least-common-coarsening merge with $\Pi_K$.
+\end{corollary}
+
+\section{Persistent four-corner SAT fallback}
+Introduce one selector per carrier prime block and two assignment clones per variable.  Let mixed-corner inputs be selected by an ITE controlled by the block selector.  One fixed CNF asserts
+\[
+(F_{00}\land F_{11})\mathbin{\mathsf{XOR}}(F_{01}\land F_{10})=1.
+\]
+A cut is specified only by selector assumptions.
+
+\begin{theorem}[Assumption equivalence]
+For every carrier-compatible cut, the fixed selector-controlled formula under its cut assumptions is satisfiable if and only if the independently rebuilt four-corner defect instance for that cut is satisfiable.
+\end{theorem}
+
+This allows direct SDD/CM certificates to split the problem first, with the persistent SAT oracle used only inside unresolved simultaneous blocks.
+
+\section{Validation summary}
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Campaign & Tests & Discrepancies\\
+\midrule
+SDD four-variable nonfalse functions & 65,535 & 0\\
+CM/LM read-once operator trees & 35,210 & 0\\
+Incremental cut queries & 516 & 0\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The SDD campaign also found 2,376 functions whose unrestricted prime factorization was strictly finer than the finest factorization exposed by the fixed balanced vtree, demonstrating the need for vtree adaptation or residual exact testing.
+
+\section{Claim boundary}
+The note does not claim novelty for SDD compression/canonicity, read-once Boolean factorization, or incremental SAT bi-decomposition.  The research question is the exact carrier-constrained simultaneous factorization and the correspondence-matrix certificates connecting these representations.
+
+\end{document}

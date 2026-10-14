@@ -1,0 +1,7 @@
+# Paper U review workspaces
+
+These are two **distinct review histories for the same Paper U manuscript**, grouped in one paper-centered folder. Start with the [original fresh-referee final report](<Original_Fresh_Referee_2026-09-29/00_FINAL_REFEREE_REPORT.md>) and its [revised manuscript](<Original_Fresh_Referee_2026-09-29/revised_manuscript/Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.pdf>). The [independent/rebuilt workspace](<Independent_Rebuilt_Review_2026-09-29>) preserves the earlier independent review, recovery work, receipts and rebuilt ZIP. The two old root-level folders were retired after a fresh hash check; use these locations for reading.
+
+The TeX and bibliography for the original and rebuilt v0.3 match byte for byte; their PDFs differ. Neither review history was discarded or treated as an interchangeable duplicate. The original directory trees and ZIP files were copied and hash-checked; see the [MIND provenance index](<../../../00_Index_and_Manifests/README.md>) and the workspace-level [folder map](<../../../../00_Collection_Index/PAPER_FOLDER_RENAME_PLAN_2026-10-01.json>).
+
+Historical receipts and logs may show the original root-level folder names. The live packaging/build scripts inside these workspaces use paths relative to their script files; run any historical one-time script only after reading its own assumptions. The manuscript reading head remains in [Current_Manuscript](<../Current_Manuscript/v0.3_Original_Fresh_Referee/Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.pdf>).

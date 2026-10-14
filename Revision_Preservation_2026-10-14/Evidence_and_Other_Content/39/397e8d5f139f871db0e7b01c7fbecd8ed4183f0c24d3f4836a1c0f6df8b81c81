@@ -1,0 +1,38 @@
+# Response to the attached publication-readiness review
+
+**Revision:** 26 September 2026. **Disposition:** contract/specification corrections completed; performance and submission gate remains open.
+
+This response addresses the received pasted summary. Its linked full audit and checker bundle were not provided; no findings or fresh checks from those files are claimed as our own. The September 22 manuscript and prior audit records are preserved byte-for-byte. The compiler source is also unmodified: the revised draft describes and tests its actual behavior.
+
+| Review concern | Change / evidence | Status |
+|---|---|---|
+| Dense output incorrectly described as unfixed-axis output | Sections 5.1–5.4 now retain every ambient row/column axis, distinguish syntactic/essential/ambient counts, give exact shape and the 4-by-2 fixed-Z example, and charge NumPy Boolean bytes. Tests cover both fixed values, all three strategies, irrelevant axes, ownership and budget refusal. | Resolved in draft and executable regressions |
+| Valid derivations confused with selected strategy | Section 4 treats inference as an admissibility relation. Section 5.2 gives ordered case selection, S/T/H outcome mapping, and the legacy `structural` alias. `X AND Y` can derive S and T; pure compilation of `X OR (Y AND Y)` still fails. The theorem's fallback clause now explicitly concerns selected failure. | Resolved |
+| Support ambiguous | Explicit recursive `Vars(e)` minus `dom(F)` definition, with cancellation examples. No essential-dependence minimization is assumed. | Resolved |
+| Child folds assumed to survive root failure | Section 5.2 states original-AST fallback and distinguishes attempted counters from committed results. A spy regression verifies the identical original AST is passed to the real builder after child success. Root retabulation can also supersede earlier work. | Resolved; no different persistent-rewrite algorithm introduced |
+| Token failure, invalid input and actual fallback conflated | Duplicate/overlapping layouts are errors; token `None` with `ordinary_fallback` is a diagnostic; only the dense wrapper executes fallback. Budget checking occurs before token compilation. | Resolved |
+| Novelty too close to classical operations | Abstract and contribution language narrowed; Proposition 3.3 attribution, kitty operations, mockturtle's ordered leaf interface, and AIG candidate/gain/commit behavior compared explicitly. No claim of novel truth-table algebra, unprecedented operand metadata, or measured engineering advantage. | Positioning corrected; research significance remains for reviewers to assess |
+| No current implementation artifact/check chain | Recovered 63 source/import/test files at the pinned commit, checked Git blobs and SHA-256, added a portable runner, 27 contract cases and current manifest. 90 upstream tests plus the 27 new cases pass. | Current contract chain closed; historical 116-test identity remains unestablished |
+| Historical evidence merely reported | Recovered 95 byte-identical S1/S2/P14 archive members. Recounted S1/S2 totals/tie/failures/medians and all P14 primary point estimates/case ratios from raw records. Eight P14 freeze hashes match. | Materially improved; complete historical runtime closure and bootstrap replay remain open |
+| Missing/obsolete package-relative checker | Current runner uses only packaged dependencies and data. Historical broken checker is retained as history and clearly not the current entry point. | Resolved for this revision |
+| Confirmatory pair study missing | Preserved full protocol-v3 plan, called it pre-freeze/unexecuted, retained primary workload/endpoint/threshold, and specified prospective design clarifications. No S1/S2, P14, or later project result substitutes for it. | Open empirical work; not fabricated or silently changed |
+| Natural applicability unknown | Calls for root admission by strategy and attempted work discarded at root failure, distinct from timing evidence. | Open empirical work |
+| Other useful editorial/evidence corrections | Removed detailed later-project results from abstract; kept P14 table with its subsection; corrected 98.75% marginal versus 95% familywise interpretation after inspecting frozen analyzer quantiles; restored P14 environment/amendments; corrected AIG page range and Lee first author. | Resolved in revision |
+
+## Verification actually performed
+
+- All 117 selected tests pass under Python 3.10.11 / NumPy 2.2.6 / pytest 9.0.2, including 327,680 signed-fusion assignment comparisons across all five implemented outer operations.
+- 63 pinned source files have verified Git blob identities and current SHA-256 checks. They are not edited to make the tests pass.
+- Recovered S1/S2: 10,500 rows, 10,389 all-arm completions, zero differences in the seven stated CM/generic symbolic metrics, and the reported failure patterns and medians confirmed.
+- Recovered P14: 51,102 timing rows; four primary case-balanced ratios independently reconstructed; eight frozen source/holdout hashes verified. Historical confidence endpoints are not fresh bootstrap results.
+- The PDF build and visual QA records are packaged separately. A successful build is not a mathematical proof or a publication-readiness certificate.
+
+One initial new checker attempted to pass an arbitrary outer truth-table integer to the implementation's string-only five-operation `cm_compose` API. The checker was corrected to test the five implemented operations, giving the explicitly reported 327,680 comparisons. No implementation behavior was changed. The first LaTeX build encountered a sandbox denial for MiKTeX's user cache; the build was subsequently run with the required tool access.
+
+## Remaining submission work, in priority order
+
+1. Resolve and freeze the pair-token study's formula sampling, cache/process state, aggregation, and secondary multiplicity; execute the retained primary cell against direct packed evaluation. Include a matched generic-folding arm and a natural-input root-admission survey. Preserve a negative or parity result.
+2. Finish historical execution closure (exact imported compiler/dependency versions and bootstrap replay), then prepare a public versioned archive with corpus provenance and a stable identifier. Recover before rerunning expensive timings.
+3. Reassess venue and contribution significance using the resulting evidence. The contract suite is a useful methods artifact but does not alone prove journal-level novelty or performance.
+
+These are separate research/release requirements. The authorized draft revision, source recovery, regression checks, and raw-record recount are complete; no timing campaign, production code change, external publication, commit, or push was performed.

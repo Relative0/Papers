@@ -1,0 +1,32 @@
+# Reviewer 5 - Algorithms and complexity
+
+**Recommendation:** return to Theory for resource-model repair; do not infer lower bounds beyond their contracts.
+**Confidence:** high on the identified distinctions and counterexamples.
+
+This is one adversarial perspective in the audit.
+
+## Main attack: which resource is bounded?
+
+A statement about rank of a real-linear sketch is not a statement about its storage bits. A statement about how deep marginal conditioning must go is not a statement about how many queries an adaptive algorithm makes. A statement about a fixed-cut explicit factorization is not a statement about a succinct formula input. The manuscript must keep these distinctions in its abstract and conclusion, not only in proofs.
+
+The submitted Q15 is actually well scoped: on all real-valued functions, any sufficient linear sketch has kernel contained in ker Q_k and therefore rank at least the query rank, even with nonlinear decoding. I accept it. On Boolean inputs alone a weighted one-coordinate linear encoding can distinguish every truth table, but the coordinate uses exponentially many bits. This is exactly why the domain and representation model are indispensable.
+
+## Persistent-state lower bounds
+
+For a finite class and fixed-width deterministic state, exact query answers require at least log2 of the number of distinct query-answer vectors. Full point queries require enough states to distinguish every class member. These are standard counting facts. They do not imply that each low-rank input needs 2^n bits.
+
+The parity pair is decisive against the broader reading: reconstruction threshold n, one-bit encoding for the known pair, trivial conditioned counting. Thus the rank threshold does not explain the artifact's benchmark overhead. That overhead is a property of the implementation and charged lifecycle until a more specific theorem is proved.
+
+## Adaptive contract
+
+The correct Q_t characterization quantifies over all protocols fixing at most t distinct coordinates cumulatively. A single realized transcript generally contains less information. A summary that answers remaining-budget queries after a restriction is different from an updated summary with a reset budget. Complementary parity refutes the latter interpretation. Require a state machine with explicit reset/restart semantics before proving optimality.
+
+## Verification and algorithms
+
+The zero-transcript spike argument is correct for deterministic zero-error verifiers with only point queries to the source. It says nothing about proof certificates or a source formula. S15 gives a concrete existing certified knowledge-compilation route outside that model. The manuscript should never conclude that trusted exact persistence requires rereading the entire truth table under every deployment model.
+
+The rank-profile Walsh algorithm is fixed-parameter in r only after the input and histogram access model is stated. Its integer operations and preprocessing need accounting. The alternative streaming method is polynomial in explicit dimensions that may themselves be exponential in n. No new FPT claim on succinct circuits follows automatically.
+
+## Disagreement and required repair
+
+I disagree with any broad suggestion that the current theorems are incorrect; most are right precisely because their formal caveats are already narrow. The repair is to prevent broader interpretations and then solve a genuinely new resource problem. State the source class, allowed state, precision, update protocol, preprocessing/query tradeoff, and lower-bound access model in one place. Only then choose the theorem that a benchmark can test.

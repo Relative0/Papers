@@ -1,0 +1,146 @@
+# Astra Pro audit bundle: CM/ANF optimization experiments N1, P1-P13
+
+Prepared 2026-09-18 for an independent adversarial audit before any P14 implementation is frozen.
+
+## Why this bundle exists
+
+This package is intended to let Astra Pro reconstruct the P1-P13 optimization campaign from primary artifacts rather than from chat summaries. The audit question is not merely "did P13 get faster?" but:
+
+- what transformation is actually being performed;
+- whether the direct/no-rewrite baseline is fair;
+- why propagated two-support information reduces sparse-ANF work;
+- which costs are algorithmic versus CPython/runtime artifacts;
+- whether P1-P13 measurement and statistics support the interpretations made so far;
+- whether a pure-Python cleanup or a different experiment should precede a compiled P14;
+- and, if compiled code is the right next step, how to design P14 without creating a compiled-vs-Python fairness artifact.
+
+**Start with `01_PROMPT/ASTRA_PRO_P1_P13_AUDIT_PROMPT.md`.**
+
+Astra should inspect source code, preregistrations and raw result files before relying on `*_RESULTS.md` or `*_INTERPRETATION.md`.
+
+---
+
+## Bundle layout
+
+### `01_PROMPT/`
+Contains the full Astra Pro audit prompt. It explicitly tells Astra to treat the current P1-P13 narrative as a hypothesis to test.
+
+### `02_BACKGROUND/`
+Mathematical/background material relevant to interpreting CM/two-support folding.
+
+Included:
+
+- `Correspondence-Matrices-A-Structural-Layer-for-Boolean-Computation.pdf` — full PDF available from the user's Library.
+- `operator-level-boolean-computation-with-correspondence-matrices.txt` — text extraction of the manuscript *Operator-Level Boolean Computation with Correspondence Matrices*.
+- `CM_Phase_Calculus_Verified.txt` — text extraction of the verified phase-calculus paper; this is optional background for the P1-P13 performance audit.
+
+The original PDFs for the last two text extractions could not be raw-materialized in this environment. See `07_OPTIONAL_ADD/MISSING_OR_RECOMMENDED_ADDITIONS.md`.
+
+### `03_N1_BASELINE/`
+The immediate predecessor experiment and sharing diagnostic:
+
+- `n1_gatep_harness.py` — original N1/Gate-P harness used by later experiments.
+- `N1_GATEP_RESULTS.md` — N1 results.
+- `SHARING_GUARD_DIAGNOSTIC.md` — diagnostic that identified the shared-DAG/folding regression and motivated profitability-aware selection.
+- `README.md` — original N1 notes.
+
+### `04_EXPERIMENTS/`
+Primary experiment artifacts, one folder per experimental pass. These were extracted from the original generated P-series bundles. `__pycache__` and `.pyc` files were deliberately omitted; source, preregistration, raw JSON/CSV/timing data, profiles, verification scripts and reports were retained.
+
+### `05_BENCHMARK_SOURCES/`
+Frozen benchmark inputs and selections:
+
+- `EPFL_size_blif_pinned/` — the exact six EPFL BLIF files repeatedly used by the frozen natural evaluation corpus.
+- `EPFL_SOURCE_MANIFEST.json` — pinned provenance/hashes when available.
+- `P1_NATURAL_SELECTION_FROZEN.json` — frozen ten-case natural selection.
+- `P8_EPFL_TRAINVAL_SELECTION.json` — disjoint EPFL train/validation roots used for P8 policy work.
+- `P8_FROZEN_GATE.json` — fitted/frozen P8 decision tree and cutoff.
+- `P7B_FROZEN_GATE.json` — earlier pressure-threshold policy for comparison.
+
+### `06_REPO_CONTEXT/`
+Provenance pointers for the broader Correspondence Matrices repository and relevant source files that are **not fully embedded** in this package. The P-series harnesses themselves are embedded and are the authoritative code for the experiments.
+
+### `07_OPTIONAL_ADD/`
+Files which would improve the audit if the user can add them, but whose absence does not prevent a serious P1-P13 review.
+
+---
+
+# Experiment map
+
+The table below is orientation only. Astra should rederive these claims from the code/results.
+
+| Folder | Main question / change | What to inspect first |
+|---|---|---|
+| `P01` | Frozen profitability-aware fold selector; compare direct, generic 2-support, unconditional/guarded CM, and P1. Natural selector accepted no folds; Gate-P retained useful folds. | `N2_P1_PREREGISTRATION.md`, `n2_p1_harness.py`, `n2_p1_results.json`, `chunks/`, summaries |
+| `P02` | Make direct sparse ANF the executable baseline; represent accepted folds as a plan consumed by lowering rather than rewriting an executable DAG. Revealed low plan-utilization. | `N2_P2_PREREGISTRATION.md`, `n2_p2_harness.py`, raw Gate-P/natural chunks/results |
+| `P03` | Demand-driven/top-down fold recognition fused with ANF lowering; every accepted fold consumed. Reduced P2 overhead but still slower than direct. | `N2_P3_PREREGISTRATION.md`, `n2_p3_harness.py`, `n2_p3_results.json`, profiles/results |
+| `P04` | Propagate a compact two-support semantic signature and edge-use metadata during DAG construction, allowing profitable ancestor folds. First clear lowering-stage win on fold-rich Gate-P; expensive annotated construction. | `N2_P4_PREREGISTRATION.md`, `n2_p4_harness.py`, raw results, depth summaries/profiles |
+| `P05` | Packed primitive metadata fields/arrays; no per-node Candidate object; demand-time profitability arithmetic. Cut P4 construction cost substantially while preserving decisions. | `N2_P5_PREREGISTRATION.md`, `n2_p5_harness.py`, profiles/memory/results |
+| `P06` | Put two packed logical words directly on Python nodes. Tested whether fewer metadata fields and locality beat P5 arrays. They did not in CPython. | `N2_P6_PREREGISTRATION.md`, `n2_p6_harness.py`, profiles/memory/results |
+| `P07` | Store the same two logical words in two C-backed `array('Q')` buffers. Saved memory but did not improve construction time. | `N2_P7_PREREGISTRATION.md`, `n2_p7_harness.py`, `P7_POSTHOC_*`, raw results |
+| `P07B` | Separate dispatch pre-scan using two-support pressure. Showed a separate full-DAG profitability probe is too expensive and not selective enough. Includes a documented timing-accounting correction and rerun. | `N2_P7B_PREREGISTRATION.md`, `P7B_TIMING_CORRECTION.md`, both harness variants if present, `P7B_FROZEN_GATE.json`, raw calibration/validation/results |
+| `P08` | Zero-pass dispatch: gather telemetry during source construction, fit a small decision tree on disjoint train/validation data, freeze cutoff, then evaluate. Compiler-only selective path became promising; telemetry source construction costly. | `N2_P8_PREREGISTRATION.md`, `n2_p8_harness.py`, `P8_FROZEN_GATE.json`, train/validation selection, calibration, raw results |
+| `P09` | Keep only seven primitive telemetry counters used by frozen P8 tree. Exact P8/P9 decision invariance required. | `N2_P9_PREREGISTRATION.md`, `n2_p9_harness.py`, invariance, profiles/results |
+| `P10` | Fuse ordinary node construction and telemetry into one specialized `_make` path. Same frozen gate/decisions. | `N2_P10_PREREGISTRATION.md`, `n2_p10_harness.py`, invariance, direct/P9/P10 profiles |
+| `P11` | Specialize telemetry to the single frozen annotate leaf; threshold/saturating state only, dropping generic feature computation. | `N2_P11_PREREGISTRATION.md`, `n2_p11_harness.py`, invariance, profiles/results |
+| `P12` | Lazy reuse exactification and exact algebraic identity `pair_repeat_excess = binary_nodes - distinct_pairs`; compute reuse only if earlier predicates leave annotation possible. First measured workload-weighted source-inclusive crossover, while case-balanced primary remained just above direct. | `N2_P12_PREREGISTRATION.md`, `n2_p12_harness.py`, profiles/results |
+| `P13` | Move pair multiplicity work out of the per-node dictionary path: append packed pair keys during construction, obtain distinct count with C-backed `set`, use CPython `_count_elements` only when needed. Essentially tied with P12, suggesting pair identity observation itself remains costly in Python. | `N2_P13_PREREGISTRATION.md`, `n2_p13_harness.py`, profiles/results |
+
+---
+
+# Important methodological facts to keep separate
+
+1. **Gate-P is synthetic and intentionally fold-rich.** It is mechanism evidence, not proof of typical natural-circuit speedup.
+2. **The frozen natural EPFL evaluation set repeatedly produced zero accepted folds.** It is therefore principally an abstention/overhead control. A sub-1 timing on that set is not a CM-folding claim when no fold occurred.
+3. **Case-balanced geometric mean and workload-weighted aggregate timing answer different questions.** Do not silently substitute one for the other.
+4. **P12/P13 crossed below direct on the workload-weighted source-inclusive endpoint, but not on the preregistered case-balanced primary endpoint.**
+5. **P7B contains an explicit timing-accounting correction.** The initial affected evaluation timings were discarded and rerun; inspect `P7B_TIMING_CORRECTION.md`.
+6. **P2/P3-era direct timing endpoints are not automatically numerically interchangeable with later direct endpoints.** Compare simultaneous arms and read the corresponding reproducibility notes.
+7. **Repeated iteration on Gate-P creates an overfitting risk even with preregistration.** Astra is explicitly asked to design an untouched holdout suite.
+8. **The P8 policy is frozen from disjoint training/validation data, but later P9-P13 intentionally preserve its decisions rather than retrain.**
+9. **The central mechanistic observation does not require CM uniqueness.** A generic Boolean optimizer given equivalent two-support semantic information may be able to perform the same contraction. The audit should characterize this accurately rather than treating uniqueness as a success criterion.
+10. **Any compiled P14 must avoid a fairness trap.** Compiling only CM-specific code while leaving a comparable direct path in Python could manufacture an implementation advantage.
+
+---
+
+# Recommended Astra reading order
+
+1. `01_PROMPT/ASTRA_PRO_P1_P13_AUDIT_PROMPT.md`
+2. `03_N1_BASELINE/SHARING_GUARD_DIAGNOSTIC.md`
+3. `03_N1_BASELINE/n1_gatep_harness.py`
+4. `04_EXPERIMENTS/P01` through `P04`: preregistration + harness + raw result JSON, to understand how the mechanism was isolated.
+5. `P05` through `P07`: implementation/storage experiments.
+6. `P07B` and `P08`: dispatch design and training/validation methodology.
+7. `P09` through `P13`: increasingly narrow telemetry implementation experiments.
+8. `05_BENCHMARK_SOURCES/` to independently inspect corpus/selection semantics.
+9. `02_BACKGROUND/operator-level-boolean-computation-with-correspondence-matrices.txt` for the formula-valued LM/Boolean contraction background, and the structural-layer PDF if broader context is useful.
+10. Only after primary inspection, read each `*_INTERPRETATION.md` to compare the audit's independent reconstruction with the prior interpretation.
+
+---
+
+# Provenance
+
+The experiment archives used for extraction are listed with SHA-256 hashes in `ORIGINAL_BUNDLE_SHA256S.txt`.
+
+Known public pins:
+
+- Correspondence Matrices repository: `Relative0/Correspondence_Matrices`, commit `1145537c9e2274ae7622dad5b68a7d612b27bb7e`.
+- EPFL benchmark repository: `lsils/benchmarks`, commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`.
+
+The six repeatedly used EPFL size-BLIF blobs are documented in the manifest and/or experiment preregistrations.
+
+A package-wide `MANIFEST_SHA256.txt` is generated at the root so Astra can detect accidental changes.
+
+---
+
+# Current state entering the audit
+
+The current working hypothesis is that propagated two-support folding is computationally useful on fold-rich workloads, and that by P12/P13 enough downstream ANF work is saved to cross below direct on a workload-weighted source-inclusive endpoint, while the case-balanced primary endpoint remains slightly above direct. P13 suggests that simply rearranging the same pair-counting telemetry inside CPython is reaching diminishing returns.
+
+**Do not accept this interpretation automatically.** The purpose of Astra's audit is to determine whether:
+
+- the mechanism is genuinely useful;
+- a stronger direct/generic baseline changes the conclusion;
+- there are still missed pure-Python cleanups;
+- benchmark or timing artifacts explain some or all of the effect;
+- the next experiment should be compiled telemetry, another pure-Python experiment, a new holdout suite, or something else.

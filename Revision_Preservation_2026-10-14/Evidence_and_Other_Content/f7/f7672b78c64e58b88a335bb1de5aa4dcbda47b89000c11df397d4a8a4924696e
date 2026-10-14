@@ -1,0 +1,66 @@
+# CM Structural Computation - Independent Convergence Audit
+
+**Decision: RETURN TO BOTH THREADS.** Current justified form: **D - technical report**.
+
+Start with `CONVERGENCE_DECISION.md` for the decision, `ASTRA_CONVERGENCE_AUDIT.md` for the synthesis, and `HANDOFF_TO_MASTER.md` / `REPAIR_TASKS.md` for the exact next steps.
+
+## Contents
+
+| File / directory | Purpose |
+|---|---|
+| `ASTRA_CONVERGENCE_AUDIT.md` | Overall gate, material status, findings, publication alternatives and routing. |
+| `THEOREM_PRIORITY_AUDIT.md` | Q1-Q17 and ten baseline result groups, precise contracts, proof reconstructions, attacks, prior-art status. |
+| `COMPUTATION_VALIDITY_AUDIT.md` | Actual reruns, independent tests, limitations, lifecycle/corpus/comparator audit. |
+| `OVERLAP_AUDIT.md` | Boundaries with current CM-LM and pair-compiler papers. |
+| `REVIEWER_REPORTS/` | Seven distinct adversarial disciplinary perspectives, including their disagreements. |
+| `CONVERGENCE_DECISION.md` | Formal decision and blocking repairs. |
+| `HANDOFF_TO_MASTER.md` | Seven-part compact transfer record. |
+| `REPAIR_TASKS.md` | Exact Theory, Computation and Master tasks with acceptance evidence. |
+| `EVIDENCE/` | Raw rerun receipts, independent checker, summaries, input hashes, source bibliography/search notes. |
+| `INPUT_SNAPSHOTS/` | Both small uploaded archives unchanged, plus readable Theory files. |
+| `CONTEXT_SNAPSHOTS/` | Unchanged selected manuscript sources/PDFs; not revised submission manuscripts. |
+| `reproduce.py` | Portable entrypoint to reproduce one component into a new directory. |
+| `verify_delivery.py` | Validate the delivery's SHA-256 manifest. |
+
+The reviews are role-separated perspectives from one audit, not externally commissioned human reviews. The new mathematical checker was authored separately and imports no project code. The large Library research/compiler archives are identified and inventoried but not recopied in full; the two small included archives contain what is needed for the claimed baseline and Theory reruns.
+
+## Reproduction
+
+Run commands from this extracted directory. Each `--output` must name a **new** directory. Python 3.13.5 was the recorded runtime; other versions can change timing and serialization guard behavior. The baseline and independent audit use only the standard library.
+
+```sh
+python verify_delivery.py
+python reproduce.py independent --output independent_rerun
+python reproduce.py baseline --output baseline_rerun
+```
+
+The original Theory verifier requires SymPy; 1.14.0 was used here. Install that version in the intended environment if needed, then run:
+
+```sh
+python -m pip install sympy==1.14.0
+python reproduce.py theory --output theory_rerun
+```
+
+The original Theory source hardcodes `/mnt/data/theory_work/qk_verification_results.json`. The portable wrapper checks that literal occurs exactly once and changes **only that output filename**. It retains the original source and emits `portability_patch.json` with both hashes. The main audit had also run the unmodified source by providing its original directory; its recorded output is `EVIDENCE/theory_original_replay.json`.
+
+The complete reference timing campaign can be rerun separately:
+
+```sh
+python reproduce.py benchmark --output benchmark_rerun
+```
+
+This executes all 570 trials rather than extrapolating them. Absolute timings and case ratios will vary with hardware and load. Correctness and dataset/query/source identity, not exact nanoseconds, are the appropriate replay invariants. The timing mode is same-process fresh-representation loading, not process-cold or disk-cold execution.
+
+The wrapper executes programs from the included research archives; inspect the source first in environments where executing research code requires review. No command in the replay wrapper uploads results or writes back to the user's Library.
+
+## Evidence interpretation
+
+`execution_summary.json` combines the integrity and run outcomes. `benchmark_case_summary.csv` gives per-case medians, ratios, sizes and query hashes. `independent_math_results.json` records exact finite class/rank counts and witnesses. `correctness_original_comparison.json` checks source identity and equality of original versus replay results after removing timing fields.
+
+The 3,988 core 'corruption rejection' checks should not be mistaken for general security fuzzing. The 613,656 new profile checks cover every restriction of every rank-at-most-two 4x4 binary matrix, not all matrices of every size. The external benchmark has 26 outputs of one design, not 26 independent designs.
+
+Input/source inventory row counts are not claims that every historical item was semantically reviewed. Selected manuscript snapshots preserve their old claims and dates for context; the authoritative new judgment is in this audit's root-level reports.
+
+## Version and integrity
+
+Audit date: 28 September 2026. Execution receipts retain their actual UTC timestamps. `MANIFEST_SHA256.json` covers delivery files other than itself. It provides integrity against that manifest, not external cryptographic authentication of the research. This audit does not silently modify the author manuscripts or replace any shared Library artifact.

@@ -1,0 +1,122 @@
+# N2/P7B Results — Formula-Level Dispatch Before Annotation
+
+## Executive result
+
+P7B tested whether a cheap source-DAG probe could avoid the P4-P7 annotation tax on formulas unlikely to amortize it. The policy was calibrated only on disjoint synthetic data, frozen at `two_support_pressure >= 17`, and then replayed on the unchanged 36-case Gate-P evaluation and ten frozen EPFL natural cones.
+
+**Primary Gate-P policy result: FAIL.**
+
+| comparison | case-balanced ratio | bootstrap 95% CI | workload-weighted ratio |
+|---|---:|---:|---:|
+| **P7B dispatch / direct** | **1.3396x** | **1.1608-1.5102** | **1.1158x** |
+| always-P6 / direct | 1.2477x | 1.0384-1.4726 | **0.9469x** |
+
+P7B beat direct end-to-end on 3/36 Gate-P cases. The always-P6 control beat direct on 9/36.
+
+The dispatch gate therefore made the case-balanced result worse than always annotating in this run, and it also destroyed the always-P6 workload-weighted crossover.
+
+## Calibration and frozen gate
+
+The frozen rule family used one source-DAG feature only: `two_support_pressure`, the maximum incoming-use pressure among immediate binary shells sharing a canonical operand pair and containing at least two distinct truth tokens.
+
+- calibration corpus: 120 disjoint synthetic cases;
+- candidate thresholds: integer 2..32;
+- selected threshold: **T = 17**;
+- selected calibration predicted dispatch/direct ratio including probe: **1.1727x**;
+- corrected disjoint validation dispatch/direct: **1.2620x** case-balanced, **1.1499x** workload-weighted;
+- validation annotations: 13/60.
+
+Notably, the calibration family already predicted no net end-to-end win. A post-hoc diagnostic that sets probe cost artificially to zero gives a best calibration ratio of only **0.9853x**, while the actual probe itself cost **0.1770x of direct** geometrically on calibration cases. This diagnostic was not used to fit or change the frozen gate.
+
+## Gate-P decisions and mechanism
+
+P7B annotated **17/36** Gate-P cases and bypassed 19/36.
+
+Among the 17 annotated cases:
+
+- **15** actually consumed at least one P6 fold;
+- **16** folds were consumed in total;
+- **2** annotated cases consumed zero folds.
+
+Relative to simultaneous P6 timing:
+
+- P6 beat direct on **9/36** cases;
+- P7B annotated **7/9** of those wins and missed 2;
+- but P7B also annotated **10** cases where P6 itself was slower than direct.
+
+Thus the pressure feature had reasonable recall for P6 wins but poor precision. On the annotated subset, P6/direct was **1.0204x** geometrically: the gate did not isolate a reliably profitable region.
+
+The dispatch probe was also expensive on these small formulas: probe/direct pipeline time was **0.2985x** geometrically across Gate-P. On bypassed cases, the selected direct backend itself remained essentially unchanged; direct-after-probe / standalone-direct was about **1.014x**, so the extra traversal is the dominant bypass penalty.
+
+## Boolean work
+
+Because 19/36 cases bypassed, the median work ratio is 1.0, but folds on the annotated subset still produced substantial geometric-mean reductions across the full Gate-P corpus:
+
+- multiplications: **0.5238x direct**;
+- pair terms: **0.2663x direct**;
+- evaluated ANF nodes: **0.6644x direct**;
+- peak monomials: **0.9301x direct**.
+
+So P7B does not invalidate the P4-P7 mechanism result. The failure is policy/overhead: the gate is too costly and not selective enough.
+
+## Gate-P by depth
+
+| depth | dispatch/direct | always-P6/direct | annotated | fold cases |
+|---:|---:|---:|---:|---:|
+| 6 | 1.3454x | 1.3943x | 0/12 | 0 |
+| 8 | 1.2369x | 1.1888x | 6/12 | 6 |
+| 10 | 1.4447x | 1.1718x | 11/12 | 9 |
+
+The rule largely behaves as intended structurally—higher-pressure/deeper Gate-P cases are annotated—but structural pressure alone is not a sufficient proxy for end-to-end profitability.
+
+## Natural EPFL negative control
+
+P7B made **zero false-positive annotation decisions on all ten frozen natural cases**. Their pressures were 0 except `int2float:y6`, which had pressure 3, well below T=17. Therefore no natural fold was consumed.
+
+| comparison | case-balanced ratio | bootstrap 95% CI | workload-weighted ratio |
+|---|---:|---:|---:|
+| **P7B / direct** | **1.0564x** | **1.0285-1.0928** | **1.0198x** |
+| always-P6 / direct | 1.1079x | 1.0471-1.2010 | 1.0279x |
+
+This is an abstention-overhead result only. The gate successfully avoided the much larger always-annotation tax, but its own full-DAG scan still added about 5.6% case-balanced overhead. Probe/direct itself was about **0.0196x** geometrically on these larger natural cones.
+
+## Mixed 46-case result
+
+Across 36 Gate-P plus ten natural cases:
+
+- case-balanced P7B/direct: **1.2722x** (95% CI **1.1358-1.4064**);
+- workload-weighted P7B/direct: **1.0202x**.
+
+These are secondary endpoints and do not alter the failed Gate-P primary criterion.
+
+## Memory
+
+Traced full-pipeline Python peak remained favorable on Gate-P despite the timing failure:
+
+- P7B/direct: **0.9293x** geometric mean;
+- always-P6/direct: **0.8130x**.
+
+On natural cases P7B/direct peak was **0.9911x**. Memory is therefore not the limiting result in P7B.
+
+## Correctness and audit
+
+- fresh fuzz: **1000/1000 passed**;
+- Gate-P evaluation: 108 symbolic rows + 2,160 timed rows, all correct;
+- natural evaluation: 30 symbolic rows + 450 timed rows, all correct;
+- all six frozen EPFL files reverified against their pinned Git blob hashes;
+- every dispatch decision independently rechecked against T=17;
+- every annotated P6 case satisfied accepted-folds = consumed-folds;
+- independent verification: **PASS**.
+
+### Timing-accounting correction
+
+The first evaluation execution exposed a wrapper-timing bug: dispatch `pipeline_ns` accidentally included correctness conversion/reporting that the direct/P6 pipeline endpoints exclude. This contradicted the preregistered endpoint. The bug was corrected to exactly `probe_ns + selected_backend.pipeline_ns`; **all pre-correction evaluation timings were discarded and rerun**.
+
+The threshold was unaffected because calibration selected T using the correctly defined predicted quantity `median_probe + selected_backend_median`. The frozen gate file was not altered. See `P7B_TIMING_CORRECTION.md` for the audit trail.
+
+## Frozen hashes
+
+- preregistration SHA-256: `b34a830b65a64e01bb397411ee4b6fcd7501d30d662f80024894a51419046799`
+- frozen gate SHA-256: `5df0de5bb1a31b7adb36352f42dcf0e0e386e728e6d153b498ecab2a1de995ad`
+- corrected harness SHA-256: `d12bee0c4f4a80b85c51535e74a88778a7ff88225972c2cb9b42d09a9a45ab65`
+- pre-correction harness SHA-256: `ab272f18fd9f5f7cca56806d26857f9451f634f62d06883f69862c138ad3675a`

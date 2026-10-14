@@ -1,0 +1,167 @@
+# N2/P10 Preregistration - Fused Minimal Telemetry Construction
+
+Frozen before any P10 dispatch-invariance result, fuzz result, Gate-P timing, natural timing, memory result, or profiling result is inspected.
+
+## Goal
+
+Test whether the remaining P9 source-construction premium is caused materially by the wrapper architecture of `MinimalTelemetryFactory._make`, which first calls the ordinary `Factory._make` and then revisits the newly created node to update telemetry.
+
+P10 fuses ordinary hash-consed node construction and the already-frozen seven-counter P9 telemetry into one specialized `_make` implementation. The cache lookup, node creation, edge/depth/use accounting, and repeated-pair accounting occur in one Python call path.
+
+P10 is an implementation experiment only. It does **not** change the folding mathematics, profitability thresholds, P6 compiler backend, P8 decision tree, P8 cutoff, evaluation corpora, or timing endpoints.
+
+## Frozen policy inherited unchanged
+
+P10 reuses the exact frozen P8 gate from `cm_n2_p8_run/P8_FROZEN_GATE.json`:
+
+- cutoff: `0.80`;
+- same depth-3 tree;
+- same five derived tree inputs: `binary_density`, `max_depth`, `max_pair_shells`, `pair_repeat_density`, `reuse_density`;
+- same P6 folding backend and P1 profitability thresholds.
+
+P10 computes the exact same seven primitive quantities as P9:
+
+1. `node_count`;
+2. `edge_count`;
+3. `binary_nodes`;
+4. `max_depth`;
+5. `reuse_edge_events`;
+6. `pair_repeat_excess`;
+7. `max_pair_shells`.
+
+No training, fitting, threshold selection, feature selection, or retuning occurs in P10.
+
+## P10 implementation under test
+
+`FusedMinimalTelemetryFactory` subclasses the ordinary source `Factory` only to inherit its public Boolean construction methods (`var`, `const`, `not_`, `bin`, `nary`, `tf`). It does **not** call `super()._make`.
+
+Its `_make` performs exactly one cache lookup and, on a cache miss:
+
+1. creates the ordinary `Node`;
+2. inserts it in the same hash-consing cache and node list;
+3. computes depth;
+4. updates incoming-edge/reuse counts;
+5. updates repeated two-input operand-pair counts for `and`, `or`, `xor`, and `tf` nodes;
+6. returns the new node.
+
+On a cache hit it returns the cached node without telemetry changes, matching P9 semantics.
+
+Supporting state remains frozen to P9's representation:
+
+- `bytearray` for per-node depth;
+- `bytearray` for whether a node has previously received an incoming edge;
+- one dictionary keyed by canonical packed operand pair for pair-shell counts;
+- scalar integer counters for all other telemetry.
+
+No tree-aware lazy telemetry or dispatch-policy change is allowed in P10.
+
+## Mandatory invariance before timing interpretation
+
+Before P10 performance is interpreted, P10 must reproduce P9/P8 on all 332 frozen policy cases:
+
+- 188 P8 training cases;
+- 98 P8 validation cases;
+- 36 frozen Gate-P evaluation cases;
+- 10 frozen natural evaluation cases.
+
+For every case, P10 must equal P9 on:
+
+- all seven primitive counters;
+- all five frozen tree inputs;
+- predicted frozen-tree leaf ratio;
+- annotate/bypass decision.
+
+Any mismatch aborts performance interpretation.
+
+## Correctness gate
+
+Before timing interpretation, run 1,000 fresh fuzz formulas. For every fuzz case:
+
+- ordinary, P9, and P10 source DAG semantics must agree;
+- P9 and P10 seven primitive counters and five tree inputs must agree exactly;
+- P8/P9/P10 annotate/bypass decisions must agree;
+- direct and P6 compiler results must match the independent Boolean oracle/digest;
+- selected P10 work metrics must equal the selected frozen backend;
+- P6 accepted-fold count must equal fold-lowering count.
+
+Any mismatch aborts interpretation.
+
+## Evaluation corpora
+
+### Gate-P
+
+Replay exactly the frozen 36-case Gate-P evaluation family: depths 6, 8, and 10, 12 cases per depth, using the original frozen RNG state/order.
+
+### Natural EPFL
+
+Replay exactly the frozen ten natural cones used in P1-P9 from EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`.
+
+No natural-folding claim is permitted unless P10 actually dispatches to P6 and consumes a fold on a natural case.
+
+## Simultaneous source-inclusive arms
+
+Randomize these four arms within each timing schedule:
+
+1. `direct_source_pipeline` - ordinary source Factory + direct/no-rewrite sparse ANF;
+2. `p6_source_pipeline` - ordinary source Factory + always-P6 compiler;
+3. `p9_min_source_dispatch` - P9 minimal wrapper telemetry + frozen P8 gate;
+4. `p10_fused_source_dispatch` - fused P10 minimal telemetry + the exact same frozen P8 gate.
+
+This simultaneous design isolates the P10/P9 implementation difference while controlling for machine drift.
+
+## Timing
+
+- Gate-P: 20 randomized repetitions per case per arm.
+- Natural: 15 randomized repetitions per case per arm.
+- Separate untimed `tracemalloc` passes are permitted.
+- Case medians are formed first.
+- Pooled ratios use case-balanced geometric means with 5,000 bootstrap resamples for 95% intervals.
+- Workload-weighted summed-median ratios and per-case wins are reported secondarily.
+
+## Primary endpoint
+
+`P10 / direct` source-inclusive time, from source-DAG construction through selected compiler construction and sparse-ANF lowering.
+
+## Secondary endpoints
+
+Report at minimum:
+
+- P10/P9 source-inclusive ratio;
+- P10/P6 source-inclusive ratio;
+- P10/direct source-build ratio;
+- P10/P9 source-build ratio;
+- P10/direct selected-compiler ratio;
+- workload-weighted versions;
+- Gate-P depth strata;
+- exact dispatch counts;
+- Boolean-work ratios versus direct;
+- traced peak-allocation ratios.
+
+## Predeclared signals
+
+### Gate-P direct-crossover PASS
+
+Requires all of:
+
+1. zero correctness failures;
+2. exact P9/P10 invariance on all 332 frozen cases;
+3. at least one Gate-P case dispatched to P6 and consuming a fold;
+4. P10/direct source-inclusive case-balanced geomean <= `0.95`;
+5. bootstrap 95% upper bound < `1.00`;
+6. no greater than 5% pooled increase in pair terms or peak monomials versus direct.
+
+### Fused-construction engineering success
+
+Independently report success if all hold:
+
+1. exact P9/P10 dispatch invariance;
+2. P10/P9 source-build case-balanced geomean <= `0.90`;
+3. P10/P9 source-inclusive case-balanced geomean <= `0.98`;
+4. bootstrap 95% upper bound for P10/P9 source-inclusive < `1.00`.
+
+## Guardrails
+
+- No frozen tree value, cutoff, fold threshold, case, repetition count, or endpoint may change after P10 results are seen.
+- No P10 timing may be used to alter the fused telemetry representation.
+- No lazy branch-specific telemetry may be introduced in this pass.
+- P10 is a CPython implementation experiment. A performance win would show that the already-demonstrated folding and dispatch mechanism can be exposed more cheaply in this implementation; it would not establish uniqueness to CM or general natural-circuit acceleration.

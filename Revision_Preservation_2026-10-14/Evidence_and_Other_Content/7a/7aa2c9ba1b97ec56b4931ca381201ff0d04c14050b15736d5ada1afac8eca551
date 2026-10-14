@@ -1,0 +1,134 @@
+# Independent convergence audit
+## CM Structural Computation and Exact Conditioned Queries
+
+**Audit date:** 28 September 2026. **Decision:** RETURN TO BOTH THREADS.
+**Present publication form:** D - technical report, not yet a stronger integrated paper.
+
+## 1. Executive finding
+
+The supplied mathematical statements are substantially healthier than the proposed integrated publication claim. I reconstructed the main proofs, found no counterexample to the precisely scoped rank-threshold results, reproduced the original correctness and timing campaigns, and added missing direct tests of the new theory. The evidence does **not** yet justify promoting the report to a theory-first or integrated research paper.
+
+The decisive distinction is between three different questions:
+
+1. How much of the indexed marginal hierarchy identifies a function within a promised class?
+2. How many bits must a persistent representation retain, and under which future-operation protocol?
+3. How cheaply can a particular implementation answer queries after all preparation and persistence costs?
+
+The Theory milestone answers much of the first question using established Fourier/marginal mathematics and a small rank-class corollary. The Computation baseline tests the third question for particular explicit artifacts. The missing substantive theorem is the bridge through the second question. That bridge cannot be replaced by the observation that parity requires high-order marginals: parity also has a tiny representation and very cheap conditioned counts.
+
+This is not a finding that the research is valueless, or that a serious journal could never accept a narrow note. It is a finding that the **requested stronger-paper convergence gate is not passed by these materials**.
+
+## 2. Independence, method, and limits
+
+The seven reports are separate adversarial disciplinary perspectives produced in this audit. They are not reports obtained from seven external humans or separately operating agents. The mathematical reconstructions and new finite-audit implementation were not copied from the submitted verifier; the new program imports neither project code nor that verifier. The original programs were also replayed separately, so independent validation and faithful reproduction remain distinguishable.
+
+I inspected the two uploaded archives, recovered the specifically relevant three-draft archive and latest available CM-LM and pair-compiler packages from the user's Library, read the current manuscript sources and theorems, and inspected representative rendered PDF pages containing the experimental tables and persistence claims. I did not perform a new full publication-readiness review of either companion manuscript. The nested original portfolio archive was inventoried for scope; its entire historical scientific content was not re-audited.
+
+Fresh literature searches and primary-source checks covered Fourier marginals, design trades, generalized Chow parameters, Boolean decomposition, matrix rank conventions, knowledge compilation, tensor representations, exact counting, and certificates. The bibliography records which sources were read at theorem level and which only at abstract/metadata level. A search not finding the exact rank-threshold sentence is **not** a priority certificate.
+
+No Runpod job was launched. No new optimized CUDD, DSD, ACD, or tensor backend was benchmarked. No resident-memory or process-cold experiment was performed. Timings are descriptive reruns in the available shared environment.
+
+## 3. Material-completeness gate
+
+| Required material | Finding |
+|---|---|
+| Latest structural manuscript | Draft 3 supplied; current TEX/PDF and claim crosswalk inspected. |
+| Complete three-draft research package | Recovered from Library; all 630 entries in its recorded SHA-256 manifest passed. |
+| Latest available CM-LM/Lifting paper | Later 27 September revision recovered and inspected for overlap. |
+| Theory handoff and three ledgers | Present, together with proofs, open problems, script, and recorded output. |
+| Computation handoff, ledger, manifest | Present, but explicitly a repackaged 26 September baseline, not a new Q_k milestone. |
+| Referenced executable evidence | Baseline material sufficient for both full correctness and timing replay. Its 523-entry manifest passed. |
+| Pair-compiler comparison | Latest available study archive additionally recovered; inspected, not independently rerun. |
+
+The small computation handoff's TEX context lacks `references_formatted.tex`, which is needed for a standalone manuscript build. The larger recovered archive supplies it. This is a packaging repair, not a mathematical defect.
+
+**Gate interpretation:** enough material exists for this substantial baseline/theory audit. A final convergence audit claiming that both new research threads have matured should be postponed. The independent tests added here repair a finite-validation omission; they do not turn the old workload into a new theory-guided experimental campaign.
+
+## 4. Strongest surviving mathematical statement
+
+Let a named input set be split into nonempty blocks of sizes p and q. Let C_r be all Boolean truth matrices with GF(2) rank at most r across this **fixed** cut. Let kappa(C_r) be the smallest k such that all indexed conditioned counts fixing at most k variables distinguish every pair in C_r. Then
+
+\[
+\kappa(C_1)=\max(p,q),\qquad
+\kappa(C_r)=p+q\quad(r\geq2).
+\]
+
+The rank-one upper bound follows by recovering the nonzero row and column supports of a Boolean rectangle from their marginal sums. The lower bound uses complementary parity on the larger block. The rank-two lower bound uses complementary global parity: the two functions agree on every proper marginal and have rank two across any nontrivial cut. Full assignments give the upper bound.
+
+**Assessment:** CORRECT BUT MINOR; priority of this exact formulation remains uncertain. The proof is short, and the same threshold holds for analogous binary-matrix classes under other rank conventions because rank-one binary matrices are rectangles and the witnesses are unions of two disjoint rectangles. Thus the statement is not evidence of a uniquely GF(2) obstruction.
+
+The exact rank/dimension formula for Q_k, its Fourier equivalence, the high-degree kernel description, the minimum collision distance, and generalized Chow uniqueness all have established antecedents. The theory ledger already acknowledges most of this; that restraint should be preserved. See the full result-by-result audit and sources S1-S5.
+
+## 5. The critical counterexample to the proposed bridge
+
+Consider the known two-element class consisting of global odd and even parity on n variables. Its reconstruction threshold is n: all proper conditioned counts agree. Nevertheless, one bit identifies the member of this class. Given a restriction, the count is half the remaining cube when any variable is free; for a full assignment it is either zero or one.
+
+Therefore
+
+\[
+\text{large reconstruction threshold}
+\not\Rightarrow
+\text{large unrestricted persistent encoding or expensive counting}.
+\]
+
+This does not refute the submitted real-linear-sketch theorem: that theorem explicitly ranges over arbitrary real-valued functions and is correct. It refutes a broader interpretation that could otherwise be used to claim that the threshold theorem explains the benchmark losses.
+
+A second distinction concerns updates. From Q_k(f), restricting t variables permits reconstruction of Q_{k-t} of the residual function, for t <= k. It generally does **not** permit a new full Q_k summary with a reset budget. Complementary parity on k+1 variables is an explicit counterexample. A persistence theorem must say which of these contracts it means.
+
+## 6. Reproduction and new verification
+
+| Audit action | Actual result | Scope limitation |
+|---|---|---|
+| Original clean correctness campaign | All eight child-process commands passed; source and dataset hashes match the frozen receipt. | The supplied tests are finite, not a proof of all loader safety or all input sizes. |
+| Original Theory verifier | Passed; resulting JSON exactly matches the submitted JSON. | Original program does not directly enumerate Q13/Q14 rank classes. |
+| Full Draft 3 timing replay | 38 cases x 3 backends x 5 repetitions = 570 trials; 128 queries each. | One external design, 12 synthetic controls, reference implementations. |
+| Artifact versus packed lifecycle medians | 0 wins out of 38, reproducing the qualitative negative result. | Not a universal impossibility result or population-level estimate. |
+| New exact query-operator ranks | All 28 pairs 0 <= k <= n <= 6; both <=k and exactly-k matrices. | 56 exact finite matrix-rank checks. |
+| New Fourier/query fibres | Exhaustive Boolean functions through n=4. | Not an exhaustive search on larger truth spaces. |
+| New rank-threshold tests | Rank <=1 and <=2 classes across six cuts with n<=4; two larger complete rank-one classes. | 14 parameter/class rows, not every larger class. |
+| New conditioned rank-profile identity | All 7,576 rank-at-most-two 4x4 Boolean matrices, all 81 restrictions each: 613,656 checks. | Validates the mathematical identity, not a new optimized backend. |
+| New semantic counterexamples | Parity/update examples checked for n=2,...,10. | Explicit witness family, not exhaustive larger-domain classification. |
+
+The baseline's strongest correctness evidence also includes 3,988 artifacts and 105,292 conditioning/count checks over all 278 Boolean functions through n=3, all 65,536 binary 4x4 matrices in the rank/prototype extension suite, and fresh-load tests. The full details and distinction between corruption detection and security fuzzing appear in the computation audit.
+
+Seven selected artifact files are smaller than the raw packed truth payload floor. This is real compression for those representations. It is not a resident-memory result, and it does not contradict the absence of lifecycle-time wins.
+
+## 7. Why the experiments do not yet validate the new theorem
+
+The threshold theorem concerns **identifiability from a complete indexed query family**, not the execution time of random query batches. The baseline samples restrictions by independently fixing each variable with probability one half; it does not stratify by an externally specified k or test recovery from all of Q_k. It also selects among several artifact kinds by serialized size, so the timing population is not an experiment on a fixed rank-r hypothesis.
+
+The profile formula is closer to the code: after constructing restricted row/column factor-state histograms, their Walsh pairing yields the count. But that identity already appears in Draft 3, and the expensive parts for a real system include building or maintaining coordinate-sensitive histograms, representation discovery, serialization, and updates. Those costs are not removed by restating the transform formula.
+
+There is consequently no justified statement of the form: 'the new theorem predicts this low-rank regime, and the external benchmark demonstrates it.' There are sound mathematical observations and a sound small negative benchmark, but not yet that causal connection.
+
+## 8. Publication alternatives
+
+| Option | Gate decision |
+|---|---|
+| A. Theory-first paper | Not ready: surviving new candidate is a small corollary; persistence/optimality result remains open. |
+| B. Empirical/methods paper | Not ready as a stronger general study: reproducibility is good, but one external design and weak reference comparators do not establish a broadly useful niche or robust general negative result. |
+| C. Integrated paper | Not ready: current theorem and timing campaign answer different questions. |
+| D. Technical report | Supported: exact artifact contracts, explicit limitations, corrected reload accounting, and reproducible negative findings form a coherent report. |
+| E. Split papers | Not justified now: neither branch has independently crossed the proposed stronger-paper threshold. Splitting is not a substitute for strengthening. |
+
+These are editorial judgments, not mathematical impossibility claims. Reviewer 6 is more optimistic about a narrowly framed reproducibility/workshop contribution than Reviewers 1 and 7 are about a stronger theory paper. That disagreement is retained in the individual reports.
+
+## 9. Highest-priority risks
+
+**Interpretation risk:** confusing marginal identifiability, linear dimension, bit storage, and query time. The precise submitted Q15 is not guilty of this; proposed prose and integration must remain equally precise.
+
+**Priority risk:** treating known Fourier/trade/Chow results or the elementary rank threshold as a newly discovered substantial foundation. The exact corollary may be worth recording, but uniqueness of wording is not substantive novelty.
+
+**Experimental risk:** treating 26 outputs as 26 independent designs, a fixed-order Python ROBDD as optimized knowledge compilation, or same-process fresh-object loading as cold execution. The baseline itself discloses these limitations; future summaries must not erase them.
+
+**Portfolio risk:** republishing the LM paper's rank/separability theorem, the pair compiler's normalization/fusion and negative campaign, or generic Boolean decomposition identities as new structural-computation contributions.
+
+## 10. Required routing
+
+**RETURN TO THEORY THREAD:** resolve T1-T3 in `REPAIR_TASKS.md`: specify the persistence protocol and bit model; close the exact rank-corollary priority/field comparison; establish a genuinely new, correctly scoped update/storage/query theorem or restricted-model obstruction. Reproving the existing histogram identity does not meet this requirement.
+
+**RETURN TO COMPUTATION THREAD:** resolve C1-C4: integrate the new direct tests, freeze a theory-guided rank/k/horizon experiment, broaden to independent source designs, and use matched persistence/query endpoints with credible backends and lifecycle accounting.
+
+**RETURN TO MASTER THREAD:** take the strategic decision M1 before manuscript synthesis. Keep Draft 3 as the technical report, append only clearly labeled audit corrections/results, and select one central research hypothesis. Do not merge the two branches into a stronger-paper claim until that hypothesis has both theorem-level and experimental support.
+
+The portable handoff is `HANDOFF_TO_MASTER.md`. This audit does not authorize submission of a newly integrated stronger manuscript.

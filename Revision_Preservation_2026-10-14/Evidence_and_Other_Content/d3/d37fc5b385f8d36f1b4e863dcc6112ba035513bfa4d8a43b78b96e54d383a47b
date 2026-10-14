@@ -1,0 +1,139 @@
+# N2/P3 Preregistration — Demand-Driven Shallow Fold Fusion
+
+Frozen before any N2/P3 benchmark execution.
+
+## Goal
+Test the P2 bottleneck directly: can CM same-pair folding beat direct/no-rewrite sparse-ANF lowering when fold discovery is performed only at nodes that are actually demanded by ANF lowering, with no global virtual rewrite graph and no speculative fold plan?
+
+P3 is an execution-architecture experiment. It deliberately gives up some P2 fold-discovery power in exchange for much lower selector overhead.
+
+## Frozen profitability thresholds
+P3 reuses the N2/P1 thresholds unchanged:
+
+- monomial estimate cap: `4096`;
+- reject estimated benefit `<= 0`;
+- reject estimated benefit `< 16` pair terms;
+- if either source child is shared (source fanout > 1), require relative benefit `>= 20%`;
+- otherwise require relative benefit `>= 10%`;
+- no generic truth-table retabulation is allowed;
+- NOT-over-TF is not a P3 fold candidate.
+
+No threshold may be changed after P3 results are observed.
+
+## P3 execution architecture
+P3 has no rewrite/planning pass and constructs no virtual executable DAG.
+
+A single source-DAG reference-count scan is performed first because the frozen profitability rule requires source fanout. The cost of this scan is charged to P3 compile time.
+
+Sparse-ANF lowering is then demand-driven and top-down:
+
+1. When a source node is requested, check the memo table. A memo hit returns immediately.
+2. For a demanded binary `AND`, `OR`, or `XOR` node, try a **shallow same-pair CM fold before lowering either child**.
+3. Candidate base pairs may come only from the immediate source children. A child is tokenizable over a proposed base pair if it is:
+   - exactly base `a` or base `b`;
+   - `NOT(a)` or `NOT(b)`;
+   - a source `AND`, `OR`, `XOR`, or `TF` directly over `(a,b)` or `(b,a)`.
+4. P3 does **not** recursively optimize a child merely to expose a candidate pair. If an ancestor cannot see a same-pair fold from its immediate source shell, it falls through to direct lowering and the child is considered only if/when that child itself is demanded.
+5. If a candidate is accepted, P3 recursively lowers only the two surviving base operands and applies the composed two-input token directly. The bypassed child operator shells are never selector-analyzed or ANF-lowered.
+6. If no candidate is accepted, P3 executes the exact direct sparse-ANF rule for that node and recursively processes its demanded children the same way.
+
+Thus every accepted P3 fold is necessarily consumed. There is no concept of an accepted-but-unused plan entry.
+
+## Frozen local cost estimator
+For a candidate base pair `(a,b)`:
+
+- `m(a)` and `m(b)` use the unchanged P1 saturating structural estimator and are computed lazily only after a shallow candidate exists;
+- the estimated monomial size of an immediate child token is the P1 TF bound `const + a + b + a*b` according to that token's ANF coefficients, capped at 4096;
+- `keep_pair_cost` is the parent nonlinear pair cost on the two child estimates, plus each child-local nonlinear pair cost when that source child has fanout 1 and is bypassed by the fold;
+- `fold_pair_cost` is the composed token nonlinear pair cost on `m(a)*m(b)`;
+- `benefit = keep_pair_cost - fold_pair_cost`.
+
+This is the P1/P2 cost model specialized to the shallow source shells P3 is willing to inspect.
+
+## Arms
+Primary timing arms:
+
+- `direct_sparse_anf` — direct/no-rewrite sparse ANF.
+- `cm_demand_profit_sparse` — P3 source-reference scan + demand-driven shallow fold matching fused into ANF lowering.
+- `cm_inline_profit_sparse` — frozen P2 plan-then-lower implementation, included as a simultaneous reference.
+
+P1 and generic two-support arms may be run for symbolic reference only; they do not determine the P3 conclusion.
+
+## Corpora
+### Natural EPFL replay
+Replay the exact frozen N2/P1/N2/P2 source snapshot and structural selection:
+
+- EPFL benchmark commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`;
+- circuits: adder, bar, CAVLC, int2float, priority, router;
+- support 9–12;
+- transitive source-node count <=128;
+- first and last admissible case by `(source_nodes, depth, root_name)` per circuit;
+- source Git blob hashes and selected case IDs must match the frozen P2 references;
+- `bar` may again contribute zero timed cases under the frozen admission rule.
+
+### Gate-P replay
+Replay the exact N1/P1/P2 Gate-P generator and seed family:
+
+- depths 6, 8, 10;
+- 12 cases per depth;
+- same generator and case order as prior campaigns.
+
+Before timing, the direct-arm final digests and structural work metrics for all 36 Gate-P cases must match the frozen P2 reference. Any identity drift aborts the run.
+
+## Correctness
+Before benchmark timing:
+
+- run 1000 fresh randomized formulas through direct, P3, and P2;
+- require oracle equality and final ANF digest equality;
+- every natural and Gate-P symbolic arm must match the independent Boolean oracle and the direct ANF digest.
+
+A correctness failure aborts the experiment without changing P3.
+
+## Timing protocol
+- Natural: 25 randomized paired repetitions per case per primary arm.
+- Gate-P: 25 randomized paired repetitions per case per primary arm.
+- Memory: separate untimed `tracemalloc` pass per case/arm.
+
+P3 records:
+
+- `refscan_ns` — charged source-reference scan;
+- `match_ns` — accumulated time spent in shallow candidate discovery, lazy monomial estimation, and profitability decisions;
+- `compile_ns` — total P3 reference scan + fused demand-driven ANF lowering; **primary endpoint**;
+- `net_lower_ns = compile_ns - refscan_ns - match_ns` — diagnostic only, not a primary endpoint.
+
+For direct, `compile_ns` is direct sparse-ANF lowering. For P2, `compile_ns` is the frozen plan + lowering total.
+
+Case medians are formed first. Pooled comparisons use the geometric mean of paired case-median ratios with a case bootstrap 95% interval.
+
+## Predeclared interpretation
+### Natural actual-fold speed signal
+Requires all of:
+
+1. at least one P3 fold is accepted/consumed on the natural set;
+2. zero correctness or digest failures;
+3. pooled P3/direct compile ratio `<= 0.95`;
+4. bootstrap 95% upper bound `< 1.00`;
+5. no >5% pooled increase in pair terms or peak monomials versus direct.
+
+If no natural fold is taken, report abstention overhead only and do not call it a natural folding speed win.
+
+### Gate-P mechanism speed signal
+Requires:
+
+1. at least one P3 fold is taken;
+2. zero correctness/digest failures;
+3. pooled P3/direct compile ratio `<= 0.95`;
+4. bootstrap 95% upper bound `< 1.00`;
+5. no >5% pooled increase in pair terms or peak monomials versus direct.
+
+Gate-P remains synthetic mechanism evidence.
+
+### P3 architectural success diagnostic
+Independently of the speed-signal threshold, report whether:
+
+- every accepted P3 fold is consumed (must be 100% by construction);
+- P3 reduces selector overhead versus P2;
+- P3 preserves a meaningful fraction of P2's ANF work reduction;
+- cases with useful folding cross from `P2/direct > 1` to `P3/direct < 1`.
+
+A result in which P3 is faster than P2 but still not faster than direct is an overhead reduction, not a folding speed win.

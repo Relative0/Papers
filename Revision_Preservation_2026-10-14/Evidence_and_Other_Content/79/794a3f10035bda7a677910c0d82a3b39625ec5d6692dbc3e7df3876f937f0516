@@ -1,0 +1,23 @@
+# Benchmark status: synthetic evidence, not a new speed claim
+
+## Preserved corpus and reanalysis
+
+The source raw file is `provenance/source_snapshots/bench/results/raw/gate_a_s1_s2.csv`, SHA256 `91791666d36c91362eadd2f3e3bf3e9040d248170ccde4d6bed53b474f060ff4`. It contains10,500 rows:3,750 S1 and6,750 S2. There are10,389 full all-arm admissions:3,750 S1 and6,639 S2. The111 other cases remain part of the denominator:108 all-four budget failures, two direct/CSE failures with generic/CM admitted, and one direct failure/CSE success/generic+CM failure.
+
+Both the supplied raw auditor and a newly written recount ran. All completed correctness comparisons agree. On all10,389 fully admitted cases, CM and the generic two-support optimizer tie in final degree, final monomials, multiplication count, output unique nodes, pair terms, peak monomials and serialized bytes. Output digests also agree in the supplied auditor. The generic optimizer performs more folds on6,010 cases; CM performs more on none. Equal endpoints do not prove equal recognition costs, but they defeat the claim that this synthetic reduction is uniquely unavailable to generic local truth-function optimization.
+
+## What S1/S2 actually demonstrate
+
+SC-A passes its synthetic mechanism criterion. Deep nonlinear-looking subexpressions of low semantic support can have their intermediate polynomial work removed before expansion. In the S2 fully admitted strata, requested sharing0/0.25/0.5 has counts2,146/2,243/2,250. Recorded median direct-to-CM multiplication counts are35-to35,17-to12,9-to0 respectively; median CM folds are0,2,3 versus generic4 in each stratum. These are source synthetic-work diagnostics, not measured user-visible speedups. Requested sharing is a generator setting, not a guarantee of measured shared-DAG reuse.
+
+The supplied no-fold timing diagnostic over1,789 cases has CM/generic median ratio0.911. It is a single-pass exploratory diagnostic and is not a cold-build or confidence-qualified production performance result. No fresh time or memory measurements were performed during this consolidation.
+
+## Gates still open
+
+Paper B's confirmatory plan requires its frozen corpus/seed/environment/schedule, repeated process-isolated samples, correctness failures retained, cold compilation and prepared reuse separately, output allocation, memory, and matched sharing-aware comparators. Its stated positive rule includes20% structural-versus-retabulation improvement and a qualifying20% end-to-end cell versus a strong baseline with no more than10% memory increase. These data are not supplied as a completed Gate-P campaign.
+
+In the Gate-A extension, SC-B (natural polynomial work and backend timing), SC-C (XAG quality) and SC-D (survival of a strong polynomial representation/comparator) have not run. SC-E's abstention/overhead behavior is not confirmatorily resolved. S2 v0 support55.161% is superseded by the guarded v1 construction reaching100%; do not mix their denominators.
+
+## Publication consequence
+
+Keep folding in Paper B. A useful optimization need not be CM-exclusive. The remaining hypothesis is lower detection/normalization cost, better reuse, or a better measured resource envelope for the same semantic reduction. A separate optimization paper is not justified until matched natural-workload evidence supplies a distinct empirical center. A negative final campaign can still be publishable if its boundary and comparator fairness are rigorous.

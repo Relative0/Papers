@@ -1,0 +1,314 @@
+PDF PAGE 1
+arXiv:1002.0941v1  [math.MG]  4 Feb 2010
+Description of Polygonal Regions by Polynomials
+of Bounded Degree
+Gennadiy Averkov∗, Christian Bey
+November 9, 2018
+Abstract
+We show that every (possibly unbounded) convex polygon P in R2 with m edges
+can be represented by inequalities p1 ≥ 0, . . . , pn ≥ 0, where the pi’s are products of
+at most k aﬃne functions each vanishing on an edge of P and n = n(m, k) satisﬁes
+s(m, k) ≤ n(m, k) ≤ (1+ εm)s(m, k) with s(m, k) := max {m/k, log2 m} and εm → 0
+as m → ∞ . This choice of n is asymptotically best possible. An analogous result
+on representing the interior of P in the form p1 > 0, . . . , pn > 0 is also given.
+For k ≤ m/ log2 m these statements remain valid for representations with arb itrary
+polynomials of degree not exceeding k.
+2000 Mathematics Subject Classiﬁcation. Primary: 14P10, 52B11; Secondary: 52A10
+Key words and phrases. Gray code; polygon; polynomial; semi-algebraic set; Theorem of
+Br¨ ocker and Scheiderer.
+1 Introduction
+A set P in Rd is said to be a d-dimensional polyhedron if P is intersection of ﬁnitely
+many closed half-spaces and has non-empty interior. Thus, a natu ral description of P is
+given in terms of its H-representation, i.e. a collection of non-strict aﬃne inequalities.
+As was suggested in [GH03], [BGH05] and [Hen07], one could try to use more general
+polynomial representations of P , called P-representations, for possibly developing new
+eﬀective methods for solving combinatorial optimization problems. T hat is, one may look
+for representations of the form
+P = {p1 ≥ 0, . . . , p n ≥ 0} :=
+{
+x ∈ Rd : p1(x) ≥ 0, . . . , p n(x) ≥ 0
+}
+,
+where p1, . . . , p n are real polynomials in d variables. Naturally, one tries to ﬁnd P-
+representations of P with a small number n of polynomials. Possible choices of n, also
+for the more general case when P is a semi-algebraic set, can be derived using results
+from real algebraic geometry, see [BCR98], [ABR96]. It has been rec ently established
+∗Work supported by the German Research Foundation within the Res earch Unit 468 “Methods from
+Discrete Mathematics for the Synthesis and Control of Chemical P rocesses”.
+1
+
+PDF PAGE 3
+Prior to Theorem 1.2, an upper bound N(m, k ) ≤ m/k + log 2 k was observed in
+[HM06] (see also [Hen07, Satz 2.4]), which, together with the lower bo und in Theorem
+1.2, determines N(m, k ) already up to a factor of 2.
+Theorem 1.1 will follow from Theorem 1.2. The proof of Theorem 1.2 con sists of a
+geometric and a combinatorial part. In the geometric part, given in Section 2, we show
+that essentially it suﬃces to consider unbounded polygons whose tw o unbounded edges
+are not parallel and express the minimal n from Theorem 1.2 for such polygons in purely
+combinatorial terms. In the combinatorial part, given in Section 3, we estimate this
+minimal n by employing results on Gray codes (cf. [Sav97] and [Knu05]).
+By Theorem 1.1, N(m, k ) ∼ N(m, k ) ∼ m/k for k ≤ m/ log2 m as m → ∞ . Let us give
+a few remarks for other choices of k. We only discuss N(m, k ) here, since the comments
+on N (m, k ) are analogous. Using results from real algebraic geometry, one c an show that
+there exists a function k0(m) such that N(m, k ) = 2 for every k ≥ k0(m). This follows
+directly from the Theorem of Br¨ ocker and Scheiderer [BCR98, § 6.5, § 10.4] and [Pre98,
+Theorem 5.1], which are formulated in the framework of real closed ﬁ elds. One should
+point out that the existence of k0(m) is a non-constructive result. In fact, on the one
+hand it is known that every m-gon P can be described by two polynomials p1, p 2, see
+[Ber98]. On the other hand, known formulas for p1, p 2 depend on the metric structure of
+the m-gon P so that the degrees of p1, p 2 are not bounded from above for any ﬁxed m.
+Already for the case m = 5 it is not clear how to (eﬃciently) construct polynomials p1, p 2
+representing an arbitrary given pentagon P and having degrees bounded from above by
+an absolute constant, for further details see [AH09a]. Finally, it wou ld be interesting to
+estimate N(m, k ) for m/ log2 m ≤ k ≤ k0(m), where N(m, k ) changes from about log 2 m
+to 2 .
+As for P-representations of polyhedra of arbitrary dimensions, we point o ut that re-
+cently it was shown [AB10] that every d-dimensional polyhedron can be represented by d
+non-strict polynomial inequalities. This provides a positive answer to a conjecture posed
+in [BGH05]. We also refer to [vH92], [Ber98], [BGH05], [AH09a], [AH09b] fo r preliminary
+results, [Ave09], [Ave08] for related results, and [Hen07] for a sur vey on that topic. For
+the case d ≥ 3 currently no results on the interplay between the degrees and th e number
+of polynomials in P-representations of d-dimensional polyhedra seem available.
+2 Geometric arguments
+Let P be a polygon in R2. By E we denote the set of all edges of P . For every edge I ∈ E,
+we ﬁx a real polynomial pI(x) of degree one, vanishing on I and non-negative on P .
+The following proposition is easily derived by standard arguments fro m real algebraic
+geometry. For completeness we give a proof (see also [GH03, Prop . 2.1] and [Ave09]).
+Proposition 2.1. Let P be a polygon and let p1, . . . , p n be real polynomials such that
+P = {p1 ≥ 0, . . . , p n ≥ 0} or int P = {p1 > 0, . . . , p n > 0}. Then for every I ∈ E the
+polynomial pI is a factor of odd multiplicity of some pi, 1 ≤ i ≤ n.
+Proof. Fix an edge I ∈ E and let ∏n
+i=1 pi = pe
+I
+∏m
+j=1 qj with e ∈ N ∪ { 0} and irreducible
+polynomials qj not divisible by pI, 1 ≤ j ≤ m. Since every qj has only ﬁnitely many
+zeros in {pI = 0 } there exists an x ∈ I with qj(x) ̸= 0 for all j = 1 , . . . , m , and hence,
+by continuity, there is an neighboorhood N of x on which for all j = 1 , . . . , m the sign
+3
+
+PDF PAGE 4
+of qj is constant. If pI would have even multiplicity in every pi then the sign of every pi
+would be constant on N \ {pI = 0} so that, in both cases P = {p1 ≥ 0, . . . , p n ≥ 0} and
+int P = {p1 > 0, . . . , p n > 0}, either N \ {pI = 0 } ⊆ P or ( N \ {pI = 0 }) ∩ int P = ∅.
+But this is impossible since x is a boundary point of P and hence N ∩ { pI < 0} ̸⊆ P and
+N ∩ { pI > 0} ∩ int P ̸= ∅.
+Recall that a real polynomial is called squarefree if every irreducible factor of it occurs
+with multiplicity one.
+Lemma 2.2. Let m, k ∈ N. The quantity N(m, k ) (resp.
+N (m, k )) from Theorem 1.2 is
+attained at squarefree polynomials p1, . . . , p n satisfying (A) and (C) (resp. A and (C)).
+Proof. Given a polygon P with m edges and polynomials p1, . . . , p n satisfying the con-
+ditions ( A) and ( C), we can clearly replace factors of p1, . . . , p n with odd multiplicities
+by the same factors with multiplicity one while maintaining the conditions (A) and (C).
+Furthermore, factors with even multiplicities can just be dropped o ut. In fact, if for some
+edge I, pI is a factor of p1 with even multiplicity, say with multiplicity two, then, in view
+of Proposition 2.1, pI is a factor of odd multiplicity of some pi, 1 < i ≤ n, say p2, so that
+{p1 > 0, p 2 > 0} = {p1/p 2
+I > 0, p 2 > 0}.
+Similarly, given polynomials p1, . . . , p n satisfying the conditions (
+A) and ( C), odd
+multiplicities can be replaced by multiplicity one, and factors with even m ultiplicities can
+be dropped out, since, with the notation above, P ⊆ { p1/p 2
+I ≥ 0, p 2 ≥ 0} ⊆ { p1 ≥ 0, p 2 ≥
+0}.
+Performing the above reductions we obtain polynomials p1, . . . , p n each of which being
+a product of at most k diﬀerent pI, I ∈ E.
+For every set F ⊆ E of edges of the polygon P we put
+pF (x) :=
+∏
+I∈ F
+pI(x).
+For x ∈ R2 \P we deﬁne the set E<(x) := {I ∈ E : pI(x) < 0} . Geometrically, E<(x)
+is the set of edges of P illuminated from x. The sets E≤ (x) and E=(x) are deﬁned analo-
+gously.
+Lemma 2.3. Let P be a polygon and let F1, . . . , F n ⊆ E. Then the following statements
+hold.
+I. If P = {pF1 ≥ 0, . . . , p Fn ≥ 0} then int P = {pF1 > 0, . . . , p Fn > 0}.
+II. If int P = {pF1 > 0, . . . , p Fn > 0} then E = F1 ∪ . . . ∪ Fn.
+III. P = {pF1 ≥ 0, . . . , p Fn ≥ 0} if and only if for every x ∈ R2 \ P there exists i ∈
+{1, . . . , n } such that #(Fi ∩ E<(x)) is odd and Fi ∩ E=(x) = ∅.
+IV. int P = {pF1 > 0, . . . , p Fn > 0} if and only if for every x ∈ R2 \ P there exists
+i ∈ { 1, . . . , n } such that #(Fi ∩ E<(x)) is odd.
+Proof. The proof is straightforward. Part II follows directly from Propos ition 2.1. Let
+us show only IV. We start with the “only if” part. Let x ∈ R2 \ P. If pI(x) ̸= 0 for
+every I ∈ E then, by assumption, there exists i ∈ { 1, . . . , n } such that pFi(x) < 0 and
+4
+
+PDF PAGE 5
+consequently #( Fi ∩ E<(x)) is odd. If pI(x) = 0 for some I ∈ E then we can choose an
+y ∈ Rd \P with E<(y) = E<(x) and pJ (y) ̸= 0 for every J ∈ E. Thus, by the previous
+case, there exists i ∈ { 1, . . . , n } such that #( Fi ∩ E<(x)) is odd. Next we show the “if”
+part. Since obviously int P ⊆ { pF1 > 0, . . . , p Fn > 0}, we have to show that for every
+x ∈ R2 \ int P there exists i ∈ { 1, . . . , n } with pFi(x) ≤ 0. If x / ∈ P this is clear by
+assumption. If x ∈ P \ int P we have x ∈ I for some I ∈ E, and we can choose an
+y ∈ R2 \ P with E<(y) = {I}. Then, by assumption, there exists i ∈ { 1, . . . , n } with
+I ∈ Fi, so pFi(x) = 0.
+We remark that the converse of Lemma 2.3.I is not true in general. Fo r example, the
+interior of the quadrant P := {x ∈ R2 : x1 ≥ 0, x 2 ≥ 0} is equal to
+{
+x ∈ R2 : x1 > 0, x 2 > 0
+}
+=
+{
+x ∈ R2 : x1 > 0, x 1x2 > 0
+}
+,
+and relaxing the inequalities on the right hand side gives {x ∈ R2 : x1 ≥ 0, x 1x2 ≥ 0},
+the union of P with the x1-axis.
+By n(P, k ) (resp. n(P, k )) we denote the minimal n ∈ N such that there exist
+F1, . . . , F n ⊆ E, each Fi of cardinality at most k, such that int P = {pF1 > 0, . . . , p Fn > 0}
+(resp. P = {pF1 ≥ 0, . . . , p Fn ≥ 0}). Clearly, in view of Lemma 2.2, the quantity N(m, k )
+(resp. N (m, k )) in Theorem 1.2 is the maximum of n(P, k ) (resp. n(P, k )) over all poly-
+gons P with m edges.
+We can now state our two main propositions in this section.
+Proposition 2.4. Let P be an unbounded polygon with m edges such that the unbounded
+edges of P are not parallel. Then the quantities n(P, k ) and n(P, k ) depend only on m
+and k. Furthermore, n(m, k ) := n(P, k ) and n(m, k ) := n(P, k ) are determined as follows:
+I. n(m, k ) is the minimal n ∈ N such that there exist sets S1, . . . , S n ⊆ { 1, . . . , m }
+satisfying the following conditions:
+(I) for every a, b ∈ N with 1 ≤ a ≤ b ≤ m there exists i ∈ { 1, . . . , n } such that
+#(Si ∩ { a, . . . , b }) is odd;
+(K) #Si ≤ k for all i ∈ { 1, . . . , n }.
+II. n(m, k ) is the minimal n ∈ N such that there exist sets S1, . . . , S n ⊆ { 1, . . . , m }
+satisfying the following conditions:
+(J) for every a, b ∈ N with 1 ≤ a ≤ b ≤ m there exists i ∈ { 1, . . . , n } such that
+#(Si ∩ { a, . . . , b }) is odd and {a − 1, b + 1} ∩ Si = ∅;
+(K) #Si ≤ k for all i ∈ { 1, . . . , n }.
+Proof. Let I1, I 2, . . . , I m denote the edges of P in consecutive order. Thus, I1 and Im are
+the non-parallel unbounded edges. By identifying edge sets F1, . . . , F n ⊆ E = {I1, . . . , I m}
+with subsets S1, . . . , S n ⊆ { 1, . . . , m } in the obvious way, part I follows from Lemma 2.3.IV
+and the equality
+{
+E<(x) : x ∈ R2 \P
+}
+= {{Ia, . . . , I b} : 1 ≤ a ≤ b ≤ m} ,
+5
+
+PDF PAGE 6
+and part II follows from Lemma 2.3.III and the equality
+{(
+E<(x), E =(x)
+)
+: x ∈ R2 \P
+}
+={(
+{Ia, . . . , I b}, F
+)
+: 1 ≤ a ≤ b ≤ m, F ⊆ { Ia− 1, I b+1} ∩ E
+}
+.
+Proposition 2.5. For m, k ∈ N let N(m, k ) and N (m, k ) be deﬁned as in Theorem 1.2,
+and n(m, k ) and n(m, k ) as in Proposition 2.4. Then one has
+n(m, k ) ≤ N(m, k ) ≤ 1 + n(m − 1, k ),
+n(m, k ) ≤ N(m, k ) ≤ 1 + n(m − 1, k ).
+Proof. The lower bounds for N(m, k ) and N (m, k ) are clear by Proposition 2.4 and the
+remark preceding it. As for the upper bounds consider an arbitrar y polygon P with m + 1
+consecutive edges I0, . . . , I m. Notice that
+{
+E<(x) : x ∈ R2 \P, I 0 ̸∈ E<(x)
+}
+= {{Ia, . . . , I b} : 1 ≤ a ≤ b ≤ m} .
+Consider sets S1, . . . , S n ⊆ { 1, . . . , m } satisfying (I) and (K). As in the proof of Propo-
+sition 2.4 we identify each set Si with the corresponding edge set Fi ⊆ { I1, . . . , I m}.
+In view of Lemma 2.3.IV we have int P = {pI0 > 0, p F1 > 0, . . . , p Fn > 0}. Hence
+N(m + 1 , k ) ≤ 1 + n(m, k ). The upper bound for N (m, k ) is proved analogously and
+employs Lemma 2.3.III.
+3 Combinatorial arguments and conclusion
+In view of the results from Section 2, the proofs of Theorem 1.1 and 1.2 require the
+determination of the asymptotic behavior of the functions n(m, k ) and
+n(m, k ) (deﬁned
+in Proposition 2.4). We will show the following.
+Theorem 3.1. Let m, k ∈ N, k ≤ m. Then
+max{m/k, log2(m+1)} ≤ n(m, k ) ≤
+n(m, k ) ≤ max
+{ m
+k + 3 log2
+m
+k + C, ⌈log2(m+1)⌉
+}
+,
+where C > 0 is an absolute constant.
+In particular, for every ε > 0 and all (1 + ε)m/ log2 m ≤ k ≤ m with m suﬃciently
+large, we have the exact values n(m, k ) = n(m, k ) = ⌈log2(m + 1)⌉.
+The proof of Theorem 3.1 employs results on Gray codes and is based on the following
+reformulations for n(m, k ) and n(m, k ).
+For subsets S1, . . . , S n of {1, . . . , m } let M denote their incidence matrix, i.e., the
+n × m-matrix whose ( i, j )-entry is 1 if j ∈ Si and 0 otherwise. Let cj be the j-th
+column of M, and let M ′ denote the binary n × (m + 1) matrix whose j-th column is
+c′
+j is c1 + · · ·+ cj (mod 2), j = 0 , . . . , m . In particular, c′
+0 is the zero column. Clearly,
+cj = c′
+j− 1 + c′
+j (mod 2) for all j = 1, . . . , m . Now it is easy to see that the conditions ( I),
+(J) and ( K) (in Proposition 2.4) on the sets S1, . . . , S n are equivalent to the following
+conditions ( I ′), ( J ′) and ( K ′), respectively, on the matrix M ′:
+6
+
+PDF PAGE 7
+(I ′) the m + 1 columns of M ′ are pairwise distinct;
+(J ′) for every a, b ∈ N with 0 ≤ a < b ≤ m there exists i ∈ { 1, . . . , n } such that
+M ′
+i,a− 1 = M ′
+i,a ̸= M ′
+i,b = M ′
+i,b+1 (with M ′
+i,− 1 := M ′
+i,0 and M ′
+i,m+1 := M ′
+i,m);
+(K ′) every row of M ′ has at most k bit changes.
+Here a bit change in row i of M ′ is a column index j ∈ { 1, . . . , m } for which M ′
+i,j− 1 ̸= M ′
+i,j.
+Thus, n(m, k ) (resp. n(m, k )) is the minimal n ∈ N such that there exits a binary
+n × (m + 1)-matrix M ′ starting with the zero column and satisfying ( I ′) and ( K ′) (resp.
+(J ′) and ( K ′)).
+Next we cite some facts about Gray codes (cf. [Sav97] and [Knu0 5]). Recall that an
+n-bit Gray code is a binary n × 2n-matrix G with distinct columns gj, j = 0 , . . . 2n − 1,
+such that gj and gj+1 diﬀer in exactly one coordinate, j = 0, . . . , 2n − 1, where g2n := g0.
+Without loss of generality we shall always assume that g0 is the zero column.
+A bit run of length ℓ of G is a 1 × ℓ-submatrix ( Gi,j+1, . . . , G i,j+ℓ) of G with Gi,j ̸=
+Gi,j+1 = Gi,j+2 = · · ·= Gi,j+ℓ ̸= Gi,j+ℓ+1, where the columns are indexed modulo 2 n.
+The upper bound in Theorem 3.1 essentialy follows from the following re sult due to
+Goddyn and Gvozdjak [GG03], see also [Knu05, Section 7.2.1.1].
+Theorem 3.2. For every n ∈ N there exists an n-bit Gray code for which every bit run
+has length at least n − 3 log2 n. □
+In fact, as shown in [GG03], Theorem 3.2 holds with the slightly stronge r bound
+⌊n − 2. 001 log2 n⌋.
+We will also need the following simple observation.
+Lemma 3.3. Every n-bit Gray code G satisﬁes condition (J’) (with M ′ = G).
+Proof. Fix a, b ∈ N with 0 < a < b < m . Consider the row indices j, k ∈ { 1, . . . , n } for
+which M ′
+j,a− 1 ̸= M ′
+j,a and M ′
+k,b ̸= M ′
+k,b+1. Then, since M ′ is a Gray code, M ′
+i,a− 1 = M ′
+i,a for
+all i ̸= j, and M ′
+i,b = M ′
+i,b+1 for all i ̸= k. In particular, the submatrix of M ′ corresponding
+to the row indices j, k and column indices a − 1, a, b, b + 1 contains two equal columns
+(in both cases j ̸= k and j = k). Since the four columns of M ′ corresponding to the
+column indices a − 1, a, b, b + 1 are pairwise diﬀerent, there exists an i ̸= j, k for which
+M ′
+i,a− 1 = M ′
+i,a ̸= M ′
+i,b = M ′
+i,b+1.
+A similar argument works if a = 0 or b = m.
+Proof of Theorem 3.1. We shall use the matrices M and M ′ introduced above.
+The lower bound on n(m, k ) is clear in view of the conditions on M and M ′. Indeed,
+with a = b in condition ( I) we see that every element from {1, . . . , m } is covered by at
+least one of the sets S1, . . . , S n, which in view of ( K) yields n ≥ m/k . (Alternatively, we
+can count the total number of bit changes in M ′.) Further, we have n ≥ log2(m + 1) since
+the m + 1 columns of M ′ are distinct.
+The bound n(m, k ) ≤ n(m, k ) is trivial.
+It remains to show the upper bound on n(m, k ). Fix the minimal n ∈ N satisfying
+m ≤ 2n − 1 and m ≤ k(n − 3 log2 n) and consider an n-bit Gray code G as in Theorem 3.2.
+Then the n × (m + 1)-matrix M ′ consisting of the ﬁrst m + 1 columns of G starts with
+the zero column and clearly satisﬁes condition ( K ′). By Lemma 3.3, M ′ also satisﬁes
+condition ( J ′). Thus, n(m, k ) ≤ n, from which the desired upper bound follows by
+7

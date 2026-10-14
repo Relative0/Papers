@@ -1,0 +1,176 @@
+# N2/P7 Preregistration — Two C-Backed 64-bit Annotation Words
+
+Frozen before any N2/P7 fuzz, Gate-P, or natural benchmark result is inspected.
+
+## Goal
+
+Test whether the successful P4-P6 propagated two-support signature can survive the complete DAG-construction + sparse-ANF pipeline when the P6 two-word logical annotation is moved out of Python node objects into exactly two C-backed `array('Q')` buffers indexed by node id.
+
+P7 is a representation/storage experiment only. It does not retune the profitability rule, change signature propagation semantics, change the Gate-P generator, change the frozen natural selection, or introduce a formula-level dispatch gate. A dispatch gate is intentionally deferred to a separate experiment so that P7 isolates storage/placement cost.
+
+## Frozen profitability and propagation semantics
+
+Reuse P1-P6 unchanged:
+
+- monomial estimate cap 4096;
+- reject benefit <= 0;
+- reject benefit < 16 estimated pair terms;
+- shared relative-benefit threshold 20%;
+- unshared relative-benefit threshold 10%;
+- no arbitrary truth-table retabulation;
+- no general NOT-over-two-support propagation;
+- same ordered-pair precedence and transpose handling;
+- same requirement that at least one child shell is composed through;
+- if composition fails, retain the native immediate two-support signature.
+
+No threshold or precedence rule may change after results are observed.
+
+## P7 representation
+
+Ordinary compiler nodes remain the unmodified `base.Node` type. The factory owns exactly two C-backed unsigned-64-bit arrays:
+
+1. `array('Q') meta_word`
+2. `array('Q') sig_word`
+
+The packed layouts are bit-for-bit identical to P6:
+
+- `meta_word[nid]`: low 13 bits are saturated monomial estimate 0..4096; higher bits are unique-parent edge-use count.
+- `sig_word[nid]`: 20-bit `a`, 20-bit `b`, 4-bit truth token, one propagated bit, one valid bit; zero means no signature.
+- maximum node id is 2^20-1 and construction must abort on overflow.
+
+No per-node Python metadata fields, no Candidate or Sig objects, and no additional use/estimate/pair/token/flag side containers are permitted.
+
+## Construction-time work
+
+On creation of a unique node, P7 may:
+
+- append one zero entry to each of the two arrays;
+- increment each child's packed use count in `meta_word`;
+- compute and pack the frozen saturated monomial estimate;
+- inspect immediate child `sig_word` entries;
+- propagate and pack one two-support signature when the frozen P4-P6 propagation rule succeeds.
+
+It may not compute/store pair cost, shell cost, fold cost, benefit, sharing status, fractional profitability, or Candidate records during construction.
+
+## Demand-time lowering
+
+Primary arm: `cm_cword_sig_sparse`.
+
+At a demanded binary node:
+
+1. if propagated bit is absent, use the exact direct sparse-ANF rule;
+2. otherwise decode `(a,b,token)` from `sig_word[nid]`;
+3. align immediate children to `(a,b)` using the two arrays and ordinary topology;
+4. decode use counts and monomial estimates from `meta_word`;
+5. compute the frozen P5/P6 candidate arithmetic on demand;
+6. if accepted, lower only surviving base operands and apply the composed token;
+7. if rejected, execute the exact direct rule.
+
+No rewrite DAG, fold plan, recursive matcher/estimator, reference-count scan, Candidate object, or additional metadata container is permitted. Every accepted fold must be consumed.
+
+## Mandatory equivalence
+
+P7 must reproduce P6 and P5 exactly on every fuzz and benchmark symbolic case for:
+
+- final ANF digest;
+- multiplications, pair terms, peak monomials, evaluated ANF nodes, final monomial count/degree;
+- selector-node/candidate counts;
+- accepted/shared folds and rejection-reason counts;
+- estimated keep/fold/benefit totals;
+- folds consumed and bypassed child-shell counts.
+
+Construction metadata must match P6/P5 node-by-node for topology, use count, estimate, signature pair/token, and propagated flag. Any mismatch aborts.
+
+## Timing endpoints
+
+### A. Lowering-only
+
+Materialize P7, P6, and P5 DAGs before timing.
+
+Arms:
+
+- `direct_cword_sparse_anf`: direct/no-rewrite sparse ANF on the P7 DAG, ignoring metadata;
+- `cm_cword_sig_sparse`: P7 primary;
+- `cm_innode_sig_sparse`: simultaneous P6 reference;
+- `cm_packed_sig_sparse`: simultaneous P5 reference.
+
+Primary lowering comparison: P7/direct.
+
+### B. Construction + lowering
+
+Each repetition freshly clones the frozen source DAG:
+
+- `direct_build_sparse`;
+- `cm_cword_sig_build_sparse`;
+- `cm_innode_sig_build_sparse`;
+- `cm_packed_sig_build_sparse`.
+
+Primary end-to-end comparison: P7/direct. Report build-only P7/direct, P7/P6, and P7/P5 ratios separately.
+
+BLIF parsing, oracle construction, source generation, result serialization, and truth-vector conversion remain outside timed endpoints.
+
+## Corpora
+
+### Natural EPFL
+
+Replay the exact frozen P1-P6 snapshot and ten selected cases from EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`, with the same support 9-12, source-node <=128 selection rule. `bar` may contribute zero timed cases. No timing/fold-incidence selection is allowed.
+
+### Gate-P
+
+Replay the exact frozen generator/seed family/order, depths 6/8/10, 12 cases per depth. Direct ANF identity/work must match the frozen P6/P5 reference.
+
+## Correctness and invariants
+
+Before interpreting timing:
+
+- run 1000 fresh randomized formulas through original direct, direct-on-P7, P7, P6, P5, P4, P3, and P2;
+- require oracle equality and one final ANF digest;
+- independently recompute fanout and P1 monomial estimate and compare with P7 `meta_word`;
+- compare every P7 signature with P6 and P5 metadata;
+- require exact P7/P6/P5 symbolic decision/work equality;
+- require accepted folds == consumed folds;
+- require ordinary/P7/P6/P5 clones to preserve direct reachable-node and ANF-work identity.
+
+## Repetitions
+
+Preserve P5/P6 counts:
+
+- natural lowering: 25 randomized paired repetitions/case/arm;
+- Gate-P lowering: 25 randomized paired repetitions/case/arm;
+- natural construction-inclusive: 15 randomized paired repetitions/case/arm;
+- Gate-P construction-inclusive: 15 randomized paired repetitions/case/arm;
+- memory in separate untimed passes.
+
+Case medians first. Pooled ratios use geometric mean of paired case-median ratios with case-bootstrap 95% intervals.
+
+## Predeclared interpretation
+
+### Lowering-only speed signal
+
+For a corpus with at least one consumed P7 fold, PASS requires:
+
+1. zero correctness/equivalence failures;
+2. pooled P7/direct lowering ratio <= 0.95;
+3. bootstrap 95% upper bound < 1.00;
+4. no >5% pooled increase in pair terms or peak monomials versus direct.
+
+If no fold is consumed, timing is an abstention-overhead control only.
+
+### End-to-end speed signal
+
+PASS requires:
+
+1. zero correctness/equivalence failures;
+2. at least one consumed fold;
+3. pooled P7/direct construction+lowering ratio <= 0.95;
+4. bootstrap 95% upper bound < 1.00;
+5. no >5% pooled increase in pair terms or peak monomials versus direct.
+
+The workload-weighted ratio is secondary and cannot replace the case-balanced preregistered criterion.
+
+## Interpretation guardrails
+
+- A P7 win over P6/P5 with exact symbolic equivalence is evidence about storage/representation overhead, not a new mathematical folding mechanism.
+- Gate-P is fold-rich synthetic mechanism evidence; it must not be generalized to natural circuits.
+- Natural timings with zero accepted folds measure annotation tax only.
+- If P7 still loses end-to-end, report whether the remaining gap is construction or lowering; do not retune thresholds after the fact.

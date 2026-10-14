@@ -1,0 +1,2298 @@
+=== PDF PAGE 1 ===
+arXiv:2412.05481v2  [cs.AI]  24 Feb 2025
+A Compositional Atlas for Algebraic Circuits
+Benjie Wang
+University of California, Los Angeles
+benjiewang@ucla.edu
+Denis Deratani Mauá
+University of São Paulo
+ddm@ime.usp.br
+Guy V an den Broeck
+University of California, Los Angeles
+guyvdb@cs.ucla.edu
+Y ooJung Choi
+Arizona State University
+yj.choi@asu.edu
+Abstract
+Circuits based on sum-product structure have become a ubiqu itous representation
+to compactly encode knowledge, from Boolean functions to pr obability distribu-
+tions. By imposing constraints on the structure of such circ uits, certain inference
+queries become tractable, such as model counting and most pr obable conﬁgura-
+tion. Recent works have explored analyzing probabilistic a nd causal inference
+queries as compositions of basic operators to derive tracta bility conditions. In this
+paper, we take an algebraic perspective for compositional inference , and show
+that a large class of queries—including marginal MAP , proba bilistic answer set
+programming inference, and causal backdoor adjustment—co rrespond to a com-
+bination of basic operators over semirings: aggregation, p roduct, and element-
+wise mapping. Using this framework, we uncover simple and ge neral sufﬁcient
+conditions for tractable composition of these operators, i n terms of circuit proper-
+ties (e.g., marginal determinism, compatibility) and conditions on the elementwise
+mappings. Applying our analysis, we derive novel tractability conditions for many
+such compositional queries. Our results unify tractabilit y conditions for existing
+problems on circuits, while providing a blueprint for analy sing novel composi-
+tional inference queries.
+1 Introduction
+Circuit-based representations, such as Boolean circuits, decision diagrams, and arithmetic circuits,
+are of central importance in many areas of AI and machine lear ning. For example, a primary means
+of performing inference in many models, from Bayesian netwo rks [16, 9] to probabilistic programs
+[20, 24, 26, 43], is to convert them into equivalent circuits ; this is commonly known as knowledge
+compilation. Inference via knowledge compilation has also been used for many applications in
+neuro-symbolic AI, such as constrained generation [2, 54] a nd neural logic programming [34, 28].
+Circuits can also be learned as probabilistic generative models directly from data [25, 41, 40, 32],
+in which context they are known as probabilistic circuits [1 1]. Compared with neural generative
+models, probabilistic circuits enjoy tractable evaluatio n of inference queries such as marginal prob-
+abilities, which has been used for tasks such as fair machine learning [12] and causal reasoning
+[53, 50, 49].
+The key feature of circuits is that they enable one to precise ly characterize tractability conditions
+(structural properties of the circuit) under which a given inference query can be computed exactly
+and efﬁciently. One can then enforce these circuit properti es when compiling or learning a model
+to enable tractable inference. For many basic inference que ries, such as computing a marginal
+probability, tractability conditions are well understood [48, 8]. However, for more complex queries,
+38th Conference on Neural Information Processing Systems ( NeurIPS 2024).
+
+=== PDF PAGE 2 ===
+maxX
+∑
+Y ∼ep(X, Y )
+p(X, Y )
+[ [Y ∼ e] ]
+⊗ ⊕Y τid ⊕X
+∑
+Xω (X)∑
+Y ∼q
+φ (X, Y )∑
+Y φ (X, Y )
+φ(X, Y )
+[ [Y ∼ q] ]
+[ [·] ] ⊕Y τ−1 ⊗ ⊗ ⊕Y
+ω (X)
+⊗ ⊕X
+Figure 1: Example applications of our compositional infere nce framework for (Left) MMAP and
+(Right) Success Probability in Prob. Logic Programing under the Sta ble Model semantics (MaxEnt).
+the situation is less clear, and the exercise of deriving alg orithms and tractability conditions for a
+given query has usually been carried out in an instance-spec iﬁc manner requiring signiﬁcant effort.
+In Figure 1, we illustrate two such queries. The marginal MAP (MMAP) [13] query takes a proba-
+bilistic circuitp and some evidence e and asks for the most likely assignment of a subset of variables.
+The success probability inference in probabilistic logic p rogramming [6, 45] takes a circuit repre-
+sentationφ of a logic program, a weight function ω and some query q, and computes the probability
+of the query under the program’s semantics (MaxEnt, in the ex ample). At ﬁrst glance, these seem
+like very different queries, involving different types of i nput circuits (logical and probabilistic), and
+different types of computations. However, they share simil ar algebraic structure: logical and prob-
+abilistic circuits can be interpreted as circuits deﬁned ov er different semirings, while maximization
+and summation can be viewed as aggregation over different semirings. In this paper, inspired by
+the compositional atlas for probabilistic circuits [48], w e take a compositional approach to algebraic
+inference problems, breaking them down into a series of basi c operators: aggregation, product, and
+elementwise mapping. For example, the MMAP and probabilist ic logic programming queries in-
+volve multiple interleaved aggregations and products, alo ng with one elementwise mapping each.
+Given a circuit algorithm (and associated tractability con dition) for each basic operator, we can
+reuse these algorithms to construct algorithms for arbitra ry compositions. The key challenge is then
+to check if each intermediate circuit satisﬁes the requisit e tractability conditions.
+Our contributions can be summarized as follows. We introduc e a compositional inference frame-
+work for algebraic circuits (Section 3) over arbitrary semirings, generalizi ng existing results on
+logical [18] and probabilistic [48] circuits. In particula r, we provide a language for specifying in-
+ference queries involving different semirings as a composition of basic operators (Section 3.1) . We
+then prove sufﬁcient conditions for the tractability of eac h basic operator (Section 3.2) and novel
+conditions for composing such operators (Section 3.3). We a pply our compositional framework to a
+number of inference problems (Section 4), showing how our co mpositional approach leads to more
+systematic derivation of tractability conditions and algorithms, and in some cases improved complex-
+ity analysis. In particular, we discover a tractability hie rarchy for inference queries captured under
+the 2AMC framework [29], and reduce the complexity of causal backdoor/frontdoor adjustment on
+probabilistic circuits [38, 49] from quadratic/cubic to li near/quadratic respectively.
+2 Preliminaries
+Notation We use capital letters (e.g., X,Y ) to denote variables and lowercase for assignments
+(values) of those variables (e.g., x,y ). We use boldface to denote sets of variables/assignments ( e.g.,
+X, y) and write Assign (V ) for the set of all assignments to V . Given a variable assignment v of
+V , and a subset of variables W⊆ V , we write vW to denote the assignment of W corresponding
+to v.
+Semirings In this paper, we consider inference problems over commutat ive semirings. Semirings
+are sets closed w.r.t. operators of addition (⊕) and multiplication (⊗) that satisfy certain properties:
+Deﬁnition 1 (Commutative Semiring) . A commutative semiring S is a tuple (S,⊕,⊗, 0S, 1S),
+where⊕ and⊗ are associative and commutative binary operators on a set S (called the domain)
+such that⊗ distributes over⊕ (i.e.,a⊗ (b⊕c) = (a⊗b)⊕ (a⊗c) for alla,b,c ∈S); 0S∈S is
+2
+
+=== PDF PAGE 3 ===
+∨
+∧ ∧
+XY ¬Y
+(a) A Boolean circuit that is smooth, de-
+composable, deterministic, but not {X}-
+deterministic.
+×
++ +
+× × × ×
+/llbracketX1/rrbracket/llbracketY1/rrbracket/llbracket¬X1/rrbracket/llbracket¬Y1/rrbracket/llbracketX2/rrbracket/llbracketY2/rrbracket/llbracket¬X2/rrbracket/llbracket¬Y2/rrbracket
+(b) A probabilistic circuit that is smooth, decomposable, a nd
+{X1, X 2}-deterministic. /llbracket·/rrbracketmaps ⊤ to 1 and ⊥ to 0.
+Figure 2: Examples of Algebraic Circuits. We use , , to represent input, sum and product
+nodes respectively.
+the additive identity (i.e., 0S⊕a = a for all a∈ S) and annihilates S through multiplication (i.e.,
+0S⊗a = 0 for alla∈S); and 1S∈S is the multiplicative identity (i.e., 1S⊗a =a for alla∈S).
+For example, the probability semiring P = ( R≥0, +,·, 0, 1) employs standard addition and
+multiplication (⊕ = + and ⊗ = ·) over the non-negative reals, the (max,·) semiring
+M = ( R≥0, max,·, 0, 1) replaces addition with maximization, while the Boolean sem iringB =
+({⊥,⊤},∨,∧,⊥,⊤) employs disjunction and conjunction operators (⊕ =∨ and⊗ =∧) over truth
+values.
+Algebraic Circuits We now deﬁne the concept of an algebraic circuit, which are co mputational
+graph-based representations of functions taking values in an arbitrary semiring.
+Deﬁnition 2 (Algebraic Circuit) . Given a semiring S = (S,⊕,⊗, 0S, 1S), an algebraic circuit
+C over variables V is a rooted directed acyclic graph (DAG), whose nodes α have the following
+syntax:
+α ::=l| +k
+i=1α i|× k
+i=1α i,
+whereα i∈ C are circuit nodes, k∈ N>0 andl : Assign(W )→ S is a function over a (possibly
+empty) subset W⊆ V of variables, called its scope. That is, each circuit node may be an input ( l),
+sum (+), or a product (×). The scope of any internal node is deﬁned to be vars(α ) :=∪k
+i=1vars(α i).
+Each nodeα represents a functionpα taking values in S, deﬁned recursively by: pα (w) ::= l(w) if
+α =l,pα (w) ::=⊕k
+i=1pα i (w) ifα = + k
+i=1α i, and pα (w) ::=⊗k
+i=1pα i(w) if×k
+i=1α i, where W
+is the scope of α . The function pC represented by the circuit is deﬁned to be the function of the root
+node. The size|C| of a circuit is deﬁned to be the number of edges in the DAG.
+For simplicity, we will restrict to circuits with binary pro ducts (i.e. k = 2 for products); this can
+be enforced with at most a linear increase in size. Prominent examples of algebraic circuits in-
+clude negation normal forms (NNF) and binary decision diagr ams [4]—which are over the Boolean
+semiring and represent Boolean functions—and probabilist ic circuits [11]—which are over the prob-
+abilistic semiring and represent probability distributio ns.1 By imposing simple restrictions on the
+circuit, which we call circuit properties, various inference queries that are computationally hard i n
+general become tractable. In particular, smoothness and de composability ensure tractable marginal
+inference:
+Deﬁnition 3 (Smoothness, Decomposability) . A circuit is smooth if for every sum node α = + iα i,
+its children have the same scope: ∀i,j, vars(α i) = vars(α j ). A circuit is decomposable if for every
+product nodeα =α 1×α 2, its children have disjoint scopes: vars(α 1)∩ vars(α 2) =∅.
+Aside from the scopes of circuit nodes, we can also specify pr operties relating to their supports
+[11]:
+Deﬁnition 4 (X-Support). Given a partition (X, Y ) of variables V and a node α in circuitC, the
+X-support ofα is the projection of its support on X:
+suppX (α ) ={x∈ Assign(X∩ vars(α )) :∃y∈ Assign(vars(α )\ X) s.t.pα (x, y)⁄= 0 S}.
+1Probabilistic circuits are sometimes written with weights on the edges; this can easily be translated to our
+formalism by replacing the child of a weighted edge with a pro duct of itself and an input function with empty
+scope corrresponding to the weight [44, 42].
+3
+
+=== PDF PAGE 4 ===
+Deﬁnition 5 (X-Determinism). Given a circuit C and a partition (X, Y ) of V , we say that C is
+X-deterministic if for all sum nodes α = + k
+i=1α i, either: (i) vars(α )∩ X =∅; or (ii) supp X(α i)∩
+suppX (α j) =∅ for alli⁄=j.
+X-determinism refers to a family of properties indexed by set s X. In particular V -determinism is
+usually referred to simply as determinism. Note that, as deﬁ ned, scope and support, and thus these
+circuit properties, apply to any semiring: the scope only de pends on the variable decomposition
+of the circuit, while the support only refers to scope and the semiring additive identity 0S. Figure
+2a shows a simple example of a smooth, decomposable, and dete rministic circuit that is not X-
+deterministic, while Figure 2b shows a smooth, decomposabl e, and{X1,X 2}-deterministic circuit.
+3 Compositional Inference: A Unifying Approach
+Many inference problems can be written as compositions of basic operators , which take as input
+one or more functions and output another function. For examp le, the marginal MAP query on prob-
+ability distributions maxx
+∑
+yp(x, y) is a composition of the ∑ and max operators. Similarly, for
+Boolean functions φ,ψ , the query ∑
+x∃y.φ (x, y)∧ψ (x, y) composes the∑ ,∃ and∧ operators.
+Although these queries appear to involve four different ope rators, three of them (∑ , max,∃) can be
+viewed as an aggregation operation over different semirings. Thus, we begin this section by con-
+solidating to a simple set of three operators applicable to f unctions taking values in some semiring:
+namely, aggregation, product, and elementwise mapping (Se ction 3.1).
+Equipped with this language for specifying compositional i nference queries, we then move on to an-
+alyzing their tractability when the input functions are given as circuits. The thesis of this paper is that
+algebraic structure is often the right level of abstraction to derive useful sufﬁcient (and sometimes
+necessary) conditions for tractability. We ﬁrstly show tractability conditions of each of the basic op-
+erators (Section 3.2), before deriving composability conditions showing how circuit properties are
+maintained through operators (Section 3.3). This enables u s to systematically derive conditions for
+the input circuits that enable efﬁcient computation of a com positional inference query. Algorithms
+and detailed proofs of all theorems can be found in Appendix A .
+3.1 Basic Operators
+Aggregation Given a function f : Assign(V )→ S, aggregatingf over W ⊆ V returns the
+functionf ′ : Assign(Z)→S for Z = V\ W deﬁned by f ′(z) :=⨁
+wf (z, w).
+For example, aggregation corresponds to forgetting variab les W in the Boolean semiring, marginal-
+izing out W in the probability semiring, and maximizing over assignmen ts in the (max,·) semiring.
+Next, some queries, such as divergence measures between pro bability distributions, take two func-
+tions as input, and many others involve combining two or more intermediate results, as is the case in
+probabilistic answer set programming inference and causal backdoor/frontdoor queries. We deﬁne
+the product operator to encapsulate such “combination” of f unctions in general.
+Product Given two functions f : Assign(W ) → S and f ′ : Assign(W ′) → S, the product
+of f and f ′ is a function f ′′ : Assign(V ) → S, where V = W∪ W ′, deﬁned by f ′′(v) :=
+f (vW )⊗f ′(vW ′ ).
+For example, a product corresponds to the conjoin operator∧ in the Boolean semiring, and standard
+multiplication· in the probability semiring. Lastly, we introduce the elementwise mapping operator,
+deﬁned by a mapping τ from a semiring to a (possibly different) semiring. When app lied to a
+functionf , it returns the function composition τ◦f . This is the key piece that distinguishes our
+framework from prior analysis of sum-of-product queries ov er speciﬁc semirings, allowing us to
+express queries such as causal inference and probabilistic logic programming inference under the
+same framework.
+Elementwise Mapping Given a function f : Assign(V )→ S and a mapping τ :S→ S′ from
+semiringS toS′ satisfyingτ(0S ) = 0 S ′ , an elementwise mapping of f byτ results in a function
+f ′ : Assign(V )→S′ deﬁned by f ′(v) := τ(f (v)). 2
+2In a slight abuse of notation, we will write τ : S → S ′ to indicate that τ maps between the respective sets.
+4
+
+=== PDF PAGE 5 ===
+In practice, we use elementwise mappings as an abstraction p redominantly for two purposes. The
+ﬁrst is for switching between semirings, while the second is to map between elements of the same
+semiring. For the former, one of the most important elementw ise mappings we will consider is the
+support mapping, which maps between any two semirings as follows.
+Deﬁnition 6 (Support Mapping) . Given a source semiringS and a target semiringS′, the support
+mapping /llbracket·/rrbracketS→S ′ is deﬁned as: /llbracketa/rrbracketS→S ′ = 0 S ′ ifa = 0 S; /llbracketa/rrbracketS→S ′ = 1 S ′ otherwise.
+In particular we will often use the source semiring S =B, in which case the support mapping maps
+⊥ to the 0S ′ and⊤ to the 1S ′ in the target semiring. This is useful for encoding a logical function
+for inference in another semiring, e.g. probabilistic infe rence in the probabilistic semiring.
+Example 1 (Marginal MAP). Suppose that we are given a Boolean formula φ(X, Y ) and a weight
+functionw : Assign(X∪ Y )→ R≥0. The marginal MAP query for variables X is deﬁned by
+MMAP(φ,ω ) = max
+x
+∑
+y
+φ(x, y)·ω (x, y),
+where we interpret ⊤ as 1 and⊥ as 0. W e can break this down into a compositional query as
+follows:
+⨁
+x
+τid, P→M
+[⨁
+y
+/llbracketφ(x, y)/rrbracketB→P⊗ω (x, y)
+]
+.
+The support mapping ensures φ and ω are both functions over the probabilistic semiring, so that
+we can apply the product operation. Notice also the inclusio n of an identity mapping τid, P→M
+from the probability to the (max,·) semiring deﬁned by τid, P→M (x) = x for all x∈ R≥0. While
+differentiating between semirings over the same domain may seem superﬂuous, the explicit identity
+operator will become important when we analyze the tractabi lity of these compositions on circuits.
+3.2 Tractability Conditions for Basic Operators
+We now consider the tractability of applying each basic oper ator to circuits: that is, computing
+a circuit whose function corresponds to the result of applyi ng the operator to the functions given
+by the input circuit(s). First, it is well known that forgett ing and marginalization of any subset of
+variables can be performed in polynomial time if the input ci rcuits in the respective semirings (NNF
+and PC) are smooth and decomposable [18, 11]. This can be gene ralized to arbitrary semirings:
+Theorem 1 (Tractable Aggregation). LetC be a smooth and decomposable circuit representing a
+functionp : Assign(V )→ S. Then for any W ⊆ V , it is possible to compute the aggregate as a
+smooth and decomposable circuit C′ (i.e.,pC ′(Z) =⨁
+wpC(Z, w)) inO(|C|) time and space.
+Next, let us consider the product operator. In the Boolean ci rcuits literature, it is well known that
+the conjoin operator can be applied tractably if the circuit s both follow a common structure known
+as a vtree [17]. In [48] a more general property known as compatibility was introduced that directly
+speciﬁes conditions with respect to two (probabilistic) ci rcuits, without reference to a vtree. We
+now deﬁne a generalization of this property ( X-compatibility) and also identify a new condition
+(X-support-compatibility) that enables tractable products .
+Deﬁnition 7 (X-Compatibility). Given two smooth and decomposable circuitsC,C ′ over variables
+V, V ′ respectively, and a variable set X⊆ V ∩ V ′, we say that C,C ′ are X-compatible if for
+every product nodeα =α 1×α 2∈C andα ′ =α ′
+1×α ′
+2∈C′ such that vars(α )∩X = vars(α ′)∩X,
+the scope is partitioned in the same way, i.e. vars(α 1)∩ X = vars(α ′
+1)∩ X and vars(α 2)∩ X =
+vars(α ′
+2)∩ X. W e say thatC,C ′ are compatible if they are (V∩ V ′)-compatible.
+Intuitively, compatibility states that the scopes of the ci rcuits decompose in the same way at product
+nodes. Compatibility of two circuits sufﬁces to be able to tr actably compute their product:
+Theorem 2 (Tractable Product - Compatibility) . Let C,C ′ be compatible circuits over variables
+V, V ′, respectively, and the same semiring. Then it is possible to compute their product as a circuit
+C compatible with them (i.e., pC ′′(V∪ V ′) = pC (V )⊗pC ′(V ′)) inO(|C||C′|) time and space.
+We remark that if we are given a fully factorized function f (V ) = ⨂
+Vi∈V fi(Vi), this can be ar-
+ranged as a circuit (series of binary products) compatible w ith any other decomposable circuit; thus,
+5
+
+=== PDF PAGE 6 ===
+we say this type of function is omni-compatible. We also say that a circuit is structured decompos-
+able if it is compatible with itself. Now, our more general deﬁnit ion of X-compatibility states that
+the scopes of the circuits restricted to X decompose in the same way at product nodes. This will
+be important when we consider composing products with other operators, such as aggregation. The
+following result shows that compatibility w.r.t. a subset i s a weaker condition:
+Proposition 1 (Properties of X-Compatibility). If two circuits C,C ′ are X-compatible, then they
+are X ′-compatible for any subset X ′⊆ X.
+Compatibility is a sufﬁcient but not necessary condition fo r tractable products. Some non-
+compatible circuits can be efﬁciently restructured to be compatible, such that we can then apply
+Theorem 2; we refer readers to [55] for details. Alternative ly, it is also known that deterministic
+circuits can be multiplied with themselves in linear time, e ven when they are not structured decom-
+posable [48, 27]. We formalize this idea with a new property t hat we call support-compatibility.
+Deﬁnition 8 (X-Support Compatibility). Given two smooth and decomposable circuits C,C ′ over
+variables V, V ′ respectively, and a set of variables X⊆ V ∩ V ′, let C[X],C ′[X] be the DAGs
+obtained by restricting to nodes with scope overlapping wit h X. W e say thatC,C ′ are X-support-
+compatible if there is an isomorphismιbetweenC[X],C ′[X] such that: (i) for any node α∈C[X],
+vars(α )∩ X = vars(ι(α ))∩ X; (ii) for any sum node α∈C[X], suppX (α i)∩ suppX (ι(α j )) =∅
+wheneveri⁄=j. W e say thatC,C ′ are support-compatible if they are (V∩ V ′)-support-compatible.
+To unpack this deﬁnition, we note that any smooth, decomposa ble, and X-deterministic circuit is
+X-support-compatible with itself, with the obvious isomorp hism. However, this property is more
+general in that it allows for circuits over different sets of variables and does not require that the nodes
+represent exactly the same function; merely that the sum nod es have “compatible” support decom-
+positions. As we will later see, the signiﬁcance of this prop erty is that it can be often maintained
+through applications of operators, making it useful for com positions.
+Theorem 3 (Tractable Product - Support Compatibility) . LetC,C ′ be support-compatible circuits
+over variables V, V ′, respectively, and the same semiring. Then, given the isomo rphism ι, it is
+possible to compute their product as a smooth and decomposab le circuit C′′ support-compatible
+with them (i.e., pC ′′ (V∪ V ′) = pC (V )⊗pC ′(V ′)) inO(max(|C|,|C′|)) time and space.
+We now examine the tractability of general elementwise mapp ingsτ :S→S ′ on a circuit C. It is
+tempting here to simply construct a new circuitC′ over the semiringS′ with the same structure asC,
+and replace each input functionl in the circuit withτ(l). However, the resulting circuitpC ′(V ) is not
+guaranteed to correctly compute τ(pC (V )) in general. For example, consider the support mapping
+/llbracket·/rrbracketB→S —which maps ⊥ to 0S and⊤ to 1S —for the probability semiring S = ( R≥0, +,·, 0, 1).
+Then the transformation of the smooth and decomposable circ uit C = X∨X produces C′ =
+/llbracketX/rrbracket+ /llbracketX/rrbracket, which evaluates to pC ′(X =⊤) = 2 whereasτ(pC (X =⊤)) = 1 . In order for this
+simple algorithm to be correct, we need to impose certain con ditions on the elementwise mapping τ
+and/or the circuit C it is being applied to.
+Theorem 4 (Tractable Mapping) . Let C be a smooth and decomposable circuit over semiring S,
+andτ :S→S ′ a mapping such that τ(0S ) = 0 S ′. Then it is possible to compute the mapping of
+C byτ as a smooth and decomposable circuit C′ (i.e.,pC ′(V ) = τ(pC (V ))) in O(|C|) time and
+space ifτ distributes over sums and over products.
+τ distributes over sums if: either (Additive) τ is an additive homomorphism, i.e. τ(a⊕ b) =
+τ(a)⊕τ(b); or (Det)C is deterministic.
+τ distributes over products if: either (Multiplicative) τ is an multiplicative homomorphism, i.e.
+τ(a⊗b) = τ(a)⊗τ(b); or (Prod 0/1)τ(1S ) = 1 S ′, and for all product nodesα =α 1×α 2∈C, and
+for every value v∈ Assign(vars(α )), eitherpα 1(vvars(α 1))∈{ 0S, 1S} orpα 2(vvars(α 2))∈{ 0S, 1S}.
+We can apply Theorem 4 to immediately derive the following pr operty of support mappings:
+Corollary 1 (Support Mapping) . Given a circuit C over a semiringS and any target semiring S′,
+a circuit representing /llbracketpC /rrbracketS→S ′ can be computed tractably if (i) S satisﬁes a⊕b = 0 S =⇒ a =
+b = 0 S andS′ is idempotent (i.e., 1S ′⊕ 1S ′ = 1 S ′), or (ii) C is deterministic.
+Proof. First note that /llbracket·/rrbracketS→S ′ satisﬁes (Multiplicative), and thus distributes over prod ucts. If (i)
+holds, consider /llbracketa⊕b/rrbracketS→S ′. Ifa =b = 0 S, then this is equal to /llbracket0S/rrbracketS→S ′ = /llbracketa/rrbracketS→S ′ +/llbracketb/rrbracketS→S ′ =
+6
+
+=== PDF PAGE 7 ===
+Table 1: Tractability Conditions for Operations on Algebra ic Circuits. Sm: Smoothness,
+Dec: Decomposability; X-Det(erminism), X-Cmp: X-Compatibility, X-SCmp: X-Support-
+Compatibility.
+If the Input Circuit(s) are ...
+Conditions X-Det X-Cmp w/Cother X-SCmp w/Cother Complexity
+Then the Output Circuit is ... (A.4)
+Aggr. (W ) Sm, Dec X-Det
+if W∩X =∅
+X-Cmp w/Cother
+if W∩X =∅
+X-SCmp w/Cother
+if W∩X =∅ O(|C|) (A.1)
+Product Cmp X-Det X-Cmp w/Cother N/A O(|C||C′|) (A.2.1)
+SCmp X-Det X-Cmp w/Cother X-SCmp w/Cother O(max(|C|,|C′|)) (A.2.2)
+Elem.
+Mapping
+Sm, Dec,
+(Add/Det),
+(Mult/Prod01)
+X-Det X-Cmp w/Cother X-SCmp w/Cother O(|C|) (A.3)
+0S ′; otherwisea,b,a ⊕b⁄= 0 S and /llbracketa⊕b/rrbracketS→S ′ = /llbracketa/rrbracketS→S ′⊕ /llbracketb/rrbracketS→S ′ = 1 S ′ (by idempotence of
+S′). Thus /llbracket·/rrbracketS→S ′ satisﬁes (Additive). Alternatively, if (ii) holds, then (D et) holds. In either case
+/llbracket·/rrbracketS→S ′ distributes over sums in the circuit.
+The following examples illustrate the generality of elemen twise mappings and Theorem 4:
+Example 2 (Partition Function and MAP) . Given a probability distribution p(V ), consider the
+task of computing the partition function ∑
+vp(v) and MAP maxvp(v). These can be viewed as
+aggregations over the probability and (max,·) semirings respectively.
+p is often either a probabilistic circuitCprob, or a combination of a Boolean circuitCbool and weights
+w (in weighted model counting). In the former case, the partit ion function is tractable because the
+circuit is already over the probability semiring, while in the latter case, MAP is tractable because the
+S′ = (max,·) semiring is idempotent so /llbracketCbool/rrbracketB→S ′ is tractable. On the other hand, the partition
+function for Boolean circuits and MAP for PCs require determ inism for the conditions of Theorem
+4 to hold; in fact, these problems are known to be NP-hard with out determinism [18, 39].
+Example 3 (Power Function in Probability Semiring) . F or the probability semiring S = S′ =
+(R≥0, +,·, 0, 1), consider the power function τβ (a) :=
+{aβ ifa⁄= 0
+0 ifa = 0 for some β ∈ R. This
+mapping satisﬁes (Multiplicative), and is tractable if we e nforce (Det) on the circuit.
+It is worth noting that semiring homomorphisms (i.e. additi ve and multiplicative) are always
+tractable. In the case when S =S′ =P, it was shown in [48] that the only such mapping is
+the identity function. However this is not the case for other semirings: the power function τβ is an
+example in the (max,·) semiring. To summarize, we have shown sufﬁcient tractabili ty conditions
+for aggeregation, products, and elementwise mappings. Not ice that the conditions for aggregation
+and products only depend on variable scopes and supports, an d as such apply to any semiring; in
+contrast, for elementwise mappings, we take advantage of sp eciﬁc properties of the semiring(s) in
+question.
+3.3 Tractable Composition of Operators
+We now analyze compositions of these basic operators. As such, we need to consider not only circuit
+properties that enable tractability, but how these propert ies are maintained through each operator,
+so that the output circuit can be used as input to another oper ator. We call these composability
+conditions. In all cases, the output circuit is smooth and decomposable . Thus, we focus on the
+properties of X-determinism, X-compatibility, and X-support-compatibility. We emphasize that
+these are not singular properties, but rather families of pr operties indexed by a variable set X. We
+present the intuitive ideas behind our results below, while deferring full proofs to the Appendix.
+Theorem 5 (Composability Conditions). The results in T able 1 hold.
+X-determinism Intuitively, X-determinism is maintained through products because the re sulting
+sum nodes partition the X-support in a "ﬁner" way to the original circuits, and throug h elementwise
+mappings since they do not expand the support of any node (sin ceτ(0S) = 0 S ′). For aggregation,
+the X-support is maintained if aggregation does not occur over an y of the variables in X.
+7
+
+=== PDF PAGE 8 ===
+Table 2: Tractability Conditions and Complexity for Compos itional Inference Problems. We denote
+new results with an asterisk.
+Problem Tractability Conditions Complexity
+2AMC
+P ASP (Max-Credal)∗ Sm, Dec, X-Det O(|C|)
+P ASP (MaxEnt)∗, MMAP Sm, Dec, Det, X-Det O(|C|)
+SDP∗ Sm, Dec, Det, X-Det, X-First O(|C|))
+Causal
+Inference
+Backdoor∗ Sm, Dec, SD, (X∪ Z)-Det O(|C|2)
+Sm, Dec, Z-Det, (X∪ Z)-Det O(|C|)
+Frontdoor∗ Sm, Dec, SD, X-Det, (X∪ Z)-Det O(|C|2)
+Other MFE∗ Sm, Dec, H-Det, I−-Det, (H∪ I−)-Det O(|C|)
+Reverse-MAP Sm, Dec, X-Det O(|C|)
+X-compatibility Here, we are interested in the following question: if the inp ut circuit(s) to some
+operator are X-compatible with some other circuit Cother for any ﬁxed X, is the same true of the
+output of the operator? X-compatibility with Cother is maintained through aggregation because it
+weakens the condition (by Proposition 1) and through elemen twise mapping as it does not change
+variable scopes. As for taking the product of circuits, the o utput circuit will maintain similar vari-
+able partitionings at products, such that it remains X-compatible with Cother. Notably, this result
+does not hold for compatibility where the scope X may be different for each pair of circuits under
+consideration; we show a counterexample in Example 4 in the A ppendix.
+X-support-compatibility X-support-compatibility is maintained through elementwis e map-
+pings and aggregation (except on X) for similar reasons to X-determinism. For products, the result
+retains a similar X-support structure, so X-support compatibility is maintained.
+We conclude by remarking that, once we determine that a compo sitional query is tractable, then
+one immediately obtains a correct algorithm for computing t he query by application of the generic
+algorithms for aggregation, product, and elementwise mapp ing (see Appendix A). An upper bound
+on the complexity (attained by the algorithm) is also given b y considering the complexities of each
+individual operator; in particular, the algorithm is polyt ime for a bounded number of operators.
+4 Case Studies
+In this section, we apply our compositional framework to ana lyze the tractability of several different
+problems involving circuits found in the literature (Table 2). Some of the results are known, but
+can now be cast in a general framework (with often simpler pro ofs). We also present new results,
+deriving tractability conditions that are less restrictiv e than reported in existing literature.
+Theorem 6 (Tractability of Compositional Queries) . The results in T able 2 hold.
+4.1 Algebraic Model Counting
+In algebraic model counting [30] (a generalization of weigh ted model counting), one is given a
+Boolean function φ(V ), and a fully-factorized labeling function ω (V ) = ⨂
+Vi∈V ω i(Vi) in some
+semiringS, and the goal is to aggregate these labels for all satisfying assignments of φ. This can
+be easily cast in our framework as ⨁
+v
+(
+/llbracket(φ(v))/rrbracketB→S⊗ω (v)
+)
+. Here, the support mapping /llbracket·/rrbracketB→S
+transfers the Boolean function to the semiring S over which aggregation occurs. Assuming that
+φ(V ) is given as a smooth and decomposable Boolean circuit (DNNF) , then by Corollary 1 AMC
+is tractable ifS is idempotent or if the circuit is additionally determinist ic (note that ω (V ) is omni-
+compatible, so the product is tractable); this matches the r esults of [30].
+2AMC A recent generalization of algebraic model counting is the 2 AMC (second-level algebraic
+model counting) problem [29], which encompasses a number of important bilevel inference prob-
+lems such as marginal MAP and inference in probabilistic ans wer set programs. Given a partition
+of the variables V = ( X, Y ), a Boolean function φ(X, Y ), outer and inner semiringsSX,SY ,
+labeling functions ω Y (Y ) = ⨂
+Yi∈Y ω Y ,i (Yi) overSY and ω X (X) = ⨂
+Xi∈Xω X,i (Xi) over
+8
+
+=== PDF PAGE 9 ===
+∨
+∧ ∧
+XY ¬Y
+(a) Boolean circuit φ (X, Y )
++
+× ×
+X1 1
+(b) Inner semiring evaluation
+max
+× ×
+11 1
+(c) Outer semiring evaluation
+Figure 3: Failure case of 2AMC algorithm on smooth, decompos able, X-ﬁrst circuit.
+SX , and an elementwise mapping τSY →SX :SY →S X , the 2AMC problem is given by:
+⨁
+x
+(
+τSY →SX
+( ⨁
+y
+/llbracketφ(x, y)/rrbracketB→SY ⊗ω (y)
+)
+⊗ω ′(x)
+)
+(1)
+To tackle this type of bilevel inference problem, [29] ident iﬁed a circuit property called X-ﬁrstness.
+Deﬁnition 9 (X-Firstness). SupposeC is a circuit over variables V and (X, Y ) a partition of V .
+W e say that a nodeα∈C is X-only if vars(α )⊆ X, Y -only if vars(α )⊆ Y , and mixed otherwise.
+Then we say that C is X-ﬁrst if for all product nodes α =α 1×α 2, we have that either: (i) each α i
+is X-only or Y -only; (ii) or exactly one α i is mixed, and the other is X-only.
+It was stated in [29] that smoothness, decomposability, det erminism, and X-ﬁrstness sufﬁce to en-
+sure tractable computation of 2AMC problems, by simply eval uating the circuit in the given semir-
+ings (caching values if necessary). We now show that this is n either sufﬁcient nor necessary in
+general. To build intuition, consider the simple NNF circui t φ(X,Y ) = ( X∧Y )∨ (X∧¬Y ).
+Note thatφ trivially satisﬁes X-ﬁrstness and is smooth, decomposable, and deterministic. LetS be
+the probability semiring, S′ be the (max,·)-semiring, labeling functions be ω (y) = ω (¬y) = 1 ,
+ω ′(x) = ω ′(¬x) = 1 , and the mapping function be the identity τ(a) = a. Then, noting that
+the labels are the multiplicative identity 1, the 2AMC value is maxXτ(∑
+Y /llbracketφ(X,Y )/rrbracketB→S ) =
+max
+(
+τ(/llbracketφ(x,y )/rrbracketB→S + /llbracketφ(x,¬y)/rrbracketB→S ),τ (/llbracketφ(¬x,y )/rrbracketB→S + /llbracketφ(¬x,¬y)/rrbracketB→S )
+)
+= max
+(
+τ(1 +
+1),τ (0)
+)
+= 2 . On the other hand, the algorithm of [29] returns the value 2A MC = 1 , as shown in
+Figure 3. This is not just a ﬂaw in the speciﬁc evaluation algo rithm, but rather a provable intractabil-
+ity of the problem given these properties:
+Theorem 7 (Hardness of 2AMC with X-ﬁrstness) . 2AMC is #P-hard, even for circuits that are
+smooth, decomposable, deterministic, and X-ﬁrst, and a constant-time elementwise mapping.
+Analyzing using our compositional framework, the issue is t hat the tractability conditions for τ do
+not hold; whilst the Boolean circuit is deterministic, this is not true onceY is aggregated. In fact, we
+show that also enforcing X-determinism sufﬁces to tractably compute arbitrary 2AMC i nstances.
+Theorem 8 (Tractability Conditions for 2AMC) . Every 2AMC instance is tractable in O(|C|) time
+for Boolean circuits that are smooth, decomposable, determ inistic, X-ﬁrst, and X-deterministic.
+Proof sketch. The key point to notice is that the elementwise mapping relat ive to the transformation
+of inner to outer semiring operates over an aggregation of an X-ﬁrst and X-deterministic circuit,
+obtained by the product of a Boolean function (mapped to the i nner semiring by a support mapping)
+and a weight function of Y . Hence, it satisﬁes (Det) and (Prod 0/1): all of the X-only children of a
+product node are 0/1 valued (in the inner semiring).
+For speciﬁc instances of 2AMC, depending on the semirings S,S′ and mapping functionτ, we also
+ﬁnd that it is possible to remove the requirement of X-ﬁrstness or ( V )-determinism, as we summa-
+rize in Table 2. One might thus wonder if there is a difference in terms of compactness between
+requiring X-determinism and X-ﬁrstness, as opposed to X-determinism alone. For example, for
+sentential decision diagrams (SDD) [17], a popular knowled ge compilation target, these notions
+coincide: a SDD is X-deterministic iff it is X-ﬁrst (in which context this property is known as
+X-constrainedness [37, 22]). However, as shown in Figure 2b, there exist X-deterministic but not
+X-ﬁrst circuits. We now show that X-deterministic circuits can be exponentially more succinc t
+than X-deterministic circuits that are additionally X-ﬁrst, as the size of X grows.3
+3If the size of X is ﬁxed, a circuit can always be rearranged to be X-ﬁrst with at most a 2|X| blowup.
+9
+
+=== PDF PAGE 10 ===
+Theorem 9 (Exponential Separation) . Given sets of variables X = {X1,...,X n}, Y =
+{Y1,...,Y n}, there exists a smooth, decomposable and X-deterministic circuit C of size poly(n)
+such that the smallest smooth, decomposable, and X-ﬁrst circuit C′ such that pC≡ pC ′ has size
+2Ω( n).
+Thus, to summarize, some instances of 2AMC can be solved efﬁc iently when φ is smooth, decom-
+posable and X-deterministic. A larger number of instances can be solved w hen additionally, φ is
+deterministic; and all 2AMC problems are tractable if we als o impose X-ﬁrstness.
+4.2 Causal Inference
+In causal inference, one is often interested in computing interventional distributions, denoted using
+thedo(·) operator, as a function of the observed distribution p. This function depends on the causal
+graph linking the variables, and can be derived using the do- calculus [38]. For example, the well-
+known backdoor and frontdoor graphs induce the following formulae:
+p(y|do(x)) =
+∑
+z
+p(z)p(y|x, z), (2)
+p(y|do(x)) =
+∑
+z
+p(z|x)
+∑
+x′
+p(x′)p(y|x′, z). (3)
+Assuming that the observed joint distribution p(X, Y, Z) is given as a probabilistic circuit C, we
+consider the problem of obtaining a probabilistic circuit C′ over variables X∪ Y representing
+p(Y|do(X)). Tractability conditions for the backdoor/frontdoor case s were derived by [49], with
+quadratic/cubic complexity respectively. However, we obs erve that in some cases we can avoid
+the requirement of structured decomposability and/or obta in reduced complexity relative to their
+ﬁndings.
+In the backdoor case, it is known that structured decomposab ility and (X∪ Z)-determinism sufﬁces
+for a quadratic time algorithm. This can be seen by decomposi ng into a compositional query:
+⨁
+z
+(( ⨁
+x, y
+p(v)
+)
+⊗p(v)⊗τ−1
+( ⨁
+y
+p(v)
+))
+. (4)
+where V = (X, Y, Z), andτ−1(a) =
+{a−1 ifa⁄= 0
+0 ifa = 0 . Assuming (X∪Z)-determinism and struc-
+tured decomposability, then τ−1
+( ⨁
+yp(V )
+)
+is tractable by (Det) and (Multiplicative), the product
+p(V )⊗τ−1
+( ⨁
+yp(V )
+)
+by support-compatibility, and the ﬁnal product by compatib ility. How-
+ever, if we additionally have Z-determinism, then the ﬁnal product becomes tractable by su pport
+compatibility. This has linear rather than quadratic compl exity, and does not require the circuit to
+be structured decomposable. In the frontdoor case, [49] sho wed that X-determinism, (X∪ Z)-
+determinism, and structured decomposability sufﬁces for c ubic complexity. However, we note that
+under such conditions, the inner product p(X ′)⊗p(Y|X ′, Z) is tractable by support-compatibility.
+As such, the complexity of this query is actually quadratic r ather than cubic as previously shown.
+We summarize our ﬁndings in Table 2 and refer the reader to the Appendix for full proofs.
+5 Related Work
+Our work builds upon the observation that many inference pro blems can be characterized as a com-
+position of basic operators. Prior works have considered co mpositional inference for circuits in the
+Boolean [18] and probabilistic semirings [48, 49], derivin g tractability conditions for operators spe-
+ciﬁc to these semirings. Aside from generalizing to arbitra ry semirings, we also introduce extended
+composability conditions that enable interleaving of aggr egation, products, and mappings. Mean-
+while, algebraic model counting [30] deals (implicitly) wi th mappings from the Boolean semiring
+to an arbitrary semiring, but does not consider composition al queries. Closest to our work, [29] con-
+sider a generalization of algebraic model counting that all ows for an additional semiring translation;
+however, this still assumes input Boolean circuits and has i ncomplete tractability characterizations.
+Our framework resolves these limitations, permitting arbitrary compositional queries over semirings.
+Many works have considered (unbounded) sums-of-products queries on arbitrary semirings [21, 5, 1,
+23], encompassing many important problems such as constrai nt satisfaction problems [7], graphical
+10
+
+=== PDF PAGE 11 ===
+model inference [56], and database queries [52], which are o ften computationally hard in the worst-
+case. Algorithms for such queries often utilize compact int ermediate representations and/or assume
+compact input representations, such as circuits [35, 17, 36 , 3]. Our framework focuses on queries
+where the number of operators is bounded, and characterizes conditions under which inference is
+tractable in polynomial time. It also includes elementwise mappings as a key additional abstraction
+that can be used to express queries involving more than sums a nd products.
+6 Conclusion
+In summary, we have introduced a framework for analysing com positional inference problems on
+circuits, based on algebraic structure. In doing so, we were able to derive new tractability conditions
+and simpliﬁed algorithms for a number of existing problems, including 2AMC and causal inference.
+Our framework focuses on simple and composable sufﬁcient tractability conditions for aggregations,
+products and elementwise mappings operators; a limitation of this generality is these conditions may
+not be necessary for speciﬁc queries on speciﬁc semirings. O ur work motivates the development of
+knowledge compilation and learning algorithms that target the requisite circuit properties, such as
+X-determinism. Finally, while we focus on exact inference, f or many problems (e.g. marginal
+MAP) approximate algorithms exist and are of signiﬁcant int erest; an interesting direction for future
+work is to investigate if these can be also be generalized usi ng the compositional approach.
+Acknowledgements
+We thank Antonio V ergari for helpful discussions, and acknowledge him for proposing an early ver-
+sion of support compatibility and Theorem 3, and for pointing out a potential reduction in complexity
+for the causal inference queries. This work was done in part w hile the authors were visiting the Si-
+mons Institute for the Theory of Computing. This work was fun ded in part by the DARP A ANSR
+program under award FA8750-23-2-0004, the DARP A PTG Program under award HR00112220005,
+and NSF grant #IIS-1943641. DM received generous support fr om the IBM Corporation, the Center
+for Artiﬁcial Intelligence at University of São Paulo (C4AI -USP), the São Paulo Research Founda-
+tion (FAPESP grants #2019/07665-4 and 2022/02937-9), the B razilian National Research Council
+(CNPq grant no. 305136/2022-4) and CAPES (Finance Code 001) . YC was partially supported by
+a gift from Cisco University Research Program.
+References
+[1] Mahmoud Abo Khamis, Hung Q Ngo, and Atri Rudra. Faq: quest ions asked frequently. In
+Proceedings of the 35th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database
+Systems, pages 13–28, 2016.
+[2] Kareem Ahmed, Stefano Teso, Kai-Wei Chang, Guy V an den Br oeck, and Antonio V ergari.
+Semantic probabilistic layers for neuro-symbolic learnin g. In Advances in Neural Information
+Processing Systems 35 (NeurIPS) , dec 2022.
+[3] Antoine Amarilli and Florent Capelli. Tractable circui ts in database theory. ACM SIGMOD
+Record, 53(2):6–20, 2024.
+[4] Antoine Amarilli, Marcelo Arenas, Y ooJung Choi, Mikaël Monet, Guy V an den Broeck, and
+Benjie Wang. A circus of circuits: Connections between deci sion diagrams, circuits, and
+automata. arXiv preprint arXiv:2404.09674 , 2024.
+[5] Fahiem Bacchus, Shannon Dalmao, and Toniann Pitassi. So lving# sat and bayesian inference
+with backtracking search. Journal of Artiﬁcial Intelligence Research , 34:391–442, 2009.
+[6] Chitta Baral, Michael Gelfond, and J. Nelson Rushton. Pr obabilistic reasoning with answer
+sets. Theory and Practice of Logic Programming , 9(1):57–144, 2009.
+[7] Stefano Bistarelli, Ugo Montanari, and Francesca Rossi . Semiring-based constraint satisfaction
+and optimization. Journal of the ACM (JACM), 44(2):201–236, 1997.
+11
+
+=== PDF PAGE 12 ===
+[8] Oliver Broadrick, Honghua Zhang, and Guy V an den Broeck. Polynomial semantics of
+tractable probabilistic circuits. In Proceedings of the 40th Conference on Uncertainty in Artiﬁ-
+cial Intelligence (UAI), july 2024.
+[9] Mark Chavira and Adnan Darwiche. On probabilistic infer ence by weighted model counting.
+Artiﬁcial Intelligence , 172(6):772–799, 2008.
+[10] Arthur Choi, Y exiang Xue, and Adnan Darwiche. Same-dec ision probability: A conﬁdence
+measure for threshold-based decisions. International Journal of Approximate Reasoning ,
+53(9):1415–1428, 2012. ISSN 0888-613X. doi: https://doi. org/10.1016/j.ijar.2012.04.005.
+URL https://www.sciencedirect.com/science/article/pii/S0888613X12000485.
+Fifth European Workshop on Probabilistic Graphical Models (PGM-2010).
+[11] Y ooJung Choi, Antonio V ergari, and Guy V an den Broeck. P robabilistic circuits: A unifying
+framework for tractable probabilistic models. arXiv prepr int, 2020.
+[12] Y ooJung Choi, Meihua Dang, and Guy V an den Broeck. Groupfairness by probabilistic model-
+ing with latent fair decisions. In Proceedings of the AAAI Conference on Artiﬁcial Intelligen ce,
+volume 35, pages 12051–12059, 2021.
+[13] Y ooJung Choi, Tal Friedman, and Guy V an den Broeck. Solv ing marginal map exactly by
+probabilistic circuit transformations. In Proceedings of the 25th International Conference on
+Artiﬁcial Intelligence and Statistics (AISTATS) , 2022.
+[14] Fabio Gagliardi Cozman and Denis Deratani Mauá. On the s emantics and complexity of prob-
+abilistic logic programs. Journal of Artiﬁcial Intelligence Research , 60:221–262, 2017.
+[15] Adnan Darwiche. On the tractable counting of theory mod els and its application to truth
+maintenance and belief revision. Journal of Applied Non-Classical Logics , 11(1-2):11–34,
+2001. doi: 10.3166/jancl.11.11-34.
+[16] Adnan Darwiche. A differential approach to inference i n bayesian networks. Journal of the
+ACM (JACM), 50(3):280–305, 2003.
+[17] Adnan Darwiche. Sdd: A new canonical representation of propositional knowledge bases. In
+Twenty-Second International Joint Conference on Artiﬁcia l Intelligence, 2011.
+[18] Adnan Darwiche and Pierre Marquis. A knowledge compila tion map. Journal of Artiﬁcial
+Intelligence Research, 17:229–264, 2002.
+[19] Cassio P De Campos. New complexity results for map in bay esian networks. In IJCAI, vol-
+ume 11, pages 2100–2106. Citeseer, 2011.
+[20] Luc De Raedt, Angelika Kimmig, and Hannu Toivonen. Prob log: A probabilistic prolog and its
+application in link discovery. In Proceedings of the International Joint Conference in Artiﬁ cial
+Intelligence (IJCAI), volume 7, pages 2462–2467, 2007.
+[21] Rina Dechter. Bucket elimination: A unifying framewor k for reasoning. Artiﬁcial Intelligence ,
+113(1-2):41–85, 1999.
+[22] Vincent Derkinderen and Luc De Raedt. Algebraic circui ts for decision theoretic inference and
+learning. In ECAI 2020, pages 2569–2576. IOS Press, 2020.
+[23] Thomas Eiter and Rafael Kiesel. On the complexity of sum -of-products problems over semir-
+ings. In Proceedings of the AAAI Conference on Artiﬁcial Intelligen ce, volume 35, pages
+6304–6311, 2021.
+[24] Daan Fierens, Guy V an den Broeck, Joris Renkens, Dimita r Shterionov, Bernd Gutmann, Ingo
+Thon, Gerda Janssens, and Luc De Raedt. Inference and learni ng in probabilistic logic pro-
+grams using weighted boolean formulas. Theory and Practice of Logic Programming , 15(3):
+358–401, 2015.
+[25] Robert Gens and Domingos Pedro. Learning the structure of sum-product networks. In Inter-
+national conference on machine learning , pages 873–880. PMLR, 2013.
+12
+
+=== PDF PAGE 13 ===
+[26] Steven Holtzen, Guy V an den Broeck, and Todd Millstein. Scaling exact inference for discrete
+probabilistic programs. Proceedings of the ACM on Programming Languages , 4(OOPSLA):
+1–31, 2020.
+[27] Haiying Huang and Adnan Darwiche. Causal unit selectio n using tractable arithmetic circuits.
+arXiv preprint arXiv:2404.06681 , 2024.
+[28] Jiani Huang, Ziyang Li, Binghong Chen, Karan Samel, May ur Naik, Le Song, and Xujie Si.
+Scallop: From probabilistic deductive databases to scalab le differentiable reasoning. Advances
+in Neural Information Processing Systems , 34:25134–25145, 2021.
+[29] Rafael Kiesel, Pietro Totis, and Angelika Kimmig. Efﬁc ient knowledge compilation beyond
+weighted model counting. In Proceedings of the 38th International Conference on Logic P ro-
+gramming (ICLP 2022) , 2022.
+[30] Angelika Kimmig, Guy V an den Broeck, and Luc De Raedt. Al gebraic model counting. Jour-
+nal of Applied Logic , 22:42–62, 2017.
+[31] Johan Kwisthout. Most frugal explanations in bayesian networks. Artiﬁcial Intelligence , 218:
+56–73, 2015. ISSN 0004-3702. doi: https://doi.org/10.101 6/j.artint.2014.10.001.
+[32] Anji Liu, Honghua Zhang, and Guy V an den Broeck. Scaling up probabilistic circuits by latent
+variable distillation. In Proceedings of the International Conference on Learning Re presenta-
+tions (ICLR), may 2023.
+[33] T. Lukasiewicz. Probabilistic description logic prog rams. International Journal of Approxi-
+mate Reasoning, 45(2):288–307, 2007.
+[34] Robin Manhaeve, Sebastijan Dumancic, Angelika Kimmig , Thomas Demeester, and Luc
+De Raedt. Deepproblog: Neural probabilistic logic program ming. Advances in neural in-
+formation processing systems, 31, 2018.
+[35] Robert Mateescu, Rina Dechter, and Radu Marinescu. And /or multi-valued decision diagrams
+(aomdds) for graphical models. Journal of Artiﬁcial Intelligence Research , 33:465–519, 2008.
+[36] Dan Olteanu and Maximilian Schleich. Factorized datab ases. ACM SIGMOD Record , 45(2):
+5–16, 2016.
+[37] Umut Oztok, Arthur Choi, and Adnan Darwiche. Solving pp pp-complete problems using
+knowledge compilation. In Fifteenth International Conference on the Principles of Knowledge
+Representation and Reasoning, 2016.
+[38] Judea Pearl. Causal diagrams for empirical research. Biometrika, 82(4):669–688, 1995.
+[39] Robert Peharz, Robert Gens, Franz Pernkopf, and Pedro D omingos. On the latent variable
+interpretation in sum-product networks. IEEE transactions on pattern analysis and machine
+intelligence, 39(10):2030–2044, 2016.
+[40] Robert Peharz, Antonio V ergari, Karl Stelzner, Alejan dro Molina, Xiaoting Shao, Martin
+Trapp, Kristian Kersting, and Zoubin Ghahramani. Random su m-product networks: A simple
+and effective approach to probabilistic deep learning. In Uncertainty in Artiﬁcial Intelligence ,
+pages 334–344. PMLR, 2020.
+[41] Tahrima Rahman, Prasanna Kothalkar, and Vibhav Gogate . Cutset networks: A simple,
+tractable, and scalable approach for improving the accurac y of chow-liu trees. In Machine
+Learning and Knowledge Discovery in Databases: European Co nference, ECML PKDD 2014,
+Nancy, France, September 15-19, 2014. Proceedings, Part II 14, pages 630–645. Springer,
+2014.
+[42] Amirmohammad Rooshenas and Daniel Lowd. Learning sum- product networks with direct
+and indirect variable interactions. In International Conference on Machine Learning , pages
+710–718. PMLR, 2014.
+13
+
+=== PDF PAGE 14 ===
+[43] Feras A Saad, Martin C Rinard, and Vikash K Mansinghka. S ppl: probabilistic programming
+with fast exact symbolic inference. In Proceedings of the 42nd acm sigplan international
+conference on programming language design and implementat ion, pages 804–819, 2021.
+[44] Amir Shpilka, Amir Y ehudayoff, et al. Arithmetic circu its: A survey of recent results and open
+questions. F oundations and Trends® in Theoretical Computer Science, 5(3–4):207–388, 2010.
+[45] Pietro Totis, Luc De Raedt, and Angelika Kimmig. smProb Log: Stable model semantics in
+problog for probabilistic argumentation. Theory And Practice Of Logic Programming , 23(6):
+1198–1247, 2023.
+[46] Leslie G V aliant. The complexity of enumeration and rel iability problems. SIAM Journal on
+Computing, 8(3):410–421, 1979.
+[47] Guy V an den Broeck, Anton Lykov, Maximilian Schleich, a nd Dan Suciu. On the tractability
+of shap explanations. In Proceedings of the 35th AAAI International Conference on Ar tiﬁcial
+Intelligence and Statistics (AAAI 2021) , 2021.
+[48] Antonio V ergari, Y ooJung Choi, Anji Liu, Stefano Teso, and Guy den Broeck. A Composi-
+tional Atlas of Tractable Circuit Operations for Probabili stic Inference. In Advances in Neural
+Information Processing Systems, volume 34, pages 13189–13201, 2021.
+[49] Benjie Wang and Marta Kwiatkowska. Compositional prob abilistic and causal inference using
+tractable circuit models. In Proceedings of the 26th International Conference on Artiﬁc ial
+Intelligence and Statistics (AISTATS), pages 9488–9498. PMLR, 2023.
+[50] Benjie Wang, Matthew R Wicker, and Marta Kwiatkowska. T ractable uncertainty for struc-
+ture learning. In International Conference on Machine Learning , pages 23131–23150. PMLR,
+2022.
+[51] Zhun Y ang, Adam Ishay, and Joohyung Lee. NeurASP: Embra cing neural networks into an-
+swer set programming. In Proceedings of the Twenty-Ninth International Joint Confe rence on
+Artiﬁcial Intelligence (IJCAI) , pages 1755–1762, 2020.
+[52] Mihalis Y annakakis. Algorithms for acyclic database s chemes. In VLDB, volume 81, pages
+82–94, 1981.
+[53] Matej Ze ˇcevi´c, Devendra Dhami, Athresh Karanam, Sriraam Natarajan, and Kristian Kersting.
+Interventional sum-product networks: Causal inference wi th tractable probabilistic models.
+Advances in neural information processing systems , 34:15019–15031, 2021.
+[54] Honghua Zhang, Meihua Dang, Nanyun Peng, and Guy V an den Broeck. Tractable control for
+autoregressive language generation. In Proceedings of the 40th International Conference on
+Machine Learning (ICML), jul 2023.
+[55] Honghua Zhang, Benjie Wang, Marcelo Arenas, and Guy V an den Broeck. Restructuring
+tractable probabilistic circuits. arXiv preprint arXiv:2411.12256 , 2024.
+[56] Nevin L Zhang and David Poole. A simple approach to bayes ian network computations. In
+Proc. of the T enth Canadian Conference on Artiﬁcial Intelli gence, 1994.
+14
+
+=== PDF PAGE 15 ===
+Algorithm 1: AGG
+Input: Smooth and decomposable algebraic circuit C(V ); nodeα∈C; Subset of variables
+W⊆ vars(α )
+Output: Node encoding⨁
+W pα (V )
+1 ifα is input node then
+2 return AGG-INPUT(α ; W )
+3 else ifα is product or sum node and vars (α ) = W then
+4 return NEWNODE(⊗k
+i=1pAGG(α i;W ∩vars(α i))) ifα is product else NEWNODE(⊕k
+i=1pAGG(α i;W ))
+5 else ifα is product or sum node and W⊂ vars(α ) then
+6 return×k
+i=1AGG(α i; W∩ vars(α i)) ifα is product else +k
+i=1AGG(α i; W )
+Algorithm 2: PROD-CMP
+Input: Compatible algebraic circuits C(V ),C ′(V ′); nodesα∈C,α ′∈C′ s.t.
+vars(α )∩ (V∩ V ′) = vars(α ′)∩ (V∩ V ′)
+Output: Node encodingpC (V )⊗pC ′(V ′)
+1 if vars(α )∩ vars(α ′) =∅ then
+2 returnα×α ′
+3 else ifα is a product or input node and α ′ = + k′
+j=1 is a sum node then
+4 return +k′
+j=1PROD-CMP(α,α ′
+j)
+5 else ifα,α ′ are input nodes then
+6 return PROD-INPUT(α,α ′)
+7 else ifα =α 1×α 2,α ′ =α ′
+1×α ′
+2 are product nodes then
+8 return PROD-CMP(α 1,α ′
+1)× PROD-CMP(α 2,α ′
+2)
+9 else ifα = + k
+i=1α i,α ′ = + k′
+j=1α ′
+j are sum nodes then
+10 return +k
+i=1 +k′
+j=1 PROD-CMP(α i,α ′
+j)
+A Algorithms and Proofs
+In Algorithms 1-4 we present algorithms for the aggregation , product (with compatibility), product
+(with support-compatiblity), and elementwise mapping ope rators respectively (the initial call is to
+the root of the circuit(s)). In the following, we present pro ofs that the algorithms soundly compute
+smooth and decomposable output circuits for the respective operators.
+A.1 Tractable Aggregation
+Theorem 1 (Tractable Aggregation). LetC be a smooth and decomposable circuit representing a
+functionp : Assign(V )→ S. Then for any W ⊆ V , it is possible to compute the aggregate as a
+smooth and decomposable circuit C′ (i.e.,pC ′(Z) =⨁
+wpC(Z, w)) inO(|C|) time and space.
+Proof. We prove this inductively, starting from the input nodes of t he circuit. Our claim is that for
+each nodeα∈C, AGG(α ; W ) (Algorithm 1) returns a node α ′ with scope vars(α ′) = vars(α )\ W
+such thatpα ′ (vars(α ′)) =⨁
+wpα (vars(α )), and is decomposable (if product) and smooth (if sum).
+Ifα is an input node (Lines 1-2), then this is possible by assumption; we denote this with AGG-INPUT
+in the algorithm. Note that if vars (α ) = W , then this is just a scalar/constant (i.e. input node with
+empty scope).
+15
+
+=== PDF PAGE 16 ===
+Algorithm 3: PROD-SCMP
+Input: Support-compatible algebraic circuits C(V ),C ′(V ′); nodesα∈C,α ′∈C′ s.t.
+ι(α ) = α ′
+Output: Circuit encodingpC (V )⊗pC ′(V ′)
+1 if vars(α )∩ vars(α ′) =∅ then
+2 returnα×α ′
+3 else ifα,α ′ are input nodes then
+4 return PROD-INPUT(α,α ′)
+5 else ifα =α 1×α 2,α ′ =α ′
+1×α ′
+2 are product nodes then
+6 return PROD-SCMP(α 1,α ′
+1)× PROD-SCMP(α 2,α ′
+2)
+7 else ifα = + k
+i=1α i,α ′ = + k
+i=1α ′
+i are sum nodes then
+8 return +k
+i=1PROD-SCMP(α i,α ′
+i)
+Algorithm 4: MAPPING
+Input: Smooth and decomposable algebraic circuit C(V ) over semiringS; Nodeα∈C;
+Mapping functionτ :S→S ′
+Output: Node encodingτ(pC (V ))
+1 ifα is input node then
+2 return MAPPING-INPUT(α ;τ)
+3 else ifα is product or sum node then
+4 return⊗k
+i=1MAPPING(α i;τ) ifα is product else⊕k
+i=1MAPPING(α i;τ)
+Ifα is a product nodeα 1×α 2, then by decomposability, W∩ vars(α 1) and W∩ vars(α 2) partition
+W . Thus we have that:
+⨁
+w
+pα (vars(α )) =
+⨁
+w
+(
+pα 1(vars(α 1))⊗pα 2 (vars(α 2))
+)
+=
+⨁
+w∩vars(α 1)
+⨁
+w∩vars(α 2)
+(
+pα 1 (vars(α 1))⊗pα 2(vars(α 2))
+)
+=
+
+ ⨁
+w∩vars(α 1)
+pα 1(vars(α 1))
+
+⊗
+
+ ⨁
+w∩vars(α 2)
+pα 2(vars(α 2))
+
+
+=pAGG(α 1;W ∩vars(α 1))(vars(α 1)\ W )⊗pAGG(α 2;W ∩vars(α 2))(vars(α 2)\ W )
+The second equality follows by the partition (and associati vity of the addition and multiplication),
+while the third follows by distributivity of multiplicatio n over addition. In the case where vars (α ) =
+W (Lines 3-4), then pAGG(α i;W ∩vars(α i))(vars(α i)) is just a scalar for each i, so we can directly
+perform this computation, returning a new scalar node α ′. Otherwise (Lines 5-6), we construct a
+new product node α ′ = α ′
+1×α ′
+2 = AGG(α 1; W∩ vars(α 1))× AGG(α 2; W∩ vars(α 2)). By the
+inductive hypothesis,α ′
+i has scope vars(α ′
+i) = vars(α i)\ W , soα ′ is clearly decomposable and has
+scope vars(α ′) = ( vars(α 1)\ W )∪ (vars(α 2)\ W ) = vars(α )\ W .
+16
+
+=== PDF PAGE 17 ===
+Ifα = + k
+i=1α i is a sum node, then we note that by smoothness, vars (α i) = vars(α ) for all i. Thus
+we have that:
+⨁
+w
+pα (vars(α )) =
+⨁
+w
+k⨁
+i=1
+pα i(vars(α ))
+=
+k⨁
+i=1
+⨁
+w
+pα i(vars(α ))
+=
+k⨁
+i=1
+⨁
+w
+pα i(vars(α i))
+=
+k⨁
+i=1
+pAGG(α i;W )(vars(α i))
+In the case where vars (α ) = W (Lines 3-4), then pAGG(α i;W )(vars(α i)) is just a scalar, so we
+can directly perform this computation, returning a new scal ar node α ′. Otherwise (Lines 5-6), we
+construct a new sum node α ′ = + k
+i=1α ′
+i = + k
+i=1AGG(α i; W ). By the inductive hypothesis, each α ′
+i
+has scope vars(α i)\ W = vars(α )\ W , soα ′ is smooth and also has scope vars (α )\ W .
+A.2 Tractable Product
+A.2.1 Tractable Product with Compatibility
+Theorem 2 (Tractable Product - Compatibility) . Let C,C ′ be compatible circuits over variables
+V, V ′, respectively, and the same semiring. Then it is possible to compute their product as a circuit
+C compatible with them (i.e., pC ′′(V∪ V ′) = pC (V )⊗pC ′(V ′)) inO(|C||C′|) time and space.
+Proof. We prove this inductively bottom up, for nodes α ∈ C,α ′∈ C such that vars (α )∩ (V ∩
+V ′) = vars(α ′)∩ (V ∩ V ′). Our claim is that PROD-SCMP(α,α ′) (Algorithm 2) returns a node
+α ′′ such that pα ′′ = pα⊗pα ′, has scope vars (α ′′) = vars(α )∪ vars(α ′), and is decomposable (if
+product) and smooth (if sum).
+If vars(α )∩vars(α ′) =∅ (i.e. vars(α )∩(V∩V ′) = vars(α ′)∩(V∩V ′) is empty), then the algorithm
+(Lines 1-2) simply constructs a new product node α ′′ =α×α ′. By deﬁnition, pα ′′ =pα⊗pα ′, has
+scope vars(α ′′) = vars(α )∪ vars(α ′), andα ′′ is decomposable.
+Ifα,α ′ are input nodes, then we can construct a new input nodeα ′′ satisfying the requisite properties
+(Lines 5-6).
+If α is an input or product node and α ′ = + k′
+j=1α ′
+j is a sum node, then the algorithm constructs
+a new sum node α ′′ = + k′
+j=1PROD-CMP(α,α ′
+j ). This computes the correct function as pα ′′ =
+⊕k′
+j=1
+(
+pα⊗pα ′
+j
+)
+= pα⊗
+(
+⊕k′
+j=1pα ′
+j
+)
+= pα⊗pα ′. Each child has scope vars (α )∪ vars(α ′
+j) =
+vars(α )∪ vars(α ′), so smoothness is retained.
+Ifα =α 1×α 2,α ′ =α ′
+1×α ′
+2 are product nodes such that vars(α )∩(V∩V ′) = vars(α ′)∩(V∩V ′) is
+non-empty, then writing X := V∩V ′, by compatibility we also have vars(α 1)∩X = vars(α ′
+1)∩X
+and vars(α 2)∩ X = vars(α ′
+2)∩ X, so we can apply the inductive hypothesis for PROD-CMP(α 1,α ′
+1)
+and PROD-CMP(α 2,α ′
+2). Algorithm 2 constructs a new product node α ′′ = PROD-CMP(α 1,α ′
+1)×
+PROD-CMP(α 2,α ′
+2). To show that this is decomposable, we need the following lem ma:
+Lemma 1 (Decomposability of Product). Supposeα∈C,α ′∈C′ are decomposable product nodes
+which decompose in the same way over X, i.e. vars(α 1)∩ X = vars(α ′
+1)∩ X and vars(α 2)∩ X =
+vars(α ′
+2)∩ X. Then (vars(α 1)∪ vars(α ′
+1))∩ (vars(α 2)∪ vars(α ′
+2)) =∅.
+Proof. We have that:
+(vars(α 1)∪ vars(α ′
+1))∩ (vars(α 2)∪ vars(α ′
+2))
+= (vars(α 1)∩ vars(α 2))∪ (vars(α ′
+1)∩ vars(α ′
+2))∪ (vars(α 1)∩ vars(α ′
+2))∪ (vars(α 2)∩ vars(α ′
+1))
+17
+
+=== PDF PAGE 18 ===
+Note that the ﬁrst two intersections are empty due to decompo sability of α,α ′. For the third inter-
+section (vars(α 1)∩ vars(α ′
+2)), any variable in this intersection must be in the common vari ables
+X. But we know that vars (α ′
+2)∩ X = vars(α 2)∩ X in both cases above; by decomposability,
+(vars(α ′
+2)∩ X)∩ (vars(α 1)∩ X) =∅. Thus the third intersection is also empty; a similar argume nt
+applies for the fourth.
+Applying this Lemma, we see that α ′′ is decomposable as vars (PROD-CMP(α 1,α ′
+1)) = ( vars(α 1)∪
+vars(α ′
+1)) and vars(PROD-CMP(α 2,α ′
+2)) = ( vars(α 2)∪ vars(α ′
+2)). We can also verify that pα ′′ =
+pPROD-CMP(α 1,α ′
+1)⊗pPROD-CMP(α 2,α ′
+2) =pα 1⊗pα ′
+1⊗pα 2⊗pα ′
+2 =pα⊗pα ′ by the inductive hypothesis,
+and associativity of⊗.
+Ifα = + k
+i=1α i,α ′ = + k′
+i=1α ′
+i are sum nodes, then the algorithm produces a new sum node α ′′ =
++k
+i=1 +k′
+j=1 PROD-CMP(α i,α ′
+j) (Lines 7-8). This computes the correct function as pα ′′ =⊕k
+i=1⊕k′
+j=1
+PROD-CMP(α i,α ′
+j) = ⊕k
+i=1⊕k′
+j=1pα ipα ′
+j = (⊕k
+i=1pα i )⊗ (⊕k′
+j=1pα ′
+j ) = pα⊗pα ′. It also retains
+smoothness.
+The complexity of this algorithm isO(|C||C′|) because we perform recursive calls for pairs of nodes
+inC andC′.
+A.2.2 Linear-time Product with Support Comptibility
+Theorem 3 (Tractable Product - Support Compatibility) . LetC,C ′ be support-compatible circuits
+over variables V, V ′, respectively, and the same semiring. Then, given the isomo rphism ι, it is
+possible to compute their product as a smooth and decomposab le circuit C′′ support-compatible
+with them (i.e., pC ′′ (V∪ V ′) = pC (V )⊗pC ′(V ′)) inO(max(|C|,|C′|)) time and space.
+Proof. We prove this inductively bottom up, for nodes α ∈ C such that α ′ ∈ C either satisﬁes
+α ′ =ι(α ) or vars(α )∩ vars(α ′) =∅. Our claim is that PROD-SCMP(α,α ′) (Algorithm 3) returns a
+nodeα ′′ such thatpα ′′ =pα⊗pα ′, has scope vars (α ′′) = vars(α )∪ vars(α ′), and is decomposable
+(if product) and smooth (if sum).
+If vars (α )∩ vars(α ′) = ∅, then the algorithm (Lines 1-2) simply constructs a new prod uct node
+α ′′ =α×α ′. By deﬁnition, pα ′′ =pα⊗pα ′, has scope vars (α ′′) = vars(α )∪ vars(α ′), and α ′′ is
+decomposable.
+If the α,α ′ are input nodes, then we can construct a new input node α ′′ satisfying the requisite
+properties (Lines 3-4).
+Ifα = α 1×α 2,α ′ = α ′
+1×α ′
+2 are product nodes and ι(α ) = α ′, then the Algorithm (Lines 5-6)
+constructs a product node α ′′ = PROD-SCMP(α 1,α ′
+1)× PROD-SCMP(α 2,α ′
+2). Deﬁne X = V∪ V ′.
+By support compatibility (i.e. X-support compatibility), α,α ′ are part of the restricted circuits
+C[X],C ′[X] respectively and so vars (α )∩ X ⁄= ∅, vars(α ′)∩ X ⁄= ∅. There are two cases
+to consider; we ﬁrst show that in both of these cases, we can ap ply the inductive hypothesis to
+PROD-SCMP(α 1,α ′
+1) and PROD-SCMP(α 2,α ′
+2).
+• Firstly, suppose that both α 1 andα 2 have scope overlapping with X. Then by the isomor-
+phism, we have α ′
+1 = ι(α 1),α ′
+2 = ι(α 2). By the deﬁnition of support compatibility, this
+also means vars(α 1)∩ X = vars(α ′
+1)∩ X and vars(α 2)∩ X = vars(α ′
+2)∩ X and these are
+both non-empty; thus we can apply the inductive hypothesis f or PROD-SCMP(α 1,α ′
+1) and
+PROD-SCMP(α 2,α ′
+2).
+• Second, suppose instead that only α 1 has scope overlapping with X, and so vars(α 2)∩X =
+∅. Then α ′
+1 =ι(α 1) and vars(α 1)∩ X = vars(α ′
+1)∩ X = vars(α )∩ X = vars(α ′)∩ X.
+Since vars(α ′
+2) = vars(α ′)\ vars(α ′
+1), it follows that vars (α 2)∩ X = ( vars(α ′)∩ X)\
+(vars(α ′
+1)∩ X) = ∅, i.e. α ′
+2 also does not have scope overlapping with X. Since X are
+the shared variables V, V ′, it follows that vars (α 2)∩ vars(α ′
+2) =∅, and so we can apply
+the inductive hypothesis for PROD-SCMP(α 2,α ′
+2) (and for PROD-SCMP(α 1,α ′
+1)).
+By the inductive hypothesis, PROD-SCMP(α 1,α ′
+1) has scope vars (α 1) ∪ vars(α ′
+1) and
+PROD-SCMP(α 2,α ′
+2) has scope vars (α 2)∪ vars(α ′
+2). We can thus apply Lemma 1. Thus
+PROD-SCMP(α 1,α ′
+1) and PROD-SCMP(α 2,α ′
+2) have disjoint scopes and α ′′ is decomposable. We
+18
+
+=== PDF PAGE 19 ===
+can also verify thatpα ′′ =pPROD-SCMP(α 1,α ′
+1)⊗pPROD-SCMP(α 2,α ′
+2) =pα 1⊗pα ′
+1⊗pα 2⊗pα ′
+2 =pα⊗pα ′
+by the inductive hypothesis, and associativity of⊗.
+Ifα = + k
+i=1α i,α ′ = + k′
+i=1α ′
+i are sum nodes and ι(α ) = α ′, then by smoothness, all of the children
+ofα have the same support and all the children of α ′ have the same support; thus all the children
+are inC[X],C ′[X] respectively,k =k′, andι(α i) = α ′
+i. By support compatibility, we also that (i)
+vars(α i)∩ X = vars(α ′
+j)∩ X for alli,j ; and (ii) that supp X (α i)∩ suppX (α ′
+j) fori⁄=j.
+We claim that pα i⊗pα ′
+j
+≡ 0S wheneveri⁄=j. To see this, recall the deﬁnition of X-support: we
+have that:
+suppX (α i) ={x∈ Assign(X∩ vars(α i)) :∃y∈ Assign(vars(α i)\ X) s.t.pα i(x, y)⁄= 0 S}
+suppX (α ′
+j) ={x∈ Assign(X∩ vars(α ′
+j)) :∃y∈ Assign(vars(α ′
+j)\ X) s.t.pα ′
+j
+(x, y)⁄= 0 S}
+Since X∩ vars(α i) = X∩ vars(α ′
+j ) and is nonempty, by (ii) we know that there is no assignment
+of X∩ vars(α i) such that pα i and pα ′
+j
+can be simultaneously not equal to 0S. Thus there is no
+assignment of X∩ vars(α i) such thatpα i⊗pα ′
+j
+is not 0S, since 0S is the multiplicative annihilator.
+Thus, the product function is given by:
+pα⊗pα ′ =
+k⨁
+i=1
+k⨁
+j=1
+(pα i⊗pα ′
+j )
+=
+k⨁
+i=1
+(pα i⊗pα ′
+i)
+=
+k⨁
+i=1
+PROD-SCMP(α i,α ′
+i)
+The second equality follows by the Lemma and the fact that 0S is the additive identity, and the
+third equality by the inductive hypothesis. Thus α ′′ = + k
+i=1PROD-SCMP(α i,α ′
+i) computes the cor-
+rect function (Lines 7-8). We conclude by noting that vars (α ′′) = ⋃ k
+i=1(vars(α i)∪ vars(α i)) =⋃ k
+i=1 vars(α i)∪⋃ k
+i=1 vars(α i) = vars(α )∪ vars(α ′).
+The complexity of this procedure applied to the root nodes is O(max(|C|,|C′|), as we only perform
+recursive calls for (i) α ∈ C[X] and its corresponding node α ′ = ι(α ) and (ii) nodes with non-
+overlapping scope, upon which the recursion ends; so the ove rall number of recursive calls is linear
+in the size of the circuits.
+A.3 Tractable Elementwise Mapping
+Theorem 4 (Tractable Mapping) . Let C be a smooth and decomposable circuit over semiring S,
+andτ :S→S ′ a mapping such that τ(0S ) = 0 S ′. Then it is possible to compute the mapping of
+C byτ as a smooth and decomposable circuit C′ (i.e.,pC ′(V ) = τ(pC (V ))) in O(|C|) time and
+space ifτ distributes over sums and over products.
+τ distributes over sums if: either (Additive) τ is an additive homomorphism, i.e. τ(a⊕ b) =
+τ(a)⊕τ(b); or (Det)C is deterministic.
+τ distributes over products if: either (Multiplicative) τ is an multiplicative homomorphism, i.e.
+τ(a⊗b) = τ(a)⊗τ(b); or (Prod 0/1)τ(1S ) = 1 S ′, and for all product nodesα =α 1×α 2∈C, and
+for every value v∈ Assign(vars(α )), eitherpα 1(vvars(α 1))∈{ 0S, 1S} orpα 2(vvars(α 2))∈{ 0S, 1S}.
+Proof. First, let us consider sum nodes. Given any sum node α = + k
+i=1α i ∈ C, we consider
+computing a circuit representing
+τ
+(
+pα (vars(α ))
+)
+≡τ
+( k⨁
+i=1
+pα i(vars(α ))
+)
+(5)
+19
+
+=== PDF PAGE 20 ===
+If (Additive) holds, then we immediately have thatτ
+( ⨁ k
+i=1pα i(vars(α ))
+)
+≡⨁ k
+i=1τ(pα i (vars(α )))
+by associativity of⊕. Alternatively, if (Det) holds, then given any v∈ Assign((vars(α ))), there is
+at most one child, say α j, such that pα j (v)⁄= 0 S. Then we have that
+τ
+(
+⊕k
+i=1pα i(v)
+)
+=τ
+(
+pα j (v)⊕
+( k⨁
+i=1,i ⁄=j
+pα i(v)
+))
+=τ
+(
+pα j (v)⊕
+( k⨁
+i=1,i ⁄=j
+0S
+))
+=τ
+(
+pα j (v)
+)
+=τ
+(
+pα j (v)
+)
+⊕
+( k⨁
+i=1,i ⁄=j
+0S ′
+)
+=τ
+(
+pα j (v)
+)
+⊕
+( k⨁
+i=1,i ⁄=j
+τ(0S )
+)
+=τ
+(
+pα j (v)
+)
+⊕
+( k⨁
+i=1,i ⁄=j
+τ(pα i (v))
+)
+=
+k⨁
+i=1
+τ(pα i (v))
+and so again τ
+( ⨁ k
+i=1pα i (v)
+)
+≡⨁ k
+i=1τ(pα i (v)).
+Second, let us consider product nodes. If (Multiplicative) holds, then we immediately have that
+τ
+( ⨂ k
+i=1pα i(vars(α ))
+)
+≡ ⨂ k
+i=1τ(pα i (vars(α ))) by associativity of ⊗. Otherwise, if (Prod 0/1)
+holds, then given any v∈ Assign(vars(α )), there is at most one child, say α j, such that pα j (v)⁄∈
+{0S, 1S}. Thus, we have that:
+τ
+( k⨂
+i=1
+pα i (v)
+)
+=τ
+(
+pα j (v)⊗
+( k⨂
+i=1,i ⁄=j
+pα i (v)
+))
+=τ
+(
+pα j (v)
+)
+⊗τ
+( k⨂
+i=1,i ⁄=j
+pα i (v)
+)
+=τ
+(
+pα j (v)
+)
+⊗
+( k⨂
+i=1,i ⁄=j
+τ(pα i (v)
+)
+=
+k⨂
+i=1
+τ(pα i (v))
+The second equality follows because
+( ⨂ k
+i=1,i ⁄=jpα i (v)
+)
+∈{ 0S, 1S}, and we have thatτ(a⊗0S) =
+0S ′ =τ(a)⊗τ(0S ) andτ(a⊗ 1S) = 1 S ′ =τ(a)⊗τ(1S ) for anya∈S . The third equality follows
+as both τ
+( ⨂ k
+i=1,i ⁄=jpα i(v)
+)
+and⨂ k
+i=1,i ⁄=jτ(pα i (v)) are equal to 1S ′ iff no pα i(v) is 0S. Thus,
+we have thatτ
+( ⨂ k
+i=1pα i(v)
+)
+≡⨂ k
+i=1τ(pα i (v)).
+By applying these identities recursively to sum and product nodes, and assuming that τ can be
+applied tractably to input nodes, we obtain a circuit C′ such thatpC ′(V )≡τ(pC (V )).
+A.4 Tractable Composition of operators
+Theorem 5 (Composability Conditions). The results in T able 1 hold.
+20
+
+=== PDF PAGE 21 ===
+If the Input Circuit(s) are ...
+Tractability Conditions X-Det X-Cmp w/Cother X-SCmp w/Cother Complexity
+Then the Output Circuit is ...
+Aggregation (W ) Sm AND Dec
+X-Det
+if W∩ X =∅
+(5.1)
+X-Cmp w/Cother
+if W∩ X =∅
+(5.5)
+X-SCmp w/Cother
+if W∩ X =∅
+(5.9)
+O(|C|)
+Product Cmp X-Det
+(5.2)
+X-Cmp w/Cother
+(5.6) N/A O(|C||C′|)
+SCmp X-Det
+(5.3)
+X-Cmp w/Cother
+(5.7)
+X-SCmp w/Cother
+(5.10) O(max(|C|,|C′|))
+Elem. Mapping
+(Sm AND Dec) AND
+(Add OR Det) AND
+(Mult OR Prod01)
+X-Det
+(5.4)
+X-Cmp w/Cother
+(5.8)
+X-SCmp w/Cother
+(5.11) O(|C|)
+Table 3: Tractability Conditions for Operations on Algebra ic Circuits. Sm: Smoothness,
+Dec: Decomposability; X-Det(erminism), X-Cmp: X-Compatibility, X-SCmp: X-Support-
+Compatibility.
+Proof. We look at each property in turn, and show that they are mainta ined under the aggregation,
+product, and mapping operators as stated in the Table. For co nvenience, we reproduce the table in
+Table 3, with each result highlighted with a number that is re ferenced in the proof below.
+X-determinism Suppose that circuit C is X-deterministic; that is, for any sum node α =
++k
+i=1α i∈C, either (i) vars (α )∩ X =∅, or else (ii) supp X (α i)∩ suppX (α j ) =∅ for alli⁄=j.
+(5.1) Consider aggregating with respect to a set of variables W such that W∩ X =∅. According
+to Algorithm 1 and the proof of Theorem 1, this produces an out put circuit where each node α ′
+corresponds to some node α in the original circuit, such that pα ′ =⨁
+w∩vars(α )pα and with scope
+vars(α )\ W . In particular, for sum nodes α = + k
+i=1α i∈ C, either vars (α )⊆ W , in which case
+α ′ is an input node (and X-determinism is not applicable), or else α ′ = + k
+i=1α ′
+i is also a sum node,
+where eachα ′
+i corresponds toα i. If (i) vars (α )∩ X =∅, then vars(α ′)∩ X =∅ also.
+If (ii) supp X (α i)∩ suppX(α j ) = ∅ for all i⁄= j, we claim that supp X (α ′
+i)⊆ suppX (α i) for
+all i. To see this, ﬁrst note that by smoothness, vars (α ′
+i) = vars(α ′
+j) = vars(α ′). Suppose that
+xi∈ Assign(X∩ vars(α ′)) satisﬁes x∈ suppX (α ′
+i). Then there exists yi∈ Assign(vars(α ′)\ X)
+such thatpα ′
+i
+(xi, yi)⁄= 0 S. Since α ′
+i corresponds toα i in the original circuit, we have:
+⨁
+w∈Assign(W )∩vars(α )
+pα i(xi, yi, wi) = pα ′
+i
+(x, y)⁄= 0 S
+This means that there must be some wi∈ Assign(W )∩ vars(α ) such that pα i (x, yi, wi)⁄= 0 S
+(since 0S is the additive identity); thus x∈ suppX (α i). To ﬁnish the proof, note that supp X (α ′
+i)⊆
+suppX (α i) and supp X (α ′
+l)⊆ suppX(α l) are disjoint unless i = l (by X-determinism of α , i.e.
+suppX (α i)∩ suppX (α l) = ∅ unlessi = l). Thus (ii) holds for α ′. In either case, we have shown
+thatα ′ is also X-deterministic.
+(5.2) Consider taking the product of two compatible circuits C,C ′ over variables V, V ′, outputting
+a circuit C′′. According to Algorithm 2 and the proof of Theorem 2, every su m node α ′′ ∈ C′′
+corresponds to either the product of (a) an input or product n ode α ∈ C and a sum node α ′ =
++k′
+j=1α ′
+j∈C′, such thatα ′′ = + k′
+j=1α ′′
+j or (b) two sum nodesα = + k
+i=1α i∈C andα ′ = + k′
+j=1α ′
+j∈
+C′, such that α ′′ = + k
+i=1 +k′
+j=1 α ′′
+ij. Further, α and α ′ have the same scope over the common
+variables V∩ V ′, i.e. vars (α )∩ (V∩ V ′) = vars(α ′)∩ (V∩ V ′).
+Assume thatC andC′ are both X-deterministic; then X⊆ V∩ V ′. We note that since α,α ′ have
+the same scope over the common variables, they also have the s ame scope over X, i.e. vars (α )∩
+X = vars(α ′)∩ X.
+In case (a), X-determinism of α ′ means that either (i) vars (α ′)∩ X = ∅ or (ii) supp X (α ′
+i)∩
+suppX (α ′
+j) =∅ for alli⁄=j. If (i), then vars (α ′′)∩ X = (vars(α )∪ vars(α ′))∩ X =∅ also. If (ii),
+note that supp X (α ′′
+j )⊆ suppX (α ′
+j) for all j asa⊗ 0S = 0 S for any semiringS anda∈S . Thus
+suppX (α ′′
+i )∩ suppX (α ′′
+j ) =∅ for alli⁄=j. Thus α ′′ is X-deterministic.
+In case (b), since α,α ′ have the same scope over X, either (i) holds for both α,α ′, or (ii) holds for
+both. If (i), then vars(α ′′)∩X = (vars(α )∪vars(α ′))∩X =∅ also. If (ii), then for anyi,j , consider
+21
+
+=== PDF PAGE 22 ===
+the restricted support supp X (α ′′
+ij). Noting that vars (α i)∩ X = vars(α ′
+j )∩ X = vars(α ′′
+ij)∩ X by
+smoothness, we claim that supp X (α ′′
+ij)⊆ suppX(α i)∩ suppX (α ′
+j). Suppose that x∈ suppX (α ′′
+ij).
+Then there exists some y ∈ vars(α ′′
+ij)\ X such that pα ′′
+ij
+(x, y) = pα i(x, yvars(α i))\X )⊗
+pα ′
+j
+(x, yvars(α ′
+j )\X )⁄= 0 S. This means that both pα i(x, yvars(α i))\X),p α ′
+j
+(x, yvars(α ′
+j )\X ) cannot
+be 0S, and so x ∈ suppX (α i) and x ∈ suppX (α ′
+j) also. To ﬁnish the proof, we note that
+suppX (α ′′
+ij)⊆ suppX (α i)∩ suppX (α ′
+j) and suppx(α ′′
+lm)⊆ suppX(α l)∩ suppX (α ′
+m) are disjoint
+unlessi =l,j =m (by X-determinism ofα andα ′). Thus α ′′ is X-deterministic by (ii).
+(5.3) Consider taking the product of two support-compatible circ uits C,C ′ over variables V, V ′,
+outputting a circuit C′′. According to Algorithm 3 and the proof of Theorem 3, every su m node
+α ′′ = + k
+i=1α ′′
+i ∈ C′′ corresponds to some sum nodes α = + k
+i=1α i∈ C andα ′ = + k
+i=1α ′
+i∈ C′
+such thatα ′ =ι(α ),pα ′′
+i =pα i⊗pα ′
+i, and has scope vars (α )∪ vars(α ′). Further,α andα ′ have the
+same scope over the common variables V∩ V ′, i.e. vars (α )∩ (V∩ V ′) = vars(α ′)∩ (V∩ V ′).
+Assume thatC andC′ are both X-deterministic; then X⊆ V∩ V ′. We note that since α,α ′ have
+the same scope over the common variables, they also have the s ame scope over X, i.e. vars (α )∩
+X = vars(α ′)∩ X. Thus, either (i) holds for both α,α ′, or (ii) holds for both. If (i), then vars (α ′′)∩
+X = ( vars(α )∪ vars(α ′))∩ X =∅ also. If (ii), then for any i, consider the restricted support
+suppX (α ′′
+ij). Noting that vars (α i)∩ X = vars(α ′
+j )∩ X = vars(α ′′
+i )∩ X by smoothness, we claim
+that suppX (α ′′
+i )⊆ suppX (α i)∩ suppX (α ′
+i). Suppose that x∈ suppX (α ′′
+i ). Then there exists some
+y∈ vars(α ′′
+i )\ X such that pα ′′
+i
+(x, y) = pα i(x, yvars(α i))\X )⊗pα ′
+i
+(x, yvars(α ′
+i)\X )⁄= 0 S. This
+means that both pα i(x, yvars(α i))\X ),p α ′
+i(x, yvars(α ′
+i)\X ) cannot be 0S, and so x∈ suppX(α i) and
+x∈ suppX(α ′
+i) also. To ﬁnish the proof, we note that supp X (α ′′
+i )⊆ suppX (α i)∩ suppX(α ′
+i) and
+suppx(α ′′
+l )⊆ suppX(α l)∩ suppX (α ′
+l) are disjoint unless i = l (by X-determinism of α andα ′).
+Thusα ′′ is X-deterministic by (ii).
+(5.4) Consider applying an elementwise mappingτ to a circuitC, outputting a circuitC′. According
+to Algorithm 4 and Theorem 4, every sum node α ′ = + k
+i=1α ′
+i ∈ C′ corresponds to some node
+α = + k
+i=1α i∈ C′, such that pα ′ = τ(pα ), and further pα ′
+i
+= τ(pα i ) and vars(α ′
+i) = vars(α i) for
+eachi.
+Assume thatC is X-deterministic. If (i) vars (α )∩ X =∅, then vars(α ′)X =∅ also. Otherwise, (ii)
+suppX (α i)∩ suppX(α j ) =∅ for all i⁄=j. We claim that supp X (α ′
+i)⊆ suppX (α i) for each i. To
+see this, recall that elementwise mappings satisfy τ(0S ) = 0 S ′ . If x∈ suppX (α ′
+i), then there exists
+y s.t. pα ′
+i(x, y)⁄= 0 S ′. Since pα ′
+i(x, y) = τ(pα i (x, y)),pα i (x, y)⁄= 0 S. So x∈ suppX (α i). To
+ﬁnish the proof, note that supp x(α ′
+i)⊆ suppX (α i) and suppx(α ′
+l)⊆ suppX(α l) are disjoint unless
+i =l (by X-determinism ofα ). Thus α ′ is X-deterministic by (ii).
+X-compatibility Recall that two smooth and decomposable circuits C,C other over variables
+V, Vother are X-compatible for X ⊆ V ∩ Vother if for every product node α = α 1×α 2 ∈ C
+and α other = α other, 1×α other, 2∈ Cother such that vars (α )∩ X = vars(α other)∩ X, it holds that
+vars(α 1)∩ X = vars(α other, 1)∩ X and vars(α 2)∩ X = vars(α other, 2)∩ X.
+(5.5) Suppose that C,C other are X-compatible. We wish to show that Cother,C ′ are X-compatible
+whereC′ is the output circuit from Algorithm 1 that aggregates C over W , where W∩ X =∅.
+Supposeα ′ = α ′
+1×α ′
+2∈ C′ andα other = α other, 1×α other, 2∈ Cother are product nodes such that
+vars(α ′)∩ X = vars(α other)∩ X. Let α = α 1×α 2 be the corresponding node in C such that
+pα ′ = ⨁
+wpα . The scope vars (α ′) = vars(α )\ W ; since W∩ X =∅, we have vars (α )∩
+X = vars(α other)∩ X also. Thus, by X-compatibility of C,C other, we have that vars (α 1)∩ X =
+vars(α other, 1)∩ X and vars(α 2)∩ X = vars(α other, 2)∩ X. Since vars (α ′
+1) = vars(α 1)\ W and
+vars(α ′
+2) = vars(α 2)\ W , this means that vars (α ′
+1)∩ X = vars(α other, 1)∩ X and vars(α ′
+2)∩ X =
+vars(α other, 2)∩ X. Thus C′,C other are X-compatible.
+(5.6) Suppose that C over V andC′ over V ′ are both X-compatible with Cother. We wish to show
+thatCother,C ′′ are X-compatible whereC′′ is the output circuit from Algorithm 2 that computes the
+product of the two compatible (i.e. (V∪ V ′)-compatible) circuitsC,C ′.
+Suppose α ′′ = α ′′
+1×α ′′
+2 ∈ C′′ is a product node, and α other = α other, 1×α other, 2 ∈ Cother such
+that vars (α ′′)∩ X = vars(α other)∩ X; we need to show that these decompose in the same way
+over X. By Algorithm 2 and the proof of Theorem 2, this was created as the product of nodes
+22
+
+=== PDF PAGE 23 ===
+α =α 1×α 2∈C andα ′ =α ′
+1×α ′
+2∈C′ such that vars(α ′′)∩ (V∩ V ′) = vars(α )∩ (V∩ V ′) =
+vars(α ′)∩ (V∩ V ′) (and similarly for their children). Thus by (V∪ V ′)-compatibility ofC,C ′,α
+andα ′ decompose the same way over (V∪V ′), i.e. vars(α 1)∩(V∪V ′) = vars(α ′
+1)∩(V∪V ′) and
+vars(α 2)∩ (V∪ V ′) = vars(α ′
+2)∩ (V∪ V ′). Since X⊆ V∩ V ′ (by deﬁnition of compatibility),
+this also holds over X, i.e. vars (α 1)∩ X = vars(α ′
+1)∩ X and vars(α 2)∩ X = vars(α ′
+2)∩ X.
+Now, since vars(α ′′
+1 ) = vars(α 1)∪ vars(α ′
+1) and vars(α ′′
+2 ) = vars(α 2)∪ vars(α ′
+2), we have that:
+vars(α ′′)∩ X = (vars(α )∩ X)∪ (vars(α ′)∩ X) = vars(α )∩ X
+vars(α ′′
+1 )∩ X = (vars(α 1)∩ X)∪ (vars(α ′
+1)∩ X) = vars(α 1)∩ X
+vars(α ′′
+2 )∩ X = (vars(α 2)∩ X)∪ (vars(α ′
+2)∩ X) = vars(α 2)∩ X
+By compatibility ofC,C other, we have that vars(α other1 )∩X = vars(α 1)∩X and vars(α other2 )∩X =
+vars(α 2)∩ X. Thus vars (α other1 )∩ X = vars(α ′′
+1 )∩ X and vars(α other2 )∩ X = vars(α ′′
+2 )∩ X.
+This shows X-compatibility ofC′′,C other.
+Example 4 (Counterexample to (5.6) for Compatibility) . While X-compatibility is maintained
+through multiplying compatible circuits, the same is not tr ue for compatibility, due to the differ-
+ent variable overlaps between the circuits. F or example, suppose thatC over variable sets A, B, C
+has product nodes with scope decomposing as α =α 1(A)×α 2(B∪ C), andC′ over variable sets
+A, B, D has product nodes with scope decomposing as α ′ = α ′
+1(A)×α ′
+2(B∪ D). Then these
+circuits are compatible (i.e. A∪ B-compatible), and their product is a circuit with product no des
+with scope decomposing as α ′′ = α ′
+1(A)×α ′
+2(B∪ C∪ D). Now consider Cother with product
+nodes with scope decomposing as α other =α other(C)×α other(D). This is compatible with α andα ′,
+but not with α ′′.
+(5.7) This holds by the same argument as (5.6).
+(5.8) The circuitC′ obtained by applying an elementwise mapping to C does not change the scopes
+of any node. Thus, if C is compatible with Cother, thenC′ is also compatible with Cother.
+X-support-compatibility Recall that two smooth and decomposable circuits C,C other over vari-
+ables V, Vother are X-support-compatible for X⊆ V∩ Vother if there is an isomorphism ιbetween
+the nodesC[X] andCother[X], such that:
+• For any node α∈C[X], vars(α )∩ X = vars(ι(α ))∩ X;
+• For all sum nodes α = + k
+i=1α i∈ C[X], we have that supp X (α i)∩ suppX (ι(α j )) = ∅
+wheneveri⁄=j.
+(5.9) Suppose that C,C other are X-support-compatible; and let ιCother,C be the isomorphism from
+Cother[X] to C[X]. We wish to show that Cother,C ′ are X-support-compatible where C′ is the
+output circuit from Algorithm 1 that aggregates C over W , where W∩ X =∅.
+We deﬁne the isomorphism as follows. Consider the set of node sC′[X]. Since W∩ X =∅, these
+nodes are not scalars and so are not propagated away by Lines 3 -4. Moreover, since the algorithm
+retains the node types and connectivity of the circuit, ther e is an isomorphism ιC,C ′ betweenC[X]
+andC′[X]. There is thus an isomorphism ιCother,C ′ :=ιC,C ′◦ιCother,C betweenCother[X] andC′[X].
+It remains to show the two conditions.
+Given a node α other ∈ Cother, let us write α := ιCother,C (α other) and α ′ := ιC,C ′ (α ). By X-
+support compatibility of Cother,C , we have that vars (α other)∩ X = vars(α )∩ X. By the proof
+of Theorem 1, we know that vars (α ′) = vars(α )\ W . Since W∩ X = ∅, this implies that
+vars(α other)∩ X = vars(α ′)∩ X as required. For the second part, suppose that these are sum n odes,
+i.e. α other = + k
+i=1α other,i ,α = + k
+i=1α i andα ′ = + k
+i=1α ′
+i. We know by X-support-compatibility
+that suppX (α other,i )∩ suppX (α j) =∅ wheneveri⁄=j. By the same argument as in (5.1), we have
+that suppX(α ′
+i)⊆ suppX (α i) for alli. Thus we can conclude that supp X(α other,i )∩suppX (α ′
+j ) =∅
+wheneveri⁄=j. So Cother,C ′ are X-support-compatible.
+(5.10) Suppose that C over V and C′ over V ′ are both X-support-compatible with Cother; write
+ιCother,C for the isomorphism from Cother[X] toC, and ιCother,C ′ for the isomorphism from Cother[X]
+23
+
+=== PDF PAGE 24 ===
+toC′. We wish to show that Cother,C ′′ are X-support-compatible where C′′ is the output circuit
+from Algorithm 3 that computes the product of the two support -compatible (i.e. (V∪ V ′)-support-
+compatible) circuitsC,C ′.
+We deﬁne the isomorphism as follows. Consider the set of node sC′′[X]. The algorithm for mul-
+tiplying C,C ′ makes use of the isomorphism ιC,C ′ between C[V ∩ V ′] and C′[V ∩ V ′], with
+C′′[V ∩ V ′] retaining the same connectivity and node types; thus there i s an isomorphism ιC,C ′′
+fromC[V∩ V ′] toC′′[V∩ V ′], also. Since X⊆ (V∩ V ′), this isomorphism also holds between
+the circuits restricted to X. Thus, we deﬁne the isomorphism ι =ιC,C ′′◦ιCother,C betweenCother[X]
+andC′′[X]. It remains to show the two conditions.
+Given a node α other∈Cother, let us write α :=ιCother,C (α other),α ′ =ιC,C ′ (α ) andα ′′ :=ιC,C ′′ (α ).
+By X-support-compatibility ofCother,C , we have that vars(α other)∩ X = vars(α )∩ X. By support-
+compatibility ofC,C ′, we have that vars(α )∩(V∩V ′) = vars(α ′)∩(V∩V ′) and so vars(α )∩X =
+vars(α ′)∩X, and both are equal to vars(α ′′)∩X since vars(α ′′) = vars(α )∪vars(α ′) (as in Theorem
+3). Thus vars (α other)∩ X = vars(α ′′)∩ X as required. For the second part, suppose that these are
+sum nodes, i.e. α other = + k
+i=1α other,i , α = + k
+i=1α i, α ′ = + k
+i=1α ′
+i andα ′ = + k
+i=1α ′′
+i . We know
+by X-support-compatibility that supp X(α other,i )∩ suppX (α j) = ∅ wheneveri⁄= j. By the same
+argument as in (5.3), we have that supp X (α ′′)⊆ suppX (α )∩ suppX (α ′). Thus we can conclude
+that suppX (α other,i )∩ suppX (α ′′) =∅. So Cother,C ′′ are X-support-compatible.
+(5.11) Suppose that C,C other are X-support-compatible; and let ιCother,C be the isomorphism from
+Cother[X] to C[X]. We wish to show that Cother,C ′ are X-support-compatible where C′ is the
+output circuit from Algorithm 4 that applies an elementwise mapping τ toC. Algorithm 4 maps
+each node α∈ C to another node α ′∈ C, keeping the node type and connectivity; this deﬁnes an
+isomorphismιC,C ′ fromC[X] toC′[X]. Thus we have an isomorphism ιCother,C ′ :=ιC,C ′◦ιCother,C .
+It remains to show the two conditions.
+Given a node α other ∈ Cother, let us write α := ιC0,C (α other) and α ′ := ιC,C ′(α ). By X-
+support-compatibility of Cother,C , we have that vars (α other)∩ X = vars(α )∩ X. The mapping
+algorithm does not change the scope of the nodes, i.e. vars (α ′) = vars(α ), so we have that
+vars(α other)∩ X = vars(α ′)∩ X as required. For the second part, suppose that these are sum n odes,
+i.e. α other = + k
+i=1α other,i ,α = + k
+i=1α i andα ′ = + k
+i=1α ′
+i. We know by X-support-compatibility
+that suppX (α other,i )∩ suppX (α j) =∅ wheneveri⁄=j. We know by the same argument as in (5.4)
+that suppX(α ′
+i)⊆ suppX (α i) for alli. Thus we can conclude that supp X(α other,i )∩suppX (α ′
+j ) =∅
+wheneveri⁄=j. So Cother,C ′ are X-support-compatible.
+Theorem 7 (Hardness of 2AMC with X-ﬁrstness) . 2AMC is #P-hard, even for circuits that are
+smooth, decomposable, deterministic, and X-ﬁrst, and a constant-time elementwise mapping.
+Proof. Take a DNFφ with termsφ 1,...,φ m over variablesX1,...,X n. Let l =⌈logm⌉ + 1. Let
+us construct another DNF φ ′ with terms φ ′
+1,...,φ ′
+m over variables X1...,X n and Y1,...,Y l+1
+such that each φ ′
+i is the conjunction of φ i,Yl+1 and a term over Y1,...,Y l encoding a binary repre-
+sentation ofi. For example:
+φ ′
+5 =φ 5∧Y1∧¬Y2∧Y3∧¬Y4∧···∧¬ Yl∧Yl+1.
+Now, efﬁciently manipulate φ ′ to make it smooth [15]. The circuit φ ′ is thus smooth, decomposable,
+deterministic and trivially satisﬁes X-ﬁrstness (since th e children to every∧-gate are literals). Take
+the probability semiring as SX , andSY = ( N2, +2,×2, (0, 0), (1, 1)) and τ((n1,n 2)) = n1/n 2
+(deﬁne 0/ 0 = 0 ). Also, deﬁne ω (x) = 1 , and ω ′(Yl+1 = 0) = (0 , 1) andω ′(y) = 1 for all other
+literals. Then 2AMC counts the models of φ, which is #P-hard [46]:
+2AMC =
+∑
+x
+∑
+y:yl+1=1φ ′(x, y)
+∑
+yφ ′(x, y) =
+∑
+x
+φ(x),
+where we assume 0/ 0 = 0 . The last equality follows because the circuit is determini stic (hence∑
+yφ ′(x, y) = max yφ(x, y)≤ 1) and logically equivalent to φ (i.e.,∀x : φ(x) = 1 ⇔∃ y :
+φ ′(x, y) = 1 ).
+Theorem 8 (Tractability Conditions for 2AMC) . Every 2AMC instance is tractable in O(|C|) time
+for Boolean circuits that are smooth, decomposable, determ inistic, X-ﬁrst, and X-deterministic.
+24
+
+=== PDF PAGE 25 ===
+X1
+Y1
+X2
+Y2
+Xn
+Yn
+...
+(a) HMM graphical model
+0. 3 0. 7
+0. 2 0. 8 0. 6 0. 4
++
+× ×
+C1(0)
++ +
+× × × ×
+C1(1)
++ +
+C2(0) C2(1)
+... ...
+(b) Circuit
+Xn ∪ Yn
+{X1, Y 1} X2 : n ∪ Y2 : n
+{X2, Y 2}
+Xn−1 : n ∪ Yn−1 : n
+{Xn−1, Y n−1} { Xn, Y n}
+...
+(c) Vtree
+Ci(j)
+×
+/llbracketXi =j/rrbracket +
+/llbracketYi = 0/rrbracket /llbracketYi = 1/rrbracket
+(d) Component
+Figure 4: Illustration of PC computing hidden Markov model ( HMM)
+Algorithm 5: 2AMC
+Input: Decomposable, smooth, deterministic, X-ﬁrst and X-deterministic logic circuit C over
+X∪ Y , weight circuits ω X,ω Y , semiringsSX,SY , mapping function τSY →SX
+Output: 2AMC value (scalar in semiringSX )
+1 CSY (X, Y )← MAPPING(C(X, Y ); /llbracket·/rrbracketB→SY )
+2 CSY ,ω Y (X, Y )← PROD-CMP(CSY (X, Y ),ω Y )
+3 CSY ,ω Y (X)← AGG(CSY ,ω Y (X, Y ); Y )
+4 CSX ,ω Y (X)← MAPPING(CSY ,ω Y (X);τSY →SX )
+5 CSX ,ω Y ,ω X (X)← PROD-CMP(CSX (X),ω X )
+Result: AGG(CSX ,ω Y ,ω X (X); X)
+Proof. In Algorithm 5, we show the algorithm for 2AMC, which is simpl y a composition of aggre-
+gations, products, and elementwise mappings. To show tract ability of 2AMC, we simply need to
+show that the input circuits to each of these operators satis fy the requisite tractability conditions.
+We start with a smooth, decomposable, deterministic, X-deterministic, and X-ﬁrst circuit
+C(X, Y ).
+• In line 1, we use the support mapping (Deﬁnition 6) from the B oolean toSY semiring; this
+is tractable by Corollary 1 due to determinism, and the outpu tCSY (X, Y ) retains all the
+properties by Table 3.
+• In line 2, we take the product of CSY (X, Y ) and ω X(X). ω X is omni-compatible, so
+we can apply PROD-CMP. This results in a circuit CSY ,ω Y (X, Y ) that is smooth, decom-
+posable and X-ﬁrst. ω X (X) is both deterministic and X-deterministic as it has no sum
+nodes, so this output circuit is also deterministic and X-deterministic by (5.2).
+25
+
+=== PDF PAGE 26 ===
+• In line 3, we aggregate CSY ,ω Y (X, Y ) over Y . The output circuit CSY ,ω Y (X) is smooth
+and decomposable. It is also X-deterministic by (5.1), as Y∩ X =∅.
+SinceCSY ,ω Y (X, Y ) satisﬁed X-ﬁrstness, each product node α =α 1×α 2 in that circuit
+had at most one child (say α 1) with scope overlapping with Y . Then, in the product in the
+previous step,α 2 must have been produced through Lines 1-2 (otherwise it woul d contain
+some variable in Y ); thus it was produced by applying /llbracket·/rrbracketB→SY to some node in C. Thus,
+for any value v∈ Assign(α 2),pα 2∈{ 0SY, 1SY}. So (Prod 0/1) is satisﬁed.
+• In line 4, we apply the mapping τSY →SX to CSY ,ω Y (X). This circuit is over X and
+is X-deterministic, i.e. deterministic and satisﬁes (Additiv e). As shown in the previous
+step, it also satisﬁes (Prod 0/1). Thus the mapping algorith m produces the correct result,
+producing a smooth, decomposable and determinsitic circui tCSX ,ω Y (X) as output.
+• In line 5, we take the product of CSX ,ω Y (X) withω X (X). ω X is omni-compatible so
+we can apply PROD-CMP, producing a circuit CSX ,ω Y ,ω X that is smooth and decomposable
+(and also deterministic).
+• Finally, we aggregate CSX ,ω Y ,ω X (X) over X, producing a scalar.
+Theorem 9 (Exponential Separation) . Given sets of variables X = {X1,...,X n}, Y =
+{Y1,...,Y n}, there exists a smooth, decomposable and X-deterministic circuit C of size poly(n)
+such that the smallest smooth, decomposable, and X-ﬁrst circuit C′ such that pC≡ pC ′ has size
+2Ω( n).
+Proof. Consider representing the distribution given by a hidden Ma rkov model (HMM) over (hid-
+den) variables X≤n = {X1,...,X n} and (observed) variables Y≤n = {Y1,...,Y n}, as depicted
+in Figure 4a. Figure 4b shows a structured decomposable circ uit that computes the hidden
+Markov model distribution, where the components Ci(j) have scope {Xi,Y i}. The correspond-
+ing vtree/scope-decomposition (with nodes notated using t heir scopes) is shown in Figure 4c. It can
+easily be checked that the circuit is X≤n-deterministic, and that the circuit size is linear in n.
+It remains to show that the smallest X≤n-ﬁrst and X≤n-deterministic circuit computing the
+HMM distribution is exponential in size. Explicitly, we wil l choose a HMM such that the
+emission distribution is given by p(Yi|Xi) = 1Yi=Xi . Then we have that pC ′(x≤n,Y ≤n) =
+pC ′(x≤n)pC ′(Y≤n|x≤n) = pC ′(x≤n)1Y≤n=x≤n , for any circuit C′ that expresses the distribution
+of the HMM.
+Consider any such circuit C′. Then, let α ={α 1,...,α K} be the set of nodes with scope Y≤n in the
+circuit. We will need the following lemma:
+Lemma 2. F or any valuex≤n ofX≤n, there exists constants c1,..,c K∈ R≥0 such that:
+pC ′(x≤n,Y ≤n)≡
+K∑
+k=1
+ckpα k (Y≤n) (6)
+In other words, the output of the circuit is a linear function of the nodes with scope Y≤n.
+Proof. We show this proof by bottom-up induction (child before pare nt), for the set of nodes whose
+scope containsY≤n:
+• Input node: If the scope is Y≤n, then it must be some node α k∈ α ; then we take ck = 1
+andck′ = 0 for allk′⁄=k.
+• Sum node : By smoothness, all the children must have the same scope (co ntainingY≤n).
+The sum node is then just a linear combination of its children , so the result holds by the
+inductive hypothesis.
+26
+
+=== PDF PAGE 27 ===
+• Product nodeP : Let P1,P 2 be the children of P . By X≤n-ﬁrstness, either both children
+are pure (have scope entirely contained in X≤n orY≤n), or one of them is pure, and the
+scope of the other one (say P1) containsY≤n.
+In the ﬁrst case, if there is exactly one node (say P1), with scope contained in Y≤n, then it
+must have scope exactly Y≤n. Then we have that:
+pP (x≤n,Y ≤n) = pP1 (Y≤n)pP2 (x≤n∩ vars(P2))
+pP2(x≤n∩ vars(P2)) here is a constant, so by the inductive hypothesis we are done . If both
+nodes have scope contained in Y≤n, then P is in α , say P =α k. Then we set ck = 1 and
+ck′ = 0 fork′⁄=k.
+In the second case, we have that:
+pP (x≤n,Y ≤n) = pP1(x≤n∩ vars(P1),Y ≤n)pP2 (x≤n∩ vars(P2))
+HerepP2 (x≤n∩ vars(P2)) is a constant, so by the inductive hypothesis we are done.
+Note thatX≤n-ﬁrstness was crucial to avoid the case where a product has tw o mixed nodes
+(containing variables in X≤n andY≤n) as children.
+For anyk = 1,..,K , deﬁne vk∈ R2n
+≥0 to be the vector with entries vk,i =α k(i) (where we interpret
+i as a value of Y≤n). Then we have the following Corollary:
+Corollary 2. The set of vectors{v1,...,v K} forms a spanning set for R2n
+.
+Proof. By the Lemma and the fact that C′ expresses the HMM distribution, we have that for any
+x≤n∈{ 0, 1}n, there exists c1,..,c k∈ R≥0 such that:
+pC ′(x≤n)1Y≤n=x≤n≡
+K∑
+k=1
+ckpα k (Y≤n)
+Rearranging, and writing in vector form, we have:
+ex≤n =
+K∑
+k=1
+ck
+pC ′(x≤n)vk
+whereex≤n∈ R2n
+≥0 is the standard basis vector corresponding to the value x≤n. Thus{v1,...,v K}
+is a spanning set.
+Any spanning set for R2n
+must contain at least 2n elements. Thus, K≥ 2n, and the circuit C′ must
+be exponentially sized.
+One might attempt to remedy the situation by replacing X-ﬁrstness with X-determinism. For the
+general case, that however is insufﬁcient:
+Theorem 10 (Hardness of 2AMC with X-determinism). 2AMC is #P-hard even for decomposable,
+smooth, deterministic and X-deterministic circuits, and a constant-time elementwise transformation
+function.
+Proof. By reduction from the counting version of number partitioni ng: Given positive integers
+k1,...,k n, count the number of index setsS⊆{ 1,...,n } such that∑
+i∈Ski =∑
+i⁄∈Ski =c. That
+problem is known to be #P-hard [47]. Deﬁne φ =⋀ n
+i=1(Xi⇔Yi). Then φ is a deterministic, X-
+deterministic, decomposable and smooth circuit. 4 Let the inner labeling function be ω ′(yi) = ki/c
+andω ′(¬yi) = 1 . Then for a ﬁxed conﬁguration x of the variables X ={X1,...,X n}, we have
+exactly one model for φ, whose value is ⊗i:xi=1ki/c . If we select the inner semiring so that ⊗
+4While this circuit is not X-ﬁrst, it does satisfy a property known as X-ﬁrstness modulo deﬁnability [29];
+thus that property is insufﬁcient for 2AMC even together wit h X-determinism.
+27
+
+=== PDF PAGE 28 ===
+is addition (e.g., the max tropical semiring or log semiring ), then the inner AMC problem returns∑
+i:xi=1ki/c , which equals 1 iff S ={i :xi = 1} is a solution to the number partitioning instance.
+Now, deﬁne the outer labeling function to be ω = 1, and let the transformation function be τ(s) = 1
+ifs = 1 andτ(s) = 0 otherwise. Then the 2AMC problem with the probability semir ing as outer
+semiring counts the number of solutions of the number partit ioning instance.
+28
+
+=== PDF PAGE 29 ===
+Table 4: Tractability Conditions and Complexity for Compos itional Inference Problems. We denote
+new results with an asterisk.
+Problem Tractability Conditions Complexity
+2AMC
+P ASP (Max-Credal)∗ Sm, Dec, X-Det O(|C|)
+P ASP (MaxEnt)∗, MMAP Sm, Dec, Det, X-Det O(|C|)
+SDP∗ Sm, Dec, Det, X-Det, X-First O(|C|)
+Causal Inference Backdoor∗ Sm, Dec, SD, (X∪ Z)-Det O(|C|2)
+Sm, Dec, Z-Det, (X∪ Z)-Det O(|C|)
+Frontdoor∗ Sm, Dec, SD, X-Det, (X∪ Z)-Det O(|C|2)
+Other MFE∗ Sm, Dec, H-Det, I−-Det, (H∪ I−)-Det O(|C|)
+Reverse-MAP Sm, Dec, X-Det O(|C|)
+B Case Studies
+In this section, we provide more details about the compositi onal inference problems in Table 2 (re-
+produced in Table 4) for convenience, and prove the tractabi lity conditions for each (Theorem 6).
+For all of them, we assume that we are given a Boolean formula r epresented as a circuit. That would
+usually come from knowledge compilation from some source la nguage such as Bayesian Networks
+[9] or probabilistic logic programs [24]; our results thus s how what properties the compiled circuit
+must have in order a query of interest to be tractable. Note th at the problems are generally com-
+putationally hard [19, 10] on the source language, which mea ns there do not exist compact circuits
+satsifying the properties in the worst-case.
+Theorem 6 (Tractability of Compositional Queries) . The results in T able 2 hold.
+B.1 2AMC Queries
+Firstly, we consider instances of 2AMC queries. Recall the g eneral form of a 2AMC query. Given
+a partition of the variables V = ( X, Y ), a Boolean function φ(X, Y ), outer and inner semirings
+SX,SY , labeling functions ω Y (Y ) = ⨂
+Yi∈Y ω Y ,i (Yi) overS andω X (X) = ⨂
+Xi∈Xω X,i (Xi)
+overS′, and an elementwise mapping τSY →SX :SY →S X , the 2AMC problem is given by:
+⨁
+x
+(
+τSY →SX
+( ⨁
+y
+/llbracketφ(x, y)/rrbracketB→SY ⊗ω (y)
+)
+⊗ω ′(x)
+)
+(1, revisited)
+By Theorem 8, any 2AMC problem is tractable if φ is given as a smooth, decomposable, deter-
+ministic, X-deterministic, and X-ﬁrst circuit C. However, in some instances, we can relax these
+conditions, as we show shortly.
+B.1.1 Marginal MAP
+In the Marginal Maximum A Posteriori inference (MMAP), we are given a Boolean function φ(V ),
+a (unnormalized) fully factorized distribution p(V ) = ∏
+ipi(Vi), a partition X∪ Y = V and
+some evidence e on E⊂ V . The goal is to compute the probability of the maximum probab ility
+assignment of X consistent with e:
+max
+x
+p(X = x, E = e) = max
+x
+∑
+y|=φ (x, Y )∧e
+∏
+i
+pi(vi).
+To cast it as a 2AMC problem, take the inner semiring SY to be the probability semiring and deﬁne
+the inner labelling function to assign ω Y (Yi) = 0 if Yi ∈ E and Yi is inconsistent with e and
+ω Y (Yi) = pi(Yi) otherwise. The outer semiring is the (max,·) semiring with labeling function
+ω X(Xi) = 1 . The elementwise mapping function τSY →SX (a) = a is the identity function.
+The proof of the tractability conditions follows Theorem 8, except that we note that the mapping
+functionτSY →SX from the outer to inner semiring satisiﬁes (Multiplicative ). As such, we do not
+need the (Prod 0/1) circuit property, which was the reason we needed the X-ﬁrstness condition.
+29
+
+=== PDF PAGE 30 ===
+B.1.2 Probabilistic Answer Set Programming (PASP)
+The Probabilistic Answer Set Programming Inference (P ASP) query takes a Boolean formulaφ(V ),
+a partition X∪ Y = V , a (unnormalized) fully factorized distribution p(X) = ∏
+ip(Xi), and
+query variable and value{Q =q}, for some Q∈ V . The goal is to compute:
+p(Q =q) =
+∑
+x
+( ∏
+i
+p(Xi)
+) ∑
+y|=φ (x, Y )∧q
+p∗(y|x).
+The function p∗(Y|X) depends on the semantics adopted. Let mod (Y|X) := {y : φ(X, y)} be
+the set of assignments of Y such thatφ(X,·) is true. In the Maximum Entropy Semantics (MaxEnt)
+[6, 51, 45], one distributes the probability mass p(X) uniformly over the models of φ consistent
+with X, i.e. p∗(y|X) = 1
+|mod(Y |X)| . On the other hand, in the Credal Semantics [33, 14] (Max-
+Credal), one places all probability mass p(X) on some assignment y of Y consistent with X and
+q. To obtain an upper bound on the query probability regardles s of which y is chosen, one sets
+p∗(y|X) := 1 for all y if there exists an assignment Y |= φ(X, Y )∧q, and p∗(Y|X) = 0
+otherwise.
+The 2AMC formulation of the problem uses the probability sem iring as outer semiring SX , with
+labeling functionω X(Xi) = p(Xi) forXi∈ X.
+• In the (MaxEnt) semantics, for the inner semiring, we take a s the semiring of pairs of
+naturalsSY = ( N2, +,·, (0, 0), (1, 1)), with coordinatewise addition and multiplication.
+The inner labeling function sets ω Y (Q) = ( 1Q=q, 1), and sets ω Y (Yi) = (1 , 1) for all
+other variablesYi∈ Y . The mapping function is deﬁned by τSY →SX ((a,b )) = a/b (with
+0/ 0 = 0 ).
+• In the (Max-Credal) semantics, we simply set the inner semi ring to be the Boolean semiring
+SY =B. The inner labeling function sets ω Y (Q) =
+{⊤ ifQ =q
+⊥ otherwise , and sets ω Y (Yi) =
+⊤ for all other variables Yi ∈ Y . The mapping function is deﬁned by τSY →SX (a) =
+/llbracketa/rrbracketSY →SX .
+As with marginal MAP , we can see that in both cases, the mappin g function τSY →SX satisﬁes
+(Multiplicative), so X-ﬁrstness of the circuit is not required. In particular, for (MaxEnt) we have
+τSY →SX ((a,b )⊗ (c,d )) = τSY →SX ((a·c,b ·d)) = a·c
+b·d = a
+b· c
+d =τSY →SX (a,b )·τSY →SX (c,d ) =
+τSY →SX (a,b )⊗τSY →SX (c,d ) (this holds also if (a,b ) = (0, 0) and/or (c,d ) = (0, 0)). Meanwhile,
+for (Max-Credal) we have τSY →SX (a⊗b) = τSY →SX (a∧b) = /llbracketa∧b/rrbracketSY →SX = /llbracketa/rrbracketSY →SX·
+/llbracketb/rrbracketSY →SX =τSY →SX (a)·τSY →SX (b) = τSY →SX (a)⊗τSY →SX (b).
+For the (Max-Credal) semantics, we note additionally since SY is just the Boolean semiring, we do
+not need determinism in Line 1 of Algorithm 5. So the only conditi ons required are smoothness,
+decomposability, and X-determinism.
+B.1.3 Same-Decision Probability
+In the Same Decision Probability (SDP) query [37], we are given a Boolean formula φ(V ), a fully
+factorized distributionp(V ) =∏
+ip(Vi), a partition X,{Y} of V , a query{Y =y}, some evidence
+e on a subset E ⊆ X of variables and a threshold value T ∈ (0, 1]. The goal is to compute a
+conﬁdence measure on some threshold-based classiﬁcation m ade with the underlying probabilistic
+model: ∑
+x
+p(x|e)1p(Y =y|x, e)≥T,
+To cast this as a 2AMC instance, we use the inner semiring S′ = ( R2
+≥0, +,·, (0, 0), (1, 1)),
+with coordinate-wise addition and multiplication. The inn er labeling function assigns ω Y (Y ) =
+(p(Y )1Y =y,p (Y )). The outer semiring is the probability semiring and the mapp ingτSY →SX from
+inner to outer semirings is τSY →SX ((a,b )) = [ [a≥ bT ] ]. Last, the outer labeling function assigns
+ω X(Xi) = 1Xi|=e ifXi∈ E, andω X(Xi) = p(Xi) otherwise.
+Unlike marginal MAP and P ASP inference, there is no special s tructure in SDP that allows us to
+relax the general tractability conditions for 2AMC. Howeve r, it is still a 2AMC instance, and we
+30
+
+=== PDF PAGE 31 ===
+have the tractability conditions from Theorem 8. In particu lar this justiﬁes the use of X-constrained
+sentential decision diagrams for this problem.
+B.2 Causal Inference
+In Section 4.2, we discussed computing causal intervention al distributions. In particular, in the
+backdoor and frontdoor cases, we had the following formulae :
+p(y|do(x)) =
+∑
+z
+p(z)p(y|x, z), (2)
+p(y|do(x)) =
+∑
+z
+p(z|x)
+∑
+x′
+p(x′)p(y|x′, z). (3)
+B.2.1 Backdoor query
+The backdoor query can be written as a compositional query as follows:
+BACKDOOR(p; x, y) :=
+⨁
+z
+(( ⨁
+x, y
+p(v)
+)
+⊗p(v)⊗τ−1
+( ⨁
+y
+p(v)
+))
+. (7)
+where V = ( X, Y, Z), and τ−1(a) =
+{a−1 ifa⁄= 0
+0 ifa = 0 . Note that τ−1 satisﬁes (Multiplicative),
+and so for this mapping to be tractable we just need the circui t it is applied to to be deterministic.
+Assume thatp(V ) is given as a smooth, structured decomposable, and (X∪Z)-deterministic circuit
+(over the probabilistic semiring). We now show that this que ry is tractable, by showing that each
+operator in the composition is tractable. For readability, we label each circuit constructed with the
+function that it represents ( boxed ).
+• p(X, Z) C1(X, Z) := AGG(C, Y ) is tractable by smoothness and decomposability. By
+(5.1) in Table 3, since Y∩ (X∪ Z) =∅,C1 is (X∪ Z)-deterministic (i.e. deterministic).
+• 1
+p(X, Z) C2(X, Z) := MAPPING(C1,τ −1) is tractable since C1 is deterministic.
+• p(Y|X, Z) C3(X, Y, Z) := PROD-SCMP(C(X, Y, Z),C 2(X, Z)). C is (X∪ Z)-
+support-compatible with itself as it is (X∪ Z)-deterministic =⇒ C is also (X∪ Z)-
+support-compatible withC1 by (5.9) =⇒ C is also (X∪ Z)-support-compatible withC2
+by (5.11). As C andC2 share variables (X∪ Z), this means they are support-compatible.
+Thus this product is tractable in linear time.
+• p(Z) C4(Z) := AGG(C, X∪ Y ) is tractable by smoothness and decomposability.
+• p(Z)p(Y|X, Z) C5(X, Y, Z) := PROD-CMP(C4,C 3). C is V -compatible with itself
+(structured decomposable) =⇒ C is Z-compatible with itself by Proposition 1 =⇒ C
+is also Z-compatible with C4 by (5.5) =⇒ C4 is Z-compatible with C1 by (5.5) =⇒
+C4 is Z-compatible withC2 by (5.8) =⇒ C4 is Z-compatible withC3 by (5.6). Since C4
+andC3 share variables Z, this means they are compatible and so this product is tracta ble
+in quadratic time.
+• ∑
+zp(z)p(Y|X, z) C6(X, Y ) = AGG(C5, Z) is tractable by smoothness and decom-
+posability.
+Thus, we have recovered the tractability conditions derive d by [49], with the same complexity of
+O(|C|2) (induced by the compatible product to construct C5). However, we also have an alterna-
+tive tractability condition. Suppose that C were additionally Z-deterministic, but not necessarily
+structured decomposable. Then we could replace the derivat ion ofC5 above with the following:
+• p(Z)p(Y|X, Z) C5(X, Y, Z) := PROD-SCMP(C4,C 3). C is Z-support-compatible
+with itself as it is Z-deterministic =⇒ C is also Z-support-compatible with C4 by (5.9)
+31
+
+=== PDF PAGE 32 ===
+=⇒ C4 is Z-support-compatible with C1 by (5.9) =⇒ C4 is Z-compatible with C2 by
+(5.11) =⇒ C4 is Z-compatible with C3 by (5.10). Since C4 andC3 share variables Z,
+this means they are compatible and so this product is tractab le in linear time.
+In this case, the overall complexity is also reduced to O(|C|).
+B.2.2 Frontdoor query
+Now, consider the frontdoor case. In this case, we have the fo llowing compositional query:
+FRONTDOOR(p; x, y, z) =
+⨁
+z
+(( ⨁
+y
+p(v)
+)
+⊗τ−1
+( ⨁
+y, z
+p(v)
+)
+⊗ BACKDOOR(p; z, y)
+)
+(8)
+Assume that p(V ) is given as a smooth, structured decomposable, X-deterministic, and (X∪ Z)-
+deterministic circuit (over the probabilistic semiring). We continue the analysis from the backdoor
+case:
+• p(X) C7(X) := AGG(C, Y ∪ Z) is tractable by smoothness and decomposability. By
+(5.1) in Table 3, since (Y∪ Z)∩ X =∅,C7 is X-deterministic (i.e. deterministic).
+• 1
+p(X) C8(X) := MAPPING(C7,τ −1) is tractable since C7 is deterministic.
+• p(Z|X) C9(X, Z) := PROD-SCMP(C8,C 1). C is X-support-compatible with itself as
+it is X-deterministic =⇒ C is X-support-compatible with C1 by (5.9) =⇒ C1 is X-
+support-compatible withC7 by (5.9) =⇒ C1 is X-support-compatible withC8 by (5.11).
+Thus this product is tractable in linear time.
+• ∑
+xp(x)p(Y|x, Z) C10(Y, Z). This is just like C6, but with variables X and Z
+swapped. Thus it is tractable for a smooth, X-deterministic and (X∪ Z)-deterministic
+circuit in linear time.
+• p(Z|X)∑
+x′p(x′)p(Y|x′, Z) C11(X, Y, Z) := PROD-CMP(C9,C 10). We can chain
+applications of (5.5), (5.7) and (5.8) in a similar way to the other steps to show thatC9,C 10
+are Z-compatible (i.e. compatible), so this product is tractabl e in quadratic time.
+• ∑
+zp(z|X)∑
+x′p(x′)p(Y|x′, z) C12(X, Y ) := AGG(C11; Z). This is tractable by
+smoothness and decomposability.
+Thus, this algorithm has complexity O(|C|2), as opposed to the O(|C|3) complexity algorithm in
+[49]. The key difference is that we exploit support compatib ility for a linear time product when
+constructingC10.
+B.3 Other Problems
+B.3.1 Most Frugal Explanation
+In [31], the most frugal explanation (MFE) query was introdu ced. Given a partition of variables V
+into (H, I+, I−, E), some evidence e∈ Assign(E), and a probability distribution p(V ), the MFE
+query asks for the following:
+max
+h
+∑
+i−
+1[h∈ arg max
+h′
+p(h′, i−, e)] (9)
+In words, we want the explanation (assignment to H) that is the most probable for the most number
+of assignments to I−, when I+ is marginalized out. We can rewrite as follows:
+max
+h
+∑
+i−
+1
+[ p(h, i−, e)
+maxh′p(h′, i−, e) = 1
+]
+(10)
+32
+
+=== PDF PAGE 33 ===
+This can be written as a compositional query as follows.
+⨁
+h
+τS ′′′→S′
+⨁
+i−
+τS ′′→S′′′
+(
+τ−1
+(
+τS ′→S′′
+( ⨁
+h′
+τS→S ′ (p(h′, i−, e))
+))
+⊗p(h, i−, e)
+)
+(11)
+whereS is the probability semiring, S′ is the (max,·)-semiring,S′′ is ([0, 1], +,·, 0, 1) (i.e. the
+probability semiring with domain [0, 1]), andS′′′ is the counting semiring (N, +,·, 0, 1), and the
+mapping functions are deﬁned as follows:
+• τS→S ′ (a) = a
+• τS ′→S′′ (a) = a
+• τ−1(a) =
+{a−1 ifa⁄= 0
+0 ifa = 0
+• τS ′′→S′′′(a) = 1a=1
+• τS ′′′→S′ (a) = a
+Suppose we are given a probabilistic circuit representing p(H, I−, e). While this query appears
+extremely intimidating at ﬁrst glance, we note that the only operators we need to consider are the
+mappings and single product. Note that all of these mappings satisfy (Multiplicative) (τS ′′→S′′′
+because the domain of S′′ is [0, 1] soτS ′′→S′′′(a·b) = 1 iffa = b = 1 ); thus the mappings are
+tractable if the input circuits are deterministic. By check ing the scopes of the inputs to each mapping,
+we can see that (H∪ I−)-determinism, I−-determinism, and H-determinism sufﬁces. This also
+enables tractability of the product in linear time by suppor t compatibility.
+No tractability conditions for exact inference for this que ry were previously known. While the
+motivation behind the MFE query is as a means of approximatin g marginal MAP , and so this exact
+algorithm is not practically useful in this case, this example illustrates the power of the compositional
+framework to tackle even very complex queries.
+B.3.2 Reverse MAP
+Recently, in [27], the reverse-MAP query was introduced, de ﬁned by:
+max
+X
+p(e1|X, e2) (12)
+where the variables are partitioned as V = (E1, E2, X, H). In our compositional framework, this
+can be written as:
+⨁
+x
+τP→M
+( ⨁
+h
+p(e1, x, e2, h)⊗τ−1
+( ⨁
+h, e′
+1
+p(e′
+1, x, e2, h)
+) )
+(13)
+Here, the mappingτ−1 is tractable if the circuit forp is X-deterministic. Sincep is X-deterministic,
+it is X-support-compatible with itself; chaining this with (5.9) and (5.11) in Table 3, the inputs to
+the product are X-compatible; since they have scope X, this means the product is tractable by
+support-compatibility. The resulting circuit remains X-deterministic (i.e. deterministic as the scope
+is X), which means that the mapping τP→M from the probability to (max,·) semiring is tractable.
+Thus, this query is tractable for smooth, decomposable and X-deterministic circuits in linear time
+(same as derived by the authors).
+33

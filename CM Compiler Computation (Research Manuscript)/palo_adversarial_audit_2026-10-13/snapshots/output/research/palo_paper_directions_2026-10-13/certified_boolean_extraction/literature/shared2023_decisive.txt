@@ -1,0 +1,190 @@
+3 =====
+Fig. 1: Visualization of neural network verification. The input regions
+I1(x),I2(x) are propagated layer by layer through a neural networkN. The high-
+dimensional convex shapes are visualized in 2d. While initially I1(x) andI2(x)
+only slightly overlap, at layer k, N1:k(I2(x)) is fully contained in N1:k(I1(x)).
+2 Background
+Here we formally introduce the necessary background for proof sharing.
+Neural Network A neural network N is a function N : Rdin→ Rdout, commonly
+built from individual layers N =NL◦NL−1◦···◦ N1. Throughout this text, we
+consider feed-forward neural networks, where each layerNi(x) = max(Ax+b, 0)
+consists of an affine transformation ( Ax + b) as well as a rectified linear unit
+(ReLU), that applies the max with 0 elementwise. A neural network, classifying
+inputs intoc classes, outputsdout :=c scores, one for each class, and assigns the
+class with the highest score as the predicted one. While, as is common in the
+neural network verification literature, we use image classification as a proxy task,
+many other applications work analogously. Our approach also naturally extends
+to other types of neural networks, if verifiers exist for these architectures. We
+discuss the challenges and limitations of such generalizations in §4.5. In the
+following, for k<L , we let N1:k denote the application of the first k layers and
+Nk+1:L denote the last L−k layers respectively.
+(Local) Neural Network Verification Given a set of inputs and a postcondition
+ψ, the goal of neural network verification is to prove thatψ holds over the output
+of the neural network corresponding to the given set of inputs. In this work, we
+focus on local verification, proving that ψ holds for the network output for a
+given regionI(x)⊆ Rdin formed around the input x. Formally, we state this as:
+Problem 1 (Local neural network verification). For a regionI(x)⊆ Rdin, neural
+network N, and postcondition ψ, verify that ∀z∈I (x). N(z)|= ψ. We write
+I(x)|=ψ if∀z∈I (x).N (z)|=ψ.
+Here, we restrict ourselves to verifiers based on abstract interpretation [12,16]
+as they achieve state-of-the-art precision and scalability [35,34]. Further, many
+other popular verifiers [43,47] can be formulated using abstract interpretation.
+
+
+6 =====
+(a) We generate a (verifiable) template T from
+the abstraction obtained by propagating the or-
+ange input.
+(b) We shortcut the verifica-
+tion if intermediate abstrac-
+tion are contained in the T .
+Fig. 4: Conceptualization of proof sharing with templates. In (a) we create a ver-
+ifiable template T (black-dashed border) from specification N1:k(I1(x)). When
+verifying new specificationsI2,..., I5, shown in (b), we can shortcut the verifi-
+cation of all but I5 by subsuming them in T .
+N1:k(I1(x)) at layer k to create a template T . After ensuring that T is ver-
+ifiable, it can be used to shortcut the verification of other regions, e.g., of
+I2(x),..., I5(x). Formally we decompose proof sharing into two sub-problems:
+(i) the generation of proof templates and (ii) the matching of abstractions cor-
+responding to other properties to these templates. For simplicity, here we only
+consider templates at a single layer k of the neural network and we show an
+extension to multiple layers in §4.3.
+Our goal is to construct a templateT at layerk that implies the postcondition
+and captures abstractions at layer k obtained from propagating several Ii(x).
+As it is challenging to find a single T that captures abstractions corresponding
+to many input regions, yet remains verifiable, we allow a set of templatesT . We
+state this formally as:
+Problem 2 (Template Generation). For a given neural network N, input x and
+set of specificationsI1,..., Ir, layer k and a postcondition ψ, find a set of tem-
+platesT with|T|≤ m such that:
+arg max
+T
+rX
+i=1
+" _
+T∈T
+N1:k(Ii(x))⊆T
+#
+(1)
+s.t.∀T∈T .Nk+1:L(T )|=ψ .
+Intuitively, Eq. (1) aims to find a setT of templates T at layerk, such that the
+maximal amount (via the sum) of specificationsI1,..., Ir is contained in at least
+one templateT (via the disjunction) while ensuring that the individualT are still
+verifiable (via the constraint on the second line). As neural network verification
+required by the constraints of Eq. (1), is NP-complete [19], computing an exact
+solution to Problem 2 is computationally infeasible. Therefore, we compute an
+approximate solution to Eq. (1). In general, Problem 2 does not necessarily
+require that the templatesT are created from previous proofs. However, building
+on proof subsumption, as discussed in §3.1, in §4 we will infer the templates from
+previously obtained abstractions.
+
+
+7 =====
+To leverage proof sharing once the templates T are obtained, we need to be
+able to match an abstraction S = N1:k(I(x)) verified using proof transfer to a
+template inT :
+Problem 3 (Template Matching). Given a set of templates T at layer k of a
+neural networkN, and a new input regionI(x), determine whether there exists
+a T∈T such that S⊆T , where S =N1:k(I(x)).
+Together, Problems 2 and 3 outline a general framework for proof sharing,
+permitting many instantiations. We note that Problems 2 and 3 present an
+inherent precision vs. speed trade-off: Problem 3 can be solved most efficiently
+for small values of m =|T| and simpler representations of T (allowing faster
+checking of S ⊆ T ) at the cost of lower proof matching rates. Alternatively,
+Eq. (1) can be maximized by largem andT represented by complex abstractions,
+thus attaining high precision but expensive template generation and matching.
+Beyond proof sharing on the same input In this section, we focused on proof
+sharing for different specifications of the same input x. However, we observed
+that proof sharing is even possible between specifications defined on different
+inputs x and x′. To facilitate the use of templates in this setting, Eq. (1) in
+Problem 2 can be adapted to consider an input distribution. We provide an
+investigation along these lines in Appendix A.
+4 Efficient Verification via Proof Sharing
+We now consider an instantiation of proof sharing where we are given an inputx
+and propertiesI1,..., Ir to verify. Our general approach, based on Problems 2
+and 3, is shown in Algorithm 1. In this section, we first discuss Algorithm 1 in
+general. We then describe the possible choices of abstract domains and their im-
+plications on the algorithm, followed by a discussion on template generation for
+two different specific problems. Finally, we conclude the section with a discussion
+on the conditions for effective proof sharing verification.
+In Algorithm 1, we first create the set of templates T (Line 1, discussed
+shortly) and subsequently verify I1,..., Ir usingT . Here, we consider two, po-
+tentially identical, verifiersVT andVS, where VT is used to create the templates
+T andVS is used to propagate input regions up to the template layerk. For each
+Ii we propagate it up to layer k (Line 4) to obtain S = N1:k(Ii(x)) and check
+if we can match it to a template Tj∈T (Line 6) using an inclusion check. If
+a match is found, then we conclude that N(Ii(x))|=ψ and set the verification
+output vi to True. If this is not the case (Line 11) we verify N(Ii(x))|= ψ di-
+rectly by checkingVS(S,Nk+1:L)|=ψ. If the template generation fails, we revert
+to verifyingIi by applying VS in the usual way (omitted in Algorithm 1).
+Soundness As long as the templates T are sound, this procedure is sound, i.e
+Algorithm 1 only returns vi = True if∀z∈I i(x).N (z)|=ψ holds. Formally:
+Theorem 1. Algorithm 1 is sound if ∀T∈T , z∈T.N k+1:L(z)|=ψ and VS is
+sound.
+
+
+8 =====
+Algorithm 1: Neural Network Verifi-
+cation Utilizing Proof Templates
+Input: x,I1,..., Ir,k,ψ , verifiersVS,VT
+Result: v1,...,v r indicating
+vi := (N(Ii(x))|=ψ)
+1 T← gen templates(x,N,k,ψ,V S,VT )
+2 v1,...,v r← False
+3 for i← 1 to r do
+4 S←VS(Ii(x),N 1:k)
+5 for Tj∈T do
+6 if S⊆Tj then
+7 vi← True
+8 break
+9 end
+10 end
+11 if¬vi then
+12 vi← (VS(S,Nk+1:L)|=ψ)
+13 end
+14 end
+15 return v1,...,v r
+This holds by the con-
+struction of the algorithm:
+Proof. For a given x and
+Ii, Algorithm 1 only claims
+vi = True if either the
+check in (i) Line 6 or (ii)
+Line 11 succeeds. Since VS is
+sound, we know that ∀z ∈
+Ii(x). N1:k(z) ∈ S. There-
+fore in case (i) by our re-
+quirement on T as well as
+S ⊆ T it follows that ∀z∈
+Ii(x).N (z)|=ψ. In case (ii)
+we execute Line 12 and the
+same property holds due to
+the soundness of VS.
+Importantly, Theorem 1
+shows that the generation
+process of T does not affect
+the overall soundness as long
+as the set of templatesT ful-
+fills the condition in Theorem 1. In particular, that means that when solving
+Problem 2, it suffices to show the side condition ( ∀ T ∈T .Nk+1:L(T )|= ψ)
+holds, while heuristically approximating the actual optimization criteria. We let
+VT denote the verifier used to ensure this property in gen templates.
+Precision We say a verifier V1 is more precise than another verifier V2 on N if
+out of a set of specifications it can verify some that V2 can not.
+Theorem 2. If VS(VS(Ii(x),N 1:k),Nk+1:L) = VS(Ii(x),N ), then Algorithm 1
+is at least as precise as VS.
+Proof. Since, even if the inclusion check in Line 6 fails, due to Line 12 we out-
+put vi =VS(VS(Ii(x),N 1:k),Nk+1:L)|=ψ (Line 12), which by our requirement
+equals vi =VS(Ii(x),N )|=ψ. Therefore we have at least the precision of VS.
+The required property holds for any verifier VS for which the abstractions
+of all network layers depends only on the abstractions from previous layers and
+is fulfilled for all verifiers considered in this paper. For verifiers VS that do not
+fulfill the required property, potential losses in precision can be remedied (at
+the cost of runtime) by using VS(Ii(x),N 1:L) in Line 12. Interestingly, it is even
+possible to increase the precision of Algorithm 1 over VS by creating templates
+T that are verified with a more precise verifier VT . However, in this discussion,
+we restrict ourselves to speed gains. We believe that obtaining precision gains
+requires instantiating our framework with a significantly different approach than
+that taken for improving speed which is the main focus of our work. We leave
+this as an interesting item for future work.
+

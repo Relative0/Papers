@@ -1,0 +1,5 @@
+function Code(el)
+  if FORMAT:match('latex') and not el.text:find('\\', 1, true) then
+    return pandoc.RawInline('latex', '\\nolinkurl{' .. el.text .. '}')
+  end
+end

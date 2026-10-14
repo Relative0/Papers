@@ -1,0 +1,41 @@
+# N2/P13 Interpretation
+
+## Main conclusion
+
+P13 tested the strongest exact two-stage pair scheme suggested by P12 without changing the frozen policy. It succeeded functionally but only marginally affected time.
+
+The primary Gate-P result is **1.016459x direct** with CI **0.950719-1.063606**. The workload-weighted endpoint remains below direct at **0.980269x**, but the preregistered case-balanced crossover is still unresolved.
+
+## What P13 established
+
+The Python per-node count dictionary was not the dominant residual bottleneck. P13 replaced it with a much lighter construction path: append one packed integer per binary node, then use C-backed `set` and `_count_elements` work only at dispatch. Only **7** Gate-P cases needed exact multiplicity counting, yet P13/P12 source build+dispatch was still **0.992477x**, with its CI crossing 1.
+
+Post-hoc profiling is consistent with this. P12 and P13 spend similar cumulative time in their specialized `_make` paths. P13 eliminates repeated Python dictionary count updates, but still pays for:
+
+- the binary-op branch;
+- canonical child-id ordering;
+- packed integer construction;
+- one list append per binary source node;
+- a dispatch-time exact distinct-pair pass for most nontrivial cases.
+
+The remaining tax therefore appears to be **carrying pair identity at all in CPython**, rather than the particular dictionary-count representation.
+
+## Why this is still encouraging
+
+The downstream selective compiler path remains materially favorable: workload-weighted P13 compiler time is **0.814362x direct**, and the frozen policy still removes pair-term work to **0.570459x direct**. The post-hoc zero-incremental-telemetry diagnostic is **0.958020x case-balanced** and **0.872678x workload-weighted**.
+
+So P13 does not point to a failure of propagated CM folding. It points to a practical floor for progressively rearranging the same pair telemetry in pure Python.
+
+## Natural control
+
+The frozen natural corpus remains zero-fold. P13's **1.000918x direct** case-balanced timing is effectively parity and should be interpreted only as low abstention overhead, not a natural-circuit folding speedup.
+
+## Strongest next experiment
+
+Two directions are now cleaner than another Python container rearrangement:
+
+1. **Compiled telemetry path (P14A).** Keep the exact P13/P12 decision and folding backend, but move pair-key observation and distinct/frequency accumulation into a small Cython/C helper or compiled source-builder path. The mandatory 332-case decision-equivalence gate should remain unchanged. This directly tests whether crossing the Python boundary is the remaining implementation obstacle.
+
+2. **Separately preregistered policy study (P14B).** The frozen P8 tree was intentionally never retuned during P9-P13. It continues to miss some cases where always-P6 wins and selects some where P6 loses. A new policy should be trained on disjoint data against full end-to-end cost, not fold incidence, and evaluated on new held-out Gate-P-like and natural corpora. This would test a different question from implementation overhead and should not be mixed with P14A.
+
+If the immediate objective is to determine whether the current mechanism can cross the strict case-balanced endpoint without changing policy, P14A is the cleaner next step.

@@ -1,0 +1,5 @@
+# Superseded S2 generator correction — 2026-09-17
+
+The first local S2 implementation used a support-covering syntactic scaffold plus mixed wrapping. The frozen protocol axis is **semantic support/live_k**, not merely syntactic variable occurrence. Post-run audit found that only 55.161% of admitted S2 formulas retained semantic support equal to the requested `live_k` (measured exactly from canonical ANF). Therefore this S2 run is invalid for support-stratified confirmatory claims and is retained here only as superseded audit evidence.
+
+No favorable subgroup from this run is carried forward. The replacement generator is fixed by construction rather than by outcome filtering: `F = parity(x0,...,x{k-1}) XOR h`, where `h` is generated from degree-2 AND atoms under the BASIC operator family. The invariant "no degree-1 ANF monomials in h" is closed under every two-input Boolean operator, so the parity linear terms cannot cancel. This guarantees semantic support exactly `live_k` without selecting cases after observing benchmark outcomes.

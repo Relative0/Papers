@@ -1,0 +1,84 @@
+# N2/P1 Preregistration — Profitability-Aware CM Fold Selector
+
+Frozen before any N2/P1 benchmark execution.
+
+## Goal
+Test whether a static, profitability-aware CM fold rule can retain useful pre-expansion folding while avoiding the lost-sharing regression seen in the N1 post-hoc sharing diagnostic.
+
+## Frozen selector (P1)
+A candidate fold must first be a semantically legal CM same-ordered-operand-pair fold under the existing N1 rules. No truth-table retabulation is allowed in the CM arm.
+
+For each legal candidate, compute a cheap saturating structural estimate before ANF expansion:
+
+- `m(node)` = estimated ANF monomial-count upper bound, capped at 4096.
+  - const 0/1 -> 0/1
+  - variable -> 1
+  - NOT -> min(4096, m(child)+1)
+  - XOR -> min(4096, m(a)+m(b))
+  - AND -> min(4096, m(a)*m(b))
+  - OR -> min(4096, m(a)+m(b)+m(a)*m(b))
+  - TF(a,b) -> constant + optional a + optional b + optional `a*b` term from the token ANF, capped at 4096.
+- `nl(token)` is 1 iff the two-input token has an `a*b` ANF coefficient, else 0.
+- `keep_pair_cost` = parent nonlinear pair cost `nl(parent_token)*m(left)*m(right)` plus each child TF's own nonlinear pair cost `nl(child_token)*m(base_a)*m(base_b)` only when that source child has fanout 1 and therefore becomes dead if the parent is folded.
+- `fold_pair_cost` = `nl(composed_token)*m(base_a)*m(base_b)`.
+- `benefit = keep_pair_cost - fold_pair_cost`.
+- `shared` is true when either source child has fanout > 1.
+
+Frozen acceptance rule:
+
+1. Reject if `benefit <= 0`.
+2. Reject unless `benefit >= 16` estimated pair terms.
+3. If either child is shared, additionally require `benefit / max(1, keep_pair_cost) >= 0.20`.
+4. If neither child is shared, require `benefit / max(1, keep_pair_cost) >= 0.10`.
+5. A folded constant/literal/affine result is not exempt from the thresholds; it simply has `fold_pair_cost = 0` when appropriate.
+6. NOT-over-TF folding uses the same model with parent nonlinear cost 0; it is accepted only if the composed result strictly lowers estimated nonlinear pair cost by the same thresholds. This is intentionally conservative.
+
+No threshold or formula may be changed after benchmark results are observed. If this rule fails, the failure is retained.
+
+## Arms
+- `direct_sparse_anf`
+- `generic_2support_sparse` (strong generic comparator from N1)
+- `cm_frontend_sparse` (unconditional legal CM folding; N1 baseline)
+- `cm_frontend_guarded_sparse` (fanout>1 conservative post-hoc N1 guard)
+- `cm_profit_sparse` (this frozen P1 selector)
+
+All arms must produce exactly the same Boolean function and final ANF digest for admitted cases.
+
+## Gate-P replay
+- Same generator, seed family, depths 6/8/10, 12 cases/depth as N1.
+- 20 randomized paired timing repetitions per case for generic, unconditional CM, guarded CM, and P1 CM.
+- Primary timing endpoint: optimizer + sparse-ANF lowering (`run_arm` wall time), with optimize and propagation components retained separately.
+- Symbolic endpoints: multiplications, pair terms, peak monomials, output unique nodes, fold count, accepted/rejected P1 candidates, and Python `tracemalloc` peak.
+
+## Broader natural EPFL set
+Pinned source repository: `lsils/benchmarks`, commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`, MIT license.
+
+Frozen circuits (size-optimized BLIF):
+- `adder_size_2022.blif`
+- `bar_size_2015.blif`
+- `cavlc_size_2024.blif`
+- `int2float_size_2025.blif`
+- `priority_size_2024.blif`
+- `router_size_2024.blif`
+
+Selection is structural only and is performed before any arm is run:
+- candidate roots are all BLIF nodes whose transitive primary-input support is 9-12 and whose transitive LUT-node count is <=128;
+- sort candidates by `(source_nodes, depth, root_name)`;
+- select two structural quantiles per circuit (first and last admissible candidate; one if only one exists);
+- no fold incidence, ANF size, timing, or arm output is consulted for selection;
+- duplicate structural roots within a circuit are retained because the source location/fanout context is part of the natural workload.
+
+Each cone is remapped to its own local support so exhaustive packed-bitset oracle checking is bounded to <=4096 assignments.
+
+Natural timing: 15 randomized repetitions per case/arm. Memory is measured in separate untimed `tracemalloc` passes. Report per-circuit and pooled paired ratios.
+
+## Success/falsification reporting
+There is no requirement that P1 beat all methods. Report the complete outcome.
+
+The main questions are:
+1. Does P1 restore a Gate-P speed signal relative to generic while preserving more sharing than unconditional CM?
+2. On the frozen multi-circuit natural set, does P1 improve end-to-end optimizer+ANF time versus generic and/or direct without increasing symbolic work materially?
+3. Does P1 reduce the N1 lost-sharing failure pattern: cases where CM folding increases multiplications/pair terms versus direct?
+4. What memory/IR-size tradeoff accompanies any speed result?
+
+A useful positive natural signal is predeclared as a pooled paired geometric-mean time ratio <=0.95 versus generic with zero correctness mismatches, AND no >5% pooled increase in pair terms or peak monomials. Results outside that boundary remain informative but are not called a preregistered natural speed win.

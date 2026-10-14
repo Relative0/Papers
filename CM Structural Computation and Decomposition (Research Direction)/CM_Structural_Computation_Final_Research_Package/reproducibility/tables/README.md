@@ -1,1 +1,0 @@
-The manuscript tables are editable native LaTeX in each paper_v*.tex. replay_table_exact.json contains the unrounded medians behind the final table; full raw trials are in raw_results/benchmark_v3_replay.json. No external plot assets are required to compile the paper.

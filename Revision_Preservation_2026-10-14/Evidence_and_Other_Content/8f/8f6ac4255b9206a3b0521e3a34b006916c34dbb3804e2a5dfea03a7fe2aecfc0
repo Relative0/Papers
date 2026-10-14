@@ -1,0 +1,9 @@
+audit_id,name,coverage,evidence_path,reproduction,status,scope_limit
+A01,baseline integrity,523 entries,EVIDENCE/execution_summary.json,SHA-256 and size comparison,PASS,"Supplied manifest agreement, not source authentication"
+A02,prior archive integrity,630 entries,EVIDENCE/prior_package_integrity.json,Original verify_package.py,PASS,Large original archive not redistributed in full
+A03,faithful correctness replay,8 commands; exact scopes in computation audit,EVIDENCE/clean_correctness_replay.json,python reproduce.py baseline --output NEW_DIRECTORY,PASS,Original source hashes and non-timing output match
+A04,full faithful timing replay,38 x 3 x 5 trials; 128 queries/trial,EVIDENCE/benchmark_audit_replay.json,python reproduce.py benchmark --output NEW_DIRECTORY,PASS,One external design; same-process fresh-instance endpoint
+A05,original Theory verifier,21 rank cases; fibres through n=3; witnesses,EVIDENCE/theory_original_replay.json,Original verify_qk.py; provision original output path,PASS,SymPy 1.14.0; direct rank-class enumeration absent in original
+A06,independent mathematical validation,56 operator ranks; fibres n<=4; 14 rank-class cases; 613656 restricted counts,EVIDENCE/independent_math_results.json,python reproduce.py independent --output NEW_DIRECTORY,PASS,"No project/verifier imports; finite checks, not proof or priority certification"
+A07,Theory portability wrapper,Path-only patch; full original JSON comparison,EVIDENCE/theory_portability_comparison.json,python reproduce.py theory --output NEW_DIRECTORY,PASS,Separate from recorded unmodified run
+A08,baseline portability wrapper,8 clean child processes; same non-timing results,EVIDENCE/baseline_portability_comparison.json,python reproduce.py baseline --output NEW_DIRECTORY,PASS,"Additional harness confirmation, not a new benchmark corpus"

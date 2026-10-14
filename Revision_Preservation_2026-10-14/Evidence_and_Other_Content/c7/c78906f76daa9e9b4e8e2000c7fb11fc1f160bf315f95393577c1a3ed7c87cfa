@@ -1,0 +1,57 @@
+# Theorem Ledger — Theory Phase 2 (T1–T3)
+
+**Date:** 2026-09-28  
+**Publication baseline:** Draft 3 technical report remains frozen; these are research-phase results pending Master/Computation convergence.
+
+| ID | Statement | Status | Proof / evidence | Priority | Manuscript role |
+|---|---|---|---|---|---|
+| Q15 | If a real-linear sketch \(L\) supports exact \(Q_k\) decoding for every real-valued input, then \(\operatorname{rank}L\ge\sum_{j\le k}\binom nj\). | PROVED | Kernel inclusion + rank-nullity. | STANDARD | Background scope lemma only; no storage inference. |
+| Q16a | \(Q_t f=Q_t g\) iff every exact adaptive protocol fixing at most \(t\) distinct coordinates **in total** has the same transcript on \(f,g\). | PROVED / REPAIRED | Direct two-way proof in T1 contract. | elementary | Contract theorem. |
+| Q16b | After a restriction of size \(s\le k\), original \(Q_k f\) determines \(Q_{k-s}(f\mid\rho)\). | PROVED | Composition of restrictions. | elementary | Correct cumulative closure statement. |
+| Q16c | Original \(Q_k\) does not in general determine a fresh \(Q_k\) horizon after one destructive restriction. | PROVED NEGATIVE | Complementary parity on \(k+1\) variables. | elementary | Required boundary warning. |
+| RANK-1 | For a fixed \(p\mid q\) cut, the class of 0/1 matrices of rank ≤1 has \(\kappa=\max(p,q)\). | PROVED | Row/column sums reconstruct a rectangle; parity-on-larger-block lower bound. | CORRECT BUT MINOR; exact priority unresolved | One concise corollary only. |
+| RANK-2+ | For the same cut, rank bound \(r\ge2\) has \(\kappa=p+q\). | PROVED | Complementary global parity pair has rank ≤2; \(Q_n\) trivially reconstructs. | CORRECT BUT MINOR; exact priority unresolved | One concise corollary only. |
+| RANK-NOTIONS | The preceding rank-1/rank-2 threshold proof works for ordinary real, nonnegative, binary-factor, GF(2), and Boolean-OR rank on 0/1 matrices. | PROVED | Rank-1 matrices are rectangles; parity matrices are unions/sums/XORs of two disjoint rectangles. | minor generalization; priority unresolved | Optional remark, not headline. |
+| T3.1 | Profile-indexed coordinate count moments \(A_a(T)\) plus profile-character moments \(B_a(T)\) form a state closed under cumulative destructive coordinate restrictions and support exact residual counts. | PROVED | Full invariant/update/query proof in T3 document; 3,749,102 verifier checks. | potentially differentiated combination; exact priority unresolved | Main new Theory result for convergence testing. |
+| T3.2 | Any row-coordinate-blind state invariant under arbitrary row-index permutations / unordered row-profile multiset cannot support all named one-coordinate row restrictions. | PROVED RESTRICTED NEGATIVE | \(xy\) vs \((1-x)y\). | elementary but useful boundary | Scopes necessity of coordinate sensitivity; not arbitrary-encoding lower bound. |
+| T3.3 | Under invertible factor-basis change \(U\to UG, W\to G^{-1}W\), the T3 state is relabeled by \(a\to aG\), preserving size and operation counts. | PROVED | Inner product invariance. | routine but necessary | Gauge-invariance clause. |
+| T3.4 | For fixed \(r,k\) and balanced \(p\approx q\approx m\), dense T3 state is \(\Theta(2^r m^{k+1})\) bits under fixed-width counters; raw factors are \(\Theta(r2^m)\) bits. | PROVED ASYMPTOTIC | Binomial-sum asymptotics for fixed k. | consequence | Pre-registered C2 prediction, not empirical claim. |
+
+## Detailed statements and scope notes
+
+### Q15 scope note
+The theorem is about **real-linear dimension on all real inputs**. It cannot be converted into a fixed-bit storage lower bound without a precision/encoding model. The parity-pair class demonstrates the danger: identifiability depth \(n\), yet one promised-class identifier bit.
+
+### Fixed-cut rank threshold proof across five rank notions
+Let \(m=\max(p,q)\).
+
+**Rank 1 upper bound.** A nonzero 0/1 matrix of rank one under any of the five listed notions is the indicator of a rectangle \(I\times J\). \(Q_m\) includes every complete row sum and every complete column sum. Positive row sums identify \(I\), positive column sums identify \(J\), so the matrix is recovered; the all-zero margins identify the zero matrix.
+
+**Rank 1 lower bound.** If \(p\ge q\), take the two functions depending only on the X block that are complementary parity on X and constant over Y. Each truth matrix is \(I\times Y\), hence rank one in all five notions, and the pair agrees under every restriction fixing at most \(p-1\) coordinates. The \(q\ge p\) case is symmetric.
+
+**Rank 2+ lower bound.** Global odd/even parity across the cut decomposes into two disjoint rectangles according to the block parities. Thus each matrix has real, nonnegative, binary-factor, GF(2), and Boolean-OR rank at most two. The complementary pair agrees through depth \(n-1\), forcing \(\kappa\ge n\). The full assignment family \(Q_n\) gives the matching upper bound.
+
+This theorem is fixed-cut. No all-order or sign-rank claim is made.
+
+### T3.1 exact resource formulas
+Let \(s\) be the number of occurring nonzero anchor-side profiles and \(D(d,h)=\sum_{j\le h}\binom dj\).
+
+Initial sparse fixed-width storage:
+\[
+S_0\le s\left[r+(p+1)D(p,k)+(q+2)D(q,k)\right]+O(n+k+r)\text{ bits}.
+\]
+Dense worst case:
+\[
+S_0\le(2^r-1)\left[(p+1)D(p,k)+(q+2)D(q,k)\right]+O(n+k+r).
+\]
+An affected-side update with current \(d\) free coordinates and horizon \(h\) takes
+\[
+U=sD(d-1,h-1)
+\]
+exact additions/subtractions/copies; query time is \(T=O(s)\) exact integer multiply-adds. A direct build costs
+\[
+O\!\left(r(2^p+2^q)+2^pD(p,k)+2^qD(q,k)+r2^rD(q,k)\right)
+\]
+reads/arithmetic operations in the stated construction.
+
+These are representation-specific upper bounds, not universal lower bounds.

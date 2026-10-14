@@ -1,0 +1,336 @@
+23 =====
+be easily expressed in the logic, and this is where the prior serves an important
+purpose. For example, neural networks are often equipped with certain forms
+of regularization (e.g., L1 or L2 regularization for weights) that can be formally
+treated as a prior. For a PALO theory, there might be a bias regarding the
+logical weights (including potential dependencies) that can be incorporated into
+the prior. Also, a bias of the training/inference method, e.g., an early stopping
+rule or a bias caused by initialization or pretraining can be regarded as part of
+the prior as it is favoring certain models over other ones [15].
+3.5. Lower and Upper Probability Semantics
+The approximate probability semantics J•Ka
+A,, gives an exact probability
+only if the subformulas of composite formulas are independent which is rarely
+the case in practice. Consider, for example, the extreme case of an atomic
+formula  with JKa =0 .5. The approximate semantics yields J ^ ¬ Ka =0 .25
+even though classically the formula is equivalent to ?. Another extreme example
+exploiting the lack of idempotence is J ^ Ka =0 .25. A semantics that captures
+this propositional imprecision by interpreting formulas in terms of probability
+intervals can be deﬁned as follows.
+A lower and upper probability semantics (which we also call Frech´ e seman-
+tics) can be obtained by using Frech´ e bounds as follows:
+J¬ Kl
+A,, =1  JKu
+A,,
+J¬ Ku
+A,, =1  JKl
+A,,
+J ^  Kl
+A,, = max(0, JKl
+A,, + J Kl
+A,,  1)
+J ^  Ku
+A,, =m i n (JKu
+A,, , J Ku
+A,, )
+J _  Kl
+A,, = max(JKl
+A,, , J Kl
+A,, )
+J _  Ku
+A,, =m i n ( 1, JKu
+A,, + J Ku
+A,, )
+J )  Kl
+A,, = J¬  _  Kl
+A,,
+J )  Ku
+A,, = J¬  _  Ku
+A,,
+J ,  Ku
+A,, = J ^  Ku
+A,, + J¬  ^ ¬  Ku
+A,,
+J ,  Kl
+A,, = J ^  Kl
+A,, + J¬  ^ ¬  Kl
+A,,
+All other equations from the deﬁnition of J•Ka
+A,, are duplicated for J•Kl
+A,,
+and J•Ku
+A,, without changes. The same holds for the mean probability inter-
+pretation JKa
+A,, which is duplicated for JKl
+A, and JKu
+A,.T h e i n d e p e n d e n c e
+assumptions for batches are still required under this semantics.
+23
+
+
+24 =====
+Note that while J•Ka
+A,, deﬁnes conjunction as in Hajek’s Product logic and
+disjunction using involutive negation, J ^  Kl
+A,, and J _  Ku
+A,, are deﬁned
+as (strong) conjunction and disjunction in  Lukasiewicz logic, while J ^  Ku
+A,,
+and J _  Kl
+A,, correspond to G¨ odel logic (also called weak conjunction and
+disjunction in  Lukasiewicz logic).
+Since lower and upper probabilities are essential to understand the precision
+of the approximate semantics, it is natural to extend JKa
+A,, and JKa
+A, to the
+combined semantics based on triples:
+JKA,, =( JKl
+A,, , JKa
+A,, , JKu
+A,, )
+JKA, =( JKl
+A,, JKa
+A,, JKu
+A,)
+Applying this extended semantics to the extreme example  ^ ¬  we obtain
+J ^ ¬ K =( 0, 0.25, 1). While this does not give us a better estimate, it alerts us
+about the high degree of imprecision in the approximate probability. Typically,
+formulas appear in the context of quantiﬁers, resulting in reasonably narrow
+bounds for the approximate mean probability. However, if the interval is still
+too large, it can be a sign of possible inherent dependencies between subformulas
+and a reformulation of the formula would be a natural response, for example
+using classical reasoning, which would yield ? in our example. For an illustration
+of how tight these probabilistic bounds can be in practice we refer to the results
+of applying PALO to a biological network analysis problem [62].
+3.6. Abstract Classical Semantics for Symbolic Reasoning
+An abstract classical semantics can be obtained by restricting JPropK to the
+Boolean set {0, 1}, thereby leaving the interpretation of propositions outside of
+this set as undeﬁned, and using a trivial batch cover (,s )= {(s)}.T h e
+latter means that the semantics of quantiﬁers is exact rather than approximate,
+which suggests that computationally (meaning numerically) this semantics will
+not be useful in most practical cases. However, the use of a simple abstract
+semantics justiﬁes the use of symbolic deduction. Although formally a special
+case, we use JKc
+A,, and JKc
+A, instead of JKa
+A,, and JKa
+A, to make clear
+that we are using the classical semantics.
+Let A be an arbitrary ⌃-algebra and  a closed formula. We say that A
+satisﬁes  or A is a model of  (denoted by A |=c )i ↵ JKc
+A, = 1. We say A
+satisﬁes  or A is a model of  (denoted by A |=c )i ↵ A |=c  for all  2 .W e
+say  is a tautology of ,w r i t t e n |=c ,i ↵ A |=c  for all ⌃-algebras A such
+that A |=c . In this simpliﬁed presentation, the classical semantics uses all ⌃-
+algebras A,25 not a parameterized subclass such as A(✓). Classical tautologies
+25For more precision, we should constrain the algebras, e.g., by using an algebra class that
+is a classical abstraction of the algebra class used for the probabilistic semantics. Such a
+classical abstraction may still leave some symbols uninterpreted, e.g., those associated with
+neural networks or other complex functions.
+24
+
+
+25 =====
+can be established symbolically, e.g., as theorems generated by a sound and
+complete26 proof system for ﬁrst-order logic, but the particular method is not
+relevant for this discussion.
+A (ﬂexible) probabilistic theory should be regarded as an approximation of a
+classical theory in the sense that starting from a core theory 0 we can generate
+potentially inﬁnite chains of theories
+0 ✓ 1 ✓ 2 ✓ ···
+using symbolic deduction (i.e., by incrementally adding theorems). These theo-
+ries are all classically equivalent but not necessarily equivalent under the prob-
+abilistic approximate semantics. 27
+Due to the inherent limitations of a soft logic to mimic exact inference, the
+use of i for some i> 0 (instead of 0) as the basis for probabilistic approximate
+inference can lead to substantial improvements in e ciency and precision in ap-
+proximating classical reasoning. An equivalent perspective is that in addition to
+the axiomatic domain knowledge classical theorems (i.e., symbolically derived
+knowledge) can be made available to the probabilistic engine. The determina-
+tion of a suitable set of theorems is an interesting problem by itself and most
+likely related to a tradeo ↵ between computational e ciency and precision that
+should be further investigated. Note that the classical semantics completely ab-
+stracts from the probabilities, which means both the approximate as well as the
+classical semantics are limited in their own ways, and it would be inappropriate
+to consider one superior over the other.
+The complementary nature of computational inference using the approxi-
+mate semantics and symbolic inference using the classical semantics is an inter-
+esting topic by itself that leads to the idea of neuro-symbolic architectures [6]
+that synergistically integrate both forms of reasoning. Our Maude-based proto-
+type of PALO to be introduced in Section 4 combines computational/neural and
+symbolic inference in a restricted form, but also serves as framework to explore
+more general strategies. The advantage of computational inference is its non-
+sequential, non-directed, and fuzzy nature that can beneﬁt from today’s mas-
+sively parallel hardware architectures. Symbolic inference, on the other hand,
+can maintain logical precision over many reasoning steps and at the same time
+work with templates of formulas or entire classes of models, essentially leading
+to a logical form of parallelism by exploiting symmetries and abstractions.
+26Completeness does not imply completeness for our approximate semantics. Hence sound-
+ness is the more important property here. If semantic attachments are used, their relevant
+properties need to be axiomatized to make them available for deductive methods.
+27Our argument naturally extends to a chain of embeddings, which allow us to introduce
+new (auxiliary) functions and predicates.
+25
+
+
+26 =====
+3.7. Concrete Classical Semantics for Validation
+A less abstract probabilistic classical semantics can be obtained by crispiﬁ-
+cation.28 This can be useful if a soft-logic model has already been identiﬁed,
+and we would like to reinterpret the model from a classical viewpoint.
+To this end, we deﬁne a crispiﬁcation operator crisp ⌧ :[ 0, 1] ! {0, 1},w h e r e
+⌧ 2 [0, 1] is a ﬁxed threshold, by crisp ⌧ ()=1i f   ⌧ and 0 otherwise. Now
+crisp⌧ () is inserted in each equation for J•Ka
+A,, dealing with a term of propo-
+sitional type. The resulting semantics is the mean probability interpretation
+JKA, for a ⌃-algebra A and batch cover , which we denote as JK⌧
+A, or
+simply JK0.5
+A, using the default value for ⌧ .
+While crispiﬁcation itself leads to a loss of precision regarding the model, the
+use of classical logic, on the other hand, increases logical precision (by avoiding
+the incompleteness of the soft-logic approximation). This is a tradeo ↵ that
+may give some insights into the structure of a given model and motivate new
+hypotheses and extensions of the domain theory. It is also a reference to validate
+the standard semantics against, e.g., to quantify the degree of incompleteness in
+the context of speciﬁc theories and applications. We will not further discuss the
+concrete classical semantics in this paper, but the interested reader may want to
+take a look at [62] to get an idea of how (surprisingly) closely it can match the
+primary soft-logic semantics of PALO in the context of a practical application.
+3.8. PALO Semantics Summary
+We conclude this section on the PALO language and its semantics with a
+summary of the di ↵erent ﬂavors of semantics in form of a table:
+Notation Type and Objective
+JKa
+A,, JKa
+A,, JtKa
+A,
+probabilistic/approximate/soft semantics
+for model synthesis (primary semantics)
+(JKl
+A,, JKa
+A,, JKu
+A,) extended semantics with lower/upper bounds
+supports validation of independence assumptions
+JKc
+A,, JtKc
+A,
+abstract classical semantics
+justiﬁes symbolic computation/deduction
+JK⌧
+A,, JtK⌧
+A,
+concrete classical semantics based on crispiﬁcation
+to evaluate correspondence with classical interpretation
+Table 1: Overview of the di ↵erent ﬂavors of semantics introduced in this paper
+The ﬁrst semantics, that we also labelled as primary semantics, is the prob-
+abilistic approximate soft logic semantics (expressed in terms of mean probabil-
+ities of formulas) that deﬁnes the mapping of logical theories and queries into
+neural networks. The second semantics extends the probabilistic approximate
+semantics with upper and lower bounds to validate the precision of the mean
+28The term crispiﬁcation is inspired by [35], albeit in that reference it is enforced as an
+axiom, while we deﬁne it at the semantic level.
+26
+
+
+27 =====
+probability approximation. Third, we have the abstract classical semantics that
+arises as a limit case of the probabilistic semantics. It completely abstracts
+from probabilities and can support symbolic manipulation, e.g. logical deduc-
+tion or equational simpliﬁcation. Due to its simplicity, this semantics would be
+normally preferred by the user to formulate and understand theories with their
+models even if it does not paint the complete picture. Finally, we have listed
+the concrete classical semantics that can be obtained by crispiﬁcation from the
+soft semantics as a way to validate how closely soft and classical interpretations
+match up and where they diverge. The probabilistic approximate semantics will
+be illustrated by means of a toy example in the next section, which also brieﬂy
+discusses how the abstract classical semantics may be utilized to improve learn-
+ing performance. For an illustration of the extended semantics and the concrete
+classical semantics an application with a more complex theory is needed, and
+hence we refer to our bioinformatics application in [62].
+4. The Logical Imagination Engine
+To better understand the capabilities and limitations of neuro-symbolic ap-
+proaches in a range of case studies we have developed a prototype of PALO
+that we call the Logical Imagination Engine (LIME). Its layered architecture is
+shown in Fig. 2.
+JupyterFlowDistributed Execution
+PyMaudePython-Embedded
+Maude Rewriting Engine
+TensorFlowParallel Execution
+PALO/LIME API
+NotebooksApplication Workflow
+LTN(PALO)Adaptation/Extension of
+Logic Tensor Networks
+Figure 2: PALO/LIME
+Prototype Architecture
+At the highest layer, we have the applica-
+tion in form of a Jupyter/Python notebook or
+more generally an entire application workﬂow
+consisting of a set of notebooks with dataﬂow
+dependencies. The PALO/LIME Application
+Programming Interface (API) is a high-level
+notebook-based interface to the functionality
+of PALO/LIME that will be discussed in more
+detail below. It allows the user/application
+to specify theories, synthesize and validate
+models, and visualize results. The primary
+component of the next layer is PyMaude,
+a Python-embedded version of SRI’s Maude
+rewriting engine [64, 12]. We have speciﬁ-
+cally developed PyMaude to experiment with
+neuro-symbolic architectures that require a
+tight integration and e cient ﬂow of informa-
+tion between neural and symbolic engines. At
+present, PyMaude is used as a logical frame-
+work to specify PALO’s many-sorted ﬁrst-
+order logic with equality and other extensions
+such as sorted -calculus. The latter leverages
+our earlier work on CINNI [60], a calculus for
+explicit substitutions, that forms the basis for a broad use of Maude as ﬁrst-order
+and higher-order logical framework [63]. In the context of LIME, PyMaude is
+27
+
+
+28 =====
+currently performing limited symbolic computations such as simpliﬁcation of
+formulas (in particular reduction to Negation Normal Form) and equational re-
+duction according to an equational base theory that deﬁnes PALO signatures
+and hence forms the basis for PALO theories. Symbolic computations (con-
+ducted by Maude) exploit the classical semantics and hence do not take into
+account probabilities.
+The next layer in our architecture consists of a generalized and extended ver-
+sion of Logic Tensor Networks (LTNs) adapted to the PALO semantics (here the
+probabilistic approximate semantics is employed). LTNs are a convenient and
+ﬂexible framework to map a parameterized family of logics into TensorFlow [1]
+graphs that can naturally exploit the high degree of parallelism o ↵ered by mod-
+ern hardware architectures. Currently, our adaptation implements an approx-
+imation of the posterior mode semantics with a bias towards high-probability
+models29 using model sampling with Stochastic Gradient Descent (SGD) and
+variations such as SGD with Momentum, Nesterov Accelerated Gradient, and
+Adaptive Moment Estimation (Adam) [54]. We have also implemented the
+extended semantics with lower and upper probabilities that are an important
+ingredient to validate the learned models. Finally, the prototype also supports
+the concrete classical semantics as a complementary way to analyze/validate
+models that have already been learned.
+Concluding the description of our architecture, we should point out that
+PALO/LIME operates within JupyterFlow [61, 67], our notebook-based dis-
+tributed workﬂow framework for Python/TensorFlow that transparently takes
+advantage of clusters of heterogeneous machines (e.g., with varying numbers
+of CPUs and GPUs). 30 We typically use a cluster of machines to parallelize
+model sampling and other application-speciﬁc tasks that are part of the larger
+workﬂow in which PALO/LIME is employed.
+...
+Generalized Models Answers
+Theory & Data
+Model Synthesis
+(Inference, Learning, Training)
+Model Analysis (Querying)
+for Evaluation and Validation
+Figure 3: PALO/LIME High-Level Concept as a Composition of two Stages
+29One avenue that we have not explored yet is the implementation of the full posterior
+distribution semantics. As indicated earlier, one possible approach is to exploit SGD/Langevin
+MCMC sampling [36] that is already available in TensorFlow.
+30Our latest version also supports virtual kubernetes clusters and takes advantage of special
+features in the Google cloud to e ciently share large amounts of data.
+28
+

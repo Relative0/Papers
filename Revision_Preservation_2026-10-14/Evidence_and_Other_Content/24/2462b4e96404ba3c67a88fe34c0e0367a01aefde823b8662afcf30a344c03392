@@ -1,0 +1,70 @@
+# N2/P3 — Demand-Driven Shallow Fold Fusion
+
+Run completed: 2026-09-17T19:40:29Z
+Preregistration SHA-256: `d37fc5b385f8d36f1b4e863dcc6112ba035513bfa4d8a43b78b96e54d383a47b`
+Frozen harness SHA-256: `8b9a74cc952d53ed69b278091e9d36472a35d78d24806c0861cb7a2e8fc255c6`
+
+## Result in one sentence
+
+**P3 successfully removed speculative unused fold planning and is materially faster than P2, but it still does not beat direct/no-rewrite sparse ANF.** On Gate-P it takes 58/58 accepted folds, reduces symbolic ANF work, yet total compile time remains above direct because the selector/reference-scan and fused Python control path cost more than the saved ANF work.
+
+## Natural EPFL replay
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P3 / direct compile | 10 | 1.0956 | 1.0311–1.1935 |
+| P3 / P2 compile | 10 | 0.9775 | 0.9575–0.9948 |
+| P2 / direct compile | 10 | 1.1209 | 1.0411–1.2435 |
+
+Workload-weighted summed case-median P3/direct ratio: **1.0058**; P3/P2: **0.9972**.
+P3 checked 1877 demanded binary nodes, found 1 shallow candidate, and accepted **0** folds.
+Because P3 accepted zero natural folds, all ANF structural metrics match direct exactly; this natural result measures abstention/control overhead, not folding speed.
+
+**Predeclared natural actual-fold speed signal: NO PASS.**
+
+## Gate-P mechanism replay
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P3 / direct compile | 36 | 2.2611 | 2.0386–2.4955 |
+| P3 / P2 compile | 36 | 0.8480 | 0.8166–0.8827 |
+| P2 / direct compile | 36 | 2.6664 | 2.3380–3.0161 |
+
+Workload-weighted summed case-median P3/direct ratio: **1.7668**; P3/P2: **0.8907**.
+P3 selector: candidates=164, accepted=58, fold lowerings=58, shared accepts=55. **Accepted-fold utilization = 100%.**
+P2 reference: accepted plans=110, consumed planned lowerings=41 (37.3% utilization).
+P3 matcher time versus P2 planning time on positive-matcher cases: geometric-mean ratio **0.4750**.
+
+Gate-P symbolic P3/direct ratios (casewise geometric means over nonzero denominators):
+
+- multiplications: **0.8729**
+- pair terms: **0.7899**
+- evaluated ANF nodes: **0.9492**
+- peak monomials: **0.9913**
+- Python traced peak bytes: **1.3614**
+
+**Predeclared Gate-P mechanism speed signal: NO PASS.**
+
+## What changed from P2
+
+P3 fixes the specific speculative-planning pathology: it never accepts a fold that is later discarded. It also cuts the simultaneous Gate-P total compile cost by about 15% relative to P2 and substantially lowers traced Python allocation versus P2.
+
+But the stricter shallow matcher gives up some high-level composite folds. It therefore preserves only part of P2's ANF-work reduction, and the remaining per-node matching/reference bookkeeping plus the more complex fused recursion still costs more than direct lowering on these small-to-moderate Gate-P formulas. No Gate-P case had a lower total P3 compile median than direct.
+
+## Correctness and identity checks
+
+- Fresh randomized fuzz: 1000 cases; failures: 0.
+- Natural symbolic checks: 50 rows; failures: 0.
+- Gate-P symbolic checks: 180 rows; failures: 0.
+- Natural timed executions: 750; Gate-P timed executions: 2700; all successful.
+- All 36 Gate-P direct digests and frozen structural-work identity fields matched the P2 reference before timing.
+- EPFL Git blob hashes and the 10 selected natural case IDs were reverified by the frozen selection code.
+
+
+## Independent verification
+
+A separate verifier that does not import the experiment harness recalculated the primary timing ratios and checked hashes, all six EPFL Git blobs, the frozen natural case list, timing schedules, row counts, correctness flags, the 1,000-case fuzz run, Gate-P direct identity against the frozen P2 reference, and accepted-fold utilization. Status: **PASS**.
+
+- Total benchmark result rows: **3,680**.
+- Gate-P P3 traced-Python-peak ratio versus P2: **0.6937** (~30.6% lower); versus direct: **1.3614** (~36.1% higher).
+- Gate-P P3 matcher-time ratio versus P2 planner on positive-matcher cases: **0.4750** (~52.5% lower).

@@ -1,0 +1,60 @@
+# Source reconciliation - 2026-09-17
+
+## Materials incorporated
+
+1. `operator-level-boolean-computation-with-correspondence-matrices.pdf`
+2. `CM_Phase_Calculus_Verified.pdf`
+3. `CM_Quantum_Handoff_2026-09-17.zip`, including `CURRENT_STATE.md`, `TEST_RUN_GUIDE.md`, the intrinsic-Boolean source/verification archive, the signed-lift source/verification archive, and `test_runs/all/`.
+4. Public `Relative0/Correspondence_Matrices` corrected benchmark evidence, including the 2026-08-25 symmetric audit.
+
+## What changes the benchmark design
+
+### A. The operator-level paper already preregisters a narrower compiler experiment
+
+The paper's primary empirical question is whether typed pair recognition/alignment/fusion reduces user-visible cost. It explicitly requires a sharing-aware packed evaluator, lowered sharing-aware program, ROBDD, and external AIG flow where translatable. It also freezes a practical positive region requiring at least a 20% median structural-over-retabulation improvement and at least one predeclared cell with the same end-to-end improvement over a sharing-aware external baseline, without >10% median peak-memory increase.
+
+This protocol is preserved as an **operator-compiler replication gate**. It is not replaced by the broader ANF/ZDD investigation.
+
+### B. The new research thread asks a different, stricter question
+
+The current thread asks whether CM normalization/folding reduces compressed ANF work **beyond a strong generic structural optimizer**. This requires a generic 2-support/LUT/cut-rewrite baseline, because same-operand fusion of two binary truth functions is not intrinsically CM-specific. It also requires artifact-equivalent ZDD/FDD/XAG comparisons and multiplicative-complexity metrics.
+
+Therefore the broader protocol has two nested claim levels:
+
+- **Gate P (paper replication):** reproduce the operator-level compiler paper's frozen conditions and thresholds.
+- **Gate A (new ANF claim):** CM must outperform the strongest generic structural optimizer under the same ANF/network artifact contract. Passing Gate P alone does not establish a CM-specific ANF advantage.
+
+### C. Handoff results are mechanism evidence, not confirmatory comparative evidence
+
+`Illustrative_operator-folding_benchmark.csv` shows large avoided sparse pair-products for the constructed identity `(X OR Y) \\ (X AND Y) -> X XOR Y`, but it does not include a generic 2-support/cut optimizer. It is retained as mechanism evidence only.
+
+`Fresh_CM-to-ANF_propagation_verification.csv` establishes correctness of the local CM-to-ANF kernel and random DAG propagation, not performance superiority.
+
+### D. Pure-Boolean and signed-lift branches remain separated
+
+The computation benchmark uses the original predicate-CM/operator semantics and the exact CM-to-ANF rule. The pure-Boolean cyclic `star` algebra may provide classifications/provenance, but must not be substituted for pointwise operator fusion, ordinary Boolean coefficient multiplication, or matrix multiplication. Signed/cyclotomic quantum results are reference material only unless a separately contracted oracle/reversible benchmark is run.
+
+## Correctness conventions adopted
+
+For a true-first CM with rows/columns `(1,0)`, the ANF coefficients are
+
+- `a = Theta_00`
+- `b = Theta_10 XOR Theta_00`
+- `c = Theta_01 XOR Theta_00`
+- `d = Theta_11 XOR Theta_10 XOR Theta_01 XOR Theta_00`
+
+where the implementation may store the four entries in another declared order, but conversion must be explicit. `d` is feature parity: odd-weight CMs are nonlinear in the two operands; even-weight CMs are affine.
+
+## Immediate N1 target
+
+Use the public corrected B2/B4 corpus identities from the 2026-08-25 symmetric audit as provenance anchors, preserving their labels and hashes. The first N1 experiment is not a timing race against the old CM wrapper. It is a structural replay on the same formulas:
+
+1. parse the frozen formulas into one DAG;
+2. compute structural features (support, sharing, pair-frame recurrence, affine/nonlinear-node fraction);
+3. run direct sparse ANF;
+4. run sharing-aware CSE-flat + sparse ANF;
+5. run generic 2-support/LUT folding + the same sparse ANF backend;
+6. run CM typed-frame normalization/folding + the same sparse ANF backend;
+7. compare exact outputs and symbolic-work counters before timing is treated as evidence.
+
+The decisive question is whether step 6 performs any formally justified reduction that step 5 cannot reproduce under the same local support information.

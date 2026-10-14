@@ -1,0 +1,1910 @@
+
+===== PDF PAGE 1 =====
+Certified Circuits: Stability Guarantees for Mechanistic Circuits
+Alaa Anani 1 2 Tobias Lorenz2 Bernt Schiele 1 Mario Fritz * 2 Jonas Fischer * 1
+predict
+Semantic features 
+Spurious cues
+Crocodile 
+dataset D
+Layer 1 Layer 2 Layer 3 Layer 4
+Neuron’ s top activating patches
+predict
+94% 
+accuracy
+58% 
+accuracy
+       Certified Circuit           Baseline Circuit
+Certified Circuit (ours)           Baseline Circuit       
+(a)Certified circuits, here for ‘African crocodile’,
+remove spurious cues.
+ 	 
+	
+	
+
+
+
+		
+   
+ 
+
+	
+ImageNet (IN)
+IN-C
+corruption
+IN-A 
+natural  
+adversarial
+IOI
+distracting 
+prompts
+IN-O
+anomalies
+OOD-CV
+context shift
+IOI-Hard
+Certified (ours)         Baseline          OOD test
+Circuit size ↓
+Accuracy ↑
+Better
+ Vision ResNet-101         
+Language GPT-2 Small
+IOI
+ 	 
+	
+	
+
+
+
+		
+   
+ 
+
+	
+ImageNet
+Corruption
+Natural 
+adversarial
+IOI-Hard
+Distracting 
+prompts
+Anomalies
+Context shift
+Certified (ours)         Baseline         OOD test
+Circuit size ↓
+Accuracy ↑
+Better
+ Vision (ResNet101)          
+Language (GPT2-Small)
+IOI
+(b)Certified circuits are more compact (x)and
+more accurate (y).
+Figure 1.Certified circuits are smaller, more accurate, and generalize to OOD.Given a concept dataset, we isolate a circuit—a
+subnetwork encoding that concept—that is provably stable under dataset edits. (a) Certified circuits keep stable semantic neurons
+(e.g., teeth) and abstain from unstable spurious ones (e.g., bird), improving the ‘African crocodile’ circuit accuracy to94%. (b) Across
+distribution shifts (OOD test), certified circuits are significantly smaller and more accurate than baseline circuits.
+Abstract
+Understandinghowneural networks arrive at their
+predictions is essential for debugging, auditing,
+and deployment. Mechanistic interpretability pur-
+sues this goal by identifyingcircuits—minimal
+subnetworks responsible for specific behaviors.
+However, existing circuit discovery methods are
+brittle: circuits depend strongly on the chosen
+concept dataset and often fail to transfer out-of-
+distribution, raising doubts whether they capture
+the concept or merely dataset-specific artifacts.
+We introduceCertified Circuits, which provide
+provable stability guarantees for circuit discov-
+ery. Our framework wraps any black-box dis-
+covery algorithm with randomized data subsam-
+pling to certify that inclusion decisions over cir-
+*Equal contribution 1Max Planck Institute for Informatics,
+Saarland Informatics Campus, Saarbr ¨ucken, Germany 2CISPA
+Helmholtz Center for Information Security, Saarbr¨ucken, Germany.
+Correspondence to: Alaa Anani<aanani@mpi-inf.mpg.de>.
+Proceedings of the 43 rd International Conference on Machine
+Learning, Seoul, South Korea. PMLR 306, 2026. Copyright 2026
+by the author(s).
+cuit components—neurons or edges of the model
+graph, depending on the base algorithm—are in-
+variant to bounded edit-distance perturbations of
+the concept dataset. Unstable components are ab-
+stained from, yielding circuits that are more com-
+pact and more accurate. We validate across three
+architectures (ResNet, ViT, GPT-2) on vision (Im-
+ageNet and four OOD datasets) and language
+(IOI, IOI-Hard, Greater-Than) tasks. Certified
+circuits achieve up to 56% higher accuracy and
+up to 80% fewer components, and remain reliable
+where baselines degrade.Certified Circuitsputs
+circuit discovery on formal ground by producing
+mechanistic explanations that are provably stable
+and better aligned with the target concept. Code:
+https://github.com/AlaaAnani/certified-circuits.
+1. Introduction
+Understandinghowneural networks arrive at their predic-
+tions is a central challenge in machine learning. Mecha-
+nistic interpretability tackles this by identifyingcircuits—
+minimal subnetworks responsible for specific model behav-
+1
+arXiv:2602.22968v3  [cs.AI]  28 May 2026
+
+===== PDF PAGE 2 =====
+Certified Circuits
+iors (Olah et al., 2020; Conmy et al., 2023; Elhage et al.,
+2021). In vision models, for instance, a circuit for recog-
+nizing “crocodile” might comprise particular convolutional
+filters detecting scales, sharp teeth, and elongated snouts,
+connected through specific neurons across subsequent lay-
+ers. Discovering such circuits promises not only scientific
+insight into learned representations but also practical ben-
+efits: debugging failure modes, auditing for biases, and
+enabling targeted model editing.
+Circuit discovery methods have emerged across modalities.
+In language models, activation patching and causal tracing
+isolate attention heads and MLP neurons responsible for
+factual recall, indirect object identification, and other behav-
+iors (Meng et al., 2022; Wang et al., 2023; Goldowsky-Dill
+et al., 2023). In vision, analogous methods prune model
+components to find minimal sufficient subnetworks for rec-
+ognizing visual concepts (Rajaram et al., 2023; Olah et al.,
+2020; Dreyer et al., 2024; ˙Zukowska et al., 2026). These ap-
+proaches start with aconcept dataset: a collection of inputs
+representing the target behavior. They then identify which
+model components are necessary or sufficient to maintain
+performance on this dataset, discarding the rest. The re-
+sult is a sparse circuit, i.e., a subgraph of the model graph
+intended to capture the mechanistic basis of the behavior.
+However, current circuit discovery methods lack robust-
+ness (M ´eloux et al., 2025; uit de Bos & Garriga-Alonso,
+2024; Miller et al., 2024; Friedman et al., 2024). The
+identified circuits are sensitive to the choice of concept
+dataset: adding, removing, or substituting a few semanti-
+cally equivalent examples can change the discovered cir-
+cuit unpredictably. They also fail to generalize to out-of-
+distribution (OOD) data. A circuit found using photographs
+of crocodiles on land may perform poorly on crocodiles in
+water, cartoon crocodiles, or crocodiles from unusual an-
+gles. Both issues stem from the same underlying problem—
+current methods overfit to the particular concept dataset
+rather than recovering the actual concept representation.
+This undermines confidence in the mechanistic explanation
+these methods produce.
+To address this, we introduceCertified Circuits(Fig. 2), a
+framework that computes the first dataset-level robustness
+guarantees for circuit discovery. Given a concept datasetD
+and any black-box circuit discovery algorithm, we construct
+a certified circuitC∗ with the following guarantee:
+For any concept datasetD′ within edit distancer ofD,
+the certified circuitC∗ provably remains unchanged.
+Edit distance counts insertions, deletions, or substitutions of
+examples—sor= 5 guarantees stability under any combi-
+nation of up to five such changes. This covers an exponen-
+tially large family of datasets.
+Our framework isalgorithm-agnostic: we (i) randomly sub-
+sample the concept dataset several times, (ii) run the base al-
+gorithm on each subsample to obtain candidate circuits, and
+(iii) aggregate votes for each individual circuit component
+to determine which components are guaranteed to represent
+the concept across perturbed datasets. A key byproduct is
+adaptive sparsity: certification identifies components for
+which no robust decision can be made, yielding circuits that
+are more compact and accurate than fixed top-Kbaselines.
+In summary, we make the followingcontributions:
+1. We introduceCertified Circuits, the first framework
+providing provable, algorithm-agnostic robustness
+guarantees for circuit discovery.
+2. We deriveprovable boundson certified radii and char-
+acterize their dependence on a probability threshold
+and deletion probability required for subsampling.
+3. We demonstrate empirically across three architectures
+(ResNet, ViT, GPT-2), two modalities (vision, lan-
+guage) and four discovery algorithms thatCertified
+Circuitsaremore compact,more sufficient, andgen-
+eralize better to OODthan uncertified baselines while
+beinghighly structurally stable.
+We validate Certified Circuits across two modalities and
+three architectures, evaluatingsufficiency(does the circuit
+preserve model behavior?) andcompactness(how small can
+the circuit be while sufficient?). For vision, we test ResNet-
+50/101 and ViT-B/16 on ImageNet and four OOD bench-
+marks (OOD-CV , ImageNet-A, ImageNet-O, ImageNet-
+C) with neuron-level top-K scoring (relevance, activation,
+rank). For language, we test GPT-2 Small on IOI, IOI-
+Hard, and Greater-Than with EAP-IG (Hanna et al., 2024)
+as the base edge-level algorithm. Certified circuits consis-
+tently outperform uncertified baselines: certified accuracy
+improves by up to 56% on OOD shifts using up to 41%
+fewer neurons, and language circuits use up to 80% fewer
+edges at matched or higher accuracy. These gains hold
+across modalities, architectures, and base algorithms, con-
+firming that certification captures more transferable mech-
+anistic structure while pruning components that are not ro-
+bustly necessary (Fig. 1). We further analyze structural
+convergence when circuits are rediscovered on shifted dis-
+tributions and across random seeds. Certified Circuits lift
+classic circuit-based mechanistic explanations toprovably
+robust and more compact explanations that empirically bet-
+ter generalize to OOD data.
+2. Related works
+2.1. Mechanistic Interpretability
+Mechanistic interpretability aims to reverse-engineer the
+internal computations of neural networks, moving beyond
+input-output behavior to understandhowmodels arrive at
+2
+
+===== PDF PAGE 3 =====
+Certified Circuits
+their predictions (Olah et al., 2020; Elhage et al., 2021;
+Bereska & Gavves, 2024). The field spans observational
+methods that analyze learned representations (e.g., prob-
+ing, sparse autoencoders) and interventional methods that
+causally localize computations through targeted ablations
+and activation patching (Zeiler & Fergus, 2014; Zimmer-
+mann et al., 2021; Meng et al., 2022).
+Circuit discovery.Circuit discoveryaims to identify mini-
+mal subnetworks (circuits) that implement a target behavior
+or concept. Circuit components—nodes and edges of the
+computational graph—can correspond to feature channels
+in CNNs, attention heads or head-to-head connections in
+transformers, MLP neurons, etc., depending on the chosen
+granularity (Bereska & Gavves, 2024). Typically, one (i)
+defines a concept via a dataset, (ii) represents the model
+as a computational graph with nodes and edges connect-
+ing them, and (iii) extracts a sparse subgraph whose com-
+ponents are necessary and/or sufficient for that behavior
+(Conmy et al., 2023). In language models, this approach
+has revealed circuits for factual recall (Meng et al., 2022),
+indirect object identification (Wang et al., 2023), and most
+recently for verifying chain-of-thought reasoning (Zhao
+et al., 2026). ACDC (Conmy et al., 2023) automates dis-
+covery via iterative edge pruning. In vision, circuits have
+been studied via feature-preserving subnetworks (Hamblin
+et al., 2022), connectivity-based tracing of concept-specific
+computations (Rajaram et al., 2023; Wang et al., 2019),
+disentanglement of polysemantic neurons into concept cir-
+cuits (Dreyer et al., 2024), and qualitative connectome-style
+visualizations spanning all layers (Kowal et al., 2024).
+Stability limitations.A core limitation is that discovered
+circuits can behighly unstable: swapping in different (but
+semantically equivalent) examples to represent the same
+concept (or making small additions/removals) can yield
+substantially different circuits. This raises a basic ques-
+tion:is the circuit capturing the concept, or overfitting to
+dataset-specific spurious cues?Recent work documents and
+diagnoses such fragility. M ´eloux et al. (2025) cast circuit
+discovery as statistical estimation and show that EAP-IG
+(a transformer circuit discovery method) circuits change
+markedly even when thesame behavioris defined using
+paraphrased prompts, indicating high variance in the dis-
+covered structure. Miller et al. (2024) further find that com-
+mon circuit faithfulness metrics are not robust to evaluation
+choices. Finally, Friedman et al. (2024) show that explana-
+tions can appear faithful on the discovery distribution yet
+fail to generalize, creatinginterpretability illusions.
+These works highlight the problem but do not provide
+solutions that rule out instability. Concurrent work uses
+neural network verification to certify the faithfulness of a
+fixedcircuit under smallinput-levelperturbations (Hadad
+et al., 2026); in contrast, our concern isdataset-to-circuit
+instability, where thediscovered circuit itselfchanges
+when the concept dataset changes. To our knowledge, no
+prior method certifies invariance of circuit structure under
+bounded dataset-level perturbations.
+2.2. Robustness Certification
+Arobustness certificateis a worst-case guarantee ofoutput
+invariance: given an input x and a radius r, the certified
+model provably returns the same prediction for every per-
+turbed inputx′ with dist(x,x′)≤r (otherwise it abstains).
+Randomized smoothing yields such certificates by aggre-
+gating the base model’s predictions under random perturba-
+tions and converting the resulting probability margin into
+a certified radius (L´ecuyer et al., 2019; Cohen et al., 2019;
+Anani et al., 2025). Beyond classification, smoothing has
+been extended to (i)structured outputsvia per-component
+abstention, certifying only confident components in seg-
+mentation (Fischer et al., 2021; Anani et al., 2024), and
+(ii)discrete objectsunder edit distance, where RS-Del uses
+randomized deletions to certify invariance against insertions,
+deletions, and substitutions within an edit budget (Huang
+et al., 2023). We build on these ideas to certify circuit
+component stability underdataset-level edit perturbations.
+Summary.Circuit discovery is unstable: small edits to
+the concept dataset, even replacing examples with seman-
+tically equivalent ones, can produce entirely different cir-
+cuits, blurring whether the circuit encodes the concept or
+dataset-specific artifacts. We address this by certifying the
+dataset-to-circuitmapping: using deletion-based smoothing
+(RS-Del) (Huang et al., 2023) to model bounded dataset
+edits, together with circuit component-level certification
+to exclude the unstable circuit components (Fischer et al.,
+2021), we returncertified circuitswhose certified compo-
+nents are provably invariant to edits within an edit distance.
+3. Certified Circuits
+To overcome the circuit instability in prior work, we for-
+malize circuit discovery as a dataset-level mapping and
+ask: which circuit components areprovably stableunder
+bounded edits to the concept dataset? Our approach is
+driven by three goals. First, we seek guarantees (not empiri-
+cal heuristics) that circuit structure is invariant, ruling out
+brittleness by construction. Second, edit distance provides a
+threat model: it captures the scenario where a practitioner
+adds examples, removes outliers, or swaps in semantically
+equivalent images, and expects the discovered circuit to re-
+main unchanged if it encodes the concept. Third, stability
+under such edits is a prerequisite forout-of-distribution gen-
+eralization: a circuit that changes when the concept dataset
+is perturbed cannot be expected to transfer to shifted test
+distributions. Enumerating all bounded-edit datasets is in-
+3
+
+===== PDF PAGE 4 =====
+Certified Circuits
+feasible, so we use randomized smoothing: we run circuit
+discovery on many random subsamples and aggregate the
+outcomes to certify stability for all edits within the radius.
+Our approach (Figure 2).Given a model graph G=(V,E) ,
+a concept datasetD, and any black-box circuit discovery
+algorithmA, we certify which circuit components (vertices
+v∈V or edgese∈E ) are provably stable under bounded
+dataset edits. After briefly reviewing randomized smoothing,
+we formalize our setup (§3.1). We then definedataset dele-
+tion smoothing(RS-Del (Huang et al., 2023); §3.2) and a
+smoothed circuit discoveryrule that aggregates component-
+wise inclusion probabilities and thresholds them to output
+certified in/outorabstain(§3.3). We present Theorem 3.1,
+which guarantees certified decisions are invariant for all
+datasets within edit-distance r. Finally, we describe the
+Monte Carlo estimation of the certified circuit discovery
+algorithm (§3.4) and summarize its key properties (§3.5).
+Background: Randomized Smoothing
+We introduce randomized smoothing (L´ecuyer et al., 2019;
+Cohen et al., 2019) as the main technical tool for turning
+empirical stability under random perturbations intocertified
+robustness guarantees. Letfb :X→Y be a base classifier
+and letϕ:X→D(X) be a perturbation mechanism that
+maps an inputx to a distributionϕ(x) over perturbed inputs.
+Randomized smoothing defines the smoothed classifier
+f(x) := arg max
+y∈Y
+Pz∼ϕ(x)[fb(z) =y].(1)
+A certificate is obtained by lower-bounding the probability
+of the predicted class and deriving a radiusr such that, with
+confidence at least1−α, the prediction is invariant within
+the corresponding neighborhood, i.e.,f(x) =f(x ′) for all
+x′ satisfyingdist(x,x ′)≤r.
+3.1. Setup and Inputs
+LetG= (V,E) denote the model as a directed computa-
+tional graph, where verticesV are computation units (e.g.,
+neurons, attention heads) and edges E represent connec-
+tions between them. A circuit C is a subgraph of G spec-
+ified by selecting some subset of components. Let U de-
+note the set ofcircuit componentsover which the base al-
+gorithm operates: U ⊆ Vfor node-level methods (e.g.,
+neuron-level top-K) andU ⊆E for edge-level methods
+(e.g., EAP-IG). We additionally define aconcept dataset
+D= (x 1,...,x |D|)∈ X∗, viewed as a finite sequence
+of inputs that contain the same concept (e.g., same-class
+images).
+Let black-boxcircuit discovery algorithm A map a concept
+dataset to a binary mask over circuit components:
+A:X ∗ −→ {0,1}|U|,(2)
+where Au(D) = 1 indicates that component u∈ U is
+included in the circuit associated withD andAu(D) = 0
+indicates exclusion. Two common examples of A are: (i)
+node-level top-K, which scores vertices onD (e.g., by mean
+activation, gradient-based relevance, or per-example rank)
+and retains the top fraction per layer as sparse mask overv∈
+V (Olah et al., 2020; Hamblin et al., 2022; Rajaram et al.,
+2023; Dreyer et al., 2024); and (ii) edge-level attribution
+(e.g., EAP-IG (Hanna et al., 2024)), which scores edges of
+the computational graph via integrated gradients and retains
+the top-scoring fraction, yielding a sparse mask overe∈E .
+The goal is to construct asmoothed(certified) variant ˜Aτ
+ofA whose component-wise decisions are provably stable
+under bounded edit perturbations ofD.
+3.2. Dataset Deletion Smoothing
+To certify robustness of circuit discovery under dataset-level
+edits, we model the concept dataset D= (x 1,...,x |D|)
+as a sequence and measure perturbations via edit distance
+distedit(D,D′), counting insertions, deletions, and substitu-
+tions required to transformD toD′. Checking stability un-
+der all edits is intractable; instead, following RS-Del (Huang
+et al., 2023), we userandomized deletionsas a smoothing
+perturbation, which yields certificates with respect to the full
+edit distance. Although concept datasets are naturally un-
+ordered, we fix an arbitrary ordering solely to definedistedit;
+this does not affect the certificate since our base algorithms
+Adepend only on permutation-invariant statistics.
+We define a deletion-based perturbation distribution
+ϕpdel(D)by sampling an i.i.d. binary mask
+ε= (ε 1,...,ε |D|), ε i∼Bernoulli(1−p del),
+whereεi = 1 keepsxi andεi = 0 deletes it. This produces
+anordered subsequence:
+D⊙ε:= (x i|ε i = 1)
+= (xi1,...,x im),with1≤i 1 <···<i m≤|D|.
+The random sub-datasetD⊙ε is distributed according to
+ϕpdel(D). This perturbation model is the input-side mech-
+anism underlying our certified guarantees, and it directly
+connects our setting to RS-Del’s edit-distance certification
+under deletion-based smoothing (Huang et al., 2023).
+3.3. Smoothed Circuit Discovery
+Given a base circuit discovery algorithmA and the deletion
+perturbation distributionϕpdel(D), we define thesmoothed
+circuit discovery algorithm
+˜Aτ :X ∗→{0,1,⊘} |U|,
+which returns for each component u∈ U one of three
+outcomes:certified in(1),certified out(0), orabstain( ⊘).
+4
+
+===== PDF PAGE 5 =====
+Certified Circuits
+A. Concept dataset 𝒟  
+B. Model as a graph (𝒱, 𝓔)G=
+C. Circuit discovery algorithm A
+A
+① Inputs
+Draw  masks  
+  
+and apply on the dataset 
+𝒟 
+= 𝒟
+n
+εj∼Bernoulli(1−pdel)
+j
+⊙εj
+𝒟1
+𝒟2
+𝒟n
+② Sample deletions
+Run algorithm   
+per dataset sample 𝒟
+A
+j
+𝒟 A(1
+)
+𝒟 A(2
+)
+𝒟 A(n
+)
+③ Circuit per sample
+Certified in 
+pu>τ
+Majority in
+⊘
+Certified out 
+1−pu>τ
+Abstain 
+Otherwise
+Majority out
+Unstable
+Compute per-component  
+inclusion probability  (Eq. 3) 
+If  is high  certify in
+u
+pu
+pu →
+④ Aggregate & Certify
+Circuit componentspu
+τ
+⊘
+⑤ Certified circuit
+With high confidence, every 
+non-abstain component 
+remains in/out for any 𝒟′ 
+with 𝒟, 𝒟′ .distedit( )≤r
+Figure 2.Certified circuit discovery via concept deletion smoothing.(§3.1) Given a concept dataset D, model graphG, and circuit
+discovery algorithmA: (§3.2) We sample dataset variants via per-example deletion with probabilitypdel, (§3.3) runA on each to obtain
+per-sample circuits, (§3.4) aggregate per-component (e.g., vertex) inclusion frequencies, (§3.4) certify components asin,out, orabstain
+(⊘) based on votes consistency. (§3.5) The certified circuit is provably invariant to concept dataset edits within radiusr.
+The confidence thresholdτ∈[0.5,1) controls how much
+posterior mass is required to make a non-abstaining decision:
+if neither inclusion nor exclusion is sufficiently likely under
+randomized deletions, the method abstains.
+To define ˜Aτ , we quantify how consistently algorithm A
+includes a componentu under randomized deletions as the
+smoothed inclusion probability:
+pu(D) :=P ε
+
+Au
+
+D⊙ε
+
+= 1
+
+,
+εi∼Bernoulli(1−p del)i.i.d. (3)
+i.e., the probability that A includesu when run on a ran-
+domly deleted sub-datasetD⊙ε . Values near 1 meanu is
+selected almost always (stable inclusion), while values near
+0mean it is rarely selected (stable exclusion).
+The smoothed algorithm ˜Aτ converts these probabilities into
+certifiedper-component decisions by requiring a margin of
+at least τ in favor of inclusion or exclusion. Following
+segmentation-style smoothing (Fischer et al., 2021), we set
+˜Aτ
+u(D) =
+
+
+
+1ifp u(D)>τ,
+0if1−p u(D)>τ,
+⊘otherwise,
+(4)
+so ˜Aτ
+u(D) = 1 certifies that u is robustly included,
+˜Aτ
+u(D) = 0 certifies that it is robustly excluded, and
+˜Aτ
+u(D) =⊘ abstains when neither decision has enough
+evidence. We write ˜Aτ(D) := ( ˜Aτ
+u(D))u∈U∈{0,1,⊘} |U|
+for the resulting three-valued mask over all components.
+Guarantees.The rule defining ˜Aτ converts vote consistency
+under randomized deletions into a worst-case guarantee
+overalldatasets within an edit-distance neighborhood of D.
+Combining RS-Del (Huang et al., 2023) with component-
+wise certification (Fischer et al., 2021) yields a certified
+stability guarantee for every non-abstaining component:
+Theorem 3.1: Certified Circuit Robustness
+With confidence at least 1−α , for any circuit compo-
+nentu∈U with ˜Aτ
+u(D)∈{0,1} and any perturbed
+datasetD′ satisfying distedit(D,D′)≤r , the member-
+ship decision is invariant:
+˜Aτ
+u(D′) = ˜Aτ
+u(D),
+where the certified radius is
+r:=
+log(1.5−τ)
+logp del
+
+.(5)
+The guarantee in Theorem 3.1 states that any component
+that ˜Aτ certifies asin( 1) orout( 0) of the circuit remains
+so for all concept datasets D′ with distedit(D,D′)≤r ,
+with confidence at least 1−α . Components assigned⊘ are
+excluded from the certified circuit. The proof is in App. A.
+From certified mask to a circuit.Given the per-component
+guarantee in Theorem 3.1, we define the certified circuit as
+the subgraph ofG induced by certified-in components. Let
+U∗ :={u∈U| ˜Aτ
+u(D) = 1}(6)
+denote the set of certified-in components. The certified
+circuitC∗ = (V∗,E∗) is then defined as: (i) Fornode-level
+methods(U ⊆ V): V∗ =U ∗ andE∗ ={(v,w)∈ E |
+v,w∈V ∗}. (ii) Foredge-level methods( U⊆E ):E∗ =U∗
+andV∗ = S
+(v,w)∈E∗{v,w} . In both cases, components
+assigned⊘are excluded as they are not certifiably stable.
+5
+
+===== PDF PAGE 6 =====
+Certified Circuits
+3.4. Estimating the Certified Circuit
+In practice, the probabilitiespu(D) (Eq. 3) are unknown and
+are estimated by Monte Carlo sampling: drawn i.i.d. dele-
+tion masksε(1),...,ε (n)∼Bernoulli(1−p del)|D|, evalu-
+ateAu(D⊙ε (j)) for eachj, and use the resulting empirical
+frequency to estimate the lower bound ofpu(D), from which
+a (1−α) lower confidence bound is computed to decide
+whether ˜Aτ
+u(D)∈ {0,1} or⊘. We follow the standard
+evaluation scheme as in (Fischer et al., 2021) and (Huang
+et al., 2023) in our estimation Algorithm 1 in App. C.3.
+3.5. Properties of Certified Circuits
+Smoothed circuit discovery yields certified circuits with
+three key properties: (i)provable dataset-level stability:
+all non-abstain certified components are invariant under any
+sequence of up to r dataset edits; (ii)spurious-feature
+suppression: components whose membership decisions
+are unstable across deletions are abstained from, producing
+strictly sparser circuits (Fig. 1 (a), Fig. 5, App. F.6); and (iii)
+algorithm and model agnosticism: our framework wraps
+any circuit discovery methodA and modelG without requir-
+ing access to their internals. Next, we discuss that Certified
+Circuits also havepracticalbenefits, better capturing the
+target concept prediction and generalizing to OOD data.
+4. Experimental Setup
+Baseline circuit discovery algorithms.We instantiate
+our certification framework with four standard base algo-
+rithms (Eq. 2). Forvision, we follow the common top- K
+flow (Hamblin et al., 2022; Conmy et al., 2023; Rajaram
+et al., 2023; Dreyer et al., 2024): candidate verticesv∈V
+are feature channels at each residual block’s output, scored
+and ranked per layer, with top- K fraction retained. We
+condsider three scorers:relevance,activation, andrank
+— using relevance by default in §5 and evaluating others
+in App. F.1. Forlanguage, we use EAP-IG (Hanna et al.,
+2024), which scores edges e∈E via integrated gradients
+and retains the top-K fraction. For certified circuits, K
+denotes theeffectivefraction of components retained after
+certification (averaged across layers) rather than the base
+algorithm’s targetK, since certification abstains on unsta-
+ble components that the uncertified base algorithm would
+otherwise include. Thus, at a fixedK, the certified circuits
+effective size is always≤the baseline.
+Datasets and architectures.Forvision, we use Ima-
+geNet (Russakovsky et al., 2015) as the ID dataset, with each
+class defining a concept, and evaluate under four OOD shifts:
+OOD-CV (Zhao et al., 2022), ImageNet-A and ImageNet-
+O (Hendrycks et al., 2021), and ImageNet-C (Hendrycks &
+Dietterich, 2019). Circuits are discovered on 100 randomly
+selected classes. Main results use ResNet-101 and ResNet-
+50 (He et al., 2016); ViT-B/16 results are in App. F.3. For
+language, we evaluate GPT-2 Small (Radford et al., 2019)
+on three tasks: indirect object identification (IOI) (Wang
+et al., 2023), IOI-Hard, and Greater-Than (Hanna et al.,
+2023). The task concept dataset is a prompt set; circuits are
+discovered on ID splits and evaluated on held-out ID and
+OOD splits.Visionandlanguagesetups are in App. B.1
+& B.2.
+Sufficiency.We measure circuit sufficiency by preserva-
+tion of model predictions when computation is restricted to
+the discovered circuit, following standard practice (Conmy
+et al., 2023; Meng et al., 2022; Wang et al., 2023; Dreyer
+et al., 2024). For class- c circuit Cc, we zero non-circuit
+channels at each residual block and evaluate on concept
+datasetDc. We report mean circuit-class accuracy
+cACC:= 1
+|Y|
+X
+c∈Y
+CA(Cc,Dc),(7)
+where CA(Cc,Dc) is the pruned model’s accuracy onDc
+andY is the set of evaluated classes. Language sufficiency
+is analogous, restricting computation to certified-in edges
+and measuring task accuracy on the prompt set.
+Certification hyperparameters.The choice of pdel andτ
+trades off certification strength against the base algorithm’s
+operating conditions: highpdel deletes more data, hindering
+the base algorithm, while high τ demands higher consis-
+tency, increasing the abstain rate. Forvision, we default
+to pdel = 0.6 and τ= 0.95 (certified radius r= 1 ) as
+a good sweet spot. Forlanguage, where larger concept
+datasets tolerate more aggressive deletion, we tunepdel and
+τ per task and report the best configuration (App. Table. 2).
+Results at larger radii are in App. F.4 (vision) and E.2 (lan-
+guage). We usen= 1,000 Monte Carlo samples and failure
+probabilityα= 0.001 throughout, following standard prac-
+tice (L´ecuyer et al., 2019; Cohen et al., 2019; Anani et al.,
+2025). The theoretical minimumn is analyzed in App. C.2.
+All certified results hold with confidence1−α= 99.9%.
+5. Results
+We evaluateCertified Circuitsin four ways:sufficiency and
+compactness(§5.1), testing whether circuits preserve task
+performance when used in isolation and how small they can
+be;feature visualization(§5.2), qualitatively inspecting
+the features encoded by the circuits,out-of-distribution
+generalization(§5.3), measuring whether circuits discov-
+ered in-distribution retain accuracy under distribution shift;
+andstructural stability(§5.4), assessing whether circuit
+structure remains stable when re-discovered on shifted data.
+6
+
+===== PDF PAGE 7 =====
+Certified Circuits
+cACC↑ SizeK↓
+Domain Setting Dataset / Task Full Baseline Certified ∆ Full Baseline Certified ∆
+Vision
+ResNet-101
+ID ImageNet 0.78 0.83 0.95 ↑14% 1.000 0.700 0.336 ↓52%
+OOD
+ImageNet-A 0.07 0.60 0.94 ↑56%
+1.000
+0.400 0.342 ↓15%
+OOD-CV 0.20 0.73 0.93 ↑28% 0.400 0.269 ↓33%
+ImageNet-C 0.57 0.72 0.92 ↑28% 0.700 0.416 ↓41%
+ImageNet-O 0.81 0.93 0.98 ↑6% 0.700 0.417 ↓41%
+Language
+GPT-2 Small
+ID
+IOI 1.00 1.00 1.00 0%
+1.000
+0.300 0.129 ↓58%
+IOI-Hard 1.00 1.00 1.00 0% 0.200 0.125 ↓38%
+Greater-Than 1.00 1.00 1.00 0% 0.040 0.010 ↓75%
+OOD
+IOI 0.98 0.99 1.00 ↑2%
+1.000
+0.800 0.487 ↓40%
+IOI-Hard 0.79 0.85 0.91 ↑8% 0.300 0.297 ↓2%
+Greater-Than 1.00 1.00 1.00 0% 0.040 0.008 ↓80%
+Table 1.Certified vs. baseline circuit sufficiency.Peak cACC and corresponding circuit size K under sufficiency pruning on ResNet-101
+for vision datasets and GPT-2 Small for language tasks. Circuits are discovered on ID datasets and evaluated on ID or on OOD shifts. ∆
+is relative improvements on unrounded values. Certification hyperparameters are in App. Table 2. All three vision discovery algorithms in
+App. Table 5.
+0.00 0.20 0.40 0.60 0.80 1.00
+0.00
+0.25
+0.50
+0.75
+1.00
+cACC ↑
+Circuit input
+ImageNet
+0.20 0.40 0.60 0.80 1.00
+Natural adversarial
+ImageNet-A
+0.20 0.40 0.60 0.80 1.00
+Context shift
+OOD-CV
+0.20 0.40 0.60 0.80 1.00
+Corruption
+ImageNet-C
+0.20 0.40 0.60 0.80 1.00
+Semantic anomalies
+ImageNet-O
+ID OOD
+Size K ↓  (Neurons)
+Paradigm: Certified (ours) Top-K Relevance Architecture: ResNet-101 ResNet-50
+Figure 3.Circuit accuracy (cACC) vs. size K.Solid lines show certified circuits, dashed show the baseline, with colors distinguishing
+models. Circuits are discovered on ImageNet and evaluated on ID or OOD data. This figure is extended to ViT-B/16 in App. Fig. 12 and
+language circuits in App. Fig. 9 & 10.
+ID
+EAP-IG
+Certified
+(ours)
+r = 958% fewer edges
+↑0% peak cACC
+IOI
+r = 4238% fewer edges
+↑0% peak cACC
+IOI-Hard
+r = 5075% fewer edges
+↑0% peak cACC
+Greater-Than
+0.0 0.2 0.4 0.6 0.8 1.0
+OODEAP-IG
+Certified
+(ours)
+r = 840% fewer edges
+↑2% peak cACC
+0.0 0.2 0.4 0.6 0.8 1.0
+Size K ↓
+r = 422% fewer edges
+↑8% peak cACC
+ (Edges)
+0.0 0.2 0.4 0.6 0.8 1.0
+r = 5980% fewer edges
+↑0% peak cACC
+Edge category: Certified in Abstain Certified out EAP-IG selected
+Figure 4.Edges of thecertified vs. baseline EAP-IG circuits on GPT-2 Small at peak cACC.Annotations report the relative edge
+reduction and the gain in peak cACC of the certified circuit over EAP-IG. The certified radiusrdenotes the best value for every task.
+5.1. Circuit Sufficiency and Compactness
+We study two questions:(i) sufficiency: does the circuit
+alone preserve the target class prediction? and(ii) com-
+pactness: how small can the circuit be while remaining
+sufficient? We sweep the circuit sizeK∈(0,1] (fraction of
+components retained), and report (a) thepeakcACC over K
+and the correspondingK (Table 1), (b) the cACC–K curves
+onvisionacross five datasets (Fig. 3) and (c) the edge-level
+circuit breakdown onlanguagetasks at peak cACC (Fig. 4).
+Sufficiency.Does using the circuit alone preserve the
+7
+
+===== PDF PAGE 8 =====
+Certified Circuits
+Certified inAbstain (in Baseline)Certified out
+Layer 1 Layer 2 Layer 3 Layer 4
+Neuron's top activating patches
+cACC: Baseline 78% → Certified 98% (↑26%) at (↓34%) K
+Figure 5.Features encoded by certified-in, abstain (within
+Baseline), and certified-out neurons(class: digital watch ,
+ResNet-101). Per layer, top-activating neurons in each category.
+class/task accuracy?Acrossvisionandlanguage, certi-
+fied circuits match or exceed baseline peak cACC (and the
+full model) on all datasets and tasks (Table 1, Fig. 3). On
+ImageNet (ID), certified circuits reach 95% vs. the base-
+line’s 83% (↑14 %). Onlanguage, peak cACC is saturated
+at 100% for both methods on all three ID tasks.
+Compactness.How small can the circuit be while suffi-
+cient?Across both modalities, certified circuits reach peak
+cACC at substantially smaller sizeK than baselines (Table 1,
+Fig. 3 (vision), Fig. 4 (language)). On ImageNet, the certi-
+fied circuit is 52% smaller while improving cACC by 14%,
+with similar reductions across other datasets. Onlanguage,
+where sufficiency is already saturated, compactness is the
+dominant signal: certified circuits match EAP-IG’s peak
+cACC on ID while using 58%, 38%, and 75% fewer edges
+on IOI, IOI-Hard, and Greater-Than respectively (Fig. 4).
+Effect of compactness on sufficiency.Fig 3 plots cACC
+against the circuit sizeK across five vision datasets. Both
+certified and baseline circuits follow a three-stage pattern
+asK increases: (i) small K yields insufficient circuits that
+omit class-critical neurons; (ii) intermediate K captures the
+necessary evidence and cACC peaks; (iii) large K introduces
+competing or spurious features, reducing class specificity
+and degrading cACC. Certified circuits shift this curve fa-
+vorably in both dimensions, peaking at smaller K (more
+compact) and at higher cACC (more sufficient), pruning
+components that are unnecessary and harmful, rather than
+trading one property for the other. Onlanguage, both curves
+plateau rather than degrade at large K; certified circuits
+plateau at higher/equal cACC at smallerK(App. Fig. 9).
+Certified circuits aresubstantially smaller,more ac-
+curateonvisionandmatching accuracyonlanguage.
+5.2. Feature Visualization of Circuits
+To inspect what certification removes, Fig. 5 visualizes
+per-layer neurons in three categories: certified-in, abstain
+(within the baseline circuit), and certified-out. Certified-
+in neurons consistently respond to class-defining features
+(watch faces, dials). Abstained neurons, included by the
+baseline but dropped by certification, predominantly fire on
+co-occurring but non-class-specific cues (hands, wrists) or
+on spurious patterns. Certified-out neurons rarely fire on
+the concept dataset at all. The resulting digital watch
+certified circuit improves cACC by26% at 34% smaller size,
+suggesting that abstained components are not merely unin-
+formative but actively harmful, biasing the baseline toward
+spurious class correlates. Additional classes are in App. F.6.
+Certified circuitsabstain from spurious cues.
+5.3. Out-of-Distribution Generalization
+Do circuits discovered in-distribution retain accuracy on
+shifted data?Certified circuits transfer substantially better
+than baselines, with the largest gains on the hardest shifts
+(Table 1, Fig. 3 (vision), Fig. 4 (language)). Onvision,
+ImageNet-discovered certified circuits reach 93% cACC on
+OOD-CV (↑28% over baseline) at 33% smaller K, and
+94% on ImageNet-A (↑56% ) at 15% smaller K—shifts
+where the full model collapses to 20% and 7%. Onlan-
+guage, certified circuits match or improve EAP-IG’s peak
+cACC under OOD prompts at 40%, 2%, and 80% fewer
+edges on IOI, IOI-Hard, and Greater-Than (Fig. 4), with up
+to↑8% cACC on IOI-Hard. Results suggest that certified
+circuits capture concept relevant features that transfer across
+shifts. Abstention removes components with unstable inclu-
+sion under dataset perturbations, often spurious, yielding
+circuits that generalize beyond the discovery distribution.
+Certified circuitsgeneralize to OOD shifts.
+8
+
+===== PDF PAGE 9 =====
+Certified Circuits
+5.4. Structural Stability Under Distribution Shift
+OOD_CV ImageNet-A ImageNet-O ImageNet-C
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+OOD dataset
+Structural stability (IoU↑)
+ΔcACC= 100% 85%
+10% 31%
+Certified (ours)
+Baseline
+Figure 6.Structural stability under distribution shift.Per-class
+IoU between circuits discovered on ImageNet and re-discovered
+on each OOD dataset, at theK maximizing the certified–baseline
+∆cACC gap. Boxes show the distribution over classes.
+The previous experiments used the same circuit on different
+distributions. A stronger test asks:does the certified circuit
+structure remain stable when re-discovered on shifted dis-
+tributions of the same concept?We measure this via IoU
+between circuits discovered on ImageNet and re-discovered
+on each shifted dataset (Fig. 6). For two circuits with vertex
+setsVandV ′, the IoU is|V∩V ′|/|V∪V ′|.
+Overall, certified circuits have higher median IoU and tighter
+distributions than baselines across shifts, indicating more
+consistent structure. The largest stability gains align with
+the largest ∆cACC performance gains on OOD-CV (100%)
+and ImageNet-A ( 85%). ImageNet-O is the exception,
+where both methods show high variance, suggesting class-
+dependent circuit reconfiguration under semantic anomalies.
+These findings reinforce the OOD generalization results:
+abstention suppresses shift-sensitive vertices, concentrating
+circuits on an invariant core that better captures the underly-
+ing concept rather than dataset-specific artifacts.
+Certified circuitsconverge to a similar invariant core
+when re-discovered on shifted distributions.
+6. Discussion and Limitations
+Discussion.Certified circuits outperform baselines across
+three architectures (ResNet, ViT, GPT-2) and two modalities
+(vision, language). For sufficiency and compactness, certi-
+fication shifts the accuracy–sparsity curve: circuits peak
+at smaller sizes with higher cACC, suggesting unstable
+components are not only unnecessary but harmful. Fea-
+ture visualization confirms this: abstained neurons fire on
+co-occurring but non-class-specific cues, while certified-
+in neurons consistently respond to class-defining features.
+For OOD generalization, certified circuits discovered in-
+distribution (ImageNet) transfer without re-discovery, im-
+proving cACC by up to 56% on ImageNet-A while reducing
+circuit size, and producing language circuits up to 80%
+smaller at matched or higher accuracy. Structural stabil-
+ity results support this mechanism: certified circuits show
+higher IoU when re-discovered on OOD data, indicating
+convergence to an invariant core. Beyond cross-distribution
+stability, certified circuits also converge across random seeds
+(App. F.2), confirming the certification procedure itself is
+reliable. Together, these findings support our hypothesis
+that the instability noted in prior work (M´eloux et al., 2025;
+Miller et al., 2024; Friedman et al., 2024) arises from com-
+ponents inconsistently selected across dataset variants; ab-
+stention removes them, yielding circuits that provably reflect
+the concept rather than dataset-specific artifacts.
+Limitations.Certifying a circuit requires running the dis-
+covery algorithm on n randomized deletion masks, but
+caching forward and backward passes across masks keeps
+wall-clock cost close to running the base algorithm once
+(∼2.4× overhead at n=1000; App. D), so runtime does
+not linearly scale inn. Larger certified radii require higher
+deletion rates, which can degrade the base algorithm on
+very small concept datasets; however, certification recovers
+full performance at larger|D|, supporting radii up tor=59
+(App. F.4, E.2). We use a single sparsityK across layers;
+layer-wise budgets inspired by pruning literature may yield
+finer sparsity allocation. Concurrent work (Hadad et al.,
+2026) certifies circuits via neural-network verification, but
+its guarantees are over continuousinputperturbations to a
+fixedcircuit, and its reliance on exact verifiers restricts it to
+small models and datasets (MNIST, CIFAR-10, GTSRB);
+our guarantees instead coverdataset-leveledits to thediscov-
+eredcircuit, and scale to any standard vision and language
+models. While we expect the framework to extend to larger
+language models, multimodal models, and sparse-activation
+architectures, experimental validation remains open.
+7. Conclusion
+We introducedCertified Circuits, a framework providing
+provable stability guarantees for circuit discovery. By
+combining deletion-based randomized smoothing with per-
+circuit-component abstention, our method certifies that
+circuits remain unchanged under bounded dataset edits—
+directly addressing the instability undermining confidence
+in mechanistic explanations. Empirically, certified circuits
+are more compact, more sufficient, and generalize better to
+OOD data, while remaining structurally stable beyond their
+certified radius. Our work establishes that reliable circuit
+discovery is achievable: practitioners can obtain mechanis-
+tic explanations that are provably stable and empirically
+robust, bridging interpretability and trustworthiness.
+9
+
+===== PDF PAGE 10 =====
+Certified Circuits
+Impact Statement
+This paper advances the field of machine learning by intro-
+ducing Certified Circuits, a framework that provides formal
+stability guarantees for mechanistic circuit discovery meth-
+ods. By enabling provably robust mechanistic explanations,
+our work strengthens the reliability and scientific validity of
+interpretability analyses, particularly under dataset variation
+and distribution shift.
+We anticipate that this contribution will have positive down-
+stream impacts in areas where trustworthy model under-
+standing is critical, such as model debugging, robustness
+evaluation, and auditing of learned representations. More
+stable and transferable explanations may help practition-
+ers better identify spurious correlations, understand failure
+modes, and design safer machine learning systems.
+At the same time, as with interpretability tools more broadly,
+there is a risk that certified explanations could be misinter-
+preted as complete or definitive accounts of model behavior,
+despite capturing only a subset of the underlying computa-
+tion. We emphasize that certified circuits provide guarantees
+relative to a specific threat model and concept dataset, and
+should be used as one component within a broader inter-
+pretability and evaluation toolkit.
+Overall, we believe the societal implications of this work
+are aligned with established goals in machine learning inter-
+pretability—improving transparency, robustness, and trust-
+worthiness—and do not raise new ethical concerns beyond
+those already present in the field.
+References
+Anani, A., Lorenz, T., Schiele, B., and Fritz, M. Adaptive
+hierarchical certification for segmentation using random-
+ized smoothing. InInternational Conference on Machine
+Learning (ICML), 2024.
+Anani, A., Lorenz, T., Fritz, M., and Schiele, B. Pixel-
+level certified explanations via randomized smoothing. In
+International Conference on Machine Learning (ICML),
+2025.
+Bereska, L. and Gavves, E. Mechanistic interpretability for
+AI safety – a review.Transactions on Machine Learning
+Research (TMLR), 2024.
+Cohen, J., Rosenfeld, E., and Kolter, Z. Certified adversarial
+robustness via randomized smoothing. InInternational
+Conference on Machine Learning (ICML), 2019.
+Conmy, A., Mavor-Parker, A., Lynch, A., Heimersheim,
+S., and Garriga-Alonso, A. Towards automated circuit
+discovery for mechanistic interpretability. InAdvances in
+Neural Information Processing Systems (NeurIPS), 2023.
+Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn,
+D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer,
+M., Heigold, G., Gelly, S., Uszkoreit, J., and Houlsby,
+N. An image is worth 16x16 words: Transformers for
+image recognition at scale. InInternational Conference
+on Learning Representations (ICLR), 2021.
+Dreyer, M., Purelku, E., Vielhaben, J., Samek, W., and
+Lapuschkin, S. PURE: Turning polysemantic neurons
+into pure features by identifying relevant circuits. In
+XAI4CV Workshop at CVPR, 2024.
+Elhage, N., Nanda, N., Olsson, C., Henighan, T., Joseph,
+N., Mann, B., Askell, A., Bai, Y ., Chen, A., Conerly,
+T., DasSarma, N., Drain, D., Ganguli, D., Hatfield-
+Dodds, Z., Hernandez, D., Jones, A., Kernion, J., Lovitt,
+L., Ndousse, K., Amodei, D., Brown, T., Clark, J.,
+Kaplan, J., McCandlish, S., and Olah, C. A math-
+ematical framework for transformer circuits.Trans-
+former Circuits Thread, 2021. https://transformer-
+circuits.pub/2021/framework/index.html.
+Fischer, M., Baader, M., and Vechev, M. Scalable certified
+segmentation via randomized smoothing. InInternational
+Conference on Machine Learning (ICML), 2021.
+Friedman, D., Lampinen, A. K., Dixon, L., Chen, D., and
+Ghandeharioun, A. Interpretability illusions in the gener-
+alization of simplified models. InInternational Confer-
+ence on Machine Learning (ICML), 2024.
+Goldowsky-Dill, N., MacLeod, C., Sato, L., and Arora, A.
+Localizing model behavior with path patching.arXiv
+preprint arXiv:2304.05969, 2023.
+Hadad, I., Katz, G., and Bassan, S. Formal mechanistic
+interpretability: Automated circuit discovery with prov-
+able guarantees. InInternational Conference on Learning
+Representations (ICLR), 2026.
+Hamblin, C., Konkle, T., and Alvarez, G. Pruning for
+feature-preserving circuits in CNNs.arXiv preprint
+arXiv:2206.01627, 2022.
+Hanna, M., Liu, O., and Variengien, A. How does gpt-2
+compute greater-than?: Interpreting mathematical abil-
+ities in a pre-trained language model. InAdvances in
+Neural Information Processing Systems (NeurIPS), 2023.
+Hanna, M., Pezzelle, S., and Belinkov, Y . Have faith in
+faithfulness: Going beyond circuit overlap when finding
+model mechanisms. InConference on Language Model-
+ing (COLM), 2024.
+He, K., Zhang, X., Ren, S., and Sun, J. Deep residual learn-
+ing for image recognition. InConference on Computer
+Vision and Pattern Recognition (CVPR), 2016.
+10
+
+===== PDF PAGE 11 =====
+Certified Circuits
+Hendrycks, D. and Dietterich, T. Benchmarking neural
+network robustness to common corruptions and perturba-
+tions. InInternational Conference on Learning Represen-
+tations (ICLR), 2019.
+Hendrycks, D., Zhao, K., Basart, S., Steinhardt, J., and
+Song, D. Natural adversarial examples. InConference on
+Computer Vision and Pattern Recognition (CVPR), 2021.
+Huang, Z., Marchant, N. G., Lucas, K., Bauer, L., Ohri-
+menko, O., and Rubinstein, B. Rs-del: Edit distance
+robustness certificates for sequence classifiers via ran-
+domized deletion. InAdvances in Neural Information
+Processing Systems (NeurIPS), 2023.
+Kowal, M., Wildes, R. P., and Derpanis, K. G. Visual
+concept connectome (vcc): Open world concept discov-
+ery and their interlayer connections in deep models. In
+Conference on Computer Vision and Pattern Recognition
+(CVPR), 2024.
+L´ecuyer, M., Atlidakis, V ., Geambasu, R., Hsu, D., and
+Jana, S. Certified robustness to adversarial examples with
+differential privacy. InIEEE Symposium on Security and
+Privacy (S&P), 2019.
+M´eloux, M., Portet, F., and Peyrard, M. Mechanistic inter-
+pretability as statistical estimation: A variance analysis
+of EAP-IG. InNeurIPS Workshop on Mechanistic Inter-
+pretability, 2025.
+Meng, K., Bau, D., Andonian, A., and Belinkov, Y . Locating
+and editing factual associations in gpt. InAdvances in
+Neural Information Processing Systems (NeurIPS), 2022.
+Miller, J., Chughtai, B., and Saunders, W. Transformer
+circuit faithfulness metrics are not robust. InConference
+on Language Modeling (COLM), 2024.
+Olah, C., Cammarata, N., Schubert, L., Goh, G., Petrov,
+M., and Carter, S. Zoom in: An introduction to circuits.
+Distill, 2020. URL https://distill.pub/2020/
+circuits/zoom-in.
+Radford, A., Wu, J., Child, R., Luan, D., Amodei, D., and
+Sutskever, I. Language models are unsupervised multitask
+learners.OpenAI Blog, 2019.
+Rajaram, A., Chowdhury, N., Torralba, A., Andreas, J., and
+Schwettmann, S. Automatic discovery of visual circuits.
+InNeurIPS Workshop on Attributing Model Behavior at
+Scale (ATTRIB), 2023.
+Russakovsky, O., Deng, J., Su, H., Krause, J., Satheesh, S.,
+Ma, S., Huang, Z., Karpathy, A., Khosla, A., Bernstein,
+M., Berg, A. C., and Fei-Fei, L. Imagenet large scale
+visual recognition challenge.International Journal of
+Computer Vision (IJCV), 2015.
+Syed, A., Rager, C., and Conmy, A. Attribution patching
+outperforms automated circuit discovery. InNeurIPS
+Workshop on Attributing Model Behavior at Scale, 2023.
+uit de Bos, N. and Garriga-Alonso, A. Adversarial circuit
+evaluation. InICML Workshop on Mechanistic Inter-
+pretability, 2024.
+Wang, K. R., Variengien, A., Conmy, A., Shlegeris, B., and
+Steinhardt, J. Interpretability in the wild: a circuit for
+indirect object identification in GPT-2 small. InInterna-
+tional Conference on Learning Representations (ICLR),
+2023.
+Wang, Y ., Hu, X., and Su, H. Interpretable disentanglement
+of neural networks by extracting class-specific subnet-
+work.arXiv preprint arXiv:1910.02673, 2019.
+Wolf, T., Debut, L., Sanh, V ., Chaumond, J., Delangue,
+C., Moi, A., Cistac, P., Rault, T., Louf, R., Funtowicz,
+M., Davison, J., Shleifer, S., von Platen, P., Ma, C., Jer-
+nite, Y ., Plu, J., Xu, C., Le Scao, T., Gugger, S., Drame,
+M., Lhoest, Q., and Rush, A. M. Transformers: State-
+of-the-art natural language processing. InConference
+on Empirical Methods in Natural Language Processing:
+System Demonstrations (EMNLP), 2020.
+Zeiler, M. D. and Fergus, R. Visualizing and understand-
+ing convolutional networks. InEuropean Conference on
+Computer Vision (ECCV), 2014.
+Zhao, B., Yu, S., Ma, W., Yu, M., Mei, S., Wang, A., He, J.,
+Yuille, A., and Kortylewski, A. Ood-cv: A benchmark
+for robustness to out-of-distribution shifts of individual
+nuisances in natural images. InEuropean Conference on
+Computer Vision (ECCV), 2022.
+Zhao, Z., Koishekenov, Y ., Yang, X., Murray, N., and Can-
+cedda, N. Verifying chain-of-thought reasoning via its
+computational graph. InInternational Conference on
+Learning Representations (ICLR), 2026.
+Zimmermann, R. S., Borowski, J., Geirhos, R., Bethge, M.,
+Wallis, T., and Brendel, W. How well do feature visual-
+izations support causal understanding of cnn activations?
+InAdvances in Neural Information Processing Systems
+(NeurIPS), 2021.
+˙Zukowska, N., Stammer, W., Schiele, B., and Fischer, J. See-
+ing through circuits: Faithful mechanistic interpretability
+for vision transformers.arXiv preprint arXiv:2604.14477,
+2026.
+11
+
+===== PDF PAGE 12 =====
+Certified Circuits
+Appendix
+A. Proof of Theorem 3.1
+Proof. Fix a component u∈U . Define the per-component base classifier hu :X ∗→{0,1} byhu(D) :=A u(D). Let
+ϕpdel(D) denote the RS-Del perturbation that independently deletes each element of the sequenceD with probabilitypdel,
+producing a random subsequenceD⊙ε.
+Smoothed probabilities and abstaining decision.Define the smoothed inclusion probability
+pu(D) := Pr
+ε∼Bernoulli(1−pdel)|D|
+[hu(D⊙ε) = 1],
+and letpu,0(D) := 1−p u(D)andp u,1(D) :=p u(D). Let the (non-abstaining) smoothed label be
+˜Au(D) := arg max
+c∈{0,1}
+pu,c(D), µ u(D) := max{p u(D),1−p u(D)}.
+We output acertified(possibly partial) decision by thresholding as in segmentation-style smoothing with abstention:
+˜Aτ
+u(D) =
+
+
+
+1ifp u(D)>τ,
+0if1−p u(D)>τ,
+⊘otherwise.
+Note thatτ≥ 1
+2 implies that whenever ˜Aτ
+u(D)∈{0,1}, the maximizer ˜Au(D)is unique and equals ˜Aτ
+u(D).
+RS-Del certificate on the input sequence.Apply RS-Del (Huang et al., 2023) to the smoothed binary classifier ˜Au under
+Levenshtein edit distance (allowing insertions, deletions, and substitutions). RS-Del (Theorem 7 and Table 1 in (Huang
+et al., 2023)) gives that if the predicted class atD has confidenceµu(D), then the smoothed prediction is invariant for any
+edit-distance ball of radiusr≤r ⋆(µu(D)), where
+r⋆(µ) =
+$
+log
+
+1 +ν(η)−µ
+
+logp del
+%
+.
+For binary outputs and symmetric thresholds (our case),ν(η) = 1
+2, hence
+r⋆(µ) =
+log(1.5−µ)
+logp del
+
+.
+Moreoverr⋆(µ)is nondecreasing inµbecauselogp del <0and1.5−µdecreases withµ.
+Conclude invariance for certified vertices.Assume ˜Aτ
+u(D)∈ {0,1} . Then µu(D)> τ , so by monotonicity
+r⋆(µu(D))≥r ⋆(τ). Define
+r:=r ⋆(τ) =
+log(1.5−τ)
+logp del
+
+.
+Then for everyD′ withdist edit(D,D′)≤r, RS-Del implies the smoothed label is invariant:
+˜Au(D′) = ˜Au(D) = ˜Aτ
+u(D).
+This is exactly the claimed circuit-membership invariance for all non-abstaining vertices.
+Statistical confidence.In practice µu(D) is unknown and we certify based on a (1−α) lower confidence bound (e.g.,
+Clopper–Pearson) forµu(D). On the event that the true confidence exceeds this bound (which holds with probability at
+least 1−α ), the above argument applies. If one wants the guarantee to holdsimultaneouslyfor all vertices (Fischer et al.,
+2021), set per-vertex failure probability toα/|U|and apply a union bound.
+12
+
+===== PDF PAGE 13 =====
+Certified Circuits
+Domain Setting Dataset / Taskτ p del r
+Vision
+ResNet-101
+ID ImageNet 0.95 0.60 1
+OOD
+ImageNet-A 0.95 0.60 1
+OOD-CV 0.95 0.60 1
+ImageNet-C 0.95 0.60 1
+ImageNet-O 0.95 0.60 1
+Language
+GPT-2 Small
+ID
+IOI 0.90 0.95 9
+IOI-Hard 0.85 0.99 42
+Greater-Than 0.90 0.99 50
+OOD
+IOI 0.85 0.95 8
+IOI-Hard 0.85 0.99 42
+Greater-Than 0.95 0.99 59
+Table 2.Certified algorithm configuration per dataset and task in Table 1.
+B. Experimental Setup
+Table 2 lists the certification hyperparameters (τ,p del, radiusr) used for each result in Table 1.
+B.1. Vision Setup
+Concept datasets.Each ImageNet classcdefines a concept datasetD c as a set of same-class images. We use|Dc|= 50
+images per class from the ImageNet validation split. Circuits are discovered on 100 randomly selected classes and tested on
+ID (same validation images) and OOD evaluation sets.
+OOD evaluation datasets.We evaluate ImageNet-discovered circuits under four out-of-distribution shifts, each targeting
+a distinct failure mode.OOD-CV(Zhao et al., 2022) places objects in novel contexts, backgrounds, poses, and weather
+conditions (context shift).ImageNet-A(Hendrycks et al., 2021) consists of natural adversarial examples mined to fool
+standard ImageNet classifiers (natural adversarial).ImageNet-O(Hendrycks et al., 2021) contains images of object
+categoriesnotpresent in the ImageNet-1k label set (semantic anomalies).ImageNet-C(Hendrycks & Dietterich, 2019)
+applies synthetic corruptions to ImageNet images, and we pickdefocus blurat severity level2(corruption).
+For each OOD dataset we use the same100classes as on ID, except OOD-CV which only contains6classes.
+Architectures and vertex selection.Main results use ResNet-101 and ResNet-50 (He et al., 2016), ImageNet-pretrained
+from torchvision. Circuit vertices are the feature channels at the output of each of the four residual blocks, giving 256,
+512, 1024, and 2048 candidate channels per block respectively, for a total of 3,840 vertices on ResNet-101. The top-K
+fraction is applied per layer. Transformer results use ImageNet-pretrained ViT-B/16 fromtorchvision. We instrument
+all 12 transformer encoder blocks. For blocki, vertices are the 768 embedding-channel outputs of the second linear layer in
+the MLP sub-block, encoder.layers[i].mlp[3] (our hook blocki mlp fc2), before the subsequent dropout and
+residual addition. Token positions are not treated as separate vertices; each vertex corresponds to one MLP-output channel
+in one block. Thus ViT-B/16 has 12×768 = 9,216 candidate vertices. The top-K fraction is applied independently within
+each block.
+B.2. Language Setup
+Model and tasks.We evaluate GPT-2 Small (Radford et al., 2019) via HuggingFace (Wolf et al., 2020) on three next-token
+binary prediction tasks. Each example provides a clean prompt, a corrupted prompt, an answer token, and a distractor.
+IOI (Wang et al., 2023) predicts the indirect object in a two-name sentence, with corruption randomizing names while
+preserving the answer/distractor pair. IOI-Hard applies the same rule with longer prompts and harder OOD distractor clauses.
+For Greater-Than (Hanna et al., 2023), adapted to the EAP setting (Conmy et al., 2023; Syed et al., 2023), the clean prompt
+sets up a year span whose immediate successor is the answer, and corruption shifts the interval so the distractor becomes the
+natural continuation.
+13
+
+===== PDF PAGE 14 =====
+Certified Circuits
+Data.We generate 100 training, 100 ID test, and 100 OOD test examples per task. Circuits are discovered on the training
+split and evaluated on held-out ID and OOD prompts. OOD splits are task-specific: object/place distractors (IOI), repeated
+Q&A detours (IOI-Hard), and pre-answer distractor insertion (Greater-Than). Table 3 shows example ID and OOD prompts.
+ID OOD (ours)
+IOI Then, Jessica and Rachel went to the garden. Rachel gave
+a drink to(Jessica / Rachel)
+Then in the morning, Jennifer and Nicholas went to the
+school. While Nicholas looked around the school, Jennifer
+talked about the snack, and after a while Nicholas gave a
+snack to(Jennifer / Nicholas)
+IOI-Hard Then in the morning, Nicole and Katherine went to the
+restaurant. Katherine gave a ring to(Nicole / Katherine)
+Then in the morning, Elizabeth and Allison went to the of-
+fice. Elizabeth repeatedly asked Allison about the necklace
+. . . and resumed the discussion of the necklace, Allison
+gave a necklace to(Elizabeth / Allison)
+Greater-Than In scenario 920499 at the school with the drink, The war
+lasted from the year 1799 to the year(1800 / 1840)
+In scenario 794799 at the station with the necklace, The
+war lasted from the year 1399 to the year after a long and
+distracting discussion at the school about the basketball,
+followed by more unrelated details,(1400 / 1440)
+Table 3.OOD prompt construction for the three language tasks.ID prompts follow the original task formulations; OOD prompts
+(ours) introduce task-specific distractors. Each cell shows the prompt followed by (answer / distractor).
+Circuit graph and metric.EAP-IG operates on edges of the EAP computational graph (Syed et al., 2023). Nodes are
+the token embedding, every attention-head and MLP output, and the final logits. Candidate edges connect each earlier
+node to every downstream attention-head Q/K/V input, MLP input, and the final logits, yielding32,491 candidate edges
+u∈U . Circuit sizeK is the retained edge fraction, and cACC is exact next-token accuracy (correct iff the argmax under the
+circuit-restricted computation equals the answer token).
+Certification hyperparameters.We sweep τ∈{0.85,0.90,0.95} andpdel∈{0.85,0.95,0.99} . For each task/split,
+Fig. 9 reports the configuration with the highest peak cACC (ties broken by smaller effective size) while Fig. 10 fixes
+r∈{42,50,59}and shows the cACC-Kcurve across the three tasks.
+C. Certification Hyperparameter Theoretical Analysis
+C.1. Certified Radiusrvs.p del andτ
+The certified radiusrin Theorem 3.1 is determined by the deletion probabilityp del and confidence thresholdτ(Eq. 5).
+Figure 7 shows the certified radiusr at varyingpdel andτ values. The certified radius increases with bothpdel andτ: higher
+deletion probabilities mean the smoothed algorithm aggregates over more aggressively perturbed sub-datasets, while higher
+confidence thresholds require stronger agreement across perturbations before certifying a decision. As pdel→1 , the radius
+grows rapidly, but this comes at a cost: the base algorithmA receives increasingly sparse sub-datasets, which can degrade
+its performance when concept datasets are small. Conversely, lowerpdel values preserve more examples per run but yield
+smaller certified radii.
+In practice, we selectpdel to balance two considerations: (i) achieving a meaningful certified radius (e.g.,r≥1 edits), and
+(ii) retaining enough examples per sub-dataset for the base algorithm to produce reliable circuits. For concept datasets of
+size|D|, the expected sub-dataset size is (1−p del)·|D| , so larger concept datasets permit higher deletion probabilities
+without starving the base algorithm.
+C.2. Sample Complexity
+Beyond the certified radius (App. C.1, Fig. 7), a second hyperparameter controlling the strength of our guarantees is the
+Monte Carlo sample budgetn, which determines how tightly the empirical inclusion frequencies bound the true probabilities
+pu(D), which in turn determines whether a component reaches the thresholdτ for certification. Fig. 8 reports the theoretical
+minimum n required to certify a circuit under perfect agreement, as a function of τ, with Bonferroni correction over
+14
+
+===== PDF PAGE 15 =====
+Certified Circuits
+0.5 0.6 0.7 0.8 0.9 1.0
+Element-wise deletion probability pdel
+0
+10
+20
+30
+40
+50
+60Certified radius r
+τ = 0.75
+τ = 0.85
+τ = 0.95
+Figure 7.Certified radius r at various deletion probabilitypdel values for different confidence thresholdsτ.Larger pdel and largerτ
+yield larger certified radii.
+0.5 0.6 0.7 0.8 0.9 1.0
+Certification threshold 
+10
+100
+1,000
+10,000
+Minimum samples n required
+n = 1,000 (this work)
+n = 53
+n = 78
+n = 154
+n = 76
+(no correction)
+Feasible region (n 1,000)
+=0.01   
+=0.001   
+=0.0001   
+=0.001 (No union bound)
+τ∗ at n = 1,000 (circuit-level):
+  = 0.01:  *
+> 0.9871
+  = 0.001:  *
+> 0.9848
+  = 0.0001:  *
+> 0.9825
+Figure 8.Sample complexity vs. certification threshold.Minimum samplesnrequired to certify a circuit at thresholdτunder perfect
+agreement and Bonferroni correction overN= 3,840 components (the vertex setV of ResNet-101).τ ⋆ is the largest threshold certifiable
+at a givenn; anyτ≤τ ⋆ is certifiable, so largern raisesτ ⋆. Solid curves: circuit-level guarantees atα∈{0.01,0.001,0.0001} . Dashed:
+per-vertex (no correction).
+N= 3,840components (the number of candidate neurons in ResNet-101).
+The requiredn is small across the entire operating range: certification needs only 53–154 samples forτ∈[0.7,0.9] , and
+the union bound costs just≈2× over uncorrected per-vertex certification despite covering3,840 simultaneous decisions.
+Sampling is therefore not a bottleneck. In practice, the budget of n= 1,000 used throughout the paper is conservative since
+it certifies anyτ up toτ∗ = 0.985 atα= 0.001 , and could be reduced an order of magnitude at lowerτ thresholds which
+produce a meaningful radiusr.
+15
+
+===== PDF PAGE 16 =====
+Certified Circuits
+C.3. Estimating the Certified Circuit
+Since we cannot invoke our theoretically constructed smoothed algorithm ˜Aτ
+u (Eq. 4) directly, we estimate it by Monte Carlo
+sampling in Algorithm 1. Our estimator is a novel combination of two randomized-smoothing frameworks, unifying them
+for the first time to certify circuit discovery: we adopt therandomized-deletion samplingof RS-Del (Huang et al., 2023),
+which perturbs a dataset by dropping examples i.i.d. and yields a certificate inedit distance, and thecomponent-wise output
+certificationof SEGCERTIFY(Fischer et al., 2021), which certifies each component of a structured output independently via
+a per-component abstention test. The key observation enabling this combination is that certifying circuit components is an
+instance ofbinary segmentation: each component u∈U plays the role of a pixel whose inclusion (1) or exclusion (0) must
+be certified independently, while the datasetD — rather than an image — is the object being perturbed. Casting circuit
+discovery this way lets us inherit SEGCERTIFY’s certification algorithm while replacing its Gaussian input perturbation with
+RS-Del’s dataset-level deletion, turning anℓ 2 certificate over pixels into an edit-distance certificate over datasets.
+Algorithm 1CERTIFYCIRCUIT: estimating ˜Aτ(D)(Eq. 4), combining SEGCERTIFY(Fischer et al., 2021) with RS-Del’s
+deletion smoothing (Huang et al., 2023). Blue marks our changes.
+functionCERTIFYCIRCUIT(A,p del,D,n,n 0,τ,α)
+cnts0
+1,...,cnts 0
+|U|←SAMPLE(A,D,n 0,p del)
+cnts1,...,cnts |U|←SAMPLE(A,D,n,p del)
+foru∈U:
+ˆcu←top index incnts 0
+u
+nu←cntsu[ˆcu]
+pvu←BINPVALUE(n u,n,≤,τ)
+r1,...,r |U|←FWERCONTROL(α,pv 1,...,pv |U|)
+foru∈U:
+if¬ru:ˆcu←⊘
+r←⌊log(1.5−τ)/logp del⌋
+returnˆc1,...,ˆc|U|,r
+Algorithm 2SAMPLE: per-component inclusion counts
+functionSAMPLE(A,D,n,p del)
+cntsu←0for allu∈U
+forj= 1,...,n:
+ε(j)∼Bernoulli(1−p del)|D| // RS-Del (Huang et al., 2023) deletion smoothing
+C (j)←A(D⊙ε (j))
+cntsu←cntsu +1[u∈C (j)]for allu∈U
+returncnts = (cntsu)u∈U
+CERTIFYCIRCUIT(Algorithm 1) proceeds in two stages, each drawing samples through the primitive SAMPLE(Algorithm 2).
+SAMPLEdraws n deletion masks, runs the base algorithm A on each resulting sub-dataset, and counts how often each
+component is included, giving the per-componentu inclusion counts cntsu. The two stages use independent samples to
+avoid biasing the test by the choice of hypothesis. In the first stage, CERTIFYCIRCUITdraws n0 selectionsamples and
+uses the counts to guess each component’s likely decision ˆcu (include or exclude). In the second stage, it draws n fresh
+certificationsamples and tests that guess: it computes a p-value pvu measuring how strongly the evidence supports ˆcu at
+confidenceτ. A component is certified if its p-value is small enough (via the FWER correction below) and abstains (⊘)
+otherwise. Finally, CERTIFYCIRCUITreturns the edit-distance radius r=⌊log(1.5−τ)/logp del⌋ (Eq. 5, from RS-Del),
+certifying every non-abstaining component against up tordataset edits.
+Controlling the family-wise error rate.Because we certify |U| components simultaneously, the per-component failure
+probabilityα does not bound the probability thatanycertified decision is wrong; under the union bound this family-wise
+error rate (FWER) grows with|U|. We therefore inherit the multiple-hypothesis-testing correction of Fischer et al. (2021):
+applying a Bonferroni correction overU, we rejectH0 (and thus certify) only whenρu≤α/|U| . This bounds the FWER at
+α, so with confidence 1−α every non-abstaining component is certified correctly, and by Theorem 3.1 its membership is
+invariant for allD′ withdist edit(D,D′)≤r.
+16
+
+===== PDF PAGE 17 =====
+Certified Circuits
+D. Runtime Breakdown
+# Samples Paradigm
+1 Sample circuits 2 Decision rule Total= 1 + 2
+Optimized speedupNaive Optimized Naive Optimized
+n= 1Baseline – 1.007 s – – 1.007 s –
+n= 100 Majority vote 101 s 0.990 s 0.006 s 101 s 0.996 s×101
+Certified 101 s 0.990 s 0.024 s 101 s 1.014 s×99.33
+n= 500 Majority vote 504 s 1.516 s 0.013 s 504 s 1.529 s×329
+Certified 504 s 1.516 s 0.102 s 504 s 1.618 s×311
+n= 1000 Majority vote 1007 s 2.226 s 0.021 s 1007 s 2.247 s×448
+Certified 1007 s 2.226 s 0.194 s 1007 s 2.420 s×416
+Table 4.Runtime breakdown for per-class ResNet-101 circuit discovery on the ImageNet validation set.Naive scales linearly with n
+while the optimized implementation caches per-image attribution score (e.g., relevance, activation) across samples. Hardware: Intel Core
+i7-14700 CPU, 62 GiB RAM, NVIDIA RTX 4090, batch size 50.
+A potential concern with certified circuit discovery is sampling: running the base algorithm n times, once per deletion
+mask, could scale runtime linearly inn, making the method impractical at largern. Table 4 shows this concern does not
+materialize. We benchmark per-class circuit discovery on ResNet-101 over the ImageNet validation set, comparing a naive
+implementation (which re-runs the full discovery algorithm for each of then samples) against our optimized implementation
+that caches per-image scores (relevance) and computes per-sample circuits from the cache. Two findings emerge. First,
+naive scaling is indeed linear:n= 1,000samples take≈1,007s, which is1,000×the baseline single-circuit cost. Second,
+the optimized implementation reduces this to 2.42 s, a 416× speedup, because the dominant cost — forward and backward
+passes through the model — is shared across all n samples. The decision rule itself (Eq. 4) takes under 0.2 s even at
+n= 1,000 . The optimized certified pipeline therefore runs in≈2.4× the cost of a single baseline circuit, independent ofn
+in practice.
+17
+
+===== PDF PAGE 18 =====
+Certified Circuits
+E. Additional Language Results
+We extend on language circuit results illustrated earlier in §5.
+E.1. Certified Circuits at Best Radiusr
+0.00
+0.25
+0.50
+0.75
+1.00
+cACC ↑
+IOI
+r=9
+IOI-Hard
+r=42
+Greater-Than
+r=50
+0.00 0.25 0.50 0.75 1.00
+0.00
+0.25
+0.50
+0.75
+1.00
+cACC ↑
+Place distractor
+r=8
+0.25 0.50 0.75 1.00
+Q&A detours
+r=42
+0.25 0.50 0.75 1.00
+Pre-answer distractor
+r=59
+IDOOD
+Size K ↓  (Edges)
+Certified EAP-IG
+Figure 9.Best certified vs. baseline EAP-IG circuits on GPT-2 Small.cACC– K curves for the certified circuit (highest peak cACC,
+blue solid) and EAP-IG (gold dashed) across three tasks (columns) and two settings (rows: ID, OOD). The certified radiusr for each
+circuit is annotated in the bottom-right of each panel.
+Fig. 9 shows that on every task and setting, the certified curve reaches the EAP-IG peak at substantially smallerK, then
+remains saturated asK grows. On IOI and Greater-Than, both ID and OOD curves are flat at 100% from a smallK onward,
+with the certified curve reaching saturation2–10× earlier than EAP-IG. IOI-Hard under Q&A detours is the only setting with
+a non-trivial peak: the certified circuit reaches 91% cACC atK≈0.3 , exceeding the EAP-IG peak (85%) at matched size.
+Across all settings, certification matches or exceeds EAP-IG’s peak cACC while certifying invariance to radiir= 8–59.
+E.2. Higher Certified Radii
+Fig. 10 compares certified circuits atr= 42 , 50, and 59 against EAP-IG on the same tasks. All three certified radii produce
+cACC–K curves that are nearly indistinguishable from each other and that match or exceed EAP-IG at everyK. On IOI and
+IOI-Hard, the three certified curves reach saturation at the same smallK, with no measurable cACC penalty for the larger
+radius. On Greater-Than and Pre-answer distractor, the three curves overlap so tightly that the r= 59 certificate comes
+essentially for free: stability against up to 59 dataset edits is achieved with no loss in sufficiency. This confirms that, on
+tasks with sufficiently large concept datasets, the certified radius can be pushed well beyond the conservativer= 1 used for
+vision without degrading the discovered circuit.
+18
+
+===== PDF PAGE 19 =====
+Certified Circuits
+0.00
+0.25
+0.50
+0.75
+1.00
+cACC ↑
+IOI IOI-Hard Greater-Than
+0.00 0.25 0.50 0.75 1.00
+0.00
+0.25
+0.50
+0.75
+1.00
+cACC ↑
+Place distractor
+0.25 0.50 0.75 1.00
+Q&A detours
+0.25 0.50 0.75 1.00
+Pre-answer distractor
+IDOOD
+Size K ↓  (Edges)
+Certifiedr = 42 Certifiedr = 50 Certifiedr = 59 EAP-IG
+Figure 10.Certified EAP-IG circuits at higher radii on GPT-2 Small.cACC– K curves for certified circuits atr= 42 (blue),r= 50
+(teal), andr= 59 (purple), compared against EAP-IG (gold dashed) across three tasks (columns) and two settings (rows: ID, OOD).
+Curves overlap tightly, indicating that larger certified radii are achieved without measurable loss in cACC.
+19
+
+===== PDF PAGE 20 =====
+Certified Circuits
+F. Additional Vision Results
+F.1. Comparison of three circuit discovery algorithms
+We extend the analysis in Table 1 from top-K relevance to two additional scorers,activationandrank, on ResNet-101
+(Table 5). The main results transfer across all three scorers: certified circuits are more accurate, smaller, and generalize
+better to OOD than their baselines. The largest cACC gains appear under OOD shifts: on ImageNet-A, certified circuits
+improve by↑56% (relevance),↑84% (activation), and↑20% (rank). Activation shows the largest relative gains because its
+uncertified baseline is weakest, while relevance reaches the highest absolute certified cACC ( 98% on ImageNet-O) and
+the largest compactness reductions (↓52% on ImageNet,↓41% on ImageNet-C and ImageNet-O). Rank yields smaller
+compactness reductions (↓2 –18%), consistent with rank-based scoring producing flatter score distributions that leave fewer
+components confidently unstable. We use relevance as the default in §5 based on its consistently higher absolute cACC and
+larger compactness gains.
+cACC↑ SizeK↓
+Setting Dataset Top-K Full Baseline Certified ∆ Full Baseline Certified ∆
+ID ImageNet
+Relevance
+0.78±0.02
+0.83±0.02 0.95±0.02 § ↑14%
+1.000
+0.700 0.336 ↓52%
+Activation 0.80±0.02 0.82±0.02 § ↑3% 0.700 0.502 ↓29%
+Rank 0.81±0.02 0.82±0.02 ‡ ↑2% 0.700 0.585 ↓17%
+OOD
+ImageNet-A
+Relevance
+0.07±0.01
+0.60±0.03 0.94±0.01 § ↑56%
+1.000
+0.400 0.342 ↓15%
+Activation 0.20±0.02 0.36±0.03 § ↑84% 0.400 0.330 ↓18%
+Rank 0.24±0.02 0.28±0.02 § ↑20% 0.600 0.588 ↓2%
+OOD-CV
+Relevance
+0.20±0.09
+0.73±0.11 0.93±0.03 † ↑28%
+1.000
+0.400 0.269 ↓33%
+Activation 0.36±0.12 0.54±0.13 † ↑51% 0.400 0.268 ↓33%
+Rank 0.44±0.13 0.46±0.12 ↑5% 0.400 0.394 ↓2%
+ImageNet-C
+Relevance
+0.57±0.02
+0.72±0.02 0.92±0.02 § ↑28%
+1.000
+0.700 0.416 ↓41%
+Activation 0.66±0.02 0.71±0.02 § ↑8% 0.700 0.502 ↓29%
+Rank 0.67±0.02 0.69±0.02 ‡ ↑3% 0.700 0.585 ↓17%
+ImageNet-O
+Relevance
+0.81±0.01
+0.93±0.01 0.98±0.01 § ↑6%
+1.000
+0.700 0.417 ↓41%
+Activation 0.87±0.01 0.90±0.01 † ↑3% 0.700 0.492 ↓30%
+Rank 0.88±0.01 0.89±0.01 † ↑2% 0.700 0.581 ↓18%
+Table 5.Certified vs. baseline circuit sufficiency across three Top-K scoring algorithms with uncertainty estimates.Peak cACC
+and corresponding circuit sizeK under sufficiency pruning on ResNet-101. Circuits are discovered on ImageNet and evaluated either
+in-distribution or on OOD shifts. Significance markers compare certified circuits against the corresponding baseline circuit using paired
+class-level tests: †p<0.05, ‡p<0.01, §p<0.001.
+F.2. Stability Across Random Seeds
+Recent work has raised concerns that mechanistic circuits are unstable across random seeds: M ´eloux et al. (2025) cast
+circuit discovery as statistical estimation and showed that EAP-IG circuits can vary substantially across runs even with
+the same concept dataset, indicating high variance in the discovered structure. This calls into question whether a single
+discovered circuit is meaningful, or merely one realization of a noisy procedure.
+We investigate the stability of certified circuits across random seeds on ImageNet (Fig. 11). We run the certification pipeline
+(n= 1,000 deletion masks) 40 times with independent seeds on 100 ImageNet classes, and report all pairwise IoUs per
+class. Even on the 10 least stable classes, pairwise IoU stays above 0.95, with mean IoU 0.973±0.0015 (95% CI) across
+all 100 classes. Certification is stable by construction: components are included only when their inclusion probability
+pu(D) exceeds the thresholdτ, so noise that would flip a borderline inclusion under a fixed top-K rule instead resolves
+to abstention. Certification stabilizes circuits not only against bounded dataset edits (Theorem 3.1), but also empirically
+against the seed-level instability documented in prior work.
+20
+
+===== PDF PAGE 21 =====
+Certified Circuits
+Eft SalamandarGarden SpiderGreen Mamba Electric Ray Peacock
+Gila Monster
+Jay
+Black Grouse
+Cock
+Prairie Chicken
+Least stable class circuits in ImageNet
+0.94
+0.95
+0.96
+0.97
+0.98
+0.99
+1.00Pairwise IoU across 40 seeds 
+perfect: 1.000
+mean: 0.973
+Mean IoU = 0.9726    SE = 0.0008    95% CI = ±0.0015
+Seed-pair IoU Class median IQR (25th-75th pctl)
+Less stable More stable
+Figure 11.Certified circuits are highly stable across seeds, even for the least stable classes.Pairwise IoU between independent runs of
+the certification pipeline (n=1000 masks) across 40 seeds, for the 10 least stable ImageNet classes (ordered least to most stable); each dot
+is one seed-pair. Even in the worst case IoU exceeds 0.95. The dashed line marks the mean over 100 classes, 0.973±0.0015 (95% CI).
+Figure 12.Circuit accuracy (cACC) vs. size K on ResNets and ViT-B/16.Solid lines show certified circuits, dashed show the baseline,
+with colors distinguishing models. Circuits are discovered on ImageNet and evaluated either ID or on OOD data.
+F.3. Extending circuits to ViT-B/16 architecture
+Fig. 12 extends the cACC–K curves of Fig. 3 to ViT-B/16 (Dosovitskiy et al., 2021), alongside ResNet-101 and ResNet-50.
+Across all five datasets, certified circuits on ViT-B/16 closely track baseline top-K relevance: peak cACC differs by at most
+∼2 points, and both methods peak at small K. The largest certified gains appear on ImageNet-A and OOD-CV , where
+certification recovers∼2 points of peak cACC at substantially smallerK than the baseline, mirroring the trend observed on
+ResNets and confirming that the framework remains effective on vision Transformer architectures.
+F.4. Certified Vision Circuits at Larger Radii
+In the main reported results §5, we use a conservative certified radius r= 1 for vision, which guarantees stability against a
+single dataset edit. Whether the framework can certify larger radii on vision depends on the relationship between the deletion
+probabilitypdel, the confidence thresholdτ, and the concept dataset size|Dc|. Increasingr at a fixedτ requires increasing
+pdel (Eq. 5), which removes more examples per sample and can starve the base algorithm on small concept datasets. We
+characterize this trade-off across three experiments.
+Scaling to larger radii with larger|Dc|.Fig. 13 sweeps r∈{1,3,11,59} across|Dc|∈{50,100,500,1000} on all
+five vision benchmarks. At|Dc|= 50 , larger radii (r= 11,59 ) degrade noticeably because the base algorithm receives
+sub-datasets of only∼0–3 images per sample after deletion, too sparse to recover stable circuits. This degradation disappears
+as|Dc| grows: by|Dc|= 1,000 , certified circuits atr= 59 outperform the baseline on every dataset. The framework is not
+intrinsically limited to small radii on vision; the limitation is concept dataset size, and increasing it directly enables larger
+21
+
+===== PDF PAGE 22 =====
+Certified Circuits
+0
+25
+50
+75
+100cACC ↑
+|Dc| = 50
+In-distribution
+ImageNet
+Context shift
+OOD-CV
+Natural adversarial
+ImageNet-A
+Semantic anomalies
+ImageNet-O
+Corruption
+ImageNet-C
+0
+25
+50
+75
+100cACC ↑
+|Dc| = 100
+0
+25
+50
+75
+100cACC ↑
+|Dc| = 500
+0.0 0.2 0.4 0.6 0.8 1.0
+0
+25
+50
+75
+100cACC ↑
+|Dc| = 1000
+0.0 0.2 0.4 0.6 0.8 1.0 0.0 0.2 0.4 0.6 0.8 1.0 0.0 0.2 0.4 0.6 0.8 1.0 0.0 0.2 0.4 0.6 0.8 1.0
+Neurons ↓
+Radius at τ = 0.95: r = 1 (pdel = 0.60) r = 3 (pdel = 0.85) r = 11 (pdel = 0.95) r = 59 (pdel = 0.99)
+Paradigm: Certified Relevance Top-K
+Figure 13.Certified circuits scale to large radii given sufficient concept data.cACC vs. circuit size for r∈{1,3,11,59} (colors) and
+|Dc|∈{50,100,500,1000} (rows), across five ID/OOD benchmarks (columns). Solid: certified; dashed: baseline. Large radii degrade
+at small|D c|but recover by|D c|= 1,000. ResNet-101,τ= 0.95,n= 1,000.
+certified radii.
+0
+25
+50
+75
+100cACC ↑
+pdel
+In-distribution
+ImageNet
+Context shift
+OOD-CV
+Natural adversarial
+ImageNet-A
+Semantic anomalies
+ImageNet-O
+Corruption
+ImageNet-C
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0Neurons ↓ K = 0.60
+ K = 0.60
+ K = 0.60
+ K = 0.60
+ K = 0.60
+1 3 5 11
+0
+25
+50
+75
+100% Abstain
+1 3 5 11
+ 1 3 5 11
+ 1 3 5 11
+ 1 3 5 11
+0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95
+Radius ↑
+Concept dataset size: |Dc| = 50 |Dc| = 100 |Dc| = 500Concept dataset size: |Dc| = 50 |Dc| = 100 |Dc| = 500
+Figure 14.Effect of radius and|Dc| at fixedK= 0.60 .cACC (top), effective circuit size (middle), and abstention rate (bottom) as a
+function of certified radius for|Dc|∈{50,100,500} . Larger|Dc| stabilizes both cACC and abstention at high radii; effective circuit size
+stays roughly constant. ResNet-101,τ= 0.95,n= 1,000.
+Effect on circuit size and abstention at fixedK.Fig. 14 fixes the circuit size at K= 0.60 and examines how cACC,
+effective circuit size, and abstention rate vary with radius for three concept dataset sizes. Three patterns are visible. First, at
+small|Dc|= 50 , cACC drops sharply asr grows past∼3, while abstention rises toward 50–75% — the certificate becomes
+too aggressive for the available data. Second, at|Dc|= 100 the cACC remains close to the baseline up tor= 5 and then
+drops. Third, at|Dc|= 500 cACC is stable across the full radius range r∈[1,11] , with abstention staying below 30%.
+Effective circuit size (middle row) remains roughly constant in all three settings, indicating that the certification budget is
+22
+
+===== PDF PAGE 23 =====
+Certified Circuits
+spent on abstaining from unstable components rather than shrinking the certified set.
+0
+25
+50
+75
+100Peak cACC ↑
+pdel
+In-distribution
+ImageNet
+Context shift
+OOD-CV
+Natural adversarial
+ImageNet-A
+Semantic anomalies
+ImageNet-O
+Corruption
+ImageNet-C
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0Neurons ↓
+1 3 5 11
+0
+25
+50
+75
+100% Abstain
+1 3 5 11
+ 1 3 5 11
+ 1 3 5 11
+ 1 3 5 11
+0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95 0.60 0.85 0.90 0.95
+Radius ↑
+Concept dataset size: |Dc| = 50 |Dc| = 100 |Dc| = 500Concept dataset size: |Dc| = 50 |Dc| = 100 |Dc| = 500
+Figure 15.Effect of radius and|Dc| at the per-setting optimalK.Peak cACC (top), corresponding circuit size (middle), and abstention
+rate (bottom) as a function of certified radius. WithK optimized per setting, higher radii yield more compact circuits without sufficiency
+loss when|D c|is large enough. ResNet-101,τ= 0.95,n= 1,000.
+Effect at the per-setting optimalK.Fig. 15 repeats the analysis with K optimized per (r,|Dc|,dataset) setting, reporting
+peak cACC. The picture is consistent with the fixed-K analysis but more favorable: with the freedom to shrink the circuit at
+higher radii, peak cACC degrades less, and the optimal circuit size visibly contracts asr grows (middle row). This is the
+behavior we want from a certification procedure: at higher radii, more components are flagged as unstable and abstained
+from, yielding more compact circuits with no sufficiency penalty. At |Dc|= 500 , peak cACC is essentially flat across
+r∈[1,11]on every benchmark.
+Takeaway.Certified vision circuits scale to large radii given sufficient concept data: with large enough |Dc|, certified
+circuits outperform baselines on both ID and OOD atrup to59, while providing stronger guarantees.
+F.5. Comparison to Vanilla Majority Vote
+0.0 0.2 0.4 0.6 0.8 1.0
+0.00
+0.25
+0.50
+0.75
+1.00
+cACC ↑
+In-distribution
+ImageNet
+0.2 0.4 0.6 0.8 1.0
+Natural adversarial
+ImageNet-A
+0.2 0.4 0.6 0.8 1.0
+Context shift
+OOD-CV
+0.2 0.4 0.6 0.8 1.0
+Corruption
+ImageNet-C
+0.2 0.4 0.6 0.8 1.0
+Semantic anomalies
+ImageNet-O
+ID OOD
+Size K ↓  (Neurons)
+Paradigm: Certified (ours) Majority vote Baseline
+Figure 16.Certified circuits outperform majority vote at identical compute.cACC vs. K for certified, majority vote (samen,>50%
+inclusion, noτ), and baseline across five benchmarks. The gap between certified and majority vote isolates the contribution of certification
+(through the thresholdτ) beyond ensemble averaging.
+A natural question is whether the gains of certified circuits come from certification itself, or simply from the ensemble
+averaging effect of running the base algorithm on n subsamples. To isolate this, we compare certified circuits against a
+majority vote baseline at matched compute. Majority vote uses the same n= 1,000 deletion samples but includes each
+neuron appearing in more than 50% of sampled circuits, with no confidence threshold — isolating the contribution of τ
+from ensemble averaging alone. Fig. 16 shows certified circuits outperform majority vote by a wide margin across all five
+23
+
+===== PDF PAGE 24 =====
+Certified Circuits
+benchmarks in ID and OOD, with the largest gaps on OOD-CV and ImageNet-A where instability is most pronounced. This
+is notable because prior certification methods typically trade accuracy for robustness (L´ecuyer et al., 2019; Cohen et al.,
+2019; Fischer et al., 2021; Anani et al., 2024), whereas certified circuits improve both. Majority vote already improves
+over the baseline thanks to averaging, but stops short of the certified circuit, indicating thatτ contributes beyond ensemble
+averaging by excluding neurons whose inclusion votes are split rather than majority-aligned. These are the neurons most
+likely to be spurious, and abstaining from them is what makes the certified circuit both more accurate and more compact.
+We provide further feature visualizations of such neurons in the next App. F.6.
+24
+
+===== PDF PAGE 25 =====
+Certified Circuits
+F.6. Additional feature visualizations
+Certified in
+Abstain (in Baseline)Certified outLayer 1
+Layer 2 Layer 3 Layer 4 Neur
+on's top activating patchescACC:
+Baseline 90% → Certified 98% (↑9%) at 38% smaller K
+(a)vine snake
+Certified inAbstain (in Baseline)Certified out
+Layer 1 Layer 2 Layer 3 Layer 4
+Neuron's top activating patches
+cACC: Baseline 38% → Certified 100% (↑163%) at 38% smaller K
+ (b)plate
+Figure 17.Features encoded by certified-in, abstain (within baseline), and certified-out neurons(ResNet-101). Per layer, top-
+activating neurons in each category. Certification improves cACC while shrinking the circuit by abstaining from unstable, spurious
+neurons.
+25
+
+===== PDF PAGE 26 =====
+Certified Circuits
+Certified in
+Abstain (in Baseline)Certified outLayer 1
+Layer 2 Layer 3 Layer 4 Neur
+on's top activating patchescACC:
+Baseline 84% → Certified 100% (↑19%) at 37% smaller K
+(a)goose
+Certified inAbstain (in Baseline)Certified out
+Layer 1 Layer 2 Layer 3 Layer 4
+Neuron's top activating patches
+cACC: Baseline 78% → Certified 100% (↑28%) at 39% smaller K
+ (b)ballpoint
+Figure 18.Features encoded by certified-in, abstain (within baseline), and certified-out neuronsExtension of App. Fig. 17
+26
+
+===== PDF PAGE 27 =====
+Certified Circuits
+Certified inAbstain (in Baseline)Certified out
+Layer 1 Layer 2 Layer 3 Layer 4
+Neuron's top activating patches
+cACC: Baseline 58% → Certified 100% (↑72%) at 39% smaller K
+(a)frying pan
+Certified inAbstain (in Baseline)Certified out
+Layer 1 Layer 2 Layer 3 Layer 4
+Neuron's top activating patches
+cACC: Baseline 42% → Certified 100% (↑138%) at 34% smaller K
+ (b)monitor
+Figure 19.Features encoded by certified-in, abstain (within baseline), and certified-out neuronsExtension of App. Fig. 18
+27

@@ -1,0 +1,171 @@
+# N2/P9 Preregistration - Minimal Frozen-Tree Source Telemetry
+
+Frozen before any P9 fuzz result, dispatch-invariance result, Gate-P timing, natural timing, memory result, or profiling result is inspected.
+
+## Goal
+
+Test whether the P8 zero-pass dispatch policy becomes end-to-end useful when its source-construction telemetry is reduced to exactly the primitive information actually consumed by the already-frozen P8 decision tree.
+
+P9 is a telemetry-implementation experiment, not a model-selection experiment. The P8 tree, P8 cutoff, P6 folding backend, P1 profitability thresholds, propagated-signature semantics, sparse-ANF lowerers, Gate-P evaluation family, and frozen ten-case EPFL natural evaluation corpus are unchanged.
+
+## Frozen policy
+
+P9 reuses the exact P8 frozen gate in `P8_FROZEN_GATE.json`:
+
+- tree structure, thresholds, and leaf values unchanged;
+- cutoff fixed at `0.80`;
+- annotate iff `predicted_ratio <= 0.80`;
+- no retraining, recalibration, threshold search, feature addition, or feature removal that changes the five tree inputs.
+
+The P8 tree uses exactly these five derived/raw inputs:
+
+1. `max_depth`;
+2. `max_pair_shells`;
+3. `binary_density`;
+4. `reuse_density`;
+5. `pair_repeat_density`.
+
+P9 computes them from exactly seven primitive quantities accumulated during source construction:
+
+1. `node_count`;
+2. `edge_count`;
+3. `binary_nodes`;
+4. `max_depth`;
+5. `reuse_edge_events`;
+6. `pair_repeat_excess`;
+7. `max_pair_shells`.
+
+Derived values are identical to P8:
+
+- `binary_density = binary_nodes / max(1,node_count)`;
+- `reuse_density = reuse_edge_events / max(1,edge_count)`;
+- `pair_repeat_density = pair_repeat_excess / max(1,binary_nodes)`.
+
+No other P8 telemetry is computed: no nonlinear-node count, CSE-hit count, maximum use, token-diversity counters, pair-token masks, or nonlinear density.
+
+## Minimal implementation
+
+`MinimalTelemetryFactory` must preserve ordinary source-Factory semantics exactly. It calls the frozen ordinary Factory node-construction path and updates telemetry only when a new source node is actually created.
+
+Supporting state permitted only because the seven counters cannot be updated without it:
+
+- one compact per-node depth array;
+- one compact per-node incoming-use array;
+- one dictionary from a packed canonical unordered child-ID pair to its shell count.
+
+No second source-DAG traversal is permitted. No profitability or ANF computation is permitted during dispatch telemetry collection.
+
+## Arms
+
+Primary source-inclusive arms:
+
+- `direct_source_pipeline`: ordinary source Factory plus direct/no-rewrite compiler;
+- `p6_source_pipeline`: ordinary source Factory plus frozen P6 compiler;
+- `p8_full_source_dispatch`: original P8 full 16-feature TelemetryFactory plus frozen P8 gate;
+- `p9_min_source_dispatch`: P9 minimal telemetry plus the exact same frozen P8 gate.
+
+The simultaneous P8 arm isolates the implementation effect of reducing telemetry. Because P8 and P9 must make identical decisions, any P9/P8 source-inclusive timing difference is attributable to telemetry implementation and scheduling noise, not policy.
+
+Secondary source-build endpoint records ordinary, P8-full, and P9-minimal source-build time from the same randomized arm schedule.
+
+## Mandatory dispatch invariance before timing interpretation
+
+Before evaluation timing is interpreted, P9 must reproduce P8 on every frozen P8 case family:
+
+- all 188 P8 training cases;
+- all 98 P8 validation cases;
+- all 36 frozen Gate-P evaluation cases;
+- all 10 frozen natural evaluation cases.
+
+For every case:
+
+- all five tree-input values must equal P8's previously recorded values exactly, except ordinary IEEE floating derivation equality from identical integer numerators/denominators;
+- predicted leaf ratio must equal P8's frozen-tree prediction;
+- annotate/bypass decision must be identical.
+
+Any mismatch aborts performance interpretation.
+
+No P8 timing labels are used to change P9.
+
+## Correctness
+
+Before timing interpretation:
+
+- 1000 fresh fuzz formulas are built by ordinary, P8-full, and P9-minimal factories;
+- P9 source semantics must equal ordinary source semantics;
+- P8 and P9 dispatch decisions must match for every fuzz formula;
+- direct and P6 compiler outputs must match the oracle/digest;
+- selected P9 work metrics must equal the selected frozen backend exactly;
+- P6 accepted-fold count must equal consumed-fold count.
+
+Any mismatch aborts interpretation.
+
+## Evaluation corpora
+
+### Gate-P
+
+Replay the exact frozen 36-case family: depths 6, 8, and 10, 12 cases per depth, using the original frozen RNG state/order.
+
+### Natural EPFL
+
+Replay exactly the frozen ten P1-P8 selected cones from EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`.
+
+P9 cannot make a natural-folding claim unless a fold is actually consumed.
+
+## Timing
+
+Gate-P: 20 randomized repetitions per case per source-inclusive arm.
+
+Natural: 15 randomized repetitions per case per source-inclusive arm.
+
+Separate untimed memory passes are permitted.
+
+Case medians are formed first. Pooled ratios are case-balanced geometric means with 5000-case bootstrap 95% intervals. Also report workload-weighted sums and wins.
+
+## Primary endpoint
+
+`P9 / direct` source-inclusive time from source-DAG construction through selected compiler construction and sparse-ANF lowering.
+
+## Secondary endpoints
+
+Report:
+
+- P9/P8 source-inclusive ratio;
+- P9/P6 source-inclusive ratio;
+- P9/direct source-build ratio;
+- P9/P8 source-build ratio;
+- P9/direct compiler-path ratio on the selected backend;
+- workload-weighted versions;
+- dispatch counts and confusion against always-P6 profitability;
+- Boolean-work ratios relative to direct;
+- Python traced peak allocation ratios.
+
+## Predeclared signals
+
+### Gate-P P9 source-inclusive PASS
+
+Requires all of:
+
+1. zero correctness failures;
+2. exact P8/P9 dispatch invariance on all frozen P8 case families;
+3. at least one Gate-P case dispatched to P6 and consuming a fold;
+4. P9/direct source-inclusive case-balanced geomean <= 0.95;
+5. bootstrap 95% upper bound < 1.00;
+6. no greater than 5% pooled increase in pair terms or peak monomials relative to direct.
+
+### Telemetry-engineering success
+
+Independently report whether:
+
+- P9/P8 source-build geomean <= 0.75, and
+- P9/P8 source-inclusive geomean <= 0.98,
+
+with exact dispatch invariance.
+
+This secondary signal tests the narrow implementation hypothesis even if the full direct crossover is not reached.
+
+## Guardrails
+
+- No P8 tree value, threshold, cutoff, P6 fold threshold, evaluation case, repetition count, or endpoint may change after P9 results are seen.
+- No P9 timing may be used to alter the minimal counters or supporting-state representation.
+- P9 is a Python implementation experiment. A win would show that the frozen P8 dispatch can amortize when telemetry is made cheaper; it would not establish uniqueness of CM folding or general natural-circuit speedup.

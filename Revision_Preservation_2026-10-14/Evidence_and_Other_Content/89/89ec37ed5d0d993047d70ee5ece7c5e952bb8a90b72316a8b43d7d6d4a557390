@@ -1,0 +1,20 @@
+# N2/P9 Interpretation
+
+P9 answers a deliberately narrow question: if P8's model and choices are frozen, how much of its remaining tax comes from collecting telemetry that the model never uses?
+
+The answer is: **some, but not most**. P9 removed all unused P8 counters and token-diversity bookkeeping while reproducing P8 exactly on 332 frozen cases. This produced a real simultaneous improvement: P9/P8 source build was **0.8764x** and P9/P8 full source-inclusive time was **0.9648x**. The pipeline improvement is statistically clear in this run. But P9 source construction still costs **1.6314x direct**, leaving the whole pipeline at **1.1065x direct**.
+
+This matters because the selected compiler path itself is no longer the dominant problem. The simultaneous P9/direct compiler-path geomean is **0.9915x**, and the workload-weighted ratio is **0.8388x**. The frozen five-case annotation policy still removes enough work on its selected heavy cases that a post-hoc zero-incremental-telemetry calculation reaches **0.9745x** case-balanced and **0.8905x** workload-weighted.
+
+The P9 profile localizes the remaining overhead. For 360 Gate-P source builds, the minimal `_make` wrapper accounts for about 0.052 s cumulative, including about 0.024 s in the ordinary base `_make`. The remaining work is per-new-node bookkeeping: depth propagation, incoming-use marking, canonical pair counting, and the extra Python call/control path. The plain profile for the same 360 builds totals about 0.062 s versus about 0.090 s for P9. These profile totals are diagnostic only; the randomized benchmark timings are authoritative.
+
+The natural control is encouraging for a different reason. P9 takes no natural folds yet is only **1.0173x** direct case-balanced and **0.9988x** workload-weighted. Thus the abstention tax has been pushed close to practical parity on the large natural workload, even though Gate-P's small cases still expose the fixed source-builder cost.
+
+## Recommended P10
+
+The next clean experiment should keep the entire P8/P9 policy frozen again and attack only the remaining per-node source-construction path. Two changes are especially well motivated by the P9 profile:
+
+1. **Fuse the seven-counter telemetry directly into a dedicated ordinary Factory `_make` implementation**, instead of wrapping `base.Factory._make` through `super()` and then revisiting the new node. Construct the cache key, create the node, and update only the needed counters in one Python frame/code path.
+2. Add a **tree-aware lazy telemetry arm** as a separately preregistered comparator: the frozen tree's root is `max_pair_shells <= 4.5`. Natural cases never enter the right subtree, and only 24/36 Gate-P cases do. A lazy implementation can avoid maintaining features that are provably unreachable for a branch when it can do so without a second full traversal. Any such arm must preserve exact P8/P9 decisions on all 332 frozen cases before timing is interpreted.
+
+I would test the fused implementation first because it is the cleaner causal experiment. The target is now concrete: P9 needs to remove roughly the remaining 63% source-build premium over direct. The post-hoc frozen-decision bound suggests that doing so is sufficient for an end-to-end crossover without changing the folding mathematics or dispatch model.

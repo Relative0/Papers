@@ -1,0 +1,147 @@
+4 =====
+Manginas Manginas Stevinson V arghese Katzouris Paliouras Lomuscio
+2.3. Verification of Neural Networks
+NN Robustness. Verifying the robustness of NN classifiers amounts to proving that the
+network’s correct predictions remain unchanged if the input is perturbed within a given
+range ϵ (Wong et al., 2018). NN verification methods reason over infinitely-many inputs
+to derive formal certificates for the robustness condition. For a given network f, this is
+formalized as follows: for all inputs x, such that f(x) is a correct prediction, and for all x′,
+such that∥x− x′∥≤ ϵ, it holds that f(x) = f(x′). Checking if the robustness condition
+holds can be achieved by reasoning over the relations between the un-normalized predictions
+(logits) at the NN’s output layer. In particular, if for any x′ in an ϵ-ball of x, it holds that
+ytrue− yi > 0, for all yi̸=ytrue, then the network is robust for ϵ (Gowal et al., 2018). Here
+ytrue is the logit corresponding to the correct class and yi are the logits corresponding to all
+other labels. This condition can be checked by computing the minimum differences of the
+predictions for all points in theϵ-ball. If that minimum is positive, the robustness condition
+is satisfied. However, finding that minimum is NP-hard (Katz et al., 2017).
+Solver-Based Verification. Early verification approaches include Mixed Integer Linear
+Programming (MILP) (Lomuscio and Maganti, 2017; Tjeng et al., 2019; Henriksen and
+Lomuscio, 2020) and Satisfiability Modulo Theories (SMT) (Ehlers, 2017b; Katz et al.,
+2017). MILP approaches encode the verification problem as an optimization task over
+linear constraints, which can be solved by off-the-shelf MILP-solvers. SMT-based verifiers
+translate the NN operations and the verification query into an SMT formula and use SMT
+solvers to check for satisfiability. Although these methods provide exact verification results,
+they do not scale to large, deep networks, due to their high computational complexity.
+Relaxation-Based Verification. As the verification problem is NP-hard (Katz et al.,
+2017), incomplete techniques that do not reason over an exact formulation of the verification
+problem, but rather an over-approximating relaxation, are used for efficiency. A salient
+method that is commonly used is Interval Bound Propagation (IBP), a technique which uses
+interval arithmetic (Sunaga, 1958) to propagate the input bounds through all the layers of
+a NN (Gowal et al., 2018). As a non-exact approach to verification, it is not theoretically
+guaranteed to solve a problem. However, the approach is sound, in that if the lower bound
+is shown to be positive the network is robust. Therefore, once the bounds of the output
+layer are obtained, an instance is safe if the lower bound of the logit corresponding to the
+correct class is greater than the upper bounds of the rest of the logits, since this ensures a
+correct prediction, even in the worst case.
+3. Probabilistic Neuro-Symbolic Robustness Verification
+3.1. Problem Statement
+We now formally define the aim of relaxation-based techniques in the context of NeSy
+reasoning systems. Given a NeSy system, as defined in Section 2.1, our aim is to compute:
+
+min
+x′
+p(yi|x′), max
+x′
+p(yi|x′)
+
+∀x′ s.t.||x′− x||≤ ϵ (2)
+4
+
+
+5 =====
+Scalable Probabilistic NeSy Verification
+for all yi in y. That is, we wish to calculate the minimum and maximum value of each
+probabilistic output of the NeSy system, under input perturbations of size ϵ. As described
+in Section 2.3, it is then possible to use these bounds to assess the robustness of an instance.
+Consider the NeSy system of Figure 1. The neural part comprises two NNs: (1) an
+object detector predicting whether a red traffic light or a car is in front of the autonomous
+vehicle (AV), and (2) an action selector, which outputs whether to accelerate or brake the
+AV. The symbolic part is the conjunction of two constraints, as described in Appendix A.
+Given an input image x, the system computes y, the probability that the constraints are
+satisfied. An instance is robust if min x′p(y|x′)>T , with threshold T∈ [0, 1]. This denotes
+that for all inputs in anϵ-ball of x the probability of the constraints being satisfied is always
+greater than T . Throughout the rest of the paper we consider the case where T = 0.5.
+3.2. Exact Solution Complexity
+Let us now assume that via techniques described in Section 2.3 we have obtained bounds in
+the form of a probability range for each output of the NN. Solving Equation 2 involves prop-
+agating these bounds through the symbolic component, in order to obtain maxima/minima
+on the reasoning output y. We now analyze the complexity of performing this computation
+exactly. To do so, we introduce a decision problem, E-WMC (“exists” WMC). Contrary
+to the functional problem, which seeks the maximum/minimum WMC for a given set of
+variable bounds, E-WMC instead asks “is there a probability assignment within the given
+variable bounds, such that the WMC is at least T, for some given threshold T”? Formally:
+Definition 1 (E-WMC) Given a Boolean formula ϕ(v) over variables v = (v1,...,v k),
+probability intervals Ii = [li,ui]⊆ [0, 1] for each variable vi, and a threshold T ∈ [0, 1], is
+there a probability vector w∈I1×... ×Ik such that WMC(ϕ,w )≥T ?
+Importantly, the computation involved in solving Equation 2 is at least as difficult as
+E-WMC, since (1) obtaining the maximum WMC value via Equation 2 allows to directly
+answer threshold queries of E-WMC, and further (2) E-WMC only involves the maximiza-
+tion subproblem of Equation 2.
+Proposition 2 (Complexity of E-WMC) E-WMC is NPPP- complete.
+Proof For membership, we notice that the circuits comprising the symbolic component
+represent multi-linear polynomials of the input variables (Choi et al., 2020). As all input
+variables of the polynomial are defined in a closed interval, the extrema lie on the vertices
+of the domain (Laneve et al., 2010), i.e. each variable is assigned either its lower or upper
+bound, not something in between. This yields a combinatorial search space of 2n possible
+assignments. Checking if WMC(ϕ,w )≥T for each assignment can be solved via a #P-query
+(Chavira and Darwiche, 2008). Thus, we need to search in a combinatorial space in which
+each guess is linear in the size of the input (the NP-part) with a call to a #P-oracle at each
+step, which establishes that E-WMC is in NP#P. From (Monniaux, 2022) NP#P = NPPP.
+To show hardness (see Appendix B for a full proof), we reduce E-MAJSAT (Littman
+et al., 1998), the SAT-oriented complete problem for NPPP, to E-WMC. Specifically, we
+show that given any formula ϕ we can find a threshold T and a set of probability intervals
+I for the variables of ϕ, such that E-MAJSAT(ϕ)⇐⇒ E-WMC(ϕ,I,T ).
+5
+
+
+6 =====
+Manginas Manginas Stevinson V arghese Katzouris Paliouras Lomuscio
+3.3. Relaxation-Based Approach
+The hardness of exact bound computation through the compiled symbolic component mo-
+tivates the use of relaxation-based techniques. We now show how these can be extended to
+the NeSy setting in order to provide a scalable solution to Equation 2.
+In the NeSy systems of Section 2.1, the outputs of the NN are fed as input to the
+arithmetic circuit. Due to this compositionality and the algebraic nature of the circuits,
+a NeSy system can be seen as an end-to-end differentiable computational graph. Such a
+graph can be constructed as a single module within a machine learning library, such as
+Pytorch, and subsequently exported as an Open Neural Network Exchange (ONNX) graph
+(developers, 2021). Appendix C depicts the ONNX representation of the NeSy system of
+the running example, shown as an end-to-end algebraic graph.
+ONNX is the standard input format for NN verifiers (Brix et al., 2024), including both
+solver-based verification tools, such as Marabou (Katz et al., 2019), and relaxation-based
+ones, such as auto LiRPA (Xu et al., 2020) and VeriNet (Henriksen and Lomuscio, 2020).
+Thus, by exporting a NeSy system to this format, it is possible to utilize state-of-the-
+art tools to perform verification in an almost “out-of-the-box” fashion. While our pro-
+posed framework is, in principle, compatible with all the aforementioned tools, we focus
+on relaxation-based verifiers, in order to showcase scalable probabilistic NeSy verification.
+Such verifiers allow us to perturb the input and compute bounds directly on the output of
+the NeSy system, that is, without computing intermediate bounds on the NN outputs.
+4. Experimental Evaluation
+In this section we empirically evaluate the effectiveness and applicability of our approach.
+We assess the scalability of the proposed method via a synthetic task based on MNIST
+addition, a standard benchmark from the NeSy literature (Manhaeve et al., 2018). Further,
+we apply our approach to a real-world autonomous driving dataset and verify a safety
+driving property on top of two 6-layer convolutional NNs. In this case, the scalability of
+our technique allows us to handle high-dimensional input and larger networks, which are
+typical of real-world applications. All experiments are run on a machine with 128 AMD
+EPYC 7543 32-Core processors (3.7GHz) and 400GB of RAM.
+4.1. Multi-Digit MNIST Addition
+In this experiment we evaluate the scalability of our approach as the complexity of the
+symbolic component increases. Specifically, we explore how the approximate nature of
+our method enhances scalability, while also considering the corresponding trade-off in the
+quality of verification results. To this end, we compare the following approaches:
+1. End-to-End relaxation-based verification
+
+E2E-R
+
+An implementation of our method in auto LiRPA , a state-of-the-art relaxation-based
+verification tool. The input to auto LiRPA is the NeSy system under verification,
+which is translated internally into an ONNX graph. The verification method used is
+IBP, as implemented in auto LiRPA .
+2. Hybrid verification
+
+R+SL V
+
+A hybrid approach consisting of relaxation-based verification for the neural part of
+6
+

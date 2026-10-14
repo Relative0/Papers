@@ -1,0 +1,201 @@
+# N2/P6 Preregistration — Two-Word In-Node Semantic Annotation
+
+Frozen before any N2/P6 fuzz, Gate-P, or natural benchmark result is inspected.
+
+## Goal
+
+Test whether the P4/P5 propagated two-support signature can survive the **complete DAG-construction + sparse-ANF pipeline** when the persistent annotation is reduced from six side containers to two primitive integer words stored directly on each compiler node.
+
+P6 is a representation/placement refinement only. It does **not** retune the profitability rule, change signature propagation semantics, alter the Gate-P generator, alter the frozen natural selection, or add a learned/size dispatch gate. The latter is intentionally deferred so that P6 isolates the cost of carrying the successful P4/P5 semantic annotation.
+
+## Frozen profitability and propagation semantics
+
+P6 reuses P1-P5 unchanged:
+
+- monomial-estimate saturation cap `4096`;
+- reject benefit `<= 0`;
+- reject benefit `< 16` estimated pair terms;
+- shared threshold: relative benefit `>= 20%`;
+- unshared threshold: relative benefit `>= 10%`;
+- no arbitrary truth-table retabulation;
+- no general NOT-over-two-support propagation;
+- same ordered-pair precedence: propagated pair from left child first, then right child if distinct;
+- same alignment of direct base operands, `NOT(base)`, same-orientation signatures, and swapped-orientation signatures;
+- same requirement that at least one child shell is composed through;
+- if composition fails, retain the native immediate two-support signature.
+
+No threshold or precedence rule may change after results are observed.
+
+## P6 node representation
+
+`InNode` preserves the ordinary `Node` fields (`nid`, `op`, `args`, `value`) and adds exactly two mutable Python integer slots:
+
+1. `meta_word` — low 13 bits contain the saturated monomial estimate (`0..4096`); all higher bits contain the unique-parent edge-use count. Incrementing one materialized parent edge therefore adds `1 << 13` to the child word.
+2. `sig_word` — a compact semantic signature with two 20-bit node ids, one 4-bit truth token, one propagated bit, and one valid bit. `sig_word == 0` means no signature.
+
+The 20-bit node-id contract supports ids `0..1,048,575`. P6 must abort if construction would exceed it. The frozen natural admission bound and Gate-P/fuzz generators are far below this bound; it is nevertheless checked explicitly.
+
+There are **no** per-node side arrays/bytearrays for use count, estimate, pair ids, token, or propagated status, and no `Sig` or `Candidate` objects.
+
+The existing factory cache and `nodes` list remain because they are part of the ordinary compiler representation; P6 does not introduce a separate metadata index.
+
+## Construction-time work
+
+On creation of a unique node, P6 may:
+
+- increment each child's packed use count;
+- compute and pack the frozen saturated monomial estimate;
+- inspect immediate child signatures;
+- propagate and pack one two-support signature when the frozen P4/P5 propagation rule succeeds.
+
+It may **not** compute/store pair cost, shell cost, fold cost, benefit, sharing status, fractional profitability, or a Candidate record during construction.
+
+## Demand-time lowering
+
+Primary arm: `cm_innode_sig_sparse`.
+
+At a demanded binary node:
+
+1. if its propagated bit is not set, immediately use the exact direct sparse-ANF rule;
+2. otherwise decode `(a,b,token)` from the node's packed signature;
+3. align the two immediate children to `(a,b)` using their in-node signature words;
+4. decode the needed use counts/estimates directly from the relevant nodes;
+5. compute the frozen P5 candidate arithmetic on demand;
+6. if accepted, lower only the surviving base pair and apply the composed token;
+7. if rejected, execute the exact direct rule.
+
+No rewrite DAG, fold plan, recursive matcher/estimator, reference-count scan, Candidate object, or side-metadata container is permitted. Every accepted fold must be consumed.
+
+## Mandatory equivalence to P5
+
+P6 must reproduce P5 exactly on every fuzz and benchmark symbolic case:
+
+- final ANF digest;
+- multiplications, pair terms, peak monomials, evaluated ANF nodes, and final monomial count;
+- demanded selector-node/candidate counts;
+- accepted and accepted-shared folds;
+- reject-reason counts;
+- estimated keep/fold/benefit totals;
+- folds consumed and bypassed child-shell counts.
+
+Construction metadata must also match P5 node by node after cloning:
+
+- topology/op/value;
+- edge-use count;
+- saturated monomial estimate;
+- signature presence;
+- ordered base pair;
+- truth token;
+- propagated flag.
+
+Any mismatch aborts the run.
+
+## Timing endpoints
+
+### A. Lowering-only
+
+Materialize the P6 and P5 DAGs before timing.
+
+Arms:
+
+- `direct_innode_sparse_anf`: direct/no-rewrite sparse ANF on the P6 DAG, ignoring the two annotation words;
+- `cm_innode_sig_sparse`: P6 primary lowering arm;
+- `cm_packed_sig_sparse`: simultaneous frozen P5 reference.
+
+Primary lowering comparison: `cm_innode_sig_sparse / direct_innode_sparse_anf`.
+
+P6/P5 is an implementation diagnostic.
+
+### B. Construction + lowering
+
+Each repetition freshly clones the same frozen source DAG:
+
+- `direct_build_sparse`: ordinary Factory + direct sparse ANF;
+- `cm_innode_sig_build_sparse`: P6 in-node factory + P6 lowering;
+- `cm_packed_sig_build_sparse`: frozen P5 packed-side-array factory + P5 lowering.
+
+Primary end-to-end comparison: `cm_innode_sig_build_sparse / direct_build_sparse`, with `pipeline_ns` measured by one outer timer exactly as in P5.
+
+Report build-only P6/direct and P6/P5 ratios separately. Preserve the P5 convention that factory constructor time is included in `pipeline_ns` but `dag_build_ns` begins immediately after factory construction.
+
+BLIF parsing, oracle construction, source generation, result serialization, and truth-vector conversion remain outside the timed endpoint.
+
+## Corpora
+
+### Natural EPFL
+
+Replay the exact P1-P5 frozen snapshot and ten cases:
+
+- EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`;
+- pinned adder, bar, CAVLC, int2float, priority, router BLIF blobs;
+- support 9-12;
+- transitive source-node count <= 128;
+- first and last admissible case under the frozen structural ordering;
+- `bar` may again contribute zero timed cases.
+
+No timing/fold-incidence selection is permitted.
+
+### Gate-P
+
+Replay the exact frozen generator/seed family/order, depths `6,8,10`, 12 cases per depth. Direct ANF identity/work must match the frozen P5/P4 reference before timed interpretation.
+
+## Correctness and invariants
+
+Before interpreting benchmark timing:
+
+- run 1000 fresh randomized formulas through original direct, direct-on-P6, P6, P5, P4, P3, and P2;
+- require oracle equality and one final ANF digest;
+- independently recompute fanout and the P1 monomial estimate and compare with `meta_word`;
+- compare every P6 signature with P5 packed metadata;
+- require exact P6/P5 symbolic decision/work equality;
+- require accepted folds == consumed folds;
+- require ordinary/P6/P5 clones to preserve direct reachable-node and ANF-work identity.
+
+## Repetitions
+
+Preserve P5 counts:
+
+- natural lowering: 25 randomized paired repetitions/case/arm;
+- Gate-P lowering: 25 randomized paired repetitions/case/arm;
+- natural construction-inclusive: 15 randomized paired repetitions/case/arm;
+- Gate-P construction-inclusive: 15 randomized paired repetitions/case/arm;
+- memory measured in separate untimed passes.
+
+Case medians are formed first. Pooled ratios use the geometric mean of paired case-median ratios with case-bootstrap 95% intervals.
+
+## Predeclared interpretation
+
+### Lowering-only speed signal
+
+For a corpus with at least one consumed P6 fold, PASS requires:
+
+1. zero correctness/equivalence failures;
+2. pooled P6/direct lowering ratio `<= 0.95`;
+3. bootstrap 95% upper bound `< 1.00`;
+4. no >5% pooled increase in pair terms or peak monomials versus direct.
+
+If no fold is consumed, report abstention overhead only.
+
+### Construction-inclusive speed signal
+
+For a corpus with at least one consumed fold, PASS requires:
+
+1. all correctness/equivalence constraints above;
+2. pooled P6/direct pipeline ratio `<= 0.95`;
+3. bootstrap 95% upper bound `< 1.00`.
+
+### Engineering diagnostics
+
+Report, without changing the primary criterion:
+
+- P6 build / ordinary build;
+- P6 build / P5 build;
+- P6 lower / P5 lower;
+- P6 pipeline / P5 pipeline;
+- traced Python peak ratios P6/direct and P6/P5;
+- number of cases below direct for lowering and full pipeline;
+- depth-stratified Gate-P ratios;
+- workload-weighted ratios as explicitly secondary;
+- natural results separately, with no natural-folding claim if zero fold is consumed.
+
+If P6 preserves P5's algebra but substantially lowers build cost and still misses the pipeline criterion, the remaining penalty is evidence that even two in-node Python integers plus propagation/control work are too costly relative to the minimal direct builder. If it crosses the preregistered full-pipeline threshold, that is the first case-balanced end-to-end signal in the P-series and must still be described as Gate-P fold-rich evidence unless natural folds are also consumed.

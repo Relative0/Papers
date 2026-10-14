@@ -1,0 +1,163 @@
+# T1 Formal Contract: Fixed-Cut Exact Counting under Cumulative Destructive Restrictions
+
+**Version:** 2026-09-28 Theory Phase 2  
+**Status:** frozen contract for the T3 theorem in this phase
+
+## 1. Source and coordinate universe
+
+Let
+\[
+X=\{x_1,\dots,x_p\},\qquad Y=\{y_1,\dots,y_q\},\qquad V=X\sqcup Y,
+\]
+with \(n=p+q\) and a **fixed ordered cut** \(X\mid Y\). The source is a Boolean function
+\[
+f:\{0,1\}^{X}\times\{0,1\}^{Y}\to\{0,1\}.
+\]
+
+For the persistence theorem, the promised source class is the class of **supplied fixed-cut factor artifacts**
+\[
+\mathcal C^{\mathrm{fac}}_{p,q,r}
+=\{(U,W): U\in\mathbb F_2^{2^p\times r},\ W\in\mathbb F_2^{r\times 2^q}\},
+\]
+interpreted by
+\[
+f_{U,W}(x,y)=u_x\cdot w_y\pmod 2,
+\]
+where \(u_x\) is row \(x\) of \(U\) and \(w_y\) is column \(y\) of \(W\). The supplied width \(r\) need not be minimal. This is an artifact-input theorem, not a theorem about the cost of discovering a factorization from an arbitrary formula or circuit.
+
+## 2. Source access and preprocessing
+
+During preprocessing the algorithm has read-only random access to all entries of \(U,W\). After preprocessing, **the source factors and full truth table are unavailable**. All future operations must use only the persistent state and the restriction metadata.
+
+Thus construction cost is charged separately from update/query cost.
+
+## 3. Persistent state and bit convention
+
+The persistent state is an explicitly described finite bit string containing:
+
+- exact integer moment counters from the T3 construction;
+- the set (or dense index range) of profile labels used by the construction;
+- the currently free-coordinate masks;
+- the remaining cumulative restriction budget \(h\).
+
+The theorem uses a **fixed-width allocation convention** chosen at construction time:
+
+- unsigned row-profile count counters use \(p+1\) bits;
+- signed profile-character counters use \(q+2\) bits in exact two's-complement semantics;
+- query intermediates use enough exact signed bits to represent values in \([-2^n,2^n]\), e.g. \(n+2\) bits;
+- the final count uses \(n+1\) unsigned bits.
+
+No floating-point arithmetic and no rounding are permitted. Complexity is reported both as exact-integer arithmetic-operation counts and, where relevant, in bit complexity. A variable-width corollary may shrink counters after restrictions, but it is not the primary contract.
+
+## 4. Restriction/update protocol
+
+This phase selects protocol **(2): cumulative-budget destructive updates**.
+
+A restriction state is a partial assignment \(\rho\) to a set \(R\subseteq V\). Initially \(R=\varnothing\). Fix a total budget \(k\le n\). At any point define
+\[
+h=k-|R|.
+\]
+
+A legal update chooses one currently free coordinate \(z\in V\setminus R\) and a bit \(b\in\{0,1\}\), then destructively replaces
+\[
+\rho\leftarrow \rho\cup\{z=b\},\qquad h\leftarrow h-1.
+\]
+A sequence is legal only while \(|R|\le k\). Coordinates cannot be unfixed or reassigned.
+
+The T3 theorem does **not** use either of the following different contracts:
+
+1. **immutable-source restrictions:** every query is evaluated independently against the original source without mutating a state;
+2. **reset-horizon destructive restrictions:** after each destructive update a fresh budget of \(k\) additional restrictions is granted.
+
+Those models can be studied separately, but their theorems must not be conflated with this one.
+
+## 5. Query operation
+
+`COUNT()` returns the exact number of satisfying residual assignments:
+\[
+N(f\mid \rho)=\sum_{(x,y):\,(x,y)\supseteq\rho} f(x,y).
+\]
+The empty restriction is allowed. A batch restriction is implemented as a sequence of one-coordinate updates followed by `COUNT()`.
+
+The correctness quantifier is:
+
+> For **every legal continuation sequence** of at most the remaining \(h\) distinct-coordinate updates, the prescribed update map followed by `COUNT()` returns the exact residual count.
+
+This is a universal statement about all possible continuations of the state-transition system. It does **not** say that observing one realized adaptive transcript reveals the answers on unrealized branches.
+
+## 6. Identifiability depth is not an operational lower bound
+
+For a promised class \(\mathcal C\),
+\[
+\kappa(\mathcal C)=\min\{k:Q_k\text{ is injective on }\mathcal C\}
+\]
+is a **worst-case identifiability depth** for the specified family of conditioned counts. By itself it is not:
+
+- a lower bound on persistent-state bits;
+- a lower bound on machine words;
+- a lower bound on update time;
+- a lower bound on query latency;
+- a lower bound on the number of oracle calls in another source-access model.
+
+**One-bit warning.** Let \(\mathcal P_n=\{\mathrm{PARITY}_n,1-\mathrm{PARITY}_n\}\). These two functions agree on every conditioned count fixing at most \(n-1\) coordinates, so \(\kappa(\mathcal P_n)=n\). Yet under the known promise \(\mathcal P_n\), one identifying bit selects which source is present; the large identifiability depth therefore does not imply large storage.
+
+## 7. Q15 retained with its correct scope
+
+Let \(Q_k:\mathbb R^{2^n}\to\mathbb R^m\) be the full labeled conditioned-count operator through depth \(k\). If \(L:\mathbb R^{2^n}\to\mathbb R^s\) is a **real-linear** sketch and there exists any decoder \(D\) satisfying
+\[
+Q_k f=D(Lf)\qquad\text{for every real-valued }f,
+\]
+then
+\[
+\ker L\subseteq\ker Q_k,
+\]
+and hence
+\[
+\operatorname{rank}L\ge \operatorname{rank}Q_k
+=\sum_{j=0}^k\binom nj.
+\]
+
+**Proof.** If \(Lf=0=L0\), decoder correctness gives \(Q_k f=D(0)=Q_k0=0\), so \(f\in\ker Q_k\). Rank-nullity gives the inequality. \(\square\)
+
+This is a linear-dimension theorem on **all real-valued inputs**. It is not a bit-storage theorem on a finite Boolean promise class; arbitrary real scalars can carry unbounded precision, and finite classes can admit small non-linear or high-precision identifiers.
+
+## 8. Corrected Q16: cumulative closure and reset-horizon failure
+
+### Q16(a): cumulative-budget equivalence
+For Boolean functions \(f,g\) and integer \(t\ge0\), the following are equivalent:
+
+1. \(Q_t f=Q_t g\) as labeled query families;
+2. every deterministic or adaptive protocol that starts from the original source, fixes **at most \(t\) distinct coordinates in total**, and receives exact residual counts after any prefixes, produces the same transcript on \(f\) and \(g\).
+
+**Proof.** (1)\(\Rightarrow\)(2): every count asked on any realized prefix is a member of \(Q_t\), because the cumulative set of fixed coordinates has size at most \(t\). Thus corresponding replies agree inductively, so a deterministic/adaptive protocol chooses the same next action and obtains the same transcript.  
+(2)\(\Rightarrow\)(1): for any labeled query \((S,a)\) with \(|S|\le t\), choose the nonadaptive protocol that fixes exactly \((S,a)\) and asks the resulting count. Transcript equality yields equality of that query. \(\square\)
+
+A **single realized transcript** is only one path through this query tree and generally does not reveal the whole labeled family \(Q_t\).
+
+### Q16(b): residual horizon under cumulative use
+If \(\rho\) fixes \(s\le k\) coordinates, then the original \(Q_k f\) determines
+\[
+Q_{k-s}(f\mid\rho).
+\]
+Indeed, any further restriction of at most \(k-s\) coordinates composes with \(\rho\) to an original restriction of at most \(k\) coordinates.
+
+### Q16(c): reset-horizon closure is false
+For every \(k\ge1\), let \(f\) and \(g\) be complementary parity functions on \(k+1\) coordinates. Then
+\[
+Q_k f=Q_k g,
+\]
+because every restriction leaving at least one parity bit free contains equally many zeros and ones. After fixing one coordinate, however, the residual functions are complementary parity functions on \(k\) variables, and a full assignment of those \(k\) residual variables distinguishes them. Hence the original depth-\(k\) information does **not** determine a fresh \(Q_k\) horizon after a destructive update.
+
+This is why the T3 state below is parameterized by a **total cumulative budget** and reduces its active moment degree after each update.
+
+## 9. Regression evidence attached to this phase
+
+`verify_profile_moment_state.py` independently checks:
+
+- the one-bit parity warning for \(n=1,\dots,5\);
+- reset-horizon failure for \(k=1,\dots,5\);
+- the unordered-profile counterexample \(xy\) versus \((1-x)y\);
+- the full T3 state/update/query invariant on exhaustive small factor artifacts and randomized larger cases;
+- factor-basis (gauge) relabeling invariance.
+
+The recorded run is in `t3_verification_results.json`.

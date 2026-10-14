@@ -1,0 +1,147 @@
+# N2/P4 Preregistration — Construction-Time CM Signatures and Edge Metadata
+
+Frozen before any N2/P4 fuzz, natural, or Gate-P result is inspected.
+
+## Goal
+Test the remaining P3 bottleneck directly: can profitable CM/two-support folding become competitive with direct/no-rewrite sparse-ANF lowering if the information needed to recognize folds is propagated **once, incrementally, while the Boolean DAG is constructed**, rather than recovered later by a reference-count scan or recursive matcher?
+
+P4 tests both the lowering-stage effect and the cost of carrying the metadata during DAG materialization.
+
+## Frozen profitability thresholds
+P4 reuses the N2/P1–P3 thresholds unchanged:
+
+- saturating structural ANF-size estimate cap: `4096`;
+- reject estimated benefit `<= 0`;
+- reject estimated benefit `< 16` pair terms;
+- shared child threshold: estimated relative benefit `>= 20%`;
+- unshared child threshold: estimated relative benefit `>= 10%`;
+- no arbitrary truth-table retabulation;
+- no NOT-over-two-support propagation.
+
+No threshold may be tuned after P4 results are observed.
+
+## Construction-time metadata
+A `MetaFactory` preserves the exact source DAG semantics and local simplifications of the frozen `Factory`, while attaching side metadata indexed by node id. Nodes themselves are not rewritten.
+
+For each newly materialized unique DAG node, P4 records:
+
+1. **edge-use count**: each child count is incremented exactly once for each edge of a newly created unique parent node. Cache hits do not create new DAG edges. When construction finishes these counts are the source-DAG fanouts used by the frozen sharing rule;
+2. **structural monomial estimate** `m(node)`: the exact P1 saturating estimator, computed bottom-up in O(1) from already constructed children;
+3. **native two-support signature** for binary `AND`, `OR`, `XOR`, and `TF`: `(ordered base pair, four-bit truth token)` over the node's immediate operands;
+4. **propagated two-support signature**: if the two operands can both be expressed over one already-known ordered base pair, P4 composes their four-bit truth tokens and propagates the resulting signature upward. Pair alignment may use the same pair or its swapped orientation. A direct base operand and `NOT(base)` may align to a pair. P4 does not propagate a two-support signature through a general `NOT` node;
+5. **one O(1) fold candidate record** for a node when propagated composition exposes a base pair below its immediate operand shell. The record contains the pair, aligned child tokens, composed token, shell flags, and precomputable pair-cost terms.
+
+Candidate-pair precedence is deterministic: propagated signature of the left child first, then the right child; duplicate ordered pairs are considered once. No search over arbitrary cuts is allowed.
+
+The propagated signature is semantic metadata only. It does not itself authorize a rewrite. The frozen profitability test is applied only when/if the node is demanded by ANF lowering, using the final construction-time edge-use counts.
+
+## P4 lowering
+The primary P4 arm is `cm_meta_sig_sparse`.
+
+- No source-DAG reference scan is performed.
+- No virtual rewrite graph is built.
+- No fold plan is built.
+- No recursive estimator is invoked during lowering.
+- No recursive matcher is invoked merely to expose a pair.
+- For a demanded binary node, the lowerer performs one array lookup for its precomputed candidate. If absent, it follows the direct sparse-ANF rule.
+- If present, it computes the frozen P1 profitability decision from precomputed costs plus the now-final edge-use counts. If accepted, it lowers only the surviving ordered base pair and applies the composed truth token directly.
+- Every accepted fold is therefore consumed.
+
+A diagnostic `cm_meta_native_sparse` arm uses the same construction-time fanout and monomial metadata but restricts candidate signatures to immediate/native two-support shells. It is intended to isolate the value of propagated signatures from the metadata architecture itself.
+
+Per-node high-resolution timers are forbidden inside the P4 timed lowering path because their cost would dominate the very overhead being tested. Selector counts are collected in untimed symbolic passes.
+
+## Timing endpoints
+P4 has two separately preregistered endpoints.
+
+### A. Lowering-only endpoint
+The DAG is materialized once before the timing schedule. Direct and P4 operate on the **same metadata-bearing DAG**:
+
+- `direct_meta_sparse_anf`: exact direct/no-rewrite sparse ANF, ignoring all metadata;
+- `cm_meta_native_sparse`: metadata-assisted immediate-shell folding diagnostic;
+- `cm_meta_sig_sparse`: propagated-signature P4 primary arm;
+- `cm_demand_profit_sparse`: frozen P3 simultaneous reference on the original structurally identical DAG.
+
+`lower_ns` is the primary lowering-only endpoint. Metadata construction is intentionally outside this endpoint.
+
+### B. DAG-materialization + lowering endpoint
+To charge the metadata where it is created, each timed repetition freshly clones the frozen source DAG:
+
+- `direct_build_sparse`: clone into the ordinary frozen Factory, then direct sparse-ANF lower;
+- `cm_meta_sig_build_sparse`: clone into `MetaFactory` while propagating P4 metadata, then P4 lower.
+
+The clone preserves source operator order, sharing and local simplifications and is verified structurally/semantically before timing. `pipeline_ns = dag_build_ns + lower_ns` is the primary construction-inclusive endpoint.
+
+This endpoint measures the **incremental DAG materialization stage plus ANF lowering**, not BLIF parsing, file I/O, or truth-vector oracle construction.
+
+## Corpora
+### Natural EPFL replay
+Replay the exact frozen N2/P1–P3 snapshot and structural selection:
+
+- EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`;
+- exact six pinned BLIF blobs for adder, bar, CAVLC, int2float, priority, router;
+- support 9–12;
+- transitive source-node count <= 128;
+- first and last admissible case by `(source_nodes, depth, root_name)`;
+- `bar` may contribute zero timed cases exactly as before.
+
+### Gate-P replay
+Replay the exact frozen Gate-P generator and seed family:
+
+- depths 6, 8, 10;
+- 12 cases/depth;
+- exact prior case order;
+- before any timing, direct final ANF digest and structural-work fields must match the frozen P3/P2 identity reference for all 36 cases.
+
+## Correctness and metadata invariants
+Before benchmark timing:
+
+- run 1000 fresh randomized formulas through original direct, direct-on-meta-DAG, P4-native, P4-propagated, P3, and P2;
+- require oracle equality and identical final ANF digest;
+- require cloned ordinary and metadata DAGs to preserve reachable-node count and direct structural-work identity;
+- independently recompute source fanout on fuzz formulas and require equality with `MetaFactory` edge-use metadata for every reachable node;
+- independently recompute P1 monomial estimates and require equality with construction-time estimates for every reachable node;
+- every accepted P4 fold must be consumed.
+
+Any correctness or invariant failure aborts without changing P4.
+
+## Repetitions
+- Natural lowering-only: 25 randomized paired repetitions/case/arm.
+- Gate-P lowering-only: 25 randomized paired repetitions/case/arm.
+- Natural construction-inclusive: 15 randomized paired repetitions/case/arm.
+- Gate-P construction-inclusive: 15 randomized paired repetitions/case/arm.
+- Memory: separate untimed passes.
+
+Case medians are formed first. Pooled ratios use the geometric mean of paired case-median ratios with a case bootstrap 95% interval.
+
+## Predeclared interpretation
+### Lowering-only actual-fold speed signal
+For a corpus, requires all of:
+
+1. P4-propagated accepts/consumes at least one fold;
+2. zero correctness, digest, fanout, estimate, or identity failures;
+3. pooled `cm_meta_sig_sparse / direct_meta_sparse_anf` lower-time ratio `<= 0.95`;
+4. bootstrap 95% upper bound `< 1.00`;
+5. no >5% pooled increase in pair terms or peak monomials versus direct.
+
+If no fold is consumed, report abstention overhead only.
+
+### Construction-inclusive speed signal
+Requires all of the above correctness/work constraints and:
+
+1. at least one P4 fold on the corpus;
+2. pooled `cm_meta_sig_build_sparse / direct_build_sparse` pipeline ratio `<= 0.95`;
+3. bootstrap 95% upper bound `< 1.00`.
+
+### Architectural diagnostics
+Regardless of pass/fail, report:
+
+- P4-native and P4-propagated fold counts and utilization;
+- P4-propagated vs P3 lowering time;
+- P4-propagated vs P3 symbolic ANF work;
+- propagated-signature candidates/folds not available to the native-only arm;
+- metadata DAG-build overhead (`MetaFactory / ordinary Factory`);
+- whether any Gate-P case crosses below direct in lowering-only and construction-inclusive time;
+- natural results separately, with no natural-folding claim if the natural set contains zero P4 folds.
+
+A lowering-only win without a construction-inclusive win means the metadata is useful once available but still too expensive to propagate in the tested Python implementation. A construction-inclusive win is the stronger end-to-end P4 result.

@@ -1,0 +1,47 @@
+\section{Definitions and publication conventions}
+\label{sec:defs}
+All sums of Boolean coefficients are XOR; products of Boolean scalars are AND.
+Let $\Bool$ be a Boolean algebra of formulas modulo logical equivalence, regarded
+as a Boolean ring. Its elements satisfy $b^2=b$. The variables $X,Y$ used in the
+fixed LM family are independent formal generators. Paper B uses the true-first
+row and column order $(1,0)$, hence row-major truth order $(11,10,01,00)$.
+The coefficient rotation instead uses the cyclic order $(11,10,00,01)$.
+Converting between these orders is part of a map, not an implicit identification.
+
+Let $R e_j=e_{j+1\pmod 4}$, $u=I+R$, and
+$\A=\F_2[R]\cong\F_2[u]/(u^4)$. Elements of $\A$ have four binary coefficients;
+matrices over $\A$ are not original $2\times2$ correspondence matrices.
+The faithful binary regular representation of $M\in\Mat_d(\A)$ is denoted
+$\lambda_d(M)\in\Mat_{4d}(\F_2)$.
+
+More generally, $K$ is a finite commutative chain ring with maximal ideal
+$(\pi)$, nilpotency length $s$ and residue field $k=\F_q$. Set $\pi^s=0$.
+For a nonzero matrix with Smith exponents
+$0\leq a_1\leq\cdots\leq a_\ell\leq s$, let
+\[
+ r=\#\{i:a_i<s\},\qquad h=\#\{i:a_i=a_1\}.
+\]
+Here $r$ means the number of nonzero Smith factors, not an unspecified ring
+rank; $h$ is the least-valuation multiplicity. A row is primitive when one
+coordinate is a unit. Primitive rows modulo unit multiplication are projective
+rows. A complete local setting is a projective basis represented by rows of an
+invertible matrix. Different bases are different settings; no extra
+context-independent identification of repeated rays is assumed.
+
+For a bipartite resource $M$, the supported events are
+\[
+ \mathcal E_M(B,C)=\{(i,j):b_i M c_j^T\ne0\}.
+\]
+A global assignment selects one outcome in every local setting and is supported
+in every joint setting. The support is \emph{local} when every supported event
+extends to a global assignment, \emph{logical but not strong} when some event
+does not extend but a global assignment exists, and \emph{strong} when none
+exists. The zero resource, which has empty support, is excluded from the
+classification of physical-looking nonzero resources.
+
+A status of ``proved'' addresses validity under stated assumptions, not priority.
+A finite record below is never an unbounded theorem. Source abbreviations
+S-B, S-AUD, S-ADV, S-CAP and S-LMB resolve in
+\texttt{provenance/SOURCE\_GUIDE.md}. Candidate novelty means only that the
+bounded targeted search did not settle priority. Stable claim IDs resolve in
+\texttt{claims/claim\_registry.json}.

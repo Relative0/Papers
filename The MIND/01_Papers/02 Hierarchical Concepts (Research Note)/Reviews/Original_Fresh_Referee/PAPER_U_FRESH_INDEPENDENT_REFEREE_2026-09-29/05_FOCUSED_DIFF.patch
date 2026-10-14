@@ -1,0 +1,40 @@
+--- original_v0.3/Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.tex
++++ referee_revision/Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.tex
+@@ -74,7 +74,7 @@
+ The theorem is proved in \cref{sec:symmetry} using standard sections and stabilizers of full tree automorphism groups \cite[Sections 1.2.2--1.2.3]{BranchGroups}. Its role is to make the hypotheses of an adaptive ``symmetry loss'' statement explicit. Neither the uniform level-stabilizer formula nor the general group-theoretic mechanism is asserted to be original.
+ 
+ \section{A coordinate-free observation quotient}\label{sec:quotient}
+-An \emph{ultrapseudometric} satisfies the ultrametric inequality and symmetry, but may assign zero distance to different points. Throughout, $X$ is nonempty. For a partition $\PP$ let $q:X\to\PP$ send a point to its cell, and set
++An \emph{ultrapseudometric} on $X$ is a map $e:X\times X\to[0,\infty)$ with $e(x,x)=0$, symmetry, and the ultrametric inequality; it may assign zero distance to different points. Throughout, $X$ is nonempty. For a partition $\PP$ let $q:X\to\PP$ send a point to its cell, and set
+ \[
+  \tau_{\PP}=\{q^{-1}(A):A\subseteq\PP\}.
+ \]
+@@ -151,7 +151,7 @@
+ $D(a,b)=\lim_k\delta_{\PP_k}(a_k,b_k)$. For distinct sequences, these distances are positive and constant after their first differing coordinate. Passing to completion limits of representatives shows that $D$ equals the distance in $\widehat X$, proving the isometry.
+ \end{proof}
+ 
+-This is the finite clopen partition description of profinite spaces \cite[Lemma 5.22.2]{Stacks}, specialized to a calibrated ultrametric. Tree/end-space representations are much older and more general; Hughes \cite{Hughes2004} establishes a categorical equivalence with specified morphisms, while Dovgoshey \cite[Theorem 10.25]{Dovgoshey2025} relates representing trees to isometric completions of totally bounded spaces. These results should not be confused with a claim that every hierarchy is a full regular tree.
++This is the finite clopen partition description of profinite spaces \cite[Lemma 5.22.2]{Stacks}, specialized to a calibrated ultrametric. Tree/end-space representations are much older and more general; Hughes \cite{Hughes2004} establishes a categorical equivalence with specified morphisms, while Dovgoshey \cite[Theorem 10.25 and Proposition 10.29]{Dovgoshey2025} relates representing trees to isometric completions of totally bounded spaces and realizes the completion by maximal chains. These results should not be confused with a claim that every hierarchy is a full regular tree.
+ 
+ \begin{example}[Why completion cannot be omitted]
+ The eventually zero binary sequences are totally bounded under the prefix ultrametric. Every finite binary word occurs as a prefix. Their inverse limit is therefore the entire binary boundary, including the all-ones sequence, which was not in the original space.
+@@ -195,7 +195,7 @@
+ 
+ A refinement can be obtained by replacing one current leaf at a time by its $m$ children. For one replacement at a leaf $s$, the homomorphism from the current stabilizer to $\Sym(m)$ records its action on those children. It is onto and its kernel is the refined stabilizer. Thus each replacement has index $m!$. There are exactly $N$ replacements, and multiplication of subgroup indices proves \eqref{eq:index}, without any assertion that the final subgroup is normal.
+ 
+-Suppose $G_{F'}$ is normal in $G_F$. Its boundary orbit partition, already proved to be $\{C_t:t\in F'\}$, must be invariant under $G_F$: conjugation by an element of $G_F$ permutes these orbits. Fix $s\in F$ and take any descendant $t\in F'$ at relative depth $h$. The full section group at $s$ acts transitively on the words of length $h$. Invariance therefore places every vertex of $s\Sigma_m^h$ in $F'$. Prefix freeness and completeness exclude any other relative depth in that subtree. This is \eqref{eq:normalcriterion}.
++Suppose $G_{F'}$ is normal in $G_F$. Its boundary orbit partition, already proved to be $\{C_t:t\in F'\}$, must be invariant under $G_F$: conjugation by an element of $G_F$ permutes these orbits. Fix $s\in F$ and take any descendant $t\in F'$ at relative depth $h$. The full section group at $s$ acts transitively on the words of length $h$. Invariance therefore places every vertex of $s\Sigma_m^h$ in $F'$. Prefix freeness and completeness exclude any other relative depth in that subtree. This is \eqref{eq:normalcriterion}. Here distinct vertices have distinct cylinders because $m\geq2$, so permuting frontier cylinders also permutes their indexing vertices.
+ 
+ Conversely, under \eqref{eq:normalcriterion}, the subgroup in each factor $\Aut(T_m)$ is the kernel of restriction to the finite tree $T_{m,h_s}$. It is normal, the restriction is onto, and its quotient is $\Aut(T_{m,h_s})$. Taking the product proves normality and \eqref{eq:normalquotient}.
+ \end{proof}
+--- original_v0.3/paper_u_refs_v0.3.bib
++++ referee_revision/paper_u_refs_v0.3.bib
+@@ -71,7 +71,7 @@
+  eprint={2302.00305}, eprinttype={arxiv}, note={Proposition 2.31, version 3}}
+ @online{Dovgoshey2025,
+  author={Oleksiy Dovgoshey}, title={Totally bounded ultrametric spaces and locally finite trees}, date={2025},
+- eprint={2502.04228}, eprinttype={arxiv}, note={Theorem 10.25, version 1}}
++ eprint={2502.04228}, eprinttype={arxiv}, note={Theorem 10.25 and Proposition 10.29, version 1}}
+ @online{Petrov2024,
+  author={Evgeniy A. Petrov}, title={Hereditary properties of finite ultrametric spaces}, date={2024}, eprint={2412.17421}, eprinttype={arxiv}}
+ @online{Bartos2026,

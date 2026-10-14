@@ -1,0 +1,1437 @@
+PAGE 1
+arXiv:1704.04681v1  [q-bio.BM]  15 Apr 2017
+Automaton model of protein: dynamics of
+conformational and functional states
+Andrei Khrennikov and Ekaterina Yurova
+International Center for Mathematical Modeling
+in Physics and Cognitive Sciences
+Linnaeus University, V¨ axj¨ o, S-35195, Sweden
+Andrei.Khrennikov@lnu.se, Ekaterina.Yurova@lnu.se
+July 10, 2018
+Abstract
+In this conceptual paper we propose to explore the analogy be tween
+ontic/epistemic description of quantum phenomena and inte rrelation
+between dynamics of conformational and functional states o f proteins.
+Another new idea is to apply theory of automata to model the la tter
+dynamics. In our model protein’s behavior is modeled with th e aid of
+two dynamical systems, ontic and epistemic, which describe evolution
+of conformational and functional states of proteins, respe ctively. The
+epistemic automaton is constructed from the ontic automato n on the
+basis of functional (observational) equivalence relation on the space
+of ontic states. This reminds a few approaches to emergent qu antum
+mechanics in which a quantum (epistemic) state is treated as repre-
+senting a class of prequantum (ontic) states. This approach does not
+match to the standard protein structure-function paradigm. However,
+it is perfect for modeling of behavior of intrinsically diso rdered pro-
+teins. Mathematically space of protein’s ontic states (con formational
+states) is modeled with the aid of p-adic numbers or more general
+ultrametric spaces encoding the internal hierarchical str ucture of pro-
+teins. Connection with theory of p-adic dynamical systems is brieﬂy
+discussed.
+1
+PAGE 2
+keywords: proteins, conformational and functional states, st ructure-function
+paradigm, automaton-model, quantum-like model
+1 Introduction
+In this note we apply automata theory [1], [2], [3] to modeling dynamics o f
+proteins’ states. The protein automaton model is presented by e xploring the
+scientiﬁc methodology which plays the important role in foundations o f quan-
+tum physics. This methodology is based on joint exploring of the two d escrip-
+tive levels: ontic and epistemic. The ontic description is about reality “as it
+is” and the epistemic description is about observations, see Atmans pacher et
+al. [4]-[6], see also [7]-[9]. Now we want to apply this methodology to molec-
+ular biology. Conformation states of proteins are treated as ontic states and
+functional states or states approachable for observations as e pistemic states.
+Such a separation of two descriptive levels is very fruitful in creatio n of an
+adequate model of dynamics of proteins’ states. Moreover, it ma tches well
+with automata theory [1]: automata without output represent dyn amics of
+ontic states, in our case conformational states, and automata w ith outputs
+represent dynamics of epistemic states, in our case functional/ob servational
+states.
+We do not pretend that proteins are genuine quantum systems; we just
+want to use the methodology of ontic-epistemic states designed fo r quan-
+tum mechanics, see appendix 1 for discussion. The starting point link ing
+dynamics of proteins with factorization models of quantum phenome na is
+the observation that the space of conformational states of a pr otein is huge
+and the concrete conformational states can be unobservables. Thus, as in
+quantum physics, one has to proceed with two types of states: on tic states
+(conformational states of a protein) and epistemic states (obse rvable states
+representing various functions of a protein). We remark that, fo r a protein,
+the number of epistemic states is small, since each protein is a highly sp ecial-
+ized biological machine with a few functions. At the same time the numb er
+of conformational states is huge.
+In short we plan to model protein’s state dynamics as functioning of an
+automaton without output having a huge conﬁguration space (of c onforma-
+tional states); by adding output to this automaton we construct the model of
+observations of protein’s functional states (epistemic states). Such an obser-
+vational output produces factorization of the space of conform ational states
+2
+PAGE 3
+and can be mathematically represented as new “factorized automa ton”. In
+the framework of this automaton-model we discuss a number of co nceptual
+problems related to production of functional states of proteins f rom confor-
+mational states. We emphasize that this is a concept-type paper. Our main
+aim is to present the concept of the automaton-protein. We also rise a series
+of questions which have to be clariﬁed to make this model closer to th e real
+biological situation, section 7. We plan to work on these questions in c oming
+publications.
+This model of protein’s behavior does not match the standard protein
+structure-function paradigm formulated more than one hundred years ago
+[10], [11]. (In the operational terms by this paradigm the ontic and ep istemic
+descriptions can be uniﬁed in the straightforward manner.) At the s ame time
+the ontic/epistemic operational approach is perfect for modeling o f behavior
+of intrinsically disordered proteins [12], see section 2 for the discus sion on
+recent studies of the molecular biological features of proteins’ fu nctioning.
+We want that the paper will be readable for biologists. Therefore we try
+to minimize the mathematical apparatus in the use. The basic mathem atical
+formalism under consideration is theory of automata, see [1] and section 3
+for deﬁnition. We illustrate our model by a few illustrative examples, s ee
+Figures 1-3.
+The presented model can be formulated in more advanced mathema ti-
+cal terms; in particular, by formalizing the mathematical structur e of the
+ontic state space. We discuss shortly this problem appendix 2. The m ost
+natural model of proteins’ state space is based on so called p-adic numbers,
+where p > 1 is a natural number. For p prime, these numbers are widely
+used in theory of dynamical systems, physics, biology and psycholo gy [13]-
+[36]. We remark a kind of similarity between the p-adic state representation
+of protein’s state dynamics and application of p-adic dynamical systems to
+encryption of data, see Anashin [13, 16, 18]. Thus one may speculat e that
+nature encrypted functioning of proteins by using methods of p-adic cryp-
+tography. This is an interesting idea, but in this paper we cannot elab orate
+it in more detail (in particular, such elaboration would lead to explorat ion
+of advanced mathematics of theory of p-adic dynamical systems).
+Finally, we remark that statistics of quantum observations has som e pe-
+culiarities [37], see also appendix 1 with discussion on the Bell inequality. In
+physics it is known that automata-dynamics can generate some fea tures of
+quantum statistics [4]. In this note we show that biological systems s uch as
+proteins (and others having huge conﬁguration space of internal states and
+3
+PAGE 4
+just a few functional/observational states) can demonstrate s pecial statis-
+tical features (even generation of p-adic probabilities corresponding to the
+absence of statistical stabilization of frequencies of outputs, se e [38], [15] for
+such probabilities and their role in non-Archimedean physics and biolog y).
+2 Dynamics of proteins conformational and
+functional states from the perspective of
+molecular biology
+In this section we apply the ontic-epistemic approach to state dyna mics
+(which we borrow from quantum foundations) to the protein dynam ics.
+By the the protein structure-function paradigm, any protein function is
+determined by a ﬁxed three-dimensional structure [11]. This parad igm has
+been dominating in molecular biology during more than one hundred yea rs,
+see Fischer [10] for one of the pioneer studies. At the same time it wa s chal-
+lenged during many years including experimental evidences of its viola tion.
+Nevertheless, it stayed ﬁrmly as the cornerstone of molecular biolo gy; only
+the discovery of intrinsically disordered proteins (IDPs), Dunker et al. [12],
+Dyson and Wright [39], Dunker et al. [40] changed (at least partially) t he
+common viewpoint on the structure-function isomorphism. Nowada ys it is
+widely understood that “functioning proteins do not remain ﬁxed in a unique
+structure, but instead they sample a range of conformations facilitated by motions
+within the protein”, Ramanathan et al. [41], see also Henzler-Wildman et al.
+[42].
+We recall that the native state of a protein is its completely folded func-
+tional state. However, opposite to the protein structure-func tion paradigm,
+the native state is no uniquely determined by protein’s geometry. We again
+cite Ramanathan et al. [41]:
+“Even in the native state, a protein exists as a collection of interconverting con-
+formations driven by thermodynamic ﬂuctuations. Motions o n the fast time scale
+allow a protein to sample conformations in the nearby area of its conformational
+landscape, while motions on slower time scales give it acces s to conformations in
+distal areas of the landscape.”
+It is important to point out that this is the general picture of prote in’s
+functioning and not only IDP’s functioning.
+This picture matches perfectly with the ontic-epistemic approach t o the
+4
+PAGE 5
+description of dynamics of physical and biological systems. The con crete
+conformational states of a protein are typically unapproachable b y experi-
+menters. From the modern viewpoint, the native state, the funct ional state,
+cannot be identiﬁed with the concrete conformational state. It r epresents
+an ensemble of conformational states. Moreover, the native sta te is a fuzzy
+notation for a family of functional substates and protein’s functio ning can be
+represented as the dynamics in the space of these substates. Ea ch of them
+corresponds to a special subensemble of conformational states . “Emerging
+evidence indicates that protein landscapes contain confor mational substates with
+dynamic and structural features that support the designate d function of the pro-
+tein”, [41]. In this paper we shall identify such “substates” with the funct ional
+states of a protein.
+Thus we have the two levels description of protein’s dynamics:
+• conformational states dynamics: fast and stochastic;
+• functional states dynamics: slower and deterministic
+(see, e.g., Henzler-Wildman et al. [42] on time scales in protein dynamics ).
+One of the main consequences of the experimental and theoretica l stud-
+ies is that the dynamics of conformational states, in spite of its sto chastic
+nature, has the functional meta-meaning, i.e., it is not reduced to t hermo-
+dynamical ﬂuctuations. This is a delicate point and we shall try to exp lain
+it in more detail. Physically there are, of course, thermodynamical ﬂ uctua-
+tions. But proteins were able to shape these ﬂuctuations in the fun ctional
+way - to perform transitions (through long chains of rapid conform ations)
+from one functional state to another, see Hammes et al. [43], Ram anathan
+and Agarwal [44], Ramanathan et al. [45].
+Nuclear magnetic resonance devices can be used to determine ensembles
+of conformational states of proteins. This is not the end of the ex perimen-
+tal studies: X-ray crystallography allows researchers to identify the most
+populated states along the landscape. In the functional cycles of proteins,
+ensembles of conformational states (determining functional sat es) are trans-
+ferred from one to another. Such ensemble transformations are approachable
+for the experimental inspection. However, the dynamics of confo rmational
+states in subensembles determining functional states and their ju mps from
+one ensemble to another cannot be detected, at least by existing m easurement
+devices, cf. again with the situation in quantum physics.
+5
+PAGE 6
+We emphasize that in contrast to quantum physics, in molecular biolog y
+there are no doubts in the existence of conformational states in a protein
+“as it is” (although in general they are not accessible experimentally ). Of
+course, there is the crucial diﬀerence between molecular biology an d quantum
+physics. In biology it is possible “to see” the spatial structure of a p rotein and
+concrete geometric ﬁgures can be used for labeling of conformatio nal states.
+In quantum physics, the existing measurement devices do not prov ide the
+possibility of determination of a similar ﬁne structure.
+3 Automaton model of protein
+As a model of the protein dynamics, we consider an automaton [1] A =
+⟨I, S, V, f, g ⟩, where I (V ) is input (output) alphabet, S is the set of states,
+f : I × S → S and g : I × S → V are function of transition and output,
+respectively, i.e., depending on the iteration of functioning of the au tomaton:
+sk+1 = f (ik, s k), k ≥ 0. (1)
+vk = g(ik, s k), k ≥ 0. (2)
+At the moment n = 0 the automaton A is at the state s0; once fed by the
+input symbol i0 ∈ I, A outputs the symbol v0 = g(i0, s 0) ∈ O and reaches
+the state s1 = f (i0, s 0) ∈ S; then A is fed by the next input symbol i1 ∈ I
+and repeats the routine.
+The automaton A transfer words with respect to the alphabet I to words
+with respect to the alphabet V . This map, deﬁned on the set of I-words
+and taking values in the set of V -words and determined with the aid of two
+functions, f and g, i.e., associated with the automaton A, is denoted as FA.
+To construct the automaton model of the protein dynamics, we ha ve to
+describe its basic parameters:
+• States. We assume that a protein consists of N connected elementary
+units, e.g., molecules, and that each of them has p degrees of freedom.
+Here p > 1 is a natural number. Each conformational state of a protein
+is represented as the vector
+⃗ s= (x0, . . . , x N −1), x i ∈ Fp = {0, 1, . . . , p − 1}. (3)
+6
+PAGE 7
+• Input and output alphabets . The input alphabet represents the impact of
+protein ’s environment,e.g., temperature, ferments, chemical molecules
+around it. In our mathematical model it is assumed that inﬂuences o f
+the environment can be represented numerically, as the elements o f the
+set I. The output alphabet represents the results of observations on a
+protein; these results are represented as elements of the set V.
+• Functions. The function f is determined by the structure of a concrete
+protein. The function g is selected depending on the way of observation
+on a protein: the input alphabet (impact of the environment), the s pace
+of states S, and the transition function f.
+Thus in our model protein by itself is represented as an autom aton without
+output. The output represents observations. Their aim is to reconstruct
+protein ’s parameters.
+We remark that automata with ﬁnite state space S = {s1, ..., s m} (and the
+ﬁxed initial state s0 ∈ S) are known as the Mealy machines [46]. It is not clear
+whether a protein has to be modeled as a Mealy machine. Conformatio nal
+states of protein are determined by a variety of physical paramet ers, including
+the geometric conﬁgurations. The space of such parameters can be inﬁnite
+and even continuous. Of course, mathematically it is easier to proce ed with
+Mealy machines.
+4 Factor-automaton from observed output se-
+quence
+We remark that the space S of possible conformational states of a protein is
+huge, it contains Nconf = pN (N ∼ 300) elements. Therefore to construct an
+automaton working on such a space and completely describing funct ioning
+of the concrete protein is practically impossible. Thus the existence of such
+a complete automaton has basically only a theoretical value. Possible ob-
+servations cannot determine uniquely protein’s state, one ﬁxed am ong Nconf
+states of S, at the instant of measurement, i.e., observations are not able to
+distinguish states from S.
+In reality from observable data we can construct only some factor-automaton
+for the “complete automaton” A (ontic automaton).1 To construct the factor-
+1This situation reminds emergence of the quantum model, treated as an operational
+7
+PAGE 8
+automaton representing observations, we consider the following e quivalence
+relation ρ on the set S. The states s1, s 2 are ρ-equivalent, non-distinguishable
+with respect to observations, if
+g(i, s 1) = g(i, s 2) ∀i ∈ I.
+The factor-set Sρ of S with respect to ρ is considered as the space of
+states of the new automaton Aρ. The functions f and g have to “respect”
+the equivalence relation ρ, i.e., if
+s1ρs2,
+then
+fρ(i, s 1) = fρ(i, s 2), g ρ(i, s 1) = gρ(i, s 2), i ∈ I.
+The Aρ = ⟨I, S ρ, V, f ρ, g ρ⟩ is called the factor-automaton of the original au-
+tomaton A.
+Thus at the level of observation conformational states of a prot ein have
+to be uniﬁed in some classes, cf. again with ontic-epistemic approach to
+quantum theory.
+The same model can be used in more concrete biological framework ( con-
+certizing the above general observational model). We can conside r a protein
+as well specialized biological machine which performs a few concrete f unc-
+tions. In terms of automaton’s states this viewpoint means that on the space
+of conformational states S it is possible to deﬁne some equivalence relation
+which is determined by protein functions. Such a functionality-factorization
+also leads to the factor-automaton of the original protein-autom aton. Thus
+the states of the factor-automaton can be treated as functional states of a
+protein.
+Fig. 1 illustrates construction of factor-automata. At this ﬁgure the
+ovals C1, C 2, C 3, C 4, C 5 represent classes of equivalence with respect to an
+equivalence relation deﬁned on the space of all possible states S; in section
+5 we shall present detailed construction of the concrete factor- automaton.
+observation model, from prequantum models; generation of episte mic state description
+from the ontic state description, see the introduction.
+8
+PAGE 9
+functional
+state
+✛✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+ 
+ 
+❅
+❅
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+ 
+  
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+✞
+✝ ☎
+✆
+❅
+❅
+❅
+❅❅
+ 
+  
+qqq
+qqq
+C1
+C2 C3
+C4C5
+Figure 1. Functional states of a protein
+In future the set of states of the automaton A belonging to some equiva-
+lence class with respect to aforementioned equivalence relation we s hall call
+a generalized state of the automaton. This terminology is useful to have the
+possibility to consider states of the factor-atomaton Aρ as sets. In another
+terminology generalized states are basins, i.e., a basin can be conside red as
+a class of equivalence with respect to some equivalence relation ρ.
+5 Example of construction of factor automa-
+ton
+Let us consider automaton A = ⟨I, S, Y, f, F ⟩, where I = {0, 1, 2} denotes
+the input alphabet, Y = {a, b, c, d } denotes the output alphabet, and S =
+{s1, s 2, s 3, s 4, s 5, s 6, s 7, s 8} is the state space. The transition function f and
+the output function g are given by Table 1.
+Table 1. Transition and output functions for the original au tomaton.
+Table 1 shows that, for this automaton, output depends only o n the state.
+Such automata are known as the Moore machines, see section 9.1. The diagram
+of transitions of the (Moore) automaton determined by Table 1 is represented on
+the graph of Fig. 2. We repeat that here g :S → V, i.e., it is independent of the
+input symbol i.
+9
+PAGE 10
+f (i, s ) (s)
+(i) s1 s2 s3 s4 s5 s6 s7 s8
+0 s1 s3 s1 s4 s4 s7 s8 s6
+1 s3 s1 s2 s4 s2 s5 s5 s5
+2 s4 s4 s4 s4 s7 s8 s6 s8
+g(i, s ) (s)
+(i) s1 s2 s3 s4 s5 s6 s7 s8
+0 a a a b c d d d
+1 a a a b c d d d
+2 a a a b c d d d
+s1
+1
+→→
+2
+→→
+0
+↓↓ s2
+0
+←←
+1
+↙↙
+2
+←←
+s3
+0
+←←
+1
+→→
+2
+↓↓s4
+{0,1,2}
+→→
+s5
+0
+↖↖
+1
+↑↑
+2
+↓↓
+s6
+1
+↑↑
+0
+↓↓
+2
+↓↓s7
+2
+↑↑
+1
+→→
+0
+↗↗s8
+0
+↑↑
+1
+←←
+2
+↑↑
+Figure 2. Transition diagram of the original automaton.
+We consider the following equivalence relation ρ on the set of states. It
+is determined with the aid of the disjoint partition of the se t of states: S =
+{s1,s 2,s 3} ∪ {s4} ∪ {s5} ∪ {s6,s 7,s 8}.
+10
+PAGE 11
+The equivalence relation ρ is consistent with the transition function f, see
+Table 1, i.e. if sαρsβ, then f (i,s α)ρf (i,s β), i ∈ I; ρ is also consistent with the
+output function g.
+Now consider the new automaton A/ρ = ⟨I,S/ρ,Y,f ρ,g ρ⟩, factor-automaton
+with respect to ρ, which is consistent with the transition and output ’ functio ns
+(congruence of the original automaton), where
+S/ρ = {S1 = {s1,s 2,s 3},S 2 = {s4},S 3 = {s5},S 4 = {s6,s 7,s 8}},
+and the transition function fρ and the output function gρ are given by Table 2.
+fρ (S)
+(i) S1 S2 S3 S4
+0 S1 S2 S2 S4
+1 S1 S2 S1 S3
+2 S4 S2 S4 S4
+gρ (S)
+(i) S1 S2 S3 S4
+0 a b c d
+1 a b c d
+2 a b c d
+Table 2. Transition and output functions for the
+factor automaton.
+The diagram of transitions of the automaton A/ρ determined by Table 2 is
+presented at Fig. 3.
+S4
+1
+↘↘
+0,2
+↓↓
+S3
+2
+↖↖
+1↙↙⑥⑥⑥⑥⑥⑥⑥
+0 ↘↘❆❆❆❆❆❆❆
+S1 2
+→→
+0,1
+↑↑ S2
+0,1,2
+↑↑
+Figure 3. Transition diagram of the factor automaton.
+6 Protein as a Moore machine?
+As was remarked in the previous section, the automaton deter mined by Table
+1 and Fig. 2 belongs to the class of automata known as the Moore machines
+11
+PAGE 12
+[47]: a ﬁnite-state machine (which initial state is ﬁxed) wh ose output values are
+determined solely by its current state. Such automata are wi dely used in computer
+science and digital electronics.
+A bio-system modeled by a Moore machine used environmental i nputs only
+to modify its internal states. Functional outputs are deter mined solely by the
+latter. Such machines, although perfectly adaptive to sign als from the surrounding
+environment, have some degree of independence. First they h andle environment’s
+signal to modify the state and only later use this state to pro duce a functional
+output. Thus the information from outside is used not straig htforwardly. We
+can say that it is “analyzed” inside the bio-system and only t hen used for the
+corresponding functional response. This is the reason to us e the Moore machines
+to model protein’s behavior.
+We remark that many digital electronic systems work as Moore machines of
+the special type, so called clocked sequential systems. In such a system the state
+changes only when the global clock signal changes. This chan ge of the state in-
+duces change of the output. Clocked sequential systems are o ne way to solve
+metastability problems.
+We stress that a Moore machine is the ﬁnite state machine. How ever, as was
+already pointed out in section 3, we have reasons both in favo r and against using
+the ﬁnite state automata for modeling protein’s behavior. T herefore it is useful to
+consider so to say inﬁnite state Moore machines. For such an automaton, its state
+spaceS can be inﬁnite and even continuous and the output function de pend only
+on the state
+The coupling of our protein model with computer science and d igital electronics
+is the interesting topic for further speculations on the com putational structure of
+functioning of cell’s components and cells in general. Anot her important topic is
+comparison of our modeling of protein’s functioning with ma thematical modeling of
+intelligence, both biological and artiﬁcial. The basic mod el of artiﬁcial intelligence
+(or to be more rigorous computing) is given by the Turing machine. The latter
+is deﬁnitely more powerful than ﬁnite state automata, the Me aly machines and,
+in particular, the Moore machines. However, in our modeling of activity of a
+protein molecular we do not restrict consideration to the ﬁn ite state automata.
+Comparison of behavioral features of bio-systems modeled w ith the aid of Turing
+machines and inﬁnite automata is the interesting problem re lated to intelligence
+of bio-systems. In particular, it can be the starting point i n development of theory
+of intelligence of proteins.
+12
+PAGE 13
+7 Problems related to analysis of observational
+data
+As was pointed out, the automaton model of a protein is an auto maton without
+output. However, initially we do not know the structure of th is automaton, i.e.,
+the space of states, transition functions, and very often ne ither the input alphabet
+which encodes inﬂuence of environment on behavior of a prote in. To reconstruct
+the parameters of the automaton model of a protein, we have to use the results
+of observations on protein’s behaviour. For this aim, the au tomaton model of a
+protein is completed by the output alphabet V and the output function g which
+are determined by possibilities of observations.
+Thus we consider an automaton with output A = ⟨I,S,V,f,g ⟩, where V is
+the output alphabet and g I× S → V is the output function. As the result of
+functioning of this automaton with output we observe a seque nce of the form:
+vk =g(ik,s k), k ≥ 0. (4)
+We remark that by itself the automaton model of a protein is co nsidered as the
+automaton ⟨I,S,f ⟩, where, as we shall consider in future, the set of states S
+consists of generalized states.
+From observation on the output sequence vk, k ≥ 0 of the automaton A we
+can make conclusions about behavior of the protein-automat on as well as about its
+structure (states, transition functions, input sequences ans so on). In particular,
+we can consider the following problems:
+• if the transition function fρ is only partially deﬁned, then from observations
+vk, k ≥ 0, it can be reconstructed;
+• it is possible to reconstruct (determine) the input alphabe t of an automaton,
+i.e., to check the inﬂuence of an input symbol on automaton’s behavior;
+• to check the presence of equivalent states by using the outpu t sequence; in
+other words, to clarify the structure of the equivalence rel ation on the set of
+states, i.e., states of the form ⃗ s= (s0,...,s N −1);
+• to check matching of an automaton with the output data (obser ved in ex-
+periments);
+• to determine the initial state of the automaton A.
+Since the automaton A can have generalized states, its output sequences vk, k ≥
+0 can have the following speciﬁc feature. An output sequence of the automaton
+13
+PAGE 14
+A can contain a long sequence of equal elements. Such sequence s appear if the
+automaton is being in some ﬁxed generalized state. If the out put sequence is con-
+sidered as realizations of some random variable γ, then the presence of long series
+can imply some “pathological features” of γ, e.g., γ does not have the mathemat-
+ical expectation. Such features make diﬃcult construction of a proper statistical
+criteria for solution of aforementioned problems.
+To illustrate this situation, we consider behavior of the au tomaton A in a
+neighborhood of a generalized state C as it is shown at Fig. 4.
+✘
+✙
+✛
+✚ q q q
+q q q
+s
+❝ ❝
+❝
+❝❝
+sss s
+i1
+s1 s2
+i2
+C
+C−1 C1✙s ✯ ✙ s✯
+Figure 4. Unconventional probabilistic behavior.
+There are three generalized states C−1, C, C 1. Each of generalized states
+C−1, C 1 contains just one conformational state. The generalized st ate C consists
+of 2pr, wherep> 1 is a natural number, conformational states (the states s1,...,s 2
+belong to C). Conformation states composing C form two special classes, at
+Fig. 4 they are represented by white and black spots. Each cla ss contains pr
+conformational states.
+The automaton is functioning in the following way. If it is in state C−1 (C1),
+then, for each input, the automaton is transferred into the c onformational state s1
+(s2) belonging to the generalized state C. If the automaton is in one of conforma-
+tional states composing C, excluding the states s1 and s2, and marked by white
+(black) points, then for each input the automaton is transfe rred into the closest
+from the left-hand (right-hand) side state. Thus in the gene ralized state C the
+automaton goes through conformational states composing C cyclically. For the
+states s1 and s2, its behavior is more complex. There are two possible transi tions
+scenarios. If input symbol is i1 (i2), then the automaton jumps into the generalized
+state C−1 (C1). If the input symbol is diﬀerent from i1 (i2), then the automaton
+stays in the generalized state C and its state is changed in accordance with the
+general law of cyclic dynamics insied C.
+Suppose now that the output function of the automaton g depends only on the
+generalized state, i.e., it does not depend on input and auto maton’s output v−1 is
+observed if the automaton is in the state C−1 (respectively,v and v1 for C, C1 ).
+Since in the state C the automaton can stay ξpr steps of dynamics, where ξ is
+some integer valued random variable, in general the relativ e frequency of appear-
+14
+PAGE 15
+ance of the symbol v in the output sequence can ﬂuctuate, without stabilization
+to any constant - probability. Thus the probability P (C) of the state C is not well
+deﬁned. Besides of this “probabilistic pathology” (violat ion of von Mises principle
+of stabilization of relative frequences), we point to anoth er feature of behavior of
+relative frequencies: for the states v−1 andv1, they approach zero (when the length
+of the output sequence approaches inﬁnity). Thus the probab ilities of appearance
+of this automaton in the states C−1, C1 equal to zero. Therefore from the proba-
+bilistic viewpoint these states can be simply eliminated fr om the model. However,
+this will lead to a biologically inadequate model.
+For such sequences of observations, we can use the apparatus of generalized
+probability theory based on representation of probabiliti es not by real numbers
+from the segment [0 , 1], but by so called p-adic numbers, where p >1 is a prime
+number. In this framework the relative frequencies (which a re always rational
+numbers) are embedded into the ﬁelds of p-adic numbers Qp and their limits are
+considered in these ﬁelds. In this way the probabilities P (C) and P (C−1),P (C1)
+are well deﬁned and the last two of them are nonzero. In this pa per we cannot go
+in more details, see [38], [15].
+8 Automaton model: some features of pro-
+tein’s behavior and interpretations
+In this section we shall consider some special features of pr otein’s behavior implied
+by our automaton-model and possible interpretations of the se features.
+1. Testing the presence of generalized states. Consider the following situation
+represented at Fig. 5.1 and 5.2. In the ﬁrst case the automant on has only
+two generalized states for which we observe outputs v−1 andv1, respectively.
+In the second case (Fig. 5.2) there is the generalized state C between the
+states C−1 and C1. However, when this automaton is in the state C no
+outputs are observed. If the automaton is in the state C1 (C−1), but has
+not yet moved to the state C−1 (C1), then the symbol v1 (v−1) is observed
+at the output sequence .
+sC−1 C1
+✙s ✯
+❄ ❄v−1 v1
+Figure 5.1. No intermediate state
+15
+PAGE 16
+✘
+✙
+✛
+✚ q q q
+q q q
+s s
+C
+C−1 C1✙s ✯ ✙ s✯s1 s2
+❄ ❄v−1 v1
+Figure 5.2. Intermediate state
+The output sequence can be used to determine the presence of a n intermedi-
+ate state C which can be present in a protein. The presence of such a state
+C implies that the output sequence of the automaton presented at Fig. 5.2
+contains series of elementsv−1 andv1. The lengths of series can be considered
+as values of some random variable. In the case of the automato n presented
+at Fig. 5.1 the output sequence also consists of the elements v−1 and v1.
+In principle this sequence also can contain long series of th ese elements, but
+their probabilistic structure diﬀers from the probabilisti c structure of the
+series in the output sequence generated by the automaton of F ig. 5.2. We
+now point to one of the important marks of the presence of an in termedi-
+ate state C : in the sequence produced by the automaton of Fig. 5.2, the
+law of stabilization of relative frequencies of appearance of v−1 and v1 can
+be violated. As was remarked, for analysis of such statistic al data, p-adic
+probability methods can be applied.
+2. The presence of generalized states and protein ’s transition time. Our model
+with generalized states as composed of internal (conformat ional) states of
+proteins can explain the well known experimental fact that t ransition of a
+protein from one functional state to another can take long ti me and, more-
+over, that the interval of transition time can vary essentia lly from transition
+to transition, Henzler-Wildman et al. [42]. Thus the descri ptive level based
+on ontic states of proteins has some explanatory power for ob servable (epis-
+temic) features of proteins.
+3. Hierarchy. By using the automaton model of a protein the set of generaliz ed
+states, functional states of proteins, can be endowed with h ierarchic struc-
+tures, in particular, tree-like. We remark that the feature of the model that
+transition from one functional state to another is performe d through other
+generalized states (Ramanathan et al. [41]) can be explaine d even without
+appealing to a hierarchic structure in proteins. (For examp le, the graph rep-
+resented at Fig. 6 is, in fact, the binary tree. However, the p resence of the
+tree-like structure is not straightforwardly visible at Fi g. 6.) To ﬁll hierarchy
+with nontrivial content (i.e., not just the graphic scheme) , perhaps we have
+16
+PAGE 17
+to use some additional criteria. For example, a hierarchy de termining rule
+can be based on the magnitude of the total energy of transitio n from one
+functional state to another or the magnitude of the potentia l energy barrier
+separating these states, cf. with works [].
+s
+s  
+❅ ❅ s
+s   
+❅ ❅
+s
+s
+s
+Figure 6. Tree-like structure of protein-automaton.
+4. Functional inseparability. In the framework of the protein-automaton we
+can consider the following extremal case. For example, the f actor-automaton
+consists of a single generalized state C - the native state of a protein. In such
+a situation we are not able to separate functional abilities of conformational
+states. Even by knowing that the number of conformational st ates is huge we
+have the trivial factor-automaton. Moreover, the impossib ility of epistemic
+splitting of C strongly supports the protein structure-function paradig m. It
+is very attractive to extend this uniqueness from the episte mic level to the
+ontic level. And this happened at the ﬁrst stage of developme nt of molecular
+biology (in fact, the very long stage), see section 2.
+However, from the modern viewpoint [41], the space of confor mational (on-
+tic) states has to be divided into classes - generalized (epi stemic) states. The
+latter states have to be distinguishable from the functiona l viewpoint (as rep-
+resenting observable behavior of a protein). The behavior o f a protein inside
+a generalized state can be considered as “random and equipro babilistic” and
+having no inﬂuence on functioning of a protein.
+We remark that from the protein-automaton viewpoint the rat her common
+thesis that proteins are biological machines posses the fol lowing constraint
+on the relative number of generalized states Ngen. It has to be small, but
+at the same time not too small. On one hand, if Ngen is large, then such a
+biological machine has to perform a large number of various f unctions or if
+all these generalized states (“substates of the native stat e” in terminology
+of Ramanathan et al. [41]) are involved in a single functiona l cycle, then
+its performance will take too much time. This contradict to t he experiment
+and the thesis that a protein is similar to a machine. On the ot her hand, if
+Ngen is very small (e.g., just one as in the above example), then be havior of
+such a biological system is trivial (from the epistemologic al viewpoint).
+17
+PAGE 18
+9 Mathematical formalism
+In the previous sections we tried to minimize the use of the ma thematical ap-
+paratus; in fact, we proceed with only one mathematical stru cture, automaton,
+representing states’ dynamics. Now we want to be more precis e in mathematical
+terms.
+9.1 P -adic model of the space of conformational states
+For a mathematical model of the state space of the protein-au tomaton, we can
+consider inﬁnite sequences (cf. with (3)):
+⃗ s= (x0,...,x N −1,... ), x i ∈ Fp = {0, 1,...,p − 1}. (5)
+Here p > 1 is a natural number. Denote the space of such sequences by th e
+symbol Zp. For mathematical modeling, it is useful to endow Zp. with an algebraic
+structure similar to the algebraic structure on real number s. Each sequence is
+represented as the series of the form:
+⃗ s=
+∞∑
+i=0
+xipi, xi ∈ Fp. (6)
+We remark that the set of natural numbers N is the subset of Zp consisting of
+ﬁnite sums (expansions of natural numbers with respect to th e base p). Moreover,
+negative integers can be also represented in the form of such power series, by using
+so called complement code representation which is standard for computer science.
+For example, if p = 2, then − 1 = 11111.... 1..... = ∑∞
+i=0 2i. Thus even the set of
+integers Z can be embedded in Zp. The operations of addition, subtraction and
+multiplication can be extended from Z onto Zp. We obtain the algebraic structure
+called a ring. Division is in general not well deﬁned, see, e.g., [15] for de tails.
+The space S = Zp can serve as the mathematical model of the (ontic) state
+space of the protein-automaton. It can be endowed with a metr ic which is so called
+ultrametric, see section 9.2. Thus the (ontic) state space of the protein-automaton
+is the ultrametric space. Ultrametricity expresses mathematically the hierarchic
+structure of the state space, see section 9.2. This is the sim plest ultrametric
+mathematical model.
+In a more general model the ranges of digits xi need not coincide, i.e., xi ∈
+Fpi = {0, 1,...,p i − 1}, wherepi > 1 is a natural number. The latter model is more
+natural, since encoding unit i in the digital representation of protein’s state, see (3)
+and (5), can have its own degree of complexity reﬂected in the numberpi. We set
+p = (p0,...,p k,... ). Denote the space of sequences with xi ∈ Fpi by the symbol Zp.
+18
+PAGE 19
+This space can also be endowed with the algebraic structure a nd the ultrametric.
+Unfortunately, analysis on Zp is very complicated. In particular, nothing was done
+to develop theory of dynamical systems for such spaces. And t he latter can serve
+as a tool to construct concrete examples of protein’s state d ynamics, see section
+9.2.
+9.2 Ultrametricity
+Typically a hierarchic structure in a physical or biologica l system can be mathe-
+matically presented as ultrametricity, i.e., the ultrametric space structure on the
+state space. The ultrametric model is widely used in theory o f complex disordered
+systems (e.g., spin glasses) [22]-[24], in genetics [25]- [ 27], cognition and psychol-
+ogy [28]-[36]. We recall brieﬂy the deﬁnition of an ultramet ric space and the main
+features of its system of neighborhoods given by ultrametri c balls. We start with
+the terminological remark: ultrametric spaces are also kno wn as non-Archimedean
+spaces [15].
+Let S be a set (in our case the state space of a protein, the space of i ts
+conformational states). Let d : S × S → R+ be a metric (distance). It is called
+an ultrametric if, besides the standard triangle inequality, it satisﬁes t he strong
+triangle inequality:
+d(x,y ) ≤ max[d(x,z ),d (z,y )],x,y,z ∈ S. (7)
+This inequality for a metric implies many unusual features o f the system of neigh-
+borhoods in S given by the balls
+Ur(a) = {x ∈ S :d(x,y ) ≤ r},U −
+r (a) = {x ∈ S :d(x,y )<r },
+where r> 0 and a ∈ S.
+1. All balls are topologically open and closed at the same tim e - “clopen”.
+2. They are either disjoint or one is subset of another.
+3. Any point b belonging to the ball can be chosen as its center. Thus if
+b ∈ Ur(a), then Ur(a) = Ur(b). The same holds for balls U −
+r (a). We can say
+that “all points of a ball-neighborhood have equal rights.”
+We now turn to our factor-automaton model of protein functio ning. If we take
+any conformational state s belonging to a functional state C, then s completely
+determines the latter - as a representative of the factor cla ssC. Consider the func-
+tional state C as a neighborhood of the conformational state s. Then any s ∈ C
+can be treated as the center of this neighborhood. Thus all co nformational states
+19
+PAGE 20
+belonging to a functional state “have equal rights” (from th e observational view-
+point they produce the same output). This is an exhibition of ultrametricity of
+the state space of the automaton-protein. This is so to say ep istemic ultrametric-
+ity, it is generated by functional factorization of conform ational states. By using
+ultrametric spaces we can represent functional states by ba lls C =Ur(s).
+Consider the mathematical model in which the space of confor mational states
+S = Zp (the ring of p-adic integers) and all functional states are given by balls of
+the same radius r = 1/p k. The set of all conformational states S can be represented
+as the disjoint union of the balls of the radius r :S = ∪ pk−1
+j=0 Ur(j). This state space
+of balls can be obtained as the output of the factorization pr ocedure on S based
+on the mod p n equivalence relation: for x,y ∈ Zp,x ∼ y if and only if x − y is
+divisible by pn (see (6) for number-theoretic presentation of elements of Zp).
+Functioning of the protein-automaton can be described as a p-adic dynamical
+system [13]-[18], see appendix 2.
+10 Conclusion
+We proposed to model protein behavior by using theory of auto mata.
+We pointed out to similarity between modeling of behavior of proteins and
+quantum systems. In analysis of quantum foundations some au thors explore the
+ontic-epistemic methodology, see Appendix 1. Quantum mechanics is treated as
+the epistemic (observational) model which can be emergent f rom a causal ontic
+(subquantum) model, see, e.g., Atmanspacher et al. [4]-[6] , Khrennikov [7, 8],
+’t Hooft [49] and Anashin [50], [51]. 2 The states of the latter are not directly
+approachable for external inspection. In some models [4], [ 7, 8], [49] transition from
+the subquantum (ontic) level to the quantum (observational ) level is performed
+through factorization of the space of subquantum states. Th us the states described
+by the quantum formalism are treated as the symbolic images o f factor classes of
+ontic states. Moreover, in quantum mechanics there are wide ly used dynamical
+systems to model ontic ↦→ epistemic transition, see [4], [52].
+This is the good place to remark that recent development of ph ysics is char-
+acterized by creation of a number of novel automaton models d escribing state
+dynamics. This activity was culminated in ‘t Hooft’s model o f totally determinis-
+tic dynamical universe [49] functioning as a cellular autom aton.3 We also mention
+2At the same time other experts follow the tradition of the Copenhag en school and
+reject the possibility of emergent treatment of quantum mechanic s, see the work of Plot-
+nitsky and Khrennikov for detailed analysis [48].
+3We emphasize that one has to distinguish sharply theory of cellular au tomata from
+general theory of automata used in our paper. The common use of the word “automaton”
+20
+PAGE 21
+the recent work of Anashin [50], [51], an attempt to derive th e wave structure of
+quantum theory from theory of p-adic dynamics systems.
+Now we tern to molecular biology. The dimension of the space o f possible
+conformation states of proteins is huge and these states are not approachable for
+direct external inspection. Therefore it is natural to proc eed similarly to the ontic-
+epistemic approach to quantum mechanics and to work jointly with two coupled
+models of protein’s behavior:
+• the ontic model describing dynamics of conformational stat es;
+• the epistemic model describing functional states of a prote in.
+The dynamics of conformational states is described by an aut omaton, discrete
+time and state dynamical machine. Input symbols encode the i nﬂuences of the
+environment (the state of the surrounding cell and signalin g from other cells).
+The transition function f = f (i,s ) describes transitions between internal states
+of protein (conformational states) generated by interacti on of a protein molecular
+with the cell-environment; the output function g = g(i,s ) describes functional
+outputs of the protein molecular. The dynamics of functiona l states is described
+by the factor-automaton generated through functional equi valence relation on the
+space of conformational states and the corresponding facto rization of the state
+space and the transition and output functions. Here it is the good place to cite
+once again Ramanathan et al. [41]: “Motions on the fast time s cale allow a protein
+to sample conformations in the nearby area of its conformati onal landscape, while
+motions on slower time scales give it access to conformation s in distal areas of
+the landscape.” The mentioned fast scale dynamics is the aut omaton dynamics
+of ontic states, slow scale dynamics describes transitions of epistemic states. The
+later can be slow enough comparing with the fact scale transi tions, because any
+epistemic (functional) state is composed of a large number o f ontic states. The
+protein molecular can spend a lot of time inside such a cluste r of conformational
+states before to jump to the next cluster representing anoth er epistemic state.
+This factor-space structure of the space of functional stat es can lead to non-
+classical probabilistic behavior. We remark that in the com plete accordance with
+the ontic-epistemic approach nonclassicality of probabil ity is a purely epistemic
+feature. At the ontic level, classical probability works we ll. Such a model can
+generate very exotic probability distributions, not only q uantum-like, cf. [4]-[6],
+[7, 7], [49], but even so called p-adic probability distributions [15]. The latter were
+invented in p-adic (non-Archimedean) physics to provide the probabilis tic inter-
+pretation of wave functions valued in the ﬁelds of p-adic numbers or more general
+can be misleading. Here we have no possibility to go into details. We just point to the
+reader that this paper is not about cellular automata!
+21
+PAGE 22
+non-Archimedean (ultrametric) number ﬁelds. Then a few the oretical biological
+models generating p-adic probabilities were invented and theory was completed
+with numerical simulation. Now we hope that p-adic probability theory can ﬁnd
+real applications in molecular biology. Of course, these ar e just preliminary con-
+ceptual considerations.
+In appendix 2 we presented coupling (due to Anashin) of theor y of automata
+with mappings in the ﬁelds of p-adic numbers. We tried to make the ﬁrst steps to
+describe the class of automata and corresponding p-adic maps matching function-
+ing of proteins. This will be the main direction of our furthe r studies. To proceed
+in this direction, we have to analyze functioning of protein s in more detail, espe-
+cially from the biological side (and not only dynamical and i nformation processing
+constraints discussed in appendix 2).
+Acknowledgments
+This paper was written under support of the grant of the Facul ty of Technology of
+Linnaeus University, Modeling of Complex Hierarchic syste ms and the EU-project
+Quantum Information Access and Retrieval Theory (QUARTZ), Grant No. 721321
+Appendix 1: Quantum-like models in biology
+This paper is not about quantum bio-physics, cf. [53], [54]- [56]. It is closer to works
+on so called quantum-like models exploring the apparatus of quantum probability
+and information theories to model biological phenomena [57 ]–[76], [55], [56]. In
+quantum-like modeling one does not try to study genuine quan tum physical pro-
+cesses in a bio-system. The latter is considered as a black bo x processing informa-
+tion in accordance with the laws of quantum probability and i nformation. More-
+over, quantum probabilistic-informational behavior need not be explicitly coupled
+to quantum physical processes. Quantum-like behavior can b e exhibited by macro-
+scopic bio-systems operating at time, space, and temperatu re scales which do not
+match the corresponding scales of the quantum physics.
+The most successful applications of the quantum-like appro ach are in modeling
+brain’s functioning, cognition, decision making, psychol ogy, see, e.g., the mono-
+graphs [62], [63], [71]. Here the brain is treated as a black b ox with inputs from
+environment (both physical and mental) and outputs in the fo rm of perceptions,
+decisions and judgments. The probabilistic-information s tructure of interrelation
+between inputs and outputs cannot be described mathematica lly by the laws of
+classical probability and information. Therefore alterna tive (“nonclassical”) the-
+ories have to be proposed. The quantum formalism is the most w ell developed,
+22
+PAGE 23
+advanced and approved in numerous applications. Therefore it is reasonable to
+apply this formalism as an alternative to the classical prob ability and information
+formalisms. This was done in the aforementioned applicatio ns outside of physics.
+Of course, one cannot guarantee that in biological applicat ions nonclassicality coin-
+cides with quantumness. It can happen that from the probabil istic and information
+viewpoints behavior of biological systems is even more comp licated than behavior
+of quantum systems; may be the brain can exhibit information al patterns which
+structure is more complex than the structure of genuine quan tum patterns. May
+be novel mathematical formalisms have to be designed for bio logical purposes.
+Once again we remind that the quantum-like model of brain’s f unctioning
+diﬀers from the “quantum physical brain model” in the spitit o f R. Penrose [77]
+and S. Hameroof [78]. The latter tries to connect cognitive a ctions of the brain at
+the level of consciousness with physical processes in the br ain at the quantum level.
+The main bio-physical structure involved to this process ar e micro-tubular. It is
+claimed that they can be used by the brain for quantum informa tion processing.
+In particular, they can exhibit such a basic feature of quant um physical systems
+as entanglement. Justiﬁcation of this conjecture is the big challenge. For the
+moment, we cannot reject completely the possibility that th e brain really works
+in this way by exploring quantum physical processes, e.g., a t the level of micro-
+tubular. However, to justify this theory of brain’s functio ning one has to solve
+many problems and some authors presented very heavy argumen ts that the hot
+amd macroscopic brain cannot “enjoy” exciting features of t he quantum world, see,
+e.g., Tengmark [79]. However, the creators of the quantum ph ysical brain model
+argue that quantum features still can be preserved in the bra in, at least for time-
+intervals suﬃcient to perform a kind of quantum computation leading to cognitive
+processing of information. The lovely debate have been cont inued already 30 years.
+It may take many years to clarify the situation (if such clari ﬁcation is possible at
+all in the framework of existing physical theory).
+One of the main problems in justiﬁcation of the quantum-like approach to mod-
+eling of cognitive behavior of bio-systems is the resolutio n of the famous problem
+of hidden variables. For biologists, we say a few words about this problem.
+The state ψ of a classical physical system determines the outcomes of al l ob-
+servables which can be measured for this state. Observables are represented as
+functions on the state space, ψ → f (ψ ). For example, in classical mechanics the
+state ψ is given by the pair ψ = (x,p ), position and momentum (the coordinates
+in phase space). Here observables can be treated as function s on the phase space,
+f = f (x,p ). In classical statistical mechanics the state ρ is represented by the
+probability distribution on the phase space; observables a re also deﬁned as func-
+tions on the phase space. This kind of states, statistical st ates, do not determine
+the measurement outcomes, but only the probabilities of the se outcomes. Thus the
+23
+PAGE 24
+average of the observable represented by the function f in the state given by the
+probability distribution ρ is calculated by the rule of classical probability theory:
+⟨f ⟩ρ =
+∫
+f (x,p )dρ(x,p ). (8)
+If the probability has the density ρ(x,p ), then the average is given by the integral:
+⟨f ⟩ρ =
+∫
+f (x,p )ρ(x,p )dxdp.
+The state of a quantum system is represented by a (normalized ) vector ψ of
+complex Hilbert space H, i.e., ⟨ψ |ψ ⟩ = 1, where ⟨φ 1|φ 2⟩ denotes the scalar product
+of vectors φ 1,φ 2 ∈ H. Quantum observables are represented by Hermitian oper-
+ators. Similarly to the state used in classical statistical mechanics, it determines
+only the probabilities of outcomes. However, in contrast to classical statistical
+mechanics, the quantum average is represented as
+⟨A⟩ψ = ⟨Aψ |ψ ⟩. (9)
+From the very beginning of quantum mechanics, the following question dis-
+turbed its fathers: Is it possible to introduce a quantum analog of the classical
+phase space? More generally this is the question about the possibility of func-
+tional representation of quantum observables and measure- theoretic representation
+of quantum states. In particular, one wonders whether it is p ossible to represent
+quantum average (9) in the classical integral form (8).
+Since for the moment physical parameters determining the ou tputs of mea-
+surements are unknown 4, they got the name hidden variables. Two orthogonal
+positions were presented by Einstein and Bohr, respectivel y. Einstein was sure that
+such variables determining the values of quantum observabl es exist and this is just
+a matter of time, soon or latter the formalism with hidden var iables reproducing
+quantum measurement theory will be designed. Bohr was sure t hat this will never
+happen, hidden variables do not exist. Bohr’s position was m erely philosophical.
+Later it was transformed into mathematical statements know n as “no-go” theo-
+rems. The ﬁrst of them was proven by J. von Neumann. However, i t was criticized
+as unphysical. The most famous no-go theorem was formulated by J. Bell. It is
+based on the inequality for correlations known as Bell’s inequality. A theory with
+hidden variables should produce correlations which satisf y this inequality. But the
+quantum formalism implies correlations violating this ine quality. The experiment
+seems to be in favor of the quantum prediction. We emphasize t hat Bell’s no-go
+4In contrast to classical mechanics, the pair position-momentum, ψ = (x,p ), cannot
+serve as such parameters, because the position and momentum ca nnot be measurement
+jointly. By the orthodox version of the Copenhagen interpretatio n they even “do not
+exist”.
+24
+PAGE 25
+theorem diﬀers crucially from von Neumann’s theorem. Bell li fted up the issue of
+nonlocality which ﬁrst mentioned by Einstein. This issue was not present in von
+Neumann’s theorem. The main point in our discussion is that a nonlocal hidden
+variable model can match the predictions of quantum mechani cs. Correlations
+based on signaling between subsystems can violate Bell’s in equality. In physics
+such signaling is impossible, because subsystems, e.g., tw o entangled photons, are
+separated for a long distance such that signaling should hav e the speed extending
+the speed of light. Therefore quantum nonlocality appears a s a mystical physical
+phenomenon, the spooky action at a distance.
+Now we turn again to biology. In contrast to quantum physics, here “hidden
+variables do exist”. Moreover, they are not hidden at all. Th ese are states of
+neurons in brain science, states of proteins, genes, cells i n molecular biology and
+so on. It seems that those who apply the quantum-like approac h are in trouble.
+Quantum theory says that there are no (local) hidden variabl es, but biology says
+that they exist (and not even hidden). The key word here is (no n)local. In biology
+we need not be afraid of nonlocal models, because they are non local only formally.
+In reality nonlocal contributions to observations can be ge nerated by signaling
+between subsystems, e.g., between cells. This signaling is not mystical, since its
+speed does not exceeds the speed of light. The crucial point i s that biological
+systems are negligibly small in size (comparing with light’ s velocity), cf. [66].
+Thus we can apply the quantum formalism to biological phenom ena without to
+collide with no-go theorems!
+As was pointed out, quantum-like modeling was very successf ul i modeling of
+cognition and decision making. However, recently quantum o perational methods
+were extended to model behavior of micro-biological system s, e.g., cells, genomes,
+epigenomes, and proteins [80], [81]. Thus we can speak about quantum information
+biology as unifying information processing at all scales, from mole cular biology to
+cognition and social science, see [82], [83] for details.
+Appendix 2: P -adic mapping representation of
+epistemic automata
+In this section following V. Anashin [2] we shall consider re presentation of ap-
+parata by mappings of the ring of p-adic numbers Zp. We start with present-
+ing theory of automata in more detail. We remind that the initial automaton
+A(s0) = ⟨I,S,V,f,g,s 0⟩ is an automaton, where one state s0 ∈ S is ﬁxed; s0 is
+called the initial state. In particular, the Mealy machines [46] (and hence the
+Moore machines [47]) are initial automata with ﬁnite state s paces.
+25
+PAGE 26
+✲ ✲
+· · ·,i k, · · ·,i 1,i 0 y0,y 1, · · ·,y k, · · ·
+s0, · · ·
+As0
+Figure 1: Functioning of initial automation
+In theory of automata it is often assumed that there exists a s tates0 ∈ S such
+that all the states of the automaton A are reachable from s0; that is, given state
+s ∈ S, there exists input word w over alphabet I such that after the word w has
+been fed to the automaton A(s0), the automaton reaches the state s.
+To the automaton A we put into a correspondence the family of all initial
+automata A(s) = ⟨I,S,V,f,g,s ⟩,s ∈ S.
+Now we assume that both alphabets I and O are p-element alphabets: I =
+O = {0, 1,...,p − 1} = Fp; so further the word automaton stands for initial
+automaton with input/output alphabets Fp. A typical example of an automa-
+ton of that sort is the 2-adic adding machine , A(1) = ⟨F2,F 2,F 2,f,g, 1⟩, where
+f (i,s ) = is(mod 2), g(i, s) = i + s(mod 2) for s ∈ S =F2,i ∈ I =F2.
+Given an automaton A(s) = ⟨I,S,V,f,g,s ⟩, the automaton transforms input
+words (with respect to the alphabet Fp) of length n into output words of length
+n; that is, A(s) maps the set Wn of all words of length n into Wn; we denote
+corresponding mapping via FA;n(s). It is clear now that behaviour of the automaton
+can be described in terms of the mappings FA;n(s) for all s ∈ S and all n ∈ N =
+{1, 2, 3,... }. If all states of the automaton are reachable from the state s0, it suﬃces
+to study only the mappings FA;n(s0) for all n ∈ N.
+Of course, here “suﬃces” has the epistemic meaning, i.e., by considering the
+mappings FA;n(s0), instead of the original automaton, we neglect by the dynamic s
+of the ontic states; in our case the dynamics of conformation al states. We also
+make the following methodological comment. The ideology of representation of an
+automaton by mappings FA;n(s0) is diﬀerent from the ideology presented in this
+paper: transition from the ontic automaton to the epistemic one through factoriza-
+tion of the ontic state space. By moving to the FA;n(s0)-functional representation
+we neglect the state dynamics.
+The system of functions FA;n(s0) can be considered as the mapping in the space
+of inﬁnite words in the alphabet Fp. The latter can be identiﬁed with the ring of
+p-adic integers Zp. Thus each automaton can be represented by a mapping u =
+FA : Zp → Zp,u (x) = ∑n
+k=0δk(x)pk, where x = ∑n
+k=0xkpk and δk,k = 0, 1, 2...,
+are “coordinate functions” valued in Fp.
+Mappings generated by automata have very special structure . This structure
+26
+PAGE 27
+is encoded in the coordinate functions. Here δk depends only on the coordinates
+x0,...,x k of the variable x : δk = δk(x0,...,x k). In the protein model this means
+that protein cannot feel future states of the environment; i ts state at the instance
+of time tk =k depends only on environment’s states at the previous instan ces of
+time t = 0, 1,...,k. It can be easily shown that such function u = FA : Zp → Zp
+satisﬁes 1-Lipschitz condition:
+ρp(u(x),u (y)) ≤ ρp(x,y ),x,y ∈ Zp, (10)
+where ρp is the p-adic distance. This class of functions in relation to theor y of
+automata was introduced by V. Anashin [13], [16], [18], [2], [3] and it plays the
+important role in theory of p-adic dynamical systems, e.g., [84, 85]. We call the
+space of 1-Lipschitz functions the Anashin functional space. Thus in the episte-
+mological model one can in principle consider just a mapping FA belonging to the
+Anashin space (if we are not interested in the dynamics of epi stemic states). The
+following natural question arises:
+Can any mapping belonging to Anashin ’s space be generated by s ome automa-
+ton?
+The answer is ‘yes’, but in general the state space of the auto maton can be
+inﬁnite [2]. As we have already discussed, by treating prote in-automata as com-
+putational machines we have to restrict modeling to ﬁnite st ate spaces. At the
+same time physics gives us arguments in favor of inﬁnite and e ven continuous
+state spaces.
+The problem of description of functions representing ﬁnite automata in terms of
+generatedp-adic mappings were solved by Vuillemin [20] (for p = 2), Smyshlyaeva
+[21] and Anashin [3] (for an arbitrary p). Their solutions, although beautiful
+mathematically (and based on the use of coordinate function s and van der Put
+series, respectively), are too technical and too abstractl y formulate to be applicable
+to our biological modeling.
+Now we discuss other special features of automata modeling o f proteins’ behav-
+ior (in Anashin-like manner, i.e., by using the representat ion by p-adic functions).
+We have already pointed out that the Moore machines seems to b e more natural
+for such modeling than the general Mealy machines. However, in the p-adic func-
+tional approach the diﬀerence between these two types of ﬁnit e states machines
+disappears: the classes of functions representing these ma chines coincide. For any
+function representing a Mealy machine, it is possible to con struct a Moore machine
+representable by this function (of course, the inverse stat ement is also true). This
+feature of Anashin’s representation is not so natural for ou r approach to proteins’
+modeling. However, the real situation is more complicated, since we are not sure
+that the space of protein’s conformational states can be rep resented adequately as
+a ﬁnite state space. Thus it may be that we have to proceed with “generalized
+27
+PAGE 28
+Moore machines” having inﬁnite state spaces. We do not know w hether functional
+classes representing such machines and general automata co incide or not.
+The aforementioned result about the coincidence of p-adic functional classes
+for the Moore and Mealy machines shows that the functional ap proach, although
+very powerful from the mathematical viewpoint, shadows the internal structure of
+an automaton. We would like to mention another problem which is especially im-
+portant for non-ﬁnite machines. The state space of a biologi cal or physical system
+is not only a set of point; typically it is endowed with some to pological structure
+which plays the important role in understanding of function ing of this system. The
+simplest examples are state spaces S = {s1,...,s n,... } with the discrete topology
+andS = R with its continuous topology. It seems that this diﬀerence in topologi-
+cal structures of state spaces disappear in the functional r epresentation. However,
+may be a deeper analysis can clarify this connection between topology on S and
+the special features of the corresponding p-adic mapping FA. For example, suppose
+that S = Zp and that f : Zp × Zp → Zp and g : Zp × Zp → Zp are continuous
+functions. May be the corresponding mapping FA : Zp → Zp has some special
+features? May be the diﬀerence can be monitored not at the leve l of a topolog-
+ical structure, but a diﬀerential structure on S? For example, FA : Zp → Zp is
+diﬀerentiable if both f and g are diﬀerentiable.
+We continue the discussion on determination of the subspace of the Anashin
+functional space corresponding to “protein automata.” In g eneral theory of au-
+tomata one of the commonly used classes is the class of transitive automata. We
+recall that a family U of mappings of a ﬁnite non-empty set M into M is called
+transitive whenever given a pair ( a,b ) ∈ M × M, there exists u ∈ F such that
+u(a) = b. An automaton is transitive if it can generate an arbitrary ou tput from
+an arbitrary input. Anashin [2] characterized transitive a utomata in terms of er-
+godicity of corresponding mappings from Zp to Zp. Since for our protein-modeling
+we are interested in ﬁnite-automata, we make two remarks on i nterrelation of
+ergodicity and the possibility of the ﬁnite-automata reali zation [2], [3]:
+• There exist ergodic mappings belonging to the Anashin class which are not
+representable by ﬁnite automata. For example, ergodic poly nomials of de-
+grees > 1 cannot be represented by ﬁnite automata.
+• An ergodic polynomial of the degree one, i.e., an aﬃne mappin g of the
+form f (x) = ax +b can be represented by a ﬁnite automaton if and only
+if its coeﬃcients a,b are rational p-adic numbers, i.e., they belong to the
+intersection of Zp and Q, where Q is the ﬁeld of rational numbers. 5
+5 The number x belonging to Zp is rational if and only if its representation by the
+sequence of digits, see (5), is periodic, i.e., some block of digits is repe ated periodically.
+28
+PAGE 29
+We remark that consideration of mappings determined by rati onal parameters
+matches with the ideology of p-adic theoretical physics, see, for example, [86]–
+[89], [15]. Here only rational numbers are treated as “physi cal numbers”, numbers
+which can get experimental veriﬁcation.
+However, this very useful class of automata, transitive-au tomata, does not
+match with our protein model. As was discussed at the very end of section 8, a
+protein is very specialized machine and its reacts very conc retely to any input pat-
+tern of the environment producing very special functional o utput. Thus proteins
+have to be modeled by non-transitive automata.
+The simplest non-transitive automata are given by locally c onstant mappings,
+i.e., continuous mappings taking only ﬁnitely many values. We remark that in the
+p-adic and more generally ultrametric case the characterist ic function of a ball is
+continuous! A locally constant mapping can be represented a s a linear combination
+of such characteristic functions, i.e., Zp can be represented as the disjoint union
+of (ﬁnitely many) balls such that this mapping takes the cons tant value at each
+ball. Locally constant functions play the important role in thep-adic (ultrametric)
+analysis. They form the dense subspace in the space of all con tinuous functions.
+In section 9.2 starting with the ultrametric structure of th e ontic state space
+we proposed representation of the epistemic state space as t he space of balls.
+Therefore it is natural to assume that the output function (o bservational function)
+g is locally constant on the ontic state space S. Therefore it is natural as well to
+suppose that the realization of the protein-automaton by a m apping FA : Zp → Zp
+is also a locally constant function. Now the following quest ion arises: Which locally
+constant functions can be realized by ﬁnite automata? The answer is known [2]:
+only functions taking the p-adic rational values. This again matches with the
+ideology of the p-adic theoretical physics.
+Under the assumption that behavior of proteins can be mathem atically mod-
+eled with the aid of the Mealy machines (ﬁnite state automata ), we can guess
+that the class of protein-automata is a subclass of the class of automata for which
+FA is a locally constant p-adic rational-valued function. However, to describe this
+subclass precisely we have to analyze this problem taking in to account more del-
+icate biological and molecular features of representation of proteins by automata.
+In general characterization of the class of automata matchi ng proteins’ behavior
+is the interesting mathematical problem. And we hope that pu blication of this
+concept-paper would attract interest of mathematicians an d molecular biologists
+to study of this problem.
+This characterization is similar to characterization of rational numb ers in the ﬁeld of real
+numbers R : these are numbers having periodic decimal representations.
+29
+PAGE 30
+References
+[1] Sakarovitch, J. 2009. Elements of Automata Theory. Camb ridge University
+Press, Cambridge.
+[2] Anashin, V., 2012. Non-Archimedean theory of discrete s ystems. Math. Com-
+puter Sc. 6, 375-393.
+[3] Anashin, V., 2012. Automata ﬁniteness criterion in term s of van der Put
+series of automata functions. P -Adic Numbers, Ultrametric Analysis Appl. 4,
+151-160.
+[4] Atmanspacher, H., Bishop, R. C., and Amann, A., 2001. Ext rinsic and intrin-
+sic irreversibility in probabilistic dynamical laws. In: K hrennikov, A. (Ed.),
+Foundations of Probability and Physics. WSP, Singapore, pp . 50-70.
+[5] Atmanspacher, H., 2002. Determinism is ontic, determin ability is epistemic.
+In: Atmanspacher, H. and Bishop, R. C. (Eds.), Between Chanc e and Choice:
+Interdisciplinary Perspectives on Determinism. Imprint A cademic, Thorver-
+ton UK, pp. 49–74.
+[6] Atmanspacher, H. and Primas, H., 2005. Epistemic and ont ic quantum re-
+alities. In: Khrennikov, A. (Ed.), Foundations of Probabil ity and Physics-3.
+AIP, Melville, NY, 750, pp. 49-62
+[7] Khrennikov, A., 2003. Contextual viewpoint to quantum s tochastics. Math.
+Phys. 44, 2471- 2478.
+[8] Khrennikov, A., 2003. Representation of the Kolmogorov model having all
+distinguishing features of quantum probabilistic model. P hys. Lett. A 316,
+279-296.
+[9] Khrennikov, A., 2004. Contextual approach to quantum me chanics and the
+theory of the fundamental prespace. J. Math. Phys. 45, 902-9 21.
+[10] Fischer, E. 1894. Einﬂuss der Conﬁguration auf die Wirk ung den Enzyme.
+Ber. Deutsch. Chem. Ges. 27, 2985-2993.
+[11] Redfern, O. C., Dessailly, B., Orengo, C. A., 2008. Expl oring the structure
+and function paradigm. Curr. Opin. Struct. Biol. 18(3), 394 -402.
+[12] Dunker, A. K., Lawson, J. D., Brown, C. J., Williams, R. M ., Romero, P., Oh,
+J. S., Oldﬁeld, C. J., Campen, A. M., Ratliﬀ, C. M., Hipps, K. W. , Ausio, J.,
+Nissen, M. S., Reeves, R., Kang, C., Kissinger, C. R., Bailey , R. W., Griswold,
+30
+PAGE 31
+M. D., Chiu, W., Garner, E. C., Obradovic, Z., 2001. Intrinsi cally disordered
+protein. J. Molecular Graphics and Modelling 19 (1), 26-59.
+[13] Anashin, V., 1994. Uniformly distributed sequences of p-adic integers. Math.
+Notes 55, 109-133.
+[14] De Smedt, S., Khrennikov, A., 1997. Dynamical systems a nd theory of num-
+bers. Comment. Math. Univ. St. Pauli 4(6), 117-132.
+[15] Khrennikov, A., 1997. Non-Archimedean Analysis: Quan tum Paradoxes, Dy-
+namical Systems and Biological Models. Kluwer, Dordreht.
+[16] Anashin, V., 2002. Uniformly distributed sequences of p-adic integers, II.
+Discrete Math. Appl. 12(6), 527-590.
+[17] Khrennikov, A.Yu. and Nilson, M., 2004. P -adic Deterministic and Random
+Dynamics. Springer, Dordrecht.
+[18] Anashin, V., 2006. Ergodic Transformations in the Spac e of p-adic Integers.
+AIP Conf. Proc., 826, 3–24.
+[19] Fan, A.-H., Liao, L., Wang, Y. F., Zhou, D., 2007. P -adic repellers in Qp are
+subshifts of ﬁnite type. C. R. Math. Acad. Sci. Paris 344, 219 -224.
+[20] Vuillemin, J., 2000. Finite digital synchronous circu its are characterized by
+2-algebraic truth tables. Lect. Notes Comp. Sc. 1961, 1-7.
+[21] Smyshlyaeva, T. I., 2013. A criterion for functions deﬁ ned by automata to be
+bounded-determinate, Diskret. Matem. 25, 121-134.
+[22] Kozyrev, S. V., 2006. Ultrametric dynamics as a model of interbasin kinetics.
+J. Contemp. Math. Anal. 41, 38-48.
+[23] Kozyrev, S. V., 2006. Ultrametric analysis and interba sin kinetics. AIP Conf.
+Proc., Melville, NY, 826, 121-128.
+[24] Kozyrev, S. V., 2010. Dynamics on rugged landscapes of e nergy and ultra-
+metric diﬀusion. P -Adic Numbers, Ultrametric Analysis Appl. 2, 122-132.
+[25] Dragovich, B. and Dragovich, A., 2009. A p-Adic model of DNA sequence and
+genetic code. P -Adic Numbers, Ultrametric Analysis Appl. 1, 34-41.
+[26] Khrennikov, A., 2009. Gene expression from polynomial dynamics in the 2-
+adic information space. Chaos, Solitons, and Fractals 42, 3 41-347.
+31
+PAGE 32
+[27] Dragovich, B. and Dragovich, A., 2010. P-adic modellin g of the genome and
+the genetic code. Computer J. 53, 432-442.
+[28] Khrennikov, A. Yu., 1998. Human subconscious as the p-a dic dynamical sys-
+tem. J. Theor. Biol. 193, 179-196.
+[29] Albeverio, S., Khrennikov, A., and Kloeden, P. E., 1999 . Memory retrieval as
+a p-adic dynamical system. BioSystems 49. 105-115.
+[30] Khrennikov, A.Yu., 2010. Modelling of psychological b ehavior on the basis of
+ultrametric mental space: Encoding of categories by balls. P -adic Numbers,
+Ultrametric Analysis Appl. 2, 1-20.
+[31] Khrennikov, A.Yu., 2014. Cognitive processes of the br ain: An ultrametric
+model of information dynamics in unconsciousness. P -adic Numbers, Ultra-
+metric Analysis Appl. 6, 293-302.
+[32] Murtagh, F., 2012. Ultrametric model of mind, I: Review . P -adic Numbers,
+Ultrametric Analysis and Appl. 4, 193-206.
+[33] Murtagh, F., 2012. Ultrametric model of mind, II: Appli cation to text content
+analysis. P -adic Numbers, Ultrametric Analysis Appl. 4, 207-221.
+[34] Murtagh, F., 2013. The new science of complex systems th rough ultrametric
+analysis: Application to search and discovery, to narrativ e and to thinking.
+P -adic Numbers, Ultrametric Analysis Appl. 5 (4), 326-337.
+[35] Iurato, G., 2013. Mathematical thought in the light of M atte Blanco work.
+Phil. Math. Ed. J. 27, 1-9.
+[36] Iurato, G., 2015. A brief comparison of the unconscious as seen by Jung and
+Levy-Strauss. Anthropology Cons. 26, 60-107.
+[37] Khrennikov, A., 2016. Probability and Randomness: Qua ntum versus Classi-
+cal. WSP, Singapore.
+[38] Khrennikov, A. Yu., 1994. An algorithmic approach to p-adic probability the-
+ory. Dokl. Akad. Nauk 335, 35-38.
+[39] Dyson, H. J. and Wright, P. E., 2005. Intrinsically unst ructured proteins and
+their functions. Nat. Rev. Mol. Cell Biol. 6 (3), 197-208.
+[40] Dunker, A. K., Silman, I., Uversky, V. N., Sussman, J. L. , 2008. Function
+and structure of inherently disordered proteins. Curr. Opi n. Struct. Biol. 18
+(6), 756-764.
+32
+PAGE 33
+[41] Ramanathan, A., Savol, A., Burger, V., Chennubhot, C. S . and Agarwal,
+P. K., 2014. Protein conformational populations and functi onally relevant
+substates, Acc. Chem. Res., 47 (1), 149-156.
+[42] Henzler-Wildman, K. A., Lei, M., Thai, V., Kerns, S. J., Karplus, M., Kern,
+D. A., 2007. Hierarchy of Timescales in Protein Dynamics Is L inked to En-
+zyme Catalysis. Nature 450, 913-916.
+[43] Hammes, G. G., Benkovic, S. J., Hammes-Schiﬀer, S., 2011 . Flexibility, diver-
+sity, and cooperativity: Pillars of enzyme catalysis. Bioc hemistry 50, 10422-
+10430.
+[44] Ramanathan, A., Agarwal, P. K., 2011. Evolutionarily c onserved linkage be-
+tween enzyme fold, Flexibility, and Catalysis. PLoS Biol. 9 , No. e1001193.
+[45] Ramanathan, A., Savol, A. J., Langmead, C. J., Agarwal, P. K., Chennub-
+hotla, C. S., 2011. Discovering conformational sub-states relevant to protein
+function. PLoS ONE 6, No. e15827.
+[46] Mealy, G. H., 1955. A method for synthesizing sequentia l circuits. Bell Syst.
+Tech. J. 34, 1045-1079.
+[47] Moore, E. F., 1956. Gedanken-experiments on sequentia l machines. Automata
+Stud., Annals of Math. Stud. 34, 129-153.
+[48] Plotnitsky, A. and Khrennikov, A., 2015. Reality witho ut realism: On the
+ontological and epistemological architecture of quantum m echanics. Found.
+Phys. 45, 1269-1300.
+[49] ’t Hooft, G., 2016. The Cellular Automaton Interpretat ion of Quantum Me-
+chanics. Springer, Berlin-Heidelberg-New York.
+[50] Anashin, V., 2015. Quantization causes waves: Smooth ﬁ nitely computable
+functions are aﬃne. P -adic Numbers, Ultrametric Analysis Appl. 7, 169-227.
+[51] Anashin, V.S., 2015. Smooth ﬁnitely computable functi ons are aﬃne, or why
+quantum systems cause waves, Doklady Math. 92, 655-657.
+[52] Khrennikov, A., 2005. Schr¨ odinger dynamics as the Hilbert space projection of
+a realistic contextual probabilistic dynamics. Europhys. Lett. 69(5), 678-684.
+[53] Arndt, M., Juﬀmann, Th, Vedral, V., 2009. Quantum physic s meets biology.
+HFSP J. 3 (6), 386e400.
+33
+PAGE 34
+[54] Melkikh, A.V., Seleznev, V.D., 2012. Mechanisms and mo dels of the active
+transport of ions and the transformation of energy in intrac ellular compart-
+ments. Prog. Bioph. Mol. Biol. 109, 33-57.
+[55] Melkikh, A.V., Khrennikov, A., 2015. Nontrivial quant um and quantum-like
+eﬀects in biosystems: unsolved questions and paradoxes. Pro gress in Bio-
+physics and Molecular Biology. 119. issue 2, 137-161.
+[56] Melkikh, A.V., Khrennikov, A., 2016. Quantum-like mod el of par-
+tially directed evolution. Progress in Biophysics and Mole cular Biology.
+10.1016/j.pbiomolbio.2016.12.005.
+[57] Khrennikov, A., 2004. On quantum-like probabilistic s tructure of mental in-
+formation. Open Systems and Information Dynamics 11(3), 26 7-275.
+[58] Asano, M., Ohya, M. and Khrennikov, A., 2010. Quantum-l ike model for
+decision making process in two players game. Found. Phys. 41 , 538-548.
+[59] Asano, M., Ohya, M., Tanaka, Y., Khrennikov, A. and Basi eva, I., 2011.
+Dynamics of entropy in quantum-like model of decision makin g, J. Theor.
+Biol. 281, 56-64.
+[60] Asano, M., Basieva, I., Khrennikov, A., Ohya, M., Tanak a, Y., 2012.
+Quantum-like generalization of the Bayesian updating sche me for objective
+and subjective mental uncertainties. J. Math. Psych. 56, 16 6-175.
+[61] Khrennikov, A., 2006. Quantum-like brain: Interferen ce of minds. BioSystems
+84, 225-241.
+[62] Khrennikov, A., 2010. Ubiquitous Quantum Structure: f rom Psychology to
+Finance. Springer, Heidelberg-Berlin-New York.
+[63] Busemeyer, J. R. and Bruza, P. D., 2012. Quantum Models o f Cognition and
+Decision. Cambridge, Cambridge Press.
+[64] Busemeyer, J. B., Wang, Z. and Townsend, J. T., 2006. Qua ntum dynamics
+of human decision making. J. Math. Psych. 50, 220-241.
+[65] Dzhafarov, E.N. and Kujala, J.V., 2012. Selectivity in probabilistic causality:
+Where psychology runs into quantum physics. J. Math. Psych. 56, 54-63.
+[66] de Barros, A., J. and Suppes, P., 2009. Quantum mechanic s, interference, and
+the brain. J. Math. Psych. 53, 306-313.
+34
+PAGE 35
+[67] de Barros, A. J., 2012. Joint probabilities and quantum cognition. In: Khren-
+nikov, A., Atmanspacher, H., Migdall, A. and Polyakov, S. (E ds.), Quantum
+Theory: Reconsiderations of Foundations-6. AIP, Melville , NY, 1508, pp. 98-
+104.
+[68] Atmanspacher, H., Filk, Th., 2012. Temporal nonlocali ty in bistable percep-
+tion. In: Khrennikov, A., Atmanspacher, H., Migdall, A. and Polyakov, S.
+(Eds.), Quantum Theory: Reconsiderations of Foundations- 6. AIP, Melville,
+NY, 1508, pp. 79-88.
+[69] Busemeyer, J. R., Pothos, E. M., Franco, R. and Truebloo d, J., 2011. A
+quantum theoretical explanation for probability judgment errors. Psych. Rev.
+118, 193-218.
+[70] Cheon, T. and Takahashi, T., 2010. Interference and ine quality in quantum
+decision theory. Phys. Lett. A 375, 100-104.
+[71] Haven, E. and Khrennikov, A., 2012. Quantum Social Scie nce. Cambridge
+Press, Cambridge.
+[72] Khrennikova, P., Haven, E. and Khrennikov, A., 2014. An Application of the
+Theory of Open Quantum Systems to Model the Dynamics of Party Gover-
+nance in the US Political System. Int. J. Theor. Phys. 53. 134 6-1360.
+[73] Khrennikova, P., 2012. Evolution of quantum-like mode ling in decision making
+processes. AIP Conf. Proc. 1508, 108-112.
+[74] Khrennikova, P. and Haven, E., 2016. Instability of pol itical preferences and
+the role of mass media: a dynamical representation in a quant um framework.
+Phil. Tr. Royal Soc. A 374, 20150106.
+[75] Khrennikova, P., 2016. Quantum dynamical modeling of c ompetition and co-
+operation between political parties: The coalition and non -coalition equilib-
+rium model. J. Math. Psych. 71, 39-50 .
+[76] Khrennikova, P., 2016. Application of quantum master e quation for long-term
+prognosis of asset-prices. Physica A: Stat. Mech. Appl. 450 , 253-263 .
+[77] Penrose, R., 1989. The Emperor’s New Mind. Oxford Univ. Press, New-York.
+[78] Hameroﬀ, S., 1994. Quantum coherence in microtubules. A neural basis for
+emergent consciousness? J. of Cons. Stud. 1, 91-118.
+[79] Tegmark, M., 2000. Importance of quantum decoherence i n brain processes.
+Phys. Rev. E 61(4), 4194-4206.
+35
+PAGE 36
+[80] Basieva, I., Khrennikov, A., Ohya, M. and Yamato, I., 20 11. Quantum-like
+interference eﬀect in gene expression glucose-lactose dest ructive interference.
+Syst. Synth. Biol. 5, 5968.
+[81] Asano, M., Basieva, I., Khrennikov, A., Ohya, M., Tanak a, Y. and Yamato, I.,
+2012. Quantum-like model for the adaptive dynamics of the ge netic regulation
+of E-coli’s metabolism of glucose/lactose. Syst. Synth. Bi ol. 6, 1-7.
+[82] Asano, M., Khrennikov, A., Ohya, M., Tanaka, Y. and Yama to, I., 2015.
+Quantum Adaptivity in Biology: from Genetics to Cognition. Springer,
+Heidelberg-Berlin-New York.
+[83] Asano, M., Basieva, I., Khrennikov, A., Ohya, M., Yamat o, I., 2013. Non-
+Kolmogorovian approach to the context-dependent systems b reaking the clas-
+sical probability law. Found. Phys. 43, 895-911.
+bibitemvander1 Khrennikov, A. and Yurova, E., 2013. Criter ia of measure-
+preserving for p-adic dynamical systems in terms of the van d er Put basis. J.
+Number Theor. 133, 484-491.
+[84] Yurova, E.I., 2012. On measure-preserving functions o ver Z3. P -adic Num-
+bers, Ultrametric Analysis Appl. 4, 326-335.
+[85] Yurova, E. I., 2010. Van der Put basis and p-adic dynamics, P -adic Numbers,
+Ultrametric Analysis Appl. 2 (2), 175-178.
+[86] Vladimirov, V. S., Volovich, I.V. and Zelenov, E.I., 19 94. P -adic Analyisis
+and Mathematical Physics, (World Scientiﬁc, Singapore).
+[87] Khrennikov, A., 1994. P -adic Valued Distributions and Their Applications to
+the Mathematical Physics. Kluwer, Dordreht.
+[88] Dragovich, B., 1995. Adelic harmonic oscillator. Int. J. Mod. Phys. A 10,
+2349-2365.
+[89] Albeverio, S., Cianci, R., Khrennikov, A.Yu., 2009. p-adic valued quantiza-
+tion. P -adic Numbers, Ultrametric Analysis Appl. 1, 91-104.
+36

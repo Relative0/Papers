@@ -1,0 +1,1775 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  11pt,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{fancyhdr}
+\definecolor{NavyBlue}{HTML}{19344D}
+\AtBeginDocument{\hypersetup{linktoc=all,breaklinks=true,pdftitle={P02 Publication-Readiness Audit},pdfauthor={ChatGPT analytical audit}}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\sffamily P02 \enspace / \enspace Publication-readiness audit}
+\fancyhead[R]{\small\sffamily 27 September 2026}
+\fancyfoot[L]{\footnotesize Analytical audit; original manuscript unchanged}
+\fancyfoot[R]{\footnotesize\thepage}
+\setlength{\headheight}{15pt}
+\setlength{\emergencystretch}{3em}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\renewcommand{\arraystretch}{1.12}
+\setcounter{tocdepth}{1}
+\urlstyle{tt}
+\AtBeginEnvironment{longtable}{\small}
+
+\usepackage{needspace}
+\preto\section{\Needspace{6\baselineskip}}
+\preto\subsection{\Needspace{4\baselineskip}}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Publication-Readiness Audit},
+  pdfauthor={Independent analytical audit by ChatGPT},
+  colorlinks=true,
+  linkcolor={NavyBlue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={NavyBlue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Publication-Readiness Audit}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Exact Query Bounds in Characteristic-Two Modal Computation
+(P02)}
+\author{Independent analytical audit by ChatGPT}
+\date{27 September 2026}
+
+\begin{document}
+\maketitle
+
+\section{Executive verdict}\label{executive-verdict}
+
+\textbf{Recommendation: retain the publication project and revise the
+existing paper, rather than restart it. The core mathematics is
+considerably stronger than the standalone evidence package.}
+
+The manuscript has a viable center: an exact \(n\)-query lower bound for
+recovery of an \(n\)-bit Bernstein--Vazirani secret in the stated
+characteristic-two linear-modal model, including arbitrary finite
+ancillas and finite adaptive complete instruments. Standard XOR access
+attains that bound. I reconstructed the argument, examined its treatment
+of classical histories and vanishing branches, and obtained an
+alternative proof using the degree of a single secret-indicator
+polynomial. I did not identify a fatal error in any of the seven
+numbered mathematical results.
+
+This is not an unconditional approval of the archive for submission. The
+original experimental supplement, canonical runner, historical datasets,
+and several referenced provenance records are absent. The manuscript
+also retains an author-placeholder footnote and internal
+publication-workflow prose. Its theorem-level priority remains
+unresolved: several ingredients are definitely prior art, while a source
+with the full claimed adaptive BV or generalized DJ statement was not
+located in the primary-source passages inspected. That negative search
+result does not certify novelty.
+
+\textbf{Weighted readiness: 7.388/10, reported as 7.4/10.} This is an
+editorial assessment of the submitted archive, not a probability of
+acceptance, not a proof certificate, and not a score for a hypothetical
+repaired paper.
+
+The strongest result is Theorem 4.2, supported by Lemma 4.1. The Deutsch
+and Deutsch--Jozsa arguments are sound and compact. The ring proposition
+is also correct, but is secondary to the paper's query-complexity
+contribution. The weakest parts are the unsupported portability of
+historical experimental claims and the unresolved distinction between a
+useful new quantified theorem and a straightforward specialization of
+known methods.
+
+The best present form is a \textbf{focused technical note}. Put exact BV
+recovery and the adaptive recording argument at its center; retain
+Deutsch/DJ as clean related obstructions; keep UNIQUE-SAT as a short,
+explicitly attributed positive control. The ring example can be a
+compact appendix. The small Simon experiment belongs in the
+reproducibility supplement unless it carries a specific explanatory
+burden.
+
+\newpage
+
+\subsection{Decisions}\label{decisions}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Gate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Decision
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Principal reason
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A: mathematical integrity & \textbf{PASS WITH MINOR REPAIRS} & Numbered
+results survive reconstruction; clarify primitive eigenvector
+terminology and a few model conventions. \\
+B: novelty/priority & \textbf{MATERIAL PRIOR-ART UNCERTAINTY} & Known
+foundations and methods are identifiable; exact theorem-level priority
+is not cleared. \\
+C: evidence/reproducibility & \textbf{MATERIAL GAPS} & Build and
+integrity checks pass, but original experiment sources and outputs are
+missing. \\
+D: preprint & \textbf{READY AFTER MINOR REPAIRS} & A proof-centered
+release is feasible after metadata, terminology, and truthful supplement
+repairs. \\
+E: peer-reviewed submission & \textbf{READY AFTER TARGETED REVISION} &
+Needs explicit contribution comparisons, portable evidence or removal of
+unsupported empirical claims, and editorial cleanup. \\
+\end{longtable}
+
+Gate D is conditional on the minimal release route described below: do
+not claim an included or accessible supplement that has not actually
+been supplied. Gate E is not permission to ignore Gate B. A matched
+prior theorem could require substantial repositioning and a new
+significance assessment.
+
+\subsection{What this audit did, and did not,
+establish}\label{what-this-audit-did-and-did-not-establish}
+
+The archive was recursively inventoried. The current source and all
+substantive supporting reports were inspected; historical and later
+review records were compared rather than accepted as verdicts. The
+manuscript was independently rebuilt to nine pages. Its extracted word
+sequence matches the original after whitespace normalization. Fresh
+standard-library verification code reproduced several reported finite
+results and exercised additional cases.
+
+The audit is the work of one assistant applying several adversarial
+perspectives. It is not eight independent reviewers, human peer review,
+exhaustive literature clearance, or machine-checked formal verification.
+The supplied manuscript was not edited. Newly derived mathematics is
+isolated in the research-extension section and is not counted as a
+contribution of the submitted draft.
+
+\subsection{Deliverables and
+limitations}\label{deliverables-and-limitations}
+
+The report, proposed edits, ledgers, scorecard, and decisions are in
+\nolinkurl{report/}; fresh checks and results in \nolinkurl{checks/};
+source inventory, hashes, and build comparisons in
+\nolinkurl{evidence/}; unmodified manuscript sources and compilation
+logs in \nolinkurl{build/}. The README supplies commands. Historical
+evidence and theorem-level priority remain unresolved. The optional rank
+proposition is separate audit work, not a claim attributed to the
+submitted paper.
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Scope, inventory, and source
+hierarchy}\label{scope-inventory-and-source-hierarchy}
+
+The evaluated upload is
+\nolinkurl{Exact Query Bounds in Characteristic Two (P02)(1).zip}. The
+canonical manuscript is the \nolinkurl{main.tex} inside
+\nolinkurl{01_SOURCE_PACKAGE_FROM_PORTFOLIO_20260921/source_package/};
+its title and PDF match the requested paper. It is dated 19 September
+2026. A later viability assessment is dated 26 September 2026. Neither
+the folder date nor the date of that later assessment makes the
+manuscript a new revision.
+
+For compact references below, \textbf{M:Lx--Ly} denotes the
+corresponding original \nolinkurl{main.tex} lines, preserved in
+\nolinkurl{evidence/main_source_numbered.txt}. Supporting files are
+identified by filename and heading. External primary sources are
+identified by S1--S11 in the source register. Fresh results are in
+\nolinkurl{checks/fresh_results.json}. These are three distinct evidence
+classes.
+
+\subsection{Archive coverage}\label{archive-coverage}
+
+The ZIP has 40 entries: 33 files and seven directories, with 508,487
+uncompressed bytes. It contains 14 Markdown files, six CSV files, five
+JSON files, four text logs, two TeX files, one bibliography file, and
+one PDF. There is no executable experiment source, historical experiment
+dataset, or nested ZIP.
+
+The complete filename, size, and SHA-256 inventory is supplied as
+\nolinkurl{evidence/archive_inventory.json}. The following groups were
+inspected:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Group
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Contents and audit treatment
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Canonical paper & \nolinkurl{main.tex}, \nolinkurl{main.pdf},
+\nolinkurl{references.bib}, \nolinkurl{phase_table.tex}; statements,
+proofs, references, and rendered presentation. \\
+Claim tracking & \nolinkurl{FINAL_CLAIMS.md},
+\nolinkurl{CHANGED_CLAIMS.md}, theorem/proof/source crosswalk, novelty
+ledger; compared with actual statements. \\
+Prior review & \nolinkurl{ADVERSARIAL_REVIEW.md},
+\nolinkurl{GATE_4_PRIORITY_PROOF_REPORT.md}, unresolved-issues register;
+tested against the current source. \\
+Literature trail & Primary-source review and search-log CSVs; treated as
+leads, not fresh evidence. \\
+Build/provenance & Build manifest, four build logs, table provenance,
+visual-QA JSON, reproducibility readme; checked for present and missing
+dependencies. \\
+Packaging/history & Top-level readmes, uniqueness summary, source
+manifest, historical context and manifest, review/reproducibility folder
+readmes. \\
+Later assessment & \nolinkurl{RESEARCH_VIABILITY_REVIEW_2026-09-26/}
+assessment, decision, and manifest; evaluated independently. \\
+\end{longtable}
+
+The current readmes identify one canonical source package. Historical
+context is not an alternative manuscript. The later review adds opinions
+and references to spot checks, but does not supply a replacement
+manuscript or its external spot-check implementation.
+
+\subsection{Integrity and build}\label{integrity-and-build}
+
+The root source manifest has 29 entries; all 29 file sizes and hashes
+match. Its coverage excludes the manifest itself and three later
+viability-assessment files. The historical manifest's 23 entries match
+after accounting for the documented relocation of the historical context
+file. The two files covered by the viability manifest also match. The
+original build manifest's manuscript-source and PDF hashes agree with
+the archive.
+
+The manuscript rebuilt successfully using pdfLaTeX, BibTeX, and two
+further pdfLaTeX passes. The local \nolinkurl{bibtex} symlink was
+broken; invoking the installed \nolinkurl{bibtex.original} executable
+resolved that environment issue. The final log has no unresolved
+citations, undefined references, or overfull/underfull-box warnings.
+Both PDFs have nine pages and the same whitespace-normalized extracted
+word sequence. Binary PDF equality is neither obtained nor expected
+across TeX installations. Evidence is in
+\nolinkurl{build_verification.json} and the build logs.
+
+These checks establish file integrity and buildability, not mathematical
+correctness or authenticity of historical experimental runs.
+
+\subsection{Missing dependencies}\label{missing-dependencies}
+
+\nolinkurl{REPRODUCIBILITY.md}, \nolinkurl{TABLE_PROVENANCE.json}, and
+associated records point outside this standalone archive. Missing items
+include the portfolio-level reproduction envelope and supplement, the
+canonical runner and 21-stage logs, the table-generation script, the
+oracle-contract JSON, small-algorithm and phase JSON files, UNIQUE-SAT
+CSV, Simon JSON, description-readout JSON, and the later
+\nolinkurl{spot_check_results.json}. Some references use a sibling
+portfolio directory or an author's Windows path.
+
+Consequently, M:L208's claim that commands, pinned environment, hashes,
+and stage times are in the supplement cannot be verified from the
+supplied package. The correct finding is \textbf{missing evidence}, not
+fabricated evidence or a false computation. The precise historical count
+of 552 degenerate oracle matrices remains unverified because its
+enumeration domain is not reconstructible from the delivered files.
+
+\newpage
+
+\section{Publication-readiness
+scorecard}\label{publication-readiness-scorecard}
+
+The supplied prompt's weights are used unchanged. Scores are judgments
+with stated confidence, not measurements. The reproducibility score
+assesses the archive as delivered; the fresh verifier is a repair
+resource, not retroactive proof that the absent historical run occurred.
+
+\begin{longtable}[]{@{}lrrl@{}}
+\toprule\noalign{}
+Category & Weight & Score / 10 & Confidence \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Mathematical correctness & 20\% & 9.0 & High \\
+Completeness of proofs/results & 8\% & 8.8 & High \\
+Model and assumption discipline & 8\% & 8.8 & High \\
+Novelty and priority & 12\% & 6.0 & Moderate \\
+Scientific significance & 8\% & 6.5 & Moderate \\
+Literature coverage and positioning & 8\% & 7.0 & Moderate \\
+Reproducibility & 7\% & 4.5 & High \\
+Internal consistency & 6\% & 8.0 & High \\
+Resolution of prior reviewer concerns & 5\% & 8.0 & Moderate \\
+Exposition and readability & 5\% & 7.2 & Moderate \\
+Scope and structural focus & 4\% & 7.0 & Moderate \\
+Evidence and citation quality & 4\% & 6.0 & High \\
+Submission hygiene & 3\% & 5.5 & High \\
+Venue/form fit & 2\% & 7.0 & Moderate \\
+\end{longtable}
+
+The largest deductions are for unresolved priority, the missing original
+experiment envelope, and submission metadata. Mathematical correctness
+is high because the proofs themselves withstand reconstruction.
+Category-specific justifications follow and are preserved in
+\nolinkurl{scorecard.json}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Basis for score
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Mathematical correctness & All seven numbered results survived proof
+reconstruction; no substantive counterexample found. \\
+Completeness of proofs/results & Proofs cover the stated quantifiers;
+the DJ optimum is explicitly not claimed. \\
+Model and assumption discipline & Fields, complete histories, and
+lower/upper oracle interfaces are separated; minor terminology repair
+remains. \\
+Novelty and priority & Closest ingredients are known; exact fully
+quantified BV/DJ priority remains unresolved after bounded search. \\
+Scientific significance & A useful focused exact-query result, not yet a
+broad complexity theory or major algorithmic breakthrough. \\
+Literature coverage and positioning & Main modal antecedents included;
+add precise instrument antecedent and nondeterministic-degree
+comparison. \\
+Reproducibility & Manuscript builds and hashes match, but the original
+experimental runner and datasets are absent. \\
+Internal consistency & Theorem scopes and ledgers largely agree;
+supplement/provenance wording exceeds the standalone delivery. \\
+Resolution of prior reviewer concerns & Substantive proof concerns are
+addressed; priority and portable evidence remain open. \\
+Exposition and readability & Compact and readable, but needs a worked
+adaptive example and less internal-process language. \\
+Scope and structural focus & BV is the natural center; ring/Simon
+material can move to appendices or supplement. \\
+Evidence and citation quality & Primary sources support the main
+contrasts; historical finite evidence is not fully inspectable. \\
+Submission hygiene & Placeholder author note, empty PDF author metadata,
+draft workflow prose, and bibliography cleanup remain. \\
+Venue/form fit & A focused technical note is plausible; contribution
+scale and foundational motivation need sharper positioning. \\
+\end{longtable}
+
+\[
+\text{Weighted score}=\sum_i\frac{w_i s_i}{100}=7.388\quad\text{out of }10.
+\]
+
+No numerical average overrides an incorrect principal theorem,
+substantial anticipation by prior work, or a materially misleading
+evidence statement.
+
+\section{Actual contribution and claim
+ledger}\label{actual-contribution-and-claim-ledger}
+
+The paper's demonstrated result is not that all modal computation is
+weak, all finite-field quantum algorithms fail, or all ring-valued phase
+information is useless. It establishes particular exact lower bounds in
+a specified linear access/readout model, with matching QXOR upper bounds
+only for Deutsch and BV.
+
+The complete machine-readable ledger includes claim type, assumptions,
+status, novelty assessment, evidence, and action. The compact ledger
+below includes every numbered result and the major unnumbered
+mathematical, empirical, and interpretive assertions.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Claim and source location
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Audit result
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+C01 & Characteristic-two fields, finite node spaces, complete histories;
+M:L34--48 & Clear operative assumptions; finite field not required. \\
+C02 & Lower-bound class is broader than QXOR upper-bound interface;
+M:L44--55 & Correct and important. \\
+C03 & Equal actions provide no information; M:L55 & Correct for all
+query counts. Historical 552 count is separate. \\
+C04 & Exact discrimination, Lemma 2.1; M:L66--71 & Verified; genuine
+direct sum, not pairwise disjointness. \\
+C05 & Complete recorded evolution, Lemma 2.2; M:L73--78 & Verified,
+including secret-dependent zero branches. \\
+C06 & Deutsch one-query impossibility, Theorem 3.1 & Verified over the
+stated broad pointwise class. \\
+C07 & Deutsch exact QXOR complexity two & Verified lower and elementary
+matching upper bound. \\
+C08 & DJ one-query impossibility, Theorem 3.2 & Verified for \(n\ge2\);
+\(n=1\) is Deutsch. \\
+C09 & DJ upper bound \(2^{n-1}+1\) under QXOR & Verified; not a modal
+optimality theorem. \\
+C10 & Recorded monomial lemma, Lemma 4.1 & Verified, with at most
+\(\sum_{j\le q}\binom nj\) coefficient vectors. \\
+C11 & BV lower bound \(q\ge n\), Theorem 4.2 & Verified; strongest core
+result. \\
+C12 & BV QXOR upper bound \(n\) & Verified by basis-address queries. \\
+C13 & Inverse and node-specific fixed actions retain the lower bounds &
+Verified by the same affine dependence and branch induction. \\
+C14 & Ring kickback \(X\chi=z\chi\); Proposition 5.1 & Verified in the
+explicitly separate \(A\)-module example. \\
+C15 & Analyzer diagonal form and binary rank \(4+2n\) & Verified
+analytically and for six fresh finite cases. \\
+C16 & Order-two character obstruction; M:L183 & Verified; does not cover
+arbitrary groups/transforms. \\
+C17 & Primitive-vector obstruction for eigenvalue \(R\); M:L194 &
+Correct intended statement; terminology needs repair. \\
+C18 & Four-cycle primitive \(R\)-eigenvector and changed oracle &
+Verified; not the same query interface as QXOR. \\
+C19 & Compute/control/uncompute costs two QXOR calls & Correct for that
+construction; not a proven universal minimum. \\
+C20 & Tensor-base distinction; M:L196 & Verified; balancing over \(A\)
+differs from binary tensoring. \\
+C21 & Known one-query UNIQUE-SAT and displayed formula & Verified and
+correctly attributed, not novel. \\
+C22 & Deutsch 15/255 preparation counts & Freshly reproduced for
+standard QXOR. \\
+C23 & Historical 552 degenerate matrices & Unverified historical
+enumeration; source dataset absent. \\
+C24 & Historical small BV identities & Unverified exact historical
+scope; fresh independent tests are available. \\
+C25 & UNIQUE-SAT 132 instances & Freshly reproduced for
+\(n=1,\ldots,6\). \\
+C26 & Simon 65,535-preparation, 36-oracle scan & Freshly reproduced at
+exactly the stated narrow scope. \\
+C27 & Six phase ranks and 192 primitive-vector candidates & Freshly
+reproduced. \\
+C28 & Full-description readout is extra access & Correct conceptual
+distinction; historical ablation instances absent. \\
+C29 & Historical full canonical suite/provenance & Not reproducible from
+this ZIP; repair claim or delivery. \\
+C30 & Prior qualitative/methodological antecedents & Supported by
+primary comparisons; exact priority still unresolved. \\
+C31 & No dependence on companion CM/chain-ring theorems & Confirmed for
+the numbered proofs. \\
+C32 & Current format and publication status & A technical note is a
+reasonable judgment, not a proved scholarly entitlement. \\
+\end{longtable}
+
+The main claim files and crosswalk largely agree with the manuscript.
+The serious discrepancy is not an inflated DJ theorem or a hidden QXOR
+assumption in the lower bound; it is the difference between the
+archive's implied reproducibility envelope and what the recipient
+actually receives. A second issue is the ambiguous phrase ``primitive
+eigenvalue,'' discussed below.
+
+\section{Theorem-by-theorem proof
+audit}\label{theorem-by-theorem-proof-audit}
+
+\subsection{Exact discrimination: Lemma
+2.1}\label{exact-discrimination-lemma-2.1}
+
+\textbf{Status: verified.} Let \(U_i=\operatorname{span}S_i\). A
+complete readout, with all outcomes grouped by label, gives an injective
+linear map \(L:V\to\bigoplus_i W_i\). Exactness gives
+\(L(U_i)\subseteq W_i\). If \(\sum_i u_i=0\), then \(\sum_i L(u_i)=0\)
+in disjoint coordinate groups, so every \(L(u_i)=0\) and injectivity
+gives every \(u_i=0\). This proves directness, including for more than
+two labels.
+
+Conversely, concatenate bases of the \(U_i\) and extend to a basis of
+\(V\). The complete dual-coordinate instrument is injective. Each
+required state has support only in coordinates assigned its own label;
+coordinates in the complement vanish on all required states and can
+receive any label. Multiple states per label cause no problem. An
+explicit finite-family convention would improve readability; with
+finite-dimensional \(V\), a direct sum of nonzero summands is
+necessarily finite anyway.
+
+The familiar singleton criterion is prior art (S4, Section 4). The
+set-valued statement and its proof are elementary linear algebra, not a
+persuasive independent novelty centerpiece.
+
+\subsection{Complete recorded evolution: Lemma
+2.2}\label{complete-recorded-evolution-lemma-2.2}
+
+\textbf{Status: verified.} At a leaf, take the identity. If the
+descendant record maps \(T_b\) are injective and the instrument stack
+\((L_b)_b\) is injective, then
+
+\[
+(T_bL_bv)_b=0\Longrightarrow L_bv=0\ \text{for all }b\Longrightarrow v=0.
+\]
+
+Composition with an injective gate preserves injectivity. For each fixed
+oracle its query maps are invertible, so the same induction shows that
+the overall record of a nonzero initial state cannot vanish. It is not
+asserted that one oracle-independent evolution map describes all
+secrets.
+
+Different terminal dimensions are harmless because the common
+bookkeeping space is their direct sum. A zero branch remains a zero
+block. Early stopping produces a leaf with the identity as its
+continuation. Fixed ancilla addition is an injection over a field.
+Finite trees allow the induction to terminate. This is not a theorem
+about an unbounded stopping process.
+
+The record is a mathematical representation of all possible histories;
+the proof does not require a physical operation that coherently
+recombines classical outcomes. No hidden interference between distinct
+histories is used. The model's completeness condition is equivalent to
+the common-kernel condition in the established generalized-modal
+framework (S2, equation (47)); cite that exact antecedent at the
+definition.
+
+\subsection{Deutsch: Theorem 3.1}\label{deutsch-theorem-3.1}
+
+\textbf{Status: verified.} Write a nonzero preparation as \((a_0,a_1)\)
+in the two address sectors and let \(\Delta=G_0+G_1\). The four
+postquery states satisfy
+
+\[
+v_{00}+v_{11}=v_{01}+v_{10}=(\Delta a_0,\Delta a_1)=w.
+\]
+
+If \(w\ne0\), the constant and balanced spans overlap nontrivially. If
+\(w=0\), the separate address blocks imply \(\Delta a_0=\Delta a_1=0\),
+so all four states coincide. They remain nonzero because the query is
+invertible. Lemma 2.1 rules out exact classification in either case;
+Lemma 2.2 prevents query-free complete postprocessing from removing the
+obstruction.
+
+Before the first query, branch states are secret-independent. A possible
+query-free terminal branch cannot be correct on both promise classes.
+Thus any exact one-query algorithm would have a nonzero prequery branch,
+possible for every oracle, to which the argument applies. This addresses
+adaptivity without silently replacing it by a nonadaptive model.
+
+Arbitrary finite ancillas are already included in the \(a_x\).
+Commutation of \(G_0,G_1\) is not used. Inverse queries simply
+substitute another fixed invertible pair. Preparation on one address
+sector, one-dimensional targets when possible, and equal oracle actions
+all remain covered.
+
+The two-query QXOR upper bound uses basis inputs at the two addresses,
+retains their Boolean answers, and computes their parity. It does not
+require cloning an unknown modal state. The qualitative antecedent is
+explicit in James--Ortiz--Sabry (S3, conclusion); the present
+all-ancilla adaptive statement must be compared separately rather than
+advertised as the first discovery that familiar Deutsch interference
+fails.
+
+\subsection{Deutsch--Jozsa: Theorem 3.2}\label{deutschjozsa-theorem-3.2}
+
+\textbf{Status: verified as a one-query obstruction.} For \(n\ge2\),
+partition the \(N=2^n\) addresses into equal blocks \(A,B,C,D\). The
+indicators of \(A\cup B\), \(A\cup C\), and \(B\cup C\) are balanced and
+have Boolean XOR zero. In characteristic two, pointwise evaluation gives
+
+\[
+O_{A\cup B}+O_{A\cup C}+O_{B\cup C}=O_0.
+\]
+
+At an address in one of the first three blocks, two \(G_1\)
+contributions cancel and one \(G_0\) remains; at an address in \(D\),
+three \(G_0\) contributions give \(G_0\). The identity is independent of
+target dimension and preparation. Applying it to a nonzero preparation
+puts its nonzero constant-zero output in the span of balanced outputs.
+Exact discrimination is impossible. The same secret-independent prefix
+reasoning handles one-query adaptive trees.
+
+Distinct deterministic QXOR queries at \(N/2+1\) addresses give the
+stated upper bound: a balanced function cannot agree at all those
+addresses. The manuscript correctly concludes only
+
+\[
+2\le Q_{\rm exact}^{\rm QXOR}(\mathrm{DJ}_n)\le 2^{n-1}+1.
+\]
+
+The gap is an open task within this paper, not a proof gap in a claimed
+optimum. No finite experiment in the package closes it. Positive
+odd-characteristic constructions in S6 and S7 use different scalar
+assumptions and are not counterexamples.
+
+\subsection{Recorded monomials: Lemma
+4.1}\label{recorded-monomials-lemma-4.1}
+
+\textbf{Status: verified.} For a BV secret \(s\in\{0,1\}^n\) and
+\(f_s(x)=s\cdot x\), Boolean parity embeds as ordinary field addition
+specifically because the characteristic is two. Thus each oracle node
+has
+
+\[
+O_s=O_0+\sum_{j=1}^n s_j A_j,
+\qquad
+A_j=\bigoplus_x x_j(G_0+G_1).
+\]
+
+Fix a path through the syntactic tree. At that path the matrices are
+fixed, even though another history would select different ones. The
+initial coordinates have degree zero in \(s\). A secret-independent
+linear transformation does not increase degree; an oracle increases it
+by at most one. Reducing \(s_j^2=s_j\) is an identity of functions on
+the Boolean secret cube, not an algebraic relation imposed on every
+element of \(F\).
+
+For a leaf \(h\) with at most \(q\) calls, write its vector as a sum of
+squarefree monomials with fixed coefficient vectors. Use one finite
+common direct sum over all syntactic leaves and concatenate the
+coefficient vectors for each monomial across those leaves. Impossible
+histories contribute zero values; they are not deleted depending on the
+secret. Early leaves have lower degree, which is permitted. Therefore
+
+\[
+\Psi_s=\sum_{\substack{J\subseteq[n]\\|J|\le q}}s_Jc_J,
+\qquad
+\dim\operatorname{span}\{\Psi_s\}\le
+D(n,q):=\sum_{j=0}^{\min(q,n)}\binom nj.
+\]
+
+The number \(D(n,q)\) is the dimension of the available Boolean
+polynomial function space. It is an upper bound on this particular
+algorithm's record span, not a guarantee that its coefficient vectors
+are independent.
+
+Branch-dependent pairs and inverse access retain affine dependence.
+Finite ancillas change coefficient-vector dimension but not the number
+of monomials. Recorded histories do not supply uncharged secret bits:
+their possibility patterns are the supports of the same polynomial
+vectors. Histories that reconverge in an implementation may be unfolded
+into a finite tree; forgetting them cannot create an exact algorithm
+unavailable with them retained.
+
+The underlying amplitude-degree induction is an established method (S5,
+Lemma 4.1, whose proof explicitly notes that linearity rather than
+unitarity is used). The characteristic-two parameter substitution and
+the complete-history formulation are the paper's relevant
+specialization, not a wholly new polynomial method.
+
+\subsection{Bernstein--Vazirani: Theorem
+4.2}\label{bernsteinvazirani-theorem-4.2}
+
+\textbf{Status: verified.} For each secret \(s\), completeness makes
+\(\Psi_s\ne0\). Exactness makes it supported only in terminal blocks
+carrying label \(s\). Hence the \(2^n\) records are linearly
+independent. They are also contained in the span of at most \(D(n,q)\)
+coefficient vectors. When \(q<n\), \(D(n,q)<2^n\), a contradiction.
+
+This is stronger than showing that one familiar Fourier circuit fails.
+It rules out every algorithm in the stated finite adaptive contract. It
+does not extend to nonlinear secret-dependent gates, postselection, free
+description access, or a changed oracle primitive. In particular, over
+characteristic zero the Boolean parity \(s\cdot x\) is not generally a
+degree-one scalar polynomial in the bits \(s_j\); the proof does not
+contradict ordinary quantum BV.
+
+The upper bound is exactly \(n\) QXOR queries at the unit addresses
+\(e_j\), followed by basis-coordinate readout. General pairs are only in
+the lower-bound class. Some such pairs encode no information and have
+infinite complexity for recovery. The manuscript makes that distinction
+correctly.
+
+\subsubsection{Independent alternative
+proof}\label{independent-alternative-proof}
+
+There is a useful shorter audit proof. Fix one secret \(s^0\). Some
+terminal coordinate \(p(s)\) in a leaf labelled \(s^0\) has
+\(p(s^0)=a\ne0\). Exactness gives \(p(s)=0\) for all other secrets, and
+the branch-degree argument gives \(\deg p\le q\) after multilinear
+reduction. Uniqueness of Boolean multilinear interpolation gives
+
+\[
+p(s)=a\prod_{j:s^0_j=1}s_j\prod_{j:s^0_j=0}(1+s_j).
+\]
+
+Its degree is \(n\), since the coefficient of \(s_1\cdots s_n\) is
+\(a\ne0\). Therefore \(q\ge n\).
+
+This proof is independently derived here, not a claim of historical
+novelty. It is a useful cross-check because it does not use a global
+dimension comparison or a physically coherent interpretation of the
+record. A brief comparison with the nondeterministic-polynomial
+literature is appropriate (S10); its ordinary complex,
+positive-acceptance model is not the same as all-branches-correct modal
+recovery.
+
+\subsection{Ring example: Proposition 5.1 and adjacent
+claims}\label{ring-example-proposition-5.1-and-adjacent-claims}
+
+\textbf{Status: proposition verified; adjacent primitive terminology
+needs clarification.} In \(A=\mathbb F_2[u]/(u^4)\), \(z=1+u^2\) has
+\(z^2=1\), so \(X(1,z)^T=(z,1)^T=z(1,z)^T\). Elementary invertible row
+and column additions give
+
+\[
+H_z=\begin{pmatrix}1&1\\1&z\end{pmatrix}
+\sim\operatorname{diag}(1,u^2).
+\]
+
+Tensoring over \(A\) gives diagonal factors \(u^{2k}\) indexed by
+subsets of size \(k\). All terms for \(k\ge2\) vanish. Multiplication by
+\(1\) has binary rank four, and multiplication by \(u^2\) has binary
+rank two. There is one former term and \(n\) latter terms, proving
+binary rank \(4+2n\) in dimension \(4\cdot2^n\).
+
+The group-character argument is correct: an element of a
+characteristic-two field satisfying \(a^2=1\) must be \(1\). Over this
+particular local ring every unit reduces to \(1\) in the residue field,
+so a unit-valued character matrix of size greater than one reduces to
+the all-ones matrix and is not invertible. This is not a prohibition on
+every finite-field transform or on odd-order character groups.
+
+The phrase ``\(R\) cannot be a primitive eigenvalue'' at M:L194 should
+be replaced by a statement about a \textbf{primitive eigenvector}. With
+\(R=1+u\), the equation \(X\eta=R\eta\) forces \(u^2\eta=0\), excluding
+a vector with a unit coordinate. However, nonzero nonprimitive
+eigenvectors do exist. For example,
+
+\[
+\eta=(u^2,u^2+u^3)^T,\qquad X\eta=R\eta.
+\]
+
+The fresh exhaustive check finds all three nonzero such vectors in
+\(A^2\), and none among the 192 primitive vectors. This does not refute
+the intended proof; it shows why the qualifier must attach to the
+vector.
+
+The four-cycle eigenvector has coordinates \(R^{-j}\) for \(j=0,1,2,3\),
+all units, and the shift gives eigenvalue \(R\). Its controlled oracle
+is a different primitive. The described compute/control/uncompute
+simulation consumes two QXOR calls; the paper does not prove that every
+possible implementation needs two. Keep that distinction explicit.
+
+Finally, \(\otimes_A\) allows moving an \(A\)-scalar between factors,
+whereas a literal independent binary tensor product does not. The
+warning is correct. The section expressly does not export the
+field-query theorems to arbitrary ring-state models. No field-style
+dimension argument over a ring is required for Proposition 5.1.
+
+\section{Contract matrix and boundary
+checks}\label{contract-matrix-and-boundary-checks}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Feature
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Field lower bounds
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Matching upper bounds
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ring example
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Scalars & Any characteristic-two field & Same field, Boolean basis
+labels & \(A=\mathbb F_2[u]/(u^4)\) \\
+States/spaces & Nonzero vectors; finite dimension per node & Basis-state
+constructions suffice & Free modules; specify primitive vectors where
+used \\
+Composition & Tensor over \(F\) & Tensor over \(F\) & Tensor over
+\(A\) \\
+Gates & Secret-independent invertible maps/injections & Fixed Boolean
+basis permutations and allowed readout & Invertible \(A\)-linear maps \\
+Ancillas & Arbitrary finite & Finite work/answer storage & No universal
+ancilla lower bound asserted \\
+Measurement & Finite stack-injective linear instruments & Complete basis
+readout & Nonzero contractions in worked example \\
+Adaptivity & Finite recorded tree & Not needed for displayed optima & No
+general adaptive query theorem \\
+Oracle & Fixed pointwise invertible actions; node-specific pairs allowed
+& Standard QXOR specifically & Flip or separately declared cyclic
+action \\
+Inverses & Lower-bound argument persists & QXOR is its own inverse &
+Construction-specific \\
+Exactness & Every possible output correct; no vanished total record &
+Same requirement & Analyzer claim is algebraic \\
+Exclusions & Postselection, nonlinear updates, free coefficient table,
+unbounded stopping & Same exclusions & No silent scalar/tensor
+reinterpretation \\
+\end{longtable}
+
+A complete instrument is not a choice to keep only a successful outcome.
+Its stack has trivial kernel. This is decisive: allowing arbitrary
+postselection could invalidate the nonzero-record step. Arbitrary finite
+workspace is permitted, but no uniform gate-efficiency theorem is
+claimed. An exponential-size secret-independent measurement may be
+allowed by a pure query model; it would require separate treatment in a
+computational-complexity model.
+
+The equal-action case \(G_0=G_1\) is a legitimate member of the
+lower-bound class, not evidence that QXOR has infinite complexity.
+Similarly, an inverse action remains affine in the Boolean control, but
+an entirely different phase/cyclic access primitive must not inherit the
+QXOR cost label without an implementation argument.
+
+\section{Counterexample and edge-case attack
+report}\label{counterexample-and-edge-case-attack-report}
+
+The following attacks were actually performed, either analytically or by
+the supplied fresh code. No exhaustive all-dimensional search is
+claimed.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Attack
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Method and outcome
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Pairwise versus genuine direct sum & Analytic reconstruction uses a full
+linear relation; no pairwise-only shortcut. Three binary lines can be
+pairwise disjoint without forming a direct sum, so the stronger
+condition is necessary. \\
+Vanishing histories & Proved stack injectivity by backward induction;
+randomly tested finite trees with zero branches and early stops. \\
+History as extra information & Fixed syntactic direct-sum record
+includes every leaf; secret-dependent support is captured by polynomial
+coordinates. \\
+Arbitrary ancillary dimension & Analytic proofs use unrestricted finite
+sector vectors. Fresh dimension-eight Deutsch checks are only
+illustrations. \\
+Equal/noncommuting actions & All 36 ordered pairs in
+\(\mathrm{GL}(2,2)\) tested; proofs do not assume commutation or
+distinctness. \\
+Larger characteristic-two field & 2,000 seeded cases in \(\mathbb F_4\)
+passed; general field coverage is analytical, not inferred from this
+sample. \\
+One-dimensional target or sparse preparation & Deutsch overlap proof
+remains valid; no special support assumption enters. \\
+Inverse queries & Replacing each action by its inverse preserves the
+same Boolean affine form. \\
+Early termination and node-specific pairs & Path-degree induction and
+random tree tests passed; syntactic padding introduces no new
+monomials. \\
+\(n=1\) and \(n=2\) & BV proof includes \(n=1\); DJ \(n=1\) reduces to
+Deutsch; four-block DJ relation tested at \(n=2\). \\
+Infinite characteristic-two field & Proofs use finite-dimensional linear
+algebra and Boolean interpolation, not counting all field elements. \\
+Ring nonprimitive vectors & Explicit nonprimitive \(R\)-eigenvector
+found; intended primitive-vector obstruction survives. \\
+Shared versus literal tensor base & Analytic balancing check; binary
+rank calculation uses shared \(A\) multiplication, not independent
+nilpotents. \\
+Simon's three output labels & Fresh scan tests genuine directness by
+comparing combined and separate span ranks, not pairwise intersections
+alone. \\
+\end{longtable}
+
+The source does not define \(n=0\) as a target task. It is harmless to
+state \(n\ge1\) explicitly for BV and Deutsch--Jozsa inputs rather than
+leave degenerate conventions implicit. No claimed bound depends on a
+nonstandard zero-bit convention.
+
+\section{Independent computations and
+reproducibility}\label{independent-computations-and-reproducibility}
+
+\subsection{Fresh verification scope}\label{fresh-verification-scope}
+
+The fresh program \nolinkurl{checks/independent_checks.py} uses Python's
+standard library, deterministic enumeration where stated, and recorded
+seeds where sampling is used. All eight top-level checks passed in this
+environment. Run it with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{python}\NormalTok{ checks/independent\_checks.py }\AttributeTok{{-}{-}output}\NormalTok{ checks/fresh\_results.json}
+\end{Highlighting}
+\end{Shaded}
+
+The output records Python/platform information, code SHA-256, case
+counts, and runtimes. \nolinkurl{--skip-simon} provides an optional
+reduced run. The program is new audit code, not the missing canonical
+runner.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Fresh check
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Coverage
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Result
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Deutsch, dimension four & 36 ordered invertible pairs x 15 nonzero
+preparations = 540 cases & No exact one-query solution \\
+Deutsch, dimension eight & Same pairs x 255 preparations, with a
+two-dimensional untouched ancilla = 9,180 cases & No exact one-query
+solution \\
+DJ relation & \(n=2\), 36 pairs x 255 preparations = 9,180 checks &
+Required three-balanced relation holds \\
+Boolean evaluation ranks & \(n=1,\ldots,7\) and \(q=0,\ldots,n\): 35
+checks & All match \(D(n,q)\) \\
+Adaptive trees & 168 seeded tree degree checks; 480 fixed-secret
+stacked-map rank checks & Degree and injectivity tests pass \\
+\(\mathbb F_4\) Deutsch & 2,000 seeded examples;
+\(|\mathrm{GL}(2,4)|=180\) & No sampled counterexample \\
+Ring ranks & \(n=1,\ldots,6\) & Ranks \(6,8,10,12,14,16\) \\
+Ring eigenvectors & All 192 primitive vectors in \(A^2\) & No primitive
+\(R\)-eigenvector; three nonprimitive nonzero examples \\
+UNIQUE-SAT & 132 promised instances over \(n=1,\ldots,6\) & All protocol
+outputs satisfy exactness \\
+Simon & All 65,535 nonzero preparations in binary dimension 16; 36
+standard oracles, three shifts & No exact one-query, no-ancilla
+preparation \\
+New extension check & All 255 nonempty promises on three Boolean
+addresses; \(q=0,1,2,3\) & 1,020 feature/graph-state rank comparisons
+agree \\
+\end{longtable}
+
+The random adaptive tests use complementary-projection instruments,
+early stopping, branch-specific gates, and fixed invertible oracle
+pairs. They are not exhaustive over all complete instruments. The
+general induction, not these tests, establishes the theorem's
+quantifiers.
+
+\subsection{Historical evidence versus fresh
+reproduction}\label{historical-evidence-versus-fresh-reproduction}
+
+The standard Deutsch 15/255 counts, UNIQUE-SAT 132 count, Simon scan,
+phase ranks, and primitive-vector search now have fresh matching
+results. That increases confidence in those assertions. It does not
+validate the provenance of the historical JSON or a 21-stage suite that
+was not delivered.
+
+The 552-matrix historical count, exact small BV dimensions from missing
+JSON, and exact description-ablation instances remain unverified. Their
+conceptual claims are separate: \(G_0=G_1\) is information-free by
+inspection of the oracle formula; BV has a proof independent of small
+identity checks; reading an entire classical coefficient description
+changes the access model. These facts do not validate undocumented
+enumeration counts.
+
+The manuscript build is independently reproducible with the supplied
+source. Table values in \nolinkurl{phase_table.tex} are mathematically
+reconstructible, but its claimed historical generation by
+\nolinkurl{complete_p02.py} from rerun JSON is not reproducible until
+those inputs and generator are supplied.
+
+The smallest adequate repair is to add a self-contained verifier,
+outputs, one-command instructions, and truthful provenance for the
+finite results retained in the paper. Alternatively, remove historical
+empirical claims that do not serve the proof-centered note. A full
+portfolio archive is not necessary if the paper's modest checks can be
+reproduced locally.
+
+\section{Prior art, novelty, and citation
+audit}\label{prior-art-novelty-and-citation-audit}
+
+\subsection{Search method and limits}\label{search-method-and-limits}
+
+Fresh searches used theorem-content phrases about modal BV, exact
+characteristic-two Deutsch/DJ, adaptive polynomial lower bounds,
+finite-field oracle identification, modal state discrimination, and
+nondeterministic polynomial degree. Relevant primary documents were then
+opened directly and inspected at the sections below. Citation links were
+followed among the modal foundations, finite-field computation,
+state-discrimination, and polynomial-method sources.
+
+Several broad exact-phrase searches returned noisy or relaxed matches,
+including ordinary complex quantum algorithms and unrelated uses of
+``oracle.'' Such results were not counted as evidence about modal query
+lower bounds. This was a bounded literature investigation, not a
+comprehensive citation-database sweep. No equivalent full adaptive BV
+theorem was found in the inspected passages, but the search is
+insufficient to certify absence throughout the literature.
+
+The source register and search log are separate deliverables. Their
+purpose is to make both the positive source matches and the remaining
+gaps inspectable.
+
+\subsection{Closest antecedents and
+consequences}\label{closest-antecedents-and-consequences}
+
+\textbf{Modal foundations and complete instruments.} S1 supplies the
+basic finite-field modal framework. More specifically, S2 equation (47)
+requires a trivial common kernel for an unconditional family of linear
+operations, and Section 4.4 relates operator-family and enlarged-system
+descriptions. The manuscript's injective stack is the same common-kernel
+condition, since \(\ker(L_b)_b=\bigcap_b\ker L_b\). Cite this precise
+link at M:L35--40; do not portray completeness itself as new.
+
+\textbf{Qualitative Deutsch obstruction.} S3's conclusion already
+identifies loss of the familiar Deutsch advantage in its finite-field
+setting. It does not, in the inspected passage, state the present
+arbitrary-pair, all-finite-ancilla, finite-adaptive theorem. The
+appropriate positioning is a quantified contract-level formulation of a
+known qualitative obstruction, with exact priority still open.
+
+\textbf{State discrimination.} S4 Section 4 explicitly connects modal
+distinguishability with linear independence and studies multiple-copy
+distinguishability. This undercuts any novelty claim for the singleton
+linear-independence criterion, while leaving the paper free to state and
+prove the useful labelled-subspace formulation. S4 is also relevant to
+the new graph-state tensor construction below, without itself supplying
+its oracle-query rank characterization in the inspected section.
+
+\textbf{Polynomial method.} S5 Lemma 4.1 gives
+degree-at-most-query-count amplitude polynomials; the following page
+explicitly says linearity, not unitarity, is used in that step. Its
+probability-polynomial step is different and must not import an
+inappropriate factor of two into this modal argument. The method is
+known; the paper's contribution must lie in the parameterization,
+exactness model, quantified statements, and useful consequences.
+
+\textbf{Additional antecedent worth adding.} S10 Theorem 2.3 identifies
+nondeterministic quantum query complexity with nondeterministic
+polynomial degree. Its support-based proof perspective is relevant to
+the alternative BV proof and to promise-specific extensions. However, it
+is an ordinary complex, positive-acceptance model with a different
+oracle-variable parameterization. Its Fourier-based upper bound does not
+transfer automatically to characteristic two. This is a comparison to
+make, not proof that P02 is already contained in S10.
+
+\textbf{Odd-characteristic algorithms.} S6's discrete-computing
+discussion and S7 Section 4.4 use complexified finite fields, including
+\(\mathbb F_9\), and Hermitian/unitary structure. Positive DJ/BV
+statements there are not statements in the characteristic-two contract
+audited here. Preserve the domain distinction; do not describe those
+sources as contradicting the paper.
+
+\textbf{Uniform modular computation.} S8 treats valid state spaces and
+transformations and uniform circuit complexity over algebraic scalars.
+This supports the manuscript's warning that state admissibility over
+rings and computational complexity are distinct from a fixed oracle
+promise's query count. It is not a substitute citation for the present
+exact bounds.
+
+\textbf{UNIQUE-SAT.} S9 contains the known one-query protocol reproduced
+at M:L199--206. Its circuit and two promise cases match the manuscript's
+algebraic presentation. Keep the attribution and positive-control role.
+Do not score it as an original algorithm.
+
+\subsection{Claim-level novelty
+assessment}\label{claim-level-novelty-assessment}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Claim
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Best present classification
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Confidence
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Basic modal linear computation & Known framework & High \\
+Common-kernel / complete instrument condition & Known condition with
+explicit history bookkeeping & High \\
+Singleton discrimination criterion & Known result & High \\
+Labelled-subspace direct-sum lemma & Elementary extension/reformulation
+& High \\
+Finite recorded injectivity & Elementary proof device under established
+completeness & High \\
+Qualitative Deutsch failure & Known qualitative fact & High \\
+Broad exact Deutsch theorem & Quantified refinement; exact priority
+unresolved & Moderate \\
+Generalized one-query DJ obstruction & Apparently distinct formulation
+in inspected sources; priority unresolved & Moderate \\
+Degree-per-query architecture & Known technique specialized to this
+setting & High \\
+Fully adaptive BV \(n\) lower bound & Strongest candidate contribution;
+no matched theorem located, not certified new & Moderate \\
+QXOR matching upper bounds & Elementary constructions & High \\
+Ring character degeneration & Elementary algebraic obstruction with
+antecedents & High \\
+Specific \(4+2n\) calculation & Useful worked specialization; priority
+not independently established & Moderate \\
+UNIQUE-SAT protocol & Known, reproduced result & High \\
+Finite Simon enumeration & Bounded empirical observation; not a general
+theorem & High on scope, low on significance \\
+\end{longtable}
+
+``Historical firstness is not claimed'' is sensible but does not by
+itself establish a research contribution. Before journal submission,
+state what remains beyond the closest sources in terms of hypotheses,
+conclusion, and proof content. A clean known-result exposition may still
+be valuable, but it has a different submission case from a new theorem.
+
+\subsection{Bibliography and wording
+repairs}\label{bibliography-and-wording-repairs}
+
+The bibliography has nine entries. The principal sources are relevant,
+but theorem/page locators should replace some broad historical
+references. At least one published-version improvement is confirmed:
+\emph{Modal Quantum Theory} appeared in \emph{Foundations of Physics}
+\textbf{42}, 918--925 (2012), DOI \nolinkurl{10.1007/s10701-012-9650-z};
+the manuscript gives only the earlier arXiv entry. Update that entry
+without confusing it with \emph{Almost quantum theory}. The Beals
+journal citation is already substantially complete. Published
+replacements for the other arXiv entries were not all established in
+this audit; do not invent them.
+
+Add S10 as a nearby method comparison if the alternative proof or rank
+extension is included. Consider original Deutsch, DJ, and BV citations
+when explaining the named tasks' origins. No broad historical-priority
+assertion should rely on a search snippet or a local novelty label.
+
+Suggested contribution wording:
+
+\begin{quote}
+We prove exact oracle-query bounds for characteristic-two linear-modal
+computation under an explicitly recorded, complete-instrument contract.
+The amplitude-degree method and basic modal discrimination criterion are
+established; the contribution here is their explicit application to all
+finite adaptive histories and finite ancillas for these promise tasks.
+We obtain exact QXOR complexity two for Deutsch and \(n\) for BV, and a
+one-query DJ obstruction. The precise relationship of these quantified
+statements to prior formulations is detailed below.
+\end{quote}
+
+Use this as conservative positioning, not as a substitute for the
+promised detailed comparison.
+
+\section{Reconciliation of prior
+reviews}\label{reconciliation-of-prior-reviews}
+
+Existing reviews were assessed as collections of claims, not independent
+votes. The archive itself labels the adversarial perspectives as
+agent-based; there is no evidence that a human specialist panel reviewed
+the paper.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Prior issue
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Was it valid?
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Current status
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Parity must be degree one over the actual scalar field & Yes & Resolved:
+characteristic two is explicit, including infinite fields. \\
+Arbitrary postselection could fake success & Yes & Resolved in the
+contract by stack injectivity and all-possible-label exactness. \\
+Adaptive histories and zero branches need proof & Yes & Resolved
+analytically by Lemmas 2.2 and 4.1; fresh tests corroborate only
+examples. \\
+Arbitrary ancillas cannot be inferred from finite scans & Yes & Resolved
+in proofs; finite tables remain narrowly labelled. \\
+General-pair lower bounds do not imply general-pair upper bounds & Yes &
+Resolved explicitly; \(G_0=G_1\) counterexample is included. \\
+Qualitative Deutsch failure has antecedents & Yes & Acknowledged;
+precise quantified priority still not cleared. \\
+Fully quantified BV/DJ priority needs checking & Yes & Still open at
+theorem level; this audit narrows but does not close it. \\
+Ring kickback might be confused with an invertible analyzer & Yes &
+Mathematical distinction resolved; primitive-vector wording still needs
+editing. \\
+Free description inspection is not operational readout & Yes &
+Conceptual distinction resolved; exact historical ablation data
+missing. \\
+Simon scan must not become an all-size lower bound & Yes & Scope is
+correctly restricted; fresh exact-scope scan agrees. \\
+552 should refer to matrices rather than pairs & Plausible correction &
+Wording is corrected, but the historical enumeration itself cannot be
+verified. \\
+Reproduction records should support tables & Yes & Not resolved for a
+standalone recipient; external supplement is absent. \\
+\end{longtable}
+
+New or sharper findings from this audit are: the exact connection to S2
+equation (47); the nearby nondeterministic-degree literature; the
+nonprimitive \(R\)-eigenvector illustrating the terminology risk; the
+distinction between a successful portable build and a missing experiment
+envelope; and the constructive identification-rank result below. None
+should be represented as a finding already established by the supplied
+prior reviews.
+
+\section{Exposition, structure, and submission
+hygiene}\label{exposition-structure-and-submission-hygiene}
+
+The paper is short, mathematically coherent, and largely self-contained.
+The main theorem proofs do not require unpublished CM or chain-ring
+results. The abstract's oracle distinction and the task table's separate
+lower/upper columns are strengths.
+
+The title is accurate but distributes attention among queries,
+adaptivity, and kickback. A tighter title such as \textbf{Exact Query
+Bounds for Characteristic-Two Modal Computation} is sufficient. A
+subtitle can be dropped. The introduction should identify BV recovery as
+the strongest theorem within its first substantive paragraph and explain
+what arbitrary complete histories add beyond a failed textbook circuit.
+
+Add one concrete \(n=2\) illustration. With one query, every terminal
+record is of the form \(c_\varnothing+s_1c_1+s_2c_2\). Consequently,
+
+\[
+\Psi_{00}+\Psi_{10}+\Psi_{01}+\Psi_{11}=0.
+\]
+
+Four nonzero records confined to four different output labels cannot
+satisfy that relation. This single example explains the
+coefficient-space obstruction and why extra histories do not evade it. A
+small adaptive tree may be described in prose; a new decorative diagram
+is unnecessary.
+
+Use ``primitive eigenvector with eigenvalue \(R\)'' consistently and
+define primitive as having at least one unit coordinate in this local
+free module. Call \(2^n\) the free \(A\)-module rank rather than an
+unqualified vector-space dimension, and call \(4\cdot2^n\) the binary
+dimension. Proposition 5.1's meaning is clear, but table headings should
+enforce the distinction.
+
+The author footnote is a release blocker: an inherited label with
+pending metadata is not final authorship. Replace it with the intended
+publication name and actual affiliation/contact information, or use
+deliberate valid anonymous-submission formatting when a venue requires
+it. Do not invent those details. Populate PDF author metadata. Remove
+the inherited-project sentence and change the final section from ``Scope
+and publication status'' to ``Discussion and limitations''; the author's
+internal gatekeeping belongs in the README, not the scientific argument.
+
+The nine-page original was rendered for inspection. The overview shows
+no obvious overlap or clipping. The boxed figures largely repeat prose.
+They are optional. Some section and theorem transitions occur near page
+bottoms, and references spill into a sparse ninth page. These are polish
+issues, not mathematical defects. The explicit
+\texttt{\textbackslash{}clearpage} before the final section contributes
+to the sparse layout; remove it unless needed for a venue format.
+
+Retain the positive control in a short paragraph or appendix. Move
+historical finite scans, especially Simon, into a properly supplied
+supplement. The ring example can remain if its role is stated as a
+counterexample to the inference ``kickback implies invertible
+analysis,'' rather than a second main research theme.
+
+\section{Significance, format, and venue
+fit}\label{significance-format-and-venue-fit}
+
+A result can be sound without being major, and new without being
+important. The paper earns its strongest interest from excluding an
+entire class of finite adaptive modal BV algorithms, not merely a
+particular Fourier construction. It makes oracle and readout assumptions
+inspectable and shows why a characteristic-two linearization changes the
+familiar BV situation. Those are reasonable grounds for a short
+theoretical note.
+
+The principal significance risk is that a specialist may view the result
+as a short corollary of standard amplitude-degree and
+modal-discrimination facts. The response should not be more peripheral
+examples. It should be a crisp theorem, an explicit comparison to the
+strongest antecedent, and one useful generalization or explanatory
+example if it genuinely strengthens the contribution.
+
+The DJ gap does not by itself make the note incomplete. The ring example
+does not turn it into a full theory of computation over finite chain
+rings. The finite Simon scan is not strong enough to carry a standalone
+research claim here. UNIQUE-SAT establishes a useful contrast, but its
+novelty belongs to its source.
+
+Plausible venue types are a foundational mathematical-physics journal
+that accepts rigorous model comparisons, or a
+theoretical/unconventional-computation venue that values precise
+algebraic query models. \emph{Foundations of Physics} is a plausible
+scope match, not an acceptance recommendation: its current aims include
+foundational aspects of quantum and information theory (S11), and the
+modal framework has appeared there (S1). A submission would still need
+to explain the conceptual significance beyond an algebraic exercise. A
+mainstream quantum-algorithms venue would need especially clear
+motivation and a stronger account of why this nonstandard model is
+relevant.
+
+No acceptance probability or prediction is offered. Editorial fit and
+actual novelty must be assessed separately from correctness.
+
+\section{Research extensions: one proved opportunity and one unresolved
+direction}\label{research-extensions-one-proved-opportunity-and-one-unresolved-direction}
+
+\subsection{A constructive exact-identification rank
+characterization}\label{a-constructive-exact-identification-rank-characterization}
+
+\textbf{Status: independently derived in this audit; not part of the
+submitted manuscript; priority unresolved.} The prior assessment
+correctly warned that an arbitrary rank bound is not automatically an
+achievable algorithm. For the paper's unrestricted QXOR and
+complete-readout model, a particular rank condition can in fact be made
+sufficient by an explicit construction.
+
+Let \(X\) be a finite nonempty address set and \(P\) a finite nonempty
+family of distinct Boolean functions on \(X\). Form \(E_q(P)\) with
+columns indexed by \(f\in P\) and rows indexed by subsets
+\(S\subseteq X\) of size at most \(q\):
+
+\[
+(E_q(P))_{S,f}=\prod_{x\in S}f(x).
+\]
+
+The empty product is one. In the manuscript's characteristic-two field
+model, with unrestricted finite-dimensional secret-independent linear
+operations and complete readout,
+
+\[
+Q_{\rm exact}^{\rm QXOR}(\operatorname{Identify}P)
+=\min\{q\ge0:\operatorname{rank}_F E_q(P)=|P|\}.
+\]
+
+This is a statement about \textbf{identifying the entire promised
+function}, not arbitrary many-to-one classification, and not polynomial
+gate complexity.
+
+\subsubsection{Necessity}\label{necessity}
+
+Write the truth-table bits as \(t_x=f(x)\). Each pointwise query is
+affine in those bits. The recorded-path induction therefore expresses
+every output coordinate as a polynomial of total degree at most \(q\) in
+the \(t_x\), reduced to squarefree form on Boolean inputs. The matrix of
+records has a factorization through \(E_q(P)\), so its rank is at most
+\(\operatorname{rank}E_q(P)\). Exact identification requires \(|P|\)
+independent nonzero records. This necessity also holds for the broader
+fixed-action lower-bound class.
+
+\subsubsection{Sufficiency}\label{sufficiency}
+
+A single QXOR call on the fixed nonzero preparation
+\(\sum_{x\in X}|x,0\rangle\) produces
+
+\[
+|\Gamma_f\rangle=\sum_{x\in X}|x,f(x)\rangle.
+\]
+
+Preparing \(q\) independent registers and querying each once produces
+\(|\Gamma_f\rangle^{\otimes q}\). Preparation is permitted: any desired
+nonzero vector can be the image of a fixed basis vector under an
+invertible linear map. The tensor state is nonzero over a field.
+
+Let \(B_q\) have these tensor states as columns. Every coordinate of a
+column is a product of \(q\) factors, each either \(f(x)\) or
+\(1+f(x)\); hence the row space of \(B_q\) is contained in the row space
+of \(E_q(P)\).
+
+Conversely, fix a row monomial \(\prod_{x\in S}f(x)\) with
+\(|S|=k\le q\). Assign \(k\) query slots to those addresses and take
+target label 1 in each. In the remaining slots use any fixed address and
+sum the two target-label coordinate rows. Each unused slot contributes
+\((1+f(x))+f(x)=1\). Thus the desired monomial is a linear combination
+of rows of \(B_q\). For \(q=0\), both matrices reduce to the constant
+feature. Therefore their row spaces, and ranks, agree.
+
+If \(E_q(P)\) has full column rank, the tensor graph states are
+independent. Extend them to a basis and apply the complete dual-basis
+readout, assigning one label to each promised function. This instrument
+is fixed from the known promise family and does not depend on the
+unknown function. It identifies every promised input exactly. The linear
+combinations in the row-space argument are a proof of rank equality, not
+a permission to inspect unknown coefficients for free.
+
+\subsubsection{Consequences and
+cautions}\label{consequences-and-cautions}
+
+The result supplies a nonadaptive optimal-query realization for
+identification in this permissive model. Arbitrary adaptive protocols
+cannot beat the rank threshold. For a promised subset of BV secrets, the
+address family contains the unit queries, so the degree-\(q\)
+truth-query features span exactly the restricted degree-\(q\) secret
+monomials. The same criterion therefore gives an exact promised-BV
+identification characterization, not only a necessary bound.
+
+For the full BV cube, the threshold is \(n\), recovering Theorem 4.2.
+The fresh program checks row-rank equality on all 255 nonempty promises
+on three Boolean addresses at four query budgets. Those computations are
+corroboration; the argument above is the proof.
+
+This does \textbf{not} give matching upper bounds for arbitrary pairs
+\(G_0,G_1\), efficient gate synthesis, a uniform algorithm from a
+succinct promise description, or a general decision/classification
+characterization. The necessary measurement may be very large. Nor does
+it close the DJ gap, because DJ identifies a class rather than the
+entire truth table.
+
+This is the highest-value optional strengthening found in this audit: it
+directly generalizes the paper's main theorem instead of adding a new
+topic. Before insertion, audit its novelty against oracle
+identification, modal multiple-copy discrimination, and algebraic
+feature-rank literature. It has not received an external review. Keep it
+as an optional proposition until that comparison is done.
+
+\subsection{Deutsch--Jozsa beyond one
+query}\label{deutschjozsa-beyond-one-query}
+
+The natural next lower-bound question is whether low-degree coordinate
+polynomials can vanish on the balanced slice while remaining nonzero on
+constant inputs, and whether compatible complete instruments can realize
+those supports. This separates an algebraic necessary condition from an
+operational construction. A polynomial that separates the promise
+classes is not automatically an exact modal algorithm with the same
+query count.
+
+No improved general DJ bound is established by this audit. Do not add
+one to the paper based on the identification proposition or a small
+enumeration. Closing the gap could substantially strengthen the
+research, but it is not needed to make the current limited theorem
+correct or to release a focused note.
+
+\subsection{Other directions}\label{other-directions}
+
+Learning \(k\) prescribed independent linear forms of a BV secret has an
+elementary \(k\)-query upper bound and a \(k\)-bit restriction lower
+bound. For the latter, restrict the secret to a \(k\)-dimensional affine
+slice on which the requested forms are bijective; the same degree
+argument applies. This is a useful corollary, not a separate research
+program. A short access taxonomy may help exposition, but the existing
+contract table already does much of that work. Expanding into
+unrestricted ring teleportation, other CM papers, or general physical
+interpretations would weaken the present focus.
+
+\section{Ranked revision plan}\label{ranked-revision-plan}
+
+Each item is actionable. ``New mathematics'' refers to required work,
+not rewriting an existing proof. The archive contains a separate
+revision register with all fields.
+
+\subsection{Stage 1: integrity and release
+repairs}\label{stage-1-integrity-and-release-repairs}
+
+\textbf{R1 -- High; M:L17--18 and PDF metadata.} Replace inherited
+author-placeholder text with intended final authorship or deliberate
+anonymous formatting. Remove pending-venue language. No new mathematics,
+literature, or computation. Small effort, requires author-supplied
+facts.
+
+\textbf{R2 -- High; M:L208--223, phase-table caption, reproducibility
+records.} Supply a portable supplement containing the source and exact
+data behind retained finite claims, or replace/remove claims whose
+historical evidence is missing. Use the fresh verifier only with fresh
+provenance. New mathematics: no. Literature: no. Computation: yes if
+historical claims remain. Effort: small for a proof-centered release,
+moderate for a fully repaired historical supplement.
+
+\textbf{R3 -- High; M:L194 and phase-table headings.} Replace
+``primitive eigenvalue'' by ``eigenvalue on a primitive eigenvector'';
+define primitive and explicitly allow nonprimitive examples. Distinguish
+module rank and binary dimension. No new proof needed; existing proof
+and explicit counterexample settle the wording. Small effort.
+
+\textbf{R4 -- Medium; M:L35--48, Lemma 4.1.} Add a short explanation
+that records are bookkeeping, zero blocks are retained, the tree is
+finite, and complexity is query count rather than a uniform gate bound.
+Most of this is already present; consolidate rather than duplicate. No
+new mathematics. Small effort.
+
+\subsection{Stage 2: novelty and citation
+repairs}\label{stage-2-novelty-and-citation-repairs}
+
+\textbf{R5 -- High; introduction and claim ledger.} Write a
+source-by-source theorem comparison for adaptive BV and generalized DJ.
+Compare assumptions, output criterion, allowed histories, and
+conclusion, not just titles. Include S2 equation (47), S5 Lemma 4.1, S4
+Section 4, and S10's different support-polynomial model. New literature
+research: yes. New mathematics: only if comparison exposes a real gap.
+Moderate effort.
+
+\textbf{R6 -- Medium; bibliography.} Update the confirmed published S1
+record, add precise locators, verify remaining entries, and add the
+original problem sources where explanatory history is given. Do not
+fabricate publication metadata. Literature work: yes. Small effort.
+
+\textbf{R7 -- High for a new-theorem submission; before submission.}
+Obtain a genuinely independent specialist reading of Lemma 4.1/Theorem
+4.2 and the closest prior theorem comparisons. This audit does not
+substitute for independent human peer review. It is a prudent project
+gate, not a claim that every journal formally requires a pre-submission
+human audit. Moderate effort.
+
+\subsection{Stage 3: structure and
+explanation}\label{stage-3-structure-and-explanation}
+
+\textbf{R8 -- Medium; first page and Section 4.} Center BV and add the
+\(n=2\) four-record example. Explain the difference from ordinary
+complex BV at the degree-one parity step. No new mathematics. Small
+effort.
+
+\textbf{R9 -- Medium; Sections 5--7 and figures.} Move ring and Simon
+material to appendix/supplement as appropriate; keep a short UNIQUE-SAT
+contrast; remove repetitive text boxes and internal publication status.
+No new mathematics. Small to moderate effort.
+
+\textbf{R10 -- Optional; after Theorem 4.2.} Consider the constructive
+identification-rank proposition after independent proof and priority
+review. It is not necessary for a correct preprint. New mathematical
+review and literature work: yes; fresh finite checks already supplied.
+Moderate effort.
+
+\subsection{Stage 4: submission polish}\label{stage-4-submission-polish}
+
+\textbf{R11 -- Medium; release package.} Bundle only canonical sources,
+final PDF, bibliography, portable supplement, README, and manifest; keep
+historical reviews separate. Fix local-path dependencies. No new
+mathematics. Small to moderate effort.
+
+\textbf{R12 -- Low; final PDF.} Remove the forced page break where
+unnecessary, improve page-bottom transitions, check all table headings,
+and render again after edits. Build and visual QA required. Small
+effort.
+
+\section{Blockers and final publication
+gates}\label{blockers-and-final-publication-gates}
+
+\subsection{Fatal blockers}\label{fatal-blockers}
+
+\textbf{None identified in the stated numbered theorems.} This is not a
+declaration that undiscovered errors or equivalent prior results cannot
+exist. An exact prior theorem could reduce the contribution to
+exposition even while all proofs remain correct.
+
+\subsection{Preprint blockers in the archive as
+received}\label{preprint-blockers-in-the-archive-as-received}
+
+The authorship-placeholder footnote must be resolved. The supplement and
+provenance statements must match what readers can actually access.
+Primitive-vector wording should be repaired at the same release pass.
+These are targeted repairs; a new general DJ optimum, an all-size Simon
+theorem, or the optional rank characterization is not required.
+
+\subsection{Submission blockers}\label{submission-blockers}
+
+The theorem-level contribution needs a concrete prior-art comparison
+rather than reliance on ``no firstness claimed.'' Retained empirical
+claims need portable evidence and exact scopes. Administrative
+manuscript text and bibliographic incompleteness should be removed. The
+conditional novelty and significance judgment must be revisited if a
+matched theorem is found.
+
+\subsection{Nonblocking improvements}\label{nonblocking-improvements}
+
+A worked \(n=2\) example, a shorter abstract, moving secondary material,
+a cleaner layout, the indicator-polynomial alternative proof, and the
+optional identification-rank proposition can improve the paper. They
+should not become excuses to broaden it indefinitely.
+
+\subsection{Final answers}\label{final-answers}
+
+\textbf{Before public release:} finalize the actual author metadata;
+correct primitive-vector terminology; either attach a self-contained
+supplement or remove/replace unsupported historical experimental and
+provenance claims; rebuild and inspect the resulting PDF. On that
+proof-centered route, the manuscript is ready after minor repairs.
+
+\textbf{Before peer review:} additionally give precise theorem-level
+comparisons to the closest modal, polynomial, and
+nondeterministic-degree antecedents; justify the surviving contribution
+as a focused note; make the evidence package portable; and carry out a
+genuinely independent specialist read of the core proof and priority
+comparison. Submit the repaired paper, not a portfolio archive whose
+essential dependencies remain elsewhere.
+
+\newpage
+
+\section{Primary-source register}\label{primary-source-register}
+
+The locators below identify the material actually used. Bibliographic
+entries are not assertions that an entire long document was exhaustively
+audited.
+
+\textbf{S1.} B. Schumacher and M. D. Westmoreland, \emph{Modal Quantum
+Theory}, Foundations of Physics 42, 918--925 (2012). DOI:
+\href{https://doi.org/10.1007/s10701-012-9650-z}{10.1007/s10701-012-9650-z}.
+Author preprint:
+\href{https://arxiv.org/abs/1010.2929}{arXiv:1010.2929}. Publisher
+metadata and foundational model checked.
+
+\textbf{S2.} B. Schumacher and M. D. Westmoreland, \emph{Almost quantum
+theory} (2012), \href{https://arxiv.org/abs/1204.0701}{arXiv:1204.0701}.
+Especially equation (47), PDF page 23, and Section 4.4, PDF pages
+26--29: generalized modal operations and the common-kernel condition.
+
+\textbf{S3.} R. P. James, G. Ortiz, and A. Sabry, \emph{Quantum
+Computing over Finite Fields} (2011),
+\href{https://arxiv.org/abs/1101.3764}{arXiv:1101.3764}. Reversible
+finite-field formulation and conclusion on PDF page 10; qualitative
+Deutsch antecedent.
+
+\textbf{S4.} P. Diamond and B. Schumacher, \emph{Cloning, deleting, and
+hiding in modal quantum theory} (2023),
+\href{https://arxiv.org/abs/2310.04397}{arXiv:2310.04397}. Section 4,
+PDF pages 4--5: distinguishability and copies.
+
+\textbf{S5.} R. Beals, H. Buhrman, R. Cleve, M. Mosca, and R. de Wolf,
+\emph{Quantum Lower Bounds by Polynomials}, Journal of the ACM 48(4),
+778--797 (2001). \href{https://arxiv.org/abs/quant-ph/9802049}{Author
+preprint, arXiv:quant-ph/9802049}. Lemmas 4.1--4.2, PDF pages 4--5 of
+the preprint; amplitude versus probability degrees.
+
+\textbf{S6.} A. J. Hanson, G. Ortiz, A. Sabry, and J. Willcock,
+\emph{The Power of Discrete Quantum Theories} (2011),
+\href{https://arxiv.org/abs/1104.1630}{arXiv:1104.1630}. PDF page 4,
+``Discrete Quantum Computing'': odd-characteristic setting.
+
+\textbf{S7.} Y.-T. Tai, \emph{Discrete Quantum Theories and Computing},
+Indiana University PhD dissertation (2019).
+\href{https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/1b636595-9156-4c14-8fe1-da1c1cf74e99/content}{Institutional
+full text}. Sections 4.1 and 4.4, printed pages 30 and 42--45:
+complexified finite fields and discrete Deutsch. Parsed text was
+inspected; one screenshot request timed out and was not treated as
+visual evidence.
+
+\textbf{S8.} N. de Beaudrap, \emph{On computation with `probabilities'
+modulo k} (2014),
+\href{https://arxiv.org/abs/1405.7381}{arXiv:1405.7381}.
+State/valid-transformation definitions, including the unit-ideal
+formulation, and the uniform-circuit framework. This is not an exact
+oracle-bound citation.
+
+\textbf{S9.} J. Willcock and A. Sabry, \emph{Solving UNIQUE-SAT in a
+Modal Quantum Theory} (2011),
+\href{https://arxiv.org/abs/1102.3587}{arXiv:1102.3587}. Section 3 and
+Figure 1 with the two correctness cases, PDF pages 3--5.
+
+\textbf{S10.} R. de Wolf, \emph{Nondeterministic Quantum Query and
+Communication Complexities}, SIAM Journal on Computing 32(3), 681--699
+(2003), \href{https://arxiv.org/abs/cs/0001014}{author version,
+arXiv:cs/0001014}. Section 2.4, Theorem 2.3, printed pages 686--688:
+nondeterministic degree characterization in the ordinary quantum model.
+
+\textbf{S11.} \emph{Foundations of Physics}, current
+\href{https://link.springer.com/journal/10701/aims-and-scope}{aims and
+scope}, checked 27 September 2026. Used only for scope, not an
+acceptance forecast.
+
+\end{document}

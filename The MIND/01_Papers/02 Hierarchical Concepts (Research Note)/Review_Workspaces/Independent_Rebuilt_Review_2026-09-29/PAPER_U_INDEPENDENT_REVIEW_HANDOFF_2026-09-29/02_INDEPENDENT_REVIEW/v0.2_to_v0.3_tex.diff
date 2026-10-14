@@ -1,0 +1,119 @@
+--- Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.2.tex
++++ Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.tex
+@@ -5,7 +5,7 @@
+ \usepackage{amsmath,amssymb,amsthm,mathtools}
+ \usepackage{enumitem,booktabs}
+ \usepackage[backend=biber,style=numeric,sorting=nyt,maxbibnames=6,giveninits=true,url=false,isbn=false]{biblatex}
+-\addbibresource{paper_u_refs_v0.2.bib}
++\addbibresource{paper_u_refs_v0.3.bib}
+ \AtBeginBibliography{\small\setlength{\bibitemsep}{3pt}}
+ \usepackage[hidelinks]{hyperref}
+ \usepackage[nameinlink,noabbrev]{cleveref}
+@@ -27,7 +27,7 @@
+ \newcommand{\eps}{\varepsilon}
+ \setlist{itemsep=2pt,topsep=4pt}
+ \emergencystretch=1em
+-\title{Hierarchical Concepts Under Finite Resolution:\
++\title{Hierarchical Concepts Under Finite Resolution:\\
+ Observation Quotients and Adaptive Symmetry}
+ \author{Brian Droncheff}
+ \date{29 September 2026}
+@@ -40,16 +40,16 @@
+ \section{The distinction and the main statements}
+ A node of a rooted tree can represent a category by the set of branches passing through it. This interpretation is established in the $p$-adic and $m$-adic mental-space literature. In particular, Khrennikov's \cite[Section 4]{Khrennikov2007} associations are already fixed-prefix equivalence classes. Earlier subconscious and memory models also use non-Archimedean state spaces \cite{Khrennikov1998,Albeverio1999}. The present note does not introduce either hierarchy or equivalence classes into that literature.
+ 
+-The point requiring care is the passage from \emph{similarity} to \emph{inability to distinguish}. An ultrametric is a metric, so different points have disjoint sufficiently small neighborhoods. Equal distances from an external point do not make those points identical or topologically indistinguishable. Discussions linking ultrametric clusters with symmetrization, particularly \cite[pp.~537--539]{LauroGrotto2008}, therefore require an explicit restriction on observations. An inference of indiscreteness from ultrametricity in the author's thesis \cite{Droncheff2015} is not valid.
+-
+-Nor is the broad two-layer architecture new. Khrennikov and Yurova \cite[Sections 4 and 9]{KhrennikovYurova2017} combine an observational quotient with a $p$-adic or ultrametric latent space in a protein model. Kleiner \cite[Section 3.4]{Kleiner2020} uses automorphism-orbit quotients to describe accessible references to experience. These are different models, but they preclude treating ``latent state, restricted observations, equivalence classes'' as a distinctive invention here.
++The point requiring care is the passage from \emph{similarity} to \emph{inability to distinguish}. An ultrametric is a metric, so different points have disjoint sufficiently small neighborhoods. Equal distances from an external point do not make those points identical or topologically indistinguishable. Lauro-Grotto \cite[pp.~537--539]{LauroGrotto2008} links clusters with symmetrization and invokes the perception of distant objects. Here that observational restriction is made explicit by a map; it does not follow from ultrametricity alone. An inference of indiscreteness from ultrametricity in the author's thesis \cite{Droncheff2015} is not valid.
++
++Nor is the broad two-layer architecture new. Khrennikov and Yurova \cite[Sections 4 and 9]{KhrennikovYurova2017} combine an observational quotient with a $p$-adic or ultrametric latent space in a protein model. Kleiner \cite[Sections 3.3--3.4]{Kleiner2020} uses automorphism-orbit quotients to describe accessible references to experience. These are different models, but they preclude treating ``latent state, restricted observations, equivalence classes'' as a distinctive invention here.
+ 
+ We isolate two useful precise statements. First, if $\PP$ is a finite partition of an ultrametric space into nonempty clopen balls, then
+ \begin{equation}\label{eq:collapse}
+  d_{\PP}(x,y)=
+  \begin{cases}0,&x,y\text{ belong to the same cell},\\d(x,y),&\text{otherwise}\end{cases}
+ \end{equation}
+-is an ultrapseudometric. Its zero classes, topological indistinguishability classes, and fibers of every complete family of cell-level observables coincide. The quotient is universal in the senses made precise in \cref{thm:quotient}. This is a synthesis of standard quotient constructions, not a new separation theorem.
++is an ultrapseudometric. Its zero classes and topological indistinguishability classes coincide with the classes defined by agreement under all cell-constant observables. The quotient is universal in the senses made precise in \cref{thm:quotient}. This is a synthesis of standard quotient constructions, not a new separation theorem.
+ 
+ Second, consider the full rooted $m$-ary tree $T_m$, with vertices the finite words over $\Sigma_m=\{0,\ldots,m-1\}$. A \emph{finite complete frontier} $F$ is a finite prefix-free set of words whose cylinders partition the infinite branches. Let $I(F)$ be its proper prefixes, and let $G_F$ fix every vertex of $F$ individually. Write $F\preceq F'$ when $F'$ refines $F$.
+ 
+@@ -88,7 +88,7 @@
+ \end{proof}
+ 
+ \begin{theorem}[Finite ball quotient]\label{thm:quotient}
+-Let $\PP$ be a finite partition of $(X,d)$ into nonempty clopen balls. Define $\delta_{\PP}(B,B)=0$ and, for $B\ne C$, define $\delta_{\PP}(B,C)=d(x,y)$ for any $x\in B,y\in C$. Then:
++Let $\PP$ be a finite partition of an ultrametric space $(X,d)$ into nonempty clopen balls. Define $\delta_{\PP}(B,B)=0$ and, for $B\ne C$, define $\delta_{\PP}(B,C)=d(x,y)$ for any $x\in B,y\in C$. Then:
+ \begin{enumerate}[label=(\roman*)]
+ \item $\delta_{\PP}$ is an ultrametric and $d_{\PP}=\delta_{\PP}\circ(q\times q)$ is the ultrapseudometric in \eqref{eq:collapse}. Its topology is $\tau_{\PP}$.
+ \item $q$ realizes both the Kolmogorov quotient of $(X,\tau_{\PP})$ and the metric identification of $(X,d_{\PP})$. For any $T_0$ space $Y$, every continuous $f:(X,\tau_{\PP})\to Y$ factors uniquely through $q$.
+@@ -107,7 +107,7 @@
+ Finally, any admissible $e$ is zero inside cells and is at most $d=d_{\PP}$ across cells. As $d_{\PP}$ itself is admissible, it is greatest. Cell indicators show that equality under all cell-constant observables implies membership in the same cell.
+ \end{proof}
+ 
+-The topological and pseudometric identifications are established theory; see \cite[Theorem 5.3]{Pirttimaki2019}. Ultrametric amalgamation over partitions, including constructions closely related to this collapse, appears in \cite[Propositions 2.31--2.32]{Ishiki2023}. The useful geometric feature here is retaining \emph{all} distances between resolved cells, not the existence of a quotient set.
++The topological and pseudometric identifications are established theory; see \cite[Theorem 5.3]{Pirttimaki2019}. The collapse is a special case of Ishiki's pseudo-ultrametric amalgamation \cite[Proposition 2.31]{Ishiki2023}, taking every within-cell pseudo-ultrametric to be zero. The useful geometric feature here is retaining \emph{all} distances between resolved cells, not the existence of a quotient set.
+ 
+ \begin{example}[Why the ball condition matters]\label{ex:arbitrary}
+ On binary words of length two use $d(x,y)=2^{-\ell(x,y)}$, where $\ell$ is common-prefix length. Collapse the block $\{00,10\}$ while leaving $\{01\}$ and $\{11\}$ as singleton blocks. Formula \eqref{eq:collapse} gives
+@@ -121,13 +121,13 @@
+ Observable concepts at a fixed resolution form the finite Boolean algebra of all unions of cells. Individual balls are generally not closed under union or complement. In particular, introducing this observation algebra does not remove ordinary Boolean negation.
+ 
+ \section{Resolution towers, distinguishing scales, and completion}\label{sec:tower}
+-Let $(X,d)$ be totally bounded, and choose $r_0\geq\diam X$ with
++Let $(X,d)$ be a totally bounded ultrametric space, and choose $r_0\geq\diam X$ with
+ $r_0>r_1>\cdots>0$ and $r_k\to0$. Define
+ \[
+  x\sim_k y\ \Longleftrightarrow\ d(x,y)\leq r_k,
+  \qquad \PP_k=X/{\sim_k},\qquad q_k(x)=[x]_k.
+ \]
+-The strong triangle inequality makes $\sim_k$ transitive. Its classes are closed $r_k$-balls, which are also open because $r_k>0$. A finite cover by balls of radius less than $r_k$ proves that $\PP_k$ is finite. No regular branching assumption is needed.
++These are the closed-threshold quotients of M\'emoli, Smith and Wan \cite[Section 2.1, Equation (5) and Definition 10]{MemoliSmithWan2023}, with threshold $r_k$. The strong triangle inequality makes $\sim_k$ transitive. Its classes are closed $r_k$-balls, which are also open because $r_k>0$. A finite cover by balls of radius less than $r_k$ proves that $\PP_k$ is finite. No regular branching assumption is needed.
+ 
+ \begin{proposition}[A calibrated tower]\label{prop:tower}
+ Let $d_k$ and $\tau_k$ arise from $\PP_k$ as in \cref{thm:quotient}. Then
+@@ -147,8 +147,8 @@
+ 
+ The quotient maps give bonding maps $\PP_{k+1}\to\PP_k$. A compatible sequence is a nested sequence of nonempty cells of diameter at most $r_k$. In the completion $\widehat X$, their closures remain nested and nonempty. Choosing one point in each cell gives a Cauchy sequence. Its limit belongs to all the closures, and uniqueness follows from $r_k\to0$.
+ 
+-For completeness of the identification, at each fixed level there are finitely many cells and the distances between distinct cells are positive constants. Their closures therefore form a disjoint finite partition of $\widehat X$. Every point of $\widehat X$ determines exactly one compatible sequence. A basic inverse-limit neighborhood specifies finitely many coordinates and thus a nonempty cell at the deepest specified level; it meets $X$. This proves density and bijectivity with $\widehat X$. The correspondence is a homeomorphism since $\widehat X$ is compact and the inverse limit is Hausdorff. It is an isometry when the inverse limit is equipped with
+-$D(a,b)=\lim_k\delta_{\PP_k}(a_k,b_k)$, by \eqref{eq:uniform} and density.
++For completeness of the identification, at each fixed level there are finitely many cells and the distances between distinct cells are positive constants. Their closures therefore form a disjoint finite partition of $\widehat X$. These closures remain positively separated and hence are clopen, so the coordinate maps from $\widehat X$ to $\PP_k$ are continuous. Every point of $\widehat X$ determines exactly one compatible sequence. A basic inverse-limit neighborhood specifies finitely many coordinates and thus a nonempty cell at the deepest specified level; it meets $X$. This proves density and a continuous bijection from $\widehat X$ to the inverse limit. It is a homeomorphism since $\widehat X$ is compact and the inverse limit is Hausdorff. Equip the inverse limit with
++$D(a,b)=\lim_k\delta_{\PP_k}(a_k,b_k)$. For distinct sequences, these distances are positive and constant after their first differing coordinate. Passing to completion limits of representatives shows that $D$ equals the distance in $\widehat X$, proving the isometry.
+ \end{proof}
+ 
+ This is the finite clopen partition description of profinite spaces \cite[Lemma 5.22.2]{Stacks}, specialized to a calibrated ultrametric. Tree/end-space representations are much older and more general; Hughes \cite{Hughes2004} establishes a categorical equivalence with specified morphisms, while Dovgoshey \cite[Theorem 10.25]{Dovgoshey2025} relates representing trees to isometric completions of totally bounded spaces. These results should not be confused with a claim that every hierarchy is a full regular tree.
+@@ -158,7 +158,7 @@
+ \end{example}
+ 
+ \subsection{The regular prefix and prime-base specializations}
+-On $X=\Sigma_m^{\N}$, number coordinates from zero and let $\ell(x,y)$ be the number of initial coordinates that agree. For $0<\lambda<1$ set $d_\lambda(x,y)=\lambda^{\ell(x,y)}$ for $x\ne y$. Common prefixes satisfy
++On $X=\Sigma_m^{\N}$, number coordinates from zero and let $\ell(x,y)$ be the number of initial coordinates that agree. For $0<\lambda<1$ set $d_\lambda(x,x)=0$ and $d_\lambda(x,y)=\lambda^{\ell(x,y)}$ for $x\ne y$. Common prefixes satisfy
+ $\ell(x,z)\geq\min\{\ell(x,y),\ell(y,z)\}$, proving the ultrametric inequality.
+ A length-$k$ cylinder is a closed ball of radius $\lambda^k$; for $k\geq1$ it is an open ball of radius $\lambda^{k-1}$. An open ball of radius $\lambda^k$ instead fixes $k+1$ digits. Positive-radius balls are clopen and intersecting balls are nested, not necessarily equal.
+ 
+@@ -223,7 +223,7 @@
+ \[
+ H_\mu(F)=-\sum_{s\in F}\mu(C_s)\log_2\mu(C_s),
+ \]
+-using $0\log_2 0=0$. For a vertex of positive mass define $p(a\mid v)=\mu(C_{va})/\mu(C_v)$, and give zero-mass vertices zero contribution. Successively applying the finite entropy chain rule gives
++using $0\log_2 0=0$. For a vertex of positive mass define $p(a\mid v)=\mu(C_{va})/\mu(C_v)$, and give zero-mass vertices zero contribution. For $F\preceq F'$, successively applying the finite entropy chain rule gives
+ \begin{equation}\label{eq:entropy}
+  H_\mu(F')-H_\mu(F)
+  =\sum_{v\in I(F')\setminus I(F)}\mu(C_v)H\bigl(p(\cdot\mid v)\bigr).
+@@ -234,12 +234,12 @@
+ \[
+  \log_2[G_F:G_{F'}]=N\log_2(m!)
+ \]
+-counts split vertices without probability or depth weights. For a binary uniform source, both $\{00,01,10,11\}$ and $\{000,001,01,1\}$ have three internal vertices, so their stabilizers have index eight in $G_{\{\eps\}}$. Their entropies are respectively $2$ and $7/4$ bits. There is no general identification of the index with information gain. Neither cardinality should be described as a count of conscious states.
++counts split vertices without probability or depth weights. For a binary uniform source, both $\{00,01,10,11\}$ and $\{000,001,01,1\}$ have three internal vertices, so their stabilizers have index eight in $G_{\{\eps\}}$. Their entropies are respectively $2$ and $7/4$ bits. There is no general identification of the index with information gain. Neither quantity is a count of conscious states.
+ 
+ \section{Interpretation and limits}\label{sec:limits}
+ The motivating psychological analogy must be narrower than the mathematics. Matte Blanco's generalization principle concerns nested class membership, while his symmetry principle concerns treatment of a relation and its converse \cite[pp.~38--39]{MatteBlanco1975}. The relation $q(x)=q(y)$ directly represents class-relative indistinguishability. It does not by itself symmetrize an independently given binary relation.
+ 
+-It is also inaccurate to attribute to Matte Blanco merely a modern equivalence-versus-identity distinction. His discussion includes stronger treatment of class members and parts as identical \cite[p.~39]{MatteBlanco1975}. Our quotient is a deliberate restriction: $x$ and $y$ remain different latent points, and $q(x)$ is a class label, not an assertion that a member equals its containing set. Likewise the primary discussions of negation, infinite sets, and conscious unfolding \cite[pp.~45--46, 146--149, 107--108]{MatteBlanco1975} are not consequences of this construction. The observable algebra is Boolean, no part--whole bijection is inferred, and a resolution index is not a psychological time variable.
++It is also inaccurate to attribute to Matte Blanco merely a modern equivalence-versus-identity distinction. His discussion includes stronger treatment of class members and parts as identical \cite[p.~39]{MatteBlanco1975}. He also distinguishes this treatment from the external observer's description of parts and wholes \cite[pp.~148--149]{MatteBlanco1975}. Our quotient is a deliberate restriction: $x$ and $y$ remain different latent points, and $q(x)$ is a class label, not an assertion that a member equals its containing set. Likewise the primary discussions of negation, infinite sets, and conscious unfolding \cite[pp.~45--46, 146--149, 107--108]{MatteBlanco1975} are not consequences of this construction. The observable algebra is Boolean, no part--whole bijection is inferred, and a resolution index is not a psychological time variable.
+ 
+ The wider interpretation of ultrametric structure in bi-logic has been developed by Lauro-Grotto and Murtagh \cite{LauroGrotto2008,Murtagh2012,Murtagh2014}. The note supplies a precise conditional mathematical model, not an endorsement of all claims made in that literature. A model of cognitive data would still need justified features, their hierarchical ordering, an observation mechanism, and tests against nonhierarchical alternatives. No such validation is supplied here.
+ 

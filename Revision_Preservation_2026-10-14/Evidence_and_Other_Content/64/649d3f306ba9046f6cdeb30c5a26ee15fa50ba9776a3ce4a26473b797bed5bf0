@@ -1,0 +1,48 @@
+# P02 publication-readiness audit -- 27 September 2026
+
+## Start here
+
+Read `report/P02_Publication_Readiness_Audit.pdf` or its Markdown source. The weighted verdict is 7.388/10 (7.4 rounded). Mathematical integrity passes with minor repairs; exact theorem-level priority and original experiment portability remain open.
+
+**This is an audit, not a revised manuscript.** The original upload was left unchanged. `build/main.tex` is an unmodified copy of the audited source, and `build/main.pdf` is a fresh compilation of that same source, not an edited draft. Proposed changes are isolated in `report/PROPOSED_EDITS.md`. The optional rank theorem is a new audit-derived note with unresolved priority, not a result attributed to the submitted paper.
+
+## Contents
+
+- `report/`: full report (PDF, Markdown, generated TeX), scorecard and decisions, 32-claim ledger, 12-item revision register, proposed edits, and optional research extension.
+- `checks/`: new independent verification code, JSON results, and execution log.
+- `evidence/`: original ZIP inventory and hashes, numbered manuscript source, manifest checks, build comparison, actual audit request, and representative literature search log.
+- `build/`: untouched source copies and independent compilation logs/output.
+- `AUDIT_BUNDLE_SHA256.json`: output-bundle checksums, excluding itself.
+
+External literature is linked and cited in the report; copyrighted full papers are not redistributed. Original archive dependencies outside the supplied ZIP remain absent. This bundle does not claim to reconstruct or authenticate the historical canonical runner.
+
+## Run the new finite checks
+
+From this directory, with Python 3.10 or newer:
+
+```bash
+python checks/independent_checks.py --output checks/fresh_results.json
+```
+
+The script uses the standard library only. Normal Python execution is required: do not use `python -O`, which disables assertions. The optional `--skip-simon` flag omits the complete small Simon enumeration. Outputs record the code hash, interpreter/platform, test scopes, seeds, counts, and runtimes. All eight top-level checks passed in the audit environment. Repeated runs can have different runtimes without different mathematical results.
+
+## Build the unchanged manuscript
+
+In `build/`:
+
+```bash
+pdflatex -interaction=nonstopmode -halt-on-error main.tex
+bibtex main
+pdflatex -interaction=nonstopmode -halt-on-error main.tex
+pdflatex -interaction=nonstopmode -halt-on-error main.tex
+```
+
+The audit environment used `bibtex.original` because its `bibtex` symlink was broken. This was an environment issue, not a manuscript defect. The rebuilt PDF has nine pages and the same whitespace-normalized extracted word sequence as the original, but a different binary hash.
+
+## Build the audit report
+
+Pandoc and a LaTeX installation are needed. The supplied generated report TeX can be compiled with pdfLaTeX. The header and inline-code line-break filter are provided with the source for a Pandoc rebuild; see `report/build_report.sh`.
+
+## Limits
+
+One assistant reconstructed proofs and applied several adversarial lenses. This is not independent human peer review or proof-assistant certification. Fresh finite checks are not all-dimensional proofs. Literature search did not certify historical firstness. The missing historical suite is a delivery gap, not evidence of false results. The original paper's named proofs and the optional new extension are evaluated separately.

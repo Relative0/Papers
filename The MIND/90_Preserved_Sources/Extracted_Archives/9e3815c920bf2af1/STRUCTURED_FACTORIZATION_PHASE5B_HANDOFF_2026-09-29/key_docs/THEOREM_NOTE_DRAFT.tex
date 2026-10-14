@@ -1,0 +1,57 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm,booktabs}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\title{Vtree Alignment and Higher-Order Four-Corner Defects in Exact Boolean Factorization}
+\author{Research draft}
+\date{29 September 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We isolate two structural limits in exact AND-factor extraction from vtree-structured Boolean representations. First, maximizing the number of factors exposed by exact vtree cuts is a complete objective: its global optimum equals the semantic prime-factor count, while hard carrier-subtree constraints are compatible with semantic prime alignment exactly when the carrier and semantic block families are laminar. Second, a nonzero four-corner defect with varying supports $U$ and $W$ proves that some semantic prime block meets both supports, but this cannot in general be reduced to a pairwise interaction. The family supported only on $0^n$ and $1^n$ is semantically prime although every fixed-context two-variable slice has rank at most one.
+\end{abstract}
+
+\section{Setup}
+Let $\Pi_f$ denote the canonical finest partition of the variable set for which a nonfalse Boolean function factors as a conjunction of functions on disjoint blocks. For a vtree $T$, let $E_T(f)$ be the finest partition exposed recursively by the exact compressed-SDD cut criterion.
+
+\begin{theorem}[Exposure optimum]
+For every nonfalse Boolean function $f$,
+\[
+\max_T |E_T(f)|=|\Pi_f|.
+\]
+\end{theorem}
+\begin{proof}
+Every exposed factorization is valid, hence is a coarsening of $\Pi_f$. Conversely, build a binary vtree with one subtree for each block of $\Pi_f$ and combine those subtrees arbitrarily. Every internal split is a union of prime blocks against its complement and therefore factors; recursion reaches all prime blocks.
+\end{proof}
+
+\begin{theorem}[Carrier/semantic compatibility]
+Let $\Pi$ and $\Sigma$ be partitions of the same ground set. A binary rooted leaf-labelled tree can contain every block of both partitions as a subtree leaf set if and only if the combined block family $\Pi\cup\Sigma$ is laminar.
+\end{theorem}
+\begin{proof}
+Subtree leaf sets form a laminar family, giving necessity. Conversely, represent the inclusion poset of a finite laminar family as a rooted tree and refine nodes of degree greater than two by inserting binary nodes.
+\end{proof}
+
+\section{Defect support}
+Consider a cut $A\mid B$ and a nonzero four-corner determinant witnessed by row assignments $a_0,a_1$ and column assignments $b_0,b_1$. Let $U\subseteq A$ and $W\subseteq B$ be the coordinates on which the two row and two column assignments differ.
+
+\begin{lemma}[Support crossing]
+Some block of $\Pi_f$ intersects both $U$ and $W$.
+\end{lemma}
+\begin{proof}
+If not, after fixing all nonvarying coordinates every prime factor depends on row variables only, column variables only, or neither. Its $2\times2$ corner table is rank one. Entrywise multiplication of rank-one outer products remains rank one, contradicting the nonzero determinant.
+\end{proof}
+
+\begin{corollary}
+If $U=\{x\}$ and $W=\{y\}$, then $x$ and $y$ are in the same semantic prime block.
+\end{corollary}
+
+\begin{theorem}[No universal pairwise localization]
+For $n\ge 3$, let $f_n(x)=1$ exactly for $x=0^n$ and $x=1^n$. Then $\Pi_{f_n}$ consists of one block, but every two-variable restriction obtained by fixing all remaining coordinates has matrix rank at most one. For every nontrivial cut $A\mid B$, a four-corner defect exists only when the witness changes all coordinates of $A$ and all coordinates of $B$.
+\end{theorem}
+\begin{proof}
+A nontrivial product decomposition would make the two-point satisfying relation a nontrivial Cartesian product, which would contain mixed combinations; hence the function is prime. A fixed-context two-variable slice contains at most one of $0^n,1^n$, so it has at most one nonzero entry. Across $A\mid B$, the only two nonzero matrix entries are the all-zero and all-one row/column pairs; a nonzero $2\times2$ minor must select both, forcing all cut-side coordinates to change.
+\end{proof}
+
+\section{Interpretation}
+The results support hyperedge-valued defect evidence rather than automatic pairwise must-link edges. They also show that carrier blocks should not be hard-wired into vtrees when they cross emerging semantic factors.
+\end{document}

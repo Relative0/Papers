@@ -1,0 +1,67 @@
+# PRIOR ART LEDGER
+
+**Search date:** 2026-09-28
+
+## P1 — Low-order marginals and Fourier coefficients
+
+**Source:** Boaz Barak, Kamalika Chaudhuri, Cynthia Dwork, Satyen Kale, Frank McSherry, Kunal Talwar, “Privacy, Accuracy, and Consistency Too: A Holistic Solution to Contingency Table Release,” PODS 2007, pp. 273–282, DOI 10.1145/1265530.1265569.
+
+**Relevant content:** low-order marginals are computed from a downward-closed collection of Fourier coefficients; the paper states those coefficients are necessary and sufficient for the marginal and counts `sum_{j<=i} C(k,j)` coefficients for the full `i`-way marginal workload.
+
+**Classification:** KNOWN IN EQUIVALENT FORM.  
+**Impact:** T1/T2 are infrastructure, not novelty.
+
+## P2 — Current marginal-query Fourier factorization
+
+**Source:** Lebeda, Nikolov, Tang, “Weighted Fourier Factorizations: Optimal Gaussian Noise for Differentially Private Marginal and Product Queries,” arXiv:2512.21499 (2025/2026).
+
+**Relevant content:** defines marginal queries as counts for coordinate subsets/settings; explicitly uses Fourier aggregate queries and reconstructs binary marginals from degree-bounded Fourier data; states the construction generalizes to k-way marginals.
+
+**Classification:** CURRENT CONFIRMATION OF STANDARD FRAMEWORK.
+
+## P3 — Generic Boolean uniqueness from low frequencies
+
+**Source:** Roman Vershynin, “Are Most Boolean Functions Determined by Low Frequencies?”, arXiv:2401.13143 (2024).
+
+**Relevant content:** equivalence of low-dimensional marginals and low-degree Walsh data; studies whether most Boolean functions are determined by low frequencies.
+
+**Classification:** CLOSE NEIGHBOR / ACTIVE PROBLEM.
+
+## P4 — 2026 resolution of Boolean random-function threshold
+
+**Source:** Yiming Chen, “Low-Degree Fourier Threshold for Random Boolean Functions,” arXiv:2604.13493 (2026).
+
+**Relevant content:** threshold for uniqueness of a random Boolean function lies at n/2 up to an `O(sqrt(n log n))` window; below, Boolean collisions exist for most functions; above, most functions are uniquely determined even among bounded real competitors. Explicitly states marginal/Fourier equivalence.
+
+**Classification:** CURRENT THEOREM-LEVEL PRIOR ART.  
+**Impact:** do not pitch generic Boolean-fiber uniqueness as open without engaging this paper.
+
+## P5 — Chow parameters / structured positive identifiability
+
+**Sources:**
+- C.-K. Chow, “On the characterization of threshold functions,” 1961.
+- Ilias Diakonikolas and Daniel M. Kane, “Degree-d Chow Parameters Robustly Determine Degree-d PTFs (and Algorithmic Applications),” arXiv:1811.03491 (2018).
+
+**Relevant content:** degree-0/1 Fourier coefficients uniquely characterize linear threshold functions; degree-at-most-d Fourier coefficients uniquely characterize degree-d PTFs, with robust versions.
+
+**Classification:** KNOWN THEOREM.  
+**Impact:** yields `kappa(PTF_{n,d})=d` after the elementary parity lower bound.
+
+## P6 — Trades and minimum Boolean collisions
+
+**Source:** E. Ghorbani, S. Kamali, G. B. Khosrovshahi, D. S. Krotov, “On the Volumes and Affine Types of Trades,” Electronic Journal of Combinatorics 27(1), 2020, #P1.29, DOI 10.37236/8367; arXiv:1810.02296.
+
+**Relevant content:** defines `[t]`-trades; states the known minimum nonempty volume `2^t`; treats simple trades in Boolean/Reed-Muller terms and small-volume classification.
+
+**Classification:** KNOWN EQUIVALENT COMBINATORIAL FRAMEWORK.  
+**Impact:** Boolean `Q_k` collisions are exactly simple `[k]`-trades after common support removal; minimum collision Hamming distance `2^(k+1)` therefore has established antecedents.
+
+## P7 — GF(2)-rank binary-matrix literature
+
+**Search areas:** parameterized low-rank binary matrix approximation over GF(2), binary-matrix reconstruction from row/column sums, discrete tomography, matrix rigidity, low-rank factorization.
+
+**Result this pass:** no direct statement located for the exact conditioned-query thresholds
+`kappa(R_1^{p,q})=max(p,q)` and `kappa(R_r^{p,q})=p+q` for `r>=2`.
+
+**Classification:** POTENTIALLY NEW COMBINATION/COROLLARY; PRIORITY UNRESOLVED.  
+**Action:** run a dedicated theorem-level search before claiming novelty.

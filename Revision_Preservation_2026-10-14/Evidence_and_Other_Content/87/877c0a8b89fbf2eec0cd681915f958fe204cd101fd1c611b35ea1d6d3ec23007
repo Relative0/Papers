@@ -1,0 +1,74 @@
+# N2/P11 Results - Frozen-Tree Specialized Telemetry
+
+## Status
+
+P11 is complete. The P8/P9/P10 dispatch policy, `0.80` cutoff, P6 folding backend, and evaluation corpora were held fixed. P11 changed only telemetry implementation by compiling the already-frozen annotate decision into a threshold-aware construction path.
+
+Mandatory decision invariance passed on **332/332** frozen policy cases: 188 training, 98 validation, 36 Gate-P evaluation, and 10 natural evaluation cases. Fresh fuzz passed **1000/1000**.
+
+P11 reproduces P10's `edge_count`, `binary_nodes`, `reuse_edge_events`, `pair_repeat_excess`, the predicate `max_pair_shells >= 5`, and final annotate/bypass decision. It intentionally does not compute P10's unused bypass-branch depth/density features.
+
+## Gate-P primary endpoint
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P11 / direct, source-inclusive | **1.043490x** | **0.974046-1.093383** | **1.004381x** | 2/36 |
+| P11 / P10, source-inclusive | **0.969953x** | **0.963118-0.977106** | **0.969859x** | 33/36 |
+| P11 / direct, source build | **1.364523x** | **1.334510-1.392409** | **1.377555x** | 0/36 |
+| P11 / P10, source build | **0.899800x** | **0.892271-0.907540** | **0.899226x** | 36/36 |
+| P11 / direct, selected compiler | **0.967099x** | **0.861371-1.047296** | **0.822394x** | 8/36 |
+
+The preregistered **direct-crossover criterion failed**. P11 is about **4.3% slower than direct** case-balanced, and the confidence interval crosses 1. The workload-weighted result is only **0.44% above direct**, effectively near parity but not a preregistered win.
+
+The preregistered **specialized-telemetry engineering criterion passed**: P11/P10 source build is **0.899800x**, P11/P10 source-inclusive is **0.969953x**, and the latter's complete 95% interval is below 1. P11 beat P10 source construction on all **36/36** Gate-P cases and source-inclusive on **33/36**.
+
+Median-of-case-median Gate-P source construction was approximately **46.7 us direct**, **72.5 us P10**, and **65.7 us P11**. Corresponding whole-pipeline medians were approximately **229.9 us**, **262.1 us**, and **249.9 us**.
+
+## Depth strata
+
+| Depth | P11/direct source-inclusive | P11/P10 source-inclusive | P11/direct source-build | P11/P10 source-build |
+|---:|---:|---:|---:|---:|
+| 6 | 1.066840x | 0.969670x | 1.345111x | 0.905781x |
+| 8 | 0.999977x | 0.959962x | 1.378831x | 0.896887x |
+| 10 | 1.065063x | 0.980334x | 1.369852x | 0.896762x |
+
+## Dispatch and Boolean work
+
+P11 made exactly the same final decisions as frozen P10/P8: **5/36** Gate-P cases annotated, all **5** consuming a fold, for **5** total consumed folds.
+
+Relative to simultaneous always-P6 timing, 2 annotations were P6 wins, 3 were P6 losses, and 4 P6-winning cases were bypassed. This is unchanged policy behavior, not a P11 retuning result.
+
+Because dispatch is invariant, Boolean work is the same selective mechanism as P8-P10:
+
+- multiplications: **0.812451x direct**;
+- pair terms: **0.570459x direct**;
+- peak monomials: **0.978577x direct**;
+- ANF nodes evaluated: **0.873553x direct**.
+
+## Memory
+
+Gate-P traced peak allocation was **0.993015x direct** and **0.985977x P10**. P11 removes the per-node depth bytearray and generic feature bookkeeping, but the five folded cases also materially alter downstream allocation, so this is a whole-pipeline measurement rather than isolated telemetry size.
+
+## Natural EPFL control
+
+P11 annotated **0/10** frozen natural cases and consumed **0 folds**. Natural results therefore remain strictly an abstention/overhead control.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P11 / direct, source-inclusive | **1.005777x** | **0.997385-1.015090** | **0.996435x** | 4/10 |
+| P11 / P10, source-inclusive | **0.987400x** | **0.971973-1.002578** | **0.994823x** | 7/10 |
+| P11 / direct, source build | **1.378885x** | **1.207039-1.659587** | **1.282943x** | 0/10 |
+| P11 / P10, source build | **0.926492x** | **0.865128-1.025622** | **0.986046x** | 9/10 |
+
+Case-balanced natural source-inclusive overhead is about **0.58%**. The workload-weighted point estimate is slightly below direct, but with zero folds it is not a natural-folding speedup claim.
+
+## Post-hoc diagnostic
+
+Keeping P11's exact frozen dispatch decisions and measured compiler medians, but hypothetically replacing P11 source-build time by direct source-build time, gives **0.962603x direct case-balanced** and **0.878500x workload-weighted**. This is diagnostic only, not a measured implementation endpoint.
+
+## Predeclared outcomes
+
+- Gate-P direct-crossover PASS: **False**.
+- Specialized-telemetry engineering success: **True**.
+
+P11 therefore validates the implementation hypothesis that frozen-tree specialization can materially reduce telemetry cost, while leaving the stronger end-to-end direct crossover unresolved.

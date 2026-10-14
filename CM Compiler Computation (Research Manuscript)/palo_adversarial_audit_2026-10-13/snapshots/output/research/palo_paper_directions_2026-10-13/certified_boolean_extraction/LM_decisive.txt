@@ -1,0 +1,318 @@
+4 =====
+1. XOR–AND matrix productAB contracts an intermediate matrix index overF2.
+2. Pointwise Boolean operator superpositionAˆΦB applies an outer Boolean connective Φ to
+corresponding entries of two operators in the same declared frame.
+3. Boolean-function superpositionh =g(f1,...,f m) substitutes the outputs of Boolean functions
+into an outer Boolean functiong.
+The representation theorems below realize the third operation by the second when the operators
+are aligned; they do not identify either of those operations with ordinary matrix multiplication. A
+separate matched-intermediate-frame theorem later explains when the first operation also transports
+cleanly through the LM representation.
+2.2 States, one-hot selection, and binary CMs
+Let B ={0, 1} and regard it asF2 when addition and multiplication are used. Addition is XOR,
+written⇕, and multiplication is conjunction. The nonstandard XOR glyph is intentional: in the
+declared true-first CM frame, the XOR matrix is the literal quarter-turn rotation of the XNOR
+matrix,
+[⇔] =
+[
+1 0
+0 1
+]
+, [⇕] =
+[
+0 1
+1 0
+]
+= rot([⇔]). (1)
+The notation is paper-specific rather than a claim of standard usage. Logical equivalence of formulas
+is written≡; the connective itself is written⇔.
+For a bitx∈ B, define the true-first state
+|x⟩ =
+[
+x
+¬x
+]
+, ⟨x| =
+[
+x ¬x
+]
+. (2)
+These areone-hot states: exactly one component is1. Thus|1⟩ = (1, 0)T and|0⟩ = (0, 1)T. Bra–ket
+notation is used only as compact row/map/column notation in a Boolean algebra; no Hilbert-space
+or physical interpretation is assumed.
+Let Θ be a binary logical operator variable. Its correspondence matrix is
+[Θ] :=
+[
+1Θ1 1Θ0
+0Θ1 0Θ0
+]
+=
+[
+Θ11 Θ10
+Θ01 Θ00
+]
+. (3)
+The brackets are part of the notation:Θ is the logical operator, while[Θ] is its CM representation.
+For general functional notation, writefΘ(x,y ) =xΘy.
+Proposition 2.1(Unique binary representation). Once the operand axes and true-first order are
+fixed, Θ↦→[Θ] is a bijection between the sixteen binary Boolean operators and the sixteen matrices
+in B2×2.
+Proof. A binary operator is determined by its four values on(1, 1), (1, 0), (0, 1), (0, 0), exactly the
+four entries of[Θ].
+For anyC∈ B2×2 define the XOR–AND contraction
+EC(x,y ) =⟨x|C|y⟩ = ⇕
+r,s∈{1,0}
+χx(r)∧Crs∧χy(s), (4)
+where χx(r) = 1 exactly whenr =x.
+4
+
+
+5 =====
+Proposition 2.2(CM selection). For every binary operatorΘ and x,y∈ B,
+⟨x|[Θ]|y⟩ =xΘy.
+Proof. Both states are one-hot. Every term in(4) vanishes except the term indexed by(r,s ) =
+(x,y ).
+Remark 2.3 (Why XOR–AND rather than OR–AND?). For one-hot basis states, XOR–AND and
+OR–AND selection return the same selected coefficient because at most one product term can be
+nonzero. For example, if[Θ] =
+[a b
+c d
+]
+, then⟨1|[Θ]|0⟩ =b under either reduction. This observation
+already appears in the historical manuscript [10].
+The two algebras are not interchangeable in general. Withu = (1, 1) and v = (1, 1)T,
+u·XOR/ANDv = 1⇕ 1 = 0, u ·OR/ANDv = 1∨ 1 = 1.
+Thus arbitrary vector or matrix multiplication can differ as soon as more than one term survives.
+XOR is retained because it gives theF2 coefficient algebra, coefficient-space linearity, cancellation,
+and a single convention shared by the numeric and symbolic calculus. Short-circuit evaluation of
+the logical connective OR is a separate implementation issue and does not justify replacing the
+contraction algebra globally.
+2.3 Basis decomposition and Boolean closure at the coefficient level
+Let Ers =|r⟩⟨s| for r,s∈{ 1, 0}. These four one-feature matrices form the standard basis ofF2×2
+2 .
+Proposition 2.4(CM basis decomposition). Every binary CM has the unique expansion
+[Θ] = ⇕
+r,s∈{1,0}
+ΘrsErs. (5)
+This recovers one of the original CM constructions in a conventional vector-space form: a
+connective is the XOR sum of exactly those minterm positions on which it is true [10].
+The contraction is linear in the coefficients of[Θ] over F2 for fixed states. This does not imply
+that the represented Boolean function is affine in its logical inputs.
+2.4 Operand frames and the internal swap matrix
+A CM occurrence is typed by its operand frame: row expression, column expression, input polarities,
+and truth-state order. Define the transformed connectives by their truth functions
+Θτ(x,y ) :=yΘx, Θ¬L(x,y ) := (¬x)Θy, Θ¬R(x,y ) :=xΘ(¬y).
+Then
+[Θτ] = [Θ]T, [Θ¬L] = [⇕][Θ], [Θ¬R] = [Θ][⇕]. (6)
+The matrix products in(6) are XOR–AND products. Here[⇕] plays two compatible roles: as the
+CM of the XOR connective and, under matrix multiplication, as the two-state permutation matrix
+that exchanges true and false. This removes the need to introduce an unrelated symbolP or S for
+the same 2× 2 array.
+Output complement is entrywise. IfJ is the all-ones2× 2 matrix, then
+[¬Θ] =J⇕ [Θ]. (7)
+5
+
+
+10 =====
+Proof. XOR preservation is immediate. For conjunction,
+qw(T )∧qw(U) =⇕
+i,j
+(wi∧wj∧Ti∧Uj) =⇕
+i
+wi∧Ti∧Ui =qw(T∧U),
+because the cross terms vanish. Equation(21) givesqw(1) = 1, so complement is preserved as well.
+Conversely, the coordinate idempotents force pairwise orthogonality and unitality forces the weights
+to sum to1.
+For binary logical pairing the four weights are
+A⟨r⟩∧B⟨s⟩, (r,s )∈ B2.
+They form a Boolean partition of unity even whenA andB are dependent formulas. This theorem is
+the structural reason pairing can be moved through an arbitrary pointwise outer Boolean operation
+later in the coherence theorem; no special distributive law for that outer operation is required.
+5 Formula-valued operators as operands: aligned Boolean super-
+position
+The historical manuscript emphasized a same-operands result: once two subexpressions have the
+same ordered operand frame, the represented operators may themselves be operands of another
+Boolean connective [10]. The raw numeric truth-table law has direct antecedents: Cheng, Zhao, and
+Xu state for truth vectors on the same ordered variables that an arbitrary binary outer operation
+acts entrywise [6, Prop. 3.3]. The present paper therefore treats the CM identity as established
+numerical structure and places the formula-valued LM statement first.
+The reason the LM formulation is useful is that it makes the symbolic operands, their reference
+frame, and their later valuation explicit. A pointwise outer operation is sound only when corre-
+sponding cells describe the same logical polarity state. Frame agreement is therefore part of the
+type contract rather than an informal convention.
+For formula-valued matricesM1,M 2 in one declared frame and a binary Boolean connectiveΦ,
+define (
+M1ˆΦM2
+)
+rs := (M1)rs Φ (M2)rs. (22)
+The same notation is used after valuation for numeric CMs. This is not matrix multiplication; it is
+the outer connectiveΦ applied cell by cell.
+Theorem 5.1 (Aligned LM operator superposition and CM valuation). Let Θ1, Θ2 be binary
+connectives represented in the same reference frame(X,Y ), and define the derived connectiveΩ by
+xΩy := (xΘ1y)Φ(xΘ2y). (23)
+Then the formula-valued operators satisfy
+[MXΩY ] = [MXΘ1Y ]ˆΦ [MXΘ2Y ]. (24)
+For every valuationv,
+v([MXΩY ]) =v([MXΘ1Y ])ˆΦv([MXΘ2Y ]). (25)
+For free reference generators under the all-true valuation this reduces to the numeric CM identity
+[Ω] = [Θ1]ˆΦ [Θ2]. (26)
+10
+
+
+11 =====
+Consequently, for bitsx,y∈ B,
+(xΘ1y) Φ (xΘ2y) =⟨x|
+(
+[Θ1]ˆΦ [Θ2]
+)
+|y⟩. (27)
+Proof. Each LM cell is a formula in one fixed polarity position. ApplyingΦ to corresponding cells
+therefore gives the polarity orbit of the derived connectiveΩ, proving(24). Boolean valuation is a
+homomorphism, giving(25); the all-true specialization yields(26). Finally, one-hot CM selection
+gives (27).
+Corollary 5.2(Alignment before operator superposition). Suppose two LM or CM occurrences
+arrive in signed framesF1,F 2 and typed frame transformsT1,T 2 transport them to one common
+frameF. Their sound pointwise combination in frameF is
+(T1M1)ˆΦ (T2M2),
+or, after valuation,
+(T1[Θ1])ˆΦ (T2[Θ2]).
+The operation is generally unsound if the same array position refers to different assignments before
+alignment.
+Example 5.3(End-to-end frame alignment). Consider again
+(X⇒Y )⇕ (Y ⇒X).
+The local numeric arrays are both[⇒], but they are typed in frames(X,Y ) and (Y,X ). Combining
+them before transport therefore gives the spurious zero matrix. Transporting the second occurrence
+to the common(X,Y ) frame gives [⇒]T, and
+[⇒]ˆ⇕ [⇒]T =
+[
+0 1
+1 0
+]
+= [⇕].
+At the formula-valued level the same typed calculation is
+[MX⇒Y ]ˆ⇕
+(
+[MY⇒X]
+)T = [MX⇕Y ]. (28)
+Here the transpose is not cosmetic: it changes the second occurrence from its local(Y,X ) coordinates
+to the declared(X,Y ) frame. Valuation may be performed before or after Equation(28); the result
+is the corresponding signed-frame valuation of the XOR CM, and the all-true valuation returns[⇕]
+itself.
+Logical pairing preserves the same calculation. Writingp = (A⇔X) and q = (Y ⇔B),
+⟨A|[MX⇒Y ]|B⟩≡ p⇒q,
+⟨
+A
+⏐⏐⏐
+(
+[MY⇒X]
+)T⏐⏐⏐B
+⟩
+≡q⇒p,
+so their XOR isp⇕q, exactly
+⟨A|[MX⇕Y ]|B⟩≡ (A⇔X)⇕ (Y ⇔B).
+Thus one calculation exhibits the purpose of the typing discipline: a frame error that is invisible in
+the unlabelled arrays is detected before superposition, while symbolic lift, valuation, and pairing all
+preserve the repaired operation.
+The raw numeric equality is therefore not the novelty claim. The structural focus is that
+formula-valued logical operators can be combined as first-class operands in a typed common frame,
+and the resulting symbolic operation is transported coherently through valuation and, as proved
+later, through logical pairing and higher-arity LM lifts.
+11
+
+
+13 =====
+Definition 6.2(Logical tensor and LM lift). For formal variablesX = (X1,...,X n) define
+Mf(X)[α] := ~f
+(
+X⟨α1⟩
+1 ,...,X ⟨αn⟩
+n
+)
+. (33)
+Equivalently define the LM lift
+LX :Bn−→F Bn
+X , LX(f) :=Mf(X). (34)
+The binary object[MXΘY ] is the casen = 2 and f =fΘ.
+Remark 6.3 (The lift as a polarity pullback). If formulas inFX are identified with their Boolean
+functions of an assignmentx∈ Bn, then
+Mf(x,α ) =f(x⇕α⇕ 1). (35)
+Thus the LM lift is a concrete polarity pullback of the ordinary truth function. This makes clear why
+its injectivity and equivariance are standard function-algebra consequences; the additional content
+developed here is the typed interaction with valuation, pairing, frame transport, and operator
+superposition.
+Define the higher contraction
+EC(x1,...,x n) = ⇕
+α∈Bn
+C[α]∧
+n⋀
+i=1
+χxi(αi). (36)
+Exactly one one-hot product survives, soECf (x) =f(x).
+Forδ∈ Bn, define the one-triggered axis-reversal operator
+(πδT )[α] :=T [α⇕δ], (37)
+where⇕ is componentwise on assignment indices. Thusδi = 1 means that axisi is reversed.
+Theorem 6.4(General valuation theorem). If v(Xi) =xi and 1 = (1,..., 1), then
+v(Mf(X)) =π1⇕xCf. (38)
+In particular, for the free reference generators the all-true valuation satisfies
+v1(LX(f)) =Cf.
+Proof. At polarity indexα, the valued argumentX⟨αi⟩
+i equals the bitαi⇕ (1⇕xi). Hence the valued
+tensor entry isCf[α⇕ (1⇕x)], which is exactly Equation (38).
+6.3 LM orbit lift and Boolean superposition
+Definition 6.5(Pointwise lift). Forg : Bm→ B and tensorsT1,...,T m with the same index set,
+define
+ˆg(T1,...,T m)[α] :=g(T1[α],...,T m[α]).
+For formula-valued tensors,g is interpreted through its canonical Boolean term extension.
+13
+
+
+14 =====
+Theorem 6.6(LM lift and superposition law). For everyn, the mapLX is injective and preserves
+arbitrary Boolean superposition. Iff1,...,f m∈B n, g : Bm→ B, and
+h(x) =g(f1(x),...,f m(x)),
+then
+Ch =ˆg(Cf1,..., Cfm), (39)
+LX(h) =ˆg
+(
+LX(f1),..., LX(fm)
+)
+. (40)
+Hence the image ofLX is closed under every pointwise Boolean operation.
+Proof. The identities hold at each assignment/polarity index by substitution intog. For injectivity,
+ifLX(f) =LX(h), apply the all-true valuation. Equation (38) givesCf =Ch, sof =h.
+Corollary 6.7(The LM image is a Boolean subalgebra). For fixed arityn, Im(LX) is a Boolean
+subalgebra of the pointwise formula-tensor algebraF Bn
+X and is isomorphic to the Boolean algebra
+Bn of n-ary Boolean functions. Under the identification of a function with its truth tensor, all-true
+valuation is the inverse of the lift on this image.
+Remark 6.8 (Priority boundary for the orbit lift). The mapf ↦→(τ1⇕αf)α∈(C2)n is an instance
+of standard function-algebra/group-action structure associated with the polarity group [20]: an
+equivariant orbit-valued object is determined by its value at the identity element. Injectivity,
+orbit generation, and the resulting equivariance are therefore used here to identify the LM image
+cleanly, not as standalone novelty claims. The distinctive question for the present framework is
+what additional operations—valuation to CMs, logical pairing, typed frame transport, and Boolean
+superposition of the operators themselves—coexist on that orbit object and satisfy common coherence
+laws.
+6.4 Polarity-equivariance characterization
+Forδ∈ Bn, letτδ negate Xi exactly whenδi = 1. Writeα⇕δ for componentwise XOR of polarity
+indices.
+Theorem 6.9(Polarity-equivariance characterization). Every LM lift satisfies
+τδ
+(
+LX(f)[α]
+)
+≡L X(f)[α⇕δ]. (41)
+Conversely, a formula tensorT∈F Bn
+X belongs to the image ofLX if and only if it satisfies(41) for
+every α,δ.
+Proof. Negating Xi flips exactly theith polarity choice, proving the forward identity. Conversely,
+an equivariant tensor is determined by its all-positive cellT [1]. That formula defines ann-ary
+Boolean functionf modulo logical equivalence, and equivariance reconstructs every other cell as the
+corresponding polarity substitution, henceT =LX(f).
+This characterization is stronger than merely observing a “negative dual” matrix, but its group-
+theoretic mechanism is standard: an equivariant orbit is determined by one reference element. Its
+value here is classificatory. It gives an intrinsic membership test for formula-valued LMs, shows that
+the entire 2n-cell symbolic object is generated from one reference formula by polarity changes, and
+makes closure under pointwise Boolean superposition transparent.
+14
+

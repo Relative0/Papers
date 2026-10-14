@@ -1,0 +1,33 @@
+{
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "source_repository": "/mnt/data/CM_LM_RESEARCH_CONSOLIDATION",
+  "fresh_timing_campaign": false,
+  "stages": [
+    {
+      "name": "independent",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "consolidation_checks.py",
+        "/mnt/data/CM_LM_RESEARCH_CONSOLIDATION/provenance/source_snapshots/bench"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_quick_validation/independent",
+      "seconds": 7.574672913999848,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/independent.log"
+    },
+    {
+      "name": "oracle_contract",
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "oracle_contract_check.py"
+      ],
+      "cwd": "/mnt/data/cm_lm_portable_quick_validation/independent",
+      "seconds": 0.6989751950000027,
+      "returncode": 0,
+      "status": "PASS",
+      "log": "logs/oracle_contract.log"
+    }
+  ]
+}

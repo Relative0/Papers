@@ -1,0 +1,35 @@
+# N2/P3 Interpretation
+
+## Main conclusion
+
+P3 answered the narrow question it was designed to test: **removing speculative fold planning helps, but it is not yet enough to beat direct/no-rewrite sparse ANF in this Python implementation.**
+
+On Gate-P, P3 accepted 58 folds and consumed all 58 of them, versus P2's 110 accepted plan entries of which only 41 were actually used. That eliminates the P2 "plan work for subtrees later deleted by an ancestor fold" inefficiency. P3/P2 total compile is 0.8480, so the architecture change is real progress.
+
+The direct comparison is still negative: P3/direct total compile is 2.2611 (95% CI 2.0386-2.4955). Even on the workload-weighted sum of case medians it is 1.7668. No Gate-P case crossed below direct on total compile median.
+
+## Folding itself still reduces Boolean algebra work
+
+P3 is not simply doing extra bookkeeping with no mathematical effect. Relative to direct on Gate-P, the casewise geometric-mean ratios are 0.8729 for multiplications, 0.7899 for pair terms, and 0.9492 for evaluated ANF nodes. So shallow demand-driven folds do reduce expansion work.
+
+However, the reduction is smaller than P2's because P3 intentionally refuses recursive lookahead merely to expose an ancestor fold. P2 can discover a high-level composite fold after virtually folding children; P3 often cannot see that ancestor opportunity until it has already fallen through into the child. P3 therefore trades fold power for lower selector overhead.
+
+## Why total time is still above direct
+
+Two costs remain. First, P3 still needs a whole-source reference-count scan to apply the shared-child profitability rule. Second, every demanded binary node takes a selector branch, and candidate-bearing nodes may invoke structural estimates. Even after subtracting the explicitly measured reference-scan and matcher blocks, the fused P3 lowering path remains slower than the very small direct recursive lowerer on Gate-P. That indicates the control-path complexity itself is now part of the bottleneck, not only speculative planning.
+
+This matters because Gate-P's direct baseline is extremely cheap: many cases finish in only tens of microseconds. The P3 optimization has to save enough ANF multiplication work to pay for Python dictionary lookups, token checks, branch logic, reference metadata, and selector calls. The largest Gate-P cases move much closer to parity, but still do not cross it.
+
+## Natural EPFL result
+
+The natural corpus again contains no accepted profitable fold under the frozen rule. P3 found only one shallow candidate across the selected natural cases and rejected it. Its case-balanced P3/direct compile ratio is 1.0956; the workload-weighted ratio is 1.0058. Therefore this run still gives **no evidence of a natural-workload CM folding speedup**. The weighted result being close to 1 simply shows that fixed abstention overhead is diluted by the very large CAVLC case.
+
+## Most useful next experiment
+
+The next experiment should not add more selector sophistication. The evidence now points toward **zero-pass or construction-time metadata**: propagate a compact two-support/CM signature and edge-use count while the source DAG is being built, so ANF lowering can test an already-available tag in O(1) without a separate reference scan, virtual graph, plan, or recursive matcher. Direct/no-rewrite should remain the first-class baseline and the rule should again be frozen before results.
+
+A second, separable question is whether a size/amortization gate can avoid invoking any fold logic on tiny formulas where direct ANF is already cheaper than the optimizer's fixed cost. That should be calibrated on a disjoint training subset and tested on held-out circuits rather than tuned on these P3 outcomes.
+
+## Verification note
+
+Independent verification passed all frozen-source, schedule, correctness, and identity checks. A useful memory qualification is that P3 lowers traced Python peak allocation substantially relative to P2 (casewise geometric-mean ratio ~0.694 on Gate-P), but remains above direct (~1.361). As with P1/P2, the memory comparison should therefore always name its baseline.

@@ -1,0 +1,57 @@
+ .gitattributes                                     |   5 +
+ .gitignore                                         |   3 +
+ bitset_backend.py                                  |  46 +-
+ cm_bench.py                                        |  50 +-
+ cm_build_pair.py                                   | 511 ++++++++++++++++++---
+ cm_ir.py                                           | 407 +++++++++++++---
+ cm_normalize.py                                    |  10 +-
+ cm_parallel.py                                     | 113 +++--
+ cm_runpod_config.py                                |   8 +-
+ cm_token.py                                        |  63 +++
+ cmbench/comparative/gf2_native_slots.py            |  24 +
+ cmbench/comparative/gf2_projection_optimized.py    |  39 +-
+ cmbench/comparative/linux_supervisor.py            | 240 ++++++++--
+ cmbench/comparative/p7_runner.py                   |  17 +-
+ cmbench/output_budget.py                           |  23 +
+ cmbench/recognition/gf2_decomposition.py           | 189 ++++++--
+ cmbench/recognition/gf2_screening_experiment.py    |  10 +-
+ docs/CM_COMPUTATION_DEEP_TECHNICAL_DOSSIER.md      | 128 ++++--
+ .../CM_COMPUTATION_DEEP_TECHNICAL_DOSSIER.md       | 128 ++++--
+ docs/research/README.md                            |   4 +
+ tests/test_bitset_backend.py                       |  17 +
+ tests/test_cm_comparative_foundation.py            |  13 +-
+ tests/test_cm_learning_neural_website.py           |  70 ++-
+ tests/test_cm_master_website.py                    |   6 +-
+ tests/test_cm_recent_dispositions_website.py       |   2 +-
+ tests/test_cm_runpod.py                            |  16 +
+ tests/test_cm_runpod_corpus_offline.py             |   6 +-
+ tests/test_cm_website_navigation.py                |   2 +-
+ tests/test_cm_website_update_pass.py               |   2 +-
+ tests/test_gf2_decomposition.py                    |  63 ++-
+ 30 files changed, 1842 insertions(+), 373 deletions(-)
+
+STDERR:
+warning: in the working copy of '.gitattributes', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'bitset_backend.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cm_bench.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cm_build_pair.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cm_ir.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cm_token.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cmbench/comparative/gf2_native_slots.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cmbench/comparative/gf2_projection_optimized.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cmbench/comparative/linux_supervisor.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cmbench/comparative/p7_runner.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cmbench/output_budget.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cmbench/recognition/gf2_decomposition.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cmbench/recognition/gf2_screening_experiment.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/CM_COMPUTATION_DEEP_TECHNICAL_DOSSIER.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_bitset_backend.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_cm_comparative_foundation.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_cm_learning_neural_website.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_cm_master_website.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_cm_recent_dispositions_website.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_cm_runpod_corpus_offline.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_cm_website_navigation.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_cm_website_update_pass.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/test_gf2_decomposition.py', LF will be replaced by CRLF the next time Git touches it

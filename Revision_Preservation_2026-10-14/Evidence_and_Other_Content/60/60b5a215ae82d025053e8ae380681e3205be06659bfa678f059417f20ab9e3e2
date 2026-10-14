@@ -1,0 +1,711 @@
+# Astra Master Prompt: Consolidate the CM/LM Research Program and Design the Strongest Publication Portfolio
+
+## Mission
+
+You are acting as a senior mathematical researcher, research-program architect, adversarial novelty auditor, and journal-paper planner with expertise in algebraic logic, Boolean-function theory, finite algebra, modal quantum theory, quantum information, reversible computation, compiler optimization, categorical/process theories, contextuality, and research reproducibility.
+
+You will receive a collection of papers, LaTeX manuscripts, ZIP archives, computational outputs, test suites, research reports, novelty audits, historical artifacts, and prose summaries from a multi-stage research program involving Correspondence Matrices (CMs), Logical Matrices (LMs), operator-level Boolean computation, a rotation-derived Boolean algebra, finite-chain-ring modal models, contextuality, teleportation/dense coding, characteristic-two query algorithms, an LM-to-modal bridge investigation, and CM folding/benchmarking.
+
+Your task is **not to generate another loose research summary**. Your task is to turn the entire body of work into a **canonical, provenance-aware research state** and then determine the **smallest set of high-quality papers/articles** that best communicate the important findings.
+
+Quality, coherence, mathematical significance, defensibility, and usefulness matter more than paper count.
+
+The research program should preserve and highlight the distinctive CM/LM themes where justified:
+
+- Boolean connectives represented and manipulated as typed operators;
+- formula-valued LMs and valuation-natural logical pairing;
+- operator-on-operator computation before operand evaluation;
+- ordered/signed operand frames and operator folding;
+- fully Boolean/XOR-AND computation;
+- the rotation lift of CM coefficient space;
+- the separation between arbitrary Boolean oracle logic and XOR-linear state dynamics;
+- the relationship, where valid, between symbolic LM semantics and modal/effect semantics.
+
+But do **not** claim that a result is novel merely because it is expressed in CM/LM terminology. Do not repackage known modal quantum phenomena as discoveries. The sum of known and new ingredients may be scientifically valuable if the synthesis reveals a new dependency structure, a new restriction/resource theory, a new semantic bridge, a new computational architecture, or a useful controlled comparison.
+
+---
+
+# 1. Mandatory reading order and source precedence
+
+Read the actual artifacts before deciding what the research program contains.
+
+Do not rely on summaries alone. Inspect primary definitions, theorem statements, proofs, code, machine-readable outputs, and corrected audits.
+
+Use the following precedence when sources conflict:
+
+1. **Primary source definitions and current manuscripts**, especially the current manuscript *Operator-Level Boolean Computation with Correspondence Matrices* (Paper B).
+2. **CM Final Audit / adversarial review** and their independently reproduced outputs.
+3. **CM Capability and Dependency package** and **LM-to-Modal Bridge package**, including their formal theorem files and independent tests.
+4. The curated **Astra novelty research package** and its corrected-state / theorem-candidate files.
+5. The **CM Quantum Handoff / phase-calculus package** for primary historical constructions, code, and provenance.
+6. Raw benchmark packages for S1/S2/Gate-A/Gate-P if supplied.
+7. Historical intermediate artifacts.
+8. Prose summaries and prior-agent answers only as navigation aids, never as the final authority.
+
+When a later audit corrects an earlier claim, retain the history in a correction ledger but use the corrected claim as the canonical state.
+
+If a crucial referenced artifact is missing or unreadable, identify it explicitly before proceeding. Do not silently reconstruct it from summaries.
+
+---
+
+# 2. Hard scope boundary: Paper B is background, not reusable novelty
+
+Treat *Operator-Level Boolean Computation with Correspondence Matrices* as a separate existing manuscript and a hard publication boundary.
+
+Its core results include, among other things:
+
+- 2x2 Boolean CMs for binary operators;
+- XOR-AND contraction in a declared operand frame;
+- coefficient-space linearity distinct from Boolean input-linearity;
+- signed operand transformations;
+- typed same-frame operator fusion;
+- compiler/folding architecture and fallback boundaries;
+- formula-valued LMs;
+- valuation of LMs into CMs;
+- logical pairing;
+- valuation commuting with pairing;
+- distinctions from ANF and STP representations.
+
+These may be cited and used as foundations, but should not be republished as the primary novelty of a later paper.
+
+If later work substantially strengthens one of these results, state precisely what is new relative to Paper B.
+
+Maintain a file named `PAPER_B_BOUNDARY.md` that lists:
+
+- imported definitions/results;
+- legitimate extensions;
+- accidental duplication risks;
+- which later papers should cite rather than re-prove each result.
+
+---
+
+# 3. Keep the mathematical models strictly typed
+
+Never merge the following merely because they all use Boolean-looking matrices:
+
+1. **CM**: 2x2 Boolean operator matrices for binary truth functions.
+2. **LM**: formula-valued logical matrices over a Boolean/Lindenbaum algebra.
+3. **Coefficient vectors**: four-component encodings of CM cell values.
+4. **Rotation lift**: the 4x4 cyclic operator `R` acting on coefficient space.
+5. **Rotation algebra / chain ring**: `A = F2[R] ~= F2[u]/(u^4)` when that multiplication is explicitly chosen.
+6. **Model F**: ordinary finite-field modal state theory over `F2`.
+7. **Model S**: shared-module tensor constructions over `A`.
+8. **Model L**: literal independent-register tensor theory over `F2` after binary expansion.
+9. **Measurement/effect families**: e.g. rows of reversible `A`-bases, complete field-linear bases, or restricted orthogonal/symplectic families.
+10. **Boolean oracle logic**: arbitrary nonlinear Boolean functions acting on basis labels through reversible embeddings.
+11. **Linear state dynamics**: XOR-linear state evolution.
+12. **Probability models**: an additional structure not supplied by modal support alone.
+
+For every theorem, computation, and paper claim, specify which model(s) it belongs to.
+
+For every map between layers, state domain, codomain, preserved structure, required choices, and whether the map is canonical, basis-dependent, valuation-dependent, injective, surjective, faithful, or merely a useful encoding.
+
+Create `MODEL_AND_TYPE_SYSTEM.md` and `model_contracts.tex` as canonical references.
+
+---
+
+# 4. Canonical research architecture to test, not assume
+
+A possible large-scale synthesis is:
+
+```text
+symbolic Boolean logic (CM/LM)
+        |
+        v
+operator normalization / folding / oracle compilation
+        |
+        v
+rotation-derived or field-linear state dynamics
+        |
+        v
+tensor resources and restricted operations
+        |
+        v
+modal/effect readout and contextuality
+```
+
+A more precise LM-to-modal route found in the bridge work is roughly:
+
+```text
+Boolean formula algebra B
+    -> enrichment B tensor_F2 A
+    -> valuation v tensor id_A
+    -> ring-valued contraction
+    -> support predicate
+    -> modal possibility,
+```
+
+where the scalar algebra `A`, admissible effect family, and the rule `nonzero = possible` are **additional structure**, not consequences of Paper B alone.
+
+Determine how much of this larger architecture is genuinely coherent and how much should remain as separate research branches.
+
+Do not force a single grand-unified story if the mathematics is cleaner as several linked theories.
+
+---
+
+# 5. Build a canonical claim registry before planning papers
+
+Create a stable claim registry in both Markdown and CSV/JSON form.
+
+Each claim must have a stable ID such as `CM-B-###`, `ROT-###`, `MOD-###`, `RES-###`, `ALG-###`, `LMB-###`, `CMP-###`, `NEG-###`.
+
+For each claim record:
+
+- plain-language statement;
+- formal statement or theorem link;
+- model(s) in which it is valid;
+- assumptions and definitions;
+- evidence type;
+- proof status;
+- computational verification status;
+- state-space / gate-space / measurement-space size where applicable;
+- primary source artifact and exact location;
+- independent reproduction artifact;
+- correction/supersession history;
+- closest prior art;
+- novelty status;
+- caveats;
+- intended paper home;
+- whether it is headline, supporting, background, negative, or open.
+
+Use explicit evidence labels such as:
+
+- `PROVED_ANALYTICALLY`
+- `PROVED_AND_EXHAUSTIVELY_CHECKED`
+- `EXHAUSTIVE_FINITE_EVIDENCE_ONLY`
+- `REPRODUCED_FROM_SUPPLIED_CODE`
+- `HISTORICAL_UNVERIFIED`
+- `KNOWN_PRIOR_ART`
+- `CANDIDATE_NOVELTY_NEEDS_SEARCH`
+- `SUPERSEDED_OR_CORRECTED`
+- `OPEN`
+
+Never upgrade computational evidence into an unbounded theorem.
+
+---
+
+# 6. Consolidate the theorem bank
+
+Create a math-heavy canonical theorem bank in LaTeX:
+
+`math/THEOREM_BANK.tex`
+
+and a navigable Markdown index:
+
+`math/THEOREM_INDEX.md`.
+
+The theorem bank must deduplicate equivalent results across packages and record provenance.
+
+At minimum, examine and correctly place the following theorem families.
+
+## A. Paper-B logical/operator foundations
+
+Imported background only unless strengthened:
+
+- CM selection and XOR-AND contraction;
+- typed signed-frame transformations;
+- same-frame operator fusion;
+- formula-valued LM semantics;
+- valuation naturality of LM pairing.
+
+## B. Rotation / Boolean phase algebra
+
+Audit and consolidate:
+
+- centralizer of the four-cycle;
+- identification with the 16-element circulant/group algebra / chain ring;
+- `N=I+R` nilpotent filtration;
+- Boolean algebraic degree versus invertibility/reversibility of the lift;
+- argument reversal versus cyclic/phase inversion;
+- complement/translation relations in the filtration;
+- exact splitter-phase-recombine interference identities;
+- which statements depend specifically on the CM cyclic ordering rather than generic circulant algebra.
+
+## C. Shared chain-ring contextuality and resource theory
+
+Audit and consolidate:
+
+- Smith/valuation normal forms;
+- classification of local / logical-contextual / strong-contextual classes under the declared complete `A`-linear measurement family;
+- uniform Hardy witnesses for unequal nonzero valuation classes;
+- same binary rank but different restricted contextuality/resource power;
+- collapse of restricted distinctions under enlarged field-linear groups;
+- tensor-base inequivalence from zero divisors;
+- closure failures under preparation/conditioning.
+
+## D. Exact protocols and resource separations
+
+Audit and consolidate:
+
+- exact teleportation criteria;
+- dense-coding codebook results;
+- leading-layer dense-coding theorem `N_messages = d h` if correct and sufficiently general;
+- universal teleportation requiring invertible resources;
+- minimal dual-number counterexamples separating dense coding/contextuality from universal teleportation;
+- no cloning;
+- careful no-deleting statement;
+- swapping/remote preparation if only contraction statements;
+- exact distinguishable-syndrome error correction;
+- probability-completion obstruction.
+
+## E. GHZ / measurement-setting structure
+
+Audit and consolidate:
+
+- tested GHZ support contradictions;
+- theorem that two complete binary settings per party cannot yield strong contextuality in the declared characteristic-two setting, including its ring generalization and exact scope.
+
+## F. Characteristic-two algorithm/query theory
+
+Audit and consolidate:
+
+- direct-sum criterion for exact modal discrimination;
+- exact Deutsch lower/upper bound under the declared oracle contract;
+- Deutsch-Jozsa one-query obstruction and supported multi-query bounds;
+- Bernstein-Vazirani `q >= n` result;
+- genuine phase kickback versus failure of an invertible Fourier/character transform;
+- scoped Simon results;
+- Grover mechanism obstruction;
+- UNIQUE-SAT reproduction as a positive modal counterexample to overbroad negative claims.
+
+## G. LM-to-modal bridge
+
+Audit and consolidate:
+
+- mathematical characterization of LMs;
+- valuation-natural contraction (identify what is already Paper B);
+- idempotent obstruction to a direct Boolean-ring map into `A` producing nontrivial chain-ring amplitudes;
+- enrichment `B tensor_F2 A`;
+- symbolic-support bridge theorem;
+- characterization of which modal effects arise from bare LM semantics and which are only coefficient-encodable after extra choices;
+- division-free branch update `J_i^B = B^{-1} P_i B`;
+- remaining failure of a closed unrestricted process theory.
+
+## H. CM compiler/folding results
+
+Audit separately from the modal theory:
+
+- structural same-frame folding before ANF expansion;
+- S1 evidence that folding can eliminate large amounts of intermediate symbolic multiplication;
+- S2 evidence for where it helps and where it does not;
+- generic two-support/cut optimization producing the same final reductions in the currently tested synthetic families;
+- the still-open question of whether CM obtains the same reductions with less recognition/optimization overhead;
+- Gate-A/Gate-P matched benchmark results if raw evidence is supplied.
+
+The theorem bank must mark compiler performance claims separately from algebraic correctness claims.
+
+---
+
+# 7. Create a correction and conflict ledger
+
+Create:
+
+- `CORRECTIONS_AND_SUPERSEDED_CLAIMS.md`
+- `CONFLICT_LEDGER.csv`
+
+Examples of issues that must be preserved rather than forgotten include:
+
+- shared-module tensor versus literal field tensor are not operationally equivalent;
+- earlier compact teleportation claims may not apply to the full literal register;
+- unrestricted field operations can collapse Smith distinctions to rank;
+- earlier finite-copy/nonactivation claims may have been too broad;
+- transpose orthogonality is not automatically the correct analogue of unitarity;
+- modal support is not Born probability;
+- historical C8/C16/CHSH conclusions may have been corrected;
+- no-cloning statements depend on the permitted dynamics and access model;
+- query-model claims change if one allows classical inspection of the full state description;
+- CM folding can be valuable without being a simplification unavailable to a generic cut optimizer.
+
+For every conflict, state the old claim, corrected claim, reason, and authoritative source.
+
+---
+
+# 8. Prior-art and novelty audit
+
+Translate every prospective contribution into conventional mathematics before searching.
+
+Do not search only for CM/LM terminology.
+
+At minimum compare with:
+
+- Boolean matrix logic, matrix logic, vector logic, Eigenlogic;
+- STP logical structure matrices;
+- packed truth tables, LUT/cut optimization, NPN classification, AIG rewriting, BDD/ZDD/XAG/Reed-Muller/ANF methods;
+- circulant algebras and group algebras;
+- finite chain rings and modules;
+- modal quantum theory;
+- quantum computing over finite fields / finite semirings;
+- possibilistic contextuality and sheaf-theoretic contextuality;
+- Hardy and GHZ support arguments;
+- categorical quantum mechanics and phase groups;
+- relational/process theories;
+- stabilizer/normalizer theory;
+- reversible Boolean programming and oracle compilation;
+- polynomial/query lower-bound methods;
+- finite-field Fourier transforms and hidden-subgroup algorithms;
+- effectus/restriction-category/possibilistic update literature;
+- finite-ring quantum models.
+
+Use novelty categories such as:
+
+- established prior art;
+- direct corollary / routine specialization;
+- known ingredient in a new synthesis;
+- apparently new formulation, priority unverified;
+- candidate new theorem after targeted search;
+- likely new model-specific classification;
+- negative result with potential independent value.
+
+Create:
+
+- `literature/PRIOR_ART_MATRIX.csv`
+- `literature/ANNOTATED_BIBLIOGRAPHY.md`
+- `literature/SEARCH_LOG.csv`
+- `literature/references.bib`
+- `literature/NOVELTY_GAPS.md`
+
+Do not state novelty as established merely because a targeted search found nothing.
+
+---
+
+# 9. Identify the actual scientific contributions of the program
+
+After consolidation, answer at least these questions.
+
+1. What is the strongest contribution of Paper B as a Boolean/operator-computation paper?
+2. What does the CM cell rotation add beyond known matrix logic and known circulant algebra?
+3. Which modal/contextuality results are generic finite-field/modal phenomena, and which depend specifically on the CM-derived restriction, valuation structure, tensor choice, or measurement family?
+4. Which resource separations remain meaningful under enlarged operation groups?
+5. Does the LM-to-modal bridge add a genuine semantic layer, or primarily a clean enrichment/interface theorem?
+6. Which algorithmic results are structural theorems rather than failed attempts to imitate quantum algorithms?
+7. What is the scientific value of negative results such as the Fourier obstruction, process-closure obstruction, no faithful probability completion, and two-setting strong-contextuality obstruction?
+8. Does operator folding deserve a separate computational paper, an empirical section of Paper B, or only future-work status?
+9. Which results become substantially more valuable when combined, even if their individual components have antecedents?
+10. Which claims should be dropped entirely because they add terminology but not mathematics?
+
+---
+
+# 10. Publication design: optimize for quality, not quantity
+
+Do **not** maximize the number of papers.
+
+Determine the smallest coherent publication portfolio that gives each strong result an appropriate home without rehashing the same material.
+
+Use the following as **candidate clusters, not mandatory paper count**.
+
+## Candidate / existing Paper B — Boolean operator computation
+
+**Operator-Level Boolean Computation with Correspondence Matrices**
+
+Existing scope: CM/LM typed operator calculus, valuation, same-frame fusion, compiler/folding architecture, and fair computational evaluation.
+
+Determine whether the latest S1/S2/Gate-A/Gate-P evidence should:
+
+- remain in Paper B;
+- become a later dedicated optimization paper;
+- or remain preliminary until natural-workload and matched timing gates are satisfied.
+
+## Candidate Paper 1 — rotation-derived chain-ring / resource theory
+
+Possible theme:
+
+**From Logical Rotation to a Boolean Modal Subtheory**
+
+or
+
+**Boolean Modal Information: Tensor Choice, Valuation Resources, and Exact Protocols**
+
+Test whether these are better as one paper or two.
+
+Potential center:
+
+- derivation from CM cell rotation to the restricted algebra;
+- semantic lift theorems;
+- nilpotent filtration;
+- precise operational contracts;
+- Smith/valuation contextuality classification;
+- uniform Hardy family;
+- dense-coding / teleportation resource separation;
+- tensor-model inequivalence;
+- rank collapse under enlarged operations;
+- no-go and closure boundaries.
+
+Generic Bell/GHZ/no-cloning/teleportation phenomena should be supporting diagnostics unless the model-specific theorem is the actual point.
+
+## Candidate Paper 2 — characteristic-two modal query theory
+
+Possible title:
+
+**Exact Query Obstructions in Characteristic-Two Modal Computation**
+
+Potential center:
+
+- exact-discrimination direct-sum lemma;
+- Deutsch exact query complexity;
+- Deutsch-Jozsa one-query obstruction;
+- Bernstein-Vazirani lower bound;
+- kickback/Fourier separation;
+- scoped Simon/Grover negative cases;
+- UNIQUE-SAT positive control.
+
+Before recommending this as a standalone paper, perform a dedicated prior-art search for modal query complexity and characteristic-two polynomial/query lower bounds.
+
+## Candidate Paper 3 — LM / symbolic-to-modal synthesis
+
+Possible role:
+
+- central bridge section inside Paper 1;
+- a later foundations note;
+- or a broader synthesis paper such as **A Boolean Modal Laboratory for Quantum Information**.
+
+The key point must not be “LMs already are quantum measurements.” The bridge result is subtler:
+
+- Paper B gives valuation-natural Boolean symbolic contraction;
+- `A`-enrichment adds new scalar structure;
+- symbolic support can encode modal possibility;
+- the effect family and `nonzero = possible` remain additional contracts;
+- division-free updates exist, but unrestricted process closure fails.
+
+Assess whether this is enough for a standalone contribution or is strongest as connective tissue between the CM/LM and modal results.
+
+## Candidate Paper 4 — CM folding / pre-expansion optimization
+
+Only recommend as a standalone paper if the evidence justifies it.
+
+Potential center:
+
+- typed operator metadata exposes low-support subcomputations before ANF expansion;
+- folding can eliminate large intermediate symbolic multiplication;
+- generic two-support optimization may reach the same normal form, so uniqueness is not the claim;
+- the empirical question is whether CM recognizes/executes the reduction with lower cost, better reuse, provenance, or memory behavior;
+- evaluate natural workloads, cold compilation, repeated reuse, recognition cost, total wall time, memory, and equal-result cases.
+
+A negative result can still be valuable if it sharply characterizes the boundary.
+
+## Candidate synthesis / software article
+
+A broad **Boolean Modal Laboratory** paper or reproducibility/software article may be valuable after the primary mathematical papers exist. It can organize known and new phenomena through a dependency map without claiming each phenomenon as original.
+
+Determine whether this should be a journal article, software/reproducibility paper, pedagogical review, or simply supplementary documentation.
+
+---
+
+# 11. One theorem / one primary paper home
+
+Create a `PAPER_OWNERSHIP_MATRIX.csv`.
+
+Every important theorem must have one primary publication home.
+
+Other papers may summarize and cite it, but should not independently present the same theorem as a new main contribution.
+
+For every candidate paper identify:
+
+- central question;
+- one-sentence contribution;
+- strongest 3-7 primary results;
+- imported background;
+- results deliberately excluded;
+- required new work;
+- required literature checks;
+- essential computations;
+- negative results that strengthen the story;
+- likely figures/tables;
+- likely appendix/supplement contents;
+- relationship to Paper B and to the other papers;
+- overlap/self-plagiarism risk;
+- whether the paper remains coherent if its weakest novelty claim is removed.
+
+Prefer a smaller number of papers with strong mathematical centers.
+
+---
+
+# 12. Required repository-style deliverables
+
+Create a consolidation folder with approximately this structure, adapting it if a better structure emerges:
+
+```text
+CM_LM_RESEARCH_CONSOLIDATION/
+  00_MASTER_INDEX.md
+  01_EXECUTIVE_STATE.md
+  02_RESEARCH_PROGRAM_MAP.md
+  03_PAPER_B_BOUNDARY.md
+  04_MODEL_AND_TYPE_SYSTEM.md
+  05_CORRECTIONS_AND_SUPERSEDED_CLAIMS.md
+  06_NEGATIVE_RESULTS.md
+  07_OPEN_PROBLEMS_AND_FUTURE_WORK.md
+
+  claims/
+    CLAIM_REGISTRY.md
+    claim_registry.csv
+    claim_registry.json
+    CONFLICT_LEDGER.csv
+    EVIDENCE_LEDGER.csv
+
+  math/
+    THEOREM_INDEX.md
+    THEOREM_BANK.tex
+    definitions.tex
+    notation.tex
+    model_contracts.tex
+    proof_dependency_graph.md
+
+  computation/
+    COMPUTATIONAL_LEDGER.md
+    EXPERIMENT_REGISTRY.csv
+    REPRODUCTION_STATUS.md
+    BENCHMARK_STATUS.md
+    MISSING_RAW_EVIDENCE.md
+
+  literature/
+    PRIOR_ART_MATRIX.csv
+    ANNOTATED_BIBLIOGRAPHY.md
+    SEARCH_LOG.csv
+    NOVELTY_GAPS.md
+    references.bib
+
+  synthesis/
+    CAPABILITY_AND_DEPENDENCY_MAP.md
+    RESOURCE_HIERARCHY.md
+    LM_TO_MODAL_BRIDGE.md
+    LOGIC_TO_DYNAMICS_TO_READOUT.md
+    COMPILER_AND_FOLDING_SYNTHESIS.md
+    research_dependency_graph.dot
+
+  papers/
+    PUBLICATION_STRATEGY.md
+    PAPER_CANDIDATES_MATRIX.csv
+    PAPER_OWNERSHIP_MATRIX.csv
+    P01_<short_name>/
+      PAPER_SCOPE.md
+      CLAIM_SET.md
+      OUTLINE.md
+      PAPER_SKELETON.tex
+      REQUIRED_FIGURES.md
+      REQUIRED_EXPERIMENTS.md
+      REQUIRED_LITERATURE.md
+      RISKS_AND_OPEN_ISSUES.md
+      NEXT_AGENT_PROMPT.md
+    P02_<short_name>/
+      ...
+
+  handoff/
+    WHAT_TO_ATTACH_NEXT.md
+    RESEARCH_STATE_SNAPSHOT.md
+    NEXT_ACTIONS.md
+    PAPER_BUILD_ORDER.md
+```
+
+### File-format rule
+
+Use **LaTeX** for theorem banks, formal definitions, proof-heavy sections, and paper skeletons.
+
+Use **Markdown** for research overviews, scope boundaries, decision logs, paper architecture, corrections, open problems, and human-readable navigation.
+
+Use **CSV/JSON** for registries, claim/evidence tables, experiment inventories, and machine-readable provenance.
+
+`00_MASTER_INDEX.md` must contain relative links to all major outputs and act as the human entry point.
+
+Do not bury the conclusions inside one enormous report.
+
+---
+
+# 13. For each proposed paper, produce a build-ready plan
+
+For each paper Astra ultimately recommends, create a build-ready package.
+
+The `PAPER_SKELETON.tex` should include:
+
+- provisional title;
+- abstract skeleton;
+- section/subsection structure;
+- theorem/proposition slots with canonical claim IDs;
+- proof locations;
+- figure/table placeholders;
+- related-work section plan;
+- limitations section;
+- appendix/supplement plan;
+- bibliography hookup.
+
+The `NEXT_AGENT_PROMPT.md` should instruct a future GPT/agent to build that paper from the canonical consolidation without rediscovering everything.
+
+It must state:
+
+- exactly which files to read;
+- which claims are allowed as main contributions;
+- which results are imported;
+- which experiments must be rerun;
+- which novelty checks remain open;
+- what must not be overstated.
+
+This is important: the current task should leave the research program in a state where papers can be developed **one by one** without losing provenance or accidentally republishing the same result.
+
+---
+
+# 14. Adversarial tests for the publication plan
+
+For every proposed paper, attempt to defeat it.
+
+Ask:
+
+- Does the central theorem reduce to known finite-field/modal theory?
+- Is the CM rotation merely a change of coordinates in a known circulant algebra?
+- Is the claimed LM bridge only ordinary homomorphism preservation?
+- Is the dense-coding/teleportation separation already standard chain-ring module theory under another language?
+- Does enlarging the operation group erase the claimed resource hierarchy?
+- Are Bell/GHZ/teleportation examples just validation of known MQT?
+- Is the query result already known from general polynomial/adversary methods?
+- Is the compiler result just two-input LUT/cut optimization?
+- Are speed claims based on kernel counts rather than matched end-to-end costs?
+- Is a claimed “measurement” only symbolic coefficient extraction?
+- Does a proposed process theory fail closure under preparation or conditioning?
+- Are probabilities being smuggled in through normalized Hamming weights or external counting?
+- Does a grand synthesis add a real theorem/dependency structure, or only terminology?
+
+If a paper survives only by weakening its claim, weaken the claim.
+
+If two paper candidates become stronger when merged, merge them.
+
+If a paper has no sufficiently strong center, do not recommend it.
+
+---
+
+# 15. Final strategic report
+
+After creating the files, return a concise final report answering:
+
+1. **What has actually been established?**
+2. **What remains candidate novelty rather than established novelty?**
+3. **What results should be treated as known prior art but retained because they support a larger synthesis?**
+4. **What are the strongest mathematical contributions?**
+5. **What are the strongest computational contributions?**
+6. **What are the most important negative/no-go results?**
+7. **Which results are currently too weak, too duplicated, or too under-verified to publish as main claims?**
+8. **What is the recommended minimum publication portfolio?**
+9. **In what order should the papers be developed?**
+10. **What exact artifacts or experiments are still missing before paper drafting begins?**
+
+End with a one-page publication map of the form:
+
+```text
+Paper / article
+  central thesis
+  primary theorem cluster
+  imported background
+  required remaining work
+  strongest risk
+  relationship to other papers
+```
+
+The goal is not to maximize novelty claims or paper count.
+
+The goal is to make the CM/LM research program mathematically legible, reproducible, appropriately modest about prior art, and maximally useful to future researchers.
+
+---
+
+# 16. Specific synthesis question to keep in view
+
+The deepest question across the whole program is:
+
+> **What genuinely follows from representing and manipulating logical relations as typed Boolean operators, what additional structure appears when the CM coefficient geometry is lifted into a rotation/chain-ring algebra, and which modal/computational phenomena depend specifically on those restrictions rather than on generic finite-field linear algebra?**
+
+A strong consolidation should make the answer visible without requiring the reader to reconstruct the history of the project.

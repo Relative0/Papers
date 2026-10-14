@@ -1,0 +1,2447 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  10pt,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[a4paper,margin=22mm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{american}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\usepackage{amsmath,amssymb,booktabs,longtable,array,microtype}
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small CM/LM Foundations Audit}
+\fancyhead[R]{\small 26 September 2026}
+\fancyfoot[C]{\small\thepage}
+\setlength{\emergencystretch}{3em}
+\setlength{\parskip}{5pt}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.13}
+\setcounter{secnumdepth}{0}
+\AtBeginDocument{\hypersetup{pdftitle={CM/LM Foundations: Publication-Readiness Audit},pdfauthor={Independent AI-assisted audit},breaklinks=true}}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={CM/LM Foundations: Publication-Readiness Audit},
+  pdfauthor={Independent AI-assisted mathematical, literature, and reproducibility review},
+  pdflang={en-US},
+  colorlinks=true,
+  linkcolor={black},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={black},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{CM/LM Foundations: Publication-Readiness Audit}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Correspondence and Logical Matrices: A Boolean Operator
+Calculus}
+\author{Independent AI-assisted mathematical, literature, and
+reproducibility review}
+\date{26 September 2026}
+
+\begin{document}
+\maketitle
+
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\newpage
+
+\section{I. Executive verdict}\label{i.-executive-verdict}
+
+\textbf{The central mathematics survives this audit. The current
+manuscript is not yet journal-submission ready. Its strongest defensible
+publication form is a focused synthesis or methodological article, not a
+paper whose case rests on a newly discovered Boolean algebra or a
+substantial new classification theorem.}
+
+The manuscript contributes an organized symbolic/numeric calculus: a
+numeric truth matrix is transported into a formula-valued polarity
+matrix; logical pairing becomes evaluation on agreement bits; valuation,
+pointwise Boolean composition and input-frame changes fit together. The
+invertible frame normal form and partition-selector characterization are
+the most effective explanations of that organization. They remain valid
+when the reference formulas are dependent or contradictory. The
+arbitrary-arity results follow from general Boolean identities, rather
+than from a conjectural extrapolation of binary examples.
+
+No central false theorem was found. The present source has repaired the
+earlier polarity-mask inconsistency, states the all-true valuation
+qualification, specifies ordered flattenings, separates output
+complement from unchanged-outer-operation frame transport, and correctly
+uses ordinary \(\mathbb F_2\) rank. The remaining mathematical work is
+mainly precision: explicitly specify the combined symbolic signed-frame
+action, expand one compressed higher-arity proof step, and remove a
+local row/column inconsistency in the STP comparison.
+
+The novelty case is narrower than the amount of notation might suggest.
+Cheng, Zhao and Xu directly state the numeric truth-vector composition
+law {[}S1{]}. Bricken gives earlier binary matrix and bra--matrix--ket
+logic {[}S2{]}. Boolean-algebra-valued matrix and orthogonal-frame
+constructions give a close antecedent for the formula frame itself
+{[}S3{]}. The general coherence package is explained by Boolean
+homomorphisms and pullbacks. This does not make the manuscript useless:
+a well-designed representation and teaching/specification architecture
+can be publishable. It does mean that its usefulness must be
+demonstrated, not inferred from the number of theorem environments.
+
+\textbf{The 20,873-check assertion is not reproducible from the supplied
+package.} Its two-line output survives, but the associated generating
+program, count definition and execution recipe were not located after
+recursive archive inspection. A separate checker written for this audit
+passes \textbf{2,022,648 explicitly counted checks}. That new result
+independently supports the finite claims; it does not establish the
+provenance of the old run.
+
+The exact executable archive source compiles into a clean 31-page PDF,
+with no unresolved citations/references or overfull-box warnings. The
+supplied PDF has the same extracted text page by page. There is no
+separately mounted file containing the inline chat paste, so this audit
+does not pretend to have computed a bytewise hash of the paste itself.
+
+\textbf{Weighted current-readiness score: 71.45/100.} This is an
+editorial assessment, not a probability that the mathematics is correct
+or a prediction of acceptance.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3400}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6600}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Release or article form
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Determination
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Public preprint & \textbf{READY AFTER MINOR CORRECTIONS}, including
+correction of the verification assertion and the concrete
+bibliographic/type issues. \\
+Journal submission in current form & \textbf{MAJOR REVISION
+REQUIRED}. \\
+New-results mathematical research article & \textbf{NOT READY on the
+evidence established here}; a significant new theorem is not
+demonstrated. \\
+Expository/synthesis article & \textbf{Promising and the strongest
+current route}, after a substantial tightening of the narrative and an
+end-to-end worked example. \\
+Technical/methodological specification & \textbf{Plausible after
+revision}, particularly an exact transport contract and a demonstrated
+conformance/use case. \\
+\end{longtable}
+
+There is \textbf{no established P0 mathematical blocker}. The exact
+unresolved P1 issues are recorded in Section XV. The smallest credible
+revision is not a new research campaign: repair the evidence and
+citations, state the transport contract, show one complete calculation,
+and sharply distinguish the foundations from compiler and phase results.
+
+\section{II. Artifact and version
+audit}\label{ii.-artifact-and-version-audit}
+
+\subsection{Authority and version
+boundary}\label{authority-and-version-boundary}
+
+The user's inline LaTeX is the presumptive authority. The executable
+copy examined is the file named
+\texttt{Correspondence\_and\_Logical\_Matrices\_Boolean\_Operator\_Calculus\_LM\_Centered.tex}
+in the current-manuscripts subdirectory of the 22 September handoff. It
+agrees with the supplied paste in title, date, current theorem
+structure, normal form, selector theorem, corrected conventions,
+appendices and 20,873-check statement. No material difference was
+identified. This is a content comparison, not a bytewise equality claim
+about the chat message.
+
+The audited copy is supplied unchanged as
+\texttt{source/audited\_foundations.tex}. It contains \textbf{1,588
+lines and 97,170 bytes}. Its SHA-256 is:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{86f2b8cb901c0af3f1a9c0a726f26aa65091d137d33bda21aa157c0985b6fb48}
+\end{Highlighting}
+\end{Shaded}
+
+An additional copy in the historical original-release archive has the
+same hash. The separately uploaded prompt is preserved as
+\texttt{source/requested\_audit\_prompt.txt}. The input portfolio ZIP
+has SHA-256:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{727d6b0bd5d7b7dba3645e48e9cefe695981ef84c308f3cff579d8c5d66bd7b0}
+\end{Highlighting}
+\end{Shaded}
+
+All manuscript line references below refer to the unchanged audited
+source, not to a rewritten draft. The PDF is the fresh compilation of
+that source. The user's Windows path was not accessed and is not
+represented as an independently inspected filesystem.
+
+\subsection{Recursive inspection and its
+limits}\label{recursive-inspection-and-its-limits}
+
+The outer ZIP contains \textbf{393 non-directory members}, including
+three ZIP files. Recursive inspection encountered \textbf{19 ZIP
+occurrences representing 17 distinct ZIP byte contents}. A
+deduplicated-content traversal recorded \textbf{3,463 member visits},
+reading approximately 337 MB of uncompressed member bytes. There are
+\textbf{351 distinct Python source contents} in that traversal. These
+counts describe archive traversal, not the number of documents whose
+full arguments were reviewed.
+
+The inventory and targeted search include every recursively encountered
+unique archive, including levels deeper than the initial extraction.
+Paths, sizes and hashes are preserved in the inventory JSON files.
+Repeated archive bytes were not needlessly analyzed as independent
+evidence. Filename/content searches targeted the verification count, the
+named checker and relevant foundations material. The 53 search-hit files
+include incidental numeric data and repeated registers, not 53
+independent foundations verification records.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3400}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6600}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Collection or artifact
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Inspection depth and role
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Current foundations LaTeX and supplied PDF & Full mathematical reading
+of the current source; fresh build; all 31 pages visually surveyed;
+important diagrams/tables inspected at larger scale. Primary object of
+the audit. \\
+\texttt{CM\_LM\_Audit\_Astra.md} & Extensive targeted reading of theorem
+audit, repairs, prior-art, examples, novelty, verification and
+recommendations. This reviews an earlier source, not the current one. \\
+LM-centered revision notes and foundations verification output & Full
+reading. Useful provenance; neither makes its assertions
+self-verifying. \\
+26 September foundations \texttt{RESEARCH\_ASSESSMENT.md} & Full reading
+and independent comparison with current mathematics and primary
+literature. Its genre verdict is not adopted merely because it
+exists. \\
+Compiler source/PDF in original release & Actual manuscript inspected,
+especially definitions, frame/fusion architecture, LM valuation/pairing
+and experimental-status sections. No complete compiler or benchmark
+audit is claimed. \\
+Compiler R1/R2 and response & Relevant mathematical, scope and editorial
+sections inspected; R2 read in full. Compiler-only requirements are
+distinguished from foundations obligations. \\
+Publication-program preservation and ownership registers & Targeted
+searches and reading of foundation ownership, missing-checker and
+overlap entries. These are secondary assessments. \\
+Correctness/model-boundary report & Actual standalone source
+introductory findings and model/type ledger inspected, together with its
+README and root claim summary. Its modal theorems and computational
+campaigns were not re-certified. \\
+Phase handoff and source snapshots & Inventory and selected
+source/context inspection to identify the added convolution/model
+boundary. No full phase-paper theorem audit. \\
+Structural computation/decomposition direction & Research brief and
+claim/status records inspected. It is an unfinished direction rather
+than a completed foundations-supporting experiment. \\
+Other nested benchmark, modal and historical data & Inventoried and
+searched where relevant to recovery. Most algorithms, data rows and
+unrelated proofs were not substantively reviewed or rerun. \\
+\end{longtable}
+
+The current conclusions depend on the actual foundations source,
+reconstructed arguments, the new finite checker, and the identified
+primary literature. They do not depend on treating portfolio theorem
+banks, prior verdicts or historical logs as authoritative. Inspection
+depth is recorded explicitly in the supplied
+\texttt{inspection\_record.md}.
+
+\section{III. Weighted publication-readiness
+scorecard}\label{iii.-weighted-publication-readiness-scorecard}
+
+The object scored is the \textbf{current manuscript and its originally
+supplied evidentiary package}. The independent checker created during
+this audit is available for a revision, but it has not silently repaired
+the current manuscript's historical claim. Scores are ordinal judgments
+on the requested 0--10 rubric; the decimal total is arithmetic, not
+statistical precision.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.5700}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1200}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1300}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1800}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Weight
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Score
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Confidence
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Mathematical correctness & 20\% & 9.0 & High \\
+Proof completeness and assumptions & 10\% & 8.5 & High \\
+Novelty and priority differentiation & 15\% & 4.5 & Medium \\
+Significance and substantive contribution & 8\% & 6.0 & Medium \\
+Literature and bibliography & 8\% & 6.5 & Medium \\
+Coherence, typing and notation & 7\% & 8.5 & High \\
+Reproducibility and computation & 7\% & 4.0 & High \\
+Closure of previous feedback & 6\% & 8.0 & Medium \\
+Scope and cross-paper differentiation & 6\% & 8.0 & Medium \\
+Exposition and examples & 5\% & 6.5 & High \\
+Artifact, build and references & 4\% & 9.0 & High \\
+Positioning and claim calibration & 4\% & 7.5 & Medium \\
+\end{longtable}
+
+The weighted score is \(\sum_i w_i s_i/10 = \mathbf{71.45}\) out of 100,
+where the weights sum to 100.
+
+\textbf{Mathematical correctness (9.0/10).} Strength: The core
+identities survive direct proof reconstruction and the finite tests. No
+false central theorem found. Weakness: No proof-assistant certification;
+a few local typing and scope clarifications remain. Required action: Add
+the explicit symbolic transport identity and repair the STP row/column
+convention.
+
+\textbf{Proof completeness and assumptions (8.5/10).} Strength: The
+general proofs use Boolean identities, partitions and ordinary rank
+factorization, not extrapolation from small cases. Weakness:
+Higher-arity pairing is compressed; several convention-dependent
+statements deserve an extra line. Required action: Expand the
+selector-to-agreement step; state the empty-XOR convention and the scope
+of free generators.
+
+\textbf{Novelty and priority differentiation (4.5/10).} Strength:
+Current wording acknowledges the principal numeric antecedents and
+largely avoids firstness claims. Weakness: The frame matrix has a close
+explicit Boolean-space antecedent; coherence reduces to preservation by
+Boolean homomorphisms. No substantial new theorem established. Required
+action: Position as synthesis/specification and compare the exact
+mechanisms, especially Gudder--Latremoliere.
+
+\textbf{Significance and substantive contribution (6.0/10).} Strength:
+Typed alignment, invertible symbolic frames and agreement pairing offer
+a coherent teaching and specification vocabulary. Weakness: A reader
+still needs a convincing worked task where the notation materially
+prevents a mistake or simplifies a derivation. Required action: Add one
+end-to-end example and a representation/operation comparison, rather
+than more elementary theorem statements.
+
+\textbf{Literature and bibliography (6.5/10).} Strength: Strong primary
+comparisons are available for truth-vector composition, Boolean frames,
+NPN and spectral truth representations. Weakness: An unresolved preprint
+entry and a version-specific Eigenlogic attribution need correction;
+some historical sources were not accessible in full. Required action:
+Repair the bibliography and identify the versions actually supporting
+historical assertions.
+
+\textbf{Coherence, typing and notation (8.5/10).} Strength: Matrix
+product, pointwise operations, pairing, tensor reshape and phase
+convolution are carefully separated. Weakness: Symbolic signed transport
+is described more informally than the numeric action; vec changes
+effective orientation. Required action: Write the signed transport
+contract explicitly; reserve vec for a column vector throughout.
+
+\textbf{Reproducibility and computation (4.0/10).} Strength: The
+historical output is preserved and the advertised finite mathematical
+claims can be independently checked. Weakness: The generating source and
+count definition for 20,873 are not recoverable from this package.
+Required action: Replace or withdraw the historical reproducibility
+assertion; publish the new checker with its own count and scope.
+
+\textbf{Closure of previous feedback (8.0/10).} Strength: The main
+earlier mathematical repairs are present in the current source.
+Weakness: Checker recovery, exact attribution and demonstration of
+usefulness remain open; not every unrelated portfolio review was
+substantively reviewed. Required action: Close the remaining
+foundation-specific issues and avoid importing compiler-only
+requirements.
+
+\textbf{Scope and cross-paper differentiation (8.0/10).} Strength:
+Performance, cyclic multiplication and modal resources are not premises
+of the foundations results. Weakness: The compiler still repeats the
+binary LM, valuation and pairing development; the spectral appendix is
+peripheral. Required action: Assign foundational ownership explicitly
+and shorten companion duplication.
+
+\textbf{Exposition and examples (6.5/10).} Strength: Definitions and
+examples are substantially clearer than the historical framing.
+Weakness: Repeated novelty disclaimers and several elementary theorem
+environments obscure the central narrative. Required action: Consolidate
+the claim boundary, use a running example and move reference material
+behind the main argument.
+
+\textbf{Artifact, build and references (9.0/10).} Strength: Fresh
+two-pass compilation succeeds; 31 pages match the supplied PDF text and
+no unresolved references or overfull boxes appear. Weakness: There is no
+bytewise hash of the inline chat paste; one figure label is crowded and
+the last page is sparse. Required action: Freeze the source as a
+separately attached file; make small layout repairs and ship a manifest.
+
+\textbf{Positioning and claim calibration (7.5/10).} Strength: No new
+Boolean algebra, physical measurement, compression or speedup is
+asserted. Weakness: The title and repeated emphasis on first-class
+operators may still suggest a stronger research contribution than
+demonstrated. Required action: Lead with a precisely scoped
+synthesis/methodological contribution, not an implied discovery of
+operator logic.
+
+\section{IV. Claim and theorem audit}\label{iv.-claim-and-theorem-audit}
+
+The following ledger covers all \textbf{43 numbered theorem,
+proposition, corollary, definition, example and substantive remark
+environments} in the current source. The additional ledger covers
+\textbf{30 groups of substantial unnumbered definitions, displays,
+historical claims and appendix statements}. These are not 73 claims of
+novelty. Proofs and adjacent explanatory text were considered with each
+statement.
+
+Codes: \textbf{C} = correct as stated under the declared conventions;
+\textbf{S} = essentially standard or a straightforward specialization;
+\textbf{Q} = local clarification or typing repair recommended;
+\textbf{R} = substantially repetitive. A Q is not automatically a false
+theorem. No central result received a false/counterexample
+classification.
+
+\subsection{Numbered statements}\label{numbered-statements}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3200}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0800}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Result and source lines
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Verdict
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Independent reason or qualification
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Proposition 2.1: Unique binary representation (L171-173) & C/S & The
+four assigned bits give a bijection; there are exactly 16 choices. No
+mathematical depth beyond the truth-table encoding is asserted. \\
+Proposition 2.2: CM selection (L187-193) & C/S & A one-hot row and
+column leave exactly one summand. The selected coefficient is the
+connective value. \\
+Remark 2.3: Why XOR--AND rather than OR--AND? (L198-208) & C & OR and
+XOR reductions agree only when surviving products are disjoint. The
+displayed two-term counterexample is correct. \\
+Proposition 2.4: CM basis decomposition (L213-219) & C/S & The four
+matrix units form the standard coefficient-space basis; coefficient
+linearity does not imply affine dependence on logical inputs. \\
+Theorem 3.1: Binary LM frame normal form (L334-346) & C/S & The four
+disjoint minterms prove the normal form; multiplying by the involutory
+frames proves the inverse. Arbitrary formula dependence is harmless. \\
+Theorem 3.2: LM-to-CM valuation architecture (L361-373) & C & Evaluation
+of each frame is I or the swap. Joint satisfiability is needed only for
+the special all-true valuation and is now stated. \\
+Theorem 4.1: Logical-pairing identity (L400-407) & C/S & Multiplying an
+external formula state by its reference frame gives the agreement state.
+Selection then proves the stated identity. \\
+Corollary 4.2: Labelled basis reconstruction (L423-432) & C & Agreement
+with a labelled reference or its complement is the corresponding
+constant bit. All four coefficients are recovered. \\
+Example 4.3: Pairing an implication LM (L434-446) & C & Both implication
+substitutions are correct, including the vacuous-antecedent case. \\
+Theorem 4.4: Valuation commutes with logical pairing (L450-457) & C/S &
+Valuation preserves every Boolean term used in the contraction. This is
+not restricted to independent operands. \\
+Theorem 4.5: Partition-of-unity selector characterization (L473-482) &
+C/S & Orthogonal weights remove cross terms and their sum is one.
+Conversely, coordinate idempotents force orthogonality and unitality.
+The F-linearity qualification is important. \\
+Theorem 5.1: Aligned LM operator superposition and CM valuation
+(L516-548) & C/S & Cellwise substitution proves the LM identity;
+valuation and one-hot selection give the numeric corollaries. The
+numeric result has direct prior art {[}S1{]}. \\
+Corollary 5.2: Alignment before operator superposition (L553-563) & C/Q
+& Correct for transports carrying the stated occurrence into the same
+semantic assignment frame. Specify the symbolic transport formula, not
+merely a shape match. \\
+Example 5.3: Why the frame condition matters (L565-577) & C & The second
+implication must be transposed. Its XOR with the first is XOR, whereas
+unaligned identical tables cancel incorrectly. \\
+Example 5.4: LM operators as first-class operands (L579-595) & C/R & The
+OR/AND/XOR identity is correct. It partly repeats the introductory
+numerical illustration and can become the running example. \\
+Theorem 5.5: Matched-frame kernel composition (L603-616) & C/S & The two
+copies of the same intermediate frame cancel. The resulting scalar
+kernel sums parity, not existential reachability. \\
+Definition 6.1: Correspondence tensor (L648-655) & C/S & This is the
+truth function indexed as an order-n Boolean tensor. It stores all
+2\^{}n coefficients. \\
+Definition 6.2: Logical tensor and LM lift (L657-672) & C & The
+canonical Boolean term is applied to every polarity tuple. Its codomain
+is the formula algebra generated by the declared free references. \\
+Remark 6.3: The lift as a polarity pullback (L674-681) & C/S & At a
+valuation the chosen polarity has value x XOR alpha XOR 1. The lift is a
+pullback, a useful exact reduction of the construction. \\
+Theorem 6.4: General valuation theorem (L699-709) & C & The
+one-triggered axis convention agrees with the valued polarity tuple. The
+earlier reversed-mask criticism no longer applies. \\
+Definition 6.5: Pointwise lift (L716-723) & C & Numeric tensors use g
+directly; formula tensors use its Boolean term extension. Those two
+interpretations must stay explicit. \\
+Theorem 6.6: LM lift and superposition law (L725-740) & C/S & Every
+polarity cell preserves substitution into the outer term; all-true
+evaluation proves injectivity in the free-reference setting. \\
+Corollary 6.7: The LM image is a Boolean subalgebra (L745-747) & C/S/R &
+Closure under the Boolean operations plus injectivity yields the
+isomorphism. This is a repackaging of Theorem 6.6, not another
+independent novelty. \\
+Remark 6.8: Priority boundary for the orbit lift (L749-751) & C & The
+stated priority boundary is mathematically justified: an equivariant
+orbit is determined by its identity/reference cell. \\
+Theorem 6.9: Polarity-equivariance characterization (L758-767) & C/S &
+Substitution by a polarity mask changes the cell index by that mask.
+Conversely the all-positive cell determines the tensor. Extra undeclared
+parameters are not allowed in the stated codomain. \\
+Remark 6.10: Boolean clones and superposition (L774-776) & C & The
+manuscript explicitly stops short of claiming a full cross-arity clone
+representation; that restraint is correct. \\
+Remark 6.11: Valuation as an intertwining map (L778-790) & C/R & Both
+intertwining identities follow from the valuation and pointwise laws.
+The terminology is justified, though the identities repeat prior
+results. \\
+Theorem 6.12: CM/LM coherence under Boolean operator superposition
+(L792-819) & C/Q & All four claims hold. The fourth uses a genuine
+partition selector, not distributivity of an arbitrary g. Make the
+simultaneous reference/index transport precise. \\
+Remark 6.13: Output complement is a different symmetry (L824-835) & C &
+The dual outer function is necessary. Output complement is not an
+unchanged-g automorphism of arbitrary pointwise superposition. \\
+Remark 6.14: Pairing preserves the LM operator calculation (L855-865) &
+C/R & This is a direct specialization of the coherence theorem to XOR
+and can be integrated into the running example. \\
+Theorem 6.15: Higher-arity pairing and reconstruction (L877-892) & C/Q &
+The general selector chooses the polarity tuple A at each valuation,
+producing the agreement tuple. The proof is valid but should write this
+step explicitly. \\
+Definition 7.1: Correspondence-map flattening (L924-932) & C/S & The
+ordered assembly map resolves noncontiguous and permuted blocks. The
+flattening is a bijective reindexing, not compression. \\
+Theorem 7.2: Rectangular bra--map--ket selection (L949-957) & C/S & The
+two grouped one-hot states select the unique assembled assignment, even
+for unequal dimensions. \\
+Remark 7.3: Comparison with quantum terminology (L962-964) & C & The
+distinction between a rectangular linear map and a same-space observable
+is sound. No physical structure is used in the proof. \\
+Remark 7.4: Exact size boundary (L966-968) & C & All flattenings retain
+2\^{}n entries. No efficiency conclusion follows from the reshape
+alone. \\
+Theorem 8.1: Block-lift theorem (L1000-1013) & C/S & The conditional
+hypothesis f(a,b)=g(a) Theta h(b) proves both displayed formulas
+entrywise. It is not a universal one-bit block decomposition. \\
+Theorem 8.2: Rank and conjunctive/XOR separability (L1018-1039) & C/S/Q
+& Ordinary F2 rank equals the minimum number of XOR-summed outer
+products. Nonzero rank-one factors are unique over F2. State k=0 with
+the empty XOR for the zero matrix. \\
+Example 8.3: A \(4\times4\) correspondence map (L1046-1069) & C & The
+two supplied truth vectors and all four rows of the implication lift are
+correct. \\
+Theorem 9.1: Signed-frame action (L1084-1092) & C/S & The numeric
+pullback and its right-action composition direction are correct.
+Faithfulness of the entire representation is compatible with nontrivial
+stabilizers of individual functions. \\
+Theorem 9.2: Frame changes commute with pointwise composition
+(L1096-1104) & C/S/Q & Any common index pullback commutes with cellwise
+g. The symbolic counterpart needs one explicit formula to eliminate
+double application of a polarity mask. \\
+Proposition 10.1: Top ANF coefficient as correspondence parity
+(L1141-1148) & C/S & Boolean Mobius inversion gives the full monomial
+coefficient as the parity of all truth values. The explicit
+n\textgreater=1 restriction is correct. \\
+Corollary 10.2: Binary nonlinearity parity criterion (L1153-1163) &
+C/S/R & The binary specialization is correct and is a useful visible
+invariant, but classical rather than an independent discovery. \\
+Proposition 13.1: Core Boolean closure (L1285-1287) & C/Q & Every listed
+operation stays in the scalar Boolean algebra. This means scalar
+closure, not closure of the special normalized formula-state family
+under arbitrary vector addition. \\
+\end{longtable}
+
+\subsection{Other substantial claims and
+definitions}\label{other-substantial-claims-and-definitions}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2700}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4800}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID and locator
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Claim
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Assessment
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+D01: Sections 1-2; lines 93-169 & Formula/value/operator type
+distinction and the three compositions & \textbf{C}. Logical functions,
+coefficient arrays and formula-valued arrays have distinct types; the
+prose does not identify pointwise g with matrix multiplication. \\
+D02: Equations (1)-(4); lines 139-195 & XOR glyph, true-first states, CM
+order, contraction & \textbf{C}. The order is (11,10,01,00); the two
+states are one-hot; rotation of I gives the XOR swap matrix. \\
+D03: Equations (6)-(7); lines 224-245 & Transpose, left/right swaps and
+output complement & \textbf{C}. Direct substitution proves the transpose
+and two swap laws; J XOR C is entrywise complement. \\
+D04: Equation (8); lines 247-263 & Support order and Boolean difference
+& \textbf{C/S}. Entrywise containment and B AND NOT A are ordinary
+support inclusion and set difference, not arithmetic division or
+remainder. \\
+D05: Figure 1 and Section 3.1; lines 265-313 & All-true diagonal arrow
+and free references & \textbf{C/Q}. The caption explicitly conditions
+the arrow on free references. Keep that condition visible when the
+diagram is reused. \\
+D06: Equations (11)-(12); lines 314-332 & Formula frame symmetry and
+involution & \textbf{C/S}. Diagonal products sum X and NOT X;
+off-diagonal products vanish. This is a Boolean partition
+permutation. \\
+D07: Equation (17); lines 385-398 & State inner product equals
+equivalence & \textbf{C}. The two agreeing minterms are disjoint and
+their XOR is XNOR. This is not a positive-definite Hilbert inner
+product. \\
+D08: Section 4.1; lines 464-498 & Partition weights with dependent A and
+B & \textbf{C}. The four minterms always partition the unit even if some
+are identically zero. Dependence does not invalidate the selector
+theorem. \\
+D09: Equation (31); lines 634-646 & Canonical disjoint-minterm extension
+& \textbf{C/S}. Minterms partition the unit. Evaluation agrees with f,
+including when substituted formulas are dependent. \\
+D10: Equations (35)-(36); lines 683-713 & Higher selection and
+one-triggered axis reversal & \textbf{C}. The numeric selector is
+one-hot and pi\_delta composes by XOR of masks. \\
+D11: Section 6.4 and Figure 2; lines 792-853 & Meaning of coherence &
+\textbf{C/S}. The common preservation laws are Boolean-homomorphism
+identities. They do not assert a new algebraic law for arbitrary
+non-selector contractions. \\
+D12: Figure 3; lines 896-911 & Faithful embedding diagram & \textbf{C}.
+For free reference generators all-true evaluation is a left inverse;
+this suffices for injectivity. \\
+D13: Section 7; lines 919-947 & Ordered assembly, tensor states and
+dimensions & \textbf{C/Q}. The array is 2\^{}p by 2\^{}q. The
+coordinate-space identification supports the endomorphism wording when
+p=q; semantically the row and column frames remain labelled. \\
+D14: Equations (47)-(48); lines 985-998 & Outer lift and symbolic
+polarity vectors & \textbf{C}. These are rectangular arrays on disjoint
+blocks, not an ordinary matrix product of two existing CMs. \\
+D15: Section 8 after Theorem 8.2; lines 1041-1044 & Rank algebra and
+bipartition dependence & \textbf{C}. F2 rank is distinct from OR-based
+Boolean rank and can change when variables move between blocks. \\
+D16: Equation (54) and following; lines 1071-1083 & Signed map and
+right-action convention & \textbf{C}. With T\_phi C=C composed with phi,
+T\_phi T\_psi=T\_(psi composed with phi). \\
+D17: Section 9.1; lines 1106-1119 & NPN transformations & \textbf{C/S}.
+The four displayed binary operations realize standard input negation,
+permutation and output negation; NPN is not new {[}S8,S9{]}. \\
+D18: Equations (57)-(58); lines 1121-1139 & ANF and Mobius transform &
+\textbf{C/S}. The Boolean zeta transform is its own inverse in
+characteristic two. Truth coefficients are not ANF coefficients
+{[}S10{]}. \\
+D19: Section 10 STP bridge; lines 1167-1175 & Row truth vector versus
+vec & \textbf{Q: local dimensional notation}. The intended 2 by 4
+structure matrix is correct. Since vec is subsequently a column, define
+t=vec(C)\^{}T here. \\
+D20: Equations (60)-(62); lines 1177-1232 & Literal clockwise rotation
+and coefficient permutation & \textbf{C}. The explicit matrix sends
+(a,b,c,d) to (c,a,d,b); the truth function becomes f(NOT y,x). Four
+iterations are the identity. \\
+D21: Section 11; lines 1234-1247 & Impax support and optional cyclic
+algebra & \textbf{C/Q}. I XOR swap is J. The group-algebra isomorphism
+is correct after introducing convolution; cyclic ordering should be left
+to the companion construction. \\
+D22: Section 12; lines 1249-1256 & Compiler interpretation and no
+performance inference & \textbf{C/Q}. Frame-correct fusion is sound.
+Whether it saves work in practice is empirical and explicitly outside
+this paper. \\
+D23: Introduction and Section 13 related work & Historical and
+comparative assertions & \textbf{Mixed bibliographic status}. The core
+numeric comparisons are supported; the Eigenlogic version wording and
+unresolved Zhao entry require repair. See Sections VII and X. \\
+D24: Discussion and conclusion; lines 1295-1336 & Calculus, future clone
+structure and operator-valued enrichment & \textbf{C/Q}. These are
+proposals or interpretive claims, not proved research results. Keep
+matrix-valued enrichment separate from formula-valued operands. \\
+D25: Appendix A; lines 1340-1376 & Characteristic polynomial and four
+spectral examples & \textbf{C}. All four spectra and the XOR
+non-diagonalizability claim are correct for XOR-AND field arithmetic. \\
+D26: Appendix A; lines 1377-1384 & Eight idempotents and four symmetric
+idempotents & \textbf{C/S}. The entrywise idempotence equations yield
+eight solutions; symmetry forces off-diagonal entries zero. The
+independent enumeration agrees. \\
+D27: Appendix A; lines 1386-1408 & Matrix elements, diagonal truth
+observable and valuation spectrum & \textbf{C/Q}. D\_Theta is a
+different 4-dimensional representation; independent row/column reversals
+need not preserve spectrum. Specify set versus multiplicity convention
+for Spec if the profile is later developed. \\
+D28: Appendix B; lines 1411-1432 & Formula-valued LM basis expansion &
+\textbf{C/S}. Its upper-left cell is the disjoint-minterm formula and
+the other cells are polarity substitutions. Equivalent to the normal
+form. \\
+D29: Appendices C-D; lines 1434-1471 & Compatibility and notation tables
+& \textbf{C/R}. The identities repeat proved statements. The table is
+useful reference material; consistent vec orientation is still
+needed. \\
+D30: Appendix E; lines 1473-1474 & Accompanying checker and 20,873 exact
+checks & \textbf{Not reproducible as packaged}. A two-line output
+survives, but the generating checker, count definition and command were
+not found. The new independent checks must not be passed off as that
+historical run. \\
+\end{longtable}
+
+\section{V. Proof completeness and hidden
+assumptions}\label{v.-proof-completeness-and-hidden-assumptions}
+
+\subsection{The frame and pairing architecture survives dependent
+formulas}\label{the-frame-and-pairing-architecture-survives-dependent-formulas}
+
+The scalar ring is the Boolean formula algebra modulo logical
+equivalence, with XOR as addition and conjunction as multiplication.
+Thus the identities are equalities of equivalence classes, not claims
+that two strings of syntax are identical. Formula dependence is
+permitted: \(X\) and \(Y\) may share variables, coincide, be
+complementary, or be constants.
+
+For the displayed frame \(\mathsf S_X\), the diagonal of
+\(\mathsf S_X^2\) is \(X\Updownarrow\neg X=1\), and each off-diagonal
+entry is the XOR of two copies of \(X\land\neg X=0\). Hence the frame is
+involutory. The upper-left entry of \(\mathsf S_X[\Theta]\mathsf S_Y\)
+is the four-term disjoint-minterm expansion of \(X\Theta Y\); the other
+entries change the appropriate polarities. This proves Theorem 3.1 for
+arbitrary formulas. Multiplication by the two inverse frames recovers
+\([\Theta]\) without a valuation or independence assumption.
+
+This distinction matters for \(X=P\), \(Y=\neg P\). There is no
+valuation making both true, but the normal form and inverse are still
+valid. The current manuscript correctly states this. A criticism that
+such dependence destroys the LM architecture is therefore wrong for this
+source.
+
+The pairing theorem follows from
+
+\[
+\langle A|\mathsf S_X=\langle A\Leftrightarrow X|,
+\qquad
+\mathsf S_Y|B\rangle=|Y\Leftrightarrow B\rangle.
+\]
+
+The first component of the left identity is precisely the disjoint sum
+of the two agreement cases; the second component is its complement.
+One-hot selection, interpreted in the formula algebra, then gives the
+stated connective of the two agreement bits. The result is a
+relationship formula. It does not claim that pairing is a probability,
+an expectation, or a test that both agreements separately hold. For
+implication, a false antecedent agreement can make the paired result
+true.
+
+There is a useful consequence worth emphasizing more strongly:
+\textbf{the entire LM still encodes the connective after dependent
+substitution}. For example, when \(X=Y=P\), the reference formula
+\(P\Updownarrow P\) is zero, but its full polarity LM is the swap
+matrix, not the zero LM. Invertible frame reconstruction distinguishes
+the two. This is a useful explanatory corollary of the normal form, not
+an additional historical novelty claim.
+
+\subsection{Why the selector theorem proves the full outer-operation
+law}\label{why-the-selector-theorem-proves-the-full-outer-operation-law}
+
+Write \(q_w(T)=\mathop{\Updownarrow}_i w_iT_i\). Linearity gives XOR
+preservation. Orthogonality gives
+
+\[
+q_w(T)q_w(U)
+=\mathop{\Updownarrow}_{i,j}w_iw_jT_iU_j
+=\mathop{\Updownarrow}_{i}w_iT_iU_i
+=q_w(TU).
+\]
+
+The weights sum to one, so \(q_w(1)=1\); complement follows. XOR,
+conjunction and the unit generate every Boolean term operation.
+Conversely, for the coordinate idempotents \(e_i\), preservation of
+\(e_ie_j=0\) forces \(w_iw_j=0\), and preservation of the unit forces
+their sum to one. The stated converse is properly restricted to the
+displayed formula-linear maps. It is not a classification of arbitrary
+Boolean-algebra homomorphisms without that qualification.
+
+For logical pairing, weights
+\(A^{\langle r\rangle}B^{\langle s\rangle}\) are orthogonal even when
+some are identically zero. This is why dependence of \(A\) and \(B\)
+does not break coherence. An arbitrary contraction with nonorthogonal
+weights does not enjoy the same property; weights \((1,1)\) already fail
+unitality under XOR.
+
+\subsection{The arbitrary-arity statements have general
+proofs}\label{the-arbitrary-arity-statements-have-general-proofs}
+
+At an assignment \(x\), the value of \(X_i^{\langle\alpha_i\rangle}\) is
+\(x_i\Updownarrow\alpha_i\Updownarrow1\). Therefore
+
+\[
+\mathcal M_f(x,\alpha)=f(x\Updownarrow\alpha\Updownarrow\mathbf1).
+\]
+
+This single identity verifies the indexing convention, valuation
+formula, orbit structure and the pointwise superposition law for every
+finite arity. Setting \(x=\mathbf1\) recovers the truth tensor in the
+free-reference algebra. Applying a polarity substitution to the
+reference variables is equivalent to changing the same index mask.
+Conversely, an equivariant tensor is recovered from its all-positive
+cell. These are full arguments for arbitrary \(n\), not inferences from
+the arity-three tests.
+
+For higher pairing, at any valuation the product of the \(A_i\)-minterms
+selects exactly the polarity tuple \(\alpha=(v(A_i))_i\). Substitution
+into the preceding identity gives
+
+\[
+f\bigl(v(A_1)\Updownarrow v(X_1)\Updownarrow1,\ldots,
+       v(A_n)\Updownarrow v(X_n)\Updownarrow1\bigr),
+\]
+
+which is \(f\) on the agreement bits. Since the equality holds for every
+propositional valuation, the formulas are equivalent. Inserting this
+short argument would make Theorem 6.15's proof more transparent than its
+current compressed reference to the selector theorem.
+
+The intrinsic equivariance characterization has a narrower scope than
+the binary normal form: it is stated in \(\mathcal F_{\mathbf X}\) with
+free reference generators. An independent negation of one formal
+generator need not descend to a quotient imposing, for example,
+\(X_1=X_2\). Do not export that group-action statement to constrained
+references without specifying the induced action. This is a scope
+boundary, not a missing hypothesis in the current theorem.
+
+\subsection{An exact symbolic signed-frame contract should be
+added}\label{an-exact-symbolic-signed-frame-contract-should-be-added}
+
+The numeric right action is correct as written. What deserves an
+explicit statement is how the symbolic references and polarity indices
+transform together. Let \(P_\sigma z=(z_{\sigma(i)})_i\) and
+\(\phi(z)=P_\sigma z\Updownarrow\epsilon\). The correct identity is
+
+\[
+\boxed{
+\mathcal L_{\mathbf X}(f\circ\phi)[\alpha]
+=\mathcal L_{P_\sigma\mathbf X}(f)
+      [P_\sigma\alpha\Updownarrow\epsilon]
+=\mathcal L_{\phi(\mathbf X)}(f)[P_\sigma\alpha].
+}
+\]
+
+All three expressions have value
+\(f(P_\sigma x\Updownarrow P_\sigma\alpha\Updownarrow\epsilon\Updownarrow\mathbf1)\).
+A polarity mask may be placed in the references or the slot indices, but
+not independently in both. Applying it twice cancels it. For one
+variable, \(f\) the identity, \(x=\alpha=1\) and \(\epsilon=1\), the
+desired transformed value is zero; negating both the reference and the
+index incorrectly returns one.
+
+This is a proposed clarification of Theorem 6.12(3) and Section 9,
+\textbf{not a refutation of their common-reindexing identity}. It is
+especially important if the article is sold as a formal specification.
+Likewise, a claim that a scalar pairing is invariant under changing
+coordinates must transport the selector states too; the current
+preservation-of-outer-operation theorem does not assert invariance under
+a fixed, untransported selector.
+
+\subsection{Matrix multiplication, block construction and
+rank}\label{matrix-multiplication-block-construction-and-rank}
+
+Matched intermediate references cancel because \(\mathsf S_Y^2=I\). With
+unmatched references, a residual \(\mathsf S_Y\mathsf S_W\) generally
+remains. The resulting kernel sums mod-two contributions over the
+intermediate Boolean index. It is not ordinary existential relational
+composition and is not pointwise conjunction. The current paper
+distinguishes these correctly.
+
+The flattening proof is valid for any ordered bipartition, including
+noncontiguous indices. The dimensions are \(2^p\times2^q\) and the two
+one-hot tensor states have matching lengths. When \(p=q\), identifying
+both coordinate spaces with \(\mathbb F_2^{2^p}\) supports the
+endomorphism wording; the semantic row and column labels should
+nevertheless remain visible. If empty blocks are allowed, add the
+conventional empty tensor/state of length one.
+
+The block-lift theorem is conditional. It does not say every function
+has the form \(g(a)\Theta h(b)\) with one Boolean output from each
+block. A two-bit equality relation \(f(a,b)=1\) exactly when \(a=b\) has
+four distinct rows; a one-bit \(g(a)\) can distinguish at most two row
+patterns. That relation is a useful limitation example.
+
+For rank, every conjunctive term gives an outer product and thus rank at
+most one. A sum of \(k\) such matrices has rank at most \(k\). A rank
+factorization gives exactly \(r\) outer products, so the minimum is
+\(r\). Nonzero rank-one factors are unique over \(\mathbb F_2\) because
+there is only one nonzero scalar. Zero factors are not unique, and
+\(k=0\) should be admitted through the empty XOR. The invariant depends
+on the bipartition:
+\((X_1\Leftrightarrow X_2)\land(X_3\Leftrightarrow X_4)\) has rank one
+across \(12\mid34\) and rank four across \(13\mid24\).
+
+\subsection{Other proof and notation
+details}\label{other-proof-and-notation-details}
+
+The ANF parity statement follows directly from Boolean Mobius inversion;
+the current \(n\ge1\) condition is correct. The rotation matrix and its
+associated input transformation agree entry by entry. The spectral
+statements are correct for XOR--AND field arithmetic: OR has no
+eigenvalue in \(\mathbb F_2\) and XOR has a repeated eigenvalue one with
+a one-dimensional eigenspace. The four truth outputs are not the
+two-dimensional CM spectrum.
+
+Two local corrections are advisable. First, the STP comparison uses
+\(t\) as a row while the later \(\operatorname{vec}\) convention is a
+column. Define \(t=\operatorname{vec}([\Theta])^T\) there. Second, the
+phrase restricting formula-matrix multiplication to ``this subsection
+only'' is misleading because the same convention is used again in the
+matched-frame theorem. Neither correction changes a mathematical
+conclusion.
+
+The closure proposition is scalar closure. It does not mean that
+arbitrary vector addition preserves the special formula-state family:
+\(|A\rangle\Updownarrow|A\rangle=0\) is not of the form
+\((B,\neg B)^T\). The present text does not assert that stronger
+closure, but a one-sentence warning would prevent an easy misreading.
+
+\section{VI. Independent computational
+verification}\label{vi.-independent-computational-verification}
+
+\subsection{Historical result: preserved output, missing generating
+artifact}\label{historical-result-preserved-output-missing-generating-artifact}
+
+The archive contains \texttt{LM\_Foundations\_Verification\_Output.txt},
+a two-line record reporting 20,873 checks and naming the families
+covered. Revision notes repeat it. The current manuscript says an
+independent standard-library checker accompanies the revision. The
+recursive search did \textbf{not} locate an identifiable generating
+checker, execution command, family-by-family count definition,
+environment record or source hash for that run.
+
+The search also examined the separately mentioned historical
+\texttt{verify\_cm\_lm.py} and the earlier audit's 1,536,530-assertion
+claim. Those claims are not the same run as 20,873, and their named
+checker was not located either. Later partition-tool strings describe
+missing artifacts; they are not the missing implementation. Incidental
+occurrences of 20873 in resource-inventory rows are not evidence about a
+verification run.
+
+Accordingly, the precise classification is \textbf{supported by
+historical output, not reproducible from the supplied artifacts}. This
+is not evidence that the old computation was fabricated or that its
+claims are false. It is a reproducibility defect in the release package.
+Reconstructing a different loop that happens to count to 20,873 would
+not repair the provenance.
+
+\subsection{New checker and execution}\label{new-checker-and-execution}
+
+The new \texttt{verification/independent\_verify.py} does not import the
+author's computational modules. It uses Python's standard library, exact
+Boolean operations, explicit tables and independent comparison routes.
+Its SHA-256 is:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{f2d042ff56f94d5c061f391bd648a5e0e124958792344f9b706a131bae69defc}
+\end{Highlighting}
+\end{Shaded}
+
+Run it from its folder with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{python independent\_verify.py}
+\end{Highlighting}
+\end{Shaded}
+
+The recorded run used Python 3.13.5 on Linux and passed
+\textbf{2,022,648 counted equality/characterization checks}.
+\texttt{verification\_results.json} records all 28 counter families,
+their granularities, the environment, source hash and the explicit field
+\texttt{historical\_20873\_reproduced:\ false}. This is not a speed
+benchmark and is not a proof-assistant formalization.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3400}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6600}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Domain
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What was independently checked
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+All 16 binary connectives & Numeric selection, valuation, normal form,
+inverse, logical pairing, rotation and algebraic matrix identities. \\
+The 16-element formula algebra on two generators & Every reference pair
+and all external formula pairs, including constants, dependence and
+contradictory references. The full-formula pairing family alone has
+1,048,576 checks. \\
+Binary outer operations & All 16 choices each of two inner connectives
+and an outer connective, with valued LM superposition and pairing
+preservation. \\
+Independent signed input frames & All binary signed-frame combinations
+in the declared tests, including transport before comparison rather than
+comparing unaligned arrays. \\
+Matched kernel products & All 256 pairs of binary matrices at all eight
+valuations of the three references. \\
+Polarity-image membership & All 65,536 four-cell tensors over the
+two-generator formula algebra; exactly 16 satisfy the required polarity
+equivariance. \\
+Partition selectors & All 65,536 four-weight tuples characterized; 256
+are partitions. Outer-operation checks then use five specified
+representative input tensors, not every pair of possible tensors. \\
+Ternary functions & All 256 truth functions, valuation/pairing instances
+and all 48 signed permutations in the declared loops; explicit symbolic
+transport is separately checked. \\
+Flattenings and blocks & Ordered rectangular and noncontiguous
+selections, and all 16-by-16-by-16 binary block-lift choices across four
+variables. \\
+All 256 two-by-four matrices & Rank-one/conjunctive characterization and
+minimum XOR-outer-product length, with minimum length computed by
+breadth-first search independently of Gaussian rank. \\
+ANF parity & Every Boolean function through arity four, not just
+selected truth tables. \\
+Compact spectral/algebraic boundary & Cayley--Hamilton and idempotence
+checks, with eight idempotents and four symmetric idempotents. A compact
+atlas is supplied as JSON. \\
+\end{longtable}
+
+The two-by-four rank distribution is one rank-zero matrix, 45 rank-one
+matrices and 210 rank-two matrices. The breadth-first decomposition
+calculation agrees with the rank in every case. The symbolic
+calculations compare whole formulas represented by truth masks, so they
+are not merely tests on mutually independent \(A,B,X,Y\) variables.
+
+The boundary-witness file records expected failures of overbroad
+extensions: unaligned fusion, unmatched intermediate frames, unchanged-g
+output complement, arbitrary nonpartition selectors, OR/XOR interchange,
+double polarity transport, and a spectral truth-value interpretation of
+the raw OR matrix. These are not counterexamples to the current
+qualified theorems.
+
+\subsection{What is and is not
+reproduced}\label{what-is-and-is-not-reproduced}
+
+\textbf{Reproduced from original generating code:} not the historical
+20,873 or 1,536,530 runs. \textbf{Independently cross-checked:} the
+current finite claims and conventions within the explicitly enumerated
+domains above. \textbf{Proved beyond those domains:} the arbitrary-arity
+identities by the arguments in Section V. \textbf{Not established by
+computation:} historical priority, article significance, physical
+interpretation, compiler performance or all possible higher-dimensional
+inputs.
+
+The mandatory manuscript repair is to recover and freeze the old source,
+or replace the historical assertion with a new, accurately described
+verification note. The new suite should retain its own count and version
+rather than being renamed as the old one.
+
+\section{VII. Independent novelty and prior-art
+analysis}\label{vii.-independent-novelty-and-prior-art-analysis}
+
+\subsection{Raw numeric operations have close, explicit
+antecedents}\label{raw-numeric-operations-have-close-explicit-antecedents}
+
+The proceedings version of Cheng, Zhao and Xu's \emph{Matrix Approach to
+Boolean Calculus} states Proposition 3.3, equation (17), on page 6952:
+the truth vector of a binary outer operation on two functions of the
+same ordered variables is obtained entrywise. Reshaping the four entries
+gives exactly the numeric CM superposition law. This is direct overlap,
+not merely a broad resemblance to STP. The current manuscript correctly
+credits it. The surrounding XOR--AND Boolean matrix calculus also
+prevents presenting the coefficient algebra as new {[}S1{]}.
+
+Bricken's internally March-1997-dated note explicitly uses the sixteen
+binary relation matrices and bra--matrix--ket evaluation. Its
+truth-state convention differs, and some of its calculations use
+ordinary arithmetic values such as 2 and -1, so it is not safe to
+identify its entire algebra with the manuscript's XOR--AND ring. It is
+nevertheless decisive prior art against novelty claims for the binary
+matrix shape or logical Dirac-style notation. Its verified internal date
+does not independently establish an original public-release date or
+peer-reviewed status {[}S2{]}.
+
+The NPN component is similarly established. Input negation, permutation
+and output phase are standard transformations of truth functions.
+Current matrix formulas make those moves visible; they do not create a
+new equivalence relation or canonicalization problem {[}S8,S9{]}.
+
+\subsection{Formula-valued matrices and the frame mechanism also have
+close
+antecedents}\label{formula-valued-matrices-and-the-frame-mechanism-also-have-close-antecedents}
+
+Gudder and Latremoliere study matrices over Boolean algebras. Their
+Example 2.13, specialized to a two-component stochastic vector
+\((X,\neg X)\), produces the same two-by-two complementary frame pattern
+used here. Their treatment connects orthogonal Boolean bases and
+invertible Boolean operators. The scalar addition is join rather than
+unrestricted XOR, so the transfer must be stated on the orthogonal
+partition terms where the two agree; arbitrary products in the two
+calculi are not interchangeable {[}S3{]}.
+
+This materially narrows the novelty claim. The normal form is a useful
+application of a classical Boolean frame to a truth-table kernel, rather
+than compelling evidence of a new kind of matrix. Orthogonal/minterm
+expansion is also an established subject {[}S4,S18{]}. The exact CM/LM
+labels, reference-frame bookkeeping and combined presentation may be
+distinctive, but the presence of formulas rather than bits is not enough
+by itself to establish novelty.
+
+\subsection{The central coherence theorem has a simple general
+explanation}\label{the-central-coherence-theorem-has-a-simple-general-explanation}
+
+Identify a formula with its truth function on valuations. A formula
+tensor is then a Boolean function of a valuation and a polarity index.
+The LM lift is pullback along
+
+\[
+(x,\alpha)\longmapsto x\Updownarrow\alpha\Updownarrow\mathbf1.
+\]
+
+Valuation fixes \(x\); a frame change reindexes inputs; logical pairing
+restricts the tensor to the index graph selected by the formula states.
+Each construction preserves Boolean operations. The architecture's
+coherence is therefore an instance of preservation by function-algebra
+homomorphisms. This reduction is an independent mathematical comparison,
+not a claim that a particular source already prints the manuscript's
+exact diagram. General Boolean-algebra and universal-algebra background
+supports this perspective {[}S11,S12{]}.
+
+The strongest possible hostile reading is ``several truth-table
+identities dressed as matrices.'' The manuscript's answer should not be
+another repeated assertion that operators are first-class operands. Its
+stronger answer is an actual demonstration that the type contract
+catches a frame error, the symbolic representation survives dependent
+substitution, and one calculation can be carried through multiple
+semantics without reconstructing its meaning each time. That would
+establish useful synthesis even if no constituent identity is
+historically new.
+
+\subsection{Spectral logic is a different representation, not a novelty
+rescue}\label{spectral-logic-is-a-different-representation-not-a-novelty-rescue}
+
+Eigenlogic uses interpretation-space projectors whose eigenvalues encode
+truth outputs. The manuscript's diagonal \(\mathsf D_\Theta\) has this
+interpretation, whereas the compact two-by-two \(\mathbb F_2\) CM
+generally does not {[}S5,S6{]}. The appendix correctly distinguishes the
+two. Earlier Boolean-matrix eigenproblems must also be distinguished
+from the field spectrum because their scalar operations can differ
+{[}S20,S21{]}.
+
+A concrete historical correction is necessary: the inspected passage in
+Toffano deliberately discussing the avoidance of Dirac notation occurs
+in \textbf{version 12, dated 6 February 2018}, section 5. The first
+version, posted in December 2015, does not contain that passage. It is
+sound to cite the work as first posted in 2015, but not to assign the
+checked version-specific wording to its first version. The separate 2016
+Dubois--Toffano paper does use Dirac-style projectors {[}S5,S6{]}.
+
+\subsection{Searches beyond the manuscript's named
+sources}\label{searches-beyond-the-manuscripts-named-sources}
+
+Orthogonal Boolean expansion under equivalent terminology led to Sule's
+treatment of Boolean-algebra-valued coefficients and orthonormal
+expansions {[}S18{]}. A 2025 paper on matrix-product-state
+representations of Boolean functions offers a contemporary comparison
+involving variable-dependent binary matrices, Shannon expansion and
+function operations {[}S19{]}. These are relevant context for symbolic
+matrix representations; this audit does not claim that either gives the
+complete polarity-LM architecture. Matrix-based Datalog literature was
+also screened but concerns a different relational setting and does not
+supply a decisive exact antecedent here.
+
+There are limits to the historical coverage. The full Stern monograph
+was not accessible for comprehensive inspection; the 1992 Mizraji
+bibliographic detail was not fully independently resolved; Sampei was
+checked at the primary bibliographic/available indexed-content level,
+not through a complete page-by-page reading. Exact wording searches did
+not locate a single earlier source containing the whole present package.
+\textbf{That negative search result does not establish priority.} It
+supports only the bounded conclusion that the integrated presentation
+remains potentially differentiated on the inspected evidence.
+
+\subsection{Significance is not the same score as
+novelty}\label{significance-is-not-the-same-score-as-novelty}
+
+Separate editorial assessments are: new-theorem novelty \textbf{4/10};
+conceptual usefulness \textbf{7/10}; unification value \textbf{7/10};
+current expository value \textbf{6.5/10}; notation/representation value
+\textbf{6.5/10}; methodological potential \textbf{7/10}; demonstrated
+present utility beyond examples \textbf{5/10}. These are judgments, not
+measured quantities, and are distinct from the weighted readiness
+rubric.
+
+The best genre is a \textbf{synthesis/expository article with a
+methodological core}. A tutorial/reference form is also viable. Calling
+it a new-results research article would require a stronger case for a
+substantive theorem or application not already immediate from standard
+structures. A representation paper need not be rejected merely because
+it is elementary, but it must earn its notation through clarity, a task
+or an explanatory advantage.
+
+\section{VIII. Novelty/priority
+matrix}\label{viii.-noveltypriority-matrix}
+
+The table separates exact overlap, mathematical difference and
+defensible language. Confidence concerns the indicated comparison, not
+global firstness. The full discussion and bibliography identify the
+source-inspection limits.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2300}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4100}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3600}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Contribution
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Closest overlap and remaining difference
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Defensible classification and wording
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Two-by-two numeric truth matrix and basis selection & Bricken and
+broader matrix logic {[}S2,S13-S16{]}. State order and naming differ. &
+\textbf{Established prior art; high confidence.} ``We use a true-first
+matrix encoding of binary truth tables.'' \\
+Aligned numeric entrywise superposition & Exact truth-vector law in
+Cheng et al., Proposition 3.3 {[}S1{]}. A reshape does not change the
+law. & \textbf{Established prior art; high.} ``The familiar aligned
+truth-vector law is transported through the LM layer.'' \\
+Formula-valued polarity LM & Boolean-algebra-valued matrices and
+orthogonal expansions {[}S3,S4,S18{]}; the displayed orbit and reference
+labels organize them in a particular way. & \textbf{Known ingredients in
+a possibly distinctive architecture; medium.} ``We organize symbolic
+polarity orbits and their numeric valuations in one typed calculus.'' \\
+Frame matrix and normal form & The two-component Boolean frame has a
+close explicit antecedent {[}S3{]}; minterm expansion supplies the
+kernel factorization. & \textbf{Straightforward structural formulation;
+high for mechanism, medium for exact historical formulation.} ``The
+normal form makes reconstruction and specialization explicit.'' \\
+Agreement-bit logical pairing & Boolean state/selector contractions and
+the frame factorization reduce it to a cofactor identity; numeric
+bra-ket logic is earlier {[}S2,S3{]}. & \textbf{Useful representation
+identity; priority unestablished.} ``Pairing has exact agreement-bit
+semantics.'' \\
+Partition selector characterization & Orthogonal idempotents and a
+unital linear map yield a Boolean homomorphism {[}S3,S11{]}. &
+\textbf{Standard algebraic mechanism; high.} ``A selector lemma explains
+why arbitrary outer Boolean terms commute with pairing.'' \\
+Coherence package & Each map is a Boolean homomorphism or pullback; the
+combination is the potential contribution. & \textbf{Synthesis rather
+than a demonstrated deep new theorem; high for reduction, medium for
+architectural distinctness.} ``We collect the compatibility laws in a
+common typed framework.'' \\
+Matched-frame kernel composition & Invertible change-of-basis
+cancellation; parity kernel composition is ordinary matrix
+multiplication. & \textbf{Straightforward corollary; high.} ``The
+representation also transports parity kernel composition when the middle
+frame matches.'' \\
+Orbit image and equivariance & An orbit-valued equivariant object is
+determined by its reference cell {[}S11{]}. & \textbf{Standard result in
+concrete notation; high.} ``Equivariance characterizes the LM
+image.'' \\
+Tensors and rectangular flattenings & Truth tables, one-hot tensors and
+coordinate reshaping {[}S7,S10,S19{]}. The typed operand labels are the
+specific emphasis. & \textbf{Standard representation, potentially useful
+specification; high.} ``The construction extends to ordered rectangular
+correspondence maps.'' \\
+XOR/conjunctive rank decomposition & Ordinary field rank equals minimum
+outer-product length. The Boolean-function interpretation changes no
+rank theorem. & \textbf{Standard linear algebra; high.} ``Flattening
+rank quantifies XOR-conjunctive separability across the declared
+partition.'' \\
+Signed frames/NPN & Established truth-function transformations and
+implementation reuse {[}S8,S9{]}. & \textbf{Established prior art;
+high.} ``We express standard input-frame transformations in the CM/LM
+notation.'' \\
+ANF top coefficient and truth parity & Direct Boolean Mobius inversion
+{[}S10{]}. & \textbf{Standard corollary; high.} ``Truth-tensor parity
+detects the full-degree coefficient.'' \\
+Compact spectra and diagonal truth observable & Elementary finite-field
+classification versus established spectral truth operators
+{[}S5,S6,S20,S21{]}. & \textbf{Boundary/expository contribution; high.}
+``Compact CM spectra must be distinguished from interpretation-space
+truth spectra.'' \\
+Entire integrated paper & No inspected source was shown to contain the
+identical package; inaccessible literature remains. & \textbf{Apparently
+differentiated organization, not certified priority; medium.} ``A
+unified formula-valued symbolic/numeric presentation with explicit
+operation and frame contracts.'' \\
+\end{longtable}
+
+\section{IX. Reviewer-feedback closure
+matrix}\label{ix.-reviewer-feedback-closure-matrix}
+
+The older foundation audit addresses an earlier revision. Its criticisms
+were checked against the \textbf{current} source rather than copied into
+this verdict. The compiler reviews were also separated from
+foundations-specific obligations. A later register repeating a criticism
+is not an additional independent audit.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2700}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4800}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Feedback
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Disposition and current location
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Independent assessment
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+F01: Earlier CM\_LM\_Audit\_Astra: zero/one-triggered mask mismatch &
+\textbf{Resolved}. Theorem 6.4; equation (36) & The current pi mask is
+explicitly one-triggered and the valuation formula agrees. Do not repeat
+the old counterexample as a current defect. \\
+F02: Earlier audit: free references versus substituted formulas &
+\textbf{Resolved}. Section 3.1; Theorem 3.2 & Joint satisfiability is
+now confined to all-true specialization. Frame inversion remains valid
+even without it. \\
+F03: Earlier audit: introduce invertible formula frame normal form &
+\textbf{Resolved}. Theorem 3.1 & Both forward and inverse identities and
+their minterm proof are present. \\
+F04: Earlier audit: pairing preservation needs a structural proof &
+\textbf{Resolved}. Theorem 4.5; Theorem 6.12 & Orthogonal partition
+weights now explain arbitrary outer Boolean operations. \\
+F05: Earlier audit: term extension for arbitrary f & \textbf{Resolved}.
+Equation (31); Definition 6.5 & The canonical Boolean term is explicit,
+so formula substitution is well typed. \\
+F06: Earlier audit: exact higher-arity pairing and reconstruction &
+\textbf{Substantially resolved}. Theorem 6.15 & The theorem is correct.
+Expand the sentence identifying the selected tuple as agreement bits. \\
+F07: Earlier audit: flattened noncontiguous variable order &
+\textbf{Resolved}. Section 7; Definition 7.1 & An ordered assembly map
+removes the ambiguity. \\
+F08: Earlier audit: rank-one converse and minimum XOR rank &
+\textbf{Resolved}. Theorem 8.2 & Both directions and the
+rank-factorization argument are present; only the zero/empty-sum
+convention needs explicit wording. \\
+F09: Earlier audit: top-degree statement must exclude zero arity &
+\textbf{Resolved}. Proposition 10.1 & The current proposition explicitly
+assumes n\textgreater=1. \\
+F10: Earlier audit: input/output phase distinction & \textbf{Resolved}.
+Theorem 6.12(3); Remark 6.13 & Output complement is excluded from the
+unchanged-g law and the dual function is supplied. \\
+F11: Earlier audit: distinguish ordinary LM multiplication &
+\textbf{Resolved}. Section 5.1; Theorem 5.5 & Matched intermediate
+frames are required; the text distinguishes parity kernel composition
+from other products. \\
+F12: Earlier audit: action direction & \textbf{Substantially resolved}.
+Section 9 & The numeric right action is exact. An explicit symbolic
+signed action should still be added. \\
+F13: Earlier audit: elementary orbit result is not a novelty theorem &
+\textbf{Resolved as wording}. Remarks 6.8, 6.10 and Section 13 & The
+manuscript now acknowledges the classical function-algebra mechanism.
+The value of the remaining synthesis still needs demonstration. \\
+F14: Earlier review: pointwise numeric superposition already in Cheng &
+\textbf{Resolved as attribution}. Introduction; Section 5; Table 1 & The
+2011 Proposition 3.3 is explicitly credited and independently confirmed
+in the proceedings PDF. \\
+F15: Earlier review: Bricken predates bra-ket and 2 by 2 matrices &
+\textbf{Substantially resolved}. Introduction; Section 13 & The direct
+numeric antecedent is acknowledged. Retain the distinction between
+internal date and verified public availability. \\
+F16: Earlier audit: stronger Boolean-space/orthogonal-expansion
+comparison & \textbf{Partially resolved}. Section 3.2 & Gudder and
+Sampei are cited, but the exact n=2 frame construction in
+Gudder--Latremoliere deserves a direct comparison. \\
+F17: Earlier audit: do not confuse raw spectrum and truth values &
+\textbf{Resolved}. Appendix A & The OR/XOR examples, diagonal observable
+bridge and absence of physical measurement semantics are now clear. \\
+F18: Earlier audit: phase and quantum material overload &
+\textbf{Substantially resolved}. Section 11; discussion; Appendix A &
+The extra multiplication is fenced off. The spectrum appendix could be
+shortened further for exposition. \\
+F19: Earlier audit: diagrams need layout work & \textbf{Substantially
+resolved}. Figures 1-4, compiled pages 6,16-18 & No clipping found;
+Figure 2 upper label is still crowded against its boxes. \\
+F20: Earlier audit and revision notes: many repeated OR/AND/XOR
+demonstrations & \textbf{Partially resolved}. Examples 5.3-5.4; Remark
+6.14 & Current examples are correct but should be threaded into one
+calculation instead of reset repeatedly. \\
+F21: Preservation audit, viability review and revision notes: runnable
+foundations checker & \textbf{Unresolved in supplied package}. Appendix
+E & The missing generating source is independently confirmed. New
+verification supplied by this audit is a replacement, not recovered
+provenance. \\
+F22: Earlier audit: 1,536,530 checks and verify\_cm\_lm.py &
+\textbf{Requires external evidence}. Historical audit
+finite-verification section & A historical assertion is present; its
+named program is not located. This neither validates nor disproves that
+past run. \\
+F23: Earlier literature discussion: Eigenlogic deliberately avoids Dirac
+notation & \textbf{Partially resolved; version correction needed}.
+Introduction; Toffano bibliography entry & The inspected supporting
+passage is in v12 (2018), not the first 2015 version. Credit the work
+and version separately. \\
+F24: Bibliographic placeholder for Zhao/Gao/Cheng & \textbf{Unresolved}.
+Bibliography ZhaoSTP & The undated author preprint is identifiable.
+Supply that stable record, or compare it with the related 2012 journal
+paper before replacing the citation. \\
+F25: Viability review: justify standalone value/genre with a task &
+\textbf{Unresolved}. Introduction and discussion & Typed architecture is
+plausible but an end-to-end demonstration and explicit comparison remain
+the highest-value journal revisions. \\
+F26: Compiler R1/R2: hybrid failure, benchmark freeze, speed and
+comparator obligations & \textbf{Not applicable to foundations verdict}.
+Actual compiler manuscript and reviews & Those are compiler-specific
+obligations. The foundations manuscript uses none of those empirical
+claims in its proofs. \\
+F27: Compiler R1: scalar transpose/axis confusion in earlier
+computational presentation & \textbf{Obsolete for this source}. Equation
+(6); Example 5.3 & The current foundations transpose and ordered-frame
+statements are correct. \\
+F28: Portfolio warnings: missing figures in other papers & \textbf{Not
+applicable to this source}. Fresh foundations build & This source
+defines its figures inline with TikZ and compiles without missing
+assets. Do not import another manuscript build failure. \\
+F29: Repeated later registers endorse prior findings & \textbf{Not
+independent verification}. Program partition tools and summary registers
+& Their repetition is provenance/triage evidence, not additional
+mathematical or experimental confirmation. No evidence of intentional
+misrepresentation is inferred. \\
+\end{longtable}
+
+The substantive unresolved foundation issues are therefore not the
+earlier mask error or a failure of dependent-formula semantics. They are
+the runnable-checker claim, exact historical versioning and citations,
+the residual symbolic transport specification, and the need to
+demonstrate the value of the synthesis. No evidence was found that
+warrants an allegation that earlier reviewers intentionally
+misrepresented their work. Their stated inspection limits and the
+provenance of repeated conclusions should simply remain visible.
+
+\section{X. Bibliography and historical-attribution
+audit}\label{x.-bibliography-and-historical-attribution-audit}
+
+There are \textbf{21 bibliography entries} in the audited source. The
+following status table addresses all of them. ``Metadata checked'' does
+not mean the complete work was read. The source register at the end of
+this report identifies the accessible primary records and important
+locators.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2100}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3600}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4300}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Manuscript entry
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Audit status
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Required or recommended action
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Edwards 1972 & Publisher metadata supports title, journal 15(3), 247-253
+and year. Full paper not comprehensively inspected {[}S13{]}. & Retain;
+DOI 10.1093/comjnl/15.3.247 may be added. Do not use a broad citation as
+evidence for a specific LM theorem. \\
+Stern 1988 & Book/preview record supports author, matrix-logic work and
+publication. Full monograph not reviewed {[}S14{]}. & Retain
+conservatively; do not claim that an unsearched book lacks
+formula-valued precedents. Verify the edition's full title on its title
+page before submission. \\
+Mizraji 1992 & Exact primary bibliographic/content verification remains
+incomplete in this audit {[}S15{]}. & Independently confirm title,
+volume/issue/pages against the original record. Do not add an unverified
+DOI. \\
+Mizraji 2008 & Publisher issue record supports 18(1), 97-121 and DOI
+10.1093/logcom/exm057; an author manuscript was available {[}S16{]}. &
+Retain 2008 as issue year; distinguish an earlier online date from that
+year. \\
+Cheng and Qi 2010 & Author PDF/record supports the IEEE article, 55(10),
+2251-2258 {[}S7{]}. & Retain. This is numeric structure-matrix context,
+not proof that the full LM architecture already appears there. \\
+Cheng, Zhao and Xu 2011 & Actual proceedings PDF and Proposition 3.3
+checked {[}S1{]}. & Retain exact proceedings version, pages and DOI. The
+manuscript's direct attribution is appropriate. \\
+ZhaoSTP & The named nine-page author-hosted preprint exists. The
+``details to be checked'' wording is not publication-grade {[}S22{]}. &
+Cite it accurately as an undated preprint with stable URL/access date,
+or first compare it with the related 2012 journal article before
+substituting that record. \\
+Toffano 2015 & First-posting date is correct, but the inspected
+Dirac-notation statement belongs to v12 (2018), not v1 {[}S5{]}. & Cite
+the first-posted work and the specific 2018 version/section supporting
+that assertion. \\
+Dubois and Toffano 2016 & arXiv:1607.03509, authors, year and
+projector/Dirac content checked {[}S6{]}. & Retain as the preprint
+actually inspected; do not invent journal publication metadata. \\
+Droncheff 2018 & Public record distinguishes May 2018 labeling and
+upload on 1 October 2018 {[}S17{]}. & The current caution is correct.
+Retain the historical author name and DOI; do not collapse the two
+dates. \\
+TheoryCompiler2026 & Unpublished companion exists in the archive and
+actual relevant manuscript sections were inspected. & Give a stable
+deposited version or a precise unpublished description. Keep the
+foundations proofs self-contained. \\
+TheoryPhase2026 & In-preparation self-citation is not an independently
+retrievable finalized publication. & Remove if unused; otherwise retain
+explicitly as in preparation, without making it a necessary proof
+reference. \\
+Rutherford 1965 & Publisher metadata supports 67(1), 25-38 and DOI
+10.1017/S0080454100010712 {[}S20{]}. & Retain the warning that its
+Boolean algebra need not be the present XOR--AND field algebra. \\
+Blyth 1967 & Publisher metadata supports 67(3), 196-204 and DOI
+10.1017/S0080454100008049 {[}S21{]}. & Same algebraic qualification; no
+full-paper theorem comparison is claimed here. \\
+Bricken 1997 & Actual nine-page note inspected; internal date and
+explicit binary bra-ket examples confirmed {[}S2{]}. & Retain the
+unresolved public-release/peer-review qualification. Distinguish its
+mixed arithmetic examples from the present scalar convention. \\
+Mishchenko et al.~2006 & Proceedings PDF/record supports three authors,
+DAC pages 532-536 and DOI 10.1145/1146909.1147048 {[}S8{]}. & Retain as
+NPN/cut-reuse context, not a direct formula-LM source. \\
+Zhou, Wang and Mishchenko 2019 & Author PDF confirms the three-author
+TRETS article 12(2), Article 7, 16 pages; DOI 10.1145/3313917 {[}S9{]}.
+& Current authors are correct. Do not confuse it with a related
+four-author conference paper. \\
+Gudder and Latremoliere 2009 & Primary paper and arXiv publication
+record checked {[}S3{]}. It also appeared in Linear Algebra and its
+Applications 431(1-2), 272-296. & Strengthen to the journal citation
+while retaining the accessible preprint. Add the exact
+frame/orthogonal-basis comparison. \\
+Sampei 1950 & Primary metadata supports author, pages 113-125, volume
+11(3) and DOI 10.14492/hokmj/1530864050 {[}S4{]}. Full article access
+was limited. & Retain as historical orthogonal-expansion context; avoid
+a more specific theorem claim without reading the relevant page. \\
+Burris and Sankappanavar 1981/2012 & Author-hosted corrected 2012
+edition identifies the original 1981 book {[}S11{]}. & Current edition
+distinction is sound. Give a relevant chapter/section if making a
+precise attribution. \\
+Post 1941 & Publisher preview identifies the work and original 1941
+copyright/series {[}S12{]}. & Retain 1941; a later reprint/catalog year
+is not grounds to silently replace it. \\
+\end{longtable}
+
+The clearest required changes are the Zhao placeholder and the
+version-specific Toffano attribution. Strengthening the Gudder
+comparison matters more than adding a long list of distant operator
+papers. Verifying the outstanding Mizraji record is a small but
+necessary submission task. The 2025 MPS comparison is useful optional
+context, not a mandatory claim that the manuscript has been superseded.
+
+No unpublished companion is needed to follow the core proofs as written.
+A scholarly citation may acknowledge origin or a related program, but it
+should not be the only source of a hypothesis, definition or proof used
+in this paper. The current foundations manuscript largely satisfies that
+requirement.
+
+\section{XI. Scope and cross-paper boundary
+analysis}\label{xi.-scope-and-cross-paper-boundary-analysis}
+
+\subsection{Foundations versus
+compiler}\label{foundations-versus-compiler}
+
+The actual companion compiler manuscript contains the binary formula LM,
+its valuation, logical pairing and valuation/pairing commutation in its
+LM section. These are genuine overlapping mathematical passages, not
+overlap inferred solely from an ownership register. Its implementation
+discussion also makes clear that the compiler operates on numeric
+four-bit CM tokens and pair metadata, not on arbitrary symbolic
+formula-valued matrices. Therefore the foundations calculus should not
+be credited with an implemented formula-level compiler that the
+companion does not actually implement.
+
+This overlap is manageable. The foundations article should own the full
+definitions and proofs. The compiler can retain a short, self-contained
+statement of the numeric frame/fusion invariant, with a concise
+explanation of its relation to the LM viewpoint and a precise
+cross-reference. It should not be necessary to read a performance paper
+to understand Theorem 4.1 here, nor to reproduce every foundational
+theorem in the compiler.
+
+The companion's unfinished confirmatory experiment and the old
+hybrid/fallback review issues are \textbf{not mathematical defects in
+this foundations manuscript}. No speed or memory claim is used as a
+premise here. Conversely, the correctness of this calculus is not
+evidence of compiler profitability. The report does not certify the
+companion's source, experimental protocol or performance.
+
+\subsection{Foundations versus phase and modal
+work}\label{foundations-versus-phase-and-modal-work}
+
+The archive's correctness/model-boundary report explicitly separates
+native two-by-two CM logic, a rotation-generated coefficient algebra,
+shared modules, literal tensor systems and additional allowed
+gates/measurements. Selected actual source passages were inspected, not
+just the ownership summaries. Those distinctions reinforce the current
+foundations boundary: truth-table selection alone does not establish
+Bell phenomena, teleportation, interference resources or a physical
+theory.
+
+The current manuscript correctly identifies literal rotation as a signed
+coordinate action and treats cyclic convolution as an additional
+multiplication. Its short group-algebra isomorphism is mathematically
+sound, but the development of units, nilpotents, operational
+restrictions and modal resources belongs elsewhere. Nothing found in
+those companion corrections invalidates the formula frame or agreement
+pairing. No modal correctness campaign was rerun as part of this
+foundations audit.
+
+The spectral appendix can remain as a defensive clarification, but it
+should not grow into another paper inside this one. A compact
+explanation that matrix elements and eigenvalues are different
+semantics, with OR as a counterexample and the diagonal truth
+representation as a comparison, is enough for most readers.
+
+\subsection{Structural computation and
+decomposition}\label{structural-computation-and-decomposition}
+
+The structural-computation collection describes research endpoints and
+incomplete empirical work, not a completed experiment supporting the
+present foundations. The ordinary rank/separability theorem belongs
+naturally here as a mathematical explanation of flattenings. Claims
+about avoiding materialization, structural retrieval, persistent
+decomposition or end-to-end speed belong to the structural/computational
+work and require their own evidence.
+
+\textbf{Standalone assessment:} the current foundations mathematics is
+substantially self-contained. The remaining cross-paper task is
+editorial ownership and reduction of duplicated proofs, not recovery of
+an external theorem without which this paper fails.
+
+\section{XII. Completeness audit}\label{xii.-completeness-audit}
+
+The main mathematical objects, scalar algebra, valuation map, polarity
+convention, ordered flattening and pointwise operation are defined. The
+proofs needed for the principal claims are present. The theorem count
+does not conceal a missing central result. The following changes would
+make the paper more complete as a standalone article without enlarging
+its research scope.
+
+First, make the symbolic signed-frame action explicit using the identity
+in Section V of this report. This closes the gap between an informal
+``typed'' promise and an executable convention. Second, explain the
+higher-pairing selector step rather than relying on an abrupt appeal to
+a general theorem. Third, state the zero/empty-sum and optional
+empty-block conventions where relevant.
+
+Fourth, supply one complete worked example from a logical expression
+through two differently framed occurrences, alignment, operator
+combination, symbolic pairing and numeric valuation. The current short
+examples each illustrate a correct local identity, but the reader does
+not yet see the whole promised architecture doing one job. A small
+noncontiguous rectangular example would also help readers use the
+assembly definition.
+
+Fifth, publish the verification source actually supporting the new
+revision and accurately state what was checked. The present verification
+appendix is incomplete as an artifact claim, despite the finite
+mathematics being independently sound.
+
+Finally, align headings with content. Appendix A is titled a compact-CM
+atlas, but presents representative spectral examples and the idempotent
+classification rather than a full sixteen-row atlas. Either rename it to
+``Spectral boundary and examples'' or supply a genuine complete table as
+supplementary material. The independent atlas JSON in this audit can
+support the latter after integration and review.
+
+The binary LM basis appendix is useful but could be shortened by
+referring to the normal form. The compatibility appendix largely repeats
+the main theorem and could become a one-page reference box. The notation
+table is valuable as an appendix. The finite verification note should
+stay separate from the proofs, with its executable supplement clearly
+linked. No full clone formalism, operator-valued enrichment, new phase
+theory, or physical measurement axioms are needed to make the present
+article complete.
+
+\section{XIII. Exposition and editorial
+review}\label{xiii.-exposition-and-editorial-review}
+
+\subsection{Organize around the useful
+mechanism}\label{organize-around-the-useful-mechanism}
+
+The reader should encounter a practical semantic problem before a long
+list of representation levels. A good opening is the
+reversed-implication example: two local operators have identical numeric
+arrays, but canceling them without their operand frames gives the wrong
+answer. This motivates labelled frames. The formula frame then explains
+how to transport them; the selector theorem explains why pairing and
+outer operations agree.
+
+The strongest short narrative is: \textbf{truth kernel; symbolic frame;
+agreement pairing; Boolean-homomorphism coherence; typed higher-arity
+extension}. Ordinary rank and rotation boundaries are
+applications/reference material, not competing main themes.
+
+The introduction, abstract, status paragraph, related-work section,
+discussion and conclusion repeatedly explain that the individual
+ingredients are classical and that no physics or speedup is assumed.
+Those cautions are appropriate, but repetition makes the article sound
+defensive and interrupts the mathematics. Give one precise contribution
+statement, one operation/type table and one boundary paragraph; use
+short cross-references thereafter. Removing repeated disclaimers is not
+permission to strengthen the novelty claims.
+
+\subsection{Concrete section-level
+edits}\label{concrete-section-level-edits}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2200}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4300}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Location
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Editorial action
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reader benefit
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Abstract & Lead with the frame normal form and agreement semantics;
+shorten the inventory of extensions. & The organizing idea becomes
+visible before the notation list. \\
+Introduction/status paragraph & Replace project-history prose with a
+short provenance note and one clear contribution boundary. & A reader
+outside the portfolio can understand the paper without knowing the
+earlier split. \\
+Section 2 & Retain the three-composition distinction; consider making
+several elementary propositions a compact preliminary lemma. & Fewer
+theorem labels compete with the actual structural explanation. \\
+Section 3 & Show one LM explicitly factored by its two frames, including
+a dependent-reference specialization. & Explains what is retained beyond
+a single reference formula. \\
+Section 4 & State in words that pairing asks the connective about
+agreement with two references, not about the original truth values
+directly. & Avoids a physical or probabilistic interpretation. \\
+Sections 5-6 & Reuse the same example through superposition, valuation
+and pairing. & Demonstrates coherence rather than repeating isolated
+identities. \\
+Section 6.5 & Add the valuation/selected-index calculation from this
+report. & Removes the most compressed proof transition. \\
+Sections 7-8 & Add one two-by-four noncontiguous flattening example;
+state the limitation of one-bit block summaries. & Prevents a reader
+from mistaking a conditional block lift for universal compact
+decomposition. \\
+Section 9 & Add the explicit symbolic signed-frame formula and one
+mask/permutation check. & Makes the type contract auditable and
+implementable. \\
+Section 10 & Fix the row vector \(t\); shorten the cyclic-algebra
+teaser. & Prevents a dimension mismatch and keeps the coordinate
+comparison focused. \\
+Section 11 & Keep the distinction between the four-coefficient rotation
+operator and a four-variable map; move most future phase discussion out.
+& Equal matrix size no longer suggests equal semantic type. \\
+Related work & Compare the exact Boolean-frame construction, not just
+fields of study. & Gives a fair account of what is and is not new. \\
+Discussion/open directions & Shorten the six-item expansion agenda or
+move it to supplementary research notes. & Avoids making the article
+look like a prospectus for several unfinished papers. \\
+Conclusion & State what the reader can now calculate correctly and what
+remains outside scope. & Ends with an outcome rather than another
+comprehensive disclaimer. \\
+\end{longtable}
+
+The nonstandard \(\Updownarrow\) notation is internally explained and
+need not be replaced. ``Superposition'' is defensible in the defined
+Boolean-function sense but should normally appear as ``pointwise Boolean
+superposition.'' ``State,'' ``bra'' and ``ket'' are acceptable shorthand
+once the formula-state and Boolean-algebra meaning is fixed. ``Logical
+matrix'' is overloaded in existing literature, so retain the qualifier
+\textbf{formula-valued LM} at first use in each main context.
+``Spectrum'' needs its field and multiplicity convention when developed
+further.
+
+A shorter article does not require deleting the conceptual contribution.
+It requires giving the reader fewer parallel names for the same
+preservation mechanism and more evidence of why that mechanism is
+useful.
+
+\section{XIV. Typesetting and build
+audit}\label{xiv.-typesetting-and-build-audit}
+
+The unchanged source was compiled from scratch using pdfLaTeX, with
+shell escape disabled, and a second pass resolved cross-references. The
+source is self-contained with its bibliography and TikZ definitions; no
+external image assets were required.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pdflatex {-}interaction=nonstopmode {-}halt{-}on{-}error {-}no{-}shell{-}escape \textbackslash{}}
+\NormalTok{  {-}output{-}directory=build source/audited\_foundations.tex}
+\NormalTok{\# Run the same command a second time.}
+\end{Highlighting}
+\end{Shaded}
+
+The fresh output is \textbf{31 pages, 615,830 bytes} in the recorded
+build. The pass logs contain no unresolved citations, undefined
+references, duplicate-label diagnostics, or overfull/underfull-box
+warnings. The shell-escape-related epstopdf warning is benign for this
+source, which needs no EPS conversion. The supplied PDF has the same
+page count and the same extracted text on every page. PDF byte identity
+is not claimed.
+
+All pages were rendered and visually surveyed. Figures 1-4 were checked
+in the rendered document, including larger views of pages 6, 16 and 18.
+No clipped text, unreadable mathematical glyphs, missing figures or
+margin overflow was found. Page 16's Figure 2 upper arrow label consumes
+almost the full gap between boxes; splitting ``LM operator
+superposition'' into two lines would avoid its white label background
+crowding the box borders. This is an editorial defect rather than a
+failed build.
+
+The related-work table on page 24 and notation table on page 29 are
+dense; they are legible but could benefit from a shorter text column or
+slightly more space. Some proofs begin on the page after their theorem
+statement. The last bibliography page is sparse. These are P2/P3
+presentation matters, not evidence that the current equations are
+broken.
+
+The audit did not certify PDF accessibility tagging, every external
+hyperlink destination or identical rendering in every PDF reader.
+Source/PDF consistency, successful compilation and the visual checks
+above are the demonstrated build results. The logs and freshly compiled
+paper are included in the bundle.
+
+\section{XV. Publication blockers}\label{xv.-publication-blockers}
+
+\textbf{P0: none established in this audit.} No central false theorem,
+missing core argument, unavoidable contradiction of types or unsupported
+principal firstness assertion was found. The verification run is
+ancillary, so its missing original source should not be escalated into
+an alleged failure of the central mathematics. It still must be
+corrected as a factual publication claim.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1400}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4600}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID / level
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Location and problem
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Required repair and effect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+B1 / \textbf{P1} & Appendix E, L1473-1474: a checker is said to
+accompany the revision, but the generating artifact for 20,873 is not
+located. & Recover it with a count definition and manifest, or
+replace/withdraw that historical reproducibility assertion and ship the
+new checker under its own identity. Required before release. No change
+to the theorems. \\
+B2 / \textbf{P1} & Introduction and bibliography: unresolved Zhao entry,
+version-specific Eigenlogic attribution, incomplete verification of one
+older bibliographic record. & Remove the placeholder; accurately cite
+the inspected Toffano version; check the outstanding Mizraji metadata.
+Required before submission and the concrete known corrections before
+preprint. No mathematical conclusion changes. \\
+B3 / \textbf{P1} & Contribution statement and related work: the closest
+frame/Boolean-space mechanism is not compared directly enough. & Explain
+the exact overlap and the restricted OR/XOR transfer; position the
+contribution as synthesis/methodology unless a stronger result is
+established. Important for journal review, not a demand to invent new
+mathematics. \\
+B4 / \textbf{P1 for a specification article} & Theorem 6.12(3) and
+Section 9: symbolic combined transport is less explicit than the
+advertised typed architecture. & Add the identity in Section V and the
+double-mask warning. A small edit; no central theorem needs to be
+withdrawn. \\
+B5 / \textbf{P1 for journal submission} & Introduction, examples and
+discussion: usefulness of the integrated representation is asserted more
+than demonstrated. & Add one complete task/example and consolidate the
+repeated narrative. Establishes the article's value for its chosen
+genre. \\
+B6 / \textbf{P2} & Section 10, L1167-1175: row truth vector and column
+vec conventions conflict. & Set \(t=\operatorname{vec}([\Theta])^T\).
+Fix before preprint; local dimensional repair only. \\
+B7 / \textbf{P2} & Theorem 6.15 proof; Theorem 8.2; optional empty
+blocks. & Expand the selected-index step and state empty-product/XOR
+conventions. Clarifies generality and degeneracies. \\
+B8 / \textbf{P2} & Foundations/compiler duplication and project-history
+prose. & Give full proof ownership to the foundations and shorten
+companion repetition. No need to merge the papers. \\
+B9 / \textbf{P2} & Appendix A title promises an atlas more complete than
+the displayed examples. & Rename it or include a full supplementary
+atlas. The existing spectral claims remain correct. \\
+B10 / \textbf{P3} & Figure 2 label, dense reference tables,
+theorem/proof page splits, sparse final page. & Small TikZ and
+pagination edits. Cosmetic/readability effects only. \\
+B11 / \textbf{P3} & Formula-matrix convention says ``this subsection
+only''; repeated compatibility prose. & Clarify that the product
+convention also governs the matched-frame theorem and shorten
+repetition. \\
+\end{longtable}
+
+A preprint can be made accurate through a short correction pass even
+though the journal-level exposition and contribution case require major
+revision. Those are different thresholds; the weighted score does not
+erase either one.
+
+\section{XVI. Smallest revision program to reach the next readiness
+state}\label{xvi.-smallest-revision-program-to-reach-the-next-readiness-state}
+
+\subsection{Mandatory correctness and factual
+changes}\label{mandatory-correctness-and-factual-changes}
+
+Freeze a separately attached source file and record its hash. Correct
+the STP vector orientation. Add the explicit symbolic transport identity
+and a sentence making clear that a mask is applied once. Expand the
+higher-pairing proof by identifying the selected polarity tuple. State
+the zero-sum convention in the rank theorem. None of these requires
+changing the normal form, pairing theorem or arbitrary-arity
+architecture.
+
+\subsection{Novelty and claim
+calibration}\label{novelty-and-claim-calibration}
+
+Replace repeated claims that the integration is distinctive with one
+precise paragraph explaining the representation and its compatibility.
+Add the exact Gudder--Latremoliere comparison and retain the direct
+Cheng attribution. Describe the article as a formula-valued
+representation calculus with expository/methodological value. Do not
+claim that all formula-valued Boolean matrices, bra-ket logic, arbitrary
+pointwise operator operations or invertible Boolean frames originated
+here.
+
+\subsection{Literature and history}\label{literature-and-history}
+
+Resolve the Zhao placeholder using the source actually cited. Correct
+the Toffano version attribution. Strengthen the Gudder citation to its
+journal publication and verify the remaining old bibliographic metadata.
+Preserve the manuscript's careful distinction between Droncheff's May
+label and October upload and between Bricken's internal date and public
+chronology. No exhaustive history of every matrix-logic formalism is
+needed, but close mechanisms require accurate attribution.
+
+\subsection{Reproducibility}\label{reproducibility}
+
+Choose explicitly between recovery and replacement. With replacement,
+publish the new checker, outputs, environment, source hash, exact
+enumeration domains and counted units. Update Appendix E to say which
+finite families were tested and make clear that the proofs handle
+arbitrary arity. Remove the assertion that the old 20,873 run is
+reproducible unless its original evidence is actually recovered. Do not
+retain two unexplained large counts as interchangeable endorsements.
+
+\subsection{Structure and exposition for journal
+submission}\label{structure-and-exposition-for-journal-submission}
+
+Use the reversed-implication calculation as the entry point, then
+continue one expression through normal form, pairing and valuation.
+Include dependent references to show what the full LM preserves. Shorten
+the introduction's project history, merge redundant elementary results,
+and consolidate the claim boundary. Keep phase multiplication and modal
+resources outside the main development. Assign full foundational proof
+ownership here and shorten the compiler's duplicate section.
+
+\subsection{Optional, not
+prerequisites}\label{optional-not-prerequisites}
+
+A full sixteen-CM reference atlas, a small noncontiguous flattening
+example, a compact formula-pullback diagram, or a short comparison with
+contemporary Boolean matrix-product representations would help. A full
+clone formalization, new universal categorical language, operator-valued
+enrichment, additional phase theorems and an expanded quantum discussion
+are not needed for the next release and risk recreating the scope
+problem.
+
+\textbf{Acceptance test for the revised preprint:} source/PDF identity
+is frozen; all known factual/type corrections are made; the verification
+note matches a shipped runnable artifact; bibliography placeholders are
+gone; the claim paragraph states the honest genre. \textbf{Acceptance
+test for a journal-ready revision:} additionally, the paper demonstrates
+why its architecture is useful and reduces duplicated or peripheral
+material enough that the contribution is easy to identify.
+
+\section{XVII. Final readiness determinations and explicit
+answers}\label{xvii.-final-readiness-determinations-and-explicit-answers}
+
+\subsection{Five distinct
+determinations}\label{five-distinct-determinations}
+
+\textbf{A. Public preprint: READY AFTER MINOR CORRECTIONS.} The
+mathematics is sufficiently sound for public circulation once the known
+artifact, citation-version and local typing issues are corrected. This
+is not approval to post the unmodified verification claim. A preprint
+can accurately present a synthesis without first proving a new research
+theorem.
+
+\textbf{B. Journal submission in current form: MAJOR REVISION REQUIRED.}
+The remaining work concerns the contribution case, comparison with close
+antecedents, demonstration of utility, reproducible supplement and
+narrative focus. A journal-facing reader should not have to infer the
+genre from repeated caveats.
+
+\textbf{C. New-results research article: NOT READY on the evidence
+established here.} No substantial new theorem has been independently
+distinguished from the standard Boolean-frame, function-algebra and rank
+mechanisms. This does not rule out publication in a venue that values
+representation or synthesis, nor does it prove that no novel theorem
+could be developed later.
+
+\textbf{D. Expository/synthesis article: the strongest defensible
+publication route; revision required.} The representation can clarify
+several operations and prevent real alignment mistakes. It needs a more
+economical narrative and a complete example to realize that value. Its
+classical ingredients are not, by themselves, a reason against
+publication.
+
+\textbf{E. Technical/methodological article: plausible but not ready in
+its current presentation.} A fully explicit frame transport contract,
+operation/type signatures, conformance tests and a demonstrated task
+would support this genre. The current code independently checks the
+identities, but the paper should not imply an implemented symbolic
+compiler or performance benefit.
+
+\subsection{Answers to the 25 requested
+questions}\label{answers-to-the-25-requested-questions}
+
+\begin{longtable}[]{@{}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0600}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2900}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedleft
+No.
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Question
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Answer
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Are central statements false? & None found in this audit. Expected
+failures of stronger extensions are identified separately. \\
+2 & Are central statements true only after adding hypotheses? & The
+principal needed hypotheses are already present. Symbolic transport
+needs a more explicit definition, not rescue of a false central
+theorem. \\
+3 & Are arbitrary-arity results genuinely proved? & Yes. Pullback,
+Boolean term, partition and rank arguments apply for every finite arity
+under their scopes. \\
+4 & Is the formula-valued construction well typed? & Yes, in the
+declared formula algebra. Free-reference equivariance should not be
+silently exported to a constrained quotient. \\
+5 & Is pairing correctly characterized? & Yes: it applies the connective
+to reference-agreement bits. It is not a physical measurement or
+probability. \\
+6 & Does valuation commute as claimed? & Yes for the stated Boolean
+term, contraction and pointwise operations. All-true specialization has
+its explicit satisfiability condition. \\
+7 & Are pointwise and matrix products separated? & Yes. The
+matched-frame product is separately defined as parity kernel
+composition. \\
+8 & Is rank over the correct algebra? & Yes, ordinary \(\mathbb F_2\)
+rank, not OR-based Boolean rank. Clarify the zero/empty-XOR
+convention. \\
+9 & Are signed frames and NPN accurate? & The numeric action and NPN
+moves are correct. Add the exact combined symbolic transport formula. \\
+10 & Are spectra appropriately limited? & Yes. Compact field spectra,
+Boolean-algebra spectra and diagonal truth projectors are
+distinguished. \\
+11 & Is the manuscript standalone? & Substantially yes mathematically;
+the verification artifact and bibliography need completion. \\
+12 & Is 20,873 reproducible? & No, not from the supplied generating
+artifacts. The preserved log is not a runnable checker. New independent
+checks are not that historical run. \\
+13 & Which previous criticisms remain? & Checker recovery, exact
+attribution/metadata, stronger mechanism comparison, explicit transport
+and demonstration of usefulness. \\
+14 & Which are obsolete or incorrect now? & The old polarity-mask
+mismatch, an unqualified all-true valuation, missing canonical
+extension/assembly, and missing rank converse are repaired.
+Compiler-only requirements do not apply here. \\
+15 & Which contributions are prior art? & Numeric matrix logic, bra-ket
+evaluation, aligned truth-vector composition, Boolean orthogonal frames,
+NPN, Mobius parity and ordinary rank factorization. \\
+16 & What appears differentiated? & The particular integrated
+formula-polarity representation with its explicit valuation, agreement
+pairing and operation/frame organization. Priority is not
+established. \\
+17 & Is new-theorem novelty sufficient? & Not demonstrated under a
+significant-new-mathematics research-article expectation. \\
+18 & Is another publishable form plausible? & Yes: focused
+synthesis/exposition or a rigorously illustrated methodological
+specification. No acceptance prediction is made. \\
+19 & Are title and abstract calibrated? & The title is defensible but
+broad. The abstract is largely cautious; it should foreground the useful
+mechanism and reduce the inventory of claims. \\
+20 & What is understated? & Reconstruction of the connective from the
+entire LM survives dependent/contradictory reference substitution even
+when the reference cell alone collapses. \\
+21 & What needs narrowing? & Any implied novelty of formula-valued
+matrices or first-class operator treatment in general, and any
+suggestion that a commuting diagram alone supplies a deep new
+theorem. \\
+22 & What belongs elsewhere? & Full phase multiplication, modal
+resources, performance/benchmark claims and extended
+structural-computation research. \\
+23 & Exact P0/P1 blockers? & No established P0. P1: missing checker
+claim, bibliographic/version corrections, close-mechanism/genre
+positioning, specification-level transport and journal-level utility
+demonstration. See B1-B5. \\
+24 & Ready for preprint? & After the identified minor correction pass,
+not with the uncorrected verification and citation wording. \\
+25 & Ready for journal submission? & No; major revision of the
+presentation, contribution case and supporting release package is
+required. \\
+\end{longtable}
+
+\section{XVIII. Suggested contribution
+language}\label{xviii.-suggested-contribution-language}
+
+\subsection{Replacement contribution
+paragraph}\label{replacement-contribution-paragraph}
+
+We present a formula-valued representation calculus for Boolean
+functions with explicit reference frames. A logical matrix is the
+polarity orbit of a reference formula, and its frame normal form relates
+it to the corresponding numeric truth matrix by invertible Boolean
+matrices. Logical pairing evaluates the represented connective on
+agreement with the reference formulas. These constructions fit into a
+common system of compatibility laws: valuation, aligned pointwise
+Boolean composition, input-frame transport and pairing preserve the same
+Boolean operations. The calculus extends to arbitrary-arity truth
+tensors and ordered rectangular flattenings, where ordinary field rank
+measures XOR-conjunctive separability across a chosen variable
+partition. The aim is a precise and usable symbolic/numeric organization
+of classical Boolean mechanisms, rather than a new Boolean algebra,
+physical measurement theory or compression scheme.
+
+\subsection{Replacement novelty/related-work
+paragraph}\label{replacement-noveltyrelated-work-paragraph}
+
+Truth-vector composition, logical matrix evaluation, Boolean orthogonal
+expansions, input-frame transformations and matrix rank factorization
+have substantial prior literature. In particular, aligned numeric
+pointwise composition is already explicit in Cheng, Zhao and Xu, while
+Boolean-algebra-valued frame constructions provide a close antecedent
+for the complementary frame matrices used here. The contribution pursued
+in this paper is the integrated reference-polarity presentation and its
+explicit agreement-pairing and transport contracts. We therefore
+distinguish the utility of this formulation from claims of historical
+priority for its ingredients; no firstness claim is made for
+formula-valued matrices, logical bra--matrix--ket notation or pointwise
+operations on logical operators in general.
+
+These paragraphs are suggested replacement language, not a rewritten
+manuscript or a claim that the requested revision has already been
+applied. The delivered source remains unchanged.
+
+\section{Primary-source register and audit
+evidence}\label{primary-source-register-and-audit-evidence}
+
+The following sources were used at the indicated depth. URLs are
+supplied for reproducibility. A primary record or preview may verify
+metadata without supporting a full mathematical comparison. Retrieval
+and comparison date: 26 September 2026. Sources unavailable in full
+remain limitations rather than silently completed readings.
+
+\textbf{{[}S1{]} Cheng, Zhao and Xu (2011).} \emph{Matrix Approach to
+Boolean Calculus}, CDC-ECC, pp.~6950-6955, DOI 10.1109/CDC.2011.6160289.
+Actual proceedings PDF inspected; key locator Proposition 3.3, equation
+(17), p.~6952. Source:
+\url{https://skoge.folk.ntnu.no/prost/proceedings/cdc-ecc-2011/data/papers/0224.pdf}.
+
+\textbf{{[}S2{]} Bricken, William.} \emph{Notes on Matrix Techniques for
+Logic}, internally dated March 1997. Nine-page technical note inspected,
+including binary matrices, bra-ket expressions and arithmetic examples.
+Public-release chronology is not established by that internal date.
+Source:
+\url{https://wbricken.com/pdfs/01bm/01math/03math-supporting/math-tangential/04matrix-tech.pdf}.
+
+\textbf{{[}S3{]} Gudder, Stan, and Frederic Latremoliere (2009).}
+\emph{Boolean inner-product spaces and Boolean matrices}, Linear Algebra
+and its Applications 431(1-2), 272-296; arXiv:0902.1290. Primary paper
+and publication record inspected. Important locators: Example 2.13,
+Lemma 2.15 and Theorem 4.1. Source:
+\url{https://arxiv.org/abs/0902.1290}; paper:
+\url{https://arxiv.org/pdf/0902.1290}.
+
+\textbf{{[}S4{]} Sampei, Yoemon (1950).} \emph{On the orthogonal
+expansion of the Boolean polynomial and its applications I}, Journal of
+the Faculty of Science, Hokkaido University, Series I, 11(3), 113-125;
+DOI 10.14492/hokmj/1530864050. Primary metadata and available indexed
+content; full-page access limited. Source:
+\url{https://doi.org/10.14492/hokmj/1530864050}.
+
+\textbf{{[}S5{]} Toffano, Zeno.} \emph{Eigenlogic in the spirit of
+George Boole}, arXiv:1512.06632. First version December 2015; inspected
+version 12 dated 6 February 2018. The specific discussion about not
+using Dirac notation is in v12, section 5, p.~17. Sources:
+\url{https://arxiv.org/abs/1512.06632},
+\url{https://arxiv.org/pdf/1512.06632v1},
+\url{https://arxiv.org/pdf/1512.06632v12}.
+
+\textbf{{[}S6{]} Dubois, Francois, and Zeno Toffano (2016).}
+\emph{Eigenlogic: A quantum view for multiple-valued and fuzzy systems},
+arXiv:1607.03509. Primary paper inspected at the operator/projector and
+Dirac notation passages. Source: \url{https://arxiv.org/abs/1607.03509}.
+
+\textbf{{[}S7{]} Cheng, Daizhan, and Hongsheng Qi (2010).} \emph{A
+linear representation of dynamics of Boolean networks}, IEEE
+Transactions on Automatic Control 55(10), 2251-2258. Author PDF
+inspected for the representation and publication metadata. Source:
+\url{https://lsc.amss.ac.cn/~hsqi/papers/TAC2010-LinearRepresentation.pdf}.
+
+\textbf{{[}S8{]} Mishchenko, Alan, Satrajit Chatterjee and Robert K.
+Brayton (2006).} \emph{DAG-aware AIG rewriting: A fresh look at
+combinational logic synthesis}, DAC, 532-536, DOI
+10.1145/1146909.1147048. Proceedings paper/record inspected for
+NPN/cut-reuse context and metadata. Source:
+\url{https://web.cecs.pdx.edu/~mperkows/CLASS_573/febr-2007/p532-mishchenko.pdf}.
+
+\textbf{{[}S9{]} Zhou, Xuegong, Lingli Wang and Alan Mishchenko (2019).}
+\emph{Fast adjustable NPN classification using generalized symmetries},
+ACM TRETS 12(2), Article 7, 16 pp., DOI 10.1145/3313917. Author PDF
+inspected. Source:
+\url{https://people.eecs.berkeley.edu/~alanmi/publications/2019/trets19_npn.pdf}.
+
+\textbf{{[}S10{]} Carlet, Claude.} \emph{Boolean Functions for
+Cryptography and Error Correcting Codes}, author-hosted chapter.
+Relevant inspection: Boolean functions, ANF and Mobius-transform
+discussion, especially section 2.1. Source:
+\url{https://www.math.univ-paris13.fr/~carlet/chap-fcts-Bool-corr.pdf}.
+
+\textbf{{[}S11{]} Burris, Stanley, and H. P. Sankappanavar.} \emph{A
+Course in Universal Algebra}, original 1981, corrected author-hosted
+edition 2012. General algebraic background and edition record; not a
+claimed exact antecedent printing the LM theorem. Source:
+\url{https://www.math.uwaterloo.ca/~snburris/htdocs/UALG/univ-algebra2012.pdf}.
+
+\textbf{{[}S12{]} Post, Emil L. (1941).} \emph{The Two-Valued Iterative
+Systems of Mathematical Logic}, Annals of Mathematics Studies 5.
+Publisher preview checked for the original record and
+substitution-system context. Source:
+\url{https://api.pageplace.de/preview/DT0400.9781400882366_A27761476/preview-9781400882366_A27761476.pdf}.
+
+\textbf{{[}S13{]} Edwards, C. R. (1972).} \emph{The Logic of Boolean
+Matrices}, The Computer Journal 15(3), 247-253, DOI
+10.1093/comjnl/15.3.247. Publisher metadata/abstract, not a complete
+theorem-level reading. Source:
+\url{https://academic.oup.com/comjnl/article-abstract/15/3/247/480639}.
+
+\textbf{{[}S14{]} Stern, August (1988).} \emph{Matrix Logic},
+North-Holland; the manuscript uses the extended title \emph{Matrix
+Logic: Theory and Applications}. Publisher/book preview and catalog
+context checked; full monograph unavailable for this audit. Source:
+\url{https://api.pageplace.de/preview/DT0400.9781483295497_A23889179/preview-9781483295497_A23889179.pdf}.
+
+\textbf{{[}S15{]} Mizraji, Eduardo (1992).} The manuscript lists
+\emph{Vector logics: The matrix--vector representation of logical
+calculus}, Fuzzy Sets and Systems 50(2), 179-185. This audit did not
+complete independent primary-record verification of all those details or
+inspect the complete article. This is an explicit unresolved
+bibliography item, not a verified external citation.
+
+\textbf{{[}S16{]} Mizraji, Eduardo (2008).} \emph{Vector logic: A
+natural algebraic representation of the fundamental logical gates},
+Journal of Logic and Computation 18(1), 97-121, DOI
+10.1093/logcom/exm057. Publisher issue metadata and author-manuscript
+content used for vector/operator context. Source:
+\url{https://academic.oup.com/logcom/issue/18/1}.
+
+\textbf{{[}S17{]} Droncheff, Brian (2018).} \emph{Correspondence
+Matrices; Algorithms for Propositional Logic}, ResearchGate preprint,
+DOI 10.13140/RG.2.2.28036.37764. Primary record shows May labeling and
+an October 1 upload. Historical mathematical material was used
+selectively, not certified wholesale. Source:
+\url{https://www.researchgate.net/publication/327980262_Correspondence_Matrices_Algorithms_for_Propositional_Logic}.
+
+\textbf{{[}S18{]} Sule, Virendra (2013).} \emph{Generalization of
+Boole-Shannon expansion, consistency of Boolean equations and
+elimination by orthonormal expansion}, arXiv:1306.2484. Primary abstract
+and relevant expansion discussion inspected; not asserted to contain the
+complete LM architecture. Source: \url{https://arxiv.org/abs/1306.2484}.
+
+\textbf{{[}S19{]} Usturali, Umut Eren, Claudio Chamon, Andrei E.
+Ruckenstein and Eduardo R. Mucciolo (2025).} \emph{A Matrix Product
+State Representation of Boolean Functions}, arXiv:2505.01930v2. Primary
+text inspected for variable-dependent matrix representations and
+function operations; no performance claim was independently reproduced.
+Source: \url{https://arxiv.org/html/2505.01930v2}.
+
+\textbf{{[}S20{]} Rutherford, D. E. (1965).} \emph{The eigenvalue
+problem for Boolean matrices}, Proceedings of the Royal Society of
+Edinburgh Section A 67(1), 25-38; DOI 10.1017/S0080454100010712.
+Publisher metadata/abstract checked. Source:
+\url{https://doi.org/10.1017/S0080454100010712}.
+
+\textbf{{[}S21{]} Blyth, T. S. (1967).} \emph{On eigenvectors of Boolean
+matrices}, Proceedings of the Royal Society of Edinburgh Section A
+67(3), 196-204; DOI 10.1017/S0080454100008049. Publisher
+metadata/abstract checked. Source:
+\url{https://doi.org/10.1017/S0080454100008049}.
+
+\textbf{{[}S22{]} Zhao, Yin, Xu Gao and Daizhan Cheng.}
+\emph{Semi-tensor product approach to Boolean functions}, undated
+author-hosted preprint:
+\url{https://lsc.amss.ac.cn/~dcheng/preprint/bf01.pdf}. A related 2012
+journal record is \emph{Some applications of the matrix expression of
+Boolean function via semi-tensor product}, pp.~743-749, DOI
+10.7523/j.issn.2095-6134.2012.6.004:
+\url{https://journal.ucas.ac.cn/CN/10.7523/j.issn.2095-6134.2012.6.004}.
+The journal metadata is a lead, not proof that the preprint and article
+are identical. No unverified volume number is supplied.
+
+\subsection{Portable audit evidence}\label{portable-audit-evidence}
+
+The bundle contains the unchanged audited source and fresh PDF; the
+report in Markdown/PDF; the formal and additional claim ledgers; the
+weighted scorecard; reviewer-feedback dispositions; the recursive
+inventory and checker-recovery search evidence; the independent checker
+and results; boundary witnesses and compact atlas; build logs;
+inspection notes; and SHA-256 manifests. It does not redistribute the
+complete input portfolio or copies of copyrighted external literature.
+
+The audit is an AI-assisted independent analysis using multiple
+disciplinary perspectives, not a claim that a separate panel of human
+referees or multiple independently executing agents reviewed the paper.
+Mathematical conclusions are based on explicit arguments and tests;
+editorial scores and genre recommendations remain judgments. The
+original manuscript has not been silently changed.
+
+\end{document}

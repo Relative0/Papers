@@ -1,0 +1,130 @@
+# P14-PY0: clean endpoints, credible direct baseline, exact Python dispatch
+
+**Status: draft specification for a future experiment. Not preregistered results.** Written after examining P1–P13 and the explicitly exploratory audit diagnostics. Existing cases are development/regression evidence. Before any confirmatory run, resolve the environment and budget fields below, seal the test manifests, freeze implementation hashes, and timestamp this complete protocol. Do not claim the audit's favorable candidate timings are prospective evidence.
+
+## Research question and hypotheses
+
+Does propagated two-support contraction repay its incremental cost after removing instrumentation and unnecessary direct rebuilding, and can exact Python dispatch make that cost smaller without native code?
+
+H1, implementation: exact bounds and deferred tuple-based counting reduce build+dispatch cost relative to a P13 dispatcher with the **same minimal Boolean-only interface**.
+
+H2, practical compiler: a selected folded pipeline is faster than an equally optimized direct ANF compiler on a prespecified workload population when all incremental costs are included.
+
+H3, mechanism: large reductions in symbolic multiplication work persist under canonical commutative CSE and new synthetic/natural circuit families, even where dispatch is imperfect.
+
+Failure of H2 is a useful result and must not be replaced by a secondary weighted, lower-only, or selected-winner claim.
+
+## Frozen implementation differences
+
+Retain false-first token encoding, P6 signature propagation/choice order, term-estimate cap, profitability thresholds, source fanout semantics, memoization, and polynomial representation. All measured ANF kernels exclude `AnfStats`/selector-reporting updates, repeated peak scans, reporting-only reachable-node traversal, and tracing. Run equivalent instrumented kernels separately for work diagnostics.
+
+Direct consumes the source DAG already built for this compile. On bypass, both dispatch implementations do the same. Annotated paths pay for the same P6 metadata clone and the same folded lowerer. No product caching, coefficient-directed demand, new cuts, general NOT propagation, or redesigned policy is added in the primary comparison. These are separate future experiments.
+
+The exact telemetry candidate is the audited `TupleBoundFactory` design in `python_diagnostics/dispatch_diagnostics.py`, with no timing-driven changes: reuse canonical operand-ID tuples where possible; retain a list of pairs; derive binary count from its length; apply `B<25` and `max(0,E-N+1)>floor(E*t_reuse)` bypasses; count surviving pairs once; test exact repeat and five-shell predicates; exactify reuse only when necessary. Preserve the frozen P8 thresholds as their exact binary-float rational values. Reject unsupported gate schema/threshold changes rather than silently applying specialized bounds to another policy.
+
+Both reference and candidate return only the backend decision in the measured path. Reason codes, feature dictionaries, predicted ratios, operation counters, and correctness outputs are reconstructed outside timing. This removes a confound from the audit prototype, where candidate/P13 also removed diagnostic work.
+
+Preserve factory-local source node keys, IDs, creation order, child references, and output semantics in the exact-dispatch comparison. Diagnostic scan counts/reason strings need not be identical, because safe early exits intentionally differ. A separate checker must still reconstruct full reference features and verify every early-exit proof.
+
+## Arms
+
+| Arm | Source and observer | Compiler |
+|---|---|---|
+| D | Ordinary shared factory, telemetry off | Statistics-free direct, no clone |
+| F | Same source representation, P13 pair representation/decision stages, Boolean-only interface | Direct on bypass, shared P6 on selection |
+| E | Same source representation, audited exact-bound/tuple/count-once observer | Same backend selection and compiler as F |
+| A | Same ordinary factory | Always-P6, metadata cost included |
+| G | Same ordinary source | Generic propagated four-bit truth-function formulation with equivalent semantic opportunity and declared selector |
+
+D/F/E/A are mandatory for the implementation experiment. G is mandatory before making a comparative algorithmic publication claim. An independently implemented truth-token checker validates the propagated identities even if G shares the final kernel. Document any sharing of implementation so G is not portrayed as wholly independent.
+
+Add a **separate representation stratum**, D and A under efficient canonical AND/OR/XOR source interning. Apply the same canonical factory to both. For diagnostic continuity, report frozen F/E decisions on canonical sources; expect the five-shell rule to abstain on primitive-only input. Do not fit a new tree in this experiment.
+
+Keep original instrumented/cloned P13 and direct as small historical-bridge controls on the old suite only. Their timings are not the new primary comparator. Do not force direct to pay for metadata it does not need; forced-observer/bypass can be a separately labeled cost-control arm.
+
+## Input and endpoint contracts
+
+Precompute fixture lists and any RNG states outside timing. Two distinct input contracts are reported:
+
+1. **Recipe-to-ANF:** begin before source factory creation and execution of a fixed recipe; end after the final sparse polynomial is produced. Recipe RNG execution is included equally in all arms. Exclude loading/constructing the recipe list itself.
+2. **Compiler IR-to-ANF:** begin with the same already available ordinary source IR. Charge observer construction/scan if needed, selected metadata, and lowering. No source metadata is silently donated to one arm. This is secondary and does not replace recipe-to-ANF.
+
+The primary timer returns an owned polynomial before oracle evaluation, digesting, serialization, statistics, report construction, or plotting. Use the same output ownership/lifetime contract for all arms. Report retained-output latency and a separate repeated-compilation lifecycle including cleanup; do not include object destruction in only one path. Avoid a timer nested around a wrapper that subsequently validates.
+
+Record instrumented phase times separately: ordinary source construction, incremental observation, final dispatch, signature/metadata construction, lowerer, and output conversion. Fused work that cannot be separated without perturbing execution must be labeled as a combined stage. Their sum need not equal a different instrumented wall measurement; the production total is authoritative.
+
+Memory is a separate run: peak RSS, traced Python peak, retained source/metadata/output bytes, and measurement boundaries. Measure compilation and end-to-end application memory separately; exclude verification from compilation memory. Do not subtract two peak values to estimate a stage's peak.
+
+## Correctness gates before timing interpretation
+
+1. Reproduce every old 332-case policy recipe and the original 1,000-case P13 fuzz. Assert exact F/E backend decisions, not only aggregate counts. Verify ordered structural source keys and direct ANF equality.
+2. Include the audit's 2,000 extra DAGs, 4,040 targeted cases, and 14,708 boundary checks as **known regression tests**. Preserve the 273 positive dispatch cases; add a freshly seeded targeted corpus before prospective timing.
+3. New targeted correctness: all 16 tokens; both operand orientations; constants/projections and NOT; shared descendants; no-sharing trees; multiple dead construction roots; multiple outputs; CSE hits; n-ary operators when admitted; five-shell witnesses distributed through the construction history; threshold counts just below/equal/above each boundary; very small B; supported ID-width boundaries; interning across separate factories prohibited.
+4. Independently enumerate four-input-value token composition/frame transforms. For tractable support, compare exact polynomial sets and exhaustive Boolean values against an independently evaluated original DAG/BLIF. For larger-support natural tests use a frozen independent equivalence checker; timeout is unresolved correctness, not PASS.
+5. Confirm ordinary/folded outputs match before timing and after every block. Timing guards must not gather statistics inside the timer. Memory and optional work counts are untimed and reproducible.
+6. Any wrong polynomial, incorrect early exit, invalid ID encoding, or altered frozen decision aborts the affected arm's performance interpretation. Preserve every failure and fix; fixes require a new code freeze before rerunning all relevant correctness gates.
+
+## Benchmark sets and holdout discipline
+
+**R, historical regression:** existing 36 Gate-P cases, ten natural cones, and 286 training/validation cases. Report separately. No population/generalization claim comes from R.
+
+**S-development:** create synthetic generators and validate support/resources on a discovery set whose results may guide engineering. All generator or implementation changes stop before S-test is instantiated.
+
+**S-test:** 384 instances, 12 prespecified families × 32 seeds, generated only after code freeze with master seed `2026091901`; store exact per-case seeds and instruction traces. Within each family use a published balanced design over depth {2,6,12,24}, width {1,4,16}, support {4,8,12,16}, fanout {1,2,8,32}, and shell multiplicity {1,3,4,5,8,16}, with factor definitions and feasible combinations frozen before generation. The selection algorithm balances each level rather than filtering by measured success. Define 12 families:
+
+* affine sparse tokens, deep propagation;
+* nonlinear sparse tokens, deep propagation;
+* dense operand ANFs with rare profitable contraction;
+* many cheap repeated shells with little saved multiplication;
+* shells with intentionally unprofitable sharing;
+* unshared trees with comparable formula sizes;
+* high fanout with shared bases and consumers;
+* shared partial products across AND/OR/TF;
+* wide independent pair groups;
+* narrow nested pairs with changing primary support/degree;
+* semantically equivalent ordered/canonical/reassociated/polarity encodings;
+* identical reachable root with controlled discarded-node construction history.
+
+Construct paired transformations for clean factor effects where possible. Record realized unique nodes, actual support, degree, ANF density, pair repetition, fanout distribution, signature depth, and shared-descendant fraction. Generator depth alone is not a realized complexity measure. Do not label affine/nonlinear basis cases solely by the outer token if their operand ANFs differ.
+
+**N-discovery:** separate designs from arithmetic, control/mux, decoder, and cryptographic/synthesis sources. Scan all outputs or a prespecified node/sample budget, and report eligible opportunity prevalence, zero-opportunity prevalence, parsing/synthesis transformations, and discovery cost. This set can identify natural mechanisms, not supply confirmatory wins.
+
+**N-test:** seal at least 16 previously uninspected design families from these categories, with up to eight deterministically sampled output/cone cases per design (target 128 cases). All outputs, bitwidth variants, and synthesis versions of one design stay in one split. Pin repositories/blobs. The exact manifest must be established and independently confirmed as uninspected before running opportunity or timing code. If 16 suitable designs cannot be obtained, register the actual count and reduced scope before results; do not silently relax it later.
+
+Primary N-test reporting is unconditional across all admitted cases. Also report a preregistered mechanism-positive stratum selected by **untimed exact structural/semantic opportunity**, not favorable runtime, and report its coverage denominator. The ten old no-fold cones remain overhead controls. Comparisons between original BLIF/LUT, AIG, and normalized IR are separate representation strata, not pooled interchangeable samples.
+
+## Host, replication, and resource plan
+
+Before freeze, fill in: CPU model/topology, OS, exact interpreter/build, benchmark host availability, affinity/power policy, RAM cap, and approved total wall-time budget. Do not schedule a paid machine without authorization. The audit itself did not authorize paid compute.
+
+Use three independently scheduled sessions, each with ten fresh sequential worker processes. In each worker use complete randomized arm blocks, ten measured blocks after five fixed warmup blocks. Calibrate a common per-case batch length to at least 100 ms using excluded development pilots; use the same batch length across compared arms for that case. Record seeds, timestamps, arm order, process IDs, hash seed, GC state, and block duration. Do not parallelize timing workers on one host. Keep CPU affinity and power settings fixed if approved and supported; otherwise record the uncontrolled condition and weaken close-effect claims.
+
+GC enabled is primary; a separately labeled GC-disabled sensitivity is allowed, with collection policy consistent across arms. Report cold process/import startup separately from warmed compile throughput. JIT runtimes, if later tested, require their own frozen warmup and startup contracts.
+
+Proposed per-case caps: 60 seconds per compilation, 1 GiB process memory, and 1,000,000 monomials. Freeze the enforcement method before testing. Common budget violations are outcomes; do not replace hard cases or discard only one arm's timeout. If total resource needs exceed the approved budget, stop at the frozen cap, report incompleteness, and obtain authorization before additional runs. The precise total budget must be computed from the sealed manifest/pilot before the experiment is considered ready to run.
+
+## Estimands and statistical analysis
+
+Analyze paired log-time ratios within complete case/process blocks. Keep family/representation strata separate. Report per-case medians, median ratio, case-balanced geomean, family-balanced geomean for natural tests, sum of case medians, absolute time differences, and per-case contribution to aggregate gains. Production weighting requires frequencies fixed from an external workload specification; equal occurrence of benchmark cases is its own finite-suite scenario.
+
+Use 10,000 hierarchical bootstrap draws with frozen seed `2026091902`: resample design families and cases within family, then matched session/process blocks, carrying both arms together. For a fixed synthetic factorial also give a fixed-case repeated-session interval, since its cells are a designed set rather than random natural draws. Report both sampling interpretations. A paired blockwise permutation/sign-flip sensitivity may be added with assumptions stated; it is secondary.
+
+Primary implementation comparison is E/F, not candidate/raw-reporting-P13. Primary practical comparison is E/D. Declare both before analysis. Apply Holm control at familywise alpha .05 to confirmatory superiority tests across these two claims and the two S-test/N-test populations, or equivalently use prespecified simultaneous bootstrap bounds. Report ordinary 95% intervals as descriptive and adjusted upper bounds for formal success decisions. All other comparisons are secondary, with multiplicity acknowledged.
+
+**Implementation success:** zero equivalence failures; E/F build+dispatch geomean <=0.95; E/F total <=0.99; adjusted upper bound for total <1.00; no unexplained >5% memory growth or natural-control total-time regression.
+
+**Practical direct crossover:** zero correctness failures; E/D primary total geomean <=0.95 with adjusted upper bound <1.00 in the declared test population; at least one actually consumed fold; no >5% pooled peak-memory or pair-work regression. A natural speedup claim requires this on N-test with actual folds, not merely fast abstention. State separate synthetic/natural outcomes.
+
+**Failure/inconclusive:** any correctness failure; effect threshold missed; interval overlapping one; excessive regressions; or resource/host instability preventing the declared inference. Report weighted wins and favorable strata as secondary even if the primary fails. Do not change the cutoff, pair structure, lowerer, or case admission rules after seeing test results.
+
+## Break-even analysis and artifacts
+
+Preserve signed `T_optimized-T_direct`, saved pair terms, metadata/dispatch cost, direct workload size, realized density/fanout, and opportunity coverage per case. Plot the difference against independently varied factors; mark zero and timeout boundaries. Fit a cost model only on development data; test its prediction error on the holdout. Do not infer a universal workload-size threshold from one weighted aggregate.
+
+Archive protocol timestamps and hashes, exact source and diffs, all benchmark blobs/recipes, compiler flags, interpreter/dependency versions, machine metadata, source signatures and decisions, exact ANF digests, independent correctness results, all raw timing/memory/operation rows, failures/timeouts, profile scope, analysis code, and final tables. Preserve old records and corrections side by side.
+
+## Decision after this experiment
+
+If exact Python dispatch remains slow but clean always-folded lowering has substantial savings on held-out opportunities, a compiled observer/common-factory experiment is justified. If a better direct kernel removes most practical benefit, prioritize shared ANF algorithms or narrow the workload claim. If natural opportunities are too rare, publish the mechanism and measured applicability boundary instead of a general compiler speedup.
+
+For native work, freeze a factorial with a shared compiled source factory and shared ANF core wherever compiled. Compare direct telemetry-off, telemetry-on forced bypass, selected folding, and generic folding. Share node allocation, interning, canonicalization, ownership, integer widths/overflow guards, API crossings, memoization, kernel, instrumentation, and validation placement. Report incremental metadata cost, FFI/cold startup, lower-only and total timings. A telemetry-only native helper can be evaluated separately as an implementation intervention; it does not substitute for matched native-direct versus native-folded evidence.

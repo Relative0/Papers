@@ -1,0 +1,86 @@
+# P15 late-scan non-production implementation review
+
+Date: 2026-09-19 (Asia/Bangkok)
+
+Disposition: **correctness-ready for preregistration hardening; not timing-ready and not production-authorized.**
+
+## Implemented scope
+
+`p15_late_scan.py` is isolated under `audit_p1_p13_20260918/p15_py0_dev`. It does not modify the production compiler or frozen P14 code. The candidate:
+
+1. builds recipes with the same ordinary `base.Factory` used by D;
+2. requires the complete retained factory/arena plus an arena-owned root;
+3. scans `factory.nodes` for exact `N`, `E`, and `B`;
+4. applies the frozen exact-safe `B < 25` and reuse lower bounds;
+5. allocates and counts normalized pair tuples only for bound survivors;
+6. exactifies repeated child use only for repeat/shell survivors;
+7. directly lowers the original root on false; and
+8. invokes the unchanged P6 metadata builder/lowerer only on true.
+
+The scan is read-only. It creates no observer clone and stores no telemetry during ordinary source construction.
+
+## Review findings
+
+No correctness blocker remains in the authorized prototype scope.
+
+- Exact threshold arithmetic uses the frozen binary-float rational numerators and denominators; no rounded decimal comparison was introduced.
+- Pair orientation, admitted operations, full creation history, dead nodes, source IDs, and repeated-child semantics match `exact_stats`/`ref_decision`.
+- The API cannot silently accept only a root. Full diagnostic validation checks dense ordered IDs and child ownership. Even the prospective optimized `validate=False` path retains an O(1) factory/root ownership check.
+- The selected backend is unchanged from P14. All five profitable cases still consume one fold and retain their exact pair-term and multiplication reductions.
+- Early exact-reuse failure records a partial reuse count for diagnostics, but the Boolean decision is exact. No report treats that partial value as the final exact statistic.
+
+One issue was found during review and fixed before the final rerun: `validate=False` originally omitted the root-ownership check. It now rejects a foreign root while avoiding the full diagnostic validation traversal. The complete exposed suite was rerun after this change.
+
+## Exposed-case correctness result
+
+`P15_EXPOSED_CORRECTNESS_RESULTS.json` reports `PASS`, `performance_timing_run: false`, and `fresh_holdout_used: false`.
+
+| Check | Cases | Result |
+|---|---:|---|
+| P14 synthetic holdout | 384 | Stored ANF digest, monomial count, truth behavior, and decision matched |
+| P14 natural holdout | 107 | Stored ANF digest, monomial count, independent oracle, and decision matched |
+| P14 exposed fresh-targeted | 512 | Stored ANF digest, truth behavior, and decision matched |
+| Historical decision cases | 332 | Exact reference decision matched; 23 positive |
+| Targeted boundary cases | 4,040 | Exact reference decision matched; all 273 positives preserved |
+| Adversarial DAGs | 2,000 | Exact reference decision matched |
+
+The P14 selected set is exactly:
+
+- `encoding_variants:21`
+- `encoding_variants:22`
+- `encoding_variants:23`
+- `encoding_variants:30`
+- `encoding_variants:31`
+
+Their direct/folded pair terms remain respectively 11,520/128, 37,120/64, 61,184/128, 8,496/72, and 17,856/72. Every direct and folded ANF was equal.
+
+## Defect reproduction and fix
+
+The diagnostic constructs a 68-node arena containing a legal five-shell opportunity and 20 distinct filler pairs, then chooses a root that is independent of that dead construction history.
+
+- Frozen reference over the complete arena: true.
+- Late-scan decision over the complete arena: true.
+- Old root-only observer clone: false, because it contains only the one reachable root node.
+- Candidate output: equal to the original root polynomial.
+
+This proves both the root-only semantic defect and the arena-based correction without using timing evidence.
+
+## Hashes after final review
+
+| Artifact | SHA-256 |
+|---|---|
+| `p15_late_scan.py` | `a76b6535967c5c42a0f85de58b6fb48119a3f54d0405640f742616d3be700851` |
+| `run_exposed_correctness.py` | `bc472a9a0129be4d6d9d7b4043c24072c20ec9b930f6c39e97728cc4b791ba27` |
+| `P15_EXPOSED_CORRECTNESS_RESULTS.json` | `5dcd136353f7f29bbc9accb20d8fc8959bc0d1893d2b85dd3e388f776912a2fc` |
+
+Frozen P14 `p14_common.py` remains `db26062feba4efec2119f42ef9722df9518fc8933690725a73b2cd8e91cc61b3`; frozen `P14_RESULTS.json` remains `0b5be4d8ec308d2268de851382e72d46d3fe0c4c03b3f6a724468ea5cedb6a14`.
+
+## Required work before a timing freeze
+
+1. Decide and preregister validation placement. Full arena validation is appropriate for correctness but would add a redundant traversal inside a performance endpoint. The recommended timed path is `validate=False` with the O(1) ownership check, while full validation runs immediately outside every timed block.
+2. Complete and freeze host, interpreter, affinity/power, GC, session/block, batch, timeout, memory, storage, and wall-budget fields.
+3. Fix new synthetic/bootstrap seeds and freeze the fresh natural acquisition/admission process. Do not inspect or generate those holdouts before the freeze.
+4. Hash a dedicated timing harness and analysis implementation. The correctness runner must not be repurposed as a timer.
+5. Review and sign the final preregistration and freeze record, then request separate authorization for holdout generation and timing.
+
+Until those items are complete, do not run performance pilots on P15 as confirmatory evidence, generate a fresh holdout, modify production, commit, push, or deploy.

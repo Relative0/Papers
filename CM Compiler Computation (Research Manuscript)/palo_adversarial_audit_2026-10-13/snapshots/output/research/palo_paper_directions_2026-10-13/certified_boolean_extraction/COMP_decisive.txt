@@ -1,0 +1,344 @@
+1 =====
+Operator-Level Boolean Computation with
+Correspondence Matrices
+Typed operand frames, local operator folding, fallback semantics, and empirical boundaries
+Brian Theory
+Compiler contract and evidence revision — 26 September 2026
+Abstract
+Correspondence matrices encode a binary Boolean connective as four bits in a declared operand frame.
+We specify a restricted compiler that normalizes signed and swapped variable occurrences, fuses tokens with
+matching frames, and distinguishes structural, tabulated, and hybrid derivations. An ordered strategy selects
+among those admissible derivations; failure of the selected strategy need not mean that no derivation exists.
+Soundness and completeness for an explicitly generated structural fragment are established using classical
+truth-function identities. The implementation contract separates syntactic variable occurrence from essential
+dependence, root pair success from discarded child constructions, and compact tokens from dense outputs
+over retained ambient axes. A pinned source snapshot and executable regression suite make these boundaries
+checkable. Recovered S1/S2 records show local reductions but a generic-optimizer tie; a separate ANF-dispatch
+study is negative overall. A prospectively frozen synthetic pair-token comparison on 64 held-out signed
+formulas also fails its primary utility rule: median direct-packed/CM production time is 0.248 (95% hierarchical
+bootstrap interval 0.246–0.249). A separate correctness screen of 71 admitted original EPFL primary-output
+cones found four pure structural roots, one fully retabulated root, and 66 fallbacks. In a subsequently frozen
+descriptive secondary timing run, 70 cones completed paired full-bitset Python timing and one failed calibration;
+the complete-case median direct-packed/CM producer ratio was 0.0376, with direct evaluation faster on every
+complete case. ABC/AIG truth checking completed for all 71, but its subprocess wall time is not a matched
+producer comparison. The broader protocol-v3 systems comparison remains open. The contribution is a
+bounded compiler specification and reproducible negative systems boundary, not a new truth-table algebra or
+a demonstrated performance advantage.
+Draft status. This is the revised compiler-focused manuscript after the deliberate CM/LM publication split.
+The companion foundations paper Correspondence and Logical Matrices: A Boolean Operator Calculus owns
+the formula-valued LM theory, valuation, logical pairing, higher-arity tensors/maps, and the broader coherence
+calculus [21]. The present paper imports only the numeric binary contract required by the compiler. A narrower
+synthetic protocol-v4 confirmation is complete and negative. A natural-circuit admission/correctness gate and a
+separate, incomplete descriptive secondary timing run have since completed; the full timed protocol-v3 comparison
+has not.
+1 Introduction and claim boundary
+A binary Boolean connective contains four output values. A correspondence matrix stores those four values as a
+2× 2 array whose row and column axes are tied to declared operands. In isolation, that is only a reshaping of a
+truth table. The computational question is different: can a compiler use the small operator as a first-class token,
+normalize the token’s operand frame, and combine compatible local operators before evaluating or expanding
+their operands?
+The key example is deliberately simple. Consider
+(X⇒Y )⇕ (Y ⇒X). (1)
+Both inner connectives are implication, but they do not initially refer to the same ordered operand frame. Treating
+their four-bit arrays as if corresponding entries described the same assignment would be a type error. Once the
+second occurrence is transported from frame ( Y,X ) to frame (X,Y ) by transpose, entrywise XOR is sound:
+[⇒]b⇕ [⇒]T = [⇕]. (2)
+1
+
+
+2 =====
+Operator-Level Boolean Computation with Correspondence Matrices Contract revision, 26 September 2026
+The resulting token represents X⇕Y . Equation (2) is not important because XOR of two truth tables is difficult;
+it is important because it makes the admission condition explicit. A local table may be fused only when its
+coordinates have a common logical meaning.
+This paper therefore treats operand-frame metadata as part of the compiler type. A successful pair compilation
+returns not just four bits, but a token tied to canonical row and column operands. Swaps and input polarities are
+normalized by fixed reindexings. Compatible tokens can then be fused by an outer Boolean connective before
+repeated operand work or polynomial expansion. If structural recognition fails, the implementation can exactly
+retabulate an admitted two-variable subtree, can combine such a retabulated descendant with structural parents
+while marking the result hybrid, or can pass the original expression to the ordinary builder. Successful child pair
+constructions are not retained when the root pair attempt fails.
+The component operations have substantial prior art. Boolean matrices predate this work [ 5]; matrix and vector
+logics represent logical operators algebraically [ 19, 14, 15]; Cheng, Zhao, and Xu explicitly combine truth vectors
+entrywise under an arbitrary outer Boolean operation [ 3]; small truth functions, NPN transformations, LUTs, and
+DAG-aware rewriting are standard synthesis techniques [ 7, 23, 20]; and bit-parallel evaluators compute several
+assignments simultaneously [6]. Bricken’s internally dated 1997 technical note is also a close antecedent for 2 × 2
+logical matrices and bra–matrix–ket evaluation [1]. The present paper does not claim those ingredients as new.
+The narrower contribution is computational and testable:
+1. a typed frame-aware compiler rule in which a four-bit CM token is paired with operand metadata and
+normalized before same-frame fusion;
+2. sound multi-path semantics separating pure structural compilation, local retabulation, hybrid composition,
+and ordinary fallback;
+3. an executable implementation contract separating compact tokens, framed surrogates, general IR, lowered
+programs, and ambient dense outputs, with regression tests for strategy selection, fixed axes, and discarded
+child constructions;
+4. matched mechanism and negative evidence : exploratory folding can reduce pre-expansion work, an
+equally capable generic optimizer can reproduce the same reductions, and frozen ANF-dispatch and synthetic
+pair-token studies show that local wins need not amortize; and
+5. a preserved broader evaluation design with natural admission, correctness, and bounded secondary
+producer timing now checked, while synthesis comparability, reuse, alternative outputs, memory, and fallback
+costs still require matched measurement.
+The scientific claim does not depend on CM folding being uniquely capable of a reduction. If a generic local
+truth-function optimizer reaches the same reduced form, that locates the mechanism in a broader family of
+small-function rewrites. The remaining CM-specific question is whether the representation and its frame metadata
+make recognition, legality, transformation, caching, or reuse sufficiently direct and inexpensive to matter in a full
+compiler.
+2 Minimal CM compiler contract
+The companion foundations paper develops the CM/LM calculus in detail [ 21]. Only the following binary numeric
+contract is required here.
+Let
+B ={0, 1}∼= F2, (3)
+with multiplication interpreted as conjunction and addition written as XOR, ⇕. For a bit x∈ B, use the true-first
+state
+|x⟩ =
+ x
+¬x
+
+, ⟨x| =
+x ¬x
+. (4)
+For a binary logical connective variable Θ, define the compact correspondence matrix
+[Θ] :=
+Θ11 Θ10
+Θ01 Θ00
+
+=
+1Θ1 1Θ0
+0Θ1 0Θ0
+
+. (5)
+The row and column assignment order (1, 0) is part of the representation contract.
+ForC∈ B2×2, define the XOR–AND contraction
+EC(x,y ) =⟨x|C|y⟩ = ⇕
+r,s∈{1,0}
+χx(r)∧Crs∧χy(s), (6)
+2
+
+
+3 =====
+Operator-Level Boolean Computation with Correspondence Matrices Contract revision, 26 September 2026
+where χx(r) = 1 exactly when r =x.
+Proposition 1 (Selection). For every binary connective Θ and x,y∈ B,
+⟨x|[Θ]|y⟩ =xΘy. (7)
+Proof. Both states are one-hot. Every term in Equation (6) vanishes except the term at ( r,s ) = (x,y ).
+The compiler packs the four coefficients into a constant-size token. That token is not by itself sufficient to
+authorize a rewrite. An occurrence is also typed by an operand frame: the row expression, column expression, their
+signed polarities, and the truth-state order. In the implementation considered here, a successful pair surrogate
+ultimately records canonical row and column variable names together with the normalized token.
+3 Typed normalization and same-frame fusion
+Let
+P =
+0 1
+1 0
+
+= [⇕]. (8)
+Define Θτ(x,y ) :=yΘx. With the true-first convention,
+[Θτ] = [Θ]T, (9)
+[Θ(¬X,Y )] =P [Θ], (10)
+[Θ(X,¬Y )] = [Θ]P, (11)
+where products with P are XOR–AND products and therefore act as row/column permutations. Output negation
+is entrywise complement.
+For a binary outer connective Φ, define same-position fusion by
+
+[Θ1]bΦ[Θ2]
+
+rs := (Θ1)rsΦ(Θ2)rs. (12)
+This is not matrix multiplication.
+Theorem 1 (Same-frame fusion). If [Θ1] and [Θ2] are expressed in the same ordered operand frame, then for all
+x,y∈ B,
+(xΘ1y)Φ(xΘ2y) =
+D
+x
+
+
+[Θ1]bΦ[Θ2]
+y
+E
+. (13)
+Proof. Both sides select position (x,y ); the right-hand side stores the outer operation on exactly those two selected
+coefficients. No distributive law for Φ over XOR is required.
+The pointwise identity itself is classical; Cheng, Zhao, and Xu give the direct truth-vector antecedent in
+Proposition 3.3 [3]. The compiler-specific rule is therefore:
+Admission rule. Transport signed/swapped occurrences to one declared frame. Apply Equation (13)
+only after row operand, column operand, polarity interpretation, and truth-state order agree.
+Figure 1 summarizes the resulting local pipeline.
+Recognize signed
+binary occurrence
+Normalize to
+canonical
+(R,C ) frame
+Fuse matching
+four-bit tokens
+Return pair token
+with provenance
+If structural construction fails:
+local four-assignment retab-
+ulation when admitted, oth-
+erwise ordinary IR fallback
+pair success
+Figure 1: The compiler transformation. The operation performed on the four-bit token is trivial; the semantic
+work is the typed recognition and normalization that determines when fusion is legal and what fallback is required.
+3
+
+
+8 =====
+Operator-Level Boolean Computation with Correspondence Matrices Contract revision, 26 September 2026
+The compatibility name structural aliases hybrid, not pure structural. For valid input and fixed strategy,
+the procedure selects one outcome. Every successful return supplies a derivation of Equation (16): this follows
+by induction over the executed recursive calls, using the corresponding inference rule at each return. Thus the
+relational soundness theorems apply to the selected result. A NoPair return means failure of that strategy, not
+non-derivability in the entire relation. For example, X∨ (Y∧Y ) has a T derivation but the pure strategy returns
+NoPair. Recursion terminates on finite acyclic ASTs/DAGs; the recursive pair walk can revisit identity-shared
+nodes.
+Selection, diagnostics, and commitment. The public token artifact stores the two names and token;
+provenance is returned in accompanying metrics. Selected S,T,H map respectively to pure structural,
+full retabulation, and hybrid pair. None maps to ordinary fallback, even in the token-only API, where
+no builder is called. The dense wrapper first checks the ambient output budget, then obtains the token result. On
+success it lifts that token to the ambient layout; on failure it calls the ordinary builder on the original expression.
+Consequently,e = (X∧Y )∨Z, with no fixed variables and layouts [X,Z ] and [Y ], constructs an S child for
+X∧Y but returns no root pair. The successful child is discarded when the dense wrapper invokes the builder. The
+builder may independently optimize the original expression; this wrapper does not pass it a partially rewritten tree.
+Likewise, a root retabulation can supersede earlier child attempts. Counters such as pair collapses measure
+local work performed, including discarded work, not committed rewrites in the returned object. Root outcome
+must accompany these counters; committed contributions require separate instrumentation. Persistent child
+rewriting would be a different compiler version.
+5.3 Layout conversion and ownership
+The compact token uses true-first order while the historical dense array path uses false-first axes. The conversion
+is an explicit reindexing. If T denotes the true-first 2× 2 view and D the false-first view indexed by array positions
+a,b∈{ 0, 1}, then
+Dab =T1−a,1−b. (23)
+The dense contract retains every supplied ambient axis , including fixed names and names on which the residual
+function is independent. Writing m =|R| +|C|, the returned shape is
+2|R|× 2|C|, with 2m Boolean entries. (24)
+For each false-first row/column index, decode its ambient assignment, override fixed names by F , and evaluate e.
+This defines the corresponding entry. Fixed values affect evaluation, while their axis positions remain and repeat
+that value; irrelevant axes are also broadcast. A fixed variable may be supplied by F without appearing in the
+layout.
+For example, (X∧Y )∨Z with F ={Z7→ 0},R = [X,Z ], andC = [Y ] returns
+M =
+
+
+0 0
+0 0
+0 1
+0 1
+
+, (25)
+whose rows are (X,Z ) = 00, 01, 10, 11. The residual function is X∧Y , but the result has eight entries. A projected
+four-entry relation would require the caller to request a reduced layout or a separately specified projection API.
+The current dense wrapper neither drops fixed axes nor minimizes essential support.
+The materialized dense result is an owned writable array, not a writable broadcast view. Its NumPy Boolean
+entries occupy one byte each; a bit-packed relation is a different output representation. Expression nodes and pair
+surrogates are immutable under the compiler contract, and caller-owned layouts/fixed maps are read-only.
+5.4 Cost model
+Let N be AST occurrences, U unique DAG nodes, H AST height, S occurrences in a subtree sent to retabulation,
+D its evaluation depth, k the length of a signed literal’s negation chain, and m the number of retained ambient
+output axes. The counts | suppF (e)| and the number of essential variables can both be smaller than m.
+ Inspecting a signed literal costs O(k) followed by an O(1) four-bit transform.
+8
+
+
+9 =====
+Operator-Level Boolean Computation with Correspondence Matrices Contract revision, 26 September 2026
+ A four-bit token fusion is O(1).
+ One exact pair retabulation costs O(4S) time plus the evaluator’s stack/workspace requirements.
+ A fully successful structural pair tree is ordinarily O(N) time and O(H) stack space, although the current
+support-discovery strategy can rescan rejected subtrees and therefore has an O(N2) worst case.
+ A sharing-aware evaluator may scale with U rather than N, which is why DAG-preserving packed/CSE
+comparators are mandatory.
+ The current dense wrapper budgets and materializes 2 m entries even if many are repeated. Its output
+allocation/copy costs Θ(2m) time and bytes; additional compiler workspace is separate. Projected or bit-packed
+outputs require separate accounting.
+The last point prevents a common category error: constant-time token fusion is a local kernel fact, not an
+end-to-end complexity theorem.
+6 Closest prior art and matched comparators
+The compiler should be compared with operations that possess equivalent local information, not with deliberately
+weaker baselines.
+Boolean matrices and truth vectors. Edwards developed Boolean-matrix logic well before the present work
+[5]. Cheng, Zhao, and Xu use XOR as addition and AND as multiplication and state the same-variable entrywise
+outer-operation law in Proposition 3.3 [ 3]. Reshaping such a vector into 2 × 2 form does not make that pointwise
+identity new.
+Matrix/vector logic. Stern and Mizraji provide established operator/matrix representations of logic [19, 14, 15].
+Bricken’s technical note explicitly places logical matrices between two-component states in bra–matrix–ket form [1].
+The companion foundations paper contains the appropriate broader comparison; the computational manuscript
+needs only enough of this history to prevent novelty from being attached to notation or representation alone.
+NPN, LUT, and AIG practice. Small truth functions are routinely packed into machine words, transformed
+under input permutation/negation and output negation, classified up to NPN equivalence, and used in cut-based
+rewriting. DAG-aware AIG rewriting specifically exploits graph sharing rather than treating a formula as an
+unshared tree [7, 23, 20]. CM transposition, row/column reversal, complement, and four-bit storage are therefore
+familiar small-function operations. Kitty directly provides truth-table Boolean operations, variable swaps/flips,
+dependence tests, cofactors, and base expansion [8]. These primitives do not distinguish this compiler.
+The closest architectural comparison also carries operand identity: mockturtle cut rewriting supplies a truth
+table together with an ordered iterator range of leaves [ 9]. An explicit frame is therefore not an unprecedented
+addition to a truth function. DAG-aware AIG rewriting evaluates candidate replacement gain against shared
+graph structure before committing a selected replacement [ 7]. The present wrapper instead attempts a restricted
+variable-pair root and abandons child constructions on root failure; it neither enumerates general cuts nor selects
+network replacements by sharing-aware area gain.
+Comparison Shared capability Boundary in this paper
+Cheng et al.; kitty Aligned truth-function combination and ta-
+ble manipulation.
+No algebraic or primitive-operation novelty
+claim.
+Cut/AIG rewriting Truth functions with leaf identities, input
+transforms, local candidates.
+No general cut enumeration, gain search, or
+persistent graph replacement here.
+Direct packed/DAG evalua-
+tor
+Same four values; identity sharing can be
+preserved.
+Primary end-to-end comparator; recognition
+overhead must be paid.
+This contract artifact Frame, strategy, provenance, failure, owner-
+ship, and output size specified together.
+Regression-tested integration; synthetic pri-
+mary and bounded natural secondary com-
+parisons are negative.
+Table 2: Closest comparisons and the remaining, deliberately limited methods contribution. No kitty or AIG
+runtime comparison was executed for this revision.
+9
+
+
+10 =====
+Operator-Level Boolean Computation with Correspondence Matrices Contract revision, 26 September 2026
+Direct packed evaluation. A strong simple comparator evaluates the AST once over four packed masks to
+obtain all four assignments in parallel. With identity memoization it also preserves explicit DAG sharing. It
+returns exactly the same four-bit function required by a pair-token endpoint and does not need CM-specific frame
+metadata. This is the closest baseline for deciding whether structural recognition pays for itself.
+Generic local truth-function optimization. A generic optimizer given the same local support/function
+information can tabulate or combine a small cut without using CM notation. The S1/S2 evidence below shows
+why this comparator is scientifically necessary: it reaches the same reduced symbolic outputs as CM folding on
+the admitted all-arm cases.
+ROBDDs and broader rewrite search. ROBDDs provide canonical function representations for a fixed
+variable order [2]. Equality saturation and synthesis-driven superoptimization retain or search broader classes
+of equivalent expressions [22, 18]. These systems solve a more general problem than the fixed two-operand rule;
+comparison should therefore charge recognition/search/extraction and compare delivered artifacts appropriate to
+the task.
+7 Experimental questions and evidence hierarchy
+The computational claim is meaningful only if the benchmark answers the same question for every arm. Four
+distinctions are especially important.
+1. Kernel versus compiler. Four-bit fusion time is not compilation time.
+2. Prepared versus one-shot. A resident token/program may amortize setup; one-shot use may not.
+3. Compact versus materialized output. A token endpoint is not a complete 2m-entry ambient truth relation.
+4. Task contract. ANF production, complete truth-vector evaluation, repeated restriction, counting, and
+multi-root output are different tasks and cannot share one headline ratio.
+Figure 2 shows the evidence levels used in this draft.
+1. Formal/finite correctness: frame transforms, fusion invariant, retabulation, provenance,
+implementation tests.
+2. Exploratory mechanism: S1/S2 pre-expansion work reductions and exact tie with matched
+generic local optimization.
+3. Completed different endpoint: P14-PY0 ANF dispatcher, negative overall under its frozen
+primary rule.
+4. Separate project context: later current-source complete-relation/restriction/multi-root
+campaigns; useful for methodology, not pair-compiler attribution.
+5. Pair-token evidence: frozen synthetic v4 primary comparison is negative; bounded natural
+v5 secondary timing is negative; broader v3 scope remains open.
+Figure 2: Evidence hierarchy. A favorable result on a different endpoint is not promoted into pair-compiler
+evidence.
+7.1 Confirmatory workload design
+The preserved, pre-freeze protocol-v3 design [ 11] separates exact-frame formulas, signed/swapped frames, local
+retabulation cases, hybrid mixed-child cases, multiple operand pairs, compound-operand cases outside the structural
+claim, and natural formulas/circuits. Balanced generated trees use AST occurrence counts 15 , 63, 255, 1023, 4095;
+skewed trees stop at 255 occurrences and measured height at most 128. Cases cross the five supported outer
+10
+

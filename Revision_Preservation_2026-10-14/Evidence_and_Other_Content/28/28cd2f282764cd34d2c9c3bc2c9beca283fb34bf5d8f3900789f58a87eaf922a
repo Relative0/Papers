@@ -1,0 +1,190 @@
+# N2/P13 Preregistration - Deferred C-Backed Pair Exactification
+
+## Status
+
+Frozen before any P13 correctness, invariance, fuzz, Gate-P, natural-corpus, memory, or timing result is inspected.
+
+P13 is a pure implementation experiment. It does not retrain or modify the frozen P8/P9/P10/P11/P12 dispatch policy, the `0.80` cutoff, the P6 profitability rule, the P6 folding backend, the Gate-P generator, the natural EPFL evaluation roots, repetition counts, or primary endpoint.
+
+## Motivation fixed from P12
+
+P12 removed eager reuse bookkeeping and reduced the full Gate-P pipeline to 1.019888x direct case-balanced and 0.982339x workload-weighted. Its remaining common-path telemetry cost is dominated by maintaining a Python dictionary of canonical binary operand-pair counts during source construction.
+
+The frozen annotate decision is exactly the conjunction:
+
+- at least one canonical binary operand pair occurs at least five times (`shell_ge5`);
+- `reuse_edge_events / edge_count <= 0.44374121725559235`;
+- `pair_repeat_excess / binary_nodes <= 0.16333333402872086`.
+
+P13 tests whether pair statistics can be deferred out of per-node Python dictionary operations while preserving the exact final decision.
+
+## Frozen P13 mechanism
+
+### Source-construction state
+
+P13 maintains only:
+
+- ordinary `Factory` cache and node list;
+- `edge_count`;
+- `binary_nodes`;
+- a Python list `pair_keys` containing one packed canonical operand-pair integer for each binary `and/or/xor/tf` node.
+
+P13 deliberately does **not** maintain during source construction:
+
+- a pair-count dictionary;
+- a shell flag;
+- pair-repeat excess;
+- reuse state;
+- depth, density, or generic feature dictionaries.
+
+For a binary source node with child ids `a,b`, the canonical packed key remains exactly `(min(a,b) << 32) | max(a,b)`.
+
+### Stage 1: exact distinct-pair / repeat-density test in C-backed builtins
+
+At dispatch:
+
+1. if `binary_nodes < 5`, bypass immediately because a five-shell is impossible;
+2. construct `set(pair_keys)` and derive exact
+   `pair_repeat_excess = binary_nodes - len(set(pair_keys))`;
+3. test the frozen pair-repeat-density inequality using the exact binary-float rational and integer arithmetic;
+4. if pair-repeat density exceeds the frozen threshold, bypass immediately regardless of shell multiplicity;
+5. if `pair_repeat_excess < 4`, bypass immediately because a five-shell is impossible.
+
+The ordering is decision-equivalent because the annotate leaf is a conjunction.
+
+### Stage 2: exact five-shell test only when still eligible
+
+Only cases surviving Stage 1 materialize exact multiplicities. P13 creates a temporary plain Python dictionary and calls CPython's built-in `_collections._count_elements(counts, pair_keys)` once. This performs the counting loop in C rather than one Python-level dictionary lookup/update per source binary node.
+
+P13 then tests whether any exact multiplicity is at least five. If not, bypass.
+
+This exactification is not approximate: it must yield the same `shell_ge5` truth value as P12 whenever invoked.
+
+### Stage 3: frozen lazy reuse exactification
+
+Only cases surviving the pair-repeat and five-shell predicates execute the exact same P12 reuse scan:
+
+- allocate `bytearray(len(nodes))`;
+- scan source edges;
+- count repeated child uses exactly;
+- stop monotonically as soon as the frozen exact-rational reuse threshold is provably exceeded.
+
+Thus P13 changes only the implementation of pair telemetry.
+
+## Mandatory P12/P13 invariance
+
+Before timing interpretation, P13 must be checked on all 332 frozen policy cases:
+
+- 188 P8 training cases;
+- 98 P8 validation cases;
+- 36 Gate-P evaluation cases;
+- 10 natural evaluation cases.
+
+Require for every case:
+
+- identical ordinary Boolean source semantics / direct compiler digest;
+- identical `edge_count` and `binary_nodes` to P12;
+- exact P13-derived `pair_repeat_excess == P12.pair_repeat_excess`;
+- exact final annotate/bypass decision identical to P12;
+- when P13 performs five-shell exactification, exact `shell_ge5` must equal P12;
+- when P13 bypasses before shell exactification, a separate untimed verification helper must confirm that the shortcut could not change the final decision;
+- whenever P13 performs a reuse scan to completion, exact reuse count must equal P12/P11's exact reuse count;
+- whenever P13 early-aborts reuse, the partial count must already strictly exceed the exact frozen threshold and P12 must also bypass.
+
+Any mismatch aborts performance interpretation.
+
+## Correctness gate
+
+Before timing interpretation, run 1,000 fresh fuzz formulas. Require:
+
+- ordinary, P12, and P13 source DAG semantics agree;
+- exact P13 repeat-excess derivation matches P12;
+- P12/P13 final dispatch decisions agree;
+- direct and P6 compiler outputs match the independent Boolean oracle/digest;
+- selected P13 Boolean-work metrics equal the corresponding frozen direct/P6 backend;
+- P6 accepted-fold count equals fold-lowering count.
+
+Any mismatch aborts interpretation.
+
+## Evaluation corpora
+
+### Gate-P
+
+Replay exactly the frozen 36-case Gate-P evaluation family: depths 6, 8, and 10; 12 cases per depth; original frozen RNG/order.
+
+### Natural EPFL
+
+Replay exactly the frozen ten natural cones used in P1-P12 from EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`.
+
+No natural-folding claim is permitted unless P13 dispatches to P6 and actually consumes a fold on a natural case.
+
+## Simultaneous source-inclusive arms
+
+Randomize four arms within every timing schedule:
+
+1. `direct_source_pipeline` - ordinary source Factory + direct/no-rewrite sparse ANF;
+2. `p6_source_pipeline` - ordinary source Factory + always-P6 compiler;
+3. `p12_lazy_reuse_dispatch` - frozen P12 pair-dictionary + lazy-reuse implementation;
+4. `p13_deferred_pair_dispatch` - P13 deferred pair-key list + C-backed exactification + frozen reuse logic.
+
+This simultaneous design isolates P13/P12 implementation cost while controlling machine drift.
+
+## Timing
+
+- Gate-P: 20 randomized repetitions per case per arm.
+- Natural: 15 randomized repetitions per case per arm.
+- Separate untimed `tracemalloc` passes are permitted.
+- Case medians are formed first.
+- Pooled ratios use case-balanced geometric means with 5,000 bootstrap resamples for 95% intervals.
+- Workload-weighted summed-median ratios and per-case wins are secondary.
+
+## Primary endpoint
+
+`P13 / direct` source-inclusive time, from source-DAG construction through dispatch, selected compiler construction, and sparse-ANF lowering.
+
+## Secondary endpoints
+
+Report at minimum:
+
+- P13/P12 source-inclusive ratio;
+- P13/P6 source-inclusive ratio;
+- P13/direct source-build+dispatch ratio;
+- P13/P12 source-build+dispatch ratio;
+- P13/direct selected-compiler ratio;
+- workload-weighted versions;
+- Gate-P depth strata;
+- exact dispatch counts;
+- number of cases requiring Stage-2 multiplicity exactification;
+- number of cases requiring reuse exactification;
+- reuse-scan edge fraction;
+- Boolean-work ratios versus direct;
+- traced peak-allocation ratios.
+
+## Predeclared signals
+
+### Gate-P direct-crossover PASS
+
+Requires all of:
+
+1. zero correctness failures;
+2. exact P12/P13 final-decision invariance on all 332 frozen cases;
+3. at least one Gate-P case dispatched to P6 and consuming a fold;
+4. P13/direct source-inclusive case-balanced geomean <= `0.95`;
+5. bootstrap 95% upper bound < `1.00`;
+6. no greater than 5% pooled increase in pair terms or peak monomials versus direct.
+
+### Deferred-pair engineering success
+
+Independently report success if all hold:
+
+1. exact P12/P13 final-decision invariance;
+2. P13/P12 source-build+dispatch case-balanced geomean <= `0.95`;
+3. P13/P12 source-inclusive case-balanced geomean <= `0.99`;
+4. bootstrap 95% upper bound for P13/P12 source-inclusive < `1.00`.
+
+## Guardrails
+
+- No frozen tree value, cutoff, fold threshold, case, repetition count, endpoint, pair representation, or exactification order may change after P13 results are seen.
+- No P13 timing may be used to modify the Stage-1 shortcut, Stage-2 counting routine, reuse-scan structure, or early-abort rule.
+- No learned gate, case-specific exception, approximate duplicate filter, or post-hoc dispatch threshold is permitted.
+- P13 is a CPython implementation experiment. A win would demonstrate cheaper exposure of the already-frozen folding/dispatch mechanism; it would not establish uniqueness to CM or general natural-circuit acceleration.

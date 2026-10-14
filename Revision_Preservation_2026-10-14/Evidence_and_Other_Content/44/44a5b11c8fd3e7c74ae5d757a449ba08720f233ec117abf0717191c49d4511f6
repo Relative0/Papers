@@ -1,0 +1,55 @@
+# HANDOFF_TO_MASTER - frozen computation baseline
+
+**Origin:** Master-thread CM Structural Computation project, frozen 2026-09-26; reorganized 2026-09-28 for the multi-thread convergence workflow.
+
+## 1. Exact question this baseline addressed
+
+Can exact Boolean decomposition artifacts (XOR components, GF(2)-rank factors, cofactor/prototype blocks, product/Kronecker structure, plus flat fallback) survive conditioning/persistence correctly, and do they provide a measurable size or repeated-query advantage once build/discovery, verification, serialization, reload, and query costs are charged?
+
+## 2. Strongest correctness evidence
+
+- Exhaustive small-domain suite over all 278 Boolean functions for 0 <= n <= 3: **3,988 artifacts**, **105,292 conditioning/count checks**, 3,988 serialization checks, and 3,988 corruption rejections.
+- All **65,536 binary 4x4 matrices** checked in the rank/prototype/profile extension suite; 2,000 factor-only recompression checks; 3,020 sequential-vs-fused conditioning checks.
+- Legacy adapter exercised **675 historical artifacts** with **6,750 query comparisons** across GF(2)-rank, cofactor, Kronecker, and XOR tags.
+- Persistence suite: **278 fresh three-backend round trips**, **7,070 fresh-instance query triples**, 510 single-spike rank checks, and explicit persistent-summary/refinement counterexamples.
+- Clean-directory replay: eight separate child-process commands, user `PYTHONPATH` removed, all passed.
+
+## 3. Strongest empirical result
+
+The corrected v3 full-lifecycle experiment covered **38 cases**, three backends, five repetitions, and 128 queries per trial (**570 complete trials**). The artifact pipeline had **0 per-case median lifecycle-time wins versus the packed truth-table baseline** in this reference implementation. This is a negative result for the tested implementation/workload, not an impossibility theorem.
+
+The binary representation did produce real space savings on selected cases. In the 38-case v2-binary selection: 15 flat, 17 product, 2 rank, 2 cofactor, 2 XOR. Among the 26 outputs of the one external EPFL control design: 10 flat, 14 product, 2 rank. Seven recorded cases had SC-binary payload smaller than the raw packed truth payload floor, including 12-variable synthetic examples using 23-29 bytes versus 512 raw truth bytes.
+
+## 4. Important counterexamples / contract limits
+
+- `f(x,y)=xy` and `g(x,y)=(1-x)y` have the same recorded unconditional rank-profile histograms and model count, but conditioning `x=0` gives counts 0 and 1. Aggregate histograms sufficient for one count are not sufficient persistent summaries for arbitrary later restrictions.
+- `x*y*z XOR x XOR y` begins as one connected ANF component; after `z=0`, rediscovery yields two XOR components. A retained decomposition and a freshly optimized decomposition have different monotonicity semantics.
+- The historical loader admitted non-recomputed `factor_bits`, nonminimal declared rank, and self-supplied digest semantics that do not authenticate an external source.
+- With the tested Python decimal conversion guard, dense n=14 and n=16 truth integers fail the JSON paths; SC binary round-trips them. Reported timing cases stop at n=12.
+
+## 5. Environment / provenance
+
+Recorded main runtime: Python 3.13.5, GCC 14.2.0 build, Linux 6.18.44 x86_64/glibc 2.41, monotonic `CLOCK_MONOTONIC`; standard library only for the final replay. Dataset SHA-256: `04e0a7bd92b6a731a41472fbbd4e56b45d1c4e3387780ab7a3aa77cadb5ec41c`. Pinned EPFL BLIF SHA-256: `59b209caf863b2c6a9739777ae0a60a37cc4480c2e0d72fcbfcdddeb9a49be08`.
+
+## 6. Reproduction
+
+From the bundle root:
+
+```sh
+python reproducibility/run_correctness.py --output replay_receipt_new.json
+python reproducibility/run_benchmark_copy.py --output benchmark_replay_new
+```
+
+The second command is a timing replay; values will vary by hardware. The first is the exact correctness replay and requires no network. Full details are in `REPRODUCTION_COMMANDS.md` and `reproducibility/README.md`.
+
+## 7. What this does NOT establish
+
+- No optimized CUDD, DSD, ACD, industrial KC, or tensor comparator was executed. The included ROBDD is a fixed-order reference implementation.
+- The external corpus is **one design with 26 outputs**, not 26 independent designs; the other 12 cases are synthetic controls.
+- No resident-memory or cold-disk/fresh-process benchmark was completed.
+- No historical-first novelty claim is established for the decomposition mathematics.
+- This frozen baseline does **not** directly execute the new Theory Phase 1 Q_k rank-threshold theorem. That belongs to the new Computation thread.
+
+## 8. Implication for the new Theory/Computation convergence program
+
+Use this bundle as the trustworthy computational starting point and negative-performance baseline. The next Computation-thread milestone should independently implement the new Q_k operator, verify the rank/dimension and threshold claims on finite domains, search minimal counterexamples, and then return a new thread-native handoff. Do not treat this reconstructed handoff as evidence that those new theorems have been tested.

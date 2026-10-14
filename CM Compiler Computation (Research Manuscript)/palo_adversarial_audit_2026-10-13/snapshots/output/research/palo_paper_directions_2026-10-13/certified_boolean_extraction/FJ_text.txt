@@ -1,0 +1,652 @@
+
+===== PDF PAGE 1 =====
+Finite-Jet Sign Rigidity on Hyperplane Arrangements
+and Denjoy–Carleman Realization
+Brian Theory
+27 September 2026
+Abstract
+LetA be a finite real affine hyperplane arrangement. We study which{±1}-valued chamber
+labelings can occur as the sign of a function with prescribed regularity. A first nonzero
+homogeneous Taylor term inherits the chamber signs weakly, and factor multiplicities force
+a constant crossing parity. This gives a short arrangement-level proof of the known smooth
+signature-flatness obstruction and, in finite regularity, explicitC d orthant andC N arrangement
+rigidity statements.
+For normalized compactwise Roumieu Denjoy–Carleman classesE {M }, the Denjoy–Carleman
+criterion yields an exact realization dichotomy. In the quasianalytic case the realizable chamber
+laws are precisely the signed parity laws; in the non-quasianalytic case every chamber labeling
+is realized by explicit selector formulas. Thus an arrangement ofm distinct hyperplanes
+with r chambers admits exactly2m+1 and 2r realizable sign laws in the two regimes. The
+smooth obstruction and positive-flat existence mechanisms are classical; the contribution is the
+finite-order formulation, self-contained affine-arrangement proof, and unified exact realization
+classification.
+2020 Mathematics Subject Classification.26E10, 52C35.
+Keywords. finite jets; hyperplane arrangements; Denjoy–Carleman classes; quasianalyticity; sign
+distributions; chamber functions.
+1 Introduction
+A Boolean truth table is finite. Requiring the same truth value throughout an entire orthant of
+Rn is not. This distinction becomes sharp when the Boolean value is extracted from the sign of a
+smooth real-valued function.
+For example, the polynomial
+F (x,y ) =xy
+is positive in the first and third quadrants and negative in the other two. With positive interpreted
+as 1 and negative as0, it realizes equivalence (XNOR), an affine Boolean function overF2. By
+contrast, the AND sign pattern is positive only in the positive-positive quadrant and negative in
+the other three. The nonsmooth functionmin(x,y ) has exactly that sign pattern, but the results
+below show that anysmooth realization of AND on all four quadrants must be flat at the origin.
+In a quasianalytic class this is impossible for a nonzero function; in a non-quasianalytic class it is
+possible by using flat one-sided selectors.
+The first purpose of this paper is to isolate the local mechanism behind that phenomenon. It is
+not coordinate division, resolution of singularities, or a special feature of one ultradifferentiable
+class. It is the first nonzero homogeneous Taylor term. If a smooth function has a nonzero finite
+jet at the common corner, its leading polynomial already inherits the orthant signs in a weak
+1
+
+===== PDF PAGE 2 =====
+sense. Polynomial factorization across coordinate hyperplanes then forces an affine parity law.
+The last factor-multiplicity step is elementary and has clear antecedents; the point of the finite-jet
+formulation is that it transports that obstruction from polynomials to arbitrary smooth germs
+and makes the subsequent regularity classification immediate.
+The second purpose is to carry that mechanism to a finite affine hyperplane arrangement. If
+a smooth function is nonzero off the arrangement and has no flat point on it, the local leading
+polynomial at each point fixes a crossing parity for every incident hyperplane. Those parities
+propagate along each connected affine hyperplane and hence determine the sign on every chamber.
+The third purpose is to combine these smooth statements with the classical Denjoy–Carleman
+theorem. We use throughout one compactwise Roumieu convention,
+|Dαf(x)|≤ CKρ|α|
+K|α|!M|α|, x ∈K ⋐U,
+and no derivative-stability assumption. In this normalization the quasianalytic criterion is
+∞∑
+k=0
+Mk
+(k + 1)Mk+1
+=∞.
+On the divergent side, quasianalyticity rules out the flatness required by a non-affine orthant law.
+On the convergent side, a classical compactly supported cutoff yields a one-sided selector, from
+which arbitrary Boolean laws are assembled without cancellation.
+Prior work and contribution boundary.The C∞ arrangement obstruction belongs to the
+signature-flatness theory of Broglia and Tognoli [12]; Remark 4.6 gives the precise reduction from
+the hypotheses used here, including the homological point in their theorem. Their factorization
+analysis also contains the parity-of-multiplicity mechanism underlying Lemma 3.1, and their
+examples already use a first nonzero Taylor coefficient to detect incompatible crossing parities.
+Thus neither the smooth obstruction nor the leading-term idea is claimed as new.
+The broader historical setting includes distributions of signs and signatures [5, 1, 2, 4, 3], the
+Varchenko–Gelfand algebra of chamber functions and its later arrangement-theoretic extensions [7,
+8, 6], and the classical Denjoy–Carleman theory of quasianalyticity, cutoffs, and positive-flat
+functions [14, 13, 15]. Stronger division and monomialization frameworks are also available [11, 9,
+10], but they are not needed for the elementary proofs below.
+The note contributes three things in one framework: explicit finite-order rigidity statements; a
+self-contained leading-jet proof for arbitrary finite affine arrangements; and exact quasianalytic/non-
+quasianalytic realization classifications with constructive formulas and chamber counts. The
+purpose is therefore not historical firstness, but a compact finite-jet formulation and an exact
+synthesis across regularity regimes.
+Organization. Section 2 fixes the sign and Denjoy–Carleman conventions. Section 3 proves the
+weak-sign polynomial lemma. Section 4 establishes finite-jet rigidity and the smooth arrangement
+theorem. Section5constructsone-sidedselectorsandprovesthewhole-orthantdichotomy. Section6
+gives the arrangement classification and exact counts. Section 7 records counterexamples that
+delimit the statements and clarifies the relation with normal-crossing results.
+2
+
+===== PDF PAGE 3 =====
+2 Definitions, conventions, and classical input
+2.1 Orthants and Boolean sign laws
+Forα = (α1,...,α n)∈{ 0, 1}n, put
+εi(α) = 2αi− 1∈{− 1, +1}
+and define the open orthant
+Oα ={x∈ Rn :εi(α)xi> 0 for everyi}.
+A functionF defined on an open setU meeting all these orthantsrealizes a Boolean law Θ :
+{0, 1}n→{ 0, 1} on the orthants inU if F is nonzero on their intersections withU and
+sgnF (x) = 2Θ(α)− 1, x ∈O α∩U.
+Local realization at the common corner means realization on a centered ball contained inU; global
+realization meansU = Rn. We callΘ affine if
+Θ(α) =b⊕e1α1⊕···⊕ enαn, b,e i∈{ 0, 1},
+where⊕ denotes addition inF2. There are2n+1 affine Boolean functions. Whenn = 1, these are
+all four unary Boolean functions.
+A smooth function isflat atp if DαF (p) = 0 for every multi-indexα.
+Definition 2.1 (Taylor-quasianalytic class). For the two generic corollaries below, a smooth
+function class is calledTaylor-quasianalytic if, at every point of its domain, a function whose full
+Taylor jet vanishes has zero germ there. For a vector space of germs, this zero-jet implication
+is equivalent to injectivity of the Taylor map. Only the zero-jet implication is used in the two
+generic corollaries below. No division, composition, or sheaf axiom is intended by this shorthand.
+The divergent Denjoy–Carleman classes used later have this property by the Denjoy–Carleman
+theorem.
+2.2 Affine arrangements
+Let
+A ={H1,...,H m}, H j ={x∈ Rn :ℓj(x) = 0},
+be a finite family of distinct proper affine hyperplanes, where each nonconstant affine defining
+form ℓj is fixed once and for all. Achamber is a connected component of
+Rn\
+m⋃
+j=1
+Hj.
+We write Ch(A) for the chamber set. On a chamberC, every sgnℓj is constant. A chamber
+labeling h : Ch(A)→{± 1} is asigned parity lawif
+h(C) =c
+m∏
+j=1
+sgn(ℓj|C)ej, c ∈{± 1}, e j∈{ 0, 1}. (1)
+The word “signed” is deliberate: whenc =−1, this is not literally a group character, and the
+realized chamber sign vectors need not form a group.
+3
+
+===== PDF PAGE 4 =====
+2.3 One Denjoy–Carleman convention
+Throughout Sections 5–6, anormalized weightmeans a sequenceM = (Mk)k≥0 such that
+M0 = 1, M k > 0,
+with M nondecreasing and log-convex. For an open setU⊆ Rn, define the compactwise Roumieu
+classE{M}(U) by requiring that for every compactK ⋐U there existCK,ρK > 0 such that
+|Dαf(x)|≤ CKρ|α|
+K|α|!M|α| (x∈K). (2)
+This convention keeps the factorial outsideM. To compare with the common total-weight
+convention, set
+Wk =k!Mk.
+ThenW is a weight sequence in the sense used in [14]: it is positive and log-convex,W0 = 1≤W1,
+and W 1/k
+k →∞ . Its quotient sequence satisfies
+Wk+1
+Wk
+= (k + 1)Mk+1
+Mk
+,
+so the Denjoy–Carleman series is precisely
+∞∑
+k=0
+Mk
+(k + 1)Mk+1
+. (3)
+The Denjoy–Carleman theorem says thatE{M} is quasianalytic exactly when(3) diverges; see [14,
+Theorem 3.6]. In the convergent case, nontrivial compactly supported functions exist; the cutoff
+form we use is supplied, for example, by [14, Corollary 3.12].
+We will need only elementary closure properties in addition to this classical input.
+Lemma 2.2(Elementary closure). For a normalized weightM, the classE{M} is closed under
+finite sums, finite products, translations, and precomposition with affine linear functionals. For
+functions on R it is also closed under the primitiveG(t) =
+∫t
+0g(s)ds.
+Proof. Onlyproductsandprimitivesneedcomment. Log-convexitywith M0 = 1impliesMjMk−j≤
+Mk. Combining this with Leibniz’ rule and the bounds(2) gives the same form of estimate with a
+larger radius constant.
+For a one-variableg∈E {M}(R), defineG(t) =
+∫t
+0g(s)ds. On a compact interval,G itself is
+bounded. Fork≥ 1, G(k) =g(k−1), and monotonicity ofM gives
+|G(k)|≤ Cρk−1(k− 1)!Mk−1≤C′(ρ′)kk!Mk
+for suitable enlarged constants. For an affine functionalℓ(x) =a·x +b and a one-variable function
+g, the chain rule gives
+Dα(g◦ℓ)(x) =aαg(|α|)(ℓ(x)).
+The image of a compact set is compact, and the factors froma are absorbed into the radius
+constant. Translations are the one-variable special case of slope one.
+4
+
+===== PDF PAGE 5 =====
+3 A weak-sign polynomial lemma
+The finite-jet argument rests on an elementary fact: even aweak chamber sign prescription for a
+nonzero polynomial has parity form.
+Lemma 3.1(Polynomial weak-sign lemma). LetA ={H1,...,H m} be a finite family of distinct
+proper affine hyperplanes inRn, with fixed defining formsℓj. LetP be a nonzero real polynomial.
+Suppose numbershC∈{± 1} are assigned to the chambersC∈ Ch(A) and satisfy
+hCP (x)≥ 0 ( x∈C). (4)
+Then there are uniquec∈{± 1} and e1,...,e m∈{ 0, 1} such that
+hC =c
+m∏
+j=1
+sgn(ℓj|C)ej (C∈ Ch(A)). (5)
+The polynomial is allowed to vanish at points inside a chamber.
+Proof. For eachj, letaj be the largest exponent for whichℓaj
+j divides P, and write
+P =ℓaj
+j Qj, ℓ j ∤Qj.
+The restriction ofQj to Hj is therefore a nonzero polynomial onHj and cannot vanish on a
+relatively open subset ofHj.
+Consider two chambers sharing a facet contained inHj. In the relative interior of that facet
+choose a pointp outside every other hyperplane and withQj(p)̸= 0. In a sufficiently small ball
+about p, the sign ofQj is fixed, whileℓj changes sign whenHj is crossed. Hence the sign ofP
+changes by the factor(−1)aj. WhereverP̸= 0, the weak inequality(4) forces its sign to equal the
+prescribed chamber sign. Thus every adjacency acrossHj has the same ratio
+hC′
+hC
+= (−1)aj.
+Put ej≡aj (mod 2).
+Now divide the chamber label by∏
+j sgn(ℓj)ej. The quotient is unchanged across every chamber
+adjacency. The chamber adjacency graph is connected: choose interior points of two chambers
+and perturb a segment, or use a two-segment polygonal path, so that it meets the hyperplanes
+transversely and never meets two at the same time. The quotient is therefore a single constant
+c∈{± 1}, proving (5).
+For uniqueness, fixj and choose a point ofHj outside all other hyperplanes. The two local
+chambers on its two sides differ only in the sign ofℓj, so their label ratio determinesej. One
+chamber then determinesc.
+Remark 3.2. The content of Lemma 3.1 is elementary polynomial factorization plus chamber
+adjacency. We use it as a transparent engine for the smooth results; we do not attach an
+independent novelty claim to it.
+5
+
+===== PDF PAGE 6 =====
+4 Finite-jet rigidity
+4.1 Orthants
+Theorem 4.1(Finite-jet rigidity). LetF beC∞ on a neighborhood of the origin inRn. Assume
+that in some ballB centered at the origin,
+F (x)̸= 0 whenever every coordinate ofx is nonzero.
+Because eachB∩Oα is connected, continuity makes the sign ofF constant there; write the resulting
+local orthant sign law ash :{±1}n→{± 1}. If at least one derivative ofF at the origin is nonzero,
+then there are uniquec∈{± 1} and e∈{ 0, 1}n such that
+h(s) =c
+n∏
+i=1
+sei
+i . (6)
+Equivalently, every smooth realization of a non-affine Boolean orthant law is flat at the origin.
+Proof. Let d be the least order of a nonzero derivative ofF at the origin;d = 0 is allowed. The
+first nonzero homogeneous Taylor term is
+Pd(x) =
+∑
+|α|=d
+DαF (0)
+α! xα, P d̸= 0.
+For anyv∈ Rn with no zero coordinate, Taylor’s formula along the raytv, t↓ 0, gives
+F (tv) =tdPd(v) +o(td).
+By the nonvanishing hypothesis and connectedness just noted,F (tv) has signh(sgnv) for every
+sufficiently smallt> 0,
+h(sgnv)Pd(v)≥ 0.
+Thus the nonzero polynomialPd satisfies a weak sign prescription on the coordinate-hyperplane
+arrangement. Lemma 3.1 gives (6) and its uniqueness.
+Under the identificationsi = 2αi− 1, a sign law of the form(6) is equivalent to an affine
+Boolean functionb⊕e1α1⊕···⊕ enαn. The contrapositive gives the flatness statement.
+Remark 4.2 (Finite regularity). The proof uses only the first nonzero Taylor order. If the first
+nonzero jet has orderd, then aCd Taylor expansion is enough. The theorem does not assert that
+nonflatness is necessary for an affine law: flat functions can also realize affine laws.
+Theorem 4.3(Finite-order orthant rigidity). Letd≥ 0 and letF beCd near the origin, nonzero
+whenever all coordinates are nonzero in some centered ball. If every derivative of order< d
+vanishes at the origin and at least one derivative of orderd is nonzero, then the local orthant sign
+law is affine parity.
+Proof. The order-d Taylor expansion supplies the same nonzero leading homogeneous polynomial
+used in Theorem 4.1; Lemma 3.1 then applies verbatim.
+Corollary 4.4(Quasianalytic orthant rigidity). LetF belong to a Taylor-quasianalytic class on
+a neighborhood of the origin and suppose it realizes a whole local orthant law there. Then that
+Boolean law is affine.
+6
+
+===== PDF PAGE 7 =====
+Proof. If every derivative ofF vanished at the origin, the defining zero-jet property would make
+the germ ofF at the origin zero, contradicting nonvanishing on every local open orthant. Apply
+Theorem 4.1.
+4.2 Affine hyperplane arrangements
+Theorem 4.5(No-flat-point arrangement rigidity). LetA ={H1,...,H m} be a finite family of
+distinct proper affine hyperplanes inRn. LetF∈C∞(Rn) be nonzero onRn\⋃
+jHj. Assume that
+F is not flat at any point of⋃
+jHj. Then there are uniquec∈{± 1} and e1,...,e m∈{ 0, 1} such
+that
+sgnF (x) =c
+m∏
+j=1
+sgnℓj(x)ej, x / ∈
+⋃
+j
+Hj. (7)
+Proof. Fix p∈⋃
+jHj. Choose a ballBp small enough that every hyperplane meetingBp contains
+p. After translatingp to the origin, the incident hyperplanes form a central arrangement. LetPp
+be the first nonzero homogeneous Taylor polynomial ofF at p.
+For every directionv outside the incident hyperplanes,
+F (p +tv) =td(p)Pp(v) +o(td(p)), t ↓ 0.
+The functionF has a fixed sign on each local chamber because it is continuous and nonzero there.
+HencePp inherits those signs weakly. Lemma 3.1 gives, for every hyperplaneHj throughp, a local
+crossing parityej(p)∈{ 0, 1}.
+We claim thatej(p) is locally constant asp varies inHj. Fixp∈Hj and its ballBp. Forp′∈Hj
+sufficiently close top, choose the local ballBp′ contained inBp and avoiding all hyperplanes not
+containingp′. The relatively open setHj∩Bp′ contains a pointq outside every other hyperplane:
+the excluded intersections form a finite union of proper affine subspaces ofHj. In dimension one,
+Hj is a point and distinct hyperplanes do not meet it. A sufficiently small transverse pair nearq,
+on opposite sides ofHj, lies inside both balls and meets no other hyperplane. The ratio of the
+two actual signs ofF is both (−1)ej(p) and (−1)ej(p′). Thus the bits agree. SinceHj is connected,
+ej(p) is a single global bitej.
+Now consider the global chamber adjacency graph. Across a generic facet contained inHj,
+the sign ofF changes by(−1)ej. The same is true of the product∏
+j sgn(ℓj)ej. Their quotient is
+therefore unchanged across every chamber adjacency. As in Lemma 3.1, the chamber adjacency
+graph is connected, so the quotient is a global constantc∈{± 1}. This proves(7). Uniqueness
+follows by crossing a generic point of eachHj.
+Remark 4.6 (Earlier signature-flatness theorem). Theorem 4.5 is an elementary affine-arrangement
+case of the signature-flatness theory of Broglia and Tognoli [12, Theorem 4.2]. To compare
+hypotheses, set
+G =F
+m∏
+j=1
+ℓ2
+j.
+Then G has zero set exactly⋃
+jHj and the same chamber signs asF. If F has a first nonzero
+Taylor term at a point of the arrangement, the first nonzero term ofG is its product with a nonzero
+polynomial, so nonflatness is preserved. Forn≥ 2 their homological condition is automatic onRn
+because Hn−1(Rn; Z2) = 0; the hyperplane components admit global affine equations and satisfy
+the required connectivity. The casen = 1 is immediate from the one-dimensional crossing picture.
+7
+
+===== PDF PAGE 8 =====
+Their admissible signatures reduce, for hyperplanes, to the signed parity laws in(1). This remark
+records the historical implication explicitly; the proof above is retained because it isolates the
+finite-jet mechanism needed for Theorem 4.7.
+Theorem 4.7 (Uniform finite-order arrangement rigidity). Let N≥ 0, letA ={H1,...,H m}
+be a finite family of distinct proper affine hyperplanes inRn, and letF∈CN(Rn) be nonzero on
+Rn\⋃
+jHj. Assume that for everyp∈⋃
+jHj the N-jet ofF at p is nonzero; equivalently, for each
+such p there is a multi-indexα with|α|≤ N and DαF (p)̸= 0. Then the chamber sign law ofF is
+a unique signed parity law of the form(7).
+Proof. At eachp on the arrangement choose the leastd(p)≤N for which some derivative of order
+d(p) is nonzero. TheCd(p) Taylor expansion gives a nonzero leading homogeneous polynomial
+and therefore the same local crossing parities as in the proof of Theorem 4.5. The propagation of
+those parities along a hyperplane, and then across the connected chamber adjacency graph, uses
+only continuity and nonvanishing off the arrangement. Thus the remainder of that proof applies
+unchanged.
+Remark 4.8 (A quantitative obstruction). Equivalently, if aCN function is nonzero off the
+arrangement and realizes a chamber labeling that is not signed parity, then at some point of the
+arrangement its entireN-jet must vanish. The smooth theorem is a stronger all-orders analogue:
+it yields a single flat point. The finite-order statements alone do not imply that conclusion by
+letting N tend to infinity, because the point at which theN-jet vanishes may depend onN.
+Corollary 4.9(Quasianalytic arrangement rigidity). LetF be a nonzero globally defined member
+of a Taylor-quasianalytic class onRn, and supposeF is nonzero off a finite affine arrangement.
+Then its chamber sign law has the form(7).
+Proof. At a flat point, the defining zero-jet property would make the germ ofF there zero. Every
+neighborhood of a point on a finite hyperplane arrangement contains points off the arrangement,
+contradicting the assumed nonvanishing there. ThusF has no flat point on the arrangement, and
+Theorem 4.5 applies.
+5 Denjoy–Carleman realization on orthants
+The finite-jet theorem supplies the rigidity half of the classification. The converse direction in a
+non-quasianalytic class is constructive.
+Lemma 5.1(One-sided selector). LetM be a normalized weight. If
+∞∑
+k=0
+Mk
+(k + 1)Mk+1
+<∞, (8)
+then there existsψ∈E{M}(R) such that
+ψ(t) = 0 ( t≤ 0), ψ (t)> 0 ( t> 0).
+Proof. With Wk = k!Mk, condition (8) is the non-quasianalytic Denjoy–Carleman condition∑Wk/Wk+1 <∞. By the classical cutoff theorem, choose a nonzero real-valued compactly
+8
+
+===== PDF PAGE 9 =====
+supported functionf in the corresponding Roumieu class; see [14, Theorem 3.6 and Corollary 3.12].
+Translatef so that the left endpoint of its support is0. Then
+f(t) = 0 ( t≤ 0),
+and every interval(0,t ), t> 0, contains a point at whichf is nonzero: otherwisef would vanish
+on a right-neighborhood of0, contradicting that0 is the left endpoint ofsuppf.
+By Lemma 2.2,f 2 and its primitive belong to the same class. Define
+ψ(t) =
+∫t
+0
+f(s)2ds.
+Fort≤ 0 the integral is zero. Fort> 0, the interval(0,t ) contains a point wheref̸= 0; continuity
+then gives an interval on whichf 2> 0, and thereforeψ(t)> 0.
+Classical constructive antecedent. A stronger existence statement is classical. Rainer’s
+Remark 3.13, citing work of Langenbruch, records positive-flat ultradifferentiable functions for
+prescribed closed sets in the non-quasianalytic setting [14, Remark 3.13]; see also [13]. Taking the
+closed set to be the arrangement and changing the sign of such a function independently on each
+chamber already gives arbitrary chamber labelings, since flatness makes the chamberwise pieces
+glue with zero jet on every wall. The selector construction above is retained because it gives an
+explicit formula in the defining affine forms and makes the later counting argument transparent.
+Definition 5.2. For a normalized weightM, letRM(n) be the set of Boolean functionsΘ :
+{0, 1}n→{ 0, 1} realized by some globally definedF∈E {M}(Rn) that is nonzero whenever all
+coordinates are nonzero.
+Theorem 5.3(Whole-orthant classification). LetM be a normalized weight. Then
+RM(n) =
+
+
+
+{affine Boolean functions},
+∞∑
+k=0
+Mk
+(k + 1)Mk+1
+=∞,
+{all Boolean functions on{0, 1}n},
+∞∑
+k=0
+Mk
+(k + 1)Mk+1
+<∞.
+Proof. Assume first that the series diverges. By the Denjoy–Carleman theorem,E{M} is quasiana-
+lytic. IfF realizes a whole-orthant law, thenF is not the zero function in any neighborhood of
+the origin, so its Taylor jet at the origin cannot vanish identically. Theorem 4.1 implies that the
+law is affine. Conversely, every affine law is realized by the polynomial
+F (x) =c
+n∏
+i=1
+xei
+i
+for suitablec∈{± 1} and ei∈{ 0, 1}, and every polynomial lies in the class.
+Now assume the series converges and choose the selectorψ from Lemma 5.1. Forα∈{ 0, 1}n,
+define
+Ψα(x) =
+n∏
+i=1
+ψ
+(
+εi(α)xi
+)
+.
+For an arbitrary Boolean functionΘ, set
+FΘ(x) =
+∑
+α∈{0,1}n
+(
+2Θ(α)− 1
+)
+Ψα(x). (9)
+9
+
+===== PDF PAGE 10 =====
+By Lemma 2.2,FΘ∈E{M}(Rn). Ifx∈O α, then Ψα(x)> 0, while for everyβ̸=α at least one
+factor of Ψβ(x) is zero. Hence
+sgnFΘ(x) = 2Θ(α)− 1.
+Thus every Boolean function is realized.
+Corollary 5.4 (Gevrey dichotomy). For the Gevrey classGs, s≥ 1, with derivative growth
+Cρk(k!)s, the whole-orthant laws are exactly the affine Boolean functions whens = 1, and all
+Boolean functions whens> 1.
+Proof. In the normalization (2), takeMk = (k!)s−1. Then
+Mk
+(k + 1)Mk+1
+= (k + 1)−s.
+The corresponding series diverges exactly ats = 1 for s≥ 1. Apply Theorem 5.3.
+Remark 5.5. Forn = 1, the two sides of Theorem 5.3 contain the same four Boolean functions
+because every unary Boolean function is affine. The strict expressive difference begins at arity
+n≥ 2.
+6 Affine arrangements: classification and exact counts
+The orthant construction extends directly once orthants are replaced by the realized sign cells of a
+finite affine arrangement.
+Theorem 6.1(Arrangement classification). LetM be a normalized weight. LetA be an arrange-
+ment ofm distinct proper affine hyperplanes inRn, and writer =| Ch(A)|.
+If the series(3) diverges, the chamber sign laws realized by globally definedF∈E{M}(Rn) that
+are nonzero off the arrangement are exactly the signed parity laws(1); there are exactly2m+1 such
+laws.
+If the series(3) converges, every one of the2r chamber labelings is realizable by such a function.
+Proof. On the quasianalytic side, Corollary 4.9 gives the signed-parity form. Every choice of
+(c,e 1,...,e m) is realized by the polynomial
+c
+m∏
+j=1
+ℓj(x)ej.
+These 2m+1 restrictions are distinct. Indeed, for eachHj choose a generic point ofHj outside all
+other hyperplanes. The adjacent chamber pair at that point differs only in the sign ofℓj, so its
+label ratio recoversej; one chamber then recoversc.
+On the non-quasianalytic side, letψ be the selector from Lemma 5.1. For each chamberC, let
+sj(C) = sgn(ℓj|C)
+and define
+ΨC(x) =
+m∏
+j=1
+ψ
+(
+sj(C)ℓj(x)
+)
+.
+10
+
+===== PDF PAGE 11 =====
+Table 1: The classification in the common notation of this paper. All exact realizability counts
+refer to the full normalized Roumieu classesE{M}.
+Setting Mechanism Sign laws
+Smooth germ with a
+nonzero jet at the
+common orthant corner
+Leading homogeneous Taylor polynomial and
+Lemma 3.1
+Affine parity only
+CN function on an
+arrangement with
+nonzero N-jet at every
+wall point
+Local leading terms plus parity propagation Signed parity only
+QuasianalyticE{M} on
+orthants
+Taylor injectivity excludes the flatness re-
+quired by Theorem 4.1
+Exactly 2n+1 affine
+Boolean laws
+Non-quasianalytic
+E{M} on orthants
+One-sided flat selector All 22n
+Boolean laws
+QuasianalyticE{M} on
+m distinct hyperplanes
+No flat points plus Theorem 4.5 Exactly 2m+1
+signed-parity laws
+Non-quasianalytic
+E{M} on an
+arrangement withr
+chambers
+Chamber selectors All 2r chamber
+labelings
+Distinct chambers have distinct sign vectors: a nonempty fixed sign cell is an intersection of open
+half-spaces and is therefore convex and connected. Hence ifx lies in a chamberD, thenΨD(x)> 0
+and ΨC(x) = 0 for everyC̸=D.
+Given any labelingh : Ch(A)→{± 1}, set
+Fh(x) =
+∑
+C∈Ch(A)
+h(C)ΨC(x).
+Elementary closure givesFh∈E {M}(Rn), and on chamberD the sum reduces toh(D)ΨD(x).
+ThusFh has the prescribed sign and is nonzero off the arrangement.
+Example 6.2(Three concurrent lines). Take three distinct lines through the origin inR2, for
+example
+x = 0, y = 0, x −y = 0.
+There arer = 6 chambers. A full quasianalytic normalized Roumieu classE{M} therefore realizes
+23+1 = 16 signed-parity chamber laws, whereas a full non-quasianalytic such class realizes all
+26 = 64 labelings.
+Remark 6.3 (When the counts coincide). Each added distinct hyperplane splits at least one
+existing chamber, sor≥ m + 1. The numerical gap is strict exactly whenr > m+ 1. For m
+parallel hyperplanes one hasr =m + 1, so the two counts coincide. Thus the quasianalytic/non-
+quasianalytic distinction is structural, but its cardinality shadow depends on the arrangement.
+11
+
+===== PDF PAGE 12 =====
+7 Scope, counterexamples, and relation to nearby theory
+7.1 Real zero support is weaker than a normal-crossing divisor
+If one already has a factorization
+F =u
+∏
+i
+xai
+i
+with a nonvanishing unitu, then the sign law is immediately the sign ofu times a parity product
+of coordinate signs. Normal-crossing and monomialization theories therefore provide important
+neighboring context; see [11, 10]. They should not, however, be substituted for the weaker
+hypothesis used in Theorems 4.5 and 6.1.
+Indeed,
+F (x,y ) =xy(x2 +y2) (10)
+is real analytic and has real zero set exactly equal to the union of the two coordinate axes. Its sign
+off those axes issgn(xy). But after extracting the generic first-order factorsx and y, the residual
+factor x2 +y2 still vanishes at the origin and is not a unit. Thus set-theoretic real zero support on
+an arrangement does not imply a unit-times-monomial factorization in the original coordinates.
+This is why the arrangement theorem above is stated and proved directly at the sign level.
+Resolution and monomialization results involve stronger divisor hypotheses and/or transformations
+of source and target; they remain relevant background, not a replacement for the present argument.
+7.2 A common corner is essential for local orthant rigidity
+Theconnectednessofadomainalonedoesnotreplacethecommon-cornerhypothesisinTheorem4.1.
+On the punctured planeU = R2\{ 0}, define
+F (x,y ) =x +y +
+√
+x2 +y2. (11)
+This function is real analytic onU. It is positive in the positive-positive quadrant and in both
+mixed-sign quadrants, while it is negative in the negative-negative quadrant. In a mixed-sign
+quadrant, √
+x2 +y2>|x +y|
+because xy <0, whereas in the negative-negative quadrant
+√
+x2 +y2<|x +y| =−x−y.
+Thus (11) realizes OR on the four quadrants of the punctured plane. There is no contradiction
+with Theorem 4.1: the origin, at which the finite-jet obstruction would live, has been removed.
+7.3 Smoothness alone does not imply rigidity
+The selector construction in(9) givesC∞ realizations of every Boolean law in the non-quasianalytic
+case. For a non-affine law, Theorem 4.1 says that such a realization must be flat at the origin; the
+construction is consistent with exactly that requirement. The mathematical boundary is therefore
+not “smooth versus nonsmooth,” but rather the presence or absence of a nonzero finite jet at the
+relevant common boundary.
+12
+
+===== PDF PAGE 13 =====
+7.4 Signatures and chamber functions
+The factor-parity mechanism in Lemma 3.1 is classical antecedent material. Broglia–Tognoli’s
+Proposition 2.4 records how parity of maximal factor multiplicities controls the induced signa-
+ture [12, Proposition 2.4], while the subsequent signature and sign-distribution literature studies
+broader realization and approximation questions [5, 1, 2, 4, 3].
+A distinct combinatorial tradition studies all functions that are constant on arrangement
+chambers. Varchenko and Gelfand introduced the algebra generated by hyperplane Heaviside
+functions [7]; see also [8, 6]. The present analytic question is narrower: regularity constraints
+select a small family of{±1}-valued chamber functions in the quasianalytic regime, while the
+non-quasianalytic regime permits them all.
+7.5 Established machinery versus the sign classification
+Stronger division, quasianalytic local-ring, resolution, and monomialization frameworks are avail-
+able [15, 11, 9, 10]. The proofs here deliberately avoid that machinery: the rigidity input is only the
+first nonzero Taylor polynomial, and the realization input is only the classical Denjoy–Carleman
+criterion together with cutoffs or positive-flat functions. This is the sense in which the note is
+self-contained without claiming foundational priority.
+8 Conclusion
+A first nonzero Taylor term provides a compact bridge from local regularity to global chamber signs.
+In finite order it yields explicitCd orthant andCN arrangement obstructions; in the smooth setting
+the same mechanism gives an elementary proof of the established signature-flatness consequence
+for affine arrangements. Combined with the Denjoy–Carleman criterion, the argument gives an
+exact realization classification: form distinct hyperplanes withr chambers, the full normalized
+Roumieu class realizes exactly2m+1 signed parity laws in the quasianalytic case and all2r chamber
+labelings in the non-quasianalytic case.
+The note’s contribution is therefore the finite-order formulation, the direct affine-arrangement
+proof, and the explicit synthesis of rigidity, construction, and exact counting in one normalization.
+The underlying smooth obstruction and positive-flat existence theory are classical and are used
+here as historical and technical context rather than as claims of first discovery.
+References
+[1] F. Acquistapace and F. Broglia, Signatures and flatness,Journal für die reine und angewandte
+Mathematik 425 (1992), 61–70.
+[2] F. Acquistapace and F. Broglia, Correction to the paper “Signatures and flatness” (Vol. 425, pp.
+61–70, 1992), Journal für die reine und angewandte Mathematik444 (1993), 155–156.
+[3] F. Acquistapace and F. Broglia, More about signatures and approximation,Geometriae Dedicata50
+(1994), no. 2, 107–116. DOI: 10.1007/BF01265306.
+[4] F. Acquistapace, F. Broglia, and E. Fortuna, When is a distribution of signs locally completable?,
+Canadian Journal of Mathematics46 (1994), no. 3, 449–473. DOI: 10.4153/CJM-1994-024-2.
+13
+
+===== PDF PAGE 14 =====
+[5] E. Fortuna, Distributions de signes,Mathematika 38 (1991), no. 1, 50–62. DOI:
+10.1112/S0025579300006434.
+[6] A. Björner, M. Las Vergnas, B. Sturmfels, N. White, and G. M. Ziegler,Oriented Matroids, 2nd ed.,
+Encyclopedia of Mathematics and its Applications, vol. 46, Cambridge University Press, Cambridge,
+1999.
+[7] A. N. Varchenko and I. M. Gel’fand, Heaviside functions of a configuration of hyperplanes,Functional
+Analysis and Its Applications21 (1987), no. 4, 255–270. DOI: 10.1007/BF01077800.
+[8] D. Moseley, Equivariant cohomology and the Varchenko–Gelfand filtration,Journal of Algebra472
+(2017), 95–114. DOI: 10.1016/j.jalgebra.2016.10.010; arXiv:1110.5369.
+[9] A. Belotto da Silva, E. Bierstone, and M. Chow, Composite quasianalytic functions,Compositio
+Mathematica 154 (2018), no. 9, 1960–1973. DOI: 10.1112/S0010437X18007339; arXiv:1709.06629.
+[10] A. Belotto da Silva and E. Bierstone, Monomialization of a quasianalytic morphism,Annales
+Scientifiques de l’Ecole Normale Superieure56 (2023), no. 5, 1583–1651. DOI: 10.24033/asens.2562;
+arXiv:1907.09502.
+[11] E. Bierstone and P. D. Milman, Resolution of singularities in Denjoy–Carleman classes,Selecta
+Mathematica 10 (2004), no. 1, 1–28. DOI: 10.1007/s00029-004-0327-0; arXiv:math/0108204.
+[12] F. Broglia and A. Tognoli, Approximation ofC ∞-functions without changing their zero-set,Annales
+de l’Institut Fourier39 (1989), no. 3, 611–632. DOI: 10.5802/aif.1178.
+[13] M. Langenbruch, A general approximation theorem of Whitney type,Rev. R. Acad. Cien. Serie A.
+Mat. (RACSAM)97 (2003), no. 2, 287–303.https://rac.es/ficheros/doc/00128.pdf.
+[14] A. Rainer, Ultradifferentiable extension theorems: a survey,Expositiones Mathematicae40 (2022), no.
+3, 679–757. DOI: 10.1016/j.exmath.2021.12.001; arXiv:2107.01061.
+[15] V. Thilliez, On quasianalytic local rings,Expositiones Mathematicae26 (2008), no. 1, 1–23. DOI:
+10.1016/j.exmath.2007.04.001; arXiv:math/0509273.
+14

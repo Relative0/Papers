@@ -1,0 +1,378 @@
+9 =====
+H10
+H01
+H11
+apex
+a1
+a2
+a0
+(a)x 1∧x 2:σ 2 = 3
+H00
+H01
+H10
+H11
+apex
+a1
+a2
+a0
+(b)x 1:σ 2 = 4
+Figure 1: Two chambers ofA2 as cones in the parameter spaceR3 with coordinates(a 0,a 1,a 2), where
+Hx ={a:⟨a,ex⟩= 0}. Each cone is unbounded: solid segments are the bounded portion of the extreme
+rays, dashed arrows mark their extension to infinity, and the cross-section is an arbitrary truncation, not
+a face. (a) The chamber ofx1∧x 2 is simplicial, with three facets, supported byH10,H 01, andH 11; the
+planeH 00 meets the closure only at the apex, so00is inessential andσ2(x1∧x 2) = 3. (b) The chamber
+ofx 1 is not simplicial: all four planesH00,H 01,H 10, andH 11 support facets, so every cube point is
+essential andσ2(x1) = 4. By Theorem 3.3, a cube pointxis essential precisely whenHx supports a facet.
+The TikZ drawing for this figure was produced with the assistance of Anthropic Claude and verified by
+the author.
+3 The chamber-facet identification
+3.1 Facet crossing and the signature theorem
+We now prove the geometric lemma used throughout the paper. We first isolate two arrangement-
+theoretic facts it uses: a local characterisation of when a hyperplane supports a facet, and the
+one-sign crossing lemma built on it.
+Lemma 3.1(Relative-interior characterisation of facets).LetCbe a chamber ofA n and let
+x∈{0,1} n. ThenH x supports a facet ofCif and only if there is a pointcwith the following
+properties:
+c∈ C∩H x andc /∈H y for everyy̸=x.
+WhenH x supports a facet, such a point can be taken in the relative interior ofC∩H x.
+Proof.Suppose such acexists. Sincec∈ Candc /∈Hy for everyy̸=x, each defining inequality
+εC(y)⟨a,ey⟩≥0withy̸=xis strict atc. By continuity these inequalities remain strict on a
+relative neighbourhoodUofcinsideH x, and onU⊆H x thex-inequality holds with equality, so
+U⊆ C∩H x. AsUis a non-empty relatively open subset of the hyperplaneHx, it has dimension
+n; henceC∩H x has dimensionnandH x supports a facet.
+Conversely, supposeF= C∩H x is a facet. IfF⊆H y for somey̸=x, thenFhas dimensionn
+and lies in bothHx andH y, forcingHx =H y, contrary to Lemma 2.1. ThusF̸⊆Hy for every
+y̸=x, and eachF∩H y lies inHx∩Hy, a proper affine subspace ofHx sinceH x̸=H y. As there
+are finitely manyy̸=x, the set S
+y̸=x(F∩H y)lies in a finite union of proper affine subspaces
+ofH x∼= Rn. A non-empty open subset ofHx cannot be covered by finitely many proper affine
+subspaces, andrelint(F)is such a subset becausedimF=n= dimH x; hence there is a point
+c∈relint(F)withc /∈H y for everyy̸=x. Thisclies in C∩H x and on noHy withy̸=x, as
+required.
+9
+
+
+10 =====
+Lemma 3.2(One-sign crossing).LetCbe a chamber ofA n and letx∈{0,1} n. There exists a
+chamberC′ with
+εC′(x) =−ε C(x), ε C′(y) =ε C(y) (y̸=x)
+if and only ifHx supports a facet ofC. When such a chamber exists, it is uniquely determined
+by its sign vector.
+Proof.Suppose first that such a chamberC′ exists. Choosea∈Candb∈C ′, and set
+u(t) = (1−t)a+tb,0≤t≤1.
+Fory̸=x, the numbers⟨a,ey⟩and⟨b,ey⟩have the same strict sign, so⟨u(t),ey⟩keeps that sign
+throughout[0,1]and the segment avoidsH y. Atxthe signs are opposite, so there is a unique
+t0∈(0,1)withc=u(t 0)∈H x; fort < t0 the pointu(t)lies inC, soc∈ C. Thusc∈ C∩H x
+andclies on noH y withy̸=x, and Lemma 3.1 shows thatH x supports a facet ofC.
+Conversely, supposeF= C∩H x is a facet. By Lemma 3.1 there is a pointp∈relint(F)lying
+on noH y withy̸=x. Choosev∈Awithε C(x)⟨v,ex⟩>0. For sufficiently smallδ >0, the
+pointsp+tvwith|t|< δavoid everyH y,y̸=x, by continuity atp. Sincep∈H x, we have
+⟨p+tv,ex⟩=t⟨v,ex⟩, so
+εC(x)⟨p+tv,ex⟩=tε C(x)⟨v,ex⟩,
+which is positive fort >0and negative fort <0by the choice ofv. Hence the sidet >0lies
+inC, while the sidet<0lies in a chamberC ′ whose sign vector agrees with that ofCat every
+y̸=xand reverses atx. Finally, a chamber is determined by its sign vector, soC′ is unique.
+Theorem 3.3(Facet/signature correspondence).Forf∈H n corresponding to chamberCf of
+An, a pointx∈{0,1} n is essential forfif and only ifHx supports a facet ofCf. Moreover, the
+map
+x7−→ Cf∩Hx
+is a bijection fromEss(f)to the facets ofCf. Furthermore,Ess(f)specifiesf, and every specify-
+ing set forfcontainsEss(f). ConsequentlyEss(f)is thesignatureoff, the unique cardinality-
+minimum specifying set, and
+σn(f) =|Ess(f)|.
+Proof.We first prove the equivalence between essentiality and facets. Under the bijectionC7→
+fC, the functionf⊕1 {x} is threshold if and only if there is a chamberC′ whose sign vector
+agrees with that ofCf at everyy̸=xand differs atx. By Lemma 3.2, this happens if and only
+ifH x supports a facet ofCf.
+Thesameequivalencegivesthestatedbijectionbetweenessentialpointsandfacets.Ifx∈Ess(f),
+then Cf∩H x is a facet. Conversely, every facet ofCf is supported by one of the hyperplanes
+appearing in the chamber inequalities, say byHx, and then the equivalence givesx∈Ess(f).
+The map is injective by Lemma 2.1: if two essential points gave the same facet, that facet would
+lie in bothHx andH y, forcingHx =H y, and hencex=y.
+We now identify the signature. Every specifying set containsEss(f): ifx∈Ess(f)\S, then
+f⊕1 {x} is threshold and agrees withfon{0,1} n\{x}⊇S, soSdoes not specifyf.
+Conversely,Ess(f)specifiesf. Letg∈H n agree withfonEss(f), and letC g be its chamber. By
+the facet bijection proved above, the hyperplanesHx withx∈Ess(f)are exactly the hyperplanes
+supporting facets ofCf. Agreement ofgandfonEss(f)says precisely thatC g lies on the same
+side asC f of each of these facet hyperplanes. Lemma 2.3 therefore givesCg =C f, and hence
+g=f. ThusEss(f)specifiesf.
+10
+
+
+11 =====
+It follows thatEss(f)is contained in every specifying set and is itself a specifying set. Hence it
+is the unique cardinality-minimum specifying set, and
+σn(f) =|Ess(f)|.
+In an arbitrary concept class there need not be a unique minimum specification; for threshold
+functions there is. The specification assertion was observed for point sets in general position by
+Cover [10], without proof, in the language of ambiguous or extreme points. The Boolean cube
+is not in general position, so Cover’s result does not directly apply toHn. Anthony, Brightwell,
+and Shawe-Taylor note a proof via Mays’ boundary matrices due to Hu [23], and give an inde-
+pendent, self-contained proof forHn, where the term signature originates [1, Theorem 2.11 and
+Corollary 2.12]; Theorem 3.3 recovers it from the chamber geometry. Zuev had earlier recorded
+the corresponding observation in the language of the graph of threshold functions: the cube
+points associated with facets of the threshold cone form a smallest determining set, and their
+number is the degree in that graph [50, §5].
+3.2 Immediate consequences
+We now derive the lower bound on specification number, the affine-spanning property for specify-
+ing sets, the simplicial-chamber criterion, and the exact specification number of linear read-once
+functions.
+Corollary 3.4.σ n(f)≥n+ 1for everyf∈H n.
+Proof.LetK= Cf. By Theorem 3.3,σn(f)is the number of facets ofK, and the facet-defining
+normals may be taken to beεCf (x)exforx∈Ess(f). The coneKis full-dimensional and pointed
+in the(n+ 1)-dimensional spaceAby Section 2, so Lemma 2.4 shows that these facet normals
+spanR n+1. A spanning set ofRn+1 has at leastn+ 1elements, soKhas at leastn+ 1facets,
+and hence
+σn(f)≥n+ 1.
+Corollary 3.5(Affine-spanning property for specifying sets).For everyf∈ H n and every
+specifying setSforf, the lifted cube points
+{ex:x∈S}
+spanR n+1. Equivalently,Scontainsn+ 1affinely independent cube points, meaning points
+x0,...,x n for whichx 1−x 0,...,x n−x 0 are linearly independent.
+Proof.The proof of Corollary 3.4 shows that the facet-defining normalsεCf (x)ex,x∈Ess(f),
+spanR n+1. Since multiplying a vector byεCf (x)∈{−1,+1}does not change its span,
+span{ex:x∈Ess(f)}=R n+1.
+LetSbe any specifying set forf. By Theorem 3.3,ScontainsEss(f), so
+span{ex:x∈S}=R n+1,
+andScontainsn+ 1linearly independent lifted cube points. Finally, for pointsx 0,...,x n∈
+{0,1}n the lifted cube pointsex0,...,ex n are linearly independent inRn+1 if and only ifx 1−
+x0,...,x n−x 0 are linearly independent inRn, which gives the stated equivalence.
+11
+
+
+15 =====
+Proposition 4.1(Shortest-path closure and essential specification).For a non-empty finite
+classC⊆{0,1} Ω, the following are equivalent:
+(i)Cis shortest-path closed;
+(ii)Cis essentially specified.
+When these conditions hold,EssC(f)is the unique minimum specifying set for everyf∈C.
+Proof.Suppose first thatCis shortest-path closed, and fix distinctf,g∈C. Choose a path from
+ftogof lengthd H(f,g). Its first edge flips some coordinatex∈EssC(f), and because the path
+has Hamming-minimal length,fandgdiffer atx. Hencefandgare distinguished by a point of
+EssC(f). Sinceg∈C\{f}was arbitrary, no member ofCother thanfagrees withfonEss C(f),
+soEssC(f)specifiesf.
+Conversely, suppose thatCis essentially specified. We prove by induction onk=dH(f,g)that
+every pairf,g∈Cis joined inG(C)by a path of lengthk. The assertion is trivial fork= 0. If
+k >0, then, sinceEssC(f)specifiesfandg̸=f, there is somex∈Ess C(f)withf(x)̸=g(x).
+Putf ′ =f⊕1 {x}. Thenf′∈Candd H(f′,g) =k−1. By induction there is a path of length
+k−1fromf ′ tog; prepending the edge fromftof ′ gives a path of lengthk.
+Finally, every specifying set forfmust containEssC(f), since omittingx∈Ess C(f)leaves the
+neighbourf⊕1 {x} indistinguishable. Under either equivalent condition,EssC(f)itself specifies
+f, so it is the unique minimum specifying set.
+The equivalence has a numerical counterpart, the degree identity that drives both bounds of this
+section and appears in the proof of Doliwaet al.’s average bound.
+Lemma 4.2.For any finite essentially specified (equivalently, shortest-path-closed) classC⊆
+{0,1} Ω and everyf∈C,
+σC(f) = degG(C)(f).
+Proof.SinceCis essentially specified,Ess C(f)specifiesfrelative toC, soσ C(f)≤|Ess C(f)|.
+Conversely, every relative specifying set containsEssC(f): if an essential pointxwere omitted,
+thenf⊕1 {x}∈Cwould agree withfon the remaining points, so the set would not specifyf.
+HenceσC(f) =|Ess C(f)|. Finally|EssC(f)|= deg G(C)(f), sincex7→f⊕1 {x} is a bijection from
+EssC(f)to the neighbours offinG(C). The map is well-defined and injective: by definition
+x∈Ess C(f)exactly whenf⊕1 {x}∈C, and distinctxwill flipfat distinct points, so give
+distinct functions. It is surjective, since every neighbour offdiffers fromfat a single pointx,
+which is then essential.
+4.2 Essentially specified classes
+We next separate the argument from the special geometry of the Boolean cube. The following
+feature-map principle records the part of the chamber-facet argument that we use again below.
+Proposition 4.3(Spanning feature arrangements).LetΩbe finite, letVbe a finite-dimensional
+real vector space with dual spaceV∗, and letϕ: Ω→Vbe a map whose image spansVand
+satisfiesϕ(x)̸= 0for everyx∈Ω. Eacha∈V ∗ is a linear functional onV; writea(v)for its
+value atv∈V. Forx∈Ω, put
+Hϕ
+x ={a∈V ∗ :a(ϕ(x)) = 0}.
+Assume thatx7→H ϕ
+x is injective. LetCϕ⊆{0,1} Ω be the chamber class of the arrangement
+Aϕ ={H ϕ
+x :x∈Ω}, where a chamberCgives the Boolean function
+fC(x) = sgna(ϕ(x)) (a∈C),
+15
+
+
+16 =====
+well-defined becausea(ϕ(x))has constant sign asaranges over the chamberC, the sign chang-
+ing only across the hyperplaneHϕ
+x. ThenC ϕ is essentially specified (equivalently, shortest-path
+closed). More precisely, for every chamberC, the map
+x7−→ C∩H ϕ
+x
+is a bijection fromEssCϕ(fC)to the facets ofC, andEssCϕ(fC)specifiesf C insideC ϕ.
+Proof.Sinceϕ(Ω)spansV,
+\
+x∈Ω
+Hϕ
+x ={a∈V ∗ :a(ϕ(x)) = 0for allx∈Ω}={0}.
+Thus the chamber closures ofAϕ are full-dimensional pointed polyhedral cones inV∗.
+The proof of the one-sign crossing lemma and Theorem 3.3 uses only this spanning property
+and the injectivity ofx7→H ϕ
+x. Applying the same argument toAϕ gives the stated bijection
+betweenEssCϕ(fC)and the facets ofC.
+It remains to show that these essential points specifyfC insideC ϕ. LetDbe a chamber such that
+fD agrees withfC onEssCϕ(fC). ThenDlies on the same side asCof every facet hyperplane
+of C. By Lemma 2.3, this forcesD=C, and hencef D =f C. ThereforeEssCϕ(fC)specifiesf C
+insideC ϕ. HenceCϕ is essentially specified and, by Proposition 4.1, shortest-path closed.
+We illustrate the proposition with three instances of the feature-map construction, then record
+where the hypothesis holds more broadly and where it fails.
+Example 4.4(Homogeneous halfspaces).LetY⊆R d\{0}be finite, assume thatYspansR d,
+and assume that no two distinct points ofYlie on the same line through the origin. Taking
+Ω =Y,V=R d, andϕ(y) =ygives the class
+y7−→sgn⟨a,y⟩, a∈R d,
+and Proposition 4.3 says that this class is essentially specified. Its relative essential points are
+precisely the data points whose inequalities support facets of the corresponding realization cone.
+Example 4.5(Boolean threshold functions).TakingΩ ={0,1} n,V=R n+1, andϕ(x) =
+(1,x 1,...,x n), we recover the usual class of Boolean threshold functions. The lifted cube points
+spanR n+1, and distinct lifted cube points give distinct hyperplanes. Thus Proposition 4.3 re-
+covers the chamber-facet statement for Boolean threshold functions.
+Example 4.6(Polynomial threshold functions).For1≤d≤n, the degree-dmonomial feature
+map
+ϕd(x) =
+ Y
+i∈S
+xi
+!
+|S|≤d
+gives the feature arrangement for degree-dpolynomial threshold functions, which is the setting
+used below in Proposition 4.19. The mapϕd satisfies the hypotheses of Proposition 4.3, verified
+in the proof of Proposition 4.19, so that proposition gives essential specification forCd. The VC
+estimate is then the theorem of Doliwaet al.[12], and the remaining numerical bounds parallel
+the threshold case withNd in place ofn+ 1.
+Remark4.7 (Scope of the hypothesis).Essential specification (equivalently, shortest-path clo-
+sure) is the standing hypothesis of both bounds in this section. It is neither automatic nor
+confined to linear separation. The monotone classes of Example 4.8 satisfy it without arising
+from linear separation, while the class of Example 4.9 fails it, withσC(f)>|Ess C(f)|there, so
+the degree identity of Lemma 4.2 requires the hypothesis and is not a general identity.
+16
+
+
+21 =====
+Remark4.17 (Comparison with arbitrary finite classes).The gain from the universal finite-class
+bound to Theorem 4.11 is structural, not numerical. For an arbitrary finite classC, Bondy’s
+separating-set lemma with the argument of Kushilevitz, Linial, Rabinovich, and Saks givesσC≤
+2
+p
+|C|, and the same authors construct classes with average witness sizeΩ(
+p
+|C|)from finite
+projective planes [6, 27], so no cardinality-only bound improves the order
+p
+|C|. ForC=H n,
+Zuev’s estimatelog 2|Hn|=n 2(1−o(1))[49] makes this universal bound2
+p
+|Hn|= 2 n2/2+o(n2),
+against σn≤n 2(1 +o(1))from Theorem 4.11, so essential specification, not a sharper count,
+accounts for the separation. This does not assert thatn2 is sharp forHn, since the facet and
+Vapnik–Chervonenkis bounds giveσn = Θ(n).
+Remark4.18 (Comparisonwithgenericarrangements).Cover’sgeneral-positioncalculationgives
+a second comparison. ForNpoints in general position and homogeneous halfspaces indparam-
+eters, Cover [10, Eq. (39)] gives the expected number of extreme points of a uniformly random
+separable dichotomy as
+2NC(N−1,d−1)
+C(N,d) , C(N,d) = 2
+d−1X
+j=0
+N−1
+j
+
+,
+which is the average facet count of a chamber in a generic central arrangement ofNhyperplanes
+inR d, one in which everydof the normals are linearly independent. For fixedd≥2this ratio
+tends to2(d−1)asN→∞, so after the affine liftx7→(1,x), whered=n+1, the generic fixed-n
+limit is2n. The Boolean threshold arrangement is not generic, since its normals, the lifted cube
+points(1,x), satisfy many linear dependencies, so Cover’s value is a comparison rather than
+a computation ofσn. The exact formula of Corollary 5.3 replaces the generic restriction count
+C(N−1,d−1)by the chamber count of the resonance arrangement.
+4.5 Polynomial threshold functions
+We now consider polynomial threshold functions as the main example of the feature-arrangement
+framework of Proposition 4.3. This lets us apply the same chamber-facet mechanism to a richer
+feature arrangement and show that the lower bound, simpliciality criterion, and dimension-
+sensitive average bound are not specific to the linear setting. Let
+Mn,d ={S⊆[n] :|S|≤d}, N d =|M n,d|=
+dX
+i=0
+n
+i
+
+.
+Adegree-dpolynomial threshold functionon{0,1} n (more precisely, a polynomial threshold
+function of degree at mostd) is a Boolean functionf:{0,1}n→{0,1}for which there are real
+coefficientsa S,S∈M n,d, such that
+f(x) = sgn
+
+ X
+S∈Mn,d
+aS
+Y
+i∈S
+xi
+
+ (x∈{0,1} n),
+with the representing polynomial non-zero at every point of{0,1}n. LetC d denote the class
+of such functions. The degree-dmonomial-feature arrangement below has chambers naturally
+labelled by members ofCd, and this labelling gives a bijection between its chambers andCd. The
+non-vanishing condition places the coefficient vector strictly inside a chamber, off every one of
+the arrangement’s hyperplanes, which is what makes the labelling a bijection.
+Proposition 4.19(Polynomial threshold functions).Let1≤d≤n, and letC d be the class of
+degree-dpolynomial threshold functions on{0,1}n, in the sense above, with specification number
+taken insideCd. Then everyf∈C d satisfies
+σCd(f)≥N d,
+21
+
+
+22 =====
+with equality precisely when the corresponding chamber in the degree-dmonomial-feature ar-
+rangement is simplicial, and
+Nd≤σCd≤2N d−2.
+Proof.LetV d =RMn,d, the coordinate space indexed by the subsetsS⊆[n]with|S|≤d; its
+dimension isNd. A coefficient vectora= (aS)S∈Mn,d∈V d gives the polynomial
+pa(x) =
+X
+S∈Mn,d
+aSxS, x S =
+Y
+i∈S
+xi (x∅ = 1),
+and the monomial-feature vector isϕd(x) = (xS)S∈Mn,d∈V d, so thatpa(x) =⟨a,ϕ d(x)⟩in the
+standard inner product. The central arrangement is
+An,d ={H (d)
+x :x∈{0,1} n}, H (d)
+x ={a∈V d :p a(x) = 0}=ϕ d(x)⊥,
+and its chambers are the functions inCd.
+We verify the hypotheses of Proposition 4.3. First,ϕd({0,1}n)spansV d; equivalently, the mono-
+mial functionsx S with|S|≤dare linearly independent on{0,1} n. This is [2, Proposition 8].
+(EvaluateP
+|S|≤dcSxS = 0at the indicator vectors1T and induct on|T|.)
+Second, the mapx7→H (d)
+x is injective. IfH (d)
+x =H (d)
+y , thenϕd(x)andϕ d(y)are proportional.
+Their∅-coordinates are both1, so the proportionality scalar is1. Sinced≥1, the singleton
+coordinates then givexi =y i for alli, and hencex=y.
+Proposition 4.3 therefore applies:Cd is essentially specified (equivalently, shortest-path closed)
+and the mapx7→ Cf∩H (d)
+x identifiesEss Cd(f)with the facets of Cf. SinceC d is essentially
+specified, Lemma 4.2 givesσCd(f) = degG(Cd)(f) =|Ess Cd(f)|, and therefore
+σCd(f) = #{facets ofCf}.
+SinceCf is a full-dimensional pointed polyhedral cone in theNd-dimensional spaceVd, it has at
+leastN d facets. Therefore
+σCd(f)≥N d.
+Equality holds exactly whenCf has exactlyNd facets, which is equivalent toCf being simplicial.
+For the average, eachf∈C d has the formx7→sgn⟨a,ϕ d(x)⟩for somea∈V d =R Nd, soCd is
+contained in the class of homogeneous halfspaces onVd restricted toϕd({0,1}n). That class has
+Vapnik–Chervonenkis dimensionNd, and restriction to a subset of the domain does not increase
+it, soVCD(Cd)≤N d. SinceCd is essentially specified, Theorem 4.12 givesσCd <2 VCD(Cd)≤
+2Nd, and the cone lower boundσCd(f)≥N d gives σCd≥N d, soNd≤σCd <2N d. The sphere-
+arrangement argument proving Theorem 4.14, applied toAn,d onS Nd−1, shows thatσCd is the
+average facet count of the cells there, and the theorem of Fukuda, Tamura, and Tokuyama [15,
+Corollary 1.3] withd=N d−1sharpens this toN d≤σCd≤2N d−2.
+Remark4.20.The cardinality bound σCd ≤log 2|Cd|of Theorem 4.11 also applies. The two
+bounds behave differently at opposite ends of the degree range. For fixedd, Baldi and Vershynin’s
+estimatelog 2|Cd|= (1−o(1))nN d [4] makes the cardinality bound the weaker, giving only
+O(nNd)against the Vapnik–Chervonenkis boundO(N d). At the other extreme, whend=n,
+the classC n is all of{0,1} {0,1}n
+andlog 2|Cn|= 2 n =N n, so the cardinality bound gives the
+exact valueNn, while the Vapnik–Chervonenkis bound gives2Nn; this is the full-cube case of
+Remark 4.15. We do not attempt here to locate the crossover for intermediate degrees.
+In the next section we develop the exact facet-count approach, which specialises in the linear
+case to the resonance arrangement.
+22
+

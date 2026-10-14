@@ -29,4 +29,4 @@ Reviews are preserved as received; labels such as panel/referee do not establish
 - [09_DELETION_AND_OVERLAP_AUDIT_20260925/CM_LM_Portfolio_Deletion_and_Cross_Folder_Overlap_Audit_2026-09-25.md](../09_DELETION_AND_OVERLAP_AUDIT_20260925/CM_LM_Portfolio_Deletion_and_Cross_Folder_Overlap_Audit_2026-09-25.md)
 - [HISTORY/PARTITION_BASELINE_20260925/README_FIRST.md](../HISTORY/PARTITION_BASELINE_20260925/README_FIRST.md)
 
-Program-level review record: [audits](../../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/05_CURRENT_AUDIT_AND_RECOMMENDATIONS).
+Program-level review record: [audits](../05_CURRENT_AUDIT_AND_RECOMMENDATIONS).

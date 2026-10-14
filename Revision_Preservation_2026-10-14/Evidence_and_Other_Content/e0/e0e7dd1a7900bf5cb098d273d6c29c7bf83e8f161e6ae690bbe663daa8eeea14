@@ -1,0 +1,68 @@
+# CM Computation and Benchmarks
+
+Experimental branch testing whether Correspondence-Matrix operator normalization/folding reduces compressed Boolean/ANF work **beyond** strong generic structural optimization.
+
+## Current state
+
+The matched four-arm Gate A S1/S2 campaign has been implemented and run locally. The central result is intentionally conservative:
+
+- CM folding **does** greatly reduce sparse-ANF multiplication work versus direct propagation on the favorable repeated-same-operand S1 family.
+- Against a strong representation-neutral comparator that receives the same same-operand LUT composition plus exact two-variable cut retabulation, CM and generic optimization produced **identical symbolic work/artifact metrics on every admitted corrected S1/S2 case**.
+- This is therefore evidence for the folding mechanism, not for a CM-specific computational advantage.
+
+See `RESULTS.md`, `NEGATIVE_RESULTS.md`, and `results/GATE_A_S1_S2_RESULTS.md`.
+
+## Implemented arms
+
+- `direct_sparse_anf`
+- `cse_flat_sparse`
+- `generic_2support_sparse`
+- `cm_frontend_sparse`
+
+All arms feed the same canonical bitmask sparse-ANF backend. Correctness is gated by canonical ANF equality plus independent source-expression evaluation checks.
+
+## Reproduce tests
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Re-run S1/S2
+
+The full matrices are large enough that short chunked processes are recommended to avoid long-lived Python heap/GC effects. The runner supports `--skip-cases` and `--max-cases` for deterministic chunking:
+
+```bash
+python scripts/run_gate_a_s1_s2.py \
+  --families S1 \
+  --output results/raw/gate_a_s1.csv
+
+python scripts/run_gate_a_s1_s2.py \
+  --families S2 \
+  --output results/raw/gate_a_s2.csv
+```
+
+Operational safety defaults:
+
+- max monomials: `150000`
+- max pair terms in one multiplication: `2000000`
+- max cumulative pair terms: `10000000`
+
+A guard event is recorded as `BUDGET`; it is never silently converted into a successful row.
+
+Analyze a combined raw file with:
+
+```bash
+python scripts/analyze_gate_a_s1_s2.py \
+  --input results/raw/gate_a_s1_s2.csv
+```
+
+## Evidence boundaries
+
+- The original papers are not modified.
+- The first S2 implementation is preserved as superseded evidence because it failed the semantic-support contract; it is not used for the corrected conclusions.
+- Single-pass local timing fields are diagnostic only.
+- SC-B requires natural workloads and remains open.
+- SC-C requires identical downstream XAG optimization and remains open.
+- SC-D requires specialized ZDD/FDD comparison and remains open.
+
+The next falsifiable experiment is N1: replay the frozen public CM/EPFL-derived natural formulas through the same four-arm artifact-equivalent pipeline.

@@ -1,0 +1,157 @@
+{
+  "f2": {
+    "idempotents": [
+      "FALSE",
+      "AND",
+      "NOR",
+      "X",
+      "Y",
+      "XNOR",
+      "NOT_Y",
+      "NOT_X"
+    ],
+    "count": 8,
+    "ordered_idempotent_pairs": 64,
+    "commuting_pairs": 40,
+    "noncommuting_pairs": 24,
+    "pq_idempotent_pairs": 58
+  },
+  "boolean_semiring": {
+    "idempotents": [
+      "FALSE",
+      "AND",
+      "NOR",
+      "X",
+      "Y",
+      "XNOR",
+      "NOT_Y",
+      "NOT_X",
+      "X_IMPLIES_Y",
+      "Y_IMPLIES_X",
+      "TRUE"
+    ],
+    "count": 11,
+    "ordered_idempotent_pairs": 121,
+    "commuting_pairs": 65,
+    "noncommuting_pairs": 56,
+    "pq_idempotent_pairs": 115
+  },
+  "integer": {
+    "idempotents": [
+      "FALSE",
+      "AND",
+      "NOR",
+      "X",
+      "Y",
+      "XNOR",
+      "NOT_Y",
+      "NOT_X"
+    ],
+    "count": 8,
+    "ordered_idempotent_pairs": 64,
+    "commuting_pairs": 36,
+    "noncommuting_pairs": 28,
+    "pq_idempotent_pairs": 54
+  },
+  "cyclic_convolution_f2": {
+    "idempotents": [
+      "FALSE",
+      "AND"
+    ],
+    "count": 2,
+    "ordered_idempotent_pairs": 4,
+    "commuting_pairs": 4,
+    "noncommuting_pairs": 0,
+    "pq_idempotent_pairs": 4
+  },
+  "diagonal_truth_effects": {
+    "projectors": 16,
+    "ordered_pairs": 256,
+    "commuting_pairs": 256,
+    "sequential_product_rule": "D_E D_F = D_{E intersection F}"
+  },
+  "symmetry": {
+    "D4_group_size": 8,
+    "transpose_symmetric_connectives": 8,
+    "nonempty_strict_restrictions_increasing_stabilizer": 8,
+    "nonempty_strict_restrictions_decreasing_stabilizer": 30,
+    "nonempty_strict_restrictions_preserving_stabilizer": 72,
+    "example_increase": {
+      "state": "X_IMPLIES_Y",
+      "effect": "XNOR",
+      "result": "XNOR",
+      "state_size": 3,
+      "result_size": 2,
+      "state_transpose_symmetric": 0,
+      "result_transpose_symmetric": 1,
+      "state_stabilizer_D4": 2,
+      "result_stabilizer_D4": 4,
+      "stabilizer_change_D4": 2,
+      "strict_restriction": 1,
+      "outcome_possible": 1
+    },
+    "example_decrease": {
+      "state": "XOR",
+      "effect": "X_AND_NOT_Y",
+      "result": "X_AND_NOT_Y",
+      "state_size": 2,
+      "result_size": 1,
+      "state_transpose_symmetric": 1,
+      "result_transpose_symmetric": 0,
+      "state_stabilizer_D4": 4,
+      "result_stabilizer_D4": 2,
+      "stabilizer_change_D4": -2,
+      "strict_restriction": 1,
+      "outcome_possible": 1
+    },
+    "example_same": {
+      "state": "X",
+      "effect": "AND",
+      "result": "AND",
+      "state_size": 2,
+      "result_size": 1,
+      "state_transpose_symmetric": 0,
+      "result_transpose_symmetric": 1,
+      "state_stabilizer_D4": 2,
+      "result_stabilizer_D4": 2,
+      "stabilizer_change_D4": 0,
+      "strict_restriction": 1,
+      "outcome_possible": 1
+    }
+  },
+  "three_variable_embedding": {
+    "rows": [
+      {
+        "formula": "X",
+        "native_variables": 1,
+        "native_true_support_size": 1,
+        "embedded_to_3_support_size": 4,
+        "expected_cylinder_multiplier": 4,
+        "embedded_support": "[(1, 1, 1), (1, 1, 0), (1, 0, 1), (1, 0, 0)]",
+        "pure_native": 1,
+        "pure_after_embedding": 0
+      },
+      {
+        "formula": "X_AND_NOT_Y",
+        "native_variables": 2,
+        "native_true_support_size": 1,
+        "embedded_to_3_support_size": 2,
+        "expected_cylinder_multiplier": 2,
+        "embedded_support": "[(1, 0, 1), (1, 0, 0)]",
+        "pure_native": 1,
+        "pure_after_embedding": 0
+      },
+      {
+        "formula": "X_XOR_Y",
+        "native_variables": 2,
+        "native_true_support_size": 2,
+        "embedded_to_3_support_size": 4,
+        "expected_cylinder_multiplier": 2,
+        "embedded_support": "[(1, 0, 1), (1, 0, 0), (0, 1, 1), (0, 1, 0)]",
+        "pure_native": 0,
+        "pure_after_embedding": 0
+      }
+    ],
+    "general_rule": "support size multiplies by 2^m under a canonical cylinder extension by m unused Boolean variables"
+  }
+}

@@ -1,0 +1,37 @@
+# Reproduction status and execution
+
+## What completed
+
+See E01-E22 in [EXPERIMENT_REGISTRY.csv](EXPERIMENT_REGISTRY.csv), exact [logs](fresh_logs/), and [new independent results](independent/independent_results.json). Six named pytest suites passed102 tests. All explicitly listed mathematical script stages completed. E00, the original aggregate driver attempt, is marked interrupted. The included `fresh_logs/reproduction.json` describes the initial two bridge stages only; it is not the complete session ledger. The full canonical execution inventory is EXPERIMENT_REGISTRY.csv.
+
+## Portable rerun
+
+From the repository root, using Python3.13 or a compatible modern Python:
+
+```sh
+python computation/reproduce.py --quick --workdir /tmp/cm-lm-check
+```
+
+This copies only the new independent checker to a fresh work directory and reads the preserved benchmark raw CSV. It does not modify source snapshots or recorded output. The core checker uses the Python standard library only. A second independent script checks the explicit oracle-interface qualification.
+
+For the supplied mathematical implementations, first create an environment with the packages in [requirements.txt](requirements.txt), then run:
+
+```sh
+python computation/reproduce.py --all --historical --workdir /tmp/cm-lm-full
+```
+
+`--all` reruns explicit stages, not the interrupted aggregate driver. `--historical` adds the four unchanged embedded historical test suites in separate interpreters. The runner copies all chosen source snapshots, records each command/return code/duration, stops on failures, and puts outputs under the chosen work directory. A work directory that already exists is rejected to avoid overwriting prior results. The runner does not install packages, contact services, launch a timing campaign, or modify the repository. A subprocess timeout is logged as such, never PASS.
+
+For exact-original performance campaign commands, consult the benchmark snapshot's protocol; `--all` only audits its stored raw observations and executes correctness tests. Copying the original Python timing numbers into a new environment does not reproduce those timings.
+
+## Environment recorded in this session
+
+Python3.13.5; Linux6.18.44 x86_64/glibc2.41; numpy2.3.5, scipy1.17.0, sympy1.14.0, pytest9.0.2. See [audit_artifacts.log](fresh_logs/audit_artifacts.log). These versions describe the observed environment, not a claim to be latest supported versions.
+
+## Limits
+
+The capability cross-validator compares fresh capability data to its supplied `provenance/supplied_fresh` reference corpus. Some historical/adversarial strong-contextuality checks invoke the proved residue-hyperplane criterion; the new dual-number SCC check avoids that dependency. No additional natural-workload performance data, standalone current-Paper-B105-test suite, proof-assistant certificates, or comprehensive literature-priority clearance was obtained.
+
+## Delivered runner validation
+
+The shipped runner was tested in a new directory and completed **21 explicit stages with all PASS**, including all six named test suites. See [completed run manifest](portable_validation/completed_run_manifest.json) and [stage logs](portable_validation/logs/). These repetitions do not add new distinct tests to the 102 total. A first validation launcher was externally interrupted at the historical pure stage; that interruption is retained in [its log](portable_validation/interrupted_launch.log), and a separate historical probe passed 22 tests before the final complete run. The runner fixes BLAS/OpenMP/MKL thread counts to one for predictable check execution. It remains an exact-check runner, not a timing campaign.

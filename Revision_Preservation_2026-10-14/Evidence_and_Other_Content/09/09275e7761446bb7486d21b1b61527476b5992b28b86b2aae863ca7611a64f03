@@ -1,0 +1,644 @@
+# Q_k Theory Milestone 1
+
+**Branch:** CM Structural Computation — Theory  
+**Date:** 2026-09-28  
+**Scope:** bounded conditioned-count queries, Fourier/marginal equivalence, rank, indistinguishability, reconstruction thresholds, first structured-class results, and priority audit.
+
+## Executive result
+
+The elementary linear theory of the bounded conditioned-count operator is now clean and complete. The core facts are correct, but the Fourier/marginal equivalence and dimension count are not new: they are classical/known in equivalent form in contingency-table and Fourier literature. The mathematically useful outcome is therefore not to present those facts as the paper's novelty, but to use them as the ambient quotient theory and move to **class-specific injectivity and persistent representations**.
+
+A nontrivial structured-class result obtained in this pass is an exact threshold theorem for fixed-bipartition GF(2)-rank classes: rank at most 1 has reconstruction threshold `max(p,q)`, while rank at most 2 already has the unrestricted worst-case threshold `p+q`. This creates a sharp rank-1/rank-2 discontinuity relevant to the artifact program.
+
+---
+
+# 1. Correct formalization
+
+Let
+
+\[
+X_n=\{0,1\}^n,
+\qquad
+\mathcal I_{n,k}
+=\{(S,a):S\subseteq[n],\ |S|\le k,\ a\in\{0,1\}^S\}.
+\]
+
+For a field `F` of characteristic 0, define the **indexed** linear operator
+
+\[
+Q_k:\mathbb F^{X_n}\to \mathbb F^{\mathcal I_{n,k}},
+\qquad
+(Q_k f)_{S,a}
+=Q(f;S,a)
+=\sum_{x:x_S=a}f(x).
+\]
+
+The indexing matters. Writing `Q_k f` as a plain set of numerical values can collapse repeated answers and is not adequate for rank or equality statements. The object needed for the theory is the indexed vector/family.
+
+Define the query row
+
+\[
+q_{S,a}(x)=\mathbf 1[x_S=a],
+\]
+
+so that `Q(f;S,a)=<f,q_{S,a}>` under the ordinary counting inner product.
+
+---
+
+# 2. Theorem A — exact Walsh/Fourier characterization
+
+Use characters
+
+\[
+\chi_T(x)=(-1)^{\sum_{i\in T}x_i},
+\qquad
+\widehat f(T)=2^{-n}\sum_x f(x)\chi_T(x).
+\]
+
+For every `S,a`,
+
+\[
+q_{S,a}(x)
+=2^{-|S|}\sum_{T\subseteq S}
+(-1)^{\sum_{i\in T}a_i}\chi_T(x).
+\]
+
+Therefore
+
+\[
+\boxed{
+Q(f;S,a)
+=2^{n-|S|}\sum_{T\subseteq S}
+(-1)^{\sum_{i\in T}a_i}\widehat f(T)
+}
+\tag{A1}
+\]
+
+and, conversely, for every `T`,
+
+\[
+\boxed{
+\widehat f(T)
+=2^{-n}\sum_{a\in\{0,1\}^T}
+(-1)^{\sum_{i\in T}a_i}Q(f;T,a)
+}
+\tag{A2}
+\]
+
+Hence the complete indexed family of conditioned counts of order at most `k` is linearly equivalent over `R` or `Q` to the Walsh/Fourier coefficients of degree at most `k`.
+
+### Important scope point
+
+This is a statement about **arbitrary real-valued functions** on the Boolean cube. Boolean-valuedness is not required for the linear equivalence. Booleanity only changes which low-frequency vectors can actually occur and how large the fibers of the map can be.
+
+---
+
+# 3. Integral refinement — the natural Z-basis
+
+The Fourier change of basis is rational, not unimodular over `Z`. For exact integer query algebra, the cleaner coordinates are the positive moments
+
+\[
+M_T(f)=\sum_x f(x)\prod_{i\in T}x_i
+=Q(f;T,1^T).
+\]
+
+If
+
+\[
+P=\{i\in S:a_i=1\},\qquad
+Z=\{i\in S:a_i=0\},
+\]
+
+then inclusion-exclusion gives
+
+\[
+\boxed{
+Q(f;S,a)
+=\sum_{U\subseteq Z}(-1)^{|U|}M_{P\cup U}(f)
+}
+\tag{A3}
+\]
+
+Thus the queries with `|S|<=k` generate exactly the same **integer row lattice** as
+
+\[
+\{M_T:|T|\le k\}.
+\]
+
+For the unnormalized Walsh sums
+
+\[
+W_T(f)=\sum_x f(x)\chi_T(x),
+\]
+
+we have
+
+\[
+W_T=\sum_{U\subseteq T}(-2)^{|U|}M_U,
+\qquad
+M_T=2^{-|T|}\sum_{U\subseteq T}(-1)^{|U|}W_U.
+\]
+
+So Walsh coordinates are equivalent over `Q`, while moment/query coordinates provide the natural integral lattice basis.
+
+---
+
+# 4. Theorem B — rank and exact-k redundancy
+
+Let
+
+\[
+V_{\le k}
+=\operatorname{span}\{\chi_T:|T|\le k\}.
+\]
+
+By (A1), every query row lies in `V_{<=k}`. Conversely,
+
+\[
+q_{T,1^T}(x)=\prod_{i\in T}x_i,
+\]
+
+and the square-free monomials of degree at most `k` are linearly independent as functions on the cube. Therefore
+
+\[
+\boxed{
+\operatorname{rowspan}(Q_k)=V_{\le k}
+}
+\]
+
+and
+
+\[
+\boxed{
+\operatorname{rank}(Q_k)
+=d_{n,k}
+:=\sum_{j=0}^{k}\binom nj.
+}
+\tag{B1}
+\]
+
+### Exactly k coordinates already suffice
+
+Let `Q_k^=` denote the workload containing all assignments on all subsets `S` with exactly `|S|=k`. If `T subseteq S`, `|S|=k`, then
+
+\[
+Q(f;T,a)
+=\sum_{b\in\{0,1\}^{S\setminus T}}Q(f;S,a\cup b).
+\]
+
+Hence
+
+\[
+\operatorname{rowspan}(Q_k^=)
+=
+\operatorname{rowspan}(Q_k),
+\]
+
+so exact-`k` and at-most-`k` query families have the same rank `d_{n,k}`.
+
+### Small-n rank table
+
+| n | k=0 | k=1 | k=2 | k=3 | k=4 |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 1 | 2 |  |  |  |
+| 2 | 1 | 3 | 4 |  |  |
+| 3 | 1 | 4 | 7 | 8 |  |
+| 4 | 1 | 5 | 11 | 15 | 16 |
+
+---
+
+# 5. Theorem C — complete k-indistinguishability characterization
+
+Define
+
+\[
+f\sim_k g
+\iff
+Q_k f=Q_k g.
+\]
+
+Then, over `R` or `Q`,
+
+\[
+\boxed{
+f\sim_k g
+\iff
+\widehat f(T)=\widehat g(T)\quad\forall |T|\le k
+\iff
+f-g\in V_{>k}.
+}
+\tag{C1}
+\]
+
+Thus
+
+\[
+\ker Q_k
+=
+\operatorname{span}\{\chi_T:|T|>k\}.
+\]
+
+The quotient `F^{2^n}/ker(Q_k)` has dimension `d_{n,k}`. Passing from `k` to `k+1` adds exactly
+
+\[
+\binom n{k+1}
+\]
+
+independent linear degrees of information.
+
+For Boolean-valued functions, a fiber is the intersection of an affine Fourier coset with the Boolean hypercube of truth tables. Fiber sizes need not be uniform.
+
+---
+
+# 6. Theorem D — smallest Boolean collisions are exactly 2^(k+1) apart
+
+This sharpens the adjacent-level example requirement substantially.
+
+## Statement
+
+Let `f,g:{0,1}^n -> {0,1}` be distinct and suppose `f ~_k g`, with `0<=k<n`. Then
+
+\[
+\boxed{
+ d_H(f,g)\ge 2^{k+1}.
+}
+\tag{D1}
+\]
+
+The bound is sharp for every `n>=k+1`.
+
+## Proof
+
+Set `h=f-g`, so `h` is nonzero and all its Fourier coefficients through degree `k` vanish.
+
+Multiply by the top character:
+
+\[
+r(x)=h(x)\chi_{[n]}(x).
+\]
+
+Fourier support is complemented:
+
+\[
+\widehat r(T)=\widehat h([n]\triangle T).
+\]
+
+Since `h` has no frequencies of degree at most `k`, every nonzero Fourier coefficient of `r` has degree at most `n-k-1`. Hence
+
+\[
+\deg r\le n-k-1.
+\]
+
+Use the standard support-vs-degree lemma:
+
+> If a nonzero real multilinear function on `{0,1}^n` has degree at most `d`, then its support has size at least `2^{n-d}`.
+
+A short induction proves the lemma. Write `p(x',x_n)=r_0(x')+x_n q(x')`. If `q=0`, support doubles from dimension `n-1`; if `q!=0`, at every point where `q` is nonzero, `p(x',0)` and `p(x',1)` cannot both vanish, so the support of `p` is at least the support of `q`, to which the induction hypothesis applies at degree `d-1`.
+
+Applying the lemma to `r` yields
+
+\[
+|\operatorname{supp}h|
+=|\operatorname{supp}r|
+\ge 2^{n-(n-k-1)}
+=2^{k+1}.
+\]
+
+Since `supp(h)` is exactly the Hamming disagreement set of `f,g`, (D1) follows.
+
+## Sharp construction
+
+Choose a coordinate set `U` of size `k+1` and fix all coordinates outside `U` to some assignment `b`. On that `(k+1)`-dimensional subcube, let `f` be the even-parity half and `g` the odd-parity half; set both functions to zero outside the subcube.
+
+Every restriction fixing at most `k` coordinates leaves one parity coordinate free whenever the restricted slice meets the support, so all such counts agree. A restriction fixing all `k+1` coordinates in `U` distinguishes the pair. Their Hamming distance is exactly `2^{k+1}`.
+
+## Trade-theoretic interpretation
+
+Identify a cube point with the subset of coordinates on which it is 1. Equality `Q_k f=Q_k g` is equivalent, via the integral moment basis, to saying that after deleting common support, the two support collections contain every set `T` of size at most `k` equally often. Thus a nontrivial Boolean `~_k` collision is exactly a simple `[k]`-trade. Design-theory literature states that a nonempty `[k]`-trade has minimum volume `2^k` on each leg, reproducing the Hamming lower bound `2^(k+1)` and supplying stronger classification results for small/minimal trades.
+
+---
+
+# 7. Reconstruction thresholds kappa(C)
+
+Define
+
+\[
+\kappa(\mathcal C)
+=
+\min\{k:Q_k\text{ is injective on }\mathcal C\}.
+\]
+
+This parameter is mathematically useful, but it must be positioned as a convenient synthesis parameter rather than presumed novel terminology.
+
+## 7.1 All Boolean functions
+
+\[
+\boxed{\kappa(\mathcal B_n)=n.}
+\]
+
+Upper bound: `Q_n` gives every point value.  
+Lower bound: even and odd `n`-bit parity indicators agree under `Q_{n-1}`.
+
+## 7.2 t-juntas
+
+Let `J_{n,t}` be all Boolean functions depending on at most `t` coordinates. Then
+
+\[
+\boxed{\kappa(J_{n,t})=t}\qquad(1\le t\le n).
+\]
+
+Upper bound: every Fourier coefficient of a `t`-junta has degree at most `t`, hence `Q_t` gives the whole function.  
+Lower bound: even/odd parity on `t` relevant variables.
+
+## 7.3 Boolean functions of real Fourier degree <= d
+
+For the class `FD_{n,d}`,
+
+\[
+\boxed{\kappa(FD_{n,d})=d.}
+\]
+
+This is immediate from complete Fourier reconstruction and the degree-`d` parity pair.
+
+## 7.4 Degree-d polynomial threshold functions
+
+For `1<=d<=n`, let `PTF_{n,d}` be degree-at-most-`d` polynomial threshold functions. Classical generalized Chow theory says that degree-at-most-`d` Fourier coefficients uniquely determine a degree-`d` PTF, even among bounded competitors. Therefore
+
+\[
+\kappa(PTF_{n,d})\le d.
+\]
+
+The degree-`d` parity function and its negation are both degree-`d` PTFs and have identical Fourier coefficients below degree `d`, so
+
+\[
+\boxed{\kappa(PTF_{n,d})=d.}
+\tag{E1}
+\]
+
+For `d=1`, this specializes to Chow's theorem for linear threshold functions: first-order marginals already determine the function exactly.
+
+This is a useful positive counterpoint to the negative structured examples below, but the underlying uniqueness theorem is known prior art.
+
+## 7.5 GF(2) ANF degree does not help
+
+Let `ANF_{n,d}` be Boolean functions of algebraic-normal-form degree at most `d` over `F_2`. For every `d>=1`, full `n`-bit parity and its complement have ANF degree 1 and agree under `Q_{n-1}`. Thus
+
+\[
+\boxed{\kappa(ANF_{n,d})=n\quad(d\ge1).}
+\tag{E2}
+\]
+
+This is an important warning: low algebraic degree over `F_2` and low real/Walsh degree behave completely differently for this query language.
+
+---
+
+# 8. Theorem E — exact threshold for fixed-bipartition GF(2)-rank classes
+
+This is the strongest structured-class theorem obtained in this pass.
+
+Let the variables be partitioned into nonempty blocks `A,B` of sizes `p,q`, so `n=p+q`. Let `M_f` be the `2^p x 2^q` truth matrix and define
+
+\[
+\mathcal R_r^{p,q}
+=\{f:\operatorname{rank}_{\mathbb F_2}M_f\le r\}.
+\]
+
+Then
+
+\[
+\boxed{
+\kappa(\mathcal R_1^{p,q})=\max(p,q),
+}
+\tag{E3}
+\]
+
+while, for every `r>=2`,
+
+\[
+\boxed{
+\kappa(\mathcal R_r^{p,q})=p+q=n.
+}
+\tag{E4}
+\]
+
+## Proof of rank <= 1 upper bound
+
+Assume `p>=q`. Every nonzero rank-one binary matrix over `F_2` has the form
+
+\[
+M=u v^T,
+\qquad
+u\in\{0,1\}^{2^p},\quad
+v\in\{0,1\}^{2^q}.
+\]
+
+From `Q_p` we obtain all row sums by fixing all `p` variables of block `A`, and all column sums because fixing all `q<=p` variables of block `B` is also allowed.
+
+For a rank-one binary matrix,
+
+\[
+R_a=u_a\,|v|,
+\qquad
+C_b=v_b\,|u|.
+\]
+
+Thus the positive row sums recover exactly the support of `u`, and the positive column sums recover exactly the support of `v`. The zero matrix is recognized by all sums being zero. Hence `Q_p` determines `M`.
+
+## Rank <= 1 lower bound
+
+Again suppose `p>=q`. Let `u_even,u_odd` be the even- and odd-parity indicators on block `A`, and define
+
+\[
+f(a,b)=u_{even}(a),
+\qquad
+g(a,b)=u_{odd}(a).
+\]
+
+Both matrices have rank one (all columns are the same vector), but `f~_{p-1}g`. Hence `kappa>=p`.
+
+## Rank <= 2 lower bound
+
+Let `pi_A(a)` and `pi_B(b)` be the parity bits of the two blocks. Over `F_2`, the odd global parity indicator is
+
+\[
+M_{odd}(a,b)=\pi_A(a)+\pi_B(b)
+=\pi_A\mathbf 1^T+\mathbf1\pi_B^T,
+\]
+
+so its rank is at most 2. Its complement is
+
+\[
+M_{even}(a,b)
+=(\mathbf1+\pi_A)\mathbf1^T+\mathbf1\pi_B^T,
+\]
+
+also of rank at most 2. These are the two global parity halves and agree under every restriction fixing at most `n-1` coordinates. Therefore `Q_{n-1}` is not injective on `R_2^{p,q}`. Since `Q_n` is always injective, (E4) follows; the same lower bound applies to every `r>=2`.
+
+## Consequence
+
+For a balanced split, the worst-case reconstruction threshold jumps from approximately `n/2` at rank 1 to `n` at rank 2. Thus **small GF(2) matrix rank alone does not imply persistence of low-order conditioned-count information**.
+
+This theorem does not duplicate the separate CM/LM rank/separability theorem: that theorem characterizes the matrix representation/decomposition itself; (E3)-(E4) concern injectivity of a future conditioned-query operator on the rank-bounded class.
+
+Priority status: the ingredients are elementary and related areas include binary-matrix reconstruction and low-rank approximation, but a targeted current search did not locate this exact `Q_k` threshold statement. Treat as **potentially new combination/corollary; priority unresolved**, not as a novelty claim yet.
+
+---
+
+# 9. Persistent-information theorem
+
+Let a representation `R(f)` be required to answer every query in a family `L` exactly.
+
+The canonical equivalence is
+
+\[
+f\equiv_L g
+\iff
+\ell(f)=\ell(g)\quad\forall\ell\in L.
+\]
+
+The coarsest exact summary is the quotient by this equivalence. For `L=Q_k`, this is exactly `~_k`.
+
+For **linear sketches** on arbitrary real-valued functions, suppose
+
+\[
+L:\mathbb F^{2^n}\to\mathbb F^m
+\]
+
+and an arbitrary decoder `D` satisfy
+
+\[
+Q_k=D\circ L.
+\]
+
+Then `ker L subseteq ker Q_k`, so
+
+\[
+\operatorname{rank}L\ge\operatorname{rank}Q_k=d_{n,k}.
+\]
+
+Therefore
+
+\[
+\boxed{
+\sum_{j=0}^k\binom nj
+}
+\]
+
+scalars are necessary and sufficient for a linear persistent summary on the full real function space. The low-degree Fourier vector or integral moment vector attains the bound.
+
+This does **not** rule out nonlinear/bit-level compression on restricted Boolean classes; that is a separate problem.
+
+---
+
+# 10. Adaptive sequences of restrictions
+
+A sequence of at most `t` coordinate restrictions ends in a partial assignment `(S,a)` with `|S|<=t`. Conversely every such partial assignment can be realized by a sequence of restrictions.
+
+Thus, if the requested outputs are conditioned model counts (including any intermediate prefixes), the persistent information content of arbitrary adaptive restriction sequences of length at most `t` is still exactly `Q_t`.
+
+Adaptivity changes which query is selected next; it does not enlarge the set of possible count functionals beyond the bounded marginal family.
+
+---
+
+# 11. Computational verification performed
+
+The independent script `verify_qk.py` records exact checks in `qk_verification_results.json`.
+
+It verifies:
+
+1. exact rational/integer matrix ranks for every `0<=k<=n<=5`, both for at-most-`k` and exactly-`k` workloads, against `sum_{j<=k} C(n,j)`;
+2. exhaustive equivalence of `Q_k` fibers and degree-at-most-`k` Walsh data for every Boolean function through `n=3`;
+3. adjacent-level parity witnesses through `n=6`;
+4. exhaustive minimum Boolean collision Hamming distance `2^(k+1)` for all `k<n<=3`.
+
+All checks pass.
+
+---
+
+# 12. Priority audit
+
+## 12.1 Fourier/marginal equivalence and rank count — known in equivalent form
+
+Barak, Chaudhuri, Dwork, Kale, McSherry, and Talwar (PODS 2007), *Privacy, Accuracy, and Consistency Too: A Holistic Solution to Contingency Table Release*, explicitly analyze low-order marginals in the Fourier basis, state that the relevant Fourier coefficients are necessary and sufficient to compute a marginal, and note that the full set of `i`-way marginals uses
+
+\[
+\sum_{j\le i}\binom kj
+\]
+
+Fourier coefficients.
+
+This is essentially the present T1/T2 content under contingency-table language. It should be cited rather than claimed as new.
+
+A current confirmation is Lebeda, Nikolov, and Tang, arXiv:2512.21499 (2025/2026), *Weighted Fourier Factorizations: Optimal Gaussian Noise for Differentially Private Marginal and Product Queries*, which again reconstructs binary marginals from low-level Fourier aggregate queries and states the generalization to `k`-way marginals.
+
+## 12.2 Boolean uniqueness from low frequencies — active and recently advanced
+
+Vershynin (2024), *Are Most Boolean Functions Determined by Low Frequencies?*, formulates low-dimensional marginals and low-degree Walsh data as equivalent and studies generic uniqueness.
+
+Yiming Chen (arXiv:2604.13493, 2026), *Low-Degree Fourier Threshold for Random Boolean Functions*, resolves Vershynin's Boolean-valued uniqueness question up to an `O(sqrt(n log n))` threshold window around `n/2`: below the window most Boolean functions have another Boolean function with the same low-degree data; above the window most are uniquely determined even among bounded real-valued functions.
+
+Therefore generic Boolean-fiber uniqueness is already an active theorem-level area and should not be entered casually as if unexplored.
+
+## 12.3 Structured positive uniqueness — Chow theory
+
+Chow (1961) established uniqueness of linear threshold functions from degree-0/1 Fourier data. Diakonikolas and Kane (arXiv:1811.03491, 2018) state the generalized degree-`d` Chow uniqueness theorem for degree-`d` polynomial threshold functions and prove robust identifiability. This yields the exact `kappa(PTF_{n,d})=d` corollary above.
+
+## 12.4 Minimal Boolean collisions — design trades
+
+Ghorbani, Kamali, Khosrovshahi, and Krotov, *On the Volumes and Affine Types of Trades*, Electron. J. Combin. 27(1) (2020), study `[t]`-trades and state the known minimum nonempty volume `2^t`; they also connect simple `[t]`-trades to Boolean functions/Reed-Muller structure. Under the moment-basis equivalence, Boolean `Q_k` collisions are exactly simple `[k]`-trades after common support is removed.
+
+Hence the minimum-distance theorem above has established prior-art equivalents, although the query-language bridge is useful.
+
+## 12.5 GF(2)-rank threshold theorem
+
+Targeted searches covered GF(2) low-rank binary matrices, low-rank approximation, and binary-matrix reconstruction from row/column sums. No direct statement of (E3)-(E4) in the present conditioned-query language was found in this pass. This is insufficient for a novelty claim. Status: **potentially new combination/corollary; deeper priority search required**.
+
+---
+
+# 13. What is actually new/useful enough to pursue
+
+The foundational `Q_k` linear algebra is excellent infrastructure but not a novelty center. The strongest direction now is:
+
+> **Class-specific persistent information under structured representations.** Determine exactly when a compact structural representation permits conditioned-count queries to be answered from a compressed persistent state, and prove both positive summaries and negative lower bounds.
+
+The rank-threshold discontinuity (E3)-(E4) is the first clean result in this direction: tiny static GF(2) rank does not automatically imply low reconstruction threshold.
+
+The next theorem should go beyond injectivity and address **query-efficient persistence** for rank-`r` factors.
+
+---
+
+# 14. Recommended next theorem
+
+Let a truth matrix under a fixed variable bipartition have an exact GF(2) factorization
+
+\[
+M=UV,
+\qquad
+u_a,v_b\in\mathbb F_2^r.
+\]
+
+For partial assignments `alpha` on row-block variables and `beta` on column-block variables, define conditioned factor-state histograms
+
+\[
+p_\alpha(s)=|\{a:a\supseteq\alpha,\ u_a=s\}|,
+\qquad
+q_\beta(t)=|\{b:b\supseteq\beta,\ v_b=t\}|.
+\]
+
+The immediate identity is
+
+\[
+\#1(M_{\alpha,\beta})
+=\frac{R_\alpha C_\beta-
+\sum_{s,t}p_\alpha(s)q_\beta(t)(-1)^{s\cdot t}}{2}.
+\]
+
+The high-value theorem problem is to determine:
+
+1. the **minimal persistent data** needed to support all coordinate restrictions of order at most `k`;
+2. whether the required conditioned factor histograms admit an exact dimension/rank theorem analogous to `Q_k`;
+3. the preprocessing, storage, and per-query complexity in terms of `(n,k,r)`;
+4. whether lower bounds prove that `2^r`-state information is unavoidable in the worst case;
+5. which part is gauge-invariant under changes of rank factorization.
+
+This is the recommended next Theory-branch target.

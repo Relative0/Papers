@@ -1,0 +1,67 @@
+{
+  "unique_observation_generated_preorders": 355,
+  "transition_cases": 5680,
+  "U1_failures": 0,
+  "U3_failures": 0,
+  "effect_counts": {
+    "T0::redundant": 1678,
+    "T0::thinning_only": 1826,
+    "preT0::both": 600,
+    "preT0::redundant": 660,
+    "preT0::splitting_only": 578,
+    "preT0::thinning_only": 338
+  },
+  "cartesian_support_cases": 90880,
+  "U5_failures": 0,
+  "U6_fine_measurable_cases": 80652,
+  "U6_failures": 0,
+  "counterexamples": [
+    {
+      "statement_refuted": "No new strict quotient comparabilities ever appear under refinement.",
+      "carrier": [
+        "a",
+        "b"
+      ],
+      "coarse_observations": [],
+      "new_observation": {
+        "a": 0,
+        "b": 1
+      },
+      "coarse_quotient": "one point",
+      "fine_quotient": "two-point chain 0<1",
+      "repair": "No new comparability appears between descendants of distinct coarse vertices; strict comparabilities may appear inside a split coarse vertex."
+    },
+    {
+      "statement_refuted": "Cartesian expansion square implies coarse measurability without assuming fine measurability.",
+      "carrier": [
+        "a",
+        "b",
+        "c"
+      ],
+      "coarse_partition": [
+        [
+          "a",
+          "b",
+          "c"
+        ]
+      ],
+      "fine_partition": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "c"
+        ]
+      ],
+      "event": [
+        "a",
+        "c"
+      ],
+      "cartesian_label_square": true,
+      "fine_measurable": false,
+      "coarse_measurable": false,
+      "repair": "Add the hypothesis that E is fine-measurable (a union of fine signature classes)."
+    }
+  ]
+}

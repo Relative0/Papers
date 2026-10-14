@@ -1,0 +1,41 @@
+# Research log
+
+## 2026-09-17 — branch start
+
+- Confirmed no direct access to the user's Windows path `C:\\Users\\brian\\Documents\\CM Quantum`; requested uploads for the local papers/handoff.
+- Inspected public repository `Relative0/Correspondence_Matrices` through the connected GitHub source.
+- Read the public benchmark refresh claim map and 2026-08-25 audit correction. Key constraint carried forward: strongest generic structural comparator must be sharing-aware CSE-flat or stronger; wrapper timing must be separated from bare-kernel timing; reused validation data must not be mislabeled as held out; exact-source snapshots/hashes are required.
+- Read the original public CM PDF sections covering correspondence-matrix relationships, containment, quotient, and same-operand composition. Used page screenshots as well as extracted text to avoid relying on PDF text extraction alone.
+- External baseline reconnaissance: PolyBoRi represents Boolean polynomials with ZDDs; CUDD supports BDD/ADD/ZDD; mockturtle provides XAG algebraic rewriting, balancing, constant-fanin/don't-care optimization, and linear resynthesis; RevLib remains a public reversible benchmark source; e-graphs/equality saturation are a relevant generic rewrite family.
+- Implemented a conservative prototype. It does not assume that CM folding is unique: a generic 2-support LUT-fold comparator performs the same semantic composition when supports/operand orientation match.
+- Exhaustive unit tests pass for all 16 two-input Boolean operators, CM-to-ANF mapping, feature-parity/nonlinearity equivalence, transpose, operand negation, and all 16^3 operator-composition triples.
+- Ran an **exploratory, non-preregistered** mechanism smoke. Same-operand workloads showed large reductions in polynomial multiplication versus direct ANF propagation, but CM and the generic 2-support LUT optimizer were identical in the implemented mechanism. Mixed-support workloads showed little or no benefit. This is an early negative result for CM uniqueness, not a final natural-workload conclusion.
+- Froze `BENCHMARK_PROTOCOL.md` v0.1 after the exploratory smoke and before any final/evidentiary benchmark timing.
+
+## 2026-09-17 - supplied papers and handoff incorporated
+
+- Read the operator-level Boolean CM paper and the verified phase-calculus paper.
+- Inspected the handoff ZIP, including `CURRENT_STATE.md`, `TEST_RUN_GUIDE.md`, both source/verification archives, and the retained CSV/JSON result set.
+- Confirmed that the handoff's folding CSV is an illustrative mechanism result rather than an artifact-equivalent comparison to a strong generic cut/LUT optimizer.
+- Preserved the operator-level paper's previously frozen 20% practical-performance gate as a separate replication claim; the broader ANF research question uses an additional CM-specific gate against generic 2-support/cut rewriting.
+- Public corrected benchmark provenance anchor: B2 SHA-256 `feadff2ffb70d871847ffa5fa5e734971a5477478178664b9fde4d98cd52a1cf`; B4 SHA-256 `31b98462eb2d3d9a07dc75cb862ae90868b941a8d46aa9443aef8f9c7cba043c`. The corrected symmetric audit reports 216 formulas / 264 rows and zero packed mismatches; these are reused validation data, not held-out evidence.
+
+## 2026-09-17 — S1 completed; S2 generator corrected before final rerun
+
+- Implemented the matched four-arm Gate A runner: `direct_sparse_anf`, `cse_flat_sparse`, `generic_2support_sparse`, and `cm_frontend_sparse`, all feeding the same canonical bitmask sparse-ANF backend.
+- Strengthened the generic comparator beyond the original smoke: it receives the same arbitrary same-operand LUT composition available to CM plus exact retabulation of any residual two-variable-support cut.
+- Added lazy operand propagation, structural DAG memoization, resource guards, deterministic source-vs-ANF checks, and operation/peak-size instrumentation.
+- S1 executed all 3,750 frozen cases with zero mismatches and zero budget events.
+- Audit of the first S2 implementation exposed a protocol bug: only 55.161% of admitted rows retained semantic support equal to requested `live_k`. Those data were moved to `results/superseded/s2_support_generator_v0/` and are not used for S2 conclusions.
+- Before the corrected S2 rerun, replaced the generator with the proof-by-construction form `parity(all live inputs) XOR h`, where `h` has no degree-one ANF monomials. This preserves semantic support exactly without post-result filtering or case selection.
+
+## 2026-09-17 — corrected Gate A S1/S2 completed
+
+- Corrected S2 rerun completed on all 6,750 frozen axis combinations. 6,639 rows were fully admitted; 111 hit the local sparse pair-product safety guard. No admitted correctness mismatch occurred.
+- Corrected S2 semantic support matched requested `live_k` in 100% of admitted rows, validating the support-preserving construction.
+- Combined corrected S1/S2: 10,500 rows total, 10,389 matched/admitted, zero correctness disagreements.
+- SC-A passes in every predeclared S1 depth>=6, affine<=0.75, reversed-fraction stratum.
+- Strong negative result: CM and the strengthened generic 2-support/LUT frontend have exactly equal multiplication count, pair-product count, peak monomials, final ANF size/degree, serialization size, output structural-node count, and function digest on every admitted row. Generic executes more rewrite events in 6,010 rows but lands on the same symbolic result.
+- S2 requested sharing probability predicts benefit versus direct propagation: median direct/CM multiplication counts are 35/35 at share=0, 17/12 at 0.25, and 9/0 at 0.5. Generic matches CM exactly.
+- Two S2 admitted rows slightly increase multiplication count after folding (both CM and generic); retained as a negative boundary case.
+- Timing measurements in this local run are single-pass diagnostics only. The next evidence-bearing step is N1 natural-corpus replay; XAG/ZDD/FDD gates remain open.

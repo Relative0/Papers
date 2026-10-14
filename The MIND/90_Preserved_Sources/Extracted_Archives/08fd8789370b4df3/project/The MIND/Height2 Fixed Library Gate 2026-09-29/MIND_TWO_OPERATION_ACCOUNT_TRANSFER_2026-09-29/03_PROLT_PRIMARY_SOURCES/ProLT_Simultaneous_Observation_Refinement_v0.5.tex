@@ -1,0 +1,737 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,tabularx,array,longtable}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{tikz-cd}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{newtxtext,newtxmath}
+\usepackage{listings}
+
+\definecolor{navy}{RGB}{35,55,85}
+\definecolor{softblue}{RGB}{235,242,250}
+\definecolor{softgray}{RGB}{246,246,246}
+\definecolor{softgreen}{RGB}{237,247,240}
+\definecolor{softgold}{RGB}{251,246,232}
+\definecolor{softred}{RGB}{251,238,238}
+\hypersetup{colorlinks=true,linkcolor=navy,citecolor=navy,urlcolor=navy}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{navy}}{\thesubsection}{0.7em}{}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\lhead{ProLT Simultaneous Refinement}
+\rhead{Working note v0.5}
+\cfoot{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\Om}{\Omega_P}
+\newcommand{\truth}{\varsigma}
+\newcommand{\OX}{\mathcal O}
+\newcommand{\Cone}{\operatorname{Cone}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\sd}{\operatorname{sd}}
+\newcommand{\odim}{\operatorname{odim}}
+\newcommand{\xor}{\mathbin{\Updownarrow}}
+\newcommand{\statusS}{\textbf{[S]}}
+\newcommand{\statusA}{\textbf{[A]}}
+\newcommand{\statusC}{\textbf{[C]}}
+\setcounter{MaxMatrixCols}{20}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries\color{navy} Simultaneous Observation Refinement in Propositional Logical Topologies}\par
+\vspace{0.35em}
+{\large Order thinning, higher-dimensional rooted forests, interaction defects, and observation dimension}\par
+\vspace{0.7em}
+{\normalsize Working research note v0.5 --- 23 September 2026}\par
+\vspace{0.3em}
+{\small Continuation of \emph{Homological Foundations for Propositional Logical Topologies} (v0.1), \emph{Observation Refinement Classification} (v0.2), \emph{Controlled Refinement Regimes} (v0.3), and \emph{Homotopy-Preserving Logical Observations} (v0.4).}
+\end{center}
+
+\vspace{0.8em}
+\noindent\colorbox{softgold}{\parbox{0.96\textwidth}{
+\textbf{Status convention.} \statusS\ denotes standard mathematics used essentially unchanged. \statusA\ denotes a direct ProLT specialization or elementary derived theorem. \statusC\ marks a contribution candidate whose novelty is \emph{not} claimed pending a dedicated adversarial literature audit. A central correction made in this note is that the natural multi-observation generalization of the v0.4 repair forest already belongs to the established theory of higher-dimensional rooted forests; the possible new content lies in the ProLT-specific specialization, interaction phenomena, and observation-design questions.
+}}
+
+\begin{abstract}
+After a ProLT has reached the $T_0$ stage, adding a block of new Boolean observations leaves the state vertices fixed and thins the specialization order. We develop the simultaneous-refinement theory of this operation. A block label $\alpha:P\to\{0,1\}^k$ retains a coarse comparison $p\le q$ exactly when $\alpha(p)\le\alpha(q)$ coordinatewise, so the block refinement is the intersection of its one-coordinate refinements. This immediately exposes interaction effects: individually homotopy-neutral observations can be destructive when combined, while a jointly neutral block need not admit any homotopy-neutral first coordinate.
+
+Every same-vertex suborder $Q\subseteq P$ is realizable by a finite block of propositional observations. This motivates a relative observation dimension, the minimum number of new Boolean tests required to realize $Q$ from $P$; when $P$ is a linear extension containing all pairs, this reduces to the classical 2-dimension/bit-vector encoding problem for posets.
+
+For coarse signature posets of height at most two, the relative chain complex of a block refinement has only deleted edges and deleted triangles. Its integral boundary matrix gives coefficient-sensitive refinement information: nonzero determinant is rational acyclicity, determinant $\pm1$ is integral acyclicity, and prime divisors identify characteristics in which relative homology appears. The pair of deleted triangles and retained boundary edges is exactly a higher-dimensional rooted forest in the sense of Bernardi--Klivans when this matrix is square and nonsingular. Fitting orientations are perfect matchings between deleted edges and deleted triangles. A unique fitting orientation gives a complete acyclic relative Morse matching and hence a collapse, but multiple fitting orientations can cancel algebraically.
+
+Three explicit examples separate the principal notions: destructive interaction, compensating interaction, and a homotopy-neutral three-bit block with determinant one but no acyclic complete matching on the deleted cells. The last example proves that the exact v0.4 equivalence between homology-neutrality and direct repair collapse is special to one-bit height-two refinement and does not extend verbatim to observation blocks.
+\end{abstract}
+
+\section{Base setting: post-$T_0$ ProLT refinement}
+
+Let $\Phi=(\phi_i)_{i\in I}$ be a finite observation family on the finite valuation carrier $\Om$. Write
+\[
+P=P_\Phi=o_\Phi(\Om)\subseteq 2^I
+\]
+for the realized-signature poset, ordered by inclusion. The ProLT core manuscript proves that this is the Kolmogorov quotient and that the specialization relation is precisely signature inclusion. It also proves that extending the observation family can only delete specialization comparisons.
+
+Throughout most of this note we assume the coarse ProLT is already $T_0$. Then $o_\Phi$ is injective, so we identify a valuation with its realized coarse signature $p\in P$. Consequently, later refinement cannot split vertices: it can only delete old order relations.
+
+Let
+\[
+\Theta=(\theta_1,\ldots,\theta_k)
+\]
+be a block of new observations and put
+\[
+\Psi=\Phi\cup\Theta.
+\]
+Define the \emph{block label}
+\[
+\alpha_\Theta:P\longrightarrow\{0,1\}^k,
+\qquad
+\alpha_\Theta(p)=\bigl(1[p\models\theta_j]\bigr)_{j=1}^k.
+\]
+We order $\{0,1\}^k$ coordinatewise, equivalently by support inclusion.
+
+\begin{theorem}[Block refinement as order thinning]\label{thm:blockorder}
+\statusA\;
+The refined signature poset has the same underlying vertices as $P$, with order
+\[
+p\le_\Psi q
+\iff
+p\le_\Phi q\quad\text{and}\quad
+\alpha_\Theta(p)\le\alpha_\Theta(q).
+\]
+In particular $P_\Psi$ is a same-vertex suborder of $P_\Phi$.
+\end{theorem}
+
+\begin{proof}
+The old coordinates already identify the vertices. The refined signatures are $(p,\alpha_\Theta(p))$. Coordinatewise inclusion of two refined signatures holds exactly when inclusion holds both in the old coordinates and in every new coordinate.
+\end{proof}
+
+Let
+\[
+K:=\Delta(P_\Phi),
+\qquad
+L_\Theta:=\Delta(P_\Psi).
+\]
+Then $L_\Theta\subseteq K$ is a simplicial subcomplex.
+
+\section{A block is the intersection of its coordinates}
+
+For each $j$, let $P_j$ be the poset obtained from $P$ by adding only $\theta_j$, and put
+\[
+K_j:=\Delta(P_j).
+\]
+
+\begin{theorem}[Intersection theorem]\label{thm:intersection}
+\statusA\;
+As order relations and as simplicial complexes,
+\[
+P_\Psi=\bigcap_{j=1}^k P_j,
+\qquad
+L_\Theta=\bigcap_{j=1}^k K_j.
+\]
+\end{theorem}
+
+\begin{proof}
+A comparison $p\le q$ survives the block exactly when every new bit is nondecreasing from $p$ to $q$, which is exactly survival in every one-coordinate refinement. A finite subset of vertices forms a simplex in an order complex precisely when its elements form a chain; therefore a coarse chain survives the block exactly when it survives every coordinate.
+\end{proof}
+
+This elementary theorem is conceptually important. Homotopy preservation is therefore an \emph{intersection problem}. Intersections of homotopy-equivalent subcomplexes need not remain homotopy equivalent to the ambient complex.
+
+\begin{definition}[Coordinatewise and sequential safety]
+A block $\Theta=(\theta_1,\dots,\theta_k)$ is:
+\begin{enumerate}[label=(\roman*)]
+\item \emph{coordinatewise homotopy-neutral} if every $K_j\hookrightarrow K$ is a homotopy equivalence;
+\item \emph{sequentially homotopy-safe} if the coordinates can be ordered $\theta_{\sigma(1)},\dots,\theta_{\sigma(k)}$ so that every cumulative inclusion from one stage to the next is a homotopy equivalence.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Sequential safety is sufficient]\label{prop:sequential}
+\statusA\;
+Every sequentially homotopy-safe block is jointly homotopy-neutral.
+\end{proposition}
+
+\begin{proof}
+The composite of homotopy equivalences is a homotopy equivalence.
+\end{proof}
+
+The converse fails, and coordinatewise safety is neither necessary nor sufficient. Sections~\ref{sec:interaction} and~\ref{sec:multiorientation} give explicit examples.
+
+\section{Universality of simultaneous same-vertex order thinning}
+
+The one-bit theory of v0.4 had strong structural restrictions. A block of bits is dramatically more expressive.
+
+\begin{theorem}[Order-thinning universality]\label{thm:universality}
+\statusA/\statusC\;
+Let $P$ be any finite post-$T_0$ ProLT signature poset and let $Q$ be any partial order on the same vertex set satisfying
+\[
+Q\subseteq P
+\]
+as relations. Then there is a finite block of propositional observations $\Theta$ such that the simultaneous refinement of $P$ by $\Theta$ is exactly $Q$.
+\end{theorem}
+
+\begin{proof}
+Use one new coordinate for each $x\in P$. Define
+\[
+b_x(y)=1\iff x\le_Q y.
+\]
+Equivalently label each $y$ by its principal $Q$-downset
+\[
+\alpha(y)=\downarrow_Q y\subseteq P.
+\]
+For $p\le_P q$,
+\[
+\alpha(p)\subseteq\alpha(q)
+\iff
+p\le_Q q.
+\]
+The forward implication holds because $p\in\alpha(p)$, hence $p\in\alpha(q)$. The reverse implication is transitivity of $Q$. Therefore Theorem~\ref{thm:blockorder} produces exactly $Q$.
+
+Finally, each Boolean coordinate $b_x$ is a subset of the finite valuation carrier. Every such subset is propositionally definable by a disjunction of complete minterms, so these coordinates are legitimate propositional observations.
+\end{proof}
+
+\begin{remark}[Consequences]
+Simultaneous post-$T_0$ refinement is universal for same-vertex suborders. Hence a universal simple local homotopy test for arbitrary blocks should not be expected. The tractable theory must exploit restrictions on the coarse order, the logical fragment, the number of new observations, or the geometry of the deleted cells.
+\end{remark}
+
+\section{Observation dimension of a target refinement}
+
+Universality raises a natural design question: how many Boolean observations are actually needed?
+
+\begin{definition}[Relative observation dimension]\label{def:odim}
+For a same-vertex suborder $Q\subseteq P$, define
+\[
+\odim_P(Q)
+\]
+to be the least $k$ for which there is a label
+\[
+\alpha:P\to\{0,1\}^k
+\]
+satisfying, for every $p\le_P q$,
+\[
+p\le_Q q
+\iff
+\alpha(p)\le\alpha(q).
+\]
+Equivalently, $\odim_P(Q)$ is the minimum number of new Boolean observations whose simultaneous refinement sends $P$ to $Q$.
+\end{definition}
+
+\begin{proposition}[Basic bounds]
+\statusA\;
+For every same-vertex suborder $Q\subseteq P$,
+\[
+0\le\odim_P(Q)\le |P|.
+\]
+Moreover $\odim_P(P)=0$.
+\end{proposition}
+
+\begin{proof}
+The upper bound is the downset construction in Theorem~\ref{thm:universality}. The other statements are immediate.
+\end{proof}
+
+\begin{proposition}[Connection with classical 2-dimension]\label{prop:2dim}
+\statusS/\statusA\;
+Suppose $P$ is a total order extending $Q$ on the same vertex set. Then
+\[
+\odim_P(Q)=\dim_2(Q),
+\]
+where $\dim_2(Q)$ is the classical minimum dimension of a Boolean lattice into which $Q$ order-embeds by subset inclusion.
+\end{proposition}
+
+\begin{proof}
+Because every distinct pair is comparable in $P$, the defining biconditional for $\odim_P(Q)$ is required on every ordered pair. Thus the block labels are exactly bit-vector order embeddings of $Q$ into a Boolean lattice.
+\end{proof}
+
+The classical 2-dimension/bit-vector encoding problem is NP-complete in its decision form; see Habib--Nourine--Raynaud--Thierry~\cite{Habib2004}. Therefore even a restricted observation-design problem inherits nontrivial computational complexity.
+
+\begin{corollary}[Complexity inheritance]
+\statusS/\statusA\;
+The decision problem
+\[
+\text{``is }\odim_P(Q)\le k\text{?''}
+\]
+is NP-complete already when $P$ is supplied as a total order extending $Q$.
+\end{corollary}
+
+\section{Height-two block refinements over arbitrary coefficients}
+
+Assume now
+\[
+\operatorname{ht}(P)\le2.
+\]
+Thus $K=\Delta(P)$ has dimension at most two. Let $L=L_\Theta$ be the simultaneous refined subcomplex. Since the vertices are unchanged, the relative chain complex $(K,L)$ has the form
+\[
+0\longrightarrow C_2(K,L;R)
+\overset{\partial_2^{\rm rel}}{\longrightarrow}
+C_1(K,L;R)
+\longrightarrow0.
+\]
+Let
+\[
+T_{\rm del}=K_2\setminus L_2,
+\qquad
+E_{\rm del}=K_1\setminus L_1.
+\]
+With integral orientations, write
+\[
+B_{\mathbb Z}=\bigl[\partial_2^{\rm rel}\bigr]
+\]
+for the $|E_{\rm del}|\times|T_{\rm del}|$ matrix with entries $0,\pm1$.
+
+\begin{theorem}[Coefficient-sensitive height-two criterion]\label{thm:coeff}
+\statusS/\statusA\;
+Suppose $|E_{\rm del}|=|T_{\rm del}|=m$. Then:
+\begin{enumerate}[label=(\roman*)]
+\item over a field $\Bbbk$, $L\hookrightarrow K$ is a homology equivalence iff $\det(B_{\mathbb Z})$ is nonzero in $\Bbbk$;
+\item over $\mathbb Q$, this is equivalent to $\det(B_{\mathbb Z})\ne0$;
+\item over $\mathbb Z$, the relative homology vanishes iff $\det(B_{\mathbb Z})=\pm1$;
+\item if $d:=\det(B_{\mathbb Z})\ne0$, then
+\[
+H_2(K,L;\mathbb Z)=0,
+\qquad
+|H_1(K,L;\mathbb Z)|=|d|;
+\]
+\item for a prime $p$, relative homology over $\mathbb F_p$ is nonzero exactly when $p\mid d$.
+\end{enumerate}
+If the two deleted-cell counts differ, relative homology cannot vanish over any field.
+\end{theorem}
+
+\begin{proof}
+The relative complex has only the displayed boundary map. Over a field, acyclicity is equivalent to this square matrix being invertible. Over $\mathbb Z$, a square integer matrix is an automorphism exactly when its determinant is $\pm1$. If the determinant is merely nonzero, the map is injective and its cokernel is finite of cardinality $|d|$ by Smith normal form. Reduction modulo $p$ is singular exactly when $p$ divides $d$.
+\end{proof}
+
+\begin{definition}[Integral refinement weight]
+When $B_{\mathbb Z}$ is square and nonsingular, define
+\[
+w_{\mathbb Z}(\Theta/\Phi):=|\det B_{\mathbb Z}|.
+\]
+This is not proposed as new terminology in isolation: Section~\ref{sec:rooted} identifies it with the established homological weight of a higher-dimensional rooted forest.
+\end{definition}
+
+\section{The correct prior-art framework: higher-dimensional rooted forests}\label{sec:rooted}
+
+The v0.4 one-bit repair graph suggested a ``rooted hypergraph'' for multiple observations. That would be the wrong novelty claim. Bernardi and Klivans~\cite{BernardiKlivans2016} developed rooted forests for simplicial complexes in arbitrary dimension. In their formulation, a set $F$ of $d$-faces is a forest when the corresponding top-boundary columns are independent; a codimension-one root selects complementary rows; and a pair $(F,R)$ is a rooted forest exactly when the corresponding square boundary submatrix is nonsingular. Their integral homological weight is the order of the relevant relative homology group. Duval--Klivans--Martin~\cite{DuvalKlivansMartin2016} survey the related cellular-matroid and higher spanning-tree theory, including torsion phenomena absent for ordinary graph trees.
+
+For a height-two ProLT block refinement, form the 2-dimensional subcomplex $G$ generated by the deleted triangles $T_{\rm del}$. Put
+\[
+F=T_{\rm del},
+\qquad
+R=G_1\setminus E_{\rm del}.
+\]
+Thus the non-root edges of $G$ are exactly the deleted ProLT edges.
+
+\begin{theorem}[ProLT block defect as a rooted forest]\label{thm:rootedtranslation}
+\statusS/\statusA\;
+With the notation above, the Bernardi--Klivans submatrix
+\[
+\partial_{\bar R,F}
+\]
+is exactly $B_{\mathbb Z}$ up to row/column orientation signs. Consequently, when the deleted-cell counts agree,
+\[
+(F,R)\text{ is a higher-dimensional rooted forest}
+\iff
+\det B_{\mathbb Z}\ne0.
+\]
+Furthermore, if this holds,
+\[
+w_{\mathbb Z}(\Theta/\Phi)
+=|H_1(F,R;\mathbb Z)|.
+\]
+\end{theorem}
+
+\begin{proof}
+The rows indexed by $\bar R$ are precisely deleted edges and the columns indexed by $F$ are precisely deleted triangles. Restricting the simplicial boundary therefore produces the ProLT relative matrix. Bernardi--Klivans' rooted-forest determinant criterion and homological-weight lemma apply directly.
+\end{proof}
+
+This theorem sharply locates the novelty boundary. The determinant/rooted-forest algebra is standard. What is specific to ProLT is how logical observation blocks generate the pair $(F,R)$ and which rooted forests are realizable subject to a fixed coarse information order.
+
+\section{Fitting orientations and direct collapse}
+
+Bernardi--Klivans define a \emph{fitting orientation} of a rooted forest as a bijection from its non-root $(d-1)$-faces to its $d$-faces, pairing each lower face with a containing top face. In our height-two setting this is exactly a perfect matching in the bipartite incidence graph
+\[
+E_{\rm del}\ \text{--}\ T_{\rm del}.
+\]
+They show that every rooted forest admits at least one fitting orientation and that the signed sum of fitting orientations equals the integral homological weight; in higher dimension there may be several fitting orientations, with cancellation~\cite{BernardiKlivans2016}.
+
+\begin{definition}[Morse-safe block]
+A height-two block refinement is \emph{Morse-safe} if its deleted-edge/deleted-triangle incidence admits a fitting orientation which is acyclic as a discrete vector field on the relative face poset.
+\end{definition}
+
+\begin{theorem}[Acyclic fitting orientation criterion]\label{thm:morsesafe}
+\statusS/\statusA\;
+If a height-two block refinement is Morse-safe, then
+\[
+K\searrow L
+\]
+through a sequence encoded by the relative acyclic matching. Hence $L\hookrightarrow K$ is a simple homotopy equivalence.
+\end{theorem}
+
+\begin{proof}
+The fitting orientation matches every deleted edge with an incident deleted triangle and leaves all faces of $L$ critical. An acyclic relative matching with no critical deleted cells yields a collapse to the retained subcomplex by standard discrete Morse/matching theory.
+\end{proof}
+
+\begin{corollary}[Unique fitting orientation is sufficient]\label{cor:unique}
+\statusA\;
+If the deleted-cell incidence graph has a unique perfect matching, then the block is Morse-safe and therefore homotopy-preserving.
+\end{corollary}
+
+\begin{proof}
+A closed discrete $V$-path would give an alternating cycle in the bipartite incidence graph. Toggling the matching along that alternating cycle produces a second perfect matching. Thus uniqueness excludes such a cycle.
+\end{proof}
+
+\begin{remark}[Why the one-bit theorem was stronger]
+For one added bit at height two, v0.4 proved that homology-neutrality itself forces the repair incidence to be a rooted graph forest, hence supplies a unique acyclic repair. Multi-bit blocks can produce columns containing three deleted edges and general higher-dimensional rooted-forest behavior. Algebraic cancellation among several fitting orientations is now possible, so the one-bit equivalence cannot survive unchanged.
+\end{remark}
+
+\section{Interaction defects}\label{sec:interaction}
+
+Because $L_\Theta=\bigcap_jK_j$, simultaneous observation acquisition has interaction effects absent from a coordinatewise analysis.
+
+\begin{definition}[Destructive and compensating interaction]
+For a block $\Theta=(\theta_1,\dots,\theta_k)$:
+\begin{enumerate}[label=(\roman*)]
+\item it has \emph{destructive interaction} if each coordinate is homotopy-neutral relative to the same coarse $K$ but the joint block is not;
+\item it has \emph{compensating interaction} if the joint block is homotopy-neutral although no coordinate can be chosen as a homotopy-neutral first refinement.
+\end{enumerate}
+These are proposed ProLT terms, not claims of new general topological phenomena.
+\end{definition}
+
+\subsection{Destructive interaction: two safe observations make an unsafe block}
+
+\begin{example}[The $010/101$ three-chain]\label{ex:destructive}
+Let
+\[
+p_0<p_1<p_2
+\]
+be a three-element coarse chain. Its order complex is a filled triangle. Add two observations with words
+\[
+b_1=010,
+\qquad
+b_2=101.
+\]
+The exact one-bit chain classification of v0.3 says that each coordinate separately is homotopy-neutral. Explicitly, the first leaves the two-edge tree
+\[
+p_0p_1\cup p_0p_2,
+\]
+and the second leaves
+\[
+p_1p_2\cup p_0p_2.
+\]
+Their simultaneous intersection retains only the edge $p_0p_2$ plus the isolated vertex $p_1$. Therefore the joint refinement changes $H_0$ and is not homotopy-neutral.
+\end{example}
+
+The example also has a useful Mayer--Vietoris reading. $K_1$ and $K_2$ are contractible trees, their union is the boundary circle of the original triangle, and their intersection is disconnected. Thus the interaction is literally created by intersection.
+
+\subsection{Compensating interaction: no safe first coordinate, but the block is safe}
+
+\begin{example}[A five-state compensating block]\label{ex:compensating}
+Let $P$ have strict comparisons
+\[
+0<1,\;0<2,\;0<3,\;0<4,\qquad
+1<2,\;1<3,\;1<4.
+\]
+Thus $K$ consists of three triangles $012,013,014$ sharing the edge $01$.
+Assign two-bit labels
+\[
+\alpha(0)=11,\quad
+\alpha(1)=00,\quad
+\alpha(2)=01,\quad
+\alpha(3)=10,\quad
+\alpha(4)=11.
+\]
+The joint refined order has strict comparisons
+\[
+0<4,
+\qquad
+1<2,\;1<3,\;1<4.
+\]
+The deleted edges are
+\[
+01,02,03
+\]
+and the deleted triangles are
+\[
+012,013,014.
+\]
+With these row and column orders,
+\[
+B_{\mathbb Z}=
+\begin{bmatrix}
+1&1&1\\
+-1&0&0\\
+0&-1&0
+\end{bmatrix},
+\qquad
+\det B_{\mathbb Z}=1.
+\]
+Its incidence graph has a unique perfect matching, so Corollary~\ref{cor:unique} gives a collapse and the block is homotopy-neutral.
+
+However, either coordinate alone deletes two edges but all three triangles. Its relative matrix is $2\times3$ of rank two, leaving a one-dimensional relative $H_2$; because $K$ is contractible, the corresponding one-coordinate refined complex has a nontrivial $H_1$. Thus neither coordinate is safe to add first, even though the pair is safe together.
+\end{example}
+
+This proves
+\[
+\boxed{
+\text{joint safety}\not\Rightarrow\text{sequential safety},
+\qquad
+\text{coordinatewise safety}\not\Rightarrow\text{joint safety}.
+}
+\]
+
+\section{A multi-orientation example beyond direct repair collapse}\label{sec:multiorientation}
+
+The next example separates homotopy preservation from complete relative Morse repair.
+
+\begin{example}[Three-bit neutral block with no acyclic fitting orientation]\label{ex:multi}
+Let $P$ have vertices $0,\dots,7$ and strict comparisons
+\[
+\begin{aligned}
+&0<2,0<3,0<5,0<6,0<7,\\
+&1<3,1<4,1<5,1<6,1<7,\\
+&2<5,2<6,2<7,\\
+&3<5,3<6,3<7,\\
+&4<5,4<6.
+\end{aligned}
+\]
+Assign labels
+\[
+\begin{array}{c|cccccccc}
+p&0&1&2&3&4&5&6&7\\\hline
+\alpha(p)&001&011&100&110&000&011&100&110.
+\end{array}
+\]
+The surviving strict comparisons are
+\[
+0<5,\quad1<5,\quad2<6,\quad2<7,\quad3<7,\quad4<5,\quad4<6.
+\]
+There are eleven deleted edges and eleven deleted triangles. With the natural lexicographic orders they give the integral relative matrix
+\[
+B_{\mathbb Z}=\begin{bmatrix}
+1&1&1&0&0&0&0&0&0&0&0\\
+0&0&0&1&1&1&0&0&0&0&0\\
+0&-1&0&0&-1&0&0&0&0&0&0\\
+0&0&-1&0&0&-1&0&0&0&0&0\\
+0&0&0&0&0&0&1&1&1&0&0\\
+0&0&0&0&0&0&0&0&0&1&1\\
+0&0&0&0&0&0&0&-1&0&0&-1\\
+0&0&0&0&0&0&0&0&-1&0&0\\
+1&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&1&0&0&1&0&0&0&0\\
+0&0&0&0&1&0&0&1&0&0&0
+\end{bmatrix}.
+\]
+One computes
+\[
+\det B_{\mathbb Z}=1.
+\]
+The incidence graph has exactly three fitting orientations. Exhaustive inspection of those three matchings shows that each contains a closed relative $V$-path, so there is no complete acyclic matching that pairs only the deleted edges and deleted triangles.
+
+Nevertheless both $P$ and the refined poset are dismantlable by beat-point removals. One coarse sequence is
+\[
+2,0,3,4,5,6,1
+\]
+(with suitable alternating up/down beat witnesses), leaving vertex $7$; a refined sequence is
+\[
+0,1,3,5,4,6,2,
+\]
+again leaving $7$. Hence both order complexes are contractible. Any map between nonempty contractible spaces is a homotopy equivalence, so the inclusion $L\hookrightarrow K$ is a homotopy equivalence even though the complete deleted-cell repair mechanism fails.
+\end{example}
+
+\begin{theorem}[Failure of the one-bit collapse equivalence for blocks]\label{thm:failure}
+\statusA/\statusC\;
+For simultaneous height-two refinement, homotopy-neutrality does not imply the existence of an acyclic fitting orientation on the deleted edge--triangle pair. Consequently the v0.4 equivalence
+\[
+\text{homotopy-neutral}\iff\text{repair collapse}
+\]
+is special to the one-bit height-two regime.
+\end{theorem}
+
+\begin{proof}
+Example~\ref{ex:multi} is a counterexample to the implication.
+\end{proof}
+
+\section{One bit versus many bits}
+
+The results may be summarized as follows.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.31\textwidth}>{\raggedright\arraybackslash}p{0.34\textwidth}}
+\toprule
+Feature & One bit, height $\le2$ & Observation block, height $\le2$\\
+\midrule
+Vertices after $T_0$ & fixed & fixed\\
+Order change & delete $1\to0$ comparisons & delete comparisons with any coordinate descent\\
+Deleted triangle boundary & one or two deleted edges & one, two, or three deleted edges\\
+Relative matrix & reduced graph incidence & general simplicial boundary submatrix\\
+Natural forest object & rooted graph forest & higher-dimensional rooted forest (standard theory)\\
+$\F$ homology-neutral & equivalent to rooted repair forest & equivalent to $B_{\mathbb Z}$ invertible mod $2$\\
+Direct collapse & automatic when neutral & sufficient but not necessary\\
+Fitting orientations & effectively unique in neutral case & may be multiple and cancel algebraically\\
+Coordinate interactions & not applicable & destructive and compensating interactions occur\\
+Integral torsion & absent in repair-forest case & possible in general rooted-forest theory; ProLT realizability to be classified\\
+\bottomrule
+\end{longtable}
+
+\section{Computational audit}
+
+The accompanying verifier independently constructs the examples above from finite posets and Boolean labels. It does not assume the stated conclusions. For each block it builds the refined order, order-complex relative matrix, exact Bareiss determinant, perfect matchings, and beat-point reductions.
+
+The focused checks give:
+\begin{enumerate}[label=(\roman*)]
+\item the $010/101$ three-chain has two individually neutral coordinates but a disconnected joint refinement;
+\item the five-state compensating block has determinant $1$, a unique fitting orientation, and a direct collapse, while neither coordinate is individually neutral;
+\item the eight-state three-bit example has determinant $1$ and exactly three fitting orientations, all cyclic as relative discrete vector fields, while both endpoint posets dismantle to a point.
+\end{enumerate}
+
+A separate exhaustive check covered every naturally labelled poset of height at most two on at most four vertices and every two-bit labeling: 10,468 block refinements in total. Among them 4,459 were $\F$-homology-neutral, and all 4,459 admitted the simple greedy relative collapse. Nevertheless there were 100 cases in which both coordinates were individually neutral but the joint block was not. Thus destructive interaction appears already at the smallest scales, while the failure of direct relative collapse requires larger examples in the present search.
+
+Larger randomized searches were used only for discovery, not for proof. No claim is made that the displayed eight-state example is minimal, nor that torsion weights $>1$ cannot arise from ProLT blocks.
+
+\section{Novelty boundary and prior-art audit}
+
+Several ingredients that initially looked like possible generalizations are established mathematics:
+\begin{enumerate}[label=(\roman*)]
+\item higher-dimensional rooted forests, their determinant criterion, fitting orientations, and homological weights are due to Bernardi--Klivans and related higher-dimensional matrix-tree work~\cite{BernardiKlivans2016,DuvalKlivansMartin2016};
+\item acyclic matching/discrete Morse criteria for collapse are standard;
+\item Boolean-lattice bit-vector embeddings and poset 2-dimension are classical, with difficult computational complexity~\cite{Habib2004}.
+\end{enumerate}
+
+The following narrower items remain worth a targeted novelty search rather than immediate claims:
+\begin{enumerate}[label=(\alph*)]
+\item the ProLT block-refinement/intersection formulation $L_\Theta=\bigcap_jK_j$;
+\item order-thinning universality for simultaneous propositional observation blocks;
+\item the relative observation dimension $\odim_P(Q)$ and its complexity/approximation theory relative to a fixed coarse order;
+\item destructive versus compensating observation interaction and invariants that isolate it from coordinate defects;
+\item the exact characterization of which higher-dimensional rooted forests are realizable as deleted-cell pairs of logical observation blocks;
+\item the coefficient spectrum of a refinement and whether ProLT constraints force special determinant/torsion behavior in restricted logical fragments.
+\end{enumerate}
+
+\section{Next theorem targets}
+
+The present note changes the research priorities. The next mathematical steps should be:
+
+\begin{enumerate}[label=\textbf{N\arabic*.},leftmargin=2.6em]
+\item \textbf{Interaction homology for two blocks.} Use the Mayer--Vietoris sequence for $K_1\cup K_2$ and $K_1\cap K_2$ to isolate an interaction term. Seek conditions under which two individually neutral refinements have a neutral intersection. The $010/101$ example should be the minimal obstruction model.
+
+\item \textbf{Homotopy criteria beyond complete relative matchings.} Example~\ref{ex:multi} shows that a block can preserve homotopy even when every fitting orientation is cyclic. Search for beat-point, Quillen-fiber, or secondary discrete-Morse criteria that detect this broader class.
+
+\item \textbf{Refinement observation dimension.} Develop bounds for $\odim_P(Q)$ in terms of width, height, deleted-comparison hypergraphs, and classical $\dim_2(Q)$. Determine complexity for structured coarse ProLT orders.
+
+\item \textbf{Torsion and coefficient sensitivity.} Search systematically for ProLT block refinements with $|\det B_{\mathbb Z}|>1$. If they exist, classify logical conditions producing characteristic-dependent refinement defects. If strong logical fragments prohibit them, prove total-unimodularity results.
+
+\item \textbf{Logical fragments.} Revisit Horn, dual-Horn, affine/XOR, bijunctive, monotone, and unate blocks in the simultaneous setting. Determine which fragments force unique fitting orientations, total unimodularity, or sequential safety.
+
+\item \textbf{Persistence of interaction defects.} Along an evolving observation sequence, record not only individual refinement defects but also the first time nontrivial block interaction appears. This provides a natural higher-order layer over the two-parameter observation/premise persistence program.
+\end{enumerate}
+
+\section{Conclusion}
+
+The simultaneous-refinement problem is not merely the one-bit problem repeated $k$ times. After $T_0$, a block of observations labels each information state by a Boolean vector and retains exactly the coarse comparisons that are coordinatewise nondecreasing. Therefore the joint refined order is the intersection of its coordinate refinements. That simple fact produces genuine interaction: safe coordinates can combine destructively, and unsafe coordinates can compensate one another.
+
+At height two, the relative boundary matrix remains an exact algebraic classifier of homology over any chosen coefficient field. But its natural combinatorial home is the established theory of higher-dimensional rooted forests, not a new repair-hypergraph theory. Fitting orientations explain direct repair matchings and determinant cancellation. The one-bit repair-forest theorem emerges as a particularly rigid special case in which homological neutrality forces a direct collapse.
+
+Blocks break that rigidity. Example~\ref{ex:multi} is the decisive separation: a three-bit refinement is integrally homology-neutral and homotopy-neutral, yet every complete fitting orientation on the deleted cells is cyclic. Thus future classification must combine relative rooted-forest algebra with global finite-poset homotopy methods rather than relying on deleted-cell matching alone.
+
+Finally, universality shows that arbitrary same-vertex order thinning can be implemented by propositional observations. The resulting observation dimension $\odim_P(Q)$ turns refinement design into a quantitative problem connected to classical Boolean-lattice embeddings. This gives the program a second axis beyond topology: not only \emph{whether} a target logical refinement preserves structure, but also \emph{how many observations are required to realize it}.
+
+\appendix
+\section{Verification data for the three principal examples}
+
+For reproducibility, the accompanying script reports the following exact outputs.
+
+\subsection*{Destructive three-chain}
+\[
+P:\quad 0<1<2,
+\qquad b_1=010,
+\qquad b_2=101,
+\]
+and the joint strict order is only
+\[
+0<2.
+\]
+
+\subsection*{Compensating five-state block}
+The exact relative matrix is
+\[
+\begin{bmatrix}
+1&1&1\\
+-1&0&0\\
+0&-1&0
+\end{bmatrix}
+\]
+with determinant $1$.
+
+\subsection*{Eight-state multi-orientation block}
+The exact verifier finds
+\[
+\det B_{\mathbb Z}=1,
+\qquad
+\#\{\text{fitting orientations}\}=3,
+\]
+and tests all three perfect matchings as cyclic. It independently produces beat-point dismantlings of both the coarse and refined posets to one vertex.
+
+\section{Status of computational search}
+
+The finite exhaustive and randomized experiments are exploratory support for the formal statements, not substitutes for proof. In particular:
+\begin{itemize}
+\item the universality, intersection, determinant, rooted-forest translation, and sequential-safety results are proved abstractly;
+\item the destructive and compensating examples are exact finite counterexamples/certificates;
+\item the eight-state example is an exact certificate that direct deleted-cell Morse repair is not necessary for homotopy preservation;
+\item minimality questions and the existence/classification of torsion weights greater than one remain open in this ProLT-specific setting.
+\end{itemize}
+
+\begin{thebibliography}{99}
+\bibitem{BernardiKlivans2016}
+O. Bernardi and C. J. Klivans,
+``Directed rooted forests in higher dimension,''
+\emph{Electronic Journal of Combinatorics} 23(4) (2016), P4.35.
+DOI: 10.37236/5819.
+
+\bibitem{DuvalKlivansMartin2016}
+A. M. Duval, C. J. Klivans, and J. L. Martin,
+``Simplicial and cellular trees,''
+in \emph{Recent Trends in Combinatorics}, IMA Vol. Math. Appl. 159, Springer, 2016, 713--752.
+
+\bibitem{Forman1998}
+R. Forman,
+``Morse theory for cell complexes,''
+\emph{Advances in Mathematics} 134 (1998), 90--145.
+
+\bibitem{Habib2004}
+M. Habib, L. Nourine, O. Raynaud, and E. Thierry,
+``Computational aspects of the 2-dimension of partially ordered sets,''
+\emph{Theoretical Computer Science} 312 (2004), 401--431.
+DOI: 10.1016/j.tcs.2003.10.029.
+
+\bibitem{McCord1966}
+M. C. McCord,
+``Singular homology groups and homotopy groups of finite topological spaces,''
+\emph{Duke Mathematical Journal} 33 (1966), 465--474.
+
+\bibitem{Barmak2011}
+J. A. Barmak,
+\emph{Algebraic Topology of Finite Topological Spaces and Applications},
+Lecture Notes in Mathematics 2032, Springer, 2011.
+
+\bibitem{Theory2026}
+B. Theory,
+\emph{Propositional Logical Topology: Observation, Distinguishability, and Inference},
+core manuscript v0.8, September 2026, unpublished.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,777 @@
+Successive Concept Differentiation as Observation
+Refinement
+Carrier Splitting, Descent, Mapping-Cone Defects, and Boolean Unfolding Complexes
+Brian Droncheff
+Research draft v0.3 — 29 September 2026
+Abstract
+A 2015 thesis proposed a mathematical model of Ignacio Matte-Blanco’s “unfolding function”
+in which a concept is decomposed into distinguished logical pieces and later reconstructed by
+gluing. The proposal mixed three mathematically different operations: Boolean distinction,
+simplicial boundary, and local-to-global reconstruction. This paper separates them.
+First, the historical logical rule is reconstructed as an exact-one-false operator on a chosen
+factorization. It is meaningful but representation-sensitive and is not a chain differential. Its
+repeated, provenance-preserving version traverses the Boolean lattice by Hamming layers. The
+exact kth layer is the vertex set of a hypersimplex, while the cumulative complex of distinction
+sets is a simplex skeleton with an explicit mapping-cone profile.
+Second, observation refinement that actually splits a currentT0 state is given an exact
+finite-poset model. The refined quotient factors canonically as a homotopy-neutral lexicographic
+split completion followed by a one-bit monotonicity thinning. Consequently its mapping-cone
+homology is the relative homology of an explicit inversion-chain complex. In weighted height at
+most two this defect has a complete integral classification by a rooted incidence graph, including
+torsion-freeness, a closed Betti formula, and an exact collapse criterion.
+Third, unfolding at the cover level is modeled by refinement of covers and induced maps
+between nerves. Under a relative good-cover hypothesis, the mapping cone of a refinement
+map computes the relative homology of the support change. Semantic reconstruction is treated
+separately by sheaf descent and cosheaf colimits. The general topological ingredients are
+classical. The candidate contribution is therefore the exact observation-theoretic factorization
+of carrier splitting, its transfer to the one-bit defect theory, the Boolean unfolding model, and
+the integration of structural cone defects with semantic descent; no novelty is claimed for the
+underlying beat-point, nerve, poset-fiber, or sheaf theorems.
+Contents
+1 Purpose and scope 2
+2 Historical operator: what survives and what does not 3
+2.1 Fixed-factor unfolding . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+2.2 Representation dependence . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+2.3 Boolean derivative interpretation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+3 What the attached “Logical Complexes” notes recover 4
+3.1 XOR is a difference vector, not a scalar distance . . . . . . . . . . . . . . . . . . . . 4
+3.2 The three-variable tetrahedron is genuine . . . . . . . . . . . . . . . . . . . . . . . . 4
+3.3 Why the signs disappear overF2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+1
+4 Exact unfolding layers and hypersimplices 5
+5 A canonical cumulative unfolding complex 6
+6 Observation systems and three kinds of refinement 7
+7 Carrier splitting under a new Boolean observation 7
+7.1 The exact inversion-chain complex . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+7.2 Immediate homotopy-neutrality criteria . . . . . . . . . . . . . . . . . . . . . . . . . 9
+7.3 Localization by lower fibers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+7.4 Exact low-height classification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+7.5 Sharpness beyond weighted height two . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+8 Cover refinement and canonical homology maps 11
+9 Observation–Refinement Descent and Cone Theorem 12
+9.1 What the theorem means for unfolding . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+10 Descent defects for data that are not already a sheaf 13
+11 Exact simplicial gluing and the no-filler warning 14
+12 Finite prototypes 14
+12.1 Three attributes: vertices, cycle, filler . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+12.2 Four attributes: a tetrahedral history complex . . . . . . . . . . . . . . . . . . . . . 15
+13 Symmetry, indistinguishability, and homology are different invariants 15
+14 Relation to observation topologies and order thinning 15
+15 Persistence and zigzags 16
+16 Priority and novelty position 16
+17 Next theorem targets 17
+18 Conclusion 17
+A Reproducibility 18
+1 Purpose and scope
+The motivating question is
+Can successive differentiation of a concept be represented rigorously as a
+transformation between complexes?
+The answer developed here is yes, provided that four levels are not conflated:
+(i) a semantic state space and its attributes;
+(ii) an observation or distinction process;
+2
+(iii) a combinatorial/topological representation of the observed structure;
+(iv) a genuine chain differential on that representation.
+The historical thesis is used only as a source of ideas. The mathematical claims below stand on
+newly stated definitions.
+The resulting architecture has two primary operators:
+d :Cn(Kk;R)−→Cn−1(Kk;R), d 2 = 0,
+and
+Uk :C•(Kk;R)−→C•(Kk+1;R),
+where d is the ordinary chain differential andUk is induced by an unfolding/refinement map. When
+Uk is a chain map, it induces homology maps; when the represented support changes,H∗(Cone(Uk))
+measures the change relative to the chosen representation.
+2 Historical operator: what survives and what does not
+2.1 Fixed-factor unfolding
+Let A ={a1,...,am}be a finite attribute set and letB(A) be the Boolean functions on{0,1}A.
+Definition 2.1(Factorized concept). A factorized concept is an ordered tupleF = (f1,...,fm)
+with fi∈B(A). Its conjunction semantics is
+Π(F) =
+m⋀
+i=1
+fi.
+Definition 2.2(Historical one-step unfolding). For a chosen factorizationF = (f1,...,fm), define
+Uth(F) =
+m⋁
+j=1
+
+¬fj∧
+⋀
+i̸=j
+fi
+
+.
+Proposition 2.3(Exact-one-false characterization). At a valuationx, Uth(F)(x) = 1 if and only if
+exactly one factor valuefi(x) is false.
+Proof. The jth disjunct requiresfj(x) = 0 and every other factor to be1. Distinct disjuncts are
+mutually exclusive. Hence the disjunction is true exactly on the one-false layer.
+For the positive conjunctionX1∧···∧Xm, the one-step output is therefore the Hamming layer
+with exactly one zero. This is a precise mathematical version of “one further distinction.”
+2.2 Representation dependence
+Theorem 2.4(Non-congruence of factorized unfolding). There is no Boolean-function operator
+U : B(A)→B(A) satisfying
+U(Π(F)) =Uth(F)
+for every factorizationF.
+3
+Proof. Take
+F = (X,Y), F ′= (X,Y,X∨Z).
+Then Π(F ) = Π(F′) =X∧Y. At (X,Y,Z) = (0,1,0), the factor values are(0,1) for F and (0,1,0)
+for F′. ThusUth(F) = 1 but Uth(F′) = 0.
+Hence either internal factorization/provenance is part of the concept, a canonical normal form
+must be chosen, or the historical rule must be replaced by a semantic operator.
+2.3 Boolean derivative interpretation
+For the monomialf(x) = ∏
+ixi, the Boolean partial derivative
+∂B
+j f =f(xj = 0)⇕f(xj = 1)
+is ∏
+i̸=jxi. Therefore
+Uth(f) =
+⋁
+j
+(
+(1−xj)∧∂B
+j f
+)
+.
+The historical rule is thus a negation-gated Boolean sensitivity operator, not the simplicial boundary.
+3 What the attached “Logical Complexes” notes recover
+The attached notes contain a useful idea, but two algebraic levels must be separated.
+3.1 XOR is a difference vector, not a scalar distance
+For Boolean state vectorsx,y∈Fm
+2 ,
+x⇕y =x +y
+is the vector difference in characteristic two. The scalar Hamming distance is
+dH(x,y) = wt(x⇕y).
+Thus expressions such as “XOR is the distance” should be replaced by: XOR is the coordinatewise
+disagreement vector, whose Hamming weight is the distance.
+3.2 The three-variable tetrahedron is genuine
+Set
+G = (1,1,1), D= (1,1,0), E= (1,0,1), F= (0,1,1).
+Then
+D⇕G = (0,0,1), E⇕G = (0,1,0), F⇕G = (1,0,0).
+These three differences form a basis ofF3
+2; viewed as points inR3, the corresponding real differences
+are also linearly independent. Hence{G,D,E,F}is an affine3-simplex, a tetrahedron. The four
+points are not redundant.
+A low-arity coincidence in the notes is also correct:
+D⇕E =F,
+and cyclically. Here{0,D,E,F}is the even-parity plane inF3
+2. This closure does not persist for
+general m: XOR of two one-flip children of1m has Hamming weight2, notm−1.
+4
+3.3 Why the signs disappear over F2
+The notes also anticipate a valid characteristic-two phenomenon. If[v0,...,vn] is a formal simplex,
+then over F2
+d[v0,...,vn] =
+∑
+i
+[v0,...,ˆvi,...,vn]
+contains no visible alternating signs because−1 = +1. Every codimension-two face appears twice
+in d2, sod2 = 0.
+The important correction is that the addition above occurs in thechain group on formal simplices.
+It is not XOR of the bit-vector labels themselves. Label-space XOR and chain addition happen to
+use the same field in this model, but they are distinct operations on distinct vector spaces.
+4 Exact unfolding layers and hypersimplices
+Let the fully undifferentiated positive state be1 = (1,...,1)∈{0,1}m. ForS⊆[m], define
+xS = 1⇕χS,
+so precisely the coordinates inS are switched from1 to 0.
+Definition 4.1(Exact distinction layer). The kth exact unfolding layer is
+L(m)
+k ={xS :|S|=k}.
+Theorem 4.2(Boolean unfolding simplex and hypersimplex theorem). Form≥2:
+(i) |L(m)
+k |=
+(m
+k
+)
+and everyx∈L(m)
+k has Hamming weightm−k;
+(ii){1}∪L(m)
+1 is an affinem-simplex;
+(iii) the convex hull of the exactkth layer is the hypersimplex
+conv(L(m)
+k ) =
+{
+x∈[0,1]m :
+∑
+i
+xi =m−k
+}
+;
+(iv) for 0<k <m , this polytope has dimensionm−1 and is a simplex exactly in the extremal
+casesk = 1 or k =m−1.
+Proof. Parts (i) and (iii) follow because choosingS is equivalent to choosing thek zero coordinates,
+or equivalently them−k one coordinates. For (ii), ifui = 1⇕ei, thenui−1 =−ei in Rm, so
+the m difference vectors are linearly independent. Part (iv) is the standard dimension and vertex
+description of the hypersimplex; in the two extremal nontrivial weights its vertices are the standard
+simplex vertices up to complementation.
+Form = 4 the exact layers have the particularly transparent geometry
+point −→tetrahedron −→octahedron −→tetrahedron −→point,
+since ∆(4,2) is an octahedron. Thus repeated unfolding does not naturally stay inside the category
+of simplices if one geometrizes each exact state layer by convex hull.
+5
+5 A canonical cumulative unfolding complex
+There is, however, a canonical simplicial model ofdistinction histories. A subsetS⊆[m] records
+the attributes that have been distinguished so far.
+Definition 5.1(Cumulative distinction complex). For 0≤r≤m−1, define
+K(m)
+r ={S⊆[m] : 1≤|S|≤r + 1}.
+Thus K(m)
+r = skr ∆ m−1, ther-skeleton of the full simplex on the attribute set. We also retain the
+empty face implicitly.
+The inclusions
+K(m)
+0 ↪→K(m)
+1 ↪→···↪→K(m)
+m−1 = ∆ m−1
+form a genuine filtration. Here increasingr means allowing larger jointly distinguished attribute
+sets.
+Theorem 5.2(Exact cone profile of cumulative unfolding). LetR be any coefficient ring and let
+ir :K(m)
+r−1↪→K(m)
+r , 1≤r≤m−1.
+Then
+Hq
+(
+Cone(C∗(ir;R))
+)∼=Hq(K(m)
+r ,K(m)
+r−1;R)∼=
+
+
+
+R( m
+r+1), q=r,
+0, q ̸=r.
+Proof. The relative chain complexC∗(Kr,Kr−1;R) has no new cells below degreer and has one
+degree-r basis element for every(r + 1)-subset of [m]. There are no relative cells above degreer.
+Hence every relative differential is zero and the displayed relative homology follows. The mapping
+cone of an inclusion computes the relative homology of the pair.
+Corollary 5.3(Absolute homology of intermediate distinction stages). For 0≤r<m −1 and a
+field k,
+˜Hq(K(m)
+r ; k) = 0 ( q̸=r), dim ˜Hr(K(m)
+r ; k) =
+(
+m−1
+r + 1
+)
+.
+The final stageK(m)
+m−1 = ∆ m−1 is contractible.
+This gives a useful correction to the older suggestion that cycles should represent symmetry.
+In this exact model the transient cycles are forced combinatorially by missing higher-order fillers.
+They measure incomplete compatibility, not group-theoretic symmetry.
+Example 5.4(Four attributes). Form = 4 the cumulative stages have Betti profiles
+K0 : (β0) = (4), K 1 : (1,3), K 2 : (1,0,1), K 3 : (1,0,0,0).
+The relative/cone ranks at successive steps are6 in degree1, 4 in degree2, and 1 in degree3, exactly
+the numbers of newly admitted edges, triangles, and tetrahedra.
+6
+6 Observation systems and three kinds of refinement
+The word “refinement” is overloaded. Three operations should be distinguished.
+Definition 6.1(Signature refinement). An observation map isqk :X→Ok. We sayqk+1 refines
+qk when there isrk :Ok+1→Ok with qk =rk◦qk+1. Equivalently, everyqk+1-fiber lies in aqk-fiber.
+For finite propositional observation families, adding observables refines the generated topology,
+can split observational equivalence classes, thins the specialization preorder, and can increase
+signature distance. This is an observation-theoretic notion of differentiation.
+A second regime occurs when a new observation is constant on every currentT0 equivalence class.
+Then the carrier does not split; only order relations can be removed. This becomes a same-carrier
+order-thinning problem, which is treated separately in companion work. If the new observation
+separates previously identified worlds, the refined carrier gains points and a different construction is
+required.
+A third notion, used in the main theorem below, is acover refinement. It concerns local pieces
+representing a support, not merely enlargement of an observation vocabulary.
+Remark 6.2 (Presentation-dependent nerve warning). For an indexed family of truth regions
+{ς(φi)}, the observation-side nerve records joint satisfiability, but it is presentation-dependent.
+Adding a tautological observation can cone the nerve without changing the generated observation
+topology. Therefore arbitrary extension of an observation list should not be identified with a
+topologically meaningful nerve filtration. The main theorem uses actual refinement of covers with
+explicit containment data.
+7 Carrier splitting under a new Boolean observation
+We now treat the refinement regime left open in the previous draft: a new observation is not constant
+on every current observational-equivalence class, so one oldT0 state can split into two refined states.
+This operation is not a cover refinement and is not, on its face, a same-carrier order thinning. It
+does, however, admit a canonical factorization through one.
+Let W be the finite world set, letΦ be the current observation family, and write
+Q =oΦ (W )⊆{0,1}I
+for the finiteT0 quotient ordered coordinatewise. Add one Boolean observationψ. The refined
+quotient is
+Qψ=oΦ∪{ψ}(W )⊆Q×{0,1},
+with the product order. Let
+π:Qψ−→Q, π(s,a) =s,
+be the coordinate-forgetting map. Fora∈{0,1}put
+Aa :={s∈Q : (s,a)∈Qψ}, C :=A0∩A1.
+ThusA0∪A1 =Q, andC is precisely the set of old observational states that split.
+Definition 7.1(Split completion). On the same carrier asQψ, define the split-completion order
+ˆQψby
+(s,a)≤ˆQ (t,b) ⇐⇒
+(
+s<t in Q
+)
+or
+(
+s =t and a≤b
+)
+.
+7
+Equivalently, ˆQψis the lexicographic sum overQ of the nonempty fiber chains
+Fs :={a∈{0,1}: (s,a)∈Qψ}.
+Letb(s,a) =a be the new-bit label on this expanded carrier.
+The distinction between Qψand ˆQψis exact. The split completion remembers every old
+comparison between coarse states, independently of the new bit. The actual refined order keeps
+only those comparisons along which the new bit is nondecreasing.
+Theorem 7.2(Carrier-splitting factorization). With the notation above:
+(i) the projectionp : ˆQψ→Q, p(s,a) =s, is a homotopy equivalence of finite posets; in factˆQψ
+beat-reduces to a subposet isomorphic toQ;
+(ii) the actual refined quotient is exactly the one-bit thinning of the split completion,
+Qψ= ( ˆQψ)b,
+meaning that a comparisonx< ˆQy is retained precisely whenb(x)≤b(y);
+(iii) if i : ∆( Qψ) ↪→∆( ˆQψ) is the inclusion, then ∆(π) = ∆( p)◦i, and there is a homotopy
+equivalence of homotopy cofibers
+Cof(∆ π)≃Cof(i).
+Consequently, for every coefficient ringR,
+˜Hn(Cone(∆π);R)∼=Hn
+(
+∆( ˆQψ),∆(Qψ);R
+)
+.
+Proof. For every split states∈C, the lower copy(s,0) is an up-beat point ofˆQψ: its strict upper
+set has the minimum(s,1), because (s,1) lies below every copy over everyt > s. Remove these
+lower split copies one at a time. What remains has one representative over eachs∈Q and is
+order-isomorphic toQ. Beat-point removal is a strong deformation retraction for finiteT0 spaces [19],
+giving (i).
+For distinct coarse statess < t, the split completion always contains(s,a)< (t,b) whenever
+those copies exist. The product order onQψretains exactly the casesa≤b. The same statement
+holds within a split fiber, where(s,0)< (s,1) is retained. This proves (ii). Part (iii) follows from
+π=p◦i and homotopy invariance of the homotopy cofiber under postcomposition by the homotopy
+equivalence ∆(p). Since i is a simplicial inclusion, its homotopy cofiber computes the relative
+homology of its simplicial pair.
+Remark 7.3(What is standard and what is specific). Beat-point reduction is classical finite-space
+topology [19], and homotopy cofiber invariance is standard; Quillen-type poset equivalences even
+admit simple-homotopy refinements in the standard setting [20]. The project-specific content is the
+observation-theoretic factorization: an actual split ofT0 observational states is converted canonically
+into a homotopy-neutral lexicographic expansion followed by the precise one-bit monotonicity thinning
+already studied on a fixed carrier. Thus carrier splitting is not a fourth unrelated operation; it is a
+neutral blow-up plus an order defect.
+8
+7.1 The exact inversion-chain complex
+Theorem 7.2 gives a chain-level classification without any nerve hypothesis.
+Theorem 7.4(Inversion-chain model). For any coefficient ringR, the relative group
+Ck
+(
+∆( ˆQψ),∆(Qψ);R
+)
+is free on the strict chains
+x0< ˆQx1< ˆQ···< ˆQxk
+whose bit word
+b(x0)b(x1)···b(xk)
+is not weakly increasing. Equivalently, a relative generator is exactly a split-completion chain
+containing an inversion1···0. Its relative boundary is the ordinary alternating simplicial boundary
+with every monotone-bit face set to zero.
+Proof. The two order complexes have the same vertex set. A split-completion chain is a simplex of
+∆(Qψ) exactly when every comparison in the chain survives the one-bit thinning, which is equivalent
+to the bit word being weakly increasing. Quotienting the simplicial chain groups therefore leaves
+exactly the nonmonotone chains, and the relative differential is the induced simplicial differential.
+This formulation is useful computationally: the defect depends only on the old signature poset
+and the three-valued fiber profile
+Fs∈
+{
+{0},{1},{0,1}
+}
+,
+not on the number of worlds inside each old equivalence class.
+7.2 Immediate homotopy-neutrality criteria
+The factorization also reveals when splitting is automatically conservative.
+Proposition 7.5 (Monotone-section criterion). If A1 is an upward-closed subset ofQ, thenπ:
+Qψ→Q is a homotopy equivalence. Dually, ifA0 is downward closed, thenπis a homotopy
+equivalence.
+Proof. Assume A1 is upward closed. Define
+r+(s) =
+{
+(s,1), s∈A1,
+(s,0), s /∈A1.
+The upset condition makesr+ order preserving, andπr+ = idQ. Moreover every (s,a)∈Qψ
+satisfies (s,a)≤r+(s), so idQψ≤r+π. The order-homotopy lemma givesr+π≃id and henceπis a
+homotopy equivalence. TheA0 statement is dual, using the minimum available bit in each fiber.
+Corollary 7.6(Common-outcome anchor). If every old observational state has at least one refined
+world withψ= 1 (A1 =Q), or every old state has at least one withψ= 0 (A0 =Q), then carrier
+splitting is homotopy-neutral. In particular, if every old state genuinely splits, soA0 =A1 =Q,
+then Qψ=Q×{0< 1}and the projection is a homotopy equivalence.
+Thus the act of duplicating a state is not itself the source of topological defect. The defect is
+caused by incompatible outcome availability across comparable coarse states: a lower state that can
+realize 1 together with an upper state that can realize0 creates a potentially deleted comparison.
+9
+7.3 Localization by lower fibers
+Fors∈Q define the lower fiber
+Ls :=π−1(Q≤s).
+If s∈A1, then (s,1) is a maximum ofLs, hence Ls is contractible. Therefore all lower-fiber
+obstructions to Quillen-type equivalence localize to the0-only statesA0\A1. Dually, all upper-fiber
+obstructions localize to the1-only statesA1\A0.
+This observation does not replace the exact relative complex above. It does, however, connect the
+carrier-splitting problem to the classical poset-fiber framework. Under the connectivity hypotheses
+of the Björner–Wachs–Welker fiber theorem [21], the source∆(Qψ) admits a wedge decomposition
+in terms of the noncontractible lower fibers and upper links. The important point here is that the
+split fibers themselves disappear from that list whenever their top copy is present.
+7.4 Exact low-height classification
+The general inversion complex can have arbitrarily high dimension. In the first nontrivial dimensional
+regime it collapses to graph incidence and admits a closed integral classification.
+Definition 7.7(Weighted split height). LetC =A0∩A1 be the split set. Define
+hψ(Q) := max
+s0<···<sr in Q
+(r + #{j :sj∈C}).
+Lemma 7.8.hψ(Q) = dim ∆( ˆQψ).
+Proof. A strict coarse chain contributes one vertex from every fiber, and a split fiber can contribute
+both copies consecutively. Taking both copies at every split state on the chain attains the displayed
+number, and no split-completion chain can contain more.
+Suppose hψ(Q)≤2. An inversion edgeis a deleted order-complex edge of∆( ˆQψ), equivalently
+a pair
+(s,1)< ˆQ (t,0), s<t,
+with s∈A1 and t∈A0. A deleted triangle has one of the four nonmonotone bit patterns
+010, 100, 101, 110.
+It therefore contains either one or two inversion edges. Introduce one formal root for each connected
+component ofQ (equivalently of ˆQψ). The carrier-split defect graphGψ(Q) has one vertex for
+every inversion edge; a deleted triangle with two inversion edges joins their vertices, while a deleted
+triangle with one inversion edge joins that vertex to the root of its component. Parallel graph edges
+are allowed.
+Theorem 7.9(Carrier-splitting cone classification in weighted height two). Assumehψ(Q)≤2.
+Letc0(Gψ) be the number of connected components ofGψ(Q) containing no formal root. Then
+˜Hn(Cone(∆π); Z)∼=
+
+
+
+Zβ1(Gψ), n= 2,
+Zc0(Gψ), n= 1,
+0, otherwise.
+The relative boundary matrix is totally unimodular. Hence the same Betti ranks hold over every
+field. Moreover the following are equivalent:
+10
+(i) the carrier-splitting cone is acyclic overZ;
+(ii) it is acyclic over every field;
+(iii) Gψ(Q) is a rooted forest;
+(iv) ∆( ˆQψ) collapses onto ∆(Qψ) through deleted edge–triangle pairs;
+(v) ∆π: ∆(Qψ)→∆(Q) is a homotopy equivalence.
+Proof. By Theorem 7.2, the mapping-cone homology is the relative homology of the one-bit thinning
+∆(Qψ)⊆∆( ˆQψ). Lemma 7.8 places the split completion in dimension at most two. The one-bit
+height-two incidence theorem from the companion order-thinning analysis applies verbatim: the
+relativeC2→C1 boundary is the oriented incidence matrix of the rooted defect graph with root
+rows deleted. Ordinary graph incidence gives the two displayed free homology groups and total
+unimodularity; the rooted-forest condition is equivalent to perfect relative cancellation and to an
+elementary collapse. Finally∆(p) is already a homotopy equivalence, so two-out-of-three identifies
+homotopy neutrality of the inclusion with homotopy neutrality of∆π.
+Remark 7.10(Status of the low-height theorem). The graph-incidence algebra, total unimodularity,
+rooted forests, and beat-point technology are standard. The exact height-two theorem for one-bit
+thinning is proved in the companion structural-computation manuscript. The new point here is the
+carrier-splitting reduction that makes that theorem applicable to a process which changes theT0
+carrier. Accordingly, this theorem should be positioned as an exact transfer theorem, not as a new
+general theory of rooted forests.
+7.5 Sharpness beyond weighted height two
+No coefficient-independent forest criterion can hold in unrestricted dimension. The carrier-splitting
+family contains the no-split caseC = ∅, which is exactly arbitrary same-carrier one-bit thinning.
+Companion results show that one-bit thinning in height three can already have relative integral
+torsion, and in unrestricted height can encode arbitrary finite-poset homotopy types inside a
+contractible coarse cone. If one insists that at least one old state genuinely split, a disjoint neutral
+split component may be adjoined without changing positive-degree cone homology. Thus the
+weighted-height-two hypothesis in Theorem 7.9 marks a real boundary rather than a presentational
+convenience.
+The appropriate all-height object is therefore the inversion-chain complex of Theorem 7.4,
+supplemented where useful by poset-fiber or homotopy-colimit methods. A realistic next target is
+not another universal forest theorem, but a classification of higher-dimensional inversion complexes
+under additional structural hypotheses onQ and on the split profile(A0,A1).
+8 Cover refinement and canonical homology maps
+Definition 8.1(Nerve). For a finite coverU ={Ui}i∈I of X, its nerveNrv(U) has vertex setI
+and simplexσ⊆I exactly when
+Uσ:=
+⋂
+i∈σ
+Ui̸= ∅.
+Definition 8.2(Refinement map). LetV ={Vj}j∈J andU ={Ui}i∈I cover the same space, or let
+the union ofV lie in the union ofU. A refinement choice is a mapρ:J→I such that
+Vj⊆Uρ(j)
+11
+for everyj.
+Lemma 8.3(Contiguity of refinement choices). Every refinement choice induces a simplicial map
+N(ρ) : Nrv(V)→Nrv(U).
+Any two refinement choicesρ,ρ′are contiguous and therefore induce the same homomorphism on
+homology.
+Proof. If σ∈Nrv(V), choosex∈⋂
+j∈σVj. Thenx belongs to everyUρ(j) and everyUρ′(j). Hence
+the union of the two image vertex sets spans a simplex ofNrv(U), which is precisely contiguity.
+This lemma is standard. In particular, Leitão’s 2026 framework for persistent homology of cover
+refinements makes this contiguity principle explicit at the cover level. It should not be presented
+here as a new theorem.
+9 Observation–Refinement Descent and Cone Theorem
+We now state the central structural result in a form adapted to successive concept differentiation.
+Definition 9.1(Pair-good cover). LetY⊆X. A finite coverU ={Ui}i∈I of X is good relative to
+Y if, for every nonempty finiteσ⊆I,
+Uσ̸= ∅ =⇒Uσis contractible,
+and
+Uσ∩Y̸= ∅ =⇒Uσ∩Y is contractible.
+WriteU|Y ={Ui∩Y}i∈I after deleting empty members.
+Theorem 9.2 (Observation–Refinement Descent and Cone Theorem). Let Y ⊆X be a pair of
+spaces for which the relative nerve theorem applies (for example, a finite simplicial pair covered by
+suitable subcomplexes, or a paracompact pair with numerable good covers). LetU be a finite cover of
+X good relative toY. LetV be a finite good cover ofY refiningU|Y. Choose any refinement map
+ρ:V−→U|Y
+and let
+u : Nrv(V)
+N(ρ)
+−−−→Nrv(U|Y )↪→Nrv(U)
+be the induced simplicial map. Then:
+(a) the homotopy class up to contiguity, and hence the induced homology mapu∗, is independent
+of the refinement choice;
+(b) N(ρ) : Nrv(V)→Nrv(U|Y ) is a homotopy equivalence;
+(c) for any coefficient ringR,
+Hn(Cone(C∗(u;R)))∼=Hn(X,Y;R)
+naturally up to the standard nerve identifications;
+(d) in the conservative caseY =X, the cone is acyclic, equivalentlyu is a quasi-isomorphism;
+12
+(e) if the cover members are admissible objects of the chosen site (for example, open sets for an
+ordinary sheaf) andF is a sheaf of sets or abelian groups onX, then compatible local sections
+on either cover reconstruct a unique global section; refinement changes the presentation of the
+local data but not the reconstructed global section;
+(f) dually, under the same site/admissibility convention, ifG is a cosheaf, the global assembled
+object is the colimit of its local intersection diagram, and this assembly is compatible with
+refinement.
+Proof. Part (a) is Lemma 8.3. For (b), bothV andU|Y are good covers ofY. The functorial/relative
+form of the nerve theorem identifies their nerves withY and identifies the refinement map with the
+identity ofY up to homotopy. HenceN(ρ) is a homotopy equivalence.
+Let j : Nrv(U|Y ) ↪→Nrv(U). Since N(ρ) is a homotopy equivalence, the mapping cones of
+j◦N(ρ) and j have isomorphic homology; this follows, for example, by comparing the long exact
+sequences of the two cones and applying the five lemma. The mapping cone of the chain inclusion
+C∗(j) computes
+Hn(Nrv(U),Nrv(U|Y );R).
+The relative nerve theorem identifies this withHn(X,Y;R), proving (c). IfY =X, the relative
+groups vanish, giving (d).
+For (e), assuming the cover belongs to the site on whichF is defined, the sheaf axiom identifies
+global sections with compatible local families:F(X) is the equalizer of the first two Čech restriction
+maps. Since both covers represent the same global object, refinement transports compatible families
+without changing their unique glue. Part (f) is the dual cosheaf statement:G(X) is the colimit of
+the local intersection diagram, and refinement induces the canonical comparison maps between such
+colimits.
+9.1 What the theorem means for unfolding
+The theorem separates two questions that were previously mixed:
+(i) Did the underlying support or compatibility structure change?This is answered by cone/relative
+homology.
+(ii) Can compatible local descriptions be reconstructed globally?This is answered by descent or
+colimit conditions.
+A finer description can therefore be topologically conservative while still providing more local
+information. Conversely, one may have perfect local gluing on a support whose topology has
+genuinely changed.
+10 Descent defects for data that are not already a sheaf
+If one assumes a sheaf from the beginning, reconstruction is built into the axioms. For modeling it
+is useful to measure how a candidate local-data system fails to be a sheaf.
+LetF be a presheaf of abelian groups andU ={Ui}a finite cover. Define
+C0(U;F) =
+∏
+i
+F(Ui), C 1(U;F) =
+∏
+i<j
+F(Ui∩Uj),
+and
+(δ0s)ij =sj|Ui∩Uj−si|Ui∩Uj.
+13
+Let Z0 = kerδ0 be the compatible local families and let
+res :F(X)→Z0(U;F)
+be global restriction.
+Definition 10.1(Descent defects). Define
+Duniq(U;F) = ker(res), D exist(U;F) = coker(res).
+Proposition 10.2 (Exact reconstruction criterion). Compatible local data reconstruct a unique
+global element if and only if
+Duniq = 0 =Dexist.
+In particular both defects vanish for a sheaf.
+This motivates a two-axis defect signature for an unfolding stepu:
+D(u;F) = (H∗(ConeC∗(u)), Duniq, Dexist).
+The first entry is structural; the latter two are semantic/local-to-global. They should not be collapsed
+into one number.
+11 Exact simplicial gluing and the no-filler warning
+Proposition 11.1(Exact gluing as a colimit). If a simplicial complexK is covered by subcomplexes
+{Ki}i∈I, thenK is the colimit of the full diagram consisting of theKi and all their finite intersections,
+with the evident inclusion maps.
+This is the rigorous combinatorial version of rebuilding an object from pieces with overlap
+provenance.
+Proposition 11.2 (Bare proper faces do not determine a filler). The proper-face data of an
+n-simplex do not by themselves determine whether then-simplex is present.
+Proof. The boundary complex∂∆ n and the filled simplex∆ n have exactly the same proper faces,
+but only the latter contains the top-dimensional simplex.
+Therefore the historical idea of an “integrator” requires a filler rule, provenance, a flag/clique
+convention, a colimit diagram containing the intended top cell, or semantic descent data. Conjunction
+of face-formulas is not a general simplicial gluing operation.
+12 Finite prototypes
+12.1 Three attributes: vertices, cycle, filler
+The cumulative distinction filtration form = 3 is
+K0 ={1,2,3}↪→K1 =∂∆ 2↪→K2 = ∆ 2.
+Over F2:
+H0(K0)∼= F3
+2, H 1(K1)∼= F2, H >0(K2) = 0.
+14
+The first step adds three edges and has
+H1(K1,K0)∼= F3
+2.
+The second adds one triangle and has
+H2(K2,K1)∼= F2.
+The one-dimensional cycle at the middle stage is therefore not a symmetry invariant; it is the
+obstruction created by having all pairwise compatibilities without the triple filler.
+12.2 Four attributes: a tetrahedral history complex
+Form = 4:
+K0⊂K1⊂K2⊂K3 = ∆ 3,
+where K1 is the complete graphK4 and K2 is the tetrahedral boundary. The nonzero reduced
+homology is
+˜H0(K0)∼=R3, H 1(K1)∼=R3, H 2(K2)∼=R.
+The next stage fills the tetrahedron and kills the2-cycle.
+At the exact-state level, however, thek = 2 Hamming layer has six points and convex hull an
+octahedron. This illustrates why the state-layer geometry and the distinction-history complex are
+related but not identical constructions.
+13 Symmetry, indistinguishability, and homology are different
+invariants
+Let Aut(K) be the simplicial automorphism group. Let an observation mapq : X→O define
+indistinguishability by equal fibers. Neither is determined by homology.
+A filled triangle has automorphism groupS3 but trivial positive-dimensional homology. Con-
+versely, an asymmetric unicyclic graph can haveH1∼= Z and trivial automorphism group. Thus
+cycles cannot generally be identified with symmetry.
+There is nevertheless a rigorous symmetry-breaking statement at the observational level. If a
+group G acts onX, define
+Gq ={g∈G :q(gx) =q(x)∀x∈X}.
+If qk+1 refinesqk, then
+Gqk+1≤Gqk.
+Finer observation can therefore break observational symmetry by shrinking the subgroup that
+preserves all observations. This is separate from the homology of the chosen complex.
+14 Relation to observation topologies and order thinning
+The observation-topology program provides a natural semantic base for the present construction.
+An indexed familyΦ = (φi) defines signatures and an observation-generated topology. ExtendingΦ
+by new coordinates makes the topology finer, refines observational equivalence, and thins the special-
+ization preorder. These facts supply a mathematically clean interpretation of “more differentiated
+observation.”
+15
+However, the passage from observation topology to complex must be chosen explicitly. The
+nerve of the indexed truth regions records joint satisfiability but is not an invariant of the generated
+topology. This is why the present paper uses a cover-refinement contract when applying the nerve
+theorem.
+There is also an important same-carrier subcase. If a new Boolean observation factors through the
+currentT0 quotient, it does not split observational states; it only removes comparisons incompatible
+with the new bit. Companion work shows that, for a height-two current signature poset and one
+new bit, homotopy neutrality can be recognized exactly by a rooted-forest criterion and certified
+by simplicial collapse. That result complements the present theorem: the current paper handles
+refinement through covers, relative cone defects, and descent, while the order-thinning paper handles
+a special same-carrier refinement regime with sharper combinatorial recognition.
+15 Persistence and zigzags
+A monotone sequence of inclusions of concept complexes
+K0↪→K1↪→···
+produces an ordinary persistence module on homology. If differentiation alternates between additions,
+deletions, support restrictions, or reinterpretations, the natural object is instead a zigzag
+K0→K1←K2→K3←···.
+This is preferable to forcing every cognitive or observational change into a monotone filtration.
+Cover-level persistence is already an active theory. In particular, Leitão develops persistent
+homology directly from cover refinements and proves stability statements that propagate through
+nerve and co-nerve functors. Therefore any novelty claim here must be made at the level of the
+specific observation semantics, relative defect interpretation, or descent coupling, not at the level of
+cover-refinement persistence itself.
+16 Priority and novelty position
+The following ingredients are standard and are used as machinery rather than claimed as new:
+• Boolean lattices, Hamming layers, and hypersimplices;
+• simplicial chain complexes andd2 = 0;
+• nerves and good-cover nerve theorems;
+• contiguity of refinement choices and the induced equality on homology;
+• mapping cones and their relation to relative homology;
+• sheaf descent and cosheaf colimits;
+• persistent and zigzag homology.
+The potentially publishable contribution is narrower:
+(1) a faithful mathematical audit of the historical unfolding rule and proof of its representation
+sensitivity;
+16
+(2) an exact Boolean-layer/hypersimplex reconstruction of successive distinction;
+(3) the canonical distinction-history skeleton filtration and its closed-form cone profile;
+(4) an observation-refinement contract that separates vocabulary refinement, carrier splitting,
+cover refinement, and genuine chain boundary;
+(5) an integrated structural/semantic defect formalism combining cone homology with descent
+defects;
+(6) a mathematically explicit replacement for the original gluing intuition.
+A submission should not advertise Lemma 8.3 or the ordinary nerve theorem as new. The 2026
+cover-refinement literature makes that especially important.
+17 Next theorem targets
+The present main theorem is a strong structural foundation, but its most general parts are assembled
+from classical results. The next research step should therefore attack a model-specific theorem that
+is not automatic from standard topology.
+Question 17.1(Observation-generated pair-goodness). Given a finite observation system, charac-
+terize when its natural concept cover and all relevant support restrictions are pair-good. Can this be
+decided from the observation-incidence table without constructing all intersections geometrically?
+Question 17.2(Exact descent under attribute refinement). For a specified presheaf/cosheaf of
+semantic concept data on the observation poset, characterize exactly which observation refinements
+preserve descent and which create a nonzero existence defect.
+Question 17.3(Higher-dimensional inversion classification). For the carrier-splitting inversion
+complex of Theorem 7.4, identify structural hypotheses on the coarse signature poset and split profile
+under which the all-height mapping-cone homology admits a closed local classification. Natural can-
+didates are bounded treewidth of the comparability structure, shellability/Cohen–Macaulay conditions
+on coarse intervals, or explicit connectivity hypotheses on the lower fibers ofπ.
+The carrier-splitting gate is therefore no longer open in general form: Theorem 7.2 gives an
+exact reduction, and Theorem 7.9 gives a nontrivial complete classification in weighted height two.
+The strongest remaining target is to extend exact recognition beyond that sharp low-dimensional
+regime without merely restating a generic poset-fiber theorem.
+18 Conclusion
+Successive concept differentiation can be represented rigorously as transformations between com-
+plexes, but not by identifying every form of “unfolding” with the chain boundary. The historical
+logical rule is best understood as a factorization-sensitive Hamming-layer operator. Its provenance-
+preserving iteration has a clean Boolean-lattice geometry, with exact layers given by hypersimplices
+and a canonical cumulative simplex-skeleton filtration.
+At the observationalT0 level, genuine carrier splitting now has a canonical exact model: first
+split coarse states in a homotopy-neutral lexicographic completion, then thin the resulting fixed
+carrier by the monotonicity of the new bit. Its cone is therefore an inversion-chain defect, with a
+17
+complete rooted-forest classification in weighted height two. At the cover level, unfolding is more
+naturally a refinement map. Under good-cover hypotheses, the mapping cone measures relative
+structural change; under sheaf/cosheaf hypotheses, compatible local pieces reconstruct global data.
+These are independent mechanisms and should be reported separately. This separation preserves
+the strongest intuition of the original Mental Space proposal while replacing its defective boundary,
+gluing, and symmetry identifications with standard, verifiable mathematics.
+A Reproducibility
+The accompanying scriptverify_unfolding_complexes.py checks the following finite claims over
+F2 for 2≤m≤8:
+• affine independence of the parent plus all one-flip children;
+• exact-layer cardinalities and constant Hamming weights;
+• Betti numbers of the cumulative simplex skeletons;
+• the relative/mapping-cone rank formula of Theorem 5.2;
+• the three-variableG,D,E,Fcalculation extracted from the attached logical-complex notes.
+The earlier audit scripts separately verify the non-congruence counterexample, the gated Boolean
+derivative identity, the characteristic-two incidence differential, and the failure of the thesis’s printed
+gluing identity.
+References
+[1] I. Matte-Blanco,The Unconscious as Infinite Sets: An Essay in Bi-Logic, Duckworth, 1975.
+[2] B. Droncheff,On the Ultrametric Unconscious, Quantum Consciousness, and Mental Spaces, Master’s
+thesis, 2015.
+[3] A. Yu. Khrennikov, “Modelling of psychological behavior on the basis of ultrametric mental space:
+Encoding of categories by balls,”BioSystems 90 (2007), 656–675.
+[4] F. Murtagh, “Matte Blanco’s bi-logic, metric and ultrametric modelling,”Language and Psychoanalysis
+3 (2014).
+[5] C. H. Dowker, “Homology groups of relations,”Annals of Mathematics56 (1952), 84–95.
+[6] A. Björner, “Nerves, fibers and homotopy groups,”Journal of Combinatorial Theory, Series A102(1)
+(2003), 88–93. DOI: 10.1016/S0097-3165(03)00015-3.
+[7] A. Hatcher,Algebraic Topology, Cambridge University Press, 2002.
+[8] C. A. Weibel,An Introduction to Homological Algebra, Cambridge University Press, 1994.
+[9] J. Curry, Sheaves, Cosheaves and Applications, Ph.D. thesis, University of Pennsylvania, 2014;
+arXiv:1303.3255.
+[10] J. M. Curry, “Dualities between cellular sheaves and cosheaves,”Journal of Pure and Applied Algebra
+222(4) (2018), 966–993. DOI: 10.1016/j.jpaa.2017.06.001.
+18
+[11] G. Carlsson and V. de Silva, “Zigzag persistence,”Foundations of Computational Mathematics10 (2010),
+367–405.
+[12] H. Edelsbrunner, D. Letscher, A. Zomorodian, “Topological persistence and simplification,”Discrete &
+Computational Geometry28 (2002), 511–533.
+[13] N. J. Cavanna and D. R. Sheehy, “The generalized persistent nerve theorem,” arXiv:1807.07920, 2018.
+[14] A. Leitão, “It’s All About Covers: Persistent Homology of Cover Refinements,” arXiv:2602.22784, 2026.
+[15] D. A. Ramras, “Variations on the Nerve Theorem,”Discrete & Computational Geometry75 (2026),
+871–903.
+[16] I. M. Gelfand, M. Goresky, R. MacPherson, V. Serganova, “Combinatorial geometries, convex polyhedra,
+and Schubert cells,”Advances in Mathematics63 (1987), 301–316.
+[17] F. Grande, A. Padrol, R. Sanyal, “Extension complexity and realization spaces of hypersimplices,”
+Discrete & Computational Geometry59 (2018), 621–642.
+[18] P. Gärdenfors,Conceptual Spaces: The Geometry of Thought, MIT Press, 2000.
+[19] R. E. Stong, “Finite topological spaces,”Transactions of the American Mathematical Society123 (1966),
+325–340. DOI: 10.1090/S0002-9947-1966-0195042-2.
+[20] J. A. Barmak, “On Quillen’s Theorem A for posets,”Journal of Combinatorial Theory, Series A118
+(2011), 2445–2453. DOI: 10.1016/j.jcta.2011.06.008.
+[21] A. Björner, M. L. Wachs, and V. Welker, “Poset fiber theorems,”Transactions of the American
+Mathematical Society357 (2005), 1877–1899. DOI: 10.1090/S0002-9947-04-03496-8.
+[22] X. Fernández and E. G. Minian, “The cylinder of a relation and generalized versions of the Nerve
+Theorem,”Discrete & Computational Geometry63 (2020). DOI: 10.1007/s00454-018-0028-7.
+19

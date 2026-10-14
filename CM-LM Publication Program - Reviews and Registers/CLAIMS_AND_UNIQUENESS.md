@@ -24,7 +24,7 @@ Current source: [PROJECT_REGISTER.md](PROJECT_REGISTER.md). Line ranges below re
 - `01_THEOREM_BANK/THEOREM_BANK.tex`
 - `10_UNIQUE_PROJECT_PARTITION_20260925`
 
-File and ZIP-member SHA-256, titles/objectives and section anchors are in the [complete evidence inventory](../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/10_UNIQUE_PROJECT_PARTITION_20260925/complete_file_inventory_before.json). The [pairwise matrix](../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/10_UNIQUE_PROJECT_PARTITION_20260925/pairwise_surviving.json) specifies ownership, treatment and residual content for every project pair.
+File and ZIP-member SHA-256, titles/objectives and section anchors are in the [complete evidence inventory](10_UNIQUE_PROJECT_PARTITION_20260925/complete_file_inventory_before.json). The [pairwise matrix](10_UNIQUE_PROJECT_PARTITION_20260925/pairwise_surviving.json) specifies ownership, treatment and residual content for every project pair.
 
 ## Work still required
 

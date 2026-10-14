@@ -1,0 +1,32 @@
+# Reviewer 3 - Boolean decomposition and logic synthesis
+
+**Recommendation:** preserve the technical report; return to Computation for discovery/comparator and workload repairs.
+**Confidence:** high on the novelty boundary; moderate on empirical generalization.
+
+This is a role-separated audit perspective. The artifact definitions, current implementation, and primary decomposition sources S9/S10 were the relevant evidence.
+
+## Main attack
+
+XOR decomposition, product/conjunctive factorization, and cofactor grouping are established mechanisms. Walsh methods for recognizing disjoint bi-decompositions and modern Ashenhurst-Curtis decomposition are not absent from the literature. Packaging these mechanisms into a serializable artifact family is an engineering and contract contribution; it is not invention of Boolean decomposition.
+
+The current discovery stage tries a bounded set of partitions and selects the smallest binary serialization among its candidates. That is defensible as an exact reference implementation. It is not an optimal decomposition, not a cost-optimal query plan, and not enough to infer that favorable structure rarely occurs naturally. Rank and cofactor counts must be reported for the declared cut, together with the selection budget.
+
+## What the data actually say
+
+The full replay confirms no artifact lifecycle median beats the tested packed backend on these 38 cases. Selected artifacts genuinely occupy fewer bytes than raw truth bits. These two observations can coexist: a compact representation may cost more to discover, verify, reload, or query than the saved storage repays.
+
+Twenty-six outputs from one control design are not an industrial corpus. The deliberately structured controls are useful positive controls for the discovery path, not evidence that users' inputs follow those structures. Neither five repetitions nor a second run of the same output set creates new design-level independence.
+
+## Endpoint fairness
+
+An ACD/LUT mapper aims at a different objective from exact conditioned counting. I would not require a nonsensical wall-clock comparison between hardware-mapping quality and count queries. But if decomposition quality is part of the claim, compare the relevant extracted structure, search budget, and compilation cost with an established decomposition method. For query speed, compare methods supporting the same endpoint.
+
+Likewise, a packed truth-table backend has already paid for truth materialization, while a symbolic input may offer different opportunities. The current timed endpoint starts from truth data; that scope should remain explicit. A follow-up from formulas or circuits is a different experiment and must count front-end cost separately.
+
+## Portfolio concern
+
+The adjacent pair compiler already has typed frame normalization, same-operands fusion, and its own negative producer study. Its larger screen cannot be used to inflate this report's corpus. Cite it, separate the artifacts, and avoid a second paper whose main new message is merely 'the additional compilation layer did not beat direct packed evaluation'.
+
+## Disagreement and required repair
+
+I disagree with a demand that every useful methods paper must contain a deep new theorem. A carefully designed negative or contract-focused study can contribute. But this campaign is not broad enough yet. Freeze the target application and selection rules; add independent designs; record the prevalence of the claimed structural regime; use a matched binary packed baseline; and keep decomposition-quality and query-runtime comparisons distinct.

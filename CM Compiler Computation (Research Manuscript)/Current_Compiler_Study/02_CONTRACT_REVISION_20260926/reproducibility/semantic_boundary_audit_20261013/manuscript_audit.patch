@@ -1,0 +1,73 @@
+--- before/Operator_Level_CM_Compiler_Revised_Draft.tex
++++ after/Operator_Level_CM_Compiler_Revised_Draft.tex
+@@ -25,7 +25,7 @@
+ \pagestyle{fancy}
+ \fancyhf{}
+ \fancyhead[L]{\small Operator-Level Boolean Computation with Correspondence Matrices}
+-\fancyhead[R]{\small Semantic addition, 13 October 2026}
++\fancyhead[R]{\small Semantic audit, 13 October 2026}
+ \fancyfoot[C]{\thepage}
+ \setlength{\headheight}{14pt}
+ \emergencystretch=2em
+@@ -68,7 +68,7 @@
+ \title{\vspace{-1.3em}\textbf{Operator-Level Boolean Computation with Correspondence Matrices}\\[0.35em]
+ \large Typed operand frames, local operator folding, fallback semantics, and empirical boundaries}
+ \author{Brian Theory}
+-\date{Compiler contract and evidence revision --- 26 September 2026\\Semantic-boundary addition --- 13 October 2026}
++\date{Compiler contract and evidence revision --- 26 September 2026\\Semantic-boundary addition and audit --- 13 October 2026}
+ 
+ \begin{document}
+ \maketitle
+@@ -417,23 +417,25 @@
+ \subsection{Semantic boundary under real-valued relaxation}
+ \label{sec:soft-boundary}
+ 
+-The invariant in Equation~\eqref{eq:invariant} is Boolean. A real-valued interpretation requires a separate contract. For a truth table $C=\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)$, ordinary real contraction gives
++The invariant in Equation~\eqref{eq:invariant} is Boolean. A real-valued interpretation requires a separate contract. For a truth table $C=\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)\in\B^{2\times2}$ and $p,q\in[0,1]$, ordinary real contraction gives
+ \begin{equation}
+  B_C(p,q)=[p,1-p]C[q,1-q]^T
+  =d+(b-d)p+(c-d)q+(a-b-c+d)pq.
+  \label{eq:soft-contraction}
+ \end{equation}
+-For independent Bernoulli inputs this is the probability of the represented Boolean event. It is ordinary multilinear interpolation, not XOR--AND matrix multiplication or a new probability calculus. Weighted model counting and semantic loss already provide syntax-independent probability evaluation under declared base-variable models~\cite{Kimmig2017,Xu2018}.
+-
+-This whole-table interpretation differs from recursively applying soft kernels to subexpressions with shared variables. PALO uses $pq$ for conjunction, $p+q-pq$ for disjunction, $1-p+pq$ for implication, and $1-p-q+2pq$ for primitive equivalence; it explicitly recognizes the independence approximation and the failure of several classical laws~\cite[Sections~3.2, 3.5--3.6]{Stehr2022}. In particular, the Boolean fusion already established in Equation~\eqref{eq:worked-fusion},
++For independent Bernoulli inputs this is the probability of the represented Boolean event. More generally, let $e$ be a finite propositional expression over $n$ distinct base-event identities and let $B_e$ be the unique multilinear polynomial interpolating its Boolean truth table. Under the product Bernoulli model with marginal vector $p$, $B_e(p)=\Pr_p(e=1)$. For a correlated model $\mu$, the probability is instead $\sum_x e(x)\mu(x)$; marginals alone need not determine it. Weighted model counting supplies the established model-sum interpretation, and semantic loss uses the negative logarithm of the satisfying-assignment probability~\cite{Kimmig2017,Xu2018}. These are ordinary real operations, distinct from the XOR--AND contraction.
++
++This whole-table interpretation need not agree with recursively applying soft kernels to subexpressions with shared variables. PALO's approximate propositional semantics uses $pq$ for conjunction, $p+q-pq$ for disjunction, $1-p+pq$ for implication, and $1-p-q+2pq$ for primitive equivalence; it explicitly recognizes the independence approximation and the failure of several classical laws~\cite[Sections~3.2, 3.5--3.6]{Stehr2022}. In particular, the Boolean fusion already established in Equation~\eqref{eq:worked-fusion},
+ \[
+  (X\Rightarrow\neg Y)\bxor(\neg Y\Rightarrow X)\equiv X\Leftrightarrow Y,
+ \]
+-does not preserve recursive soft evaluation. Extending XOR by $u+v-2uv$, at $p=q=1/2$ the two implication values are $3/4$, so the source evaluates to $3/8$, whereas the fused equivalence kernel evaluates to $1/2$. The Boolean theorem remains valid; the two numerical interpretations make different claims.
+-
+-A useful sufficient condition is that each primitive composition uses disjoint base-variable supports, so recursive bilinear evaluation remains multilinear. More generally, for a finite propositional expression $e$ built from these kernels, let $s_e$ be its recursive polynomial after identifying repeated base variables. The whole-table extension agrees with $s_e$ on $[0,1]^n$ exactly when $s_e$ is affine separately in every coordinate, after coefficient cancellation. Indeed, both agree at all Boolean corners, and a multilinear polynomial is uniquely determined by those corners; equality on the full cube conversely gives polynomial identity. This elementary criterion does not imply an efficient unrestricted algorithm: polynomial expansion can grow exponentially. Same-frame metadata alone is insufficient for this additional contract.
+-
+-Any future numerical backend should distinguish Boolean equivalence, equality of the chosen recursive soft function, event equivalence under a specified joint model, and thresholded-decision equality on a declared domain. Equal event marginals alone do not authorize contextual replacement: independent fair events $X,Y$ both have probability $1/2$, but $\Pr(X\land X)=1/2$ and $\Pr(X\land Y)=1/4$. Mathematical gradient preservation additionally requires the same differentiable parameterization and function equality on its domain; custom backward rules require their own contract. PALO's recursive crisp interpretation also differs from thresholding only the final soft value~\cite[Section~3.7]{Stehr2022}. These distinctions bound possible extensions of this Boolean compiler; no integrated differentiable backend, training improvement, or CM-specific advantage is claimed. Ordinary framed truth tables support the same checks.
++does not preserve recursive soft evaluation with negation $1-p$ and XOR kernel $u+v-2uv$. At $p=q=1/2$, both implications have value $3/4$, so the source has value $3/8$, whereas the fused equivalence has value $1/2$. This compares the declared propositional kernels, not PALO's full quantified, batched, or learning semantics.
++
++For expressions built from the bilinear kernels in Equation~\eqref{eq:soft-contraction} and negation $1-p$, let $s_e$ be the recursive polynomial with one free coordinate per distinct base-event identity. A sufficient condition for $s_e=B_e$ is disjoint syntactic base-variable supports at every binary composition. More generally, equality on the full cube $[0,1]^n$ holds exactly when $s_e$ is affine separately in every coordinate, after coefficient cancellation. Both polynomials agree at the Boolean corners; uniqueness of multilinear interpolation proves sufficiency, and equality on the full cube implies polynomial identity, proving necessity. This full-cube criterion need not be necessary on a restricted parameter image. Distinct independent events may share a parameter $t$: their conjunction then has probability $t^2$, whereas repeating one event gives probability $t$. Event identity must therefore be kept separate from parameter identity. Polynomial expansion can grow exponentially; same-frame metadata alone does not establish this additional contract.
++
++A future numerical backend should distinguish Boolean equivalence, equality of the recursive soft function, almost-sure event equality under a specified joint model, and thresholded-decision equality on a declared domain. Equal marginals alone do not authorize contextual replacement: independent fair events $X,Y$ both have probability $1/2$, but $\Pr(X\land X)=1/2$ and $\Pr(X\land Y)=1/4$. Almost-sure equality permits replacement in Boolean contexts evaluated under that same model. A decision contract must specify its threshold, tie rule, and placement. PALO inserts crispification at each propositional interpretation~\cite[Section~3.7]{Stehr2022}; at threshold $1/2$ with a $\geq$ tie rule, inputs $p=q=3/5$ give crisp conjunction $1$, while thresholding their final soft product $9/25$ gives $0$.
++
++For a common differentiable parameterization $p=\phi(\theta)$, identity $s_e\circ\phi=s_f\circ\phi$ on an open parameter domain is sufficient for equality of mathematical parameter gradients there. Equality only at selected points or on a lower-dimensional input set does not guarantee equality of ambient input gradients: $p$ and $pq$ agree on $q=1$, but have gradients $(1,0)$ and $(1,p)$ there. Function equality is not necessary for gradient equality; an additive constant is a counterexample. Custom backward rules and floating-point evaluation need separate contracts. These distinctions bound possible extensions of this Boolean compiler; no integrated differentiable backend, training improvement, or CM-specific advantage is claimed. Ordinary framed truth tables support the same checks.
+ 
+ \section{Implementation architecture and cost model}
+ \label{sec:implementation}
+@@ -728,7 +730,7 @@
+ 
+ The raw four truth values are not new. The computationally useful structure is the combination of a compact token with an explicit frame. That representation provides four practical properties.
+ 
+-First, \emph{legality is local}: equality of canonical row/column metadata is a direct certificate for same-frame fusion. Second, signed normalization is fixed and cheap after recognition: transpose and row/column swaps act directly on four bits. Third, the fused result remains another four-bit token in the same frame, so the rewrite composes without expanding the operands. Fourth, provenance can say whether the token was derived structurally, retabulated, or assembled from both mechanisms.
++First, \emph{Boolean legality is local}: for valid child tokens, equality of canonical row/column metadata certifies same-frame Boolean fusion. The numerical contracts in Section~\ref{sec:soft-boundary} require additional checks. Second, signed normalization is fixed and cheap after recognition: transpose and row/column swaps act directly on four bits. Third, the fused result remains another four-bit token in the same frame, so the rewrite composes without expanding the operands. Fourth, provenance can say whether the token was derived structurally, retabulated, or assembled from both mechanisms.
+ 
+ A generic optimizer can implement the same semantic reduction with a different representation. The question is therefore not whether CM has exclusive access to the reduction, but whether the CM/frame organization lowers the engineering cost of recognizing and composing it in a larger compiler. That engineering benefit is a research question, not an established result. The demonstrated contribution here is the explicit contract plus regression cases that expose otherwise easy-to-miss integration errors; the elementary identities and fragment induction do not establish substantial algorithmic novelty.
+ 
+@@ -804,7 +806,7 @@
+ \end{lstlisting}
+ The runner verifies snapshot hashes, runs the 123 selected tests, recounts the recovered records, and reruns the supplied reference checker without executing historical timing workers. The complete runner passed in a fresh Python 3.10.11 virtual environment without system site packages or optional backends; \texttt{requirements-checks-lock.txt} records its transitive dependency versions. Separate analysis and reference-check commands are \texttt{python check\_historical.py} and \texttt{python check\_audit.py}. The P14 interval replay uses the archived seed and raw rows without importing its historical compiler; the v4 study has its own frozen run and analysis files. V5's \texttt{verify\_run001.py} independently checks raw-row counts, pair coverage, truth digests, hashes, and the reported median. \texttt{verify\_manifest.py}, run from the revision directory, checks the delivered file manifest; \texttt{build.py} builds the manuscript with pdfLaTeX. The obsolete checker under the preserved historical manuscript is not the entry point for this revision.
+ 
+-A separate supplementary diagnostic under \path{reproducibility/semantic_boundary_20261013} contains \texttt{semantic\_contract\_checker.py} and its exact-rational result record. It checks 12,288 bounded compositions and the counterexamples in Section~\ref{sec:soft-boundary}; its 42,918 assertions concern these elementary semantic bridges, not the pinned compiler implementation, training, novelty, or a numerical performance advantage. Run \texttt{python semantic\_contract\_checker.py} from that supplementary directory. The original 123-test compiler suite and historical freezes retain their distinct scope.
++A separate supplementary diagnostic under \path{reproducibility/semantic_boundary_20261013} contains \texttt{semantic\_contract\_checker.py} and its exact-rational result record. It checks 12,288 bounded compositions and examples supporting Section~\ref{sec:soft-boundary}; its 42,918 assertions concern these elementary semantic bridges, not the pinned compiler implementation, training, novelty, or a numerical performance advantage. Run \texttt{python semantic\_contract\_checker.py} from that supplementary directory. The original 123-test compiler suite and historical freezes retain their distinct scope. A subsequent adversarial audit is recorded under \path{reproducibility/semantic_boundary_audit_20261013}, including exact checks of the domain, event-identity, gradient and crispification distinctions; it preserves the preceding supplement as historical evidence.
+ 
+ \begin{table}[H]
+ \small\centering

@@ -1,0 +1,45 @@
+# N2/P11 Interpretation
+
+## Main conclusion
+
+P11 is the strongest implementation result in the zero-pass dispatch line so far: it reduces P10 source construction by about **10.0%** and P10's complete Gate-P pipeline by about **3.0%**, without changing a single dispatch decision or folding rule.
+
+The remaining gap to direct is now only **4.3% case-balanced** and **0.44% workload-weighted**. The primary direct-crossover criterion still fails, so P11 should not be described as an end-to-end speedup over direct/no-rewrite.
+
+## What P11 actually proved
+
+The frozen P8 tree has only one leaf below the 0.80 cutoff. Algebraically, annotation occurs iff a five-deep repeated operand-pair shell exists and both reuse density and pair-repeat density fall below their frozen thresholds. P11 exploits that already-frozen fact; it does not learn a new rule.
+
+This allows the timed construction path to discard per-node depth tracking, maximum-depth maintenance, binary-density reporting, and all bypass-only tree branches. It also saturates per-pair shell counts once a five-shell is established. Exact decision equivalence was then independently required over all 332 frozen cases before timing.
+
+The result is important because P11/P10 source-build is **0.899800x**, with all 36 Gate-P cases improving. The implementation hypothesis therefore survives adversarial isolation.
+
+## Why direct still wins case-balanced
+
+P11 still pays for two forms of information that direct construction does not need:
+
+1. per-child first-use state, required for `reuse_density`;
+2. a canonical operand-pair dictionary, required to know whether any pair reaches five uses and to count pair-repeat excess.
+
+Those structures are now the dominant remaining dispatch tax. The downstream selected compiler is already favorable in aggregate: P11/direct selected-compiler is **0.967099x** case-balanced and **0.822394x** workload-weighted.
+
+This makes the next question narrower than P10's: can the frozen annotate predicate be evaluated without paying full exact reuse/pair bookkeeping on cases that will inevitably bypass?
+
+## Natural control
+
+P11's natural result is especially informative. All ten cases bypass, yet source-inclusive execution is only **1.005777x direct** case-balanced and **0.996435x workload-weighted. That shows the abstention tax is approaching noise-scale on substantial workloads. Because zero folds occur, it remains an overhead result only.
+
+## Recommended P12
+
+Do **not** retrain the gate yet.
+
+P12 should preserve the exact P11 decision and attack the two remaining expensive statistics with **decision-preserving bounds / lazy exactification**:
+
+- Track the five-shell predicate cheaply first.
+- Until a five-shell is possible or reached, avoid exact reuse bookkeeping if a mathematically safe bound can prove the case will bypass anyway.
+- Once `shell_ge5` becomes true, maintain or reconstruct only the information needed to decide the two density inequalities.
+- Alternatively, carry compact per-node incoming-edge counts during ordinary construction if they can be obtained more cheaply than the current first-use bytearray.
+
+The strongest P12 design would preregister a proof that its lazy/bounded decision is exactly equivalent to P11 for **all** inputs, not merely the 332-case corpus, then retain the 332-case and fuzz checks as implementation verification.
+
+A separate branch could investigate a compiled/C implementation, but that would answer a different engineering question. P11 has shown that within CPython, frozen-tree specialization is worthwhile; the next remaining costs are specific data structures, not generic model evaluation.

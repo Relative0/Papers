@@ -1,0 +1,1285 @@
+PAGE 1
+A survey of Kolmogorov quotients
+Teemu Pirttimäki∗
+Department of Mathematics and Statistics
+University of Turku
+December 3, 2021
+Abstract
+Every topological space has a Kolmogorov quotient that is ob-
+tained by identifying topologically indistinguishable points, that is,
+points that are contained in exactly the same open sets. In this sur-
+vey, we look at the relationship between topological spaces and their
+Kolmogorov quotients. In most natural examples of spaces, the Kol-
+mogorov quotient is homeomorphic to the original space. A non-trivial
+relationship occurs, for example, in the case of pseudometric spaces,
+where the Kolmogorov quotient is a metric space. We also look at the
+topological indistinguishability relation in the context of topological
+groups and uniform spaces. The author is grateful to professor Tero
+Harju for his help and discussions on the topic.
+1 Introduction
+AKolmogorov quotientX/≡isobtainedfromatopologicalspace X byidenti-
+fying pointsxandy if and only if they have exactly the same open neighbour-
+hoods. Such points are topologically indistinguishable; there is no sequence
+of operations on open sets that would give a setA such that x∈ A and
+y̸∈A. Nothing topologically important to the spaceX is lost in identifying
+these points.
+The resulting space is aT0-space: a space where all points are topologi-
+cally distinguishable. Most topological spaces of interest areT0. AT0-space
+∗tealpi@utu.ﬁ
+1
+arXiv:1905.01157v2  [math.GN]  2 Dec 2021
+PAGE 2
+is, arguably, aesthetically more pleasing than a space that is notT0. In a
+T0-space, every point serves a purpose. When studying the topology ofX,
+there seems to be no reason to keep useless, superﬂuous points around.
+The construction of the Kolmogorov quotient is simple, intuitive, and can
+be carried out for any topological space. If a mathematician comes across a
+space that is not naturallyT0, the unnecessary points can be left out from
+the space right at the beginning and the original space forgotten. Perhaps
+for this reason, the construction is not even mentioned in most textbooks on
+topology, and where it is mentioned, this is done very brieﬂy, and proofs are
+generally omitted.
+However, therearesituationswhereitisinconvenientifaspaceis T0. Such
+a situation occurs when one is interested in reﬁnements of the topology: the
+more points there are inX, the more choices there are for reﬁnements. The
+same is true for subspaces, though the loss here is not so dramatic: for each
+subspace S ⊆ X that we lose, X/≡ retains a subspace homeomorphic to
+S/≡. Still, if one is interested in the speciﬁc points of the space, one might
+not wish to clump them together in equivalence classes.
+Removing theT0-property from a space can generate new properties for
+topological spaces. Given a propertyP (for example, the Hausdorﬀ separa-
+tion axiomT2) of aT0-space we obtain a new propertyP ′ by deﬁning: a space
+X has the propertyP ′ if and only ifX/≡ has the propertyP. Generally the
+arising property is interesting in itself and admits a more direct deﬁnition.
+In a similar vein, given a structureS (for example, a metric) on aT0-space
+we can deﬁne: a spaceX has the structureS′ if and only ifX/≡ has the
+property S.
+This survey is not aboutT0-spaces, but focuses rather on the relationship
+between spaces and their Kolmogorov quotients. It appears that no compre-
+hensive treatment on the matter has been published, and as stated before,
+standard textbooks often omit the construction entirely. As our sources don’t
+usually give proofs, it seems unnecessary to cite each theorem individually.
+Various results presented here can be found without proofs in [1]–[3]. The
+notes in [4] contain some proofs. We add here many details missing from
+these sources and present the results in a more general form when possible.
+The author’s interest in the subject was sparked by study of abstract
+model theory, speciﬁcally the paper [1] by X. Caicedo, where Kolmogorov
+quotients are used in a topological proof of Lindström’s theorem.
+Kolmogorov spaces apparently get their name from an unpublished manu-
+script by Andrey Kolmogorov (see [2], p. 1).
+2
+PAGE 3
+2 Preliminaries
+In this section, we present notions that are required to understand the main
+results, but not directly connected to Kolmogorov quotients.
+Given a topological spaceX and a subsetA⊆ X, we writeAc for the
+complement X\A and A for the closure ofA. The powerset of a setS is
+denoted byP(S).
+Deﬁnition 2.1. Let (X,τ ) be a topological space. TheBorel algebraof X
+is a collectionΣX of subsets ofX, deﬁned inductively:
+1. τ⊆ ΣX.
+2. If ∆⊆ ΣX is countable, then⋃
+B∈∆B∈ ΣX.
+3. If B∈ ΣX, thenBc∈ ΣX.
+The sets contained inΣX are called theBorel setsof X.
+ByDeMorgan’slaws, intersectionsofcountablymanyBorelsetsareBorel
+sets. Hence also the relative complementsB1\B2 =B1∩Bc
+2 are Borel sets.
+Example 2.2. Let a be an arbitrary real number. By rule 1,R is a Borel
+set, and the open intervals(−∞,a ) and (a,∞) are Borel sets. By rule 3,
+(−∞,a ] = R\ (a,∞) and [a,∞) = R\ (−∞,a ) are Borel sets. Their in-
+tersection{a} = (−∞,a ]∩ [a,∞) is a Borel set. Sincea was arbitrary, all
+countable sets of reals are Borel sets by rule 2.
+Since the Borel algebra is closed with respect to ﬁnite unions and inter-
+sections, and contains the complementsX\B for allB∈ ΣX, it is a Boolean
+algebra.
+Deﬁnition 2.3. Let X be a set. A collectionF of subsets ofX is a ﬁlter
+on X if
+F1. X∈F ;
+F2. A∈F and A⊆B⊆X implies B∈F ;
+F3. A,B∈F implies A∩B∈F .
+A ﬁlterF is proper ifF ̸=P(X). If there is no proper ﬁlter on X that
+includesF as a proper subset, we say thatF is anultraﬁlter.
+Example 2.4.LetX be a topological space, and letx∈X. A setS⊆X is
+a neighbourhood of the pointx if x∈U⊆S for some open setU. For each
+x∈ X, denote byN (x) the collection of neighbourhoods ofx. ThenN (x)
+is a ﬁlter: First,X is a neighbourhood ofx. Second, if x∈ U⊆ A, where
+U is open, thenB is a neighbourhood ofx for allB⊆X such thatA⊆B.
+Third, ifx∈U⊆A and x∈V ⊆B, whereU and V are open, thenU∩V
+is open andx∈U∩V⊆A∩B, soA∩B is a neighbourhood ofx.
+3
+PAGE 4
+Example 2.5.LetX be a set andx∈X. The setUx ={S∈P (X)|x∈S}
+is an ultraﬁlter: First,x∈ X. Second, if x∈ A and A⊆ B, thenx∈ B.
+Third, ifx∈ A and x∈ B, thenx∈ A∩B. We have shown thatUx is a
+ﬁlter. To show that it is an ultraﬁlter, suppose thatUx is a proper subset
+of a ﬁlterF. Then F contains some setS⊆ X such thatx̸∈ S. By F3,
+∅ =S∩{x}∈F . Since∅⊆ B for allB⊆X, we haveF =P(X) by F2.
+Deﬁnition 2.6. Let X be a topological space and F a ﬁlter on X. If
+N (x)⊆F for some x∈ X, then we say thatF converges tox. A point
+x∈ X is a cluster point ofF if there exists a proper ﬁlter that includes
+F∪N (x) as a subset.
+In every topological space,N (x) converges tox and hasx as a cluster
+point. The same is true forUx, sinceN (x)⊆U x.
+Deﬁnition 2.7. A directed setis a pair (D,≥), whereD is a set and≥ a
+partial order onD such that for alli,j ∈ D there exists an elementk∈ D
+for whichk≥ i and k≥ j. A net in a topological spaceX is a map from
+a directed setD to X. A netf converges tox∈ X if for everyU∈N (x),
+there exists an elementi0∈D such thatf(i)∈U for alli≥i0.
+Remark 2.8.Every sequence is a net whereD = N and≥ is the usual order
+relation on N. Filter and net convergence are equivalent ([3], pp. 158–160).
+For this reason, we will restrict ourselves to using only ﬁlters.
+3 Kolmogorov quotients
+Let X be a topological space. We deﬁne an equivalence relation≡⊆ X2
+by lettingx≡ y if and only if every open neighbourhood ofx is an open
+neighbourhood of y and vice versa. If x ≡ y, we say that the points x
+andy are topologically indistinguishable. Otherwisex andy are topologically
+distinguishable, and we writex̸≡y. A space where all pairs of distinct points
+are topologically distinguishable is called aT0-space or aKolmogorov space.
+Most spaces studied by mathematicians areT0.
+Example 3.1.A space with the trivial topology is notT0, unless it has less
+than two points.
+Example 3.2.All Hausdorﬀ spaces areT0. This includes all discrete spaces
+and the spaceR with the euclidean topology.
+Example 3.3.LetX ={0, 1} andτ ={∅,{1},{0, 1}}. TheSierpiński space
+(X,τ ) is T0 but not Hausdorﬀ.
+4
+PAGE 5
+Example 3.4.The product ofR with the euclidean topology andR with the
+trivial topology is notT0: indeed, the points(1, 0) and (1, 1) are topologically
+indistinguishable.
+We will see more examples later. In the meanwhile, the following lemma
+should provide intuition into topological indistinguishability.
+Lemma 3.5. Let X be a topological space andx,y ∈ X. The following
+statements are equivalent:
+(i) x≡y;
+(ii)N (x) =N (y);
+(iii) x and y are contained in the same basic open sets;
+(iv) x and y are contained in the same subbasic open sets;
+(v) x and y are contained in the same open sets;
+(vi) x and y are contained in the same closed sets;
+(vii){x} ={y};
+(viii) x and y are contained in the same Borel sets;
+(ix) a ﬁlter or net that converges tox converges also toy, and vice versa;
+(x) a ﬁlter or net that hasx as a cluster point has alsoy as a cluster point,
+and vice versa.
+Proof. We prove the equivalences(ix)⇔ (ii)⇔ (i)⇔ (v)⇔ (iii)⇔ (iv),
+(v)⇔ (vi)⇔ (vii), (v)⇔ (viii) and (ii)⇒ (x)⇒ (v).
+Suppose (i). Suppose thatS is a neighbourhood ofx. Then there is an
+open setU such thatx∈U⊆S. By (i),y∈U⊆S, soS is a neighbourhood
+ofy. By symmetry, every neighbourhood ofy is a neighbourhood ofx. This
+proves that(i)⇒ (ii). The other direction(ii)⇒ (i) is trivial.
+Trivially (i)⇔ (v)⇒ (iii). Suppose (iii). LetB be a basis andB an open
+set. Then B = ⋃
+B′∈SB′ for some subsetS⊆B , and for eachB′, x∈ B′ if
+and only ify∈B′. Then
+x∈B⇔x∈B′ for someB′∈S
+⇔y∈B′ for someB′∈S
+⇔y∈B,
+so (v) holds, which proves that(iii)⇒ (v).
+Every subbasic set is in the basis determined by the subbasis. Thus
+(iii)⇒ (iv). Suppose (iv). LetS be a subbasis andB a basic open set in the
+basis determined byS. Then B = ⋂
+B′∈SB′ for some ﬁnite subsetS⊆S ,
+5
+PAGE 6
+and for eachB′, x∈B′ if and only ify∈B′. Then
+x∈B⇔x∈B′ for allB′∈S
+⇔y∈B′ for allB′∈S
+⇔y∈B,
+so (iii) holds, which proves that(iv)⇒ (iii).
+Claim (v) states that for all open setsU, x∈ U if and only ify∈ U.
+Claim (vi) states that for all open setsU, x∈Uc if and only ify∈Uc. It is
+then clear that(v)⇔ (vi).
+Suppose (vi) holds. Then
+{x} =
+⋂
+x∈F
+F closed
+F =
+⋂
+y∈F
+F closed
+F ={y}.
+Hence (vi)⇒ (vii). Suppose then that (vi) does not hold. Without loss of
+generality, we may assume that there is a closed set containingx that does
+not containy. Then y̸∈{x}, even thoughy∈{y}. Thus (vii) fails. By
+contraposition, (vii)⇒ (vi).
+Since open sets are Borel sets,(viii)⇒ (v). Suppose then that(v) holds.
+We use induction to show that(viii) follows:
+Suppose B is an open subset ofX. Thenx∈B if and only ify∈B.
+Suppose B = ⋃
+B′∈∆B′, where ∆⊆ ΣX is countable, and for eachB′,
+x∈B′ if and only ify∈B′. Then
+x∈B⇔x∈B′ for someB′∈ ∆
+⇔y∈B′ for someB′∈ ∆
+⇔y∈B.
+SupposeB =Bc
+1, whereB1∈ ΣX andx∈B1 if and only ify∈B1. Then
+x∈B⇔x̸∈B1⇔y̸∈B1⇔y∈B.
+This concludes the proof that(v)⇒ (viii).
+For (ix) and (x), we consider ﬁlters only; see remark 2.8.
+Suppose (ii). Let F be a ﬁlter onX. Then N (x)⊆F if and only if
+N (y)⊆F , so ifF converges to one of the pointsx and y, it converges to
+both of them. This proves(ii)⇒ (ix). For the other direction, suppose(ii)
+does not hold. Then one of the setsN (x) andN (y) is not a subset of the
+other; without loss of generality, we may assumeN (x)̸⊆N (y). ThenN (y)
+is a ﬁlter that includesN (y) but notN (x). Therefore,N (y) converges toy
+but not tox. Thus (ix) fails, so by contraposition,(ix)⇒ (ii).
+6
+PAGE 7
+Trivially (ii)⇒ (x). We show that (x)⇒ (v). Suppose that (x) holds.
+LetU be an ultraﬁlter. By(x),U∪N (x) is included in a proper ﬁlter if and
+only ifU∪N (y) is included in a proper ﬁlter. Since ultraﬁlters are maximal
+proper ﬁlters, the only proper ﬁlter that could include these isU. Hence
+N (x)⊆U iﬀ N (y)⊆U . (1)
+Suppose (v) fails. Without loss of generality, we may assume that there
+is an open setV such that x∈ V and y ̸∈ V. Let Uy be the ultraﬁlter
+{S∈P (X)| y∈ S}. ClearlyN (y)⊆U y. On the other hand,V ̸∈U y, but
+V∈N (x). Therefore,N (x)̸⊆U y, which contradicts (1).
+Remark 3.6. The formulation of (iii) and (iv) in the above lemma is de-
+liberately a bit vague. To show(iv)⇒ (iii)⇒ (v), it is enough to suppose
+these properties for some basis or subbasis that generates the topology of
+X. Then (v) implies (iii) and (iv) for all bases and subbases for the same
+topology.
+Example 3.7. Let Um ={n∈ N| m divides n} for all m∈ Z+. Then
+S ={N}∪{ Up| p is a prime} is a subbasis of a topology onN. By lemma
+3.5 (iv), x≡y if and only ifx and y have the same prime factors.
+Given a topological spaceX, we denote byη(x) the equivalence class of
+x∈ X with respect to≡, that is,η(x) ={y∈ X| y≡ x}. The following
+theorem gives a simple formula for the equivalence classes.
+Theorem 3.8.Let (X,τ ) be a topological space. For allx∈X,
+η(x) ={x}∩
+⋂
+U ∈τ
+x∈U
+U.
+Proof. Lety∈η(x). Then by lemma 3.5 (v) and (vi),x andy are contained
+in the same open sets and same closed sets. Hence
+y∈
+⋂
+F c∈τ
+x∈F
+F∩
+⋂
+U ∈τ
+x∈U
+U ={x}∩
+⋂
+U ∈τ
+x∈U
+U,
+which proves that
+η(x)⊆{x}∩
+⋂
+U ∈τ
+x∈U
+U.
+We prove inclusion in the other direction by contraposition. Suppose
+y̸∈ η(x). Then by lemma 3.5 (vii), there are two possibilities:y̸∈{x}, or
+7
+PAGE 8
+x̸∈{y}. In the ﬁrst case,
+y̸∈{x}∩
+⋂
+U ∈τ
+x∈U
+U.
+In the latter case,{y}
+c
+is an open set containingx and not containingy, so
+y̸∈{x}∩
+⋂
+U ∈τ
+x∈U
+U.
+By contraposition, we have
+{x}∩
+⋂
+U ∈τ
+x∈U
+U⊆η(x),
+and the claim follows.
+Remark 3.9. We could also write the equivalence class as the intersection
+of all Borel sets containingx:
+η(x) =
+⋂
+B∈ΣX
+x∈B
+B.
+Using lemma 3.5 (viii), we can write a proof for this similar to that of theorem
+3.8.
+Corollary 3.10.For allx∈X,
+η(x)⊆
+⋂
+U ∈N (x)
+U.
+Proof. By theorem 3.8,
+η(x)⊆
+⋂
+U open
+x∈U
+U =
+⋂
+U ∈N (x)
+U.
+The last equality follows from the fact that every open neighbourhoodU of
+x is the intersection of those neighbourhoods ofx that includeU.
+Corollary 3.11.For allx∈X, η(x)⊆{x}.
+Proof. This follows from theorem 3.8.
+An alternative proof: Lety∈ η(x). Then η(y) = η(x). By lemma 3.5
+(vii),{y} ={x}. Sincey∈{y}, we havey∈{x}.
+8
+PAGE 9
+Given a topological spaceX, we deﬁne X/≡ as the topological space,
+where the space as a set is the set of equivalence classes under≡, and the
+topology is the ﬁnest such topology that the quotient mapη : X → X/≡
+that maps each elementx∈X to its equivalence classη(x) is continuous. In
+other words, the open sets ofX/≡ are precisely those sets whose preimage
+underη is open inX. We call the spaceX/≡ the Kolmogorov quotientofX.
+The Kolmogorov quotient is always a Kolmogorov space, but a rigorous
+proof of this will have to wait until theorem 3.19.
+The continuity ofη already lets us know some things about the relation-
+ship between X and X/≡; for example, if A⊆ X is compact, then so is
+η(A).
+Example 3.12.Take the setX ={1, 2, 3, 4} with the clopen basis{{1, 2},
+{3, 4}}. The Kolmogorov quotientX/≡ is the two-element set{η(1),η (3)} =
+{{1, 2},{3, 4}} with the discrete topology.
+Example 3.13. The Kolmogorov quotient of any nonempty set with the
+trivial topology is a space consisting of a single point.
+Example 3.14. Let p≥ 1. Let Lp be the set of all measurable functionsf
+from a measure space(S, Σ,µ ) to R such that
+∫
+S
+|f|p dµ< ∞.
+Deﬁning (f +g)(x) =f(x)+g(x)and (λf)(x) =λf(x)for allx∈S,f,g ∈Lp
+and λ∈ R makesLp a vector space. Denote
+∥f∥p =
+(∫
+S
+|f|p dµ
+)1
+p
+.
+The map f ↦→∥ f∥p is a seminorm (see deﬁnition 5.5). It is not a norm,
+since∥f∥p = 0 for all functionsf that agree with the zero function almost
+everywhere. In the Kolmogorov quotientLp = Lp/≡, on the other hand,
+this seminorm becomes a norm. In section 5, we show that this happens to
+all seminorms when we take the Kolmogorov quotient. The spacesLp are
+important in analysis and measure theory ([5]).
+Example 3.15.A discrete version of example 3.14 is obtained by taking the
+measure space N with the counting measure, i.e. the measure of a subset of
+N is its cardinality. In this case, the space consists of sequences where
+∞∑
+n=0
+|xn|p <∞,
+9
+PAGE 10
+and
+∥(xn)∥p =
+( ∞∑
+n=0
+|xn|p
+) 1
+p
+.
+Based on the quotient mapη : X→X/≡, we deﬁne two mapsη→ : ΣX→
+ΣX/≡ and η← : ΣX/≡→P (X) as follows:
+η→(B) =η(B) ={η(x)|x∈B},
+and
+η←(B′) =η−1(B′) ={x∈X|η(x)∈B′}
+for allB∈ ΣX and B′∈ ΣX/≡.
+Theorem 3.16. The mapη→ is an isomorphism between the Boolean alge-
+bras ΣX and ΣX/≡.
+Proof. We wish to prove thatη→ is bijective and preserves binary unions,
+binary intersections and complements.
+For injectivity, letB1, B2∈ ΣX. If η→(B1)⊆ η→(B2), then for allx1∈
+B1, there is a pointx2∈B2 such thatη(x1) =η(x2). Thenx1≡x2, and they
+are in the same Borel sets; in particularx1∈B2. HenceB1⊆B2. Similarly,
+ifη→(B2)⊆η→(B1), thenB2⊆B1. Consequently,η→(B1) =η→(B2)implies
+B1 =B2.
+Surjectivity can be proved by induction:
+Suppose B is an open subset ofX/≡. Thenη←(B) is open by deﬁnition
+of X/≡, and henceη←(B)∈ ΣX. ThenB =η→(η←(B)).
+Suppose B = ⋃
+B′∈∆B′, where ∆ ⊆ ΣX/≡ is countable and each B′
+is an image of some η←(B′) ∈ ΣX. Then η←(B) = η← (⋃
+B′∈∆B′)
+=⋃
+B′∈∆η←(B′)∈ ΣX, andB =η→(η←(B)).
+Suppose B = Bc
+1, where B1 ∈ ΣX/≡ and B1 is the image of some set
+η←(B1)∈ ΣX. Thenη←(Bc
+1) = [η←(B1)]c∈ ΣX and Bc
+1 =η→(η←(Bc
+1)).
+Thusη→ is surjective.
+Let B1, B2∈ ΣX. Then
+t∈η→(B1∪B2)⇔ there isx∈B1∪B2 such thatt =η(x)
+⇔ there isx∈B1 or x∈B2 such thatt =η(x)
+⇔t∈η→(B1) or t∈η→(B2)
+⇔t∈η→(B1)∪η→(B2),
+so η→ preserves binary unions.
+For complements, we note ﬁrst that the imagesη→(B) and η→(Bc) are
+disjoint for all Borel setsB ∈ ΣX. Indeed, if there were points x1 ∈ B,
+10
+PAGE 11
+x2∈Bc such thatη(x1) = η(x2), thenx1 and x2 would be contained in the
+same Borel sets. Hencex1∈B and x1∈Bc, which is a contradiction.
+Let B∈ ΣX. Sinceη→ preserves binary unions, we have
+X/≡ =η→(X) =η→(B∪Bc) =η→(B)∪η→(Bc).
+Since η→(B) and η→(Bc) are disjoint, we must haveη→(Bc) = [η(B)]c.
+Finally, the fact thatη→ preserves binary intersections is now easily seen
+from De Morgan’s laws:
+η→(B1∩B2) =η→((Bc
+1∪Bc
+2)c)
+={[η→(B1)]c∪ [η→(B2)]c}c
+=η→(B1)∩η→(B2).
+Corollary 3.17. The quotient mapη is open, i.e. ifA⊆ X is open, then
+η→(A) is open.
+Proof. By injectivity ofη→, we haveA = η←(η→(A)). By the deﬁnition of
+the Kolmogorov quotient,η→(A) is open.
+Corollary 3.18.The quotient mapη is closed, i.e. ifA⊆X is closed, then
+η→(A) is closed.
+Proof. Since η→ preserves complements,
+A is closed⇔Ac is open
+⇒η→(Ac) is open
+⇔ [η→(A)]c is open
+⇔η→(A) is closed.
+The converses of corollaries 3.17 and 3.18 generally do not hold: there can
+be a setA⊆X such that even ifη(A) is open/closed,A is not open/closed.
+Take the set X = {1, 2, 3, 4} with the clopen basis {{1, 2},{3, 4}}. Let
+A = {1, 3}. Clearly A is neither open nor closed. On the other hand,
+η(A) ={η(1),η (3)} =X/≡, which is clopen.
+Recall that a space is Kolmogorov orT0 if every pair of points is topo-
+logically distinguishable. The following two results show that the name of
+Kolmogorov quotients is not arbitrarily chosen.
+11
+PAGE 12
+Theorem 3.19. Let X be a topological space. The Kolmogorov quotient of
+X is a Kolmogorov space.
+Proof. Suppose to the contrary that there arex1,x 2∈X such thatη(x1) and
+η(x2)are distinct topologically indistinguishable points inX/≡. Thenx1 and
+x2 are topologically indistinguishable; otherwiseη(x1) =η(x2). Without loss
+ofgenerality, wemayassumethatthereisanopenset U suchthat x1∈U and
+x2̸∈U. Now η→(U) is open inX/≡ by corollary 3.17, andη(x1)∈η→(U).
+Since η(x1) and η(x2) are topologically indistinguishable, η(x2)∈ η→(U).
+But thenx2∈η−1(η(x2)) =U; a contradiction.
+Corollary 3.20. A space is Kolmogorov if and only if it is homeomorphic
+to the Kolmogorov quotient of itself.
+Proof. Suppose X is a Kolmogorov space. Then every equivalence class con-
+sists of exactly one element, soη is an open continuous bijection, that is, a
+homeomorphism.
+Suppose then that there is a homeomorphismf : X→X/≡. In particu-
+lar, f is injective, so every equivalence class consists of exactly one element,
+that is,X is Kolmogorov.
+Lemma 3.21.LetX andY be topological spaces andf : X→Y continuous.
+If x1≡x2 for somex1,x 2∈X, thenf(x1)≡f(x2).
+Proof. Let A⊆ Y be an arbitrary open neighbourhood off(x1). Since f
+is continuous, f −1(A) is open. Clearly x1 ∈ f −1(A). Since x1 ≡ x2, we
+have x2∈ f −1(A). Then f(x2)∈ f(f −1(A))⊆ A. Since A was arbitrary,
+f(x1)≡f(x2).
+The following theorem says that the quotient mapη is universal.
+Theorem 3.22.LetηX : X→X/≡ andηY : Y→Y/≡ be the quotient maps
+andf : X→Y an arbitrary continuous map. Then there exists a continuous
+map f≡ : X/≡→ Y/≡ such that the diagram below commutes.
+X Y
+X/≡ Y/≡
+f
+ηX ηY
+f≡
+Proof. For all equivalence classesηX(x), deﬁnef≡(ηX(x)) = ηY (f(x)). This
+is well-deﬁned: ifx1≡x2, then by the previous lemma we have
+f≡(ηX(x1)) =ηY (f(x1)) =ηY (f(x2)) =f≡(ηX(x2)).
+12
+PAGE 13
+By deﬁnition, the diagram commutes.
+For continuity off≡, let A⊆ Y/≡ be open. Since ηY and f are both
+continuous,f −1(η←
+Y (A)) is open. Note that
+ηX(x)∈f −1
+≡ (A)⇔f≡(ηX(x))∈A
+⇔ηY (f(x))∈A
+⇔f(x)∈η←
+Y (A)
+⇔x∈f −1(η←
+Y (A))
+⇔ηX(x)∈η→
+X (f −1(η←
+Y (A))).
+Thus,f −1
+≡ (A) =η→
+X (f −1(η←
+Y (A))), and this is open by corollary 3.17. Hence
+f≡ is continuous.
+Choosing a representative from each equivalence class gives the following
+theorem, which states that all topological properties of the Kolmogorov quo-
+tient ofX hold also in a dense subspace ofX. If there are inﬁnitely many
+equivalence classes, then the axiom of choice is required.
+Theorem 3.23.The spaceX/≡ is homeomorphic to a dense subspace ofX.
+Proof. Letµ: X/≡→ X be a function that picks a representative from each
+equivalence class. We show thatµ is a homeomorphism betweenX/≡ and
+µ(X/≡). Since equivalence classes are disjoint,µ is injective. Restricting the
+codomain to the imageµ(X/≡) makesµ surjective.
+Let U be an arbitrary open subset ofX. We note thatx≡µ(η(x)), and
+hence x∈U if and only ifµ(η(x))∈U. Consequently,
+µ(η→(U)) ={µ(η(x))|x∈U}
+=U∩{µ(η(x))|x∈X}
+=U∩µ(X/≡),
+that is, the image of every open set ofX/≡ is an open set of the subspace
+µ(X/≡). Since µ is bijective, this proves thatµ−1 is continuous. Take the
+inverse image of both sides. By injectivity ofµ,
+η→(U) =µ−1(U∩µ(X/≡)).
+Thus the preimage of every open set ofµ(X/≡) is open, and hence µ is
+continuous.
+We still need to show thatµ(X/≡) is dense inX. LetU be a nonempty
+open set ofX and let x∈ U. Then η(x)∈ η→(U), and henceµ(η(x))∈
+13
+PAGE 14
+µ(η→(U)) = U∩µ(X/≡). This shows that the intersectionU∩µ(X/≡) is
+nonempty for all nonempty open subsetsU ofX. Then every nonempty open
+set also intersectsµ(X/≡). The complement ofµ(X/≡) is open, so it must
+be empty; thereforeµ(X/≡) =X.
+The Kolmogorov quotient may have fewer subspaces than the original
+space. For example, the spaceX ={1, 2, 3, 4} with the clopen basis{{1, 2},
+{3, 4}} has 24 diﬀerent subspaces, but the quotientX/≡ ={η(1),η (3)} has
+only 22 diﬀerent subspaces. The following theorem tells that the quotients
+of the lost subspaces are still subspaces ofX/≡, up to homeomorphism.
+Theorem 3.24.LetX be a topological space andS a subspace ofX. Then
+the spaceS/≡ is homeomorphic to some subspace ofX/≡.
+Proof. Let η : X → X/≡ and ηS : S → S/≡ be the quotient maps. Let
+f : S/≡→ η(S), f(ηS(x)) = η(x) for allηS(x)∈S/≡. We show thatf is a
+homeomorphism whenη(S) is considered as a subspace ofX/≡.
+First, we note that for allx,y∈S,
+f(ηS(x)) =f(ηS(y))⇔η(x) =η(y)
+⇔x∈U iﬀ y∈U for allU open inX
+⇔x∈U∩S iﬀ y∈U∩S for allU open inX
+⇔ηS(x) =ηS(y).
+Theimplicationfromrighttoleftshowsthat f iswell-deﬁned; theimplication
+from left to right shows thatf is injective.
+For surjectivity, letη(x)∈ η(S). Then x∈ S, and henceηS(x)∈ S/≡
+and η(x) =f(ηS(x)).
+The open sets ofS/≡ are of the formηS(U∩S), whereU is open inX.
+The open sets ofη(S) are of the formη(U)∩η(S). We note that
+f(ηS(U∩S)) ={f(ηS(x))|x∈U∩S}
+={η(x)|x∈U∩S}
+={η(x)|x∈U}∩{ η(x)|x∈S}
+=η(U)∩η(S).
+Since f is bijective, this proves thatf −1 is continuous. Take the inverse
+image of both sides. By injectivity off,
+ηS(U∩S) =f −1(η(U)∩η(S)).
+Thus the preimage of every open set ofη(S) is open, and hencef is contin-
+uous.
+14
+PAGE 15
+Theorem 3.25.LetI be a set and(Xi)i∈I a sequence of topological spaces.
+The spaces
+(∏
+i∈IXi
+)
+/≡ and ∏
+i∈IXi/≡ are homeomorphic.
+Proof. Let η be the quotient map from ∏
+i∈IXi to
+(∏
+i∈IXi
+)
+/≡, and let
+ηi be the quotient map fromXi to Xi/≡ for each i∈ I. Deﬁne a map
+f :
+(∏
+i∈IXi
+)
+/≡→ ∏
+i∈IXi/≡ from the conditionf(η(z))(i) = ηi(z(i)) for
+all i∈I and allz∈ ∏
+i∈IXi. The diagram below should commute. The
+maps pi and πi are the canonical projections.
+Xi
+∏
+i∈IXi Xi/≡
+(∏
+i∈IXi
+)
+/≡ ∏
+i∈IXi/≡
+ηipi
+η
+f
+πi
+We show thatf is a homeomorphism. First, we note that for allz1,z 2∈∏
+i∈IXi,
+η(z1) =η(z2)⇔ηi(z1(i)) =ηi(z2(i)) for alli∈I .
+Theimplicationfromlefttorightshowsthat f iswell-deﬁned; theimplication
+from right to left shows thatf is injective.
+For surjectivity, letq∈ ∏
+i∈IXi/≡. For alli∈I , q(i) = ηi(xi) for some
+xi∈Xi. Letz∈ ∏
+i∈IXi be such thatz(i) =xi for alli∈I . Then
+q(i) =ηi(xi) =ηi(z(i)) =f(η(z))(i)
+for alli∈I , and henceq = f(η(z)). We see thatq is the image of some
+η(z)∈
+(∏
+i∈IXi
+)
+/≡. Hencef is surjective.
+The basic open sets of ∏
+i∈IXi/≡ are of the form ∏
+i∈Iη→
+i (Ui), where
+each Ui is open inXi and Ui̸= Xi for only ﬁnitely manyi∈I . The basic
+open sets of(∏
+i∈IXi)/≡ are of the formη→ (∏
+i∈IUi
+)
+. We note that
+f
+(
+η→
+(∏
+i∈I
+Ui
+))
+=
+∏
+i∈I
+η→
+i (Ui).
+Since f is bijective, this proves thatf −1 is continuous. Take the inverse
+image of both sides. By injectivity off,
+η→
+(∏
+i∈I
+Ui
+)
+=f −1
+(∏
+i∈I
+η→
+i (Ui)
+)
+.
+Thus the preimage of every basic open set is open, and hencef is continuous.
+15
+PAGE 16
+4 Separation and regularity axioms
+The separation axiomsare properties a topological space can have that guar-
+antee the existence of disjoint neighbourhoods in various situations. The
+separation axioms are ordered so thatTi implies Tj whenever i≥ j. There
+is also another set of analogous properties called theregularity axiomssuch
+that Ti = Ri−1∧T0. In other words, a space satisﬁes Ti if and only if it
+is a Kolmogorov quotient of a space that satisﬁesRi−1. Table 1 shows the
+connection. Some authors require normal and regular spaces to be Hausdorﬀ;
+we do not.
+Table 1: The connection between separation and regularity axioms
+X/≡ X
+Kolmogorov (T0) topological space
+Fréchet (T1) symmetric (R0)
+Hausdorﬀ (T2) preregular (R1)
+regular Hausdorﬀ (T3) regular (R2)
+Tychonoﬀ (T3.5) completely regular (R2.5)
+normal Hausdorﬀ (T4) normal regular (R3)
+completely normal Hausdorﬀ (T5) completely normal regular (R4)
+perfectly normal Hausdorﬀ (T6) perfectly normal regular (R5)
+A topological spaceX is symmetric if for all pairs of topologically dis-
+tinguishable pointsx,y∈X, there are open setsU and V such thatx∈U,
+y̸∈U and y∈V, x̸∈V.
+Theorem 4.1. A spaceX is symmetric if and only ifη(x) = {x} for all
+x∈X.
+Proof. Suppose ﬁrst thatη(x) ={x} for allx∈ X. A space with less than
+two points is always symmetric, so we may assume that there arex,y ∈ X
+such thatx̸≡ y. Then x̸∈ η(y) ={y} and y̸∈ η(x) ={x}. Equivalently,
+x∈{y}
+c
+and y∈{x}
+c
+. We can chooseU ={y}
+c
+and V ={x}
+c
+.
+Suppose then thatX is symmetric. IfX is the empty set, then the claim
+holds. If all points ofX are topologically indistinguishable, then all singleton
+sets have the same closure, which has to beX; hence the claim holds.
+Thus we may assume that there are at least two equivalence classes with
+respect to≡. By the symmetricity of X, for all pairs of pointsp,q ∈ X,
+p̸≡q, there exists an open setVpq such thatq∈Vpq andp̸∈Vpq. Letx∈X
+and
+W =
+⋃
+y∈[η(x)]c
+Vxy.
+16
+PAGE 17
+Since y∈Vxy for ally∈ [η(x)]c, we have[η(x)]c⊆W. Also, x̸∈Vxy for all
+y∈ [η(x)]c, sox̸∈W. As a union of open sets,W is open. SinceW is not
+a neighbourhood ofx, it cannot be a neighbourhood of any point ofη(x);
+hence η(x)∩W =∅. It follows thatW = [η(x)]c. Since W is open,η(x) is
+closed. Sincex∈η(x), we getη(x) ={x} from corollary 3.11.
+Corollary 4.2.A spaceX is T1 if and only if{x} is closed for allx∈X.
+Proof. Suppose ﬁrst that X is T1. Then it is both Kolmogorov and sym-
+metric. By Kolmogorovness, η(x) = {x} for allx∈ X. By symmetricity,
+η(x) ={x} for allx∈X. Hence{x} is closed for allx∈X.
+Suppose then that{x} is closed for allx∈X. Thenη(x)⊆{x} ={x}⊆
+η(x) for allx∈ X, and henceη(x) ={x} ={x} for allx∈ X. Thus X is
+both Kolmogorov and symmetric, and henceT1.
+A topological spaceX is preregular if for all pairs of topologically distin-
+guishable pointsx,y ∈ X, there are open setsU and V such thatx∈ U,
+y∈V and U∩V =∅.
+Theorem 4.3. If K1 and K2 are disjoint compact subsets of a preregular
+topological spaceX and do not have disjoint open neighbourhoods, then there
+exist x1∈K1 and x2∈K2 such thatx1≡x2.
+Proof. Since X is preregular,X/≡ is Hausdorﬀ. The setsη(K1) and η(K2)
+are compact by continuity ofη. We show that η(K1)∩η(K2)̸=∅. Sup-
+pose to the contrary that η(K1) and η(K2) are disjoint. Disjoint com-
+pact subsets of a Hausdorﬀ space have disjoint open neighbourhoods ([6],
+p. 124); denote these neighbourhoods byU1 andU2, so thatη(K1)⊆U1 and
+η(K2)⊆U2. ThenK1⊆η−1(η(K1))⊆η−1(U1) and similarlyK2⊆η−1(U2).
+But η−1(U1) and η−1(U2) are disjoint, and they are open by the continuity
+of η. This contradicts the assumption thatK1 and K2 do not have disjoint
+open neighbourhoods. Therefore, η(K1)∩η(K2)̸=∅. Hence there is some
+η(z)∈ η(K1)∩η(K2) such thatη(z) = η(x) = η(y) for somex∈ K1 and
+y∈K2.
+5 Pseudometrics and seminorms
+In example 3.14, the Kolmogorov quotient map transformed a seminorm into
+a norm. In this section we see that this happens for all seminorms.
+Deﬁnition 5.1.LetX be a set. Apseudometric onX is a mapd: X2→ R
+such that
+17
+PAGE 18
+1. d(x,y )≥ 0 for allx,y∈X;
+2. d(x,x ) = 0 for allx∈X;
+3. d(x,y ) =d(y,x ) for allx,y∈X;
+4. d(x,z )≤d(x,y ) +d(y,z ) for allx,y,z ∈X (triangle inequality).
+A pseudometricd is ametric if d(x,y ) = 0 implies thatx =y.
+Let d be a (pseudo)metric onX, x∈ X and r a positive real number.
+The set
+B(x,r ) ={y∈X|d(x,y )<r}
+is theopen ball of radiusr centered atx. The set{B(x,r )|x∈X,r > 0} is
+a basis for a topology onX ([7], p. 119). The resulting topological space is
+called a(pseudo)metric spaceand can be denoted by(X,d ). Ifx,y∈X are
+such thatd(x,y ) = r >0, thenx∈B(x,r ), buty̸∈B(x,r ). By lemma 3.5
+(iii), x≡y if and only ifd(x,y ) = 0.
+Example 5.2. Pseudometrics can be used in the context of cellular au-
+tomata. Given a ﬁnite setA, letAZ denote the set of functions fromZ toA.
+Forx∈AZ, we writexj for x(j). Also, forn, k∈ Z, let [n,k ] denote the set
+of integersm such thatn≤m≤k. Finally, for sequences(an)∞
+n=0 of natural
+numbers, denote
+lim sup
+n→∞
+an = lim
+n→∞
+(
+sup
+m≥n
+am
+)
+.
+Then
+dB(x,y ) = lim sup
+l→∞
+|{j∈ [−l,l ]|xj̸=yj}|
+2l + 1
+is theBesicovitch pseudometricon AZ, and
+dW (x,y ) = lim sup
+l→∞
+max
+k∈Z
+|{j∈ [k + 1,k +l]|xj̸=yj}|
+l
+is the Weyl pseudometric on AZ. The topologies induced by these pseudo-
+metrics have some advantages to the standard approach, whereA is given
+the discrete topology andAZ the product topology; for example, the class of
+continuous functions fromAZ to itself is larger ([8]).
+Theorem 5.3.Let (X,d ) be a pseudometric space. Thend∗ : (X/≡)2→ R,
+d∗(η(x),η (y)) =d(x,y ) for allx,y∈X, is a metric onX/≡ that determines
+the same topology as the quotient map.
+18
+PAGE 19
+Proof. To show thatd∗ is well-deﬁned, letx1,x 2∈ η(x) and y1,y 2∈ η(y).
+Using the triangle inequality, we see that
+d(x1,y 1)≤d(x1,x 2) +d(x2,y 1) =d(x2,y 1)≤d(x2,y 2) +d(y2,y 1) =d(x2,y 2),
+and by a symmetric argument we can prove thatd(x2,y 2)≤d(x1,y 1). Thus
+d(x1,y 1) =d(x2,y 2) and d∗ is well-deﬁned.
+It is easy to see thatd∗ is a pseudometric onX/≡ by reducing each part of
+the deﬁnition to the corresponding property ofd. For example, the triangle
+inequality can be shown as follows: for allx,y,z ∈X,
+d∗(η(x),η (z)) =d(x,z )≤d(x,y ) +d(y,z ) =d∗(η(x),η (y)) +d∗(η(y),η (z)).
+Sinced(x,y ) = 0 impliesη(x) =η(y) andd∗(η(x),η (y)) =d(x,y ), we see
+thatd∗ is a metric. The open balls correspond to those ofX, so the topology
+d∗ determines is precisely that determined by the quotient map.
+The space (X/≡,d ∗) is called themetric identiﬁcation of (X,d ).
+We will use the following corollary of the triangle inequality later.
+Lemma 5.4 (Reverse triangle inequality).For allx,y,z ∈ (X,d ),
+|d(x,z )−d(y,z )|≤ d(x,y ).
+Proof. ([9], p. 3) From the triangle inequality, we get
+{
+d(x,z )≤d(x,y ) +d(y,z ),
+d(y,z )≤d(y,x ) +d(x,z ),
+which can be rearranged to
+{
+d(x,z )−d(y,z )≤d(x,y ),
+d(y,z )−d(x,z )≤d(x,y ).
+The claim follows.
+Deﬁnition 5.5. Let K be a subﬁeld ofC and V a vector space overK. A
+map∥·∥ : V→ R is aseminorm on V if
+1.∥x∥≥ 0 for allx∈V;
+2.∥λx∥ =|λ|∥x∥ for allλ∈K and x∈V;
+3.∥x +y∥≤∥ x∥ +∥y∥ for allx,y∈V.
+A seminorm is anorm if∥x∥ = 0 implies thatx is the zero vector.
+19
+PAGE 20
+A (semi)norm onV induces a (pseudo)metric onV by deﬁningd(x,y ) =
+∥x−y∥ for allx,y∈X. The resulting topological space is called a(semi-)
+normed vector spaceand can be denoted by(V,∥·∥).
+Lemma 5.6.For allx,y∈ (V,∥·∥),
+|∥x∥−∥ y∥|≤∥ x−y∥.
+Proof. The claim follows from the reverse triangle inequality by substituting
+z = 0.
+The following theorem is analogous to theorem 5.3.
+Theorem 5.7.Let (V,∥·∥) be a seminormed vector space. Then(V/≡,∥·∥∗)
+is a normed vector space, where
+λη(x) =η(λx) for allλ∈K,x∈V,
+η(x) +η(y) =η(x +y) for allx,y∈V,
+and
+∥η(x)∥∗ =∥x∥ for allx∈V.
+Furthermore,∥·∥∗ determines the same topology as the quotient map.
+Proof. It is straightforward to verify thatV/≡ satisﬁes the axioms of a vector
+space, for example: for allα∈K, x,y∈V,
+α[η(x) +η(y)]
+=αη(x +y)
+=η(α(x +y))
+=η(αx +αy)
+=η(αx) +η(αy)
+=αη(x) +αη(y).
+Letd be the metric that∥·∥ induces onV. To see that∥·∥∗ is well-deﬁned,
+we note that ifx≡y, then∥x−y∥ =d(x,y ) = 0. Then
+0≤|∥x∥−∥ y∥|≤∥ x−y∥ = 0,
+so∥x∥−∥ y∥ = 0, that is,∥x∥ =∥y∥.
+It is easy to see that∥·∥∗ is a seminorm by reducing each part of the
+deﬁnition to the corresponding property of∥·∥. For example, for allx,y∈V,
+∥η(x) +η(y)∥∗ =∥η(x +y)∥∗ =∥x +y∥≤∥ x∥ +∥y∥ =∥η(x)∥∗ +∥η(y)∥∗.
+20
+PAGE 21
+Let 0 be the zero vector ofV. If x̸≡ 0, then there is an open ball inV
+that containsx but not 0, or vice versa. In either case,d(x, 0)> 0, and
+∥η(x)∥∗ =∥x∥ =∥x− 0∥ =d(x, 0)> 0,
+which proves that∥·∥∗ is a norm. For the metricd∗ induced by∥·∥∗, we have
+d∗(η(x),η (y)) =∥η(x)−η(y)∥∗ =∥η(x−y)∥∗ =∥x−y∥ =d(x,y ),
+for allx,y∈V. By theorem 5.3, the topology determined byd∗ is the same
+as that determined by the quotient map.
+In section 7, we will see that pseudometric spaces are completely regular,
+and consequently their Kolmogorov quotients are Tychonoﬀ (see table 1).
+6 Topological groups
+A topological group is a group G with a topology on G that makes mul-
+tiplication and inversion continuous. More speciﬁcally, we want the maps
+g1 : G×G→G,g1(x,y ) =xy andg2 : G→G,g2(x) =x−1 to be continuous,
+when G×G is given the product topology. Sinceg2 is bijective and its own
+inverse, it is a homeomorphism if it is continuous. Our aim is to show that for
+all x, y∈G, x≡y if and only ify−1x∈{1}, and thatG/≡ is a topological
+group with a naturally arising group operation.
+Every group is a topological group, when endowed with the discrete or
+with the trivial topology. IfR is given the euclidean topology, then(R, +)
+and (R\{ 0},·) are topological groups.
+Throughout this section,G is a topological group. ForA, B⊆ G and
+a∈G, we denote
+1. AB ={xy|x∈A,y∈B};
+2. Aa =A{a} ={xa|x∈A};
+3. aA ={a}A ={ax|x∈A};
+4. A−1 ={x−1|x∈A}.
+We note thatg1 is continuous if and only if
+∀x,y∈G: ∀W∈N (xy): ∃U∈N (x): ∃V∈N (y): UV ⊆W. (2)
+Similarly,g2 is continuous if and only if
+∀x∈G:∀W∈N (x−1): ∃U∈N (x): U −1⊆W.
+21
+PAGE 22
+Lemma 6.1. The maps g1 and g2 are continuous if and only if the map
+g3 : G×G→G deﬁned byg3(x,y ) =xy−1 is continuous.
+Proof. Suppose ﬁrst thatg1 and g2 are continuous. In (2), substitutey↦→
+y−1. The ﬁrsty−1 can be changed back toy, since quantifying over ally−1∈
+G is the same as quantifying over ally∈G. Since g2 is a homeomorphism,
+∃V∈N (y−1): UV ⊆W is equivalent to∃V∈N (y): UV −1⊆W. Hence
+∀x,y∈G:∀W∈N (xy−1): ∃U∈N (x): ∃V∈N (y): UV −1⊆W,
+so g3 is continuous.
+Suppose then thatg3 is continuous. By substitutingx↦→ 1 we get the
+continuity ofg2. Then g2 is a homeomorphism, and we can follow the pre-
+ceding proof in the opposite direction to show the continuity ofg1.
+Theorem 6.2.Leta∈G. The functionsra : G→G andla : G→G deﬁned
+by ra(x) =xa and la(x) =ax are homeomorphisms.
+Proof. ([10], p. 12) We prove the claim forra. The claim forla is analogous.
+To show surjectivity, lety ∈ G. Since ra(ya−1) = ya−1a = y, ra is
+surjective.
+Toshowinjectivity, supposera(x) =ra(y). Thenxa =ya andmultiplying
+from the right bya−1 givesx =y. Hencera is injective.
+To show continuity, letW∈N (xa). By continuity ofg1, there existsU∈
+N (x) and V ∈N (a) such thatUV ⊆ W. In particular,ra(U) = Ua⊆ W.
+Therefore, ra is continuous.
+Finally, to show thatr−1
+a is continuous, note that
+ra−1(ra(x)) =xaa−1 =x =xa−1a =ra(r−1
+a (x)).
+Hence r−1
+a =ra−1, which is continuous by the preceding argument.
+Corollary 6.3. Let U⊆ G be open,F⊆ G be closed,A⊆ G and a∈ G.
+Then
+(i) Ua and aU are open;
+(ii) Fa and aF are closed;
+(iii) UA and AU are open.
+Proof. For claim (i), we note that Ua = ra(U) and aU = la(U). Claim
+(ii) follows similarly. Claim (iii) follows from (i), sinceUA = ⋃
+x∈AUx and
+AU = ⋃
+x∈AxU.
+Lemma 6.4.A topological groupG is T0 if and only ifG is T1.
+22
+PAGE 23
+Proof. ([11], pp. 6–7) ObviouslyT1 implies T0. Suppose that G is T0. We
+show ﬁrst that for everyx∈G\{1}, there is an open setUx such thatx∈Ux
+and 1̸∈Ux. Let x∈G\{ 1}. Since G is T0, there is some open setU such
+that x∈ U and 1̸∈ U or such thatx̸∈ U and 1∈ U. In the ﬁrst case, let
+Ux = U. In the latter case, letUx = U −1x = rx(g2(U)). This is an open
+set, sinceg2 and rx are homeomorphisms. Since 1∈ U, we have1∈ U −1,
+and hence x∈ U −1x. Also, since x̸∈ U, we havex−1̸∈ U −1, and hence
+1̸∈U −1x.
+Let
+W =
+⋃
+x∈G\{1}
+Ux.
+Since x∈Ux for allx∈G\{ 1}, we haveG\{ 1}⊆ W. Also, 1̸∈Ux for all
+x∈G\{ 1}, so 1̸∈W. Hence W =G\{ 1}. As a union of open sets,W is
+open, which proves that{1} is closed. Thenrx({1}) ={x} is closed for all
+x∈G. By corollary 4.2,G is T1.
+Corollary 6.5.The Kolmogorov quotientG/≡ is T1.
+Corollary 6.6.All topological groups are symmetric.
+A subset H ⊆ G is a subgroup of G, denoted H ≤ G, if HH −1 = H.
+A subgroupH of G is normal or invariant, denotedH ⊴G, ifaHa −1 = H
+for alla∈ G. We use the term “invariant” to avoid confusion with normal
+topological spaces. The trivial subgroup{1} is always invariant.
+Theorem 6.7.If H≤G, thenH≤G. IfH ⊴G, thenH ⊴G.
+Proof. Recall that if f : X → Y is continuous, thenf(A)⊆ f(A) for all
+A⊆X. IfH≤G, then by the continuity of inversion and multiplication,
+HH
+−1
+⊆HH −1⊆HH −1 =H.
+Hence H≤G.
+For the latter part of the theorem, we note thatla◦ra−1 is continuous. If
+H ⊴G, then
+aHa −1 = (la◦ra−1)(H)⊆ (la◦ra−1)(H) =aHa −1 =H.
+Hence H ⊴G.
+Corollary 6.8.{1} ⊴G.
+23
+PAGE 24
+LetH≤G. LetG/H ={xH|x∈G}, and letϕ: G→G/H,ϕ(x) =xH
+for allx∈ G. We deﬁne a topology onG/H by lettingA⊆ G/H be open
+if and only ifϕ−1(A) is open. We intend to show that this makesG/H a
+topological group whenH is invariant. The reader should recall or verify
+that the following statements hold for allH≤G and for allx,y∈G:
+(a) The cosetsxH partition G.
+(b) xH =yH iﬀ x∈yH iﬀ y−1x∈H.
+(c) If H ⊴G, thenxH =Hx.
+(d) IfH ⊴G, then the setG/H is a group with the group operation deﬁned
+by (xH)(yH) =xyH.
+Lemma 6.9. Let H ⊴ G. Then the map ϕ is a continuous open group
+homomorphism.
+Proof. Continuity is clear from the deﬁnition of the topology. For openness,
+let U⊆G be open. Then
+ϕ−1(ϕ(U)) ={x∈G|xH =uH for someu∈U}
+={x∈G|x∈uH for someu∈U}
+=UH,
+which is open by corollary 6.3. Thusϕ(U) is also open.
+To show thatϕ is a homomorphism, letx,y∈G. Then
+ϕ(xy) =xyH = (xH)(yH) =ϕ(x)ϕ(y).
+Lemma 6.10.LetH ⊴G. ThenG/H is a topological group.
+Proof. ([12], p. 59) It suﬃces to show that the operation(xH,yH )↦→xy−1H
+is continuous. Letx, y∈ G, and letW⊆ G/H be an open neighbourhood
+of xy−1H. Then xy−1∈ ϕ−1(xy−1H)⊆ ϕ−1(W ) and ϕ−1(W ) is open inG.
+SinceG is a topological group, there are open setsU andV such thatx∈U,
+y∈V and xy−1∈UV −1⊆ϕ−1(W ). By lemma 6.9,
+(xH)(yH)−1∈ϕ(U)[ϕ(V )]−1 =ϕ(U)ϕ(V −1) =ϕ(UV −1)⊆W.
+SinceU andV are open, so areϕ(U) andϕ(V ), which proves the claim.
+We can now prove the main result.
+Theorem 6.11.G/≡ =G/{1}.
+24
+PAGE 25
+Proof. What we want to show is that for allx,y ∈ G, x≡ y if and only
+if x{1} = y{1}. Let x,y ∈ G and suppose ﬁrst thatx≡ y. Since ly−1 is
+continuous, we havey−1x≡ 1 by lemma 3.21. Hence y−1x∈ η(1)⊆{1},
+and consequentlyx{1} =y{1}.
+Suppose now thatx{1} =y{1}. Equivalently,y−1x∈{1}. By corollary
+6.6 and theorem 4.1, we haveη(1) ={1}. Theny−1x∈η(1), that is,y−1x≡
+1. Now, by the continuity ofly and lemma 3.21,x≡y.
+The result tells us thatG/≡is a topological group with a naturally arising
+group operation, namely that ofG/{1}. Also, η(x) = x{1} ={1}x for all
+x∈G.
+From the proof above, we see thatx≡y if and only ify−1x∈{1}. Since
+{1} is invariant, we can replace the left cosetsx{1} by right cosets{1}x and
+use ry and ry−1 in place ofly and ly−1 to show that this is also equivalent to
+xy−1∈{1}. Of course, we can swap the roles ofx and y, sox−1y∈{1} and
+yx−1∈{1} are also equivalent tox≡y.
+We have now seen that the equivalence classes are determined by the
+closure of{1}. Next we will show that the whole topology is determined by
+the neighbourhoods of 1. In the next section, we will use this to show that
+topological groups are completely regular, strengthening corollary 6.6.
+Lemma6.12. Let (X,τ ) be a topological space. Suppose thatB is a collection
+of open sets ofX such that for allU∈τ, for allx∈U, there is a setB∈B
+such thatx∈B⊆U. ThenB is a basis forτ.
+Proof. [7], p. 80.
+Theorem 6.13. The collectionB ={xN | N ∈N (1)} is a basis for the
+topology ofG.
+Proof. Let U be open andx∈ U. Then 1∈ x−1U, and x−1U is open, so
+x−1U ∈N (1). Now x∈ xx−1U = U, so x−1U satisﬁes the conditions of
+lemma 6.12. The claim follows.
+7 Uniform spaces
+Topologicalspacesoriginatedasageneralframeworkforstudyingtheconcept
+of continuity. Similarly, uniform spaces are a general framework for studying
+the concept of uniform continuity.
+Let X be a set. We denote byidX the identity relation onX, that is,
+idX ={(x,x )| x∈ X}. For all binary relationsU,V ⊆ X×X and for all
+x0∈ X, we writeU −1 ={(x,y )| (y,x )∈ U}, U◦V ={(x,z )| (x,y )∈
+U, (y,z )∈V} and U(x0) ={y| (x0,y )∈U}.
+25
+PAGE 26
+Deﬁnition 7.1. A uniform structureor uniformity on a setX is a ﬁlterU
+on X×X such that the following hold for allU∈U :
+U1. idX⊆U.
+U2. U −1∈U .
+U3. There existsV∈U such thatV◦V⊆U.
+The relationsU∈U are called entourages, and the pair(X,U) is called a
+uniform space.
+We note that ifU is a uniformity, then by U1,(x,y )∈ U ∈U implies
+(x,y )∈U◦U. In other words,U⊆U◦U for allU∈U .
+Example 7.2.Every setX has the trivial uniformities{idX} andP(X×X).
+Example 7.3.Let (X,d ) be a pseudometric space. For allr >0, let
+Ur ={(x,y )∈X×X|d(x,y )<r}.
+Then letUd ={V ⊆ X×X| Ur⊆ V for somer >0}. It is easy to verify
+thatUd is a uniformity onX.
+Example 7.4.Let G be a topological group. For allN∈N (1) let
+LN ={(x,y )∈G×G|x−1y∈N}.
+Then letS(G) = {LN | N ∈N (1)}. It is easy to verify thatS(G) is a
+ﬁlter. Since x−1x = 1 ∈ N for allx∈ G and for allN∈N (1), U1 holds
+forS(G). The axiom U2 holds becauseL−1
+N =LN−1. To see that U3 holds,
+substitute x↦→ 1 and y↦→ 1 in (2) to obtain that for all neighbourhoods
+W ∈N (1), there are neighbourhoods U,V ∈N (1) such that UV ⊆ W.
+Without loss of generality, we may assume thatU and V are open. Then
+(U∩V )(U∩V )⊆UV ⊆W, andU∩V is an open neighbourhood of1. If
+x−1y,y −1z∈U∩V, thenx−1z =x−1yy −1z∈W. Thus
+LU ∩V◦LU ∩V ={(x,z )∈G×G|x−1y,y −1z∈U∩V for somey∈G}⊆ LW.
+Intheprecedingexampleswesawuniformitiesarisefromtopologies. Next
+we show that this process can be inverted to create a topology from a given
+uniformity.
+Theorem 7.5.Let (X,U) be a uniform space. The collection
+τ ={T∈P (X)| for allx∈T there existsU∈U such thatU(x)⊆T}
+is a topology onX.
+26
+PAGE 27
+Proof. Clearly∅∈ τ. We use the fact thatU is a ﬁlter to show that the
+other parts of the deﬁnition of topological spaces are satisﬁed.
+To show thatX∈ τ, we need to show that for allx∈ X, there exists
+U∈U such thatU(x) =X. By F1, we can takeU =X×X.
+LetI be a set and(Ti)i∈I a sequence of sets whereTi∈ τ for alli∈I .
+Then for alli∈I , for allx∈ Ti, there existsUi∈U such thatUi(x)⊆ Ti.
+Then for allx∈ ⋃
+i∈ITi,U(x)⊆ ⋃
+i∈ITi, whereU = ⋃
+i∈IUi. By F2,U∈U ;
+hence ⋃
+i∈ITi∈τ.
+Let T1,T 2∈ τ. Then for all x∈ T1∩T2, there existU1,U 2∈U such
+that U1(x)⊆ T1 and U2(x)⊆ T2. Then for allx∈ T1∩T2, (U1∩U2)(x) =
+U1(x)∩U2(x)⊆T1∩T2. By F3,U1∩U2∈U ; henceT1∩T2∈τ. By induction,
+the intersection of a ﬁnite collection of sets fromτ is a member ofτ.
+We call the topology of theorem 7.5 theuniform topology induced byU.
+A topological space(X,τ ) is uniformizable if there exists a uniformity onX
+such that the uniform topology it induces isτ. Such a uniformity need not
+be unique.
+Example 7.6.LetUd be as in example 7.3. By lemma 6.12, we can choose
+B ={Ur(x)| r > 0} as a basis for the uniform topology. We note that
+Ur(x) =B(x,r ), so this is exactly the topology determined byd.
+Example 7.7.LetS(G)be as in example 7.4. By lemma 6.12, we can choose
+B ={LN(x)|N∈N (1)} as a basis for the uniform topology. We note that
+LN(x) =xN, so this is exactly the original topology ofG by theorem 6.13.
+We say that a topological spaceX is completely regularor R2.5 if for all
+closed sets A⊆ X, for all points x∈ X\A, there is a continuous map
+f : X→ R such thatf(A) ={0} and f(x) = 1. It turns out that(X,τ ) is
+uniformizable if and only if it is completely regular ([3], p.442–443). Thus we
+have shown that pseudometric spaces and topological groups are completely
+regular. Their Kolmogorov quotients are then Tychonoﬀ (see table 1).
+The following theorem is a special case of a theorem on p. 178 of [13].
+Theorem 7.8.The setsU(x) are open in the uniform topology for allU∈U
+and for allx∈X.
+Proof. Let U∈U and deﬁneU ′(x) ={y∈ X| V (y)⊆ U(x) for someV ∈
+U}. We show thatU ′(x) =U(x); then it is clear thatU(x) is open.
+To show thatU ′(x)⊆U(x), lety∈U ′(x). Then there existsV∈U such
+that V (y)⊆U(x). By U1,y∈V (y), and hencey∈U(x).
+To show thatU(x)⊆ U ′(x), lety∈ U(x). By U3, there existsV ∈U
+such thatV◦V ⊆ U. Thus V (y)⊆ (V◦V )(y)⊆ U(x). Then y∈ U ′(x),
+which proves the claim.
+27
+PAGE 28
+Theorem 7.9. Let (X,U) be a uniform space equipped with the uniform
+topology. Thenx≡y if and only if(x,y )∈U for allU∈U .
+Proof. Supposex̸≡y. Without loss of generality, we may assume that there
+is an open setT such thatx∈ T and y̸∈ T. Since T is open andx∈ T,
+there existsU∈U such thatU(x)⊆T. Since y̸∈T, we havey̸∈U(x), or
+equivalently, (x,y )̸∈U.
+Suppose there is an entourageU ∈U such that (x,y )̸∈ U. Then y̸∈
+U(x). By theorem 7.8,U(x) is open, and by U1,x∈U(x). Thenx̸≡y.
+By U2, the pair(x,y ) is in every entourage if and only if the pair(y,x )
+is in every entourage.
+Corollary 7.10.On a uniform space(X,U) equipped with the uniform topol-
+ogy, the topological indistinguishability relation is the intersection of all en-
+tourages:
+≡ =
+⋂
+U ∈U
+U.
+In particular, for allx∈X,
+η(x) =
+⋂
+U ∈U
+U(x).
+8 A homotopy equivalence of Alexandrov-
+discrete spaces
+In spaces where all intersections of open sets are open, the Kolmogorov quo-
+tient map is a homotopy equivalence, as deﬁned below. We present the proof
+of this result from [14]. The proof uses the axiom of choice.
+A topological space isAlexandrov-discrete if all intersections of open sets
+are open. All ﬁnite spaces are Alexandrov-discrete, as is the space of natural
+numbers with a basis consisting of the setsVn ={m∈ N|m≥n}.
+We denote
+Ux =
+⋂
+U open
+x∈U
+U =
+⋂
+U ∈N (x)
+U,
+and call the setUx the hull of x. By the same proof as lemma 3.5 (vii),
+except that we replace closed sets with open sets, we see thatx≡ y if and
+only ifUx = Uy. In an Alexandrov-discrete space, eachUx is open, and the
+collection{Ux|x∈X} is a basis for the topology.
+We also deﬁne a relation≤ on an Alexandrov-discrete space by letting
+x≤y if and only ifx∈Uy. Note that this is also equivalent toUx⊆Uy. This
+28
+PAGE 29
+relation is apreorder, that is, it is reﬂexive and transitive. It is a partial order
+if and only if the space isT0. We say a mapf : X→Y between Alexandrov-
+discrete spaces isorder-preserving if x1≤ x2 implies f(x1)≤ f(x2) for all
+x1,x 2∈X.
+Lemma 8.1. Let X and Y be Alexandrov-discrete spaces andf : X→Y a
+map. Thenf is order-preserving if and only iff is continuous.
+Proof. Suppose f is order-preserving. Let x ∈ X. For all x′ ∈ Ux, we
+have f(x′)∈ Uf(x), sincef preserves the order. Hencef(Ux)⊆ Uf(x). For
+all neighbourhoodsV of f(x), the setUx is a neighbourhood ofx such that
+f(Ux)⊆Uf(x)⊆V; that is,f is continuous at pointx. Sincex was arbitrary,
+f is continuous.
+Suppose then thatf is not order-preserving. Then there are pointsx,x ′∈
+X such thatx′∈ Ux but f(x′)̸∈ Uf(x). Hence f(Ux)̸⊆ Uf(x). Since Ux is
+the smallest neighbourhood of x, for all neighbourhoods U of x we have
+f(U) ̸⊆ Uf(x). Hence f is not continuous at point x, and therefore not
+continuous.
+Lemma 8.2.If (X,τ ) is Alexandrov-discrete, thenη→(Ux) =Uη(x).
+Proof. Denote the topology ofX/≡ byτ≡. Under the quotient mapη, every
+open neighbourhood V of η(x) has an open preimage that is a neighbour-
+hood ofx. Conversely, every open neighbourhoodU of x maps to an open
+neighbourhood ofη(x) by corollary 3.17. Consequently,
+⋂
+U ∈τ
+x∈U
+η→(U) =
+⋂
+V ∈τ≡
+η(x)∈V
+V =Uη(x).
+Now we have
+η→(Ux) =η→
+
+
+⋂
+U ∈τ
+x∈U
+U
+
+⊆
+⋂
+U ∈τ
+x∈U
+η→(U) =Uη(x).
+Since η→(Ux) is an open neighbourhood ofη(x), we haveUη(x)⊆ η→(Ux).
+Therefore, η→(Ux) =Uη(x).
+Corollary 8.3. If X is Alexandrov-discrete, then for allx,y ∈ X, η(x)≤
+η(y) if and only ifx≤y.
+Proof. By the previous lemma, x ∈ Uy implies η(x) ∈ η→(Uy) = Uη(y).
+Conversely,η(x) = Uη(y) implies x∈ η←(η→(Uy)) = Uy, sinceUy is a Borel
+set.
+29
+PAGE 30
+Deﬁnition 8.4. Let X and Y be topological spaces withf : X→ Y and
+g : X→Y continuous functions. LetI be the unit interval[0, 1] taken as a
+subspace of R. The functionf is homotopic tog if there exists a continuous
+map F : X×I → Y such thatF (x, 0) = f(x) and F (x, 1) = g(x) for all
+x∈X.
+Intuitively, the second argument ofF can be interpreted as time; thenF
+describes the functionf turning into the functiong in a continuous manner
+over time. Clearly every continuous function is homotopic to itself; just let
+F (x,t ) =f(x) for allx∈X, t∈I.
+Deﬁnition 8.5. Topological spaces X and Y are homotopy equivalent if
+there exist continuous mapsf : X→ Y and g : Y → X such thatg◦f is
+homotopic toidX, andf◦g is homotopic toidY. In this case, we say thatf
+and g are homotopy equivalences.
+Theorem 8.6.If X is an Alexandrov-discrete space, then the quotient map
+η is a homotopy equivalence.
+Proof. Let µ: X/≡→ X be a map that picks a representative from each
+equivalence class. Thenη◦µ = idX/≡. By corollary 8.3,µ is order-preserving
+and hence continuous.
+We need to show thatπ : X→X,π =µ◦η is homotopic toidX. For all
+x∈X, η(π(x)) =η(µ(η(x))) =η(x). Hence
+Uπ(x) =Ux. (3)
+Let F : X×I→X be deﬁned by
+F (x,t ) =
+{
+x if 0≤t< 1,
+π(x) if t = 1.
+To show thatF is continuous, let (x,s )∈ X×I. Now Ux×I is a neigh-
+bourhood of (x,s ). Let (y,t )∈Ux×I. If 0≤t< 1, thenF (y,t ) = y∈Ux.
+On the other hand, ift = 1, then F (y,t ) = π(y)∈ Uπ(y) = Uy⊆ Ux. By
+equation (3), UF (x,s) = Ux. Therefore, F (Ux×I) = Ux = UF (x,s)⊆ V for
+all V ∈N (F (x,s )). Thus F is continuous at point(x,s ). Since (x,s ) was
+arbitrary,F is continuous.
+30
+PAGE 31
+References
+[1] X. Caicedo: Lindström’s theorem for positive logics, a topological view.
+Logic Without Borders: Essays on Set Theory, Model Theory, Philo-
+sophical Logic and Philosophy of Mathematics (Å. Hirvonen, J. Kon-
+tinen, R. Kossak, A. Villaveces, eds.), Ontos Mathematical Logic, De
+Gruyter, Berlin, 2015, pp. 73–90
+[2] K. H. Hofmann:The low separation axioms(T0) and (T1). Encyclopedia
+of General topology (K. P. Hart et al., eds.), Elsevier, 2003, p. 155–157
+[3] E. Schechter: Handbook of Analysis and its Foundations. Academic
+Press, San Diego, 1997
+[4] P. L. Clark: General Topology. http://math.uga.edu/~pete/
+pointset2018.pdf (last visited 2019-04-16)
+[5] T. Rowland: Lˆp-Space. http://mathworld.wolfram.com/Lp-Space.
+html (last visited 2019-04-16)
+[6] R. Engelking: General Topology. Heldermann, Berlin, 1989
+[7] J. R. Munkres:Topology. Prentice-Hall, London, 2000
+[8] F. Blanchard, E. Formenti, P. Kůrka:Cellular Automata in the Can-
+tor, Besicovitch, and Weyl Topological Spaces. Complex Systems 11 (2),
+107–123, 1997
+[9] M. Ó Searcóid:Metric spaces. Springer, London, 2006
+[10] D. Spivak:An Introduction to Topological Groups. Lakehead University,
+Thunder Bay, 2015
+[11] S. Raum: Lecture notes on abstract harmonic analysis. École polytech-
+nique fédérale de Lausanne, Écublens, 2017
+[12] T. Husain: Introduction to topological groups. Saunders, London, 1966
+[13] J. L. Kelley: General topology. D. Van Nostrand Company, Toronto,
+1955
+[14] M. C. McCord:Singular homology groups and homotopy groups of ﬁnite
+topological spaces. Duke Mathematical Journal 33 (3): 465–474, 1966
+31

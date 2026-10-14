@@ -1,0 +1,2692 @@
+PAGE 1
+arXiv:1909.13254v2  [math.RA]  3 Apr 2020
+HIGHER DIMENSIONAL GENERALIZA TIONS OF THE
+THOMPSON GROUPS
+MARK V. LA WSON AND ALINA VDOVINA
+Abstract. Motivated by the goal of generalizing the Cuntz-Krieger alg e-
+bras, and making heavy use of the pioneering work of Robertso n and Steger,
+Kumjian and Pask generalized the notion of a directed graph t o what they
+termed a ‘higher rank graph’. The C∗-algebras constructed from such higher
+rank graphs have proved to be highly interesting. Higher ran k graphs are,
+in fact, a class of cancellative categories and so the one-ve rtex higher rank
+graphs are therefore a class of cancellative monoids — in thi s paper we call
+them k-monoids. Finite direct products of free monoids belong to t his family
+but there are many examples not of this form. It is well-known that the classi-
+cal Thompson groups arise from the free monoids, and it is eas y to show that
+Brin’s higher dimensional Thompson groups arise from ﬁnite direct products
+of free monoids. In this paper, we generalize these construc tions and show
+how to construct a family of new groups with simple commutato r subgroups
+from arbitrary aperiodic k-monoids thereby subsuming all the above examples.
+Although we give simple direct constructions of our groups, a key feature of
+our paper is that we also show that they arise as topological f ull groups of
+the usual ´ etale groupoids associated with with k-monoids. In this way, our
+groups are naturally associated with C∗-algebras. The question of the mutual
+isomorphisms amongst this family of groups appears to be a de licate one and
+is not handled here.
+Contents
+1. Introduction 1
+2. Some terminology and notation 3
+3. k-monoids 5
+4. The associated Boolean space 9
+5. The inverse monoid R(S) 14
+6. Deﬁnition of the group G(S). 17
+7. The group G(S) in terms of maximal generalized preﬁx codes. 17
+8. A geometric representation of the group G(S). 20
+9. The group G(S) as a group of units 21
+10. The group G(S) as a topological full group 25
+11. Rigid k-monoids 28
+12. Maximal generalized preﬁx codes 34
+13. Constructing examples of our groups 39
+14. Concluding remarks 40
+References 42
+1. Introduction
+In this paper, we shall construct a class of new groups that include s not only
+the classical Thompson groups Gn,1 but also Brin’s higher dimensional analogues
+nV as special cases [6]. The building blocks of our groups are a class of 1- vertex
+1
+PAGE 2
+2 MARK V. LA WSON AND ALINA VDOVINA
+higher rank graphs that we call ‘ k-monoids’. Examples of such monoids are the
+ﬁnite direct products of free monoids; such direct products are n ot themselves free
+but have important properties in common with free monoids.
+We state as a theorem what we achieve in this paper (and reassure t he reader
+that all undeﬁned terms will be deﬁned).
+Theorem 1.1. Let S be an aperiodic k-monoid whose associated k alphabets are
+all ﬁnite and each have cardinality at least 2. Then we constr uct a countable group
+G(S) as a subgroup of the group of self-homeomorphisms of the Cant or space with
+simple commutator subgroup that arises as the topological f ull group of a Boolean
+´ etale groupoid.
+We generalize an approach that goes back to the work of Scott [51 ] as reinter-
+preted by Birget [3]. 1 There, free monoids and the theory of preﬁx codes [2] are
+used to construct the groups Gn,1 (where G2,1 is usually denoted by V ). This same
+approach was exploited in [31, 32] but combined with inverse semigrou p theory to
+deﬁne the same groups. The unspoken hope of the latter two pape rs was that by
+generalizing free monoids in a suitable way, generalizations of the Tho mpson groups
+would follow. John Fountain, in some unpublished notes [18] and a numb er of lec-
+tures, did take a ﬁrst step in realizing this aspiration but in our paper , we develop
+this idea much further. A crucial step was the realization that 1-ve rtex higher rank
+graphs [54, 26, 15, 52, 53] — what we call ‘ k-monoids’ — can be viewed as natural
+generalizations of free monoids. This paper is also closely allied with the categorical
+approach adopted by Spielberg [52, 53] though, of course, we wor k with monoids
+rather than categories.
+The paper consists of a further thirteen sections. Section 2 revie ws the very basic
+semigroup theory needed to read this paper, whereas Section 3 re views the proper-
+ties of ‘1-vertex higher rank graphs’ — what we call ‘ k-monoids’ — needed to read
+this paper. These two sections are entirely preliminary. Section 4 de scribes how
+to construct a Boolean space S∞ from a k-monoid S and describes the properties
+of the action S× S∞ → S∞ . This is the basic construction on which the rest of
+the paper depends. In Section 5, we describe the inverse monoid R(S) that can be
+constructed from S. The group G(S) that can be constructed from the k-monoid
+S is deﬁned in Section 6 but the deﬁnition reveals nothing about its prop erties. In
+Section 7, we show that the group G(S) can also be deﬁned in terms of what might
+be called ‘maximal generalized preﬁx codes’. But it is in Section 8, that w e are able
+to show that our group is a subgroup of the group of self-homeomo rphisms of the
+Cantor space. In Section 9, we construct from R(S) by means of a congruence, a
+Boolean inverse monoid C(S) and prove that the group G(S) is its group of units. It
+is in Section 10, that we are ﬁnally able to prove that G(S) is, in fact, a topological
+full group. This section contains what we believe is a new approach to the standard
+´ etale groupoid associated with a k-monoid since we observe that it is a groupoid of
+fractions. In Section 11, we study the properties of what we term ‘rigid’ k-monoids,
+the most natural generalizations of direct products of free mono ids. In Section 12,
+we study the structure of ‘generalized maximal preﬁx codes’. Sect ion 13 concen-
+trates on constructing concrete examples of the groups introdu ced in this paper
+and making connections with the papers [6, 25, 41]. Section 14 wraps the paper up
+with some general, contextual results.
+Acknowledgements The authors would like to thank Aidan Sims for his com-
+ments and corrections on a ﬁrst draft of this paper. They would als o like to thank
+1The connection between our work and the most recent paper by B irget [4] is described in
+Section 13.
+PAGE 3
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 3
+an anonymous referee for their detailed comments and suggestion s. The second
+author would like to thank the Mathematical Picture Language Proj ect at Harvard
+University.
+2. Some terminology and notation
+This section should be used as a reference when needed.
+If ( P,≤ ) is a poset and X⊆ P we write X ↓ ={y∈ P : (∃x∈ X) y≤ x}. If
+X = X ↓ we say that X is an order ideal. If X ={x} we write x↓ instead of{x}↓ .
+This paper introduces a class of groups but our approach is semigro up-theoretic.
+We recall some key notions now.
+A zero 0 in a semigroup S is an element 0 such that s0 = 0 = 0 s for all s∈ S. A
+congruence ρ deﬁned on a semigroup S is an equivalence relation with the property
+that a ρ b and c ρ d imply that ac ρ bd. If we denote the ρ-equivalence class containing
+s by [ s] and the set of ρ-equivalence classes by S/ρ then S/ρ is a semigroup when
+we deﬁne [ s][t] = [ st]. The natural map S → S/ρ, given by s↦→ [s], is then a
+semigroup homomorphism. If θ : S→ T is a homomorphism of semigroups then its
+kernel is the congruence ρ deﬁned by a ρ b if and only if θ(a) = θ(b). A congruence
+ρ on a semigroup with zero is said to be 0 -restricted if a ρ 0 implies that a = 0.
+A congruence ρ is said to be idempotent-pure if a ρ e, where e is an idempotent,
+implies that a is an idempotent.
+Most of the time we work with inverse semigroups which are abstract ions of
+semigroups of partial bijections just as groups are abstractions of semigroups of
+bijections. Our reference to inverse semigroup theory is [28] but w e recall some
+basic deﬁnitions here. An inverse semigroup is a semigroup S in which for each
+element a there is a unique element a− 1, called the inverse of a, such that a = aa− 1a
+and a− 1 = a− 1aa− 1. It is usual to write d(a) = a− 1a and r(a) = aa− 1, both
+of which are idempotents. The set of idempotents E(S) of an inverse semigroup
+is a commutative subsemigroup. For this reason, it is usually referre d to as the
+semilattice of idempotents of S. Our inverse semigroups will always have a zero. An
+inverse subsemigroup of an inverse semigroup is simply a subsemigroup closed under
+the taking of inverses. A wide inverse subsemigroup of S is an inverse subsemigroup
+that contains E(S). Inverse semigroups usually arise as inverse semigroups of partia l
+bijections of a set where the inverse of a partial bijection is simply its inverse partial
+bijection. In an inverse semigroup S, we can deﬁne a partial order ≤ , called the
+natural partial order , by a≤ b if and only if a = be for some idempotent e. Despite
+appearances, this deﬁnition is self-dual in the sense that a≤ b if and only if a = f b
+for some idempotent f . For inverse semigroups of partial bijections, the natural
+partial order is the usual restriction order of partial bijections. If a ≤ b then
+a− 1≤ b− 1 and if c≤ d then ac≤ bd. The set of idempotents is an order ideal.
+Observe that if a, b≤ c then a− 1b and ab− 1 are both idempotents. Deﬁne the
+compatibility relation∼ by a∼ b if and only if a− 1b and ab− 1 are both idempotents.
+It follows that a necessary condition for two elements to have a join is that they
+be compatible. If a and b have a join, we denote it by a∨ b. Elements a and b
+are said to be orthogonal, denoted by a⊥ b, if ab− 1 = 0 and a− 1b = 0. If a and b
+are orthogonal and have a join, we denote it by a⊕ b. An inverse monoid is said
+to be distributive if each compatible pair of elements has a join and multiplication
+distributes over such joins on the left and the right. A morphism of distributive
+inverse semigroups is required to preserve compatible joins. A distr ibutive inverse
+monoid is Boolean if its semilattice of idempotents is a Boolean algebra.
+An inverse semigroup is said to be fundamental if the only elements that commute
+with all idempotents are themselves idempotents. An inverse semigr oup with zero
+S is said to be 0 -simple if for any two non-zero idempotents e and f there is an
+PAGE 4
+4 MARK V. LA WSON AND ALINA VDOVINA
+element x such that d(x) = e and r(x)≤ f ; it is said to be 0 -bisimple if for each
+ordered pair of non-zero idempotents e and f there exists an element a such that
+e = a− 1a and f = aa− 1; it is said to be 0 -disjunctive if e < f , where e and f are
+non-zero idempotents, implies that there is a non-zero idempotent e′≤ f such that
+ee′ = 0; it is said to be congruence-freeif the only congruences are equality and the
+universal congruence.
+An inverse semigroup is a ∧ -semigroup if each pair of elements has a meet under
+the natural partial order. These semigroups were ﬁrst introduc ed in [38]. It can
+be proved that an inverse semigroup has binary meets if it possesse s a ﬁxed point
+operator φ meaning a map φ : S→ E(S) such that φ(s) is the largest idempotent
+less than or equal to s [38, Deﬁnition 1.7]. If φ is such an operator, then
+a∧ b = φ(ab− 1)b = aφ(a− 1b)
+by [38, Theorem 1.7]. Having binary meets is the algebraic version of be ing Haus-
+dorﬀ which explains the importance of this notion in our paper.
+An inverse semigroup S is said to be E-unitary if e≤ a, where e is an idempotent,
+implies that a is an idempotent. Observe that e could be zero. The case where
+we require e to be non-zero is the following: an inverse semigroup with zero is said
+to be E∗ -unitary if e≤ a, where e is a non-zero idempotent, implies that a is an
+idempotent. It is an unfortunate feature of semigroup theory th at deﬁnitions need
+to be changed according to whether the semigroup has a zero or no t. However,
+this will cause us no problems in this paper. The notion of being E-unitary is an
+important one in the development of inverse semigroup theory and a bstracts certain
+features of complex analytic functions [28].
+There is a congruence σ deﬁned on any inverse semigroup S such that S/σ is a
+group and if ρ is any congruence on S such that S/ρ is a group then σ⊆ ρ. Thus σ
+is the minimum group congruence . In fact, s σ t if and only if there exists u≤ s, t.
+Observe that u could be zero in which case the group reduces to the trivial group.
+However, we shall only apply this congruence when the inverse semig roup does not
+have a zero. We sometimes write σS if σ is deﬁned on S. See [28, Section 2.4].
+The following was proved as [28, Theorem 2.4.6]; it makes checking whet her two
+elements are σ-related much easier.
+Proposition 2.1. Let S be an inverse semigroup. Then S is E-unitary if and only
+if σ =∼ .
+Let S be a monoid and X a set. Then a monoid action S× X → X is a
+mapping ( a, x)↦→ ax such that 1 x = x and ( ab)x = a(bx). There is an associated
+homomomorphism λ : S→T (X), whereT (X) is the monoid of all functions from
+X to itself, given by λ(s)(x) = sx. If this homomorphism is injective we say that
+the action is eﬀective. This is equivalent to requiring that if ax = bx for all x∈ X
+then a = b.
+Free monoids are special examples of the k-monoids that form the basis of this
+paper so we outline their basic properties here to help motivate what we do. Let
+A be a countable set. The free monoid generated by A is denoted A∗ and consists
+of all ﬁnite strings over the alphabet A with the operation of concatenation as the
+semigroup multiplication. The set of all right-inﬁnite strings over A is denoted by
+Aω. We denote by An any alphabet with n elements. If S is a free monoid and
+a, b∈ S then aS∩ bS is non-empty precisely when either aS⊆ bS or bS⊆ aS. If
+a = bu for some u∈ S we say that b is a preﬁx of a. The elements a and b are
+said to be preﬁx comparable precisely when a is a preﬁx of b or b is a preﬁx of a;
+this is equivalent to aS∩ bS̸= ∅ . We shall generalize this deﬁnition to a more
+general setting later and change the terminology to avoid confusio n. If a pair of
+elements are not comparable we say that they are incomparable. A preﬁx code in
+PAGE 5
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 5
+a free monoid is a (for us, ﬁnite) set of incomparable elements. It is a maximal
+preﬁx code if it is a preﬁx code in which every element of the free monoid is preﬁx
+comparable with an element of the preﬁx code. The book by Lallement [27] is a
+good source for all these deﬁnitions.
+Notation
+• S∞ the topological space of all k-tilings of a k-monoid S (Section 4).
+• R(S) the inverse monoid of all bijective morphisms between the ﬁnitely
+generated right ideals of the k-monoid S (Section 5).
+• If T is any inverse semigroup with zero then T e is the inverse subsemi-
+group of T consisting of elements a where a− 1a and aa− 1 are both essential
+idempotents (Section 6).
+• G(S) = R(S)e/σ, the group associated with a k-monoid S (Section 6).
+• P(S) the inverse monoid of all bijective morphisms between ﬁnitely gener -
+ated projective right ideals of the k-monoid S (Section 7).
+• I(X), where X is a topological space, is the inverse monoid of all partial
+homeomorphisms between the open subsets of X (Section 4).
+• Icl(X), where X is a Boolean space, is the Boolean inverse monoid of partial
+homeomorphisms between the clopen subsets of X (Section 8 onwards).
+• C(S) = R(S)/ ≡ , the Boolean inverse monoid constructed from the k-
+monoid S. Its group of units is isomorphic with G(S) (Section 9).
+• G(S) the Boolean groupoid associated with the k-monoid S (Section 10).
+• KB(G) the Boolean inverse monoid of all compact-open local bisections of
+the Boolean groupoid G (Section 10).
+• B(S) is the inverse monoid of all bijective morphisms between principal
+right ideals of S, together with the empty function, in the case where the
+k-monoid S is singly aligned (Section 11).
+3. k-monoids
+In this section, we deﬁne the class of monoids that will underlie all our construc-
+tions.
+In what follows, Nk should be viewed as the positive cone of the lattice-ordered
+abelian group Zk. If m∈ Nk then
+m = (m1, . . . , mi, . . . , mk)
+and we deﬁne mi = mi. Accordingly, we shall use superscripts mj to label se-
+quences of elements of Nk. The order in Zk is deﬁned componentwise: m≤ n if
+and only if mi≤ ni for 1≤ i≤ k. The join operation is ( m∨ n)i = max(mi, ni) and
+the meet operation is ( m∧ n)i = min(mi, ni). Put 0 = (0, . . . ,0) and 1 = (1, . . . ,1)
+both elements of Nk. Deﬁne ei, where 1 ≤ i≤ k, to be that element of Nk which is
+zero everywhere except at i where it takes the value 1.
+Deﬁnition. A countable monoid S is said to be a k-monoid if there is a ho-
+momorphism d : S → Nk satisfying the unique factorization property (UFP) : if
+d(x) = m + n then there exist unique elements x1 and x2 of S such that x = x1x2
+where d(x1) = m and d(x2) = n. We sometimes call d(s) the size of s.
+Notation. Let S be a k-monoid and let s∈ S and 0≤ m≤ d(s). Then we write
+s = s(0, m)s(m, d(s)) where d(s(0, m)) = m and d(s(m, d(s))) = d(s)− m are the
+uniquely deﬁned elements of their respective sizes.
+PAGE 6
+6 MARK V. LA WSON AND ALINA VDOVINA
+The deﬁnition of a k-monoid is simply the monoid case of the more general no-
+tion of a higher rank graph deﬁned in [54, 26, 15, 52, 53].
+T erminology . Let a, b∈ S, a k-monoid. We shall say that a is bigger than b if
+d(a)≥ d(b). This deﬁnition needs to be used with care since if a and b are arbitrary
+there need be no order relation between d(a) and d(b).
+For each 1 ≤ i≤ k, deﬁne Xi = d− 1(ei). We call ( X1, . . . , Xk) the k alphabets
+associated with the k-monoid.
+Remark 3.1. We can assume, without loss of generality, that the map d used in
+the deﬁnition of a k-monoid is actually surjective. If d were not surjective then we
+would have that Xi = ∅ for some i. We could then replace d by a map d′: S→ Nk− 1
+by dropping the i-component (which is always 0).
+Lemma 3.2. Let S be a k-monoid in which d is surjective. Then given any element
+u∈ S and m∈ Nk there is an element v such that d(uv)≥ m.
+Proof. If d(u)≥ m then put v = 1. Otherwise, choose v such that d(v)≥ m. This
+can be done since we are assuming that d is surjective. It follows that d(uv)≥
+m. □
+A monoid is said to be conical if its group of units is trivial. An atom in a monoid
+is an element a such that if a = bc then at least one of b or c is invertible. The
+following are all well-known but can easily be proved from the deﬁnition s.
+Lemma 3.3. Let S be a k-monoid.
+(1) The identity of S is the only element a∈ S such that d(a) = 0.
+(2) The monoid S is conical.
+(3) The monoid S is cancellative.
+(4) The atoms are the elements a such that d(a) = ei for some 1≤ i≤ k.
+(5) Each non-identity element is a product of atoms.
+Remark 3.4. Countable free monoids are precisely the 1-monoids. This entitles
+us to view k-monoids as generalizations of free monoids which is our perspective
+throughout this paper.
+Let S be a k-monoid and T an l-monoid. We denote their respective homo-
+morphisms by dS : S → Nk and dT : T → Nl. There is a natural isomorphism
+Nk× Nl ∼
+= Nk+l which takes ( m, n) to the element m· n where m· n is the
+unique element of Nk+l whose components are ( m1, . . . , mk, n1, . . . , nl). Deﬁne
+d : S× T→ Nk+l by d(s, t) = dS(s)·dT (t). In this way, it is easy to see that S× T
+is a k + l-monoid. We have proved the following; see also [26, Proposition 1.8].
+Lemma 3.5. If S is a k-monoid and T is an l-monoid then S× T is a k+l-monoid.
+Example 3.6. The direct product of k free monoids is therefore a k-monoid by
+Lemma 3.5. However, the product of free monoids is not free. For e xample, the
+free monoid on one generator is N. But N× N is not isomorphic to the free monoid
+on one generator but is abelian. Thus it cannot be free .
+If X⊆ S, where S is a monoid, we denote by X ∗ the submonoid of S generated
+by X. The proof of the following lemma is immediate by the UFP.
+Lemma 3.7. Let S be a k-monoid.
+(1) XiXj⊆ XjXi for all i, j.
+(2) Each submonoid X ∗
+i is free.
+PAGE 7
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 7
+(3) Each element of S can be written uniquely as a product of the form x1 . . . xk
+where xi∈ X ∗
+i .
+We now develop part (1) of Lemma 3.7. Let S be a k-monoid with k alphabets
+(X1, . . . , Xk). Let xi1 ∈ Xi and xj1 ∈ Xj where i̸= j. Then by the UFP, we
+may write xi1 xj1 = xj′
+1 xi′
+1 where xi′
+1∈ Xi and xj′
+1∈ Xj are uniquely deﬁned. We
+have therefore deﬁned a function θij : Xi× Xj → Xi× Xj given by θ(i1, j1) =
+(i′
+1, j′
+1). By the UFP, this function is a bijection. For the case k = 2, any bijection
+X1× X2→ X1× X2 determines a unique 2-monoid and conversely [44]. For k > 2,
+we need to add an extra condition which arises by associativity as follo ws [20, 12].
+Let xi1∈ Xi, xj1∈ Xj and xl1∈ Xl where i, j, l are distinct. We now make two
+calculations. First,
+(xi1 xj1 )xl1 = xj′
+1 (xi′
+1 xl1 ) = ( xj′
+1 xl′
+1 )xi′′
+1 = xl′′
+1 xj′′
+1 xi′′
+1 .
+Second,
+xi1 (xj1 xl1 ) = ( xi1 xl2 )xj2 = xl3 (xi2 xj2 ) = xl3 xj3 xi3 .
+By associativity (since we are working in a monoid), we therefore hav e that xl′′
+1 =
+xl3 , xj′′
+1 = xj3 and xx′′
+1 = xi3 . This leads to an important connection between
+k-monoids (where k≥ 3) and set-theoretical solutions to the Yang-Baxter equation
+[26, 56].
+The following describes the ‘degenerate’ k-monoids.
+Proposition 3.8. Let S be a k-monoid with associated k-alphabets (X1, . . . , Xk).
+Then S∼
+= Nk if and only if |X1|=|X2|= . . . =|Xk|= 1.
+Proof. Only the ‘if-direction’ needs proving. Suppose that |X1| =|X2| = . . . =
+|Xk|= 1. Then X ∗
+i ∼
+= N. The homomorphism d : S→ Nk, which we always assume
+surjective, is injective by the UFP. □
+By Remark 3.4, countable free monoids are 1-monoids and by Lemma 3 .5, the
+product of k free monoids is a k-monoid and so A∗
+n1× . . .× A∗
+nk is a k-monoid.
+Proposition 3.9. The k-monoid S is isomorphic to a ﬁnite direct product of free
+monoids if and only if xy = yx for all x∈ Xi, y∈ Xj and i̸= j where 1≤ i, j≤ k.
+Proof. Only the ‘if-direction’ needs proving. We show that S∼
+= X ∗
+1× . . .× X ∗
+k .
+Let s∈ S. Then it can be writtten uniquely as a product s = x1 . . . xk where
+xi ∈ X ∗
+i . This enables us to deﬁne a bijection between S and X ∗
+1× . . .× X ∗
+k .
+It only remains to prove that it is a homomorphism. Let t = y1 . . . yk where
+yi ∈ X ∗
+i . Then st = ( x1 . . . xk)(y1 . . . yk). We now use commutativity to move
+y1. We get st = (( x1y1)x2 . . . xk)(y2 . . . yk). We now repeat this process to get
+st = (x1y1) . . . (xkyk). This now proves that our bijection is in fact a homomorphism
+and so an isomorphism. □
+The following is the analogue for k-monoids of what is termed ‘Levi’s theorem’
+for free monoids [27, Corollary 5.1.6]. It will prove useful.
+Lemma 3.10. Let S be a k-monoid. Let xy = uv, where x, y, u, v∈ S and d(x)≥
+d(u). Then there exists t∈ S such that such that x = ut and v = ty. In particular,
+if d(x) = d(u) then x = u.
+Proof. First, we deal with the case where d(x) = d(u). Put z = xy = uv. Since
+d(x) = d(u), we must have that d(y) = d(v). It now follows by the UFP, that x = u
+and y = v. Now we suppose that d(x) > d (u). Thus there exists r∈ Nk such
+that d(x) = d(u) + r. By the UFP, there are unique elements u′ and t such that
+d(u′) = d(u), d(t) = r and x = u′t. It follows that u′(ty) = uv. But d(u′) = d(u).
+By the ﬁrst part of the proof, we deduce that u′ = u and so v = ty from which we
+get that x = ut. □
+PAGE 8
+8 MARK V. LA WSON AND ALINA VDOVINA
+We now introduce concepts that will play a major role in our construc tion of a
+group from a k-monoid. Let S be any monoid and let x, y∈ S. If xS∩ yS̸= ∅ ,
+we say that x and y are comparable whereas if xS∩ yS = ∅ , we say that x and
+y are incomparable. A ﬁnite, non-empty subset X of S is said to be a generalized
+preﬁx code if each distinct pair of elements of X is incomparable. A generalized
+preﬁx code X is said to be maximal if for each y∈ S there exists x∈ X such that
+yS∩ xS̸= ∅ .
+Example 3.11. In a free monoid, generalized preﬁx codes sets are precisely the
+preﬁx codes and maximal generalized preﬁx codes are precisely the maximal preﬁx
+codes.
+Remark 3.12. If C̸={1} is a maximal generalized preﬁx code then 1 /∈ C. To
+see why, suppose that 1 ∈ C and c∈ C where c̸= 1. Then c1 = 1 c and so c and 1
+are comparable.
+Let S be a k-monoid, let m∈ Nk and let Cm be the set of all elements x of S
+such that d(x) = m.
+Lemma 3.13. Let S be a k-monoid and let m∈ Nk. Then Cm is a maximal
+generalized preﬁx code.
+Proof. Let x, y∈ Cm and suppose that xu = yv for some u, v∈ S. Then d(x) =
+d(y) = m, by assumption. It follows by Lemma 3.10 that x = y. Thus the elements
+of Cm are incomparable. Let u∈ S. Then there is an element v∈ S such that
+d(uv)≥ m (since we always assume that d is surjective). By the UFP, there is an
+element x∈ Cm and y∈ S such that uv = xy. Thus u is comparable with some
+element of Cm. □
+We can actually strengthen the above result.
+Lemma 3.14. Let S be a k-monoid. Let C be a maximal generalized preﬁx code
+in S in which every element has the same size m. Then, in fact, C = Cm.
+Proof. Clearly, C⊆ Cm. Let y be any element of S such that d(y) = m. Then,
+by assumption, there exists x ∈ C and u, v ∈ S such that yu = xv. But, by
+assumption, d(y) = d(x). It follows by Lemma 3.10 that x = y. Thus y∈ Cm, as
+required. □
+We develop more of the theory of maximal generalized preﬁx codes in Section 12.
+We say that a monoid S is ﬁnitely aligned if for each x, y∈ S either x and y
+are incomparable or the right ideal xS∩ yS is ﬁnitely generated. This deﬁnition
+ﬁrst appeared in [46]. We say that S is strongly ﬁnitely aligned 2 if for each x, y∈ S
+either x and y are incomparable or the right ideal xS∩ yS is ﬁnitely generated by
+incomparable elements; that is, it is generated by a generalized preﬁ x code. The
+result below is proved in the literature.
+Lemma 3.15. Let d : S→ Nk be a k-monoid and let cS⊆ aS, bS. Then there
+exists an element e∈ S such that cS⊆ eS⊆ aS∩ bS where d(e) = d(a)∨ d(b).
+Let a, b∈ S. We deﬁne the subset a∨ b of S as follows: if aS∩ bS = ∅ , deﬁne
+a∨ b = ∅ , and if aS∩ bS̸= ∅ deﬁne a∨ b to be all elements e such that e∈ aS∩ bS
+and d(e) = d(a)∨ d(b). By Lemma 3.15, it is immediate that aS∩ bS = ⋃
+e∈ a∨ b eS.
+Deﬁne also
+C(a, b) ={(x, y)∈ S× S : ax = by∈ a∨ b}.
+The fact that a∨ b is always ﬁnite means precisely that S is ﬁnitely aligned.
+2This term is introduced in this paper; it is not current.
+PAGE 9
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 9
+Lemma 3.16. If a∨ b is non-empty then it is a set of incomparable elements.
+Proof. Let u, v∈ a∨ b. Suppose that uS∩ vS̸= ∅ . Then us = vt for some s, t∈ S.
+But d(u) = d(v). It follows by Lemma 3.10 that u = v. □
+By Lemma 3.15 and Lemma 3.16, it follows that a ﬁnitely aligned k-monoid is
+strongly ﬁnitely aligned.
+Remark 3.17. In this paper, we are only interested in ﬁnitely aligned k-monoids.
+We shall also assume that each of the alphabets Xi is ﬁnite and has cardinality at
+least 2. Later, we shall require that the k-monoid is aperiodic.
+A k-monoid S is said to be singly aligned if aS∩ bS̸= ∅ implies that aS∩ bS = cS
+for some c∈ S. All free monoids are singly aligned as, so too, are the rigid k-
+monoids deﬁned in Section 11. The proof of the following is straightfo rward.
+Lemma 3.18. Let S and T be k-monoid and l-monoid, respectively. If both are
+singly aligned then S× T is singly aligned.
+4. The associated Boolean space
+Let S be a k-monoid. In this section, we shall recall the construction of a
+topological space, denoted by S∞ , on which S acts on the left. We are particularly
+interested in when this left action is eﬀective. A topological space is s aid to be
+Boolean if it is compact Hausdorﬀ with a basis of clopen subsets; the space S∞ will
+be Boolean.
+For each integer k≥ 1, deﬁne Ω k to be the category with objects the elements of
+Nk and morphisms those ordered pairs of elements of Nk, ( m, n), where m≤ n; in
+other words, the category associated with the partial order ≤ on Nk where the arrow
+goes from the larger to the smaller element. Deﬁne d(m, n) = n− m. By a k-tiling
+in S, we mean a function w : Ω k→ S satisfying the following three properties:
+(1) w(m, m) = 1.
+(2) w(m, n)w(n, p) = w(m, p).
+(3) d(w(m, n)) = n− m.
+An element of S of the form w(0, m) is called a corner of the k-tiling w.
+Deﬁnition. Deﬁne S∞ to be the set of all k-tilings in S.
+For each p∈ Nk, deﬁne the shift (erase) operator σp : S∞ → S∞ by
+σp(w)(m, n) = w(m + p, n + p)
+where w∈ S∞ . It is easy to check that this operation is well-deﬁned.
+A comparable set of corners is a subset of S:
+C ={wm : m∈ Nk, d(wm) = m, any two elements are comparable}.
+The following is a special case of the ﬁrst part of [26, Remarks 2.2].
+Proposition 4.1. Let S be a k-monoid. Then k-tilings and comparable sets of
+corners are equivalent notions.
+We explain what we mean by the term ‘equivalent’ used above. Let w : Ω k→ S
+be a k-tiling. Then Cw ={w(0, m) : m∈ Nk} is a comparable set of corners.
+Now, let C be a comparable set of corners. Then an associated k-tiling wC can be
+constructed as follows: let m, n∈ Nk be such that m≤ n. Then wm and wn are
+comparable and wn = wmw(m, n) for a unique w(m, n)∈ S by Lemma 3.10. This
+deﬁnes the k-tiling. The operations: w↦→ Cw and C↦→ wC are mutually inverse.
+PAGE 10
+10 MARK V. LA WSON AND ALINA VDOVINA
+Remark 4.2. The above result is important because it tells us, in particular,
+that each k-tiling has corners of every possible size and that any two corners a re
+comparable.
+The following lemma will be needed in Section 9.
+Lemma 4.3. Let S be a k-monoid, let w be a k-tiling, let a1, . . . , an∈ S be arbitrary
+and let m1, . . . ,mn∈ Nk. Then there is a corner x of w such that d(ajx)≥ mj
+for each 1≤ j≤ n.
+Proof. The k-tiling w has corners of every size. Let x be any corner of w such that
+d(x) = ⋁n
+j=1 mj. Then d(aj x) = d(aj) + d(x)≥ mj for each 1 ≤ j≤ n. □
+A comparable set of corners requires there to be an element of size m for each
+m∈ Nk. In fact, this condition can be weakened. The following is proved as t he
+second part of [26, Remark 2.2].
+Proposition 4.4. Let S be a k-monoid. Let D be a comparable subset of S such
+that for each n∈ Nk there is at least one element b∈ D such that d(b)≥ n. Then D
+gives rise to a unique comparable set of corners D′. The set D′ contains the element
+x, where d(x) = n, precisely when a∈ D is any element such that d(a)≥ n and
+a = xy for some y.
+A subset D⊆ S is called expanding if it satisﬁes the conditions of Proposition 4.4.
+If D1 and D2 are two expanding sets, we say that they are equivalent, denoted by
+D1≡ D2, if they determine the same k-tiling. This means that D′
+1 = D′
+2, using
+the notation of Proposition 4.4. The proof of the following is routine.
+Lemma 4.5. Let D1 and D2 be two expanding sets. Suppose that for any x∈ D1
+and y∈ D2, we have that x and y are comparable. Then D1 and D2 are equivalent.
+Example 4.6. In the light of our above result, it is now easy to show that ( A∗
+n)∞ =
+Aω
+n.
+The following is a special case of [26, Proposition 2.3].
+Lemma 4.7. Let a∈ S and w∈ S∞ . Then there is a unique element denoted
+aw∈ S∞ such that (aw)(0, d(a)) = a and σd(a)(aw) = w.
+It follows by the above lemma, that there is therefore a natural ac tion S× S∞ →
+S∞ meaning that 1 w = w and ( ab)w = a(bw) for all a, b∈ S. We write
+aS∞ ={aw : w∈ S∞},
+the set of all k-tilings with a as a corner. Put τ ={aS∞ : a∈ S}. Then τ forms
+the basis for a topology on S∞ . Part of the following was ﬁrst proved in [26]. The
+proof we give is due to Aidan Sims.
+Proposition 4.8. Let S be a k-monoid with ﬁnite k-alphabets (X1, . . . , Xn). Then
+S∞ , equipped with the topology above, is a compact Boolean spac e. If at least one of
+the alphabets Xi has cardinality at least 2 then S∞ is homeomorphic to the Cantor
+space.
+Proof. Recall that Cm is the set of all elements of S of size m. If x∈ C(n,...,n) then
+there are unique elements x1 and x2 such that x = x1x2, d(x1) = ( n− 1, . . . , n− 1)
+and d(x2) = 1. Deﬁne the map pn : C(n,...,n)→ C(n− 1,...,n− 1) by pn(x) = x1. Then
+S∞ is isomorphic to the projective limit of the system ( C(n,...,n), pn). Standard
+results from topology now tell us that S∞ is a Boolean space. To show that S∞
+is the Cantor space, we have to show that there are no isolated poin ts. But for
+any a∈ S the set aS∞ will contain at least two elements if at at least one of the
+alphabets Xi has cardinality at least 2. □
+PAGE 11
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 11
+We say that the action S× S∞ → S∞ is eﬀective if aw = bw for all w∈ S∞
+implies that a = b. The following was motivated by [40].
+Lemma 4.9. Let S be a k-monoid.
+(1) Let a, b∈ S such that aw = bw for some w ∈ S∞ . Then a and b are
+comparable.
+(2) Let a, b∈ S be such that aw = bw for all w∈ S∞ . Then au and bu are
+comparable for all u∈ S
+Proof. (1) Let m≥ d(a), d(b). Then ( aw)(0, m) = ( bw)(0, m). Thus by the UFP,
+we have that au = bv for some u, v∈ S. It follows that a and b are comparable.
+(2) Let u ∈ S be arbitrary. If w ∈ S∞ then uw ∈ S∞ . By assumption,
+a(uw) = b(uw) for all w∈ S∞ . Thus ( au)w = ( bu)w for all w∈ S∞ . By part (1),
+it follows that au and bu are comparable. □
+We now prove the converse to part (2) above.
+Lemma 4.10. Let a, b∈ S be such that au and bu are comparable for all u∈ S.
+Then aw = bw for all w∈ S∞ .
+Proof. We may assume that a̸= b. We prove the result by contradiction. Suppose
+that there exists w∈ S∞ such that aw̸= bw. Then for some m we have that
+(aw)(0, m)̸= (bw)(0, m). Without loss of generality, we can choose m≥ d(a), d(b).
+We can therefore write au′ = (aw)(0, m) and bv′ = (bw)(0, m) where u′ and v′ are
+both corners of w and d(au′) = d(bv′) = m. Since u′ and v′ are both corners of
+w, it follows by Proposition 4.1 that u′ and v′ are comparable and so there exist
+x, y∈ S such that u = u′x = v′y. By assumption, au and bu are comparable
+and so aue = buf for some e, f∈ S. It follows that au′xe = bv′yf . But au′ and
+bv′ have the same size, and so by Lemma 3.10, we have that au′ = bv′ which is a
+contradiction. □
+Our next deﬁnition is nothing but a reformulation of the deﬁnition of a periodicity
+given in [40] with a new name. We say that a k-monoid S is eﬀective (so, no
+reference to the action) if for each pair of distinct elements a and b of S there exists
+an element u∈ S such that au and bu are not comparable. By Lemma 4.9 and
+Lemma 4.10, we have therefore proved the following result.
+Proposition 4.11. The k-monoid S is eﬀective if and only if the action of S on
+S∞ is eﬀective.
+We shall now connect eﬀectiveness with another property. Let w∈ S∞ . We say
+that w has period p, where p∈ Zk, if for all ( m, n)∈ Ωk with m + p≥ 0 we have
+that w(m + p, n + p) = w(m, n). We say that w is periodic if it has some non-zero
+period. We say that w is eventually periodic if for some q we have that σq(w) is
+periodic. An element of S∞ that is not eventually periodic is said to be aperiodic.
+The next example will motivate the result that follows it.
+Example 4.12. We work in the 1-dimensional case. Consider the ﬁnite strings ab
+and abcd. Can we ﬁnd a right-inﬁnite string w such that abw = abcdw? A little
+thought will show that there is exactly one solution: w = cdcdcd . . .. In particular,
+w is periodic.
+The following can also be found as [45, Remark 4.4].
+Lemma 4.13. Let S be a k-monoid and let a, b∈ S be distinct elements. If w∈ S∞
+is such that aw = bw then w is eventually periodic.
+The proof of the following is now immediate on the basis of the above lem ma.
+PAGE 12
+12 MARK V. LA WSON AND ALINA VDOVINA
+Corollary 4.14. Let S be a k-monoid with at least one aperiodic k-tiling. Then
+the action of S on S∞ is eﬀective.
+Deﬁnition. A k-monoid with at least one aperiodic k-tiling will be called aperiodic.
+The converse to Corollary 4.14 is proved below — we thank Aidan Sims fo r the
+direct argument — whereas we shall prove in Section 10 that in the co ntext of ´ etale
+groupoids being aperiodic and being eﬀective are equivalent.
+Lemma 4.15. In a k-monoid, being eﬀective implies the existence of an aperiod ic
+k-tiling. It follows that being eﬀective and having an aperio dic k-tiling are equivalent
+notions.
+Proof. Suppose that S is eﬀective. We prove that it must have an aperiodic k-tiling.
+List the elements of ( Nk× Nk)\{(n, n) : n∈ Nk} as (mi, ni)∞
+i=1. For each i, choose
+an element si of length mi + ni. Since S is eﬀective, there exists an element ti
+such that si(mi, mi + ni)ti and si(ni, mi + ni)ti are incomparable. Observe that
+it is here we use the fact that mi̸= ni. Put li = siti. The set of elements of S
+given by{l1, l1l2, l1l2l3, . . .} is clearly an expanding set and so determines a unique
+k-tiling x by Proposition 4.1 and Proposition 4.4. We prove that x is aperiodic.
+Suppose that σmi
+(x) = σni
+(x). Then σ
+∑i− 1
+j=0 d(li)+mi
+(x) = σ
+∑i− 1
+j=0 d(li)+ni
+(x). Thus
+σmi
+(lili+1 . . . ) = σni
+(lili+1 . . . ). But
+σmi
+(lili+1 . . . ) = si(mi, mi + ni)tili+1 . . . ,
+and
+σni
+(lili+1 . . . ) = si(ni, mi + ni)tili+1 . . . ,
+and this contradicts the fact that si(mi, mi + ni)ti and si(ni, mi + ni)ti are incom-
+parable. □
+We now describe the properties of the action S× S∞ → S∞ that will be needed
+later.
+Proposition 4.16. Let S be an aperiodic k-monoid.
+(1) If aw = aw′ where a∈ S and w, w′∈ S∞ then w = w′.
+(2) Suppose that w = aw1 = bw2 where a, b∈ S and w1, w2 ∈ S∞ . Then
+au1 = bu2 where u1, u2 ∈ S and w1 = u1w′ and w2 = u2w′ for some
+w′∈ S∞ .
+(3) If aw = bw for all w∈ S∞ then a = b.
+Proof. (1) We have that w = σd(a)(aw) = σd(a)(aw′) = w′.
+(2) Put m = d(a)∨ d(b). Then z = w(0, m) is a corner of w. We can write
+z = w(0, d(a))w(d(a), m) = w(0, d(b))w(d(b), m). Put u1 = w(d(a), m) and u2 =
+w(d(b), m). We therefore have that z = au1 = bu2. Now w1 = σd(a)(w) and
+w2 = σd(b)(w). It follows that w1 = u1w′
+1 and w2 = u2w′
+2 for suitable elements
+w′
+1, w′
+2∈ S∞ . But then au1w′
+1 = bu2w′
+2. By Part (1), we deduce that w′
+1 = w′
+2.
+Therefore we put w′ = w′
+1 = w′
+2.
+(3) This is Corollary 4.14. □
+We take the properties listed in Proposition 4.16 as the basis for the f ollowing
+axiomatization. Let S be a k-monoid and letX be a set with a left S-action. Thus,
+1x = x for all x∈X and ( ab)x = a(bx) for all a, b∈ S. In addition, we assume the
+following three properties:
+(A1): If ax = ax′ then x = x′ where a∈ S and x, x′∈X .
+(A2): If ax1 = bx2 then there exist u1, u2 ∈ S such that au1 = bu2 and
+x1 = u1x′ and x2 = u2x′ for some x′∈X .
+PAGE 13
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 13
+(A3): If ax = bx for all x∈X then a = b.
+We shall call the pair ( S,X ) satisfying the above axioms a system. We shall now
+investigate those consequences of the above axioms that will be us eful to us later.
+The following lemma actually proves that aX∩ bX = ( a∨ b)X in all cases but we
+have divided it into two results for the sake of clarity.
+Lemma 4.17. Let (S,X ) be a system.
+(1) For all a, b∈ S, we have that aX∩ bX = ∅ if and only if aS∩ bS = ∅ .
+(2) If aS∩ bS̸= ∅ then aX∩ bX = (a∨ b)X .
+Proof. (1) Suppose that aS∩ bS = ∅ . If aX∩ bX ̸= ∅ then by (A2) there exist
+u1, u2∈ S such that au1 = bu2. But this contradicts the assumption that aS∩ bS =
+∅ . It follows that aX∩ bX = ∅ . Now suppose that aX∩ bX = ∅ . If aS∩ bS̸= ∅
+then we can ﬁnd u, v∈ S such that au = bv. Let x∈ X be arbitrary. Then
+a(ux) = b(vx) from which it follows that aX∩ bX ̸= ∅ . But this contradicts the
+assumption that aX∩ bX = ∅ .
+(2) Let aS∩ bS ={c1, . . . , cm}S where a∨ b ={c1, . . . , cm}. We prove that
+aX∩ bX ={c1, . . . , cm}X . Let x∈ aX∩ bX . Then x = ax1 = bx2. Thus by
+(A2), there exist u1, u2∈ S such that au1 = bu2 and x1 = u1x′ and x2 = u2x′
+for some x′∈X . Thus au1 = bu2 = cip for some i and p∈ S. It follows that
+x = ax1 = au1x′ = cipx′. Thus x∈{ c1, . . . , cm}X . We now prove the reverse
+inclusion. Let cix∈{ c1, . . . , cm}X . We can write ci = au = bv for some u, v∈ S.
+It follows that cix = aux = bvx. Thus cix∈ aX∩ bX . □
+The following is immediate by part (1) of Lemma 4.17.
+Corollary 4.18. Let (S,X ) be a system. Then aX∩ bX = ∅ if and only if a and
+b are incomparable.
+Let ( S,X ) be a system. Then the set β ={aX : a∈ S} forms the basis for a
+topology on X , since if x∈ aX∩ bX , then it follows from the axioms for a system
+that there is c∈ S such that x∈ cX⊆ aX∩ bX . We endow X with the topology
+with β as basis. At this stage, we require nothing else than it is a topology.
+Lemma 4.19. Let (S,X ) be a system. For each a∈ S, deﬁne λa :X → aX by
+x↦→ ax. This is a homeomorphism.
+Proof. By (A1), λa is a bijection. It clearly maps basis elements of the topology
+to basis elements. We now look at inverse images. Suppose that bX⊆ aX . Then,
+certainly, aX∩ bX ̸= ∅ . Let bx1∈ bX be arbitrary. Then bx1 = ax2. Thus by
+(A2), there exist u1, u2∈ S such that bu1 = au2 and x1 = u1x′ and x2 = u2x′ for
+some x′∈X . Observe that λ− 1
+a (bx1) = λ− 1
+a (au2x′) = u2x′. On the other hand,
+λa(u2X ) = au2X = bu1X⊆ bX . Thus, the full inverse image of bX under λ− 1
+a is a
+union of sets of the form u2X . It follows that λa is a homeomorphism. □
+Let X be a topological space. We denote by I(X) the inverse monoid of all partial
+homeomorphisms between the open subsets of X.
+Lemma 4.20. Let (S,X ) be a system. Then λ : S→I (X ) is an injective monoid
+homomorphism.
+Proof. By Lemma 4.19 and the observation that λab = λaλb, it is clear that λ deﬁnes
+a homomorphism and since λ1 is the identity on X it is a monoid homomorphism.
+It is injective by (A3). □
+We can construct examples where λ is not injective.
+PAGE 14
+14 MARK V. LA WSON AND ALINA VDOVINA
+Example 4.21. This example is essentially due to Aidan Sims. Let S be a k-
+monoid in which the alphabet X1 ={e} is a singleton and suppose that e commutes
+with every element of Xi where 1 ≤ i≤ k. Then for any element a∈ S, we have
+that ea = ae by the UFP. Let D be any expanding subset of S. We claim that D
+and eD are equivalent. Let x∈ D and ey∈ eD, where y∈ D. By assumption,
+xu = yv for some u, v∈ S. Thus exu = eyv and so x(eu) = ( ey)v. Let w be the
+k-tiling determined by D. Then 1 w = ew by Lemma 4.5. But w was arbitrary.
+Thus λ1 = λe in this case.
+There is an isomorphism of categories Ω k+l∼
+= Ωk× Ωl. It follows that the space of
+(k + l)-tilings in S× T is homeomorphism to the space of functors F from Ω k× Ωl
+to S× T such that d(F ((m1, n1), (m2, n2))) = ( m2− m1)·(n2− n1) where we
+use the notation introduced after Lemma 3.4. There is a bijective co rrespondence
+between such functors and ordered pairs ( w1, w2) where w1 : Ω k→ S is a k-tiling
+and w2 : Ω l→ T is an l-tiling. The proof of the following is now immediate by the
+above argument.
+Proposition 4.22. Let S be a k-monoid and let T be an l-monoid. Then (S× T )∞
+is homeomorphic with S∞ × T ∞ .
+Denote the set of right-inﬁnite strings over the alphabet An is denoted by Aω
+n.
+The next result follows by Example 4.6, Proposition 4.22 and induction.
+Proposition 4.23. The space (A∗
+n1× . . .× A∗
+nk )∞ is homeomorphic to the space
+Aω
+n1× . . .× Aω
+nk .
+The following result was reported to us by Aidan Sims.
+Lemma 4.24. Let S be a k-monoid and let T be an l-monoid. If S and T are both
+eﬀective then S× T is eﬀective.
+Proof. Let ( s1, t1), (s2, t2)∈ S× T be distinct elements. Suppose ﬁrst that s1 and
+s2 are distinct but t1 = t2 = t. Now, S is eﬀective. Thus there exists s∈ S such
+that s1s and s2s are not comparable. It follows that ( s1, t)(s, 1) and ( s2, t)(s, 1) are
+not comparable. A similar argument applies if s1 = s2 but t1 and t2 are distinct.
+Suppose now that s1̸= s2 and t1̸= t2. Choose s∈ S such that s1s and s2s are not
+comparable and t∈ T such that t1t and t2t are not comparable. Then ( s1, t1)(s, t)
+and ( s2, t2)(s, t) are not comparable. □
+5. The inverse monoid R(S)
+In this section, we deﬁne the inverse monoid R(S) associated with an aperiodic
+k-monoid that will be used to build our group.
+Let S be any monoid. A subset R⊆ S is said to be a right ideal if RS⊆ R. If X
+is any subset of S then XS is a right ideal. If X consists of a single element x then
+we write xS; this is called a principal right ideal . Let R1 and R2 be right ideals
+of the monoid S. A function α : R1→ R2 is called a morphism if α(as) = α(a)s
+for all a∈ R1 and s∈ S.3 Given a k-monoid S, deﬁne R(S) to consist of all the
+bijective morphisms between the ﬁnitely generated right ideals of S.
+Lemma 5.1. Let S be a k-monoid and let α : XS→ Y S be a bijective morphism
+between two right ideals of S. Then there is a subset Z⊆ Y S such that ZS = Y S
+and α induces a bijection between X and Z.
+Proof. Put Z = α(X). Clearly, ZS ⊆ Y S. Let ys ∈ Y S. Then because α is
+a bijection, there exists xt∈ XS such that α(xt) = ys. Thus α(x)t = ys. But
+α(x)∈ Z. We have therefore proved that ys∈ ZS . Thus ZS = Y S. The fact that
+α induces a bijection between X and Z is immediate. □
+3Morphisms are the analogues of (right) module homomorphism s.
+PAGE 15
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 15
+Lemma 5.2. Let S be a k-monoid. Let α : XS → Y S be a bijective morphism
+between two right ideals of S. Let ZS ⊆ XS be a ﬁnitely generated right ideal.
+Then α(ZS ) is a ﬁnitely generated right ideal.
+Proof. Since α is a morphism, it maps right ideals to right ideals. Thus α(ZS ) is
+a right ideal. By Lemma 5.1, we have that α(ZS ) = α(Z)S. It follows that α(ZS )
+is also ﬁnitely generated. □
+Our next result simply establishes what we would expect.
+Proposition 5.3. Let S be a k-monoid. Then R(S) is an inverse monoid.
+Proof. In order that the intersection of two ﬁnitely generated right ideals be ﬁnitely
+generated, it is necessary that the intersection of any two princip al right ideals be
+either empty or ﬁnitely generated but this condition also implies that t he intersec-
+tion of any two ﬁnitely generated ideals is ﬁnitely generated. From th is result and
+Lemma 5.2, it follows that R(S) is an inverse monoid. □
+We shall now show that the representation λ : S→I (X ) lifts to a representation
+of the inverse monoid R(S). To do this, we shall need some properties of this
+monoid. Let S be a k-monoid and let x, y∈ S. Denote by xy− 1 the bijective
+morphism from yS to xS deﬁned by ya↦→ xa. We shall call bijective morphisms of
+the form xy− 1 basic.
+Lemma 5.4. Let S be a k-monoid.
+(1) xy− 1≤ uv− 1 if and only if (x, y) = ( u, v)s for some s∈ S. It follows that
+if xy− 1 is an idempotent so too is uv− 1.
+(2) xx− 1⊥ yy − 1 if and only if x and y are incomparable in S.
+(3) xx− 1yy − 1 = ⋁
+u∈ x∨ y uu− 1.
+(4) Suppose that bS∩ cS ={x1, . . . , xm}S. Then
+(ab− 1)(cd− 1) =
+n⋁
+i=1
+api(dqi)− 1
+where xi = cqi = bpi.
+Proof. (1) By the deﬁnition of the order on partial functions, we have tha t yS⊆ vS
+and xS⊆ uS. In addition, xy− 1 and uv− 1 agree on elements of yS . We have that
+y = va and x = ub. Now, ( xy− 1)(y) = x. But ( uv− 1)(y) = ua. It follows that
+x = ua and so ub = ua and so a = b. The result now follows with s = a = b.
+In order that xy− 1 be an idempotent, we must have that x = y. It is therefore
+immediate that if xy− 1 is an idempotent then so too is uv− 1.
+(2) The idempotents xx− 1 and yy − 1 are orthogonal if and only if xS∩ yS = ∅ .
+But this is equivalent to saying that x and y are incomparable.
+(3) The product of xx− 1 and yy − 1 is the identity function on xS∩ yS which is
+the identity function on ( x∨ y)S.
+(4) We simply compute the composite of the partial functions ab− 1 : bS→ aS
+and cd− 1 : dS→ cS. □
+Basic morphisms are the building blocks of all elements of R(S).
+Lemma 5.5. Let S be a k-monoid. Then each element of R(S) is a join of basic
+bijective morphisms.
+Proof. Let θ : XS→ Y S be a bijective morphism where X and Y are ﬁnite sets.
+By Lemma 5.1, we may assume that θ induces a bijection between X and Y . Let
+x∈ X. Put yx = θ(x). Then θ(xs) = θ(x)s = yxs. It follows that the restriction of
+θ to xS is a map of the form yxx− 1. Thus θ = ⋃
+x∈ X yxx− 1. □
+PAGE 16
+16 MARK V. LA WSON AND ALINA VDOVINA
+The following property of R(S) is simple, but important.
+Lemma 5.6. Let S be a k-monoid. Let xy− 1≤ ⋁n
+j=1 ujv− 1
+j in R(S). Then xy− 1≤
+ujv− 1
+j for some j.
+Proof. Clearly, y∈ vjS for some j. It follows that yS⊆ vj S. Let y = vjm for some
+m∈ S. Then ( xy− 1)(y) = x and ( ujv− 1
+j )(vj m) = ujm. Thus x = ujm. It follows
+that xS⊆ ujS. It is now clear that xy− 1≤ ujv− 1
+j . □
+Proposition 5.7. Let (S,X ) be a system. Then there is a monoid homomorphism
+χ : R(S)→I (X ) such that χ(ab− 1) = λaλ− 1
+b .
+Proof. Deﬁne χ(ab− 1) = λaλ− 1
+b . By Lemma 4.19, this is a partial homeomorphism
+ofX . It has domain bX , codomain aX and bx ↦→ ax. We prove ﬁrst that if
+ab− 1 ≤ cd− 1 then χ(ab− 1)≤ χ(cd− 1). By part (1) of Lemma 5.4, there is an
+element s∈ S such that a = cs and b = ds. It is now routine to verify that
+χ(ab− 1)≤ χ(cd− 1) using the fact that λsλ− 1
+s is an idempotent. Now, let ab− 1 and
+cd− 1 be compatible elements. We prove that χ(ab− 1) and χ(cd− 1) are compatible.
+If bX∩ dX = ∅ then ab− 1 and cd− 1 are orthogonal and so bX∩ dX = ∅ and
+aX∩ cX = ∅ ; here we use the result that a pair of compatible elements with
+orthogonal domains have orthogonal ranges. It follows that χ(ab− 1) and χ(cd− 1) are
+both orthogonal and so are compatible. In the sequel, we may ther efore assume that
+bX∩ dX̸ = ∅ . Let x∈ bX∩ dX . Then x = bx1 = dx2. Thus by axiom (A2), there are
+elements u1, u2∈ S and x′∈X such that bu1 = du2 and x1 = u1x′ and x2 = u2x′.
+By deﬁnition, χ(ab− 1)(x) = ax1 = au1x′ and χ(cd− 1)(x) = cx2 = cu2x′. But ab− 1
+and cd− 1 are compatible and so au1 = cu2. It follows that χ(ab− 1)(x) = χ(cd− 1)(x).
+By symmetry, we deduce that χ(ab− 1) and χ(cd− 1) are compatible. We can now
+extend χ to the whole of R(S). By Lemma 5.5, a typical element of R(S) has the
+form ⋁n
+i=1 aib− 1
+i . Deﬁne
+χ
+( n⋁
+i=1
+aib− 1
+i
+)
+=
+n⋃
+i=1
+χ(aib− 1
+i ).
+The right-hand side is certainly a well-deﬁned element. It remains to s how that the
+map χ as deﬁned is actually well-deﬁned. Suppose that
+n⋁
+i=1
+aib− 1
+i =
+m⋁
+j=1
+cjd− 1
+j .
+By Lemma 5.6, for each i there exists a j such that aib− 1
+i ≤ cjd− 1
+j and conversely.
+From this it quickly follows that our deﬁnition of χ is indeed well-deﬁned. Finally,
+we prove that χ is a monoid homomorphism. To do this, we need only prove that
+χ(ab− 1)χ(cd− 1) = χ(ab− 1·cd− 1). We use part (4) of Lemma 5.4. We therefore
+need to prove that
+χ(ab− 1)χ(cd− 1) = χ
+( n⋁
+i=1
+api(dqi)− 1
+)
+where bS∩ cS ={x1, . . . , xm}S and xi = cqi = bpi. We check ﬁrst that the map
+on the left-hand side has the same domain as the map on the right-ha nd side. By
+Lemma 4.17, we have that bX∩ cX ={x1, . . . , xm}X . Thus the domain of the left-
+hand side is {dq1, . . . , dqm}X which is the same as the domain of the right-hand
+side. The result now follows by a routine calculation. □
+PAGE 17
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 17
+6. Definition of the group G(S).
+In this section, we deﬁne the group associated with a k-monoid. The properties
+of this group will be investigated in more detail in subsequent section s.
+We use the inverse monoid R(S) deﬁned in the previous section. We shall con-
+struct our group, not from R(S) itself, but from a certain inverse subsemigroup.
+Let T be an inverse semigroup. A non-zero idempotent e of T is said to be essential
+if ef̸= 0 for all non-zero idempotents f of S. Denote by T e the set of all s∈ T
+such that s− 1s and ss− 1 are essential. It follows by [31, Lemma 4.2], that T e is an
+inverse semigroup (without zero).
+Lemma 6.1. Let S be k-monoid. Then the idempotent in R(S) associated with the
+ﬁnitely generated right ideal XS , that is the identity function deﬁned on XS , is
+essential if and only if for every s∈ S there exists an x∈ X such that sa = xb for
+some a, b∈ S.
+Proof. A right ideal XS is essential if and only if it has a non-empty intersection
+with every principal right ideal sS. The result is now immediate. □
+We now come to the key deﬁnition of this paper.
+Deﬁnition. Let S be a k-monoid.
+Then
+G(S) = R(S)e/σ
+is the group associated with S.
+Remark 6.2. The above process for constructing a group from an inverse mono id
+of partial bijections is in fact identical to the one used in [10]. Howev er, we stress
+that the group deﬁned in our paper is quite diﬀerent from the one de ﬁned in [10].
+Observe that we can avoid the explicit use of the congruence σ by simply deﬁning
+two elements of R(S)e to be equal if they agree on an essential ﬁnitely generated
+right ideal.
+7. The group G(S) in terms of maximal generalized prefix codes.
+In Section 6, we deﬁned the group G(S) associated with any k-monoid. In this
+section, we shall show that this group can be deﬁned in a diﬀerent wa y that will
+make it much easier to represent it in geometric terms later. As a ﬁrs t step, we
+shall construct an inverse submonoid of R(S). Let S be a k-monoid. We say that
+the ﬁnitely generated right ideal XS is projective if X is a generalized preﬁx code.
+Lemma 7.1. Let S be a k-monoid. Suppose that XS = Y S where X and Y are
+generalized preﬁx codes. Then X = Y .
+Proof. Let x∈ X. Then x = ym for some y∈ Y and m∈ S. Also, y = x′m′ for
+some x′∈ X and m′∈ S. Therefore x = x′m′m. But x and x′ are incomparable if
+distinct. Thus x = x′ and so m′m = 1 by cancellation. However, S is conical and
+so m = m′ = 1. It follows that x = y. We have proved that X⊆ Y . By symmetry,
+Y ⊆ X and so X = Y . □
+Lemma 7.1 shows that there is a bijection between projective right id eals and
+generalized preﬁx codes.
+Lemma 7.2. Let S be a k-monoid. Then the intersection of any two ﬁnitely
+generated projective right ideals of S is a ﬁnitely generated projective right ideal of
+S.
+PAGE 18
+18 MARK V. LA WSON AND ALINA VDOVINA
+Proof. Let XS and Y S be two ﬁnitely generated projective right ideals where X and
+Y are generalized preﬁx codes. We shall assume that XS∩ Y S̸= ∅ , otherwise there
+is nothing to prove. By assumption, for each x∈ X and y∈ Y either xS∩ yS = ∅
+or xS∩ yS = Z(x,y)S where Z(x,y) is a ﬁnite set of incomparable elements. It
+follows that XS∩ Y S =
+( ⋃
+(x,y)∈ X× Y Z(x,y)
+)
+S.4 We prove that ⋃
+(x,y)∈ X× Y Z(x,y)
+is a generalized preﬁx code. Let a∈ Z(xi,yk) and b∈ Z(xj ,yl) where xi, xj∈ X and
+yk, yl∈ Y . Suppose that aS∩ bS̸= ∅ . Then am1 = bm2 for some m1, m2∈ S.
+But a = up, where u∈ xiS∩ ykS, and b = vq, where v∈ xjS∩ ylS. It follows that
+xi = xj and yk = yl by virtue of the fact that the elements are incomparable. □
+Lemma 7.3. Let S be a k-monoid. Each bijective morphism from XS to Y S,
+where X and Y are generalized preﬁx codes, is determined by a bijection fr om X to
+Y , and vice versa.
+Proof. Suppose ﬁrst that α : X → Y is a bijection. Deﬁne α′: XS → Y S by
+α′(xm) = α(x)m. We need ﬁrst to show that α′ is a well-deﬁned function. Suppose
+that xm = x′m′ where x, x′∈ X. Then, since X is a generalized preﬁx code, we
+must have that x = x′ and so, by cancellation, m = m′. It follows that α′ is well-
+deﬁned. It is a morphism by construction. We show that it is a bijectio n. Suppose
+that α′(xm) = α′(x′m′). Then α(x)m = α(x′)m′. By assumption, α(x), α(x′)∈ Y
+which is a generalized preﬁx code. It follows that α(x) = α(x′) and so, since α is
+a bijection, we have that x = x′. By cancellation, we then get that m = m′ and
+so xm = x′m′. It follows that α′ is injective. The fact that it is a surjection is
+immediate.
+Suppose now that α : XS → Y S is a bijective morphism. We claim that α
+induces a bijection between X and Y . Let x∈ X. Then α(x) = ym. Take α− 1 of
+both sides and we get that x = α− 1(y)m. Let α− 1(y) = x′n. Then x = x′nm. But
+x and x′ are incomparable unless x = x′ in which case 1 = nm. We now apply the
+fact that S is conical to get that m = n = 1. □
+Lemma 7.4. Let S be a k-monoid. Let α : XS → Y S be a bijective morphism
+between two ﬁnitely generated right ideals and let Z⊆ XS be a generalized preﬁx
+code. Then α(Z) is a generalized preﬁx code.
+Proof. Suppose that z, z ′∈ Z are such that α(z)S∩ α(z′)S̸= ∅ . Then α(z)m =
+α(z′)m′ for some m, m′∈ S. But α is a morphism and so α(zm) = α(z′m′). By
+injectivity, we have that zm = z′m′ and, by assumption, z and z′ are supposed to
+be incomparable. Thus z = z′. It follows that α(z) = α(z′). This proves that α(Z)
+is also a generalized preﬁx code. □
+Denote by P(S) the set of all bijective morphisms between ﬁnitely generated
+projective right ideals of S. By Lemma 7.2 and Lemma 7.4, it follows that P(S)⊆
+R(S) and that, in fact, we have proved the following.
+Proposition 7.5. Let S be a k-monoid. The set of all bijective morphisms between
+ﬁnitely generated projective right ideals of S is an inverse submonoid P(S) of R(S).
+The following lemma is simple, but important.
+Lemma 7.6. Let S be a k-monoid. Then P(S)e⊆ R(S)e.
+Proof. The result follows from the simple observation that principal right ide als aS
+are projective. □
+4Be aware that some of the sets Z(x,y) could be empty.
+PAGE 19
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 19
+Lemma 7.7. Let S be a k-monoid. Let α : XS → Y S be a bijective morphism
+between two essential, ﬁnitely generated right ideals of S such that α induces a
+bijection between X and Y . Suppose that ZS⊆ XS is such that Z is a maximal
+generalized preﬁx code. Then α(Z) is a maximal generalized preﬁx code.
+Proof. Let Z ={z1, . . . , zm}. Suppose that α(zi) and α(zj ) are comparable. Then
+α(zi)a = α(zj)b. But α is a morphism, so α(zia) = α(zjb). Thus zia = zjb. But
+Z is a generalized preﬁx code and so i = j and zi = zj. We have therefore proved
+that α(Z) is a generalized preﬁx code. We now prove that α(Z) is maximal. Let
+a∈ S be any element. Then aS∩ Y S̸= ∅ . Thus ab = ys for some y∈ Y and
+b, s∈ S. It follows that α− 1(a)b = α− 1(y)s. Since ZS is an essential ideal we
+have that α− 1(y)sd = zf . Thus ysd = α(z)f and so abd = α(z)f . It follows that
+aS∩ α(z)S̸= ∅ , as claimed. □
+Lemma 7.8. Let XS be an essential ﬁnitely generated right ideal in a k-monoid
+S. Then there is a maximal generalized preﬁx code Z⊆ XS .
+Proof. Put n = ⋁
+x∈ X d(x). Recall that Cn is the set of all elements s∈ S such that
+d(s) = n. This is a maximal generalized preﬁx code by Lemma 3.13. Put Z = Cn.
+Let z∈ Z. Then zS∩ XS̸= ∅ . Thus za = xb for some x∈ X and a, b∈ S. By
+deﬁnition, d(z)≥ d(x). It follows that z = xt for some t∈ S by Lemma 3.10. Thus
+Z⊆ XS . □
+Lemma 7.9. Each element of R(S)e extends an element of P(S)e.
+Proof. Let α : XS → Y S be a bijective morphism between two essential, ﬁnitely
+generated right ideals of S. By Lemma 7.8, there is a maximal generalized preﬁx
+code Z⊆ XS . By lemma 7.7, the bijective morphism α|ZS , the restriction of α to
+the set ZS , maps a ﬁnitely generated projective right ideal to a ﬁnitely genera ted
+projective right ideal. It is therefore an element of P(S)e. □
+Lemma 7.10. Let U be an inverse subsemigroup of the inverse semigroup V .
+Suppose that each element of V lies above an element of U in the natural partial
+order. Then V /σV ∼
+= U/σU .
+Proof. We denote the σV -congruence class containing the element s by [s]V and the
+σU -congruence class containing the element s by [ s]U . There is a homomorphism
+U→ V /σV given by s↦→ [s]V . This map is surjective since each element of V is
+above an element in U . Suppose that s and s′ map to the same element under
+this map. Then, by deﬁnition, there is an element t∈ V such that t≤ s, s′. By
+assumption, there exists s′′≤ t where s′′∈ U . It follows that [ s]U = [ s′]U . The
+result now follows. □
+By Lemma 7.9 and Lemma 7.10, we have therefore proved the following .
+Theorem 7.11. Let S be a k-
+monoid. Then
+P(S)e/σ∼
+= R(S)e/σ.
+The above theorem tells us that the two ways in which we might have de ﬁned our
+group G(S) give the same answer.
+Remark 7.12. The above theorem implies that the structure of the group G(S) is
+intimately connected with the structure of the maximal generalized preﬁx codes in
+S.
+PAGE 20
+20 MARK V. LA WSON AND ALINA VDOVINA
+8. A geometric representation of the group G(S).
+Let S be an aperiodic k-monoid. By proposition 5.7 and Proposition 4.16, there
+is a monoid homomorphism χ : R(S)→I cl(S∞ ), the inverse monoid of all partial
+homeomorphisms between the clopen subsets of S∞ . We are ﬁrst of all interested
+in which elements of R(S) map to bijections in I cl(S∞ ).
+Lemma 8.1. Let S be an aperiodic k-monoid. Let ι be the identity function on the
+ﬁnitely generated right ideal AS. Then χ(ι) is the identity on S∞ if and only if AS
+is an essential ideal of S.
+Proof. We prove that AS∞ = S∞ if and only if AS is an essential right ideal of
+S. Suppose ﬁrst that AS is an essential right ideal. Let x∈ S∞ . Choose a corner
+b of x which is larger than any element of A. Then bS∩ AS̸=∅ and so bu = av
+for some a∈ A. But, by assumption, d(b)≥ d(a). It follows by Lemma 3.10, that
+b = at for some t∈ S. It follows that a is a corner of x and so x∈ aS∞ . Thus
+AS∞ = S∞ . To prove the converse, suppose that AS∞ = S∞ . We prove that
+AS is an essential ideal. Suppose not. Then there is an element b∈ S such that
+AS∩ bS = ∅ . However, b must be a corner of some element w∈ aS∞ for some
+a∈ A. But this implies that b is comparable with a and so bS∩ aS̸= ∅ . This is a
+contradiction. □
+By the above lemma, it follows that the elements of R(S) that are mapped to
+bijections of S∞ under χ are precisely the elements of R(S)e.
+Proposition 8.2. Let S be a k-monoid. Then R(S)e is E-unitary.
+Proof. Let α : XS→ Y S be a bijective morphism between two ﬁnitely generated
+essential right ideals. Suppose that α is the identity when restricted to the ﬁnitely
+generated essential right ideal ZS where ZS⊆ XS . Let xa∈ XS . Then, since ZS
+is an essential right ideal, we have that xaS∩ ZS̸= ∅ . It follows that xab = zc
+for some b, c∈ S and z∈ Z. But α(zc) = zc and so α(xab) = xab. But α is a
+morphism and so α(xab) = α(x)ab. By cancellation, it follows that α(x) = x. We
+have therefore proved that α is the identity on X and so α is also an idempotent. □
+The above result makes the proof of the following much easier.
+Proposition 8.3. Let S be an aperiodic k-monoid. Let
+α = x1y− 1
+1 ∨ . . .∨ xmy− 1
+m and β = u1v− 1
+1 ∨ . . .∨ unv− 1
+n
+be two elements of P(S)e such that χ(α) = χ(β). Then α σ β.
+Proof. By Proposition 2.1 and Proposition 8.2, we need only prove that α ∼ β.
+By symmetry, it is enough to prove that elements of the form yix− 1
+i ujv− 1
+j are
+idempotents. Let s∈ S be such that ( yix− 1
+i ujv− 1
+j )(s) is deﬁned. Then s = vj s1
+for some j and ujs1 = xis2 for some i. In particular, ( yix− 1
+i ujv− 1
+j )(s) = yis2. By
+assumption, χ(α) = χ(β) and so χ(α)− 1 = χ(β)− 1. Thus for all w∈ S∞ , and using
+the fact that ujs1 = xis2, we have that
+χ(β)− 1(ujs1w) = vj s1w = χ(α)− 1(xis2w) = yis2w.
+By Corollary 4.14, we deduce that vjs1 = yis2. Thus ( yix− 1
+i ujv− 1
+j )(s) = s when
+deﬁned. It follows that yix− 1
+i ujv− 1
+j is an idempotent. □
+We have therefore proved the following. Recall that we usually make assumptions
+so that S∞ is the Cantor space.
+Theorem 8.4. Let S be an aperiodic k-monoid. The the group G(S) is isomorphic
+to a subgroup of the group of all self-homeomorphisms S∞ .
+PAGE 21
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 21
+Remark 8.5. We can think of the elements of the group G(S) in the follow-
+ing concrete terms. We use the results of Section 7. Let A = ( a1, . . . , am) and
+B = ( b1, . . . , bm) be two ordered maximal generalized preﬁx codes. Then the sets
+{aiS∞ : 1≤ i≤ m} and{biS∞ : 1≤ i≤ m} are both partitions of S∞ by Corol-
+lary 4.18 and Lemma 8.1. We deﬁne a function f(B,A) : S∞ → S∞ by aiw↦→ biw
+where w∈ S∞ . Then f(B,A) is a self-homeomorphism of S∞ . The group G(S) is
+isomorphic to the totality of all such maps.
+9. The group G(S) as a group of units
+In this section, we shall deﬁne a congruence ≡ on the inverse monoid R(S) and
+show that the quotient is a Boolean inverse monoid. We then show tha t our group
+G(S) is exactly the group of units of R(S)/≡ .
+Let T be an inverse∧ -semigroup with zero. Deﬁne the relation ≡ on T as follows:
+s≡ t if and only if for each 0 < x≤ s we have that x∧ t̸= 0 and for each 0 < y≤ t
+we have that y∧ s̸= 0. By [39, 23], we have the following.
+Lemma 9.1. Let T be an arbitrary inverse ∧ -monoid with zero. Then ≡ is a
+0-restricted congruence on T .
+This congruence is deﬁned out of the blue, but we now describe some of its
+properties which will make it much more natural. Let a≤ b. We write a≤ e b and
+say that a is essential in b if 0 < x≤ b implies that a∧ x̸= 0.
+Lemma 9.2. Let T be an inverse ∧ -semigroup with zero. Then a≤ e b if and only
+if d(a)≤ e d(b).
+Proof. Assume ﬁrst that a≤ e b. Then d(a)≤ d(b). Let 0 < e≤ d(b). Then 0 <
+eb≤ b. Thus a∧ eb̸= 0. But a and eb are compatible and so by [28, Lemma 1.4.11].
+we have that d(a∧ eb) = d(a)∧ e, which is therefore non-zero. Conversely, suppose
+that d(a) ≤ e d(b). Let 0 < x ≤ b. Then 0 < d(x) ≤ d(b), By assumption,
+d(x)∧ d(a)̸= 0. But a and x are compatible and so d(x∧ a) = d(x)∧ d(a)̸= 0
+again by [28, Lemma 1.4.11]. Thus x∧ a̸= 0. □
+Lemma 9.3. Let T be an arbitrary inverse ∧ -monoid with zero. Then a≡ b if and
+only if a∧ b≤ e a, b.
+Proof. Suppose ﬁrst that a≡ b where a, b̸= 0. Then since a≤ a we have that
+a∧ b̸= 0. Clearly, a∧ b≤ a. Let 0 < x≤ a. Then, by deﬁnition, b∧ x̸= 0. But
+x = x∧ a. It follows that x∧ (a∧ b)̸= 0. We have therefore proved that a∧ b≤ e a.
+By symmetry, we also have that a∧ b≤ e b, as required. To prove the converse,
+suppose that a∧ b≤ e a, b. Let 0 < x ≤ a. Then x∧ (a∧ b)̸= 0. It follows that
+x∧ b̸= 0. By symmetry, we deduce that a≡ b. □
+We can now say something speciﬁc about the congruence ≡ .
+Lemma 9.4. Let T be an arbitrary inverse ∧ -monoid with zero. Let ρ be any
+congruence such that a≤ e b implies that a ρ b. Then ≡⊆ ρ.
+Proof. Suppose that a≡ b. Then by Lemma 9.3, we have that a∧ b≤ e a, b. By
+assumption, ( a∧ b) ρ a and ( a∧ b) ρ b. It follows that a ρ b. □
+We deﬁne a congruence ρ to be essential if a≤ e b implies that a ρ b.
+Lemma 9.5. Let T be an arbitrary inverse ∧ -monoid with zero. Let ρ be a 0-
+restricted idempotent-pure essential congruence on T . Then ρ =≡ .
+PAGE 22
+22 MARK V. LA WSON AND ALINA VDOVINA
+Proof. Let aρb. Then a∼ b because ρ is idempotent-pure. It follows that a∧ b =
+ab− 1b; this can be proved directly or see [28, Lemma 1.4.12]. It follows that ab− 1b ρ b
+and so ( a∧ b) ρ b. Let 0 < x≤ b. Then ( a∧ b)x− 1x ρ bx− 1x = x. Since x is non-zero
+and ρ is 0-restricted, it follows that ( a∧ b)x− 1x̸= 0. Now x, a∧ b≤ b and so
+x∼ (a∧ b). It follows that ( a∧ b)∧ x = (a∧ b)x− 1x. We have therefore shown that
+if 0 < x≤ b then ( a∧ b)∧ x̸= 0. We have therefore proved that ( a∧ b)≤ e b. By
+symmetry, (a∧ b)≤ e a. Thus by Lemma 9.3 we have that a≡ b. □
+We have therefore proved the following theorem which demonstrat es the signiﬁ-
+cance of the congruence ≡ .
+Theorem 9.6. Let T be an arbitrary inverse ∧ -monoid with zero in which ≡ is
+idempotent-pure. Then ≡ is the unique congruence on T which is 0-restricted,
+idempotent-pure and essential.
+The following now connects the congruence ≡ with Proposition 8.2.
+Lemma 9.7. Let T be an arbitrary inverse ∧ -monoid with zero in which ≡ is
+idempotent-pure. Suppose that T e is E-unitary. Then the restriction of the con-
+gruence≡ to T e is the minimum group congruence on Se.
+Proof. Observe that a∈ T e if and only if a− 1a≡ 1 and aa− 1≡ 1. Suppose that
+a, b∈ T e and a≡ b. Then, since ≡ is idempotent-pure, we have that a∼ b and so
+a σ b, since in an E-unitary inverse semigroup σ =∼ [28, Theorem 2.4.6]. Suppose
+that a σ b in T e. Then there exists c∈ T e such that c≤ a, b. Now d(c)≡ 1
+and d(a)≡ 1 and so d(c)≡ d(a). It follows that d(c)d(a)≤ e d(a). That is,
+d(c)≤ e d(a). Thus by Lemma 9.2, we have that c≤ e a and, by symmetry, c≤ e b.
+It follows by Lemma 9.3, that a≡ b, as required. □
+We have therefore proved the following.
+Proposition 9.8. Let T be an inverse∧ -monoid with zero in which≡ is idempotent-
+pure and T e is E-unitary. Then the group of units of T /≡ is isomorphic to T e/σ.
+Proposition 9.9. Let S be a k-monoid. Then R(S) is a distributive inverse
+monoid.
+Proof. We proved in Proposition 5.3 that R(S) is an inverse monoid. If XS and
+Y S are two ﬁnitely generated right ideals then their union is ( X∪ Y )S which is
+also a ﬁnitely generated right ideal. It is now immediate that R(S) is a distributive
+inverse monoid. □
+In fact, the inverse monoid R(S) has all binary meets, a consequence of the
+following result.
+Lemma 9.10. Let S be a k-monoid. Then the ﬁxed point set of a bijective mor-
+phism θ : XS→ Y S is a ﬁnitely generated right ideal.
+Proof. Let a∈ XS be such that θ(a) = a. By assumption, a = xs for some x∈ X
+and s∈ S. It follows that θ(x)s = xs and so, by right cancellation, we have that
+θ(x) = x. Deﬁne X ′ ={x∈ X : θ(x) = x}. Then the ﬁxed point set of θ is precisely
+the set X ′S. □
+By Lemma 9.10 and [38, Theorem 1.9], we have the following.
+Corollary 9.11. Let S be a k-monoid. Then R(S) is a ∧ -monoid.
+Lemma 9.12. Let S be an inverse semigroup and let ρ be an idempotent-pure
+congruence on S.
+PAGE 23
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 23
+(1) If S is distributive then S/ρ is distributive and the natural map S→ S/ρ
+is a morphism.
+(2) If S is a ∧ -semigroup then S/ρ is a ∧ -semigroup and the natural map
+S→ S/ρ preserves meets.
+Proof. (1) Denote the ρ-class containing a by [ a]. We prove ﬁrst that for idempo-
+tents e and f we have that [ e∨ f ] = [ e]∨ [f ]. Clearly, [ e]∨ [f ]≤ [e∨ f ]. Suppose
+that [ a] is any idempotent such that [ e], [f ]≤ [a].Because ρ is idempotent-pure, we
+know that [ a] = [ i], where i is an idempotent. Thus [ e], [f ]≤ [i]. It follows that
+[e] = [ ei] and [ f ] = [ f i]. Thus [ e∨ f ] = [ ei∨ f i] = [( e∨ f )i]≤ [i]. It follows that
+[e∨ f ] = [ e]∨ [f ]. Suppose, now, that [ a]∼ [b]. Then, since ρ is idempotent-pure
+we have that a∼ b. Thus a∨ b is deﬁned. We claim that [ a∨ b] = [ a]∨ [b]. Since
+a, b≤ a∨ b we have that [ a], [b]≤ [a∨ b]. By our result on idempotents above, we
+have that [ d(a∨ b)] = [ d(a)]∨ [d(b)]. Suppose that [ a], [b]≤ [c]. It is easy to check
+that [ c][d(a)∨ d(b)] = [ cd(a)∨ cd(b)] = [ a∨ b]. Thus [ a]∨ [b] = [ a∨ b].
+(2) Let [ e]≤ [a]. Then [ e] = [ ea]. Since ρ is idempotent-pure, we have that ea
+is an idempotent and clearly ea≤ a. It follows that ea≤ φ(a), where φ is the
+operator introduced in Section 2, and so [ e] = [ ea]≤ [φ(a)]. We have therefore
+proved that φ([a]) = [ φ(a)]. That is, S/ρ is a∧ -semigroup.
+It remains to prove that the natural map preserves meets. Let a, b∈ S. Then
+a∧ b = φ(ab− 1)b. It follows that
+[a∧ b] = [ φ(ab− 1)b] = [ φ(ab− 1)][b] = φ([ab− 1][b]) = [ a]∧ [b].
+□
+In the following result, we shall use the description of elements of R(S) as joins
+of basic morphisms Lemma 5.5.
+Lemma 9.13. Let S be a k-monoid. The congruence ≡ is idempotent-pure on the
+inverse monoid R(S).
+Proof. Suppose that
+( m⋁
+i=1
+xiy− 1
+i
+)
+≡
+
+
+n⋁
+j=1
+uju− 1
+j
+
+ .
+Let 1≤ i≤ m. Then xiy− 1
+i is less than or equal to the left-hand side and non-zero.
+By deﬁnition of the relation ≡ it follows that ( xiy− 1
+i )↓∩ (uju− 1
+j )↓̸= ∅ . Now, the
+set of idempotents in an inverse semigroup is an order ideal. Thus any element less
+than or equal to uju− 1
+j is an idempotent. It follows that there is an idempotent
+zz − 1≤ xiy− 1
+i . Thus by Lemma 5.4, we have that z = xip = yip for some p∈ S.
+By right cancellation, we have that xi = yi. It follows that xiy− 1
+i is an idempotent.
+Thus ⋁m
+i=1 xiy− 1
+i is an idempotent, as required. □
+We have therefore proved the following.
+Proposition 9.14. Let S be a k-monoid. Then R(S)/≡ is a distributive∧ -monoid.
+Deﬁnition. Let S be a k-monoid. Deﬁne
+C(S) = R(S)/≡ .
+The rationale for deﬁning this monoid now follows. It is a consequence of Propo-
+sition 9.8 and what we proved above.
+Proposition 9.15. Let S be a k-monoid. Then the group of units of C(S) is
+isomorphic to the group G(S).
+PAGE 24
+24 MARK V. LA WSON AND ALINA VDOVINA
+We shall now prove that C(S) is actually a Boolean inverse monoid. By Proposi-
+tion 5.7 and Proposition 4.16, there is a monoid homomorphism χ : R(S)→I cl(S∞ )
+to the inverse monoid of partial homeomorphisms between the clope n subsets of S∞ .
+By [55, Proposition 4.4.8], this is a fundamental inverse semigroup — th e signif-
+icance of this property will be explained later. Our goal now is to calcu late the
+kernel of the homomorphism χ. To do this, we need some preparation. We use the
+fact that k-tilings have corners of every possible size (Remark 4.2). The ﬁrst r esult
+is preparatory.
+Lemma 9.16. Let S be a k-monoid. Let X ={x1, . . . , xm} and Y ={y1, . . . , yn}
+Then in R(S) we have that
+( ⋁m
+i=1 xix− 1
+i
+)
+≡
+( ⋁n
+j=1 yjy− 1
+j
+)
+if and only if XS ∞ =
+Y S ∞ .
+Proof. Suppose ﬁrst that
+( ⋁m
+i=1 xix− 1
+i
+)
+≡
+( ⋁n
+j=1 yjy− 1
+j
+)
+. We prove that XS ∞ =
+Y S ∞ . Let xiw∈ XS ∞ where xi∈ X and w∈ S∞ . Choose a corner x of w (so that
+w = xw′) such that xix is bigger than any element of Y . Now, 0 < x ix(xix)− 1≤( ⋁m
+i=1 xix− 1
+i
+)
+. Thus for some j, the set ( xix(xix)− 1)↓∩ (yjy− 1
+j )↓ is non-empty.
+Let zz − 1 ≤ xix(xix)− 1, yjy− 1
+j . Then z = xiwp = yjq for some p, q∈ S. But
+by assumption, d(xix) > d (yj). Thus by Lemma 3.10, there is t∈ S such that
+xix = yjt. It follows that xiw = yitw′ and so XS ∞ ⊆ Y S ∞ . The reverse inclusion
+follows by symmetry.
+Suppose that XS ∞ = Y S ∞ . We prove that
+( ⋁m
+i=1 xix− 1
+i
+)
+≡
+( ⋁n
+j=1 yjy− 1
+j
+)
+. Let
+uu− 1≤ xix− 1
+i . Then u = xip for some p∈ S. By assumption, xipSω⊆ Y S ∞ . Let
+w∈ S∞ . Then xipw = yjw1 for some w1∈ S∞ and some yj∈ Y . By Lemma 4.3,
+we can choose a corner x of w, so that w = xw′, such that xipx is bigger than any
+element of Y . Now recall that xip = u. Then uxw′ = yjw1. By Lemma 3.10, there
+is t∈ S such that z = ux = yjt. It follows that zz − 1≤ uu− 1, yjy− 1
+j , as required.
+The result now follows by symmetry. □
+Our key result is the following.
+Proposition 9.17. Let S be a k-monoid with an aperiodic k-tiling. Let X =
+{x1, . . . , xm}, Y ={y1, . . . , ym}, U ={u1, . . . , un} and V ={v1, . . . , vn}. Put
+α = ⋁m
+i=1 xiy− 1
+i and β = ⋁n
+j=1 ujv− 1
+j . Then in R(S) we have that α≡ β if and
+only if χ(α) = χ(β).
+Proof. Suppose that α≡ β. By Lemma 9.16, we have that Y S ∞ = V S ∞ and
+XS ∞ = U S∞ . Let yiw∈ Y S ∞ . By Lemma 4.3, we can choose a corner x of w such
+that xix is bigger than every element in U and yix is bigger than every element in V .
+Let w = xw′. Now xix(yix)− 1≤ xiy− 1
+i . Thus we can ﬁnd ab− 1≤ xix(yix)− 1, ujv− 1
+j
+for some j. It follows that a = xixp = ujq and b = yixp = vjq for some p, q∈ S.
+Thus by Lemma 3.10, we can write xix = ujt and yix = vjs. Observe that tp = q
+and that sp = q and so s = t. It is now easy to show that χ(α)(yiw) = χ(β)(yiw),
+as required.
+Now suppose that χ(α) = χ(β). We prove that α≡ β. Let ab− 1≤ xiy− 1
+i . Then
+(a, b) = ( xi, yi)p for some p∈ S. Let w∈ S∞ be arbitrary. By Lemma 4.3, we can
+choose a corner x of w such that yipx is bigger than every element of V and xipx
+is bigger than every element of U . Let w = xw′. Then χ(α)(yipxw′) = xipxw′.
+By assumption, χ(β)(yipxw′) is also deﬁned and equals xipxw′. We must have
+that yipxw′ = vjw1 for some j. It follows that χ(β)(yipxw′) = ujw1. Thus
+xipxw′ = ujw1. By Lemma 3.10, there are elements s, t∈ S such that yipx =
+vjs and xipx = ujt. Now, we have that yipx ˆw = vjs ˆw for all ˆw ∈ S∞ . But
+χ(α) = χ(β) and so xipx ˆw = ujs ˆw for all ˆw∈ S∞ . By Corollary 4.14, it follows
+PAGE 25
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 25
+that xipx = ujs. Put c = ax = ujs and d = bx = vjs where a = xip and b = yip.
+Then cd− 1≤ ab− 1, ujv− 1
+j . The result now follows by symmetry. □
+The idempotents of I cl(S∞ ) are the identity functions on the clopen subsets of
+S∞ . Each clopen subset is compact and therefore a ﬁnite union of clope n subsets of
+the form xS∞ where x∈ S. Thus each clopen subset is of the form {x1, . . . , xn}S∞ .
+It follows that each idempotent in I cl(S∞ ) is the image of an idempotent in R(S).
+It is well-known, and easy to prove, that wide inverse subsemigroup s of funda-
+mental inverse semigroups are themselves fundamental. Let {x1, . . . , xm}S∞ and
+{y1, . . . , yn}S∞ be any two non-empty clopen subsets of S∞ . There is a bijective
+morphism between{x1, . . . , xm}S∞ and{y1x1, . . . , y1xm}S∞ where xiω↦→ y1xiω.
+Clearly,{y1x1, . . . , y1xm}S∞ ⊆{ y1, . . . , yn}S∞ . It follows that C(S) is 0-simple.
+By Lemma 9.11, C(S) is a ∧ -monoid. We refer to the unique countable atomless
+Boolean algebra as the Tarski algebra ; it is the dual of the Cantor space under
+classical Stone duality. We have therefore proved the following.
+Theorem 9.18. Let S be a k-monoid with an aperiodic k-tiling. Then the inverse
+monoid C(S) is isomorphic to a wide inverse submonoid of I cl(S∞ ). In particular,
+C(S) is a countably inﬁnite, 0-simple fundamental Boolean inverse∧ -monoid whose
+semilattice of idempotents is the Tarski algebra.
+It follows that the Boolean inverse monoid C(S) is of the type discussed in the
+paper [35].
+10. The group G(S) as a topological full group
+In this section, we pull the diﬀerent strands of the paper togethe r using groupoids.
+If G is a groupoid (a small category in which every arrow is invertible) then its set
+of identities is denoted by Go. The groupoid in question is the one described in
+[26, Section 2] but we shall describe it from a new perspective. We sh all begin
+with some general results before specializing to the case that inter ests us. It is
+well-known that a group acting on a set gives rise to a groupoid. Ther e is an ob-
+vious generalization of this construction which yields a category whe n the group is
+replaced by an arbitrary monoid.
+Let M be an abelian monoid acting on the left on the set X. We denote the
+action by (a, x)↦→ a·x. Deﬁne M ⋉ X to be the set of all triples in X× M× X of the
+form ( x, a, a·x). Now deﬁne d(x2, a, x1) = ( x1, 1, x1) and r(x2, a, x1) = ( x2, 1, x2).
+If d(x2, a, x1) = r(x3, b, x4) then deﬁne the partial product ( x2, a, x1)(x3, b, x4) =
+(x2, ab, x4). It is easy to check that M ⋉ X is a category whose identity space
+consists of all elements of the form ( x, 1, x) and so can be identiﬁed with X. If M
+is a cancellative monoid then M ⋉ X is a cancellative category. Put C = M ⋉ X.
+Suppose now that M⊆ G where G is an abelian group. We shall construct a
+groupoidG from G and X but without assuming that the action of M on X can be
+lifted to an action of G on X. The elements of G are those triples from X× G× X
+of the form ( x, c, y) where a·x = b·y and c = ab− 1 for some a, b∈ M and x, y∈ X.
+We prove that this is a groupoid we shall call G. Deﬁne d(x, c, y) = ( y, 1, y) and
+r(x, c, y) = ( x, 1, x), both well-deﬁned elements. Suppose that d(x, c, y) = r(u, d, v).
+Then y = u, a1·x = a2·y where c = a1a− 1
+2 , b1·u = b2·v where d = b1b− 1
+2 . We
+prove that ( x, cd, v) has the correct form. We calculate
+(a1b1)·x = b1·(a1·x) = b1·(a2·y) = a2·(b1·y) = a2·(b1·u) = ( a2b2)·v,
+where we have used commutativity throughout and, in addition, a1b1(a2b2)− 1 = cd.
+ThusG is certainly a category. Finally, if we deﬁne ( x, c, y) = ( y, c− 1, x) then we
+get a groupoid.
+PAGE 26
+26 MARK V. LA WSON AND ALINA VDOVINA
+The space of identitities of G again consists of all triples of the form ( x, 1, x).
+ThusC⊆G is a wide subcategory 5 and we have therefore embedded a cancellative
+category into a groupoid. In fact, we can say more. Let ( x, c, y) be an arbitrary
+element ofG where a·x = b·y and c = ab− 1. Then ( x, a, a·x), (y, b, b·y)∈C . We
+have that
+(x, a, a·x)(y, b, b·y)− 1 = (xa, a·x)(b·y, b− 1, y) = ( x, ab− 1, y) = ( x, c, y).
+Thus in fact we have that G =CC − 1.
+There is an action of the monoid Nk on the set S∞ given by ( m, x)↦→ σm(x).
+That this really is an action is apparent from [26, Deﬁnitions 2.1]. The m onoid
+Nk is the positive cone of the lattice-ordered abelian group Zk. Restricting the
+construction of our groupoid above to this special case yields a gro upoid we shall
+denote byG(S) which is exactly the one deﬁned in [26, Deﬁnition 2.7]. We describe
+it explicitly. The elements of G(S) are those triples ( w2, n, w1)∈ S∞ × Zk× S∞
+where σl(w2) = σm(w1) and n = l− m. In addition, d(w2, n, w1) = ( w1, 0, w1) and
+r(w2, n, w1) = ( w2, 0, w2) and
+(w2, n, w1)− 1 = (w1,− n, w2).
+We now endow M with the discrete topology, assume that X has a topology
+(ultimately Boolean), and that the action of M on X is by local homeomorphisms. If
+U⊆ X is an open set and a∈ M then aU is an open set since local homeomorphisms
+are open maps. Deﬁne O(a, U) ={(x, a, a·x) : x∈ U}. Clearly,O(a, U)⊆C . Using
+these sets as basis elements, we can endow C with a topology.
+We now return to our action Nk× S∞ → S∞ which is by local homeomorphisms
+(from the top of page 8 of [26]). Clearly, O(d(u), uS∞ ) is well-deﬁned for any u∈ S.
+CalculatingO(d(x), xS∞ )O(d(y), yS ∞ )− 1⊆G (S), we ﬁnd it consists precisely of
+elements of the form ( xw, d(x)− d(y), yw) where w∈ S∞ . Deﬁne
+Z(x, y) ={(xw, d(x)− d(y), yw) : w∈ S∞}
+where x, y∈ S and endow the groupoid G(S) with the topology having as basis
+elements precisely subsets of this form. We refer the reader to [4 9] for the theory of
+´ etale topological groupoids. An ´ etale groupoidG is said to be Boolean if its space
+of identities, Go, is a Boolean space. The following is simply a restatement of [26,
+Proposition 2.8].
+Proposition 10.1. Let S be a k-monoid. Then G(S) is a second-countable, Haus-
+dorﬀ Boolean groupoid.
+Remark 10.2. Our calculations above suggest studying those ´ etale groupoids that
+are obtained as categories of fractions (in the sense of [21]) from t opological can-
+cellative categories .
+At this point, we shall make use of the non-commutative Stone dualit y developed
+in [33, 34, 36]. A subset A⊆ G of a groupoid is said to be a local bisection if g, h∈ A
+and g− 1g = h− 1h (respectively gg − 1 = hh− 1) implies that g = h. A local bisection
+A is said to be a bisection if A− 1A = Go = AA− 1. Let G be a Boolean groupoid.
+Denote by KB(G) the set of all compact-open local bisections. This is a Boolean
+inverse monoid. Let A be a compact-open local bisection. Then we may deﬁne
+a partial homeomorphism αA : A− 1A→ AA− 1 by e↦→ f where e = a− 1a and
+f = aa− 1 where a∈ A. This deﬁnes a homomorphism α : KB(G)→I cl(Go) to the
+Boolean inverse monoid of all partial homeomorphisms between clope n subsets.
+Let G be a groupoid. The isotropy groupoid of G is the set of all elements g∈ G
+such that g− 1g = gg − 1. Clearly, the space of identities is contained in the isotropy
+5This simply means that the two categories have the same set of identities.
+PAGE 27
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 27
+groupoid. An ´ etale topological groupoid is said to be eﬀective if the interior of
+the isotropy groupoid is exactly the space of identities of the group oid. An ´ etale
+topological groupoid is said to be topologically principal if the set of identities with
+trivial isotropy is dense. 6 The following is just a version of [48, Corollary 3.3].
+Lemma 10.3. Let G be a Boolean groupoid. Then α : KB(G)→I cl(Go) is injective
+if and only if G is eﬀective
+Proof. Suppose that α is injective. We prove that G is eﬀective. Let A be an open
+subset of isotropy groupoid. Without loss of generality, we may ass ume that A is
+a compact-open local bisection. By assumption, α(A) ﬁxes every identity in A− 1A
+and so A and A− 1A have the same image under α. It follows that A = A− 1A and so
+every element of A is an identity. We have therefore proved that the interior of the
+isotropy groupoid is the space of identities. Now suppose that G is eﬀective. Let A
+and B be compact-open local bisections such that α(A) = β(B). Then α(A− 1B) is
+the identity where it is deﬁned. Thus A− 1B is a subset of the isotropy groupoid.
+But A− 1B is open and so must consist entirely of identities. It now follows that
+A = b, as required. □
+The following is [26, Proposition 4.5].
+Lemma 10.4. Let S be a k-monoid. Then the groupoid G(S) is topologically prin-
+cipal if and only if there is an aperiodic k-tiling.
+Lemma 10.5. Let S be a k-monoid. If S is eﬀective — that is, if for each pair of
+distinct elements x and y there is an element c such that xc and yc are incomparable
+— then G(S) is eﬀective.
+Proof. Suppose that Z(x, y) is a subset of the isotropy groupoid and that Z(x, y)
+contains a non-identity element ( xw′, d(x)− d(y), yw′) for some w′∈ S∞ . In
+partiuclar, d(x)− d(y)̸= 0 and so x̸= y. But, by assumption, there then exists
+c∈ S such that xc and yc are incomparable. It follows that for all w∈ S∞ , we
+must have that x(cw)̸= y(cw) (because if xcw = ycw for some w∈ S∞ then xc
+and yc would be comparable). This contradicts the assumption that Z(x, y) is a
+subset of the isotropy groupoid. It follows that Z(x, y) can only contain identities
+and so we have proved that S is eﬀective. □
+Recall that a Baire space is a topological space in which the intersection of every
+countable set of dense open subsets is dense. Every locally compac t Hausdorﬀ space
+is a Baire space. Thus Boolean spaces are Baire spaces. The ´ etale g roupoid of a
+k-monoid is a Hausdorﬀ, second countable Boolean groupoid by Propo sition 10.1.
+The following is therefore a consequence of a result proved by Rena ult [48, Propo-
+sition 3.6].
+Proposition 10.6. Let S be a k-monoid. Then the following are equivalent:
+(1) The groupoidG(S) is eﬀective.
+(2) The groupoidG(S) is topologically principle.
+Remark 10.7. We shall assume that the groupoid is eﬀective in what follows .
+We now describe the compact-open local bisections.
+Lemma 10.8. Each compact-open local bisection of G(S) is determined by an ele-
+ment of R(S).
+6The term essentially free is used in [26]
+PAGE 28
+28 MARK V. LA WSON AND ALINA VDOVINA
+Proof. Observe that the sets Z(x, y) are local bisections because if yw = yw′ then
+w = w′ (and dually). We calculate the partial bijection of G(S)o determined by
+Z(x, y) under the map α. Its domain is yS ∞ and its range is xS∞ and the eﬀect of
+the partial bijection is yw↦→ xw. It follows that the partial bijection is xy− 1. The
+fact that the groupoid is eﬀective means if two such sets induce the same partial
+bijection then they are equal. It follows that there is a bijection Z(x, y)←→ xy− 1.
+Let A be a compact-open local bisection of G(S). Then A is a union of elements
+of the form Z(x, y) and a ﬁnite union since it is compact. We therefore have that
+A = ⋃n
+i=1 Z(xi, yi). □
+Because the groupoidG(S) is eﬀective, we may identify compact-open local bisec-
+tions with certain partial homeomorphisms between clopen subsets of S∞ . The set
+of these homeomorphisms is precisely the image under the monoid hom omorphism
+χ : R(S)→I cl(S∞ ). It follows by Lemma 10.8 that χ maps R(S) onto KB(G(S)).
+Thus KB(G(S)) is isomorphic to R(S)/≡ .
+Given an ´ etale topological groupoid G, its topological full group is the groupoid
+of all compact-open bisections. We have therefore proved the fo llowing.
+Theorem 10.9. Let S be a k-monoid with an aperiodic k-tiling such that S∞ is
+the Cantor space.
+(1) The Boolean inverse monoid C(S) is isomorphic to the Boolean inverse
+monoid KB(G(S)).
+(2) The group G(S) is therefore the topological full group of the Boolean groupoid
+G(S).
+By Theorem 9.18, the Boolean inverse monoid C(S) is 0-simple and fundamental.
+It follows by [35, Theorem 4.16], that the groupoid G(S) is purely inﬁnite and
+minimal. Thus by Theorem 10.9 and [47, Theorem 4.16], we have proved t he
+following.
+Theorem 10.10. Let S be a k-monoid with an aperiodic k-tiling such that S∞ is
+the Cantor space. Then the commutator subgroup of G(S) is simple.
+11. Rigid k-monoids
+Let S be a k-monoid with alphabets X1, . . . , Xk and let s ∈ S. Then s =
+x1 . . . xk, where xi ∈ X ∗
+i , uniquely. We call xi the i-component of s. However,
+there is another way of obtaining elements of X ∗
+i from s. If s = sis′
+i, where si∈ X ∗
+i
+and s′
+i∈ X ∗
+1 . . . ˆX ∗
+i . . . X∗
+k (thus, the ith co-ordinate of d(s′
+i) is zero), then we call si
+the i-projection of s. Thus we have a k-tuple (s1, . . . , sk) which we call a projection.
+If s∈ X ∗
+i we say that s is homogeneous (of type i).
+Simple examples of k-monoids can be constructed from direct products of k free
+monoids by Example 3.6, but direct products of free monoids are rat her restricted.
+It is useful to have a broader class of k-monoids to work with. We deﬁne this class
+now. Let S be a k-monoid with alphabets X1, . . . , Xk. We say that S is right rigid
+if the following condition holds where i̸= j: given x∈ Xi and y∈ Xj there are
+unique elements x′∈ Xi and y′∈ Xj such that xy′ = yx′. This condition implies,
+in particular, that letters belonging to diﬀerent alphabets are alway s comparable.
+This condition was called the unique pullback property in [56], whereas in [57] it was
+called the little pullback property which is the term used in [14, Section 20] where it
+seems to have been ﬁrst introduced. In terms of ‘squares’, it says that the bottom
+lefthand-side uniquely determines the top righthand-side. We say t hat S is left
+rigid if the following condition holds: given x′∈ Xi and y′∈ Xj there are unique
+elements x∈ Xi and y∈ Xj such that xy′ = yx′. This condition was ﬁrst stated
+in [56] where it was called the unique pushout property . In terms of ‘squares’, it
+PAGE 29
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 29
+says that the top righthand-side uniquely determines the bottom le fthand-side. We
+shall construct examples below to show that these two conditions a re independent.
+A rigid monoid is one that is both left rigid and right rigid. Free monoids are
+vacuously rigid. The direct product of rigid monoids is rigid. Thus ﬁnite direct
+products of free monoids are rigid.
+Example 11.1. We now describe all the 2-monoids in which there are two types
+of alphabets: the e-alphabet{e1, e2} and the f -alphabet{f1, f2}. According to
+[44], we can describe all such 2-monoids by means of a permutation θ of the set
+{1, 2}×{ 1, 2}. Given such a permutation, we write down all the relations of the
+form eifj = fj′ei′ where θ(i, j) = ( i′, j′). Observe that whenever θ(i, j) = ( i, j), we
+get the relation eifj = fjei. The monoid that results is denoted by A∗
+2× θ A∗
+2. By
+[44, Proposition 3.1], there are 9 non-isomorphic 2-monoids of this ty pe. Here is a
+list of all 9 monoids of this type.
+(1) θ is the identity permutation. The relations are e1f1 = f1e1, e1f2 = f2e1,
+e2f1 = f1e2, e2f2 = f2e2. This is just the presentation of the monoid
+A∗
+2× A∗
+2. Each of the four relations can be written as a square; observe
+that we orientate the e-alphabet from left-to-right and the f -alphabet from
+bottom-to-top:
+A : e1
+f1
+e1
+f1
+B :
+f2
+e1
+f2
+e1
+C :
+f1
+e2
+f1
+e2
+D :
+f2
+e2
+f2
+e2
+(2) θ is the transposition (1 , 1)↔ (1, 2). The relations are e1f1 = f2e1 and
+e1f2 = f1e1 and then e2f1 = f1e2, e2f2 = f2e2. We write each of the four
+relations as a square:
+A :
+f2
+e1
+f1
+e1
+B :
+f1
+e1
+f2
+e1
+C :
+f1
+e2
+f1
+e2
+D :
+f2
+e2
+f2
+e2
+(3) θ is the transposition (1 , 1)↔ (2, 2). The relations are e1f1 = f2e2 and
+e2f2 = f1e1 and e1f2 = f2e1, e2f1 = f1e2. We write each of the four
+relations as a square.
+A :
+f2
+e2
+f1
+e1
+B :
+f1
+e1
+f2
+e2
+C :
+f2
+e1
+f2
+e1
+D :
+f1
+e2
+f1
+e2
+(4) θ is the 3-cycle (1 , 1)→ (1, 2)→ (2, 2)→ (1, 1). The relations are e1f1 =
+f2e1, e1f2 = f2e2, e2f2 = f1e1 and e2f1 = f1e2. We write each of the four
+relations as a square:
+A :
+f2
+e1
+f1
+e1
+B :
+f2
+e2
+f2
+e1
+C :
+f1
+e1
+f2
+e2
+D :
+f1
+e2
+f1
+e2
+(5) θ is the 3-cycle (1 , 1)→ (2, 2)→ (1, 2)→ (1, 1). The relations are e1f1 =
+f2e2, e2f2 = f2e1, e1f2 = f1e1 and e2f1 = f1e2.
+A :
+f2
+e2
+f1
+e1
+B :
+f2
+e1
+f2
+e2
+C :
+f1
+e1
+f2
+e1
+D :
+f1
+e2
+f1
+e2
+PAGE 30
+30 MARK V. LA WSON AND ALINA VDOVINA
+(6) θ is the following pair of transpositions (1 , 1)↔ (1, 2) and (2 , 1)↔ (2, 2).
+The relations are e1f1 = f2e1, e1f2 = f1e1, e2f1 = f2e2 and e2f2 = f1e2.
+We write each of the four relations as a square:
+A :
+f2
+e1
+f1
+e1
+B :
+f1
+e1
+f2
+e1
+C :
+f2
+e2
+f1
+e2
+D :
+f1
+e2
+f2
+e2
+(7) θ is the following pair of transpositions (1 , 1)↔ (2, 2) and (1 , 2)↔ (2, 1).
+The relations are e1f1 = f2e2 and e2f2 = f1e1, e1f2 = f1e2 and e2f1 = f2e1.
+We write each of the four relations as a square:
+A :
+f2
+e2
+f1
+e1
+B :
+f1
+e1
+f2
+e2
+C :
+f1
+e2
+f2
+e1
+D :
+f2
+e1
+f1
+e2
+(8) θ is the following 4-cycle (1 , 1)→ (1, 2)→ (2, 2)→ (2, 1)→ (1, 1). The
+relations are e1f1 = f2e1, e1f2 = f2e2, e2f2 = f1e2, e2f1 = f1e1. We write
+each of the four relations as a square:
+A :
+f2
+e1
+f1
+e1
+B :
+f2
+e2
+f2
+e1
+C :
+f1
+e2
+f2
+e2
+D :
+f1
+e1
+f1
+e2
+(9) θ is the following 4-cycle (1 , 1)→ (1, 2)→ (2, 1)→ (2, 2)→ (1, 1). The
+relations are e1f1 = f2e1, e1f2 = f1e2, e2f1 = f2e2, e2f2 = f1e1. We write
+each of the four relations as a square:
+A :
+f2
+e1
+f1
+e1
+B :
+f1
+e2
+f2
+e1
+C :
+f2
+e2
+f1
+e2
+D :
+f1
+e1
+f2
+e2
+In the above nine examples, (1), (2), (6), (7) and (9) are rigid, (3 ) and (8) are
+neither left nor right rigid, (4) is left rigid but not right rigid and (5) is r ight rigid
+but not left rigid.
+Lemma 11.2. Let S be a rigid k-monoid with alphabets X1, . . . , Xk. Let s1 ∈
+X ∗
+1 , . . . , sk∈ X ∗
+k . Then there is a unique element s∈ S which has (s1, . . . , sk) as
+its projection.
+Proof. This proof is best viewed graphically by ﬁlling in the region bounded by th e
+elements s1, . . . , sk which the rigidity condition guarantees can be done uniquely.
+□
+The following is [56, Lemma 6.3].
+Lemma 11.3. Let S be a k-monoid and let x, y∈ S such that d(x)∧ d(y) = 0 .
+(1) If S is right rigid then there are unique elements u and v such that xu = yv
+where d(u) = d(y) and d(v) = d(x).
+(2) If S is left rigid then there are unique elements u and v such that ux = vy
+where d(u) = d(y) and d(v) = d(x).
+We can reﬁne the above lemma a little to obtain a ‘categorical-looking re sult’.
+We prove the reﬁnement of part (1) above since the proof of the r eﬁnement of part
+(2) follows by symmetry. Recall that d(x)i is the ith co-ordinate of d(x).
+Lemma 11.4. Let S be a right rigid k-monoid and let x, y ∈ S be such that
+d(x)∧ d(y) = 0. Let u and v be the unique elements such that xu = yv where
+d(u) = d(y) and d(v) = d(x). Let p and q be any elements such that xp = yq. Then
+there is a unique element t such that p = ut and q = vt.
+PAGE 31
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 31
+Proof. Suppose that xp = yq. Then d(x) +d(p) = d(y) +d(q). Clearly, d(x), d(y)≤
+d(x) + d(p). Now d(x)∧ d(y) = 0 implies that for each 1 ≤ i≤ k at least one
+of d(x)i or d(y)i is zero. It follows that d(x) + d(y) ≤ d(x) + d(p). Similarly
+d(x) + d(y) ≤ d(y) + d(q). It follows that xp = xy′s where d(y′) = d(y) and
+d(s) = d(p)− d(y) and yq = yx′t where d(x′) = d(x) and d(t) = d(q)− d(x). It
+follows that s and t have the same length. By the dual of Lemma 3.10, we have that
+s = t. It follows that q = x′t and p = y′t. Thus xy′ = yx′ where d(y′) = d(y) = d(u)
+and d(x′) = d(x) = d(v). By uniqueness, we have that y′ = u and x′ = v. It follows
+that q = vt and p = ut. □
+The terminology ‘singly aligned’ seems to have been ﬁrst used in [14, Pr oposi-
+tion 20.3] where the following result was proved.
+Lemma 11.5. Let S be a right rigid k-monoid. Then S is singly aligned; that is,
+if x, y∈ S, where x̸= y, are such that xS∩ yS̸= ∅ then there is a unique element
+z such that xS∩ yS = zS .
+Remark 11.6. The property of being ‘singly aligned’ has played an important
+role in semigroup theory; see [29] and [19]. The latter paper would ref er to left
+cancellative monoids in which the intersection of any two principal righ ts ideals
+is either empty or a principal right ideal as right LCM monoid. In particular, left
+cancellative monoids which are singly aligned can be used to construct all 0-bisimple
+inverse monoids. Given such a monoid S, we construct the inverse monoid B(S)
+that consists of all the isomorphisms ab− 1 : bS→ aS. That this is even a semigroup
+follows from the singly aligned property. It is 0-bisimple because any t wo non-zero
+principal right ideals are connected by an element of B(S). If S is cancellative
+then the inverse monoid B(S) is E∗ -unitary. C∗ -algebras of right LCM monoids in
+general are studied in [8].
+The following example motivates the idea behind Proposition 11.8.
+Example 11.7. Let A ={a1, a2}, B ={b1, b2}, C ={c1, c2} and D ={d1, d2}.
+We work in the rigid 4-monoid A∗× B∗× C∗× D∗ . Let x = ac and y = bd where
+a∈ A∗ , b∈ B∗ , c∈ C∗ and d∈ D∗ . Then xu = yv where u = y and v = x since,
+in fact, x and y commute. We choose the 1-projection of v which is the element a.
+Let ¯a be any element of A∗ which is preﬁx incomparable with a (which makes sense
+since we are working in a free monoid). Observe that x¯a = a¯ac and y¯a = ¯abd. The
+only way for x¯a and y¯a to be comparable is for a¯a and ¯a to be preﬁx comparable
+but this is impossible.
+The following was motivated by [24].
+Proposition 11.8. Let S be a right rigid k-monoid in which every alphabet has
+cardinality at least 2. Then S is eﬀective; that is, if x, y∈ S are distinct elements,
+there exists c∈ S such that xc and yc are incomparable.
+Proof. We begin by proving a special case that does almost all the work. Let
+x, y∈ S, x̸= y such that d(x)∧ d(y) = 0. We shall prove that there is an element
+c∈ S such that xc and yc are not comparable. By right rigidity and Lemma 11.3,
+there are unique elements u, v∈ S such that xu = yv where d(u) = d(y) and
+d(v) = d(x). Observe that u̸= v since otherwise we could cancel them and get
+x = y. Also, we cannot have both x and y equal to the identity since then x = y.
+Now suppose that exactly one of them, say y, was equal to the identity; accordingly
+x̸= 1. In fact, then, for any x we have d(x)∧ d(1) = 0. We have to ﬁnd an element
+a such that xa̸= a but this will be true for any element a∈ S since x̸= 1. In
+what follows, therefore, we can assume that x̸= 1 and y̸= 1. Observe that since
+d(x)∧ d(y) = 0, if the i-projection of x is not the identity then the i-projection
+PAGE 32
+32 MARK V. LA WSON AND ALINA VDOVINA
+of y is the identity, and vice versa. Let i be any value 1 ≤ i≤ k such that the
+i-projection of x is not trivial. Now d(v) = d(x). It follows that v has a non-trivial
+i-projection. Write v = bv′ where b∈ X ∗
+i is the i-projection and v′ has only a
+trivial i-projection. Let c be any element of X ∗
+i which is preﬁx incomparable with b
+which we can do this since the cardinality of Xi is at least 2 and we are working in
+a free monoid. In fact, b and c are therefore incomparable by Lemma 3.10. We now
+consider the elements xc and yc. If they are incomparable we are done. So, assume
+that they are comparable and we shall derive a contradiction. Then xcp = ycq,
+for some p, q∈ S, which we regard as x(cp) = y(cq). By Lemma 11.4, there is a
+unique element t such that cp = ut and cq = vt. We focus on the second equation
+cq = vt. We can write this cq = bv′t which says that b and c are comparable which
+is a contradiction. It follows that xc and yc are not comparable.
+The general case, where we do not assume that d(a)∧ d(b) = 0, is proved using
+the same argument as [40, Remark 3.2]. Now let x, y∈ S, where x̸= y, be arbitrary
+elements, where d(x)∧ d(y) = m̸= 0. Since m≤ d(x), d(y) we can write x = u1x′
+and y = u2y′ where d(u1) = m = d(u2). Suppose ﬁrst that u1̸= u2. Suppose that
+x and y were comparable. Then xp = yq for some p, q∈ S. But then u1x′p = u2y′q
+where d(u1) = d(u2). By Lemma 3.10, we would then have u1 = u2 which is
+a contradiction. It follows that x and y are already not comparable. Assume,
+therefore, that u1 = u2. If x′ = y′ then we would have x = y. It follows that
+x′̸= y′. Observe that d(x′)∧ d(y′) = 0. By the ﬁrst part of the proof there is
+therefore an element c such that x′c and y′c are incomparable. It follows that xc
+and yc are incomparable. □
+We can rephrase the above result in terms of the 0-bisimple inverse m onoid B(S).
+The following is immediate by Lemma 5.4.
+Lemma 11.9. Let S be a right rigid k-monoid. Then the following are equivalent:
+(1) For each non-idempotent element xy− 1 there is an element x1y− 1
+1 ≤ xy− 1
+such that x1y− 1
+1 has disjoint domain and range.
+(2) If x, y∈ S are distinct elements, then there exists c∈ S such that xc and
+yc are incomparable; thus, S is eﬀective.
+The following is now immediate by Proposition 11.8 and Lemma 4.15.
+Corollary 11.10. The ´ etale groupoid of a right rigid k-monoid in which every
+alphabet has cardinality at least 2 is eﬀective and so aperio dic.
+Lemma 11.11. Let S be a right rigid k-monoid in which each of the associated
+alphabets has cardinality at least two. Then the 0-bisimple inverse monoid B(S) is
+congruence free.
+Proof. We use [42, Theorem 1.11, Lemma 1.10] and prove that B(S) is 0-disjunctive
+and fundamental; this is enough because it is 0-bisimple.
+We ﬁrst prove the following simple result; we are grateful to the ref eree for their
+nice proof. Let p∈ S be a non-trivial element. Then there is an element q∈ S
+such that p and q are not comparable. Choose 1 ≤ i≤ k such that p = ap′ where
+a∈ Xi. Since Xi contains at least 2 elements, there is b∈ Xi such that b̸= a.
+Clearly, a and b are incomparable and we may put q = b.
+We apply this result to the structure of B(S). Let bb− 1 < aa − 1. Then b = ap
+for some p∈ S. By the result above, there is a q ∈ S such that p and q are
+incomparable. We claim that the idempotents bb− 1 and aq(aq)− 1 are orthogonal.
+Suppose not. Then b and aq are comparable. Thus ap and aq are comparable.
+Thus apu = aqv for some u, v∈ S. Thus pu = qv which implies that p and q
+are comparable, which is a contradiction. We have therefore prove d that B(S) is
+0-disjunctive.
+PAGE 33
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 33
+We shall prove that B(S) is fundamental but we prove a more general result
+ﬁrst. Let a be an element in an inverse semigroup that there exists b≤ a such that
+bb− 1⊥ b− 1b. We prove that it cannot commute with all idempotents. Suppose it
+did. Since b≤ a we have that b = ab− 1b = bb− 1a. Thus a− 1ab− 1b = a− 1bb− 1a. But
+b− 1b≤ a− 1a and so we get b− 1b = a− 1bb− 1a. We now use the fact that a commutes
+with all idempotents to deduce b− 1b = a− 1abb− 1. It follows that b− 1b≤ bb− 1 which
+is impossible because these idempotents are supposed to be orthog onal. Now let
+xy− 1 be a non-idempotent element of B(S). Then x̸= y. By Proposition 11.8, S
+is eﬀective. Thus there is a c∈ S such that xc and yc are incomparable. Thus
+(xc)(yc)− 1≤ xy− 1 wherethe domain and range of ( xc)(yc)− 1 are orthogonal. It
+follows by our result above that xy− 1 cannot commute with all idempotents. We
+have therefore proved that B(S) is fundamental. Thus B(S) is congruence-free. □
+Remark 11.12. Determining whether a k-monoid is aperiodic in general is com-
+plex, see [50, 11, 40], but the right rigidity condition is an easy one to c heck.
+The question of whether k-monoids can be embedded in groups is discussed in
+[43]. They construct a counterexample [43, Example 7.1] of a 2-mono id that cannot
+be embedded into a group. Their example is evidently not rigid.
+Example 11.13. This example was constructed by Benjamin Steinberg and com-
+municated to the second author. Consider the 2-monoid S with alphabets{e1, e2, e3, e4}
+and{f1, f2, f3, f4} deﬁned by means of the following relations:
+e1 →→
+f4
+↑↑
+e1
+→→
+f4
+↑↑
+e4 →→
+f1
+↑↑
+e4
+→→
+f1
+↑↑
+ej →→
+fi
+↑↑
+ei
+→→
+fj
+↑↑ where ( i, j)̸= (1, 4), (4, 1).
+This is not a rigid monoid. Suppose that S could be embedded in a group. Then
+for ( i, j)̸= (1 , 4), (4, 1), we would have e− 1
+i fi = fje− 1
+j . Thus e− 1
+1 f1 = f2e− 1
+2 =
+e− 1
+3 f3 = f4e− 1
+4 . It follows that e1f4 = f1e4 but we also have e1f4 = f4e1. Thus
+f1e4 = f4e1 which is an equation in S that contradicts the UFP.
+The following theorem is not used in this paper but is of independent int erest.
+Theorem 11.14. Every rigid k-monoid can be embedded in a group.
+Proof. Let S be a rigid k-monoid with alphabets ( X1, . . . , Xk). The monoid S is
+deﬁned by relations of the form xy = y1x1 where x, x1∈ Xi and y, y1∈ Xj and
+i̸= j. This relation can be represented by means of the following square
+x1 →→
+y1
+↑↑
+x
+→→
+y
+↑↑
+The fact that the monoid is rigid means that each corner of this squa re uniquely
+determines the opposite corner uniquely. For each set Xi, construct a new set X ′
+i
+which is in bijective correspondence with it; the map is x↦→ x′ where x∈ Xi and
+x′∈ X ′
+i. The free group Gi on the set Xi is the free monoid on the set Xi∪ X ′
+i
+factored out by the congruence generated by x′x = 1 = xx′ where x∈ Xi. Observe
+that X ∗
+i ⊆ Gi. We regard Gi as the set of reduced words. We now deﬁne another
+monoid S′ as follows. Its generators will be the set X1∪ X ′
+1∪ . . .∪ Xk∪ X ′
+k subject
+to the following relations:
+(1) xy = y1x1, the monoid relations of S.
+(2) y′x′ = x′
+1y′
+1.
+(3) x′y1 = yx′
+1.
+PAGE 34
+34 MARK V. LA WSON AND ALINA VDOVINA
+(4) y′
+1x = x1y′.
+It follows that S′ is a k-monoid; observe that the compatibility conditions hold
+because they hold in S. Thus each element of S′ can be written uniquely as a
+product of elements in the free monoids ( X1∪ X ′
+1)∗ . . .(Xk∪ X ′
+k)∗ . Deﬁne T to be
+the quotient of S′ factored out by the congruence generated by all relations of the
+form:
+(5) xx′ = 1 = x′x where x∈ X1∪ . . .∪ Xk.
+Then T is a group in which each element can be written uniquely as a product of
+elements in the free groups G1 . . . Gk. The monoid S injects as a set into G1 . . . Gk,
+since X ∗
+1 . . . X∗
+k ⊆ G1 . . . Gk, and embeds as a monoid, since the relations in T
+restricted to S are exactly the deﬁning relations of S. □
+Remark 11.15. In the case where S is a rigid k-monoid, it follows by Theo-
+rem 11.14 that the inverse monoid B(S) is not merely E∗ -unitary but actually
+strongly E∗ -unitary; an inverse semigroup with zero T is strongly E∗ -unitary if
+there is a function θ : T\{0}→ G to a group G such that θ(st) = θ(s)θ(t) when-
+ever st̸= 0 and θ− 1(1) consists of only idempotents in T [30].
+12. Maximal generalized prefix codes
+At the conclusion to Section 7, we remarked that the structure of the group G(S)
+is bound up with the structure of the maximal generalized preﬁx cod es in S. The
+key problem is how to construct such codes in order to construct t he groups. The
+following lemma shows that the properties of (maximal) generalized pr eﬁx codes
+really do generalize well-known properties of (maximal) preﬁx codes; see [2, Section
+II.4].
+Lemma 12.1. Let M be a cancellative monoid.
+(1) Let u∈ M . Then
+{x1, . . . , xm}
+is a generalized preﬁx code if and only if
+{ux1, . . . , uxm}
+is a generalized preﬁx code.
+(2) Let X ={x1, . . . , xm} be a (resp. maximal) generalized preﬁx code and let
+Y ={y1, . . . , yn} be a (resp. maximal) generalized preﬁx code. Then
+{x1, . . . , xm− 1, xmy1, . . . , xmyn}
+is a (resp. maximal) generalized preﬁx code. We call this pro cess of enlarg-
+ing maximal generalized preﬁx codes in this way an elementary expansion .
+(3) Let C be a maximal generalized preﬁx code. Let xD⊆ C where D is also
+a maximal generalized preﬁx code. Then C′ = C\xD∪{ x} is a maximal
+generalized preﬁx code. We call this process of reducing max imal generalized
+preﬁx codes in this way an elementary reduction .
+(4) If X and Y are maximal generalized preﬁx codes so too is XY .
+(5) Let X and Y be maximal generalized preﬁx codes. Then XM⊆ Y M if and
+only if X is obtained from Y by a ﬁnite sequence of elementary expansions.
+Proof. (1) Suppose that{x1, . . . , xm} is a generalized preﬁx code. If {ux1, . . . , uxm}
+is not a generalized preﬁx code then there exist a, b∈ M such that uxia = uxjb
+for some i and j. But then by cancellation, xia = xj b which contradicts our
+assumption. It follows that {ux1, . . . , uxm} is a generalized preﬁx code. Conversely,
+suppose that {ux1, . . . , uxm} is a generalized preﬁx code. If {x1, . . . , xm} is not a
+generalized preﬁx code then there exists a, b∈ M such that xia = xj b for some i
+PAGE 35
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 35
+and j. But then uxia = uxjb which contradicts our assumption. It follows that
+{x1, . . . , xm} is a generalized preﬁx code.
+(2) By Part (1), we know that {xmy1, . . . , xmyn} is a generalized preﬁx code.
+Let 1 ≤ i ≤ m− 1 and 1 ≤ j ≤ n and suppose that xiM∩ xmyjM ̸= ∅ .
+But then xi and xm are comparable and so this cannot happen. It follows that
+{x1, . . . , xm− 1, xmy1, . . . , xmyn} is a generalized preﬁx code.
+Now suppose that X and Y are maximal. We show that our code is a maximal
+generalized preﬁx code. Suppose not. Then there is an element x∈ M which is
+incomparable with all of the elements in {x1, . . . , xm− 1, xmy1, . . . , xmyn}. Now, X
+is a maximal generalized preﬁx code. So, either xiM∩ xM̸= ∅ for 1≤ i≤ m− 1
+or xmM∩ xM̸= ∅ . It follows that xiM∩ xM = ∅ and xmM∩ xM̸= ∅ . Thus
+xma = xb for some a, b∈ M . Now Y is a maximal generalized preﬁx code. By
+relabelling if necessary, we can assume that y1M∩ aM̸= ∅ . Thus y1c = ad for
+some c, d∈ M . It follows that xmy1c = xbd and so xmy1M∩ xM̸= ∅ . This is a
+contradiction.
+(3) We prove ﬁrst that C′ = C\xD∪{ x} is a generalized preﬁx code. Suppose
+that there is c∈ C\ xD such that cu = xv for some u, v∈ S (we shall get a
+contradiction). Now D is a maximal generalized preﬁx code and so da = vb for
+some d∈ D and a, b∈ S. It follows that cub = xvb and so cub = (xd)a but xd∈ C
+and c∈ C are not comparable. Thus C′ is a generalized preﬁx code. It only remains
+to prove that it is maximal.
+Let s∈ S. Then su = cv for some c∈ C and u, v∈ S. Suppose that c∈ xD.
+Then c = xd for some d∈ D. Thus su = xdv and so s is comparable with x.
+Suppose that c /∈ xD. Then c∈ C\xD and we are done.
+(4) We prove ﬁrst that no two elements of XY are comparable. Suppose that
+xy and x′y′ are comparable where x, x′∈ X and y, y′∈ Y . Then xyu = x′y′v for
+some u, v∈ S. This implies that x and x′ are comparable and so, by assumption,
+x = x′. It follows that yu = y′v. This implies that y and y′ are comparable and
+so, by assumption, y = y′. It follows that xy = x′y′. We now prove that XY is
+maximal. Let s∈ S. Then since X is maximal there are u, v∈ S and x∈ X such
+that su = xv. Since Y is maximal there are a, b∈ S and y∈ Y such that va = yb.
+Thus s(ua) = xva = xy(b). It follows that s is comparable to an element of XY .
+(5) We look at the easy direction ﬁrst. Suppose that X is obtained from Y by
+one application of expansion. Then X = Y\{y}∪ yZ where y∈ Y and both Y and
+Z are maximal generalized preﬁx codes. By part (2), we have that X is a maximal
+generalized preﬁx code. We have that
+XM = (Y\{y}∪ yZ )M = (Y\{y})M∪ (yZ )M⊆ Y M∪ yM⊆ Y M.
+The general case follows by induction. We now prove the converse. Let XM⊆ Y M .
+For each x∈ X we can ﬁnd a y∈ Y and an m∈ M such that x = ym. Let
+Y = {y1, . . . , yn}. We may therefore write X = ⋃m
+i=1 yiZi where, by suitable
+relabelling if necessary, m≤ n. We show that in fact m = n. Suppose not. Then
+ym+1 is not included. However, X is a maximal generalized preﬁx code. It follows
+that for some i≤ m we have that yiza = ym+1b where z∈ Zi. But this cannot
+happen since Y is a maximal generalized preﬁx code. It follows that m = n. Next,
+we prove that each Zi is a maximal generalized preﬁx code. First, we prove that
+each Zi is a generalized preﬁx code. Suppose not. Then there are z, z ′∈ Zi such
+that za = z′b. It follows that yiza = yiz′b. But yiz = x and yiz′ = x′ where
+x, x′∈ X. By assumption, x and x′ are incomparable. It follows that Zi is an
+generalized preﬁx code. We now prove that it is a maximal generalized preﬁx code.
+Suppose not. Then there exists w∈ M such that ZiM∩ wM = ∅ . It follows that
+Zi∪{ w} is a generalized preﬁx code. Thus yiZi∪{ yiw} is a generalized preﬁx
+code. But X is maximal generalized preﬁx code. Thus there is a yjz∈ yjZj, where
+PAGE 36
+36 MARK V. LA WSON AND ALINA VDOVINA
+j̸= i, such that yjza = yiwb. But this cannot happen since i̸= j and the set Y is
+a generalized preﬁx code. □
+We highlight two operations in the above lemma that generate new max imal
+generalized preﬁx codes from old:
+(1) Elementary expansion. Let X be a maximal generalized preﬁx code, let
+x∈ X and let Y be a maximal generalized preﬁx code. Then X\{x}∪ xY
+is a maximal generalized preﬁx code.
+(2) Elementary reduction. Let C be maximal generalized preﬁx code and let
+xD⊆ C where D is a maximal generalized preﬁx code. Then C\xD∪{ x}
+is a maximal generalized preﬁx code.
+Observe that these two operations are the inverse of each other .
+We need a source of examples of maximal generalized preﬁx codes. L et S be a
+k-monoid with k alphabets ( X1, . . . , Xk). Each X ∗
+i is a free monoid by part (2) of
+Lemma 3.7. The following tells us that maximal preﬁx codes in each of th e free
+monoids X ∗
+i are automatically maximal generalized preﬁx codes in the ambient k-
+monoid. Let S be a k-monoid. It is useful to deﬁne di(s) to be the ith component
+of d(s). It therefore tells us the number of elements of Xi that occur in s counting
+multiplicities.
+Lemma 12.2. Let S be a k-monoid and let C⊆ X ∗
+i be a maximal preﬁx code in
+X ∗
+i . Then C is a maximal generalized preﬁx code in S.
+Proof. Let x, y∈ C⊆ X ∗
+i . Suppose that z = xu = yv for some u, v∈ S. Deﬁne
+m∈ Nk by mi = di(z) and all other components are 0. Then d(z) = m+(d(z)− m).
+By the UFP, there is a unique element x′∈ X ∗
+i , such that d(x′) = m, and a
+unique element w ∈ S, such that d(w) = d(z)− m, where z = x′w. Clearly,
+d(x′) ≥ d(x), d(y) and x′w = xu = yv. It follows that x′ = xx1 = yy1, by
+Lemma 3.10, for some x1, y1∈ X ∗
+i . But this implies that x and y are comparable
+in X ∗
+i which means that x = y. Thus C is a generalized preﬁx code in S.
+We now prove that C is maximal. Let y∈ S. Choose u∈ S such that di(yu)
+is greater than or equal to di(x) for any x∈ C. We can write yu = x1y1 where
+x1∈ X ∗
+i and y1 has no i-component. Now x1 = ct for some c∈ C and t∈ S, since
+C is a maximal preﬁx code in X ∗
+i . Thus yu = cty1. It follows that y is comparable
+with some element of C. □
+Deﬁnition. Let S be a k-monoid with alphabets X1, . . . , Xk. We deﬁne a concrete
+maximal generalized preﬁx code to be one constructed as follows:
+(1) {1} and Xi, where 1 ≤ i≤ k, are all concrete maximal generalized preﬁx
+codes.
+(2) If X is a concrete maximal generalized preﬁx code, x∈ X, and Y is a
+concrete maximal generalized preﬁx code then X\{x}∪ xY is a concrete
+maximal generalized preﬁx code.
+(3) All concrete maximal generalized preﬁx codes are obtained in a ﬁ nite num-
+ber of steps by repeated applications of (1) and (2).
+The following is immediate by part (2) of Lemma 12.1 and Lemma 12.2.
+Corollary 12.3. Let S be a k-monoid. Then every concrete maximal generalized
+preﬁx code is a maximal generalized preﬁx code.
+We shall now begin an analysis of the maximal generalized preﬁx codes Cm.
+Lemma 12.4. Let m∈ Nk be any non-zero element. Let i be the smallest suf-
+ﬁx such that mi ̸= 0 . Put Xi ={a1, . . . , an} and m′ = m− ei. Then Cm =⋃n
+j=1 ajCm′ = XiCm′.
+PAGE 37
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 37
+Proof. Let x∈ Cm. Then d(x) = m. By assumption, mi̸= 0. Thus x = ajy for a
+unique element aj∈ Xi and where d(y) = m− ei. It follows that Cm⊆ ⋃n
+j=1 ajCm′.
+Now let ajy ∈ ajCm′. Then d(ajy) = m and so ajy ∈ Cm. It follows that⋃n
+j=1 ajCm′⊆ Cm, and we have therefore proved that the two sets are equal. □
+By Lemma 12.2, the set Xi is a maximal generalized preﬁx code. Thus Cm
+is obtained from Xi by a sequence of elementary expansions using the maximal
+generalized preﬁx codes Cm′ where m′ < m. This process can be repeated and so
+we have proved the following.
+Proposition 12.5. Let S be a k-monoid. The maximal generalized preﬁx code Cm
+is either{1} or is obtained from the maximal generalized preﬁx codes X1, . . . , Xk by
+a sequence of elementary expansions. It follows that such co des are always concrete.
+Let C be a maximal generalized preﬁx code. The extent of C is deﬁned to be
+the join of all the sizes of the elements of C.
+Proposition 12.6. Let S be a k-monoid. Let C be a maximal generalized preﬁx
+code of extent m′ and let m≥ m′. Then Cm can be obtained from C by a sequence
+of elementary expansions.
+Proof. Let C ={c1, . . . , cn} with the extent of C being m′. We shall show how to
+replace the element c1 by a subset all of whose elements have size m. A similar
+procedure can then be applied to each of the other elements of C in turn. If
+d(c1) = m then there is nothing to do, so that in what follows we may assume
+that d(c1) < m. Let m− d(c1) = ( s1, . . . , sk). Replace c1 by c1X s1
+1 . . . Xsk
+k . It
+is immediate that every element of c1X s1
+1 . . . Xsk
+k has size m and X s1
+1 . . . Xsk
+k is a
+maximal generalized preﬁx code by part (4) of Lemma 12.1 and Lemma 12.2. Once
+this procedure has been applied to each element of C call the resulting maximal
+generalized preﬁx code D. By construction, every element of D has size m. We
+prove that, in fact, D = Cm. Let x be any element of size m. Then, since D is a
+maximal generalized preﬁx code, there is an element y∈ D such that xu = yv for
+some u, v∈ S. But d(x) = d(y). Thus by Lemma 3.10, we must have that x = y
+and so x∈ Cm. □
+The above theorem shows that a sequence of elementary expansio ns can be ap-
+plied to a maximal generalized preﬁx code to yield a concrete maximal g eneralized
+preﬁx code.
+Observe that if X and Y are maximal generalized preﬁx codes then XY =⋃
+x∈ X xY . Thus XY is obtained from X by a sequence of elementary expansions.
+It follows that the maximal generalized preﬁx codes X s1
+1 . . . Xsk
+k can be obtained
+by a sequence of elementary expansions using only the maximal gene ralized pre-
+ﬁx codes X1, . . . , Xk. If we combine this observation with Proposition 12.5 and
+Proposition 12.6, we obtain the following theorem.
+Theorem 12.7. Let S be a k-monoid with k alphabets (X1, . . . , Xk). Then every
+maximal generalized preﬁx code which is not {1} is obtained by means of a sequence
+of elementary expansions following by a sequence of element ary reductions using
+only the maximal generalized preﬁx codes X1, . . . , Xk.
+The above theorem tells us, in particular, that every maximal gener alized preﬁx
+code can be obtained from a concrete maximal generalized preﬁx co de by means of a
+sequence of elementary reductions. The obvious question is wheth er every maximal
+generalized preﬁx code is concrete. We shall show by means of a cou nterexample
+that the answer to this question is ‘no’ in general.
+PAGE 38
+38 MARK V. LA WSON AND ALINA VDOVINA
+Example 12.8. Let S ={a1, a2}∗×{ b1, b2}∗×{ c1, c2}∗, a 3-monoid obtained by
+taking the direct product of three copies of the free monoid on two generators. We
+shall write the elements of S as triples xyz. Let
+C ={a1b1, a2c1, b2c2, a1b2c1, a2b1c2}.
+It is easy to check that this is a generalized preﬁx code; a pair of elem ents xyz and
+uvw are incomparable if and only if at least one pair of corresponding comp onents
+are preﬁx-incomparable — recall that if M is a free monoid, the elements a and
+b are preﬁx incomparable if neither a = bc for some c or b = ac for some c or,
+equivalently, aM∩ bM = ∅ . It can be proved directly that C is, in fact, a maximal
+generalized preﬁx code but we show this by using our results above. Replace the
+element a1b1 by the elements a1b1c1 and a1b1c2; replace the element a2c1 by a2b1c1
+and a2b2c1; ﬁnally, replace b2c2 by a1b2c2 and a2b2c2. Denote by C′ the resulting
+set of eight elements of S. They all have the same size (1 , 1, 1). It follows that
+C′ = C(1,1,1) and so is a maximal generalized preﬁx code by Lemma 3.13. Now, C
+is obtained from C(1,1,1) by a sequence of elementary reductions: the pair a1b1c1
+and a1b1c2 is replaced by a1b1; the pair a2b1c1 and a2b2c1 is replaced by a2c1; the
+pair a1b2c2 and a2b2c2 is replaced by b2c2. It follows by Lemma 12.1 that C is a
+maximal generalized preﬁx code. However, it is not concrete since it contains the
+elements b2c2, a2c1 and a1b1, which omit an a-coordinate, a b-coordinate and a c-
+coordinate, respectively, which means that part (2) of the deﬁnit ion of concreteness
+cannot be applied.
+Our counterexample above was constructed for a rigid 3-monoid. W e now show
+that there is no counterexample in the case of right rigid 2-monoids.
+Lemma 12.9. Let S be a k-monoid. Let C be a maximal generalized preﬁx code
+such that
+C =
+⋃
+x∈ Y
+xZx
+where Y ⊆ Xi for some 1≤ i≤ k. Then Y = Xi and each Zx is a maximal
+generalized preﬁx code.
+Proof. Suppose ﬁrst that Y ̸= Xi. Let x′∈ Xi\Y . Then, by assumption, x′u = xz
+where z∈ Zx for some x∈ Y . It follows by Lemma 3.10 that x′ = x, which is
+a contradiction. We have therefore proved that Y = Xi. We prove that Zx is a
+generalized preﬁx code. Let a, b∈ Zx and suppose that au = bv for some u, v∈ S.
+Then ( xa)u = ( xb)v. But xa, xb∈ C and so xa = xb giving a = b. We now prove
+that Zx is maximal. Let a∈ S be arbitrary. Then xa must be comparable with an
+element c∈ C. Thus xau = cv where u, v∈ S. Now c must contain at least one
+element of Xi by assumption. It follows that we can write c = yc′ for some c′∈ S
+and y∈ Xi. Thus xau = yc′v. But, by assumption, d(x) = d(y) and so x = y
+by Lemma 3.10. From c = xc′, we get that c′∈ Zx. Also xau = xc′v and so by
+cancellation, au = c′v. It follows that Zx is a maximal generalized preﬁx code. □
+The following is immediate by Lemma 11.3 since if x∈ X ∗
+1 and y∈ X ∗
+2 then
+d(x)∧ d(y) = 0.
+Lemma 12.10. Let S be a right rigid 2-monoid with alphabets X1 and X2. Let
+x∈ X ∗
+1 and y∈ X ∗
+2 be two non-empty strings. Then there are elements u, v∈ S
+such that xu = yv.
+We can now prove the following.
+Theorem 12.11. Let S be a right rigid 2-monoid with alphabets X1 and X2. Then
+every maximal generalized preﬁx code C̸={1} in S is obtained from the maximal
+PAGE 39
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 39
+preﬁx codes in X ∗
+1 or X ∗
+2 by a sequence of expansions. In particular, every maximal
+generalized preﬁx code in S is concrete.
+Proof. In this proof, we shall use the term homogeneous to mean a non-identity
+element of X ∗
+1 or a non-identity element of X ∗
+2 . Let D̸={1} be any maximal
+generalized preﬁx code in S. There are two possibilities: either D contains a ho-
+mogeneous element or it doesn’t. Suppose that D contains a homogeneous element
+x. Then, without loss of generality, we can assume that x∈ X ∗
+1 . By Lemma 12.10,
+there can be no elements of D that belong to X ∗
+2 . It follows that every element of
+D contains an element of X1. Thus by Lemma 12.9, we can write D = ⋃
+x∈ X1 xWx
+where each Wx is a maximal generalized preﬁx code. Now suppose that D contains
+no homogeneous element. Thus every element of D contains at least one letter from
+both of the alphabets X1 and X2. It follows again that D = ⋃
+x∈ Xi xWx for some
+1≤ i≤ 2 where each Wx is a maximal generalized preﬁx code. Thus, in either case,
+we can write D = ⋃
+x∈ Xi xWx for some 1 ≤ i≤ 2. But each Wx is either equal to
+{1} or is a non-trivial maximal generalized preﬁx code but with elements s trictly
+shorter than in D. It follows that an inductive argument can now be applied. □
+13. Constructing examples of our groups
+In this section, we shall prove that the groups we have deﬁned con tain as special
+cases the higher-dimensional Thompson groups introduced by Mat t Brin [6] and
+subsequently widely studied [7, 9, 17, 22, 1, 13, 5]. Brin’s groups aris e from the
+k-monoids which are ﬁnite direct products of free monoids. That his g roups arise
+in this way has also been proved by Birget [4] working solely with ﬁnite dir ect
+products of free monoids. We therefore begin by establishing a dict ionary between
+our paper and that of Birget [4]; speciﬁcally, Section 1 and Section 2 o f his paper.
+Observe that he is working solely with k-monoids of the form S = nA∗ — that
+is the direct product of n copies of the free monoid A∗ . Let S be any n-monoid.
+Deﬁne u≤ int v if and only if there exists an x such that ux = v. This is an order
+relation since S is conical. It is called the initial factor order . in the case where
+S is a free monoid, it is the usual preﬁx order where u≤ pref v if and only if there
+exists an x such that ux = v. Given u and v we are also interested in when there
+is an element z such that u≤ pref z and v≤ pref z. This is equivalent to requiring
+that there exist x and y such that ux = vy = z; equivalently, uS∩ vS̸= ∅ . By
+[4, Lemma 2.5], we have that u, v∈ nA∗ have a join if and only if uS∩ vS̸= ∅ .
+It follows that ‘joinless’ used in [4] is equivalent to our ‘incomparable’. It follows
+that our deﬁnition of a ’maximal generalized preﬁx code’ is equivalent to Birget’s
+deﬁnition of a ‘maximal joinless code’. With this understanding, Birget ’s inverse
+monoid nRI f in
+A is our inverse monoid P(nA∗ ). His deﬁnition of the congruence ≡ end
+[4, Deﬁnition 2.23] looks diﬀerent from that of the minimum group cong ruence we
+use but this is only apparent. Recall that P(nA∗ ) is E-unitary by Proposition 8.2
+and Lemma 7.6. By Proposition 2.1, in an E-unitary inverse semigroup σ =∼ .
+We prove (the well-known) result that in an E-unitary inverse semigroup a∼ b if
+and only if ab− 1b = ba− 1a. Suppose that ab− 1b = ba− 1a. Then ba− 1 = ab− 1ba− 1
+and so is an idempotent. It follows that ab− 1 is an idempotent. Now observe
+that a− 1ba− 1a = a− 1ab− 1b. Thus a− 1b is above an idempotent and so, since
+the inverse semigroup is E-unitary, it is itself an idempotent. We have therefore
+proved that a ∼ b. Suppose now that a∼ b. Since ab− 1 is an idempotent it
+follows that ab− 1b≤ b. It is immediate that ab− 1b≤ a. Now let z≤ a, b. Then
+z≤ ab− 1b, ba− 1a. It follows that ab− 1b = a∧ b. A similar argument shows that
+ba− 1a = a∧ b. We have therefore proved that ab− 1b = ba− 1a. Observe that his [4,
+Lemma 2.11] is a special case of our Lemma 12.1.
+The papers [3] and [31, 32] simply prove the following.
+PAGE 40
+40 MARK V. LA WSON AND ALINA VDOVINA
+Proposition 13.1.
+G(A∗
+n) = Gn,1.
+Before we can state our next result, we shall need to describe max imal generalized
+preﬁx codes in more geometrical language.
+Remark 13.2. Let S be a k-monoid with associated k-alphabets ( X1, . . . , Xk).
+Let|Xi| = ni≥ 2 but ﬁnite. Write Xi ={x1
+i , . . . , xni
+i } — observe that here we
+use superscripts as labels not powers. Let I k be the product [0 , 1)k. We shall show
+how maximal generalized preﬁx codes in S divide up the k-cube I k. Each element
+s∈ S can be written uniquely as s = x1 . . . xk where xi∈ X ∗
+i . An elements of I k is
+a k-tuple and we associate the ith-coordinate with the alphabet Xi. Let m∈ Nk.
+We show ﬁrst how the elements of Cm correspond to a special partition of I k. We
+shall assume ﬁrst that no component of m is zero. We calculate the cardinality of
+Cm. This is nm1
+1 . . . nmk
+k . Given ni≥ 2 divide the interval [0 , 1] into ni right-open,
+left-closed intervals each of length 1
+ni
+. The interval [ j− 1
+ni
+, j
+ni
+] is associated with the
+element xj
+i where 1 ≤ j≤ ni. More generally, the element xj
+i applied to a left-
+closed, right-open interval J does the following: divide J equally into ni left-closed,
+right-open intervals and pick out the j− 1th. An element of X ∗
+i therefore determines
+a left-closed right-open interval in [0 , 1). If that element is 1 then this is the whole
+of [0, 1). If it is an individual letter xj
+i then it picks out the j− 1th as above. If it is
+a sequence of elements of X ∗
+i then we apply then one at a time from left-to-right.
+If the sequence has length mi then the left-closed, right-open interval will have
+length 1
+n
+mi
+i
+. It follows that each element s = ( x1, . . . , xk)∈ Cm will correspond
+to a k-parallelepiped inside I k whose volume will be 1
+nm1
+1 ...n
+mk
+k
+. We call such a
+parallelepiped a brick (of size m). In this way, the set Cm leads to a partition
+of I k into nm1
+1 . . . nmk
+k bricks each with the same volume. We call the partition of
+I k obtained in this way a uniform partition . We can now explain the reduction
+process in terms of gluing suitable bricks together. Let c1, . . . , cni be elements of a
+generalized maximal preﬁx code. We say that they are i-contiguous if there exists
+c∈ S such that cj = cxj
+i where 1 ≤ j≤ ni. This may be diﬃcult to determine
+but is easy if the alphabets mutually commute. We now remove c1, . . . , cni from
+the code but replace them with c. Geometrically, we say that c is obtained from
+c1, . . . , cni by gluing them along the ith-component. A shape is obtained from bricks
+by applying the gluing process a ﬁnite number of times. A pattern is any partition
+of I k into shapes obtained from a uniform partition by a ﬁnite number of glu ings.
+Now consider the n-fold direct product A∗
+2× . . .× A∗
+2. By Proposition 4.23,
+Remark 13.2, Section 7, and [5], we have the following.
+Proposition 13.3.
+G((A∗
+2)n)∼
+= nV.
+Remark 13.4. Observe that our Example 12.8 contradicts the statement in the
+original version of [4, Lemma 2.10]. This has no bearing on the ﬁrst two sections
+of Birget’s paper which we refer to here.
+14. Concluding remarks
+This section contains sundry results that are interesting but do no t ﬁt with the
+main thrust of the paper.
+Maximal generalized preﬁx codes occupy a special position in the the ory as we
+now show. Let S be a distributive inverse semigroup. A congruence ρ on S is said
+to be additive if a ρ b and c ρ d and a∼ c and b∼ d imply that ( a∨ c) ρ (b∨ d).
+PAGE 41
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 41
+Lemma 14.1. Let S be a k-monoid. If X ={x1, . . . , xm} is a maximal generalized
+preﬁx code then ⋁
+x∈ X xx− 1≤ e 1.
+Proof. It is enough to work with idempotents of the form uu− 1. By assumption,
+uS∩ xiS̸= ∅ for some i. Thus z = up = xiq for some p, q∈ S. Then zz − 1≤
+uu− 1, xix− 1
+i . It follows that uu− 1∧ xix− 1
+i ̸= 0. □
+The above lemma provides the context for the next result.
+Proposition 14.2. Let S be a k-monoid. Let ρ be an additive congruence on R(S)
+such that
+( ⋁
+x∈ X xx− 1)
+ρ 1 whenever X is a maximal generalized preﬁx code. Then
+ρ is an essential congruence.
+Proof. Let ⋁m
+i=1 xix− 1
+i ≤ e 1. Put n = ⋁m
+i=1 d(xi). Let u∈ Cn. Then uu− 1 is an
+idempotent and so, by assumption, there is an i such that zz − 1≤ uu− 1, xix− 1
+i . It
+follows that z = up = xiq for some p, q∈ S. But d(u)≥ d(xi). By Lemma 3.10, we
+have that u = xit for some t∈ S. Thus uu− 1≤ xix− 1
+i . We have therefore proved
+that
+⋁
+u∈ Cn
+uu− 1≤
+m⋁
+i=1
+xix− 1
+i .
+By assumption, ⋁
+u∈ Cn uu− 1ρ1 and so, using the fact that ρ is an additive con-
+gruence, we get that ⋁m
+i=1 xix− 1
+i ρ1. Let ⋁m
+i=1 xix− 1
+i ≤ uu− 1. Then we can write
+xi = upi for each 1 ≤ i≤ m. It is routine to check that
+m⋁
+i=1
+xix− 1
+i ≤ e uu− 1⇔
+m⋁
+i=1
+pip− 1
+i ≤ e 1.
+It is also routine to check that
+m⋁
+i=1
+ei≤ e 1⇒ a
+( m⋁
+i=1
+ei
+)
+a− 1≤ e aa− 1.
+We have therefore proved that if ⋁m
+i=1 xix− 1
+i ≤ e uu− 1 then ⋁m
+i=1 xix− 1
+i ρuu− 1. Next,
+one can easily check that
+m⋁
+i=1
+ei≤ e
+n⋁
+j=1
+fj⇔
+m⋁
+i=1
+fj∧ ei≤ e fj
+for 1 ≤ j≤ n. Suppose that ⋁m
+i=1 ei≤ e
+⋁n
+j=1 fj. Then ⋁m
+i=1 fj∧ eiρfj for each
+1≤ j≤ n. We now use the fact that ρ is an additive congruence to deduce that⋁n
+j=1 (⋁m
+i=1 fj∧ ei) ρ ⋁n
+j=1 fj. This simpliﬁes to ⋁m
+i=1 eiρ ⋁n
+j=1 fj. Suppose that
+a≤ e b in R(S). By Lemma 9.2, we have that d(a)≤ e d(b). But we have proved
+that d(a)ρd(b). Thus bd(a)ρb. But a = bd(a). We have therefore proved that
+aρb. □
+For the time being, let S be any cancellative monoid. For each a∈ S, deﬁne a
+function λa : S→ S by λa(x) = ax. By left cancellation in S, the function λa is
+injective. Regarded as a function λa : S→ aS, it is a bijection or a partial bijection
+when viewed as an element of the symmetric inverse monoid I(S). We denote its
+inverse (as a partial bijection) by λ− 1
+a . Deﬁne Σ( S), the inverse hull of S, to be
+the inverse submonoid of I(S) generated by all the elements λa. Thus Σ( S) is the
+monoid generated by all the elements of the form λa and λ− 1
+a . We can massage
+the elements of Σ( S) into a certain shape. Observe that λaλb = λab and that
+λ− 1
+a λ− 1
+b = λ− 1
+ba . In addition, λ− 1
+a λa is the identity map on S. We can therefore
+write each element of Σ( S) in the form
+λ− 1
+a1 λa2 . . . λ− 1
+a2s− 1 λa2s .
+PAGE 42
+42 MARK V. LA WSON AND ALINA VDOVINA
+In general, we cannot say more about the structure of the invers e monoid Σ( S).
+However, if S is strongly ﬁnitely aligned we can say more. We analyse maps of
+the form λ− 1
+a λb. If bS∩ aS = ∅ then this map is the empty map. We therefore
+assume that bS∩ aS̸= ∅ . Let bS∩ aS = ⋃m
+i=1 ciS and let ci = axi = byi. Thus
+λ− 1
+a λb = ⨆m
+i=1 λxiλ− 1
+yi which is a disjoint union. This means that the domains
+and ranges of the elements of the inverse hull are ﬁnitely generate d right ideals
+generated by incomparable elements. If we repeatedly apply this re sult, we deduce
+that every element of the inverse hull can be written in the form ⨁m
+i=1 λxi λ− 1
+yi .
+Remark 14.3. Spielberg’s monoid of zig-zags [52] is an inverse hull .
+There is a natural embedding of ι : Σ( S)→ R(S). The proof of the following is
+straightforward and uses Lemma 5.6.
+Proposition 14.4. Let S be a k-monoid. Let α : Σ( S)→ T be any homomor-
+phism to a distributive inverse semigroup T . Then there is a unique morphism of
+distributive inverse semigroups β : R(S)→ T such that ιβ = α.
+The above results means that R(S) is the distributive completion of Σ( S). By
+Proposition 14.2 and Proposition 14.4, it follows that the Boolean inver se monoid
+C(S) is what we termed in [37] the tight completion of Σ( S) and the groupoid G(S)
+is therefore the tight groupoid of Σ( S).
+Remark 14.5. There are parallels and similarities between our paper and [25, 41].
+In particular, let S = A∗
+n1× . . .× A∗
+ns, where ni≥ 2. This is an s-monoid. It is
+convenient to denote the associated alphabets by X1, . . . , Xs. We say that we have
+s colours. Assume that Xi contains ni elements. We write Xi ={x1
+i , . . . , xni
+i }. We
+say that Xi has arity ni. The data consisting of the number s, the list of arities
+(n1, . . . , ns) and the fact that the elements of Xi commute with the elements of
+Xj, when i̸= j, is precisely what is needed to deﬁne the Ω-algebras described in
+[25]. There are also parallels between our maximal generalized preﬁx c odes and
+the admissible sets used there. But we do not know if the general cla ss of groups
+deﬁned in [25] is the same as ours. This is similar to an issue described in [ 16]. It
+is worth noting that our groups are closely associated with ´ etale gr oupoids, as we
+have shown. This is not, a priori, the case with the groups deﬁned in [2 5, 41].
+References
+[1] J. Belk, C. Bleak, Some undecidability results for async hronous transducers and the Brin-
+Thompson group 2 V , Trans. Amer. Math. Soc. 369 (2017), 3157–3172.
+[2] J. Berstel, D. Perrin, Theory of codes , Academic Press, 1985.
+[3] J.-C. Birget, The groups of Richard Thompson and complex ity, Int. J. Algebra Comput. 14
+(2004), 569–626.
+[4] J.-C. Birget, The word problem of the Brin-Thompson grou ps is coNP-complete,
+arXiv:1902.03852v1.
+[5] C. Bleak, D. Lanoue, A family of non-isomorphism results , Geom. Dedicata 146 (2010),
+21–26.
+[6] M. G. Brin, Higher dimensional Thompson groups, Geometriae Dedicata 108 (2004), 163–
+192.
+[7] M. G. Brin, On the Baker’s map and the simplicity of the hig her dimensional Thompson’s
+group nV , Publ. Mat. 54 (2010), 422–439.
+[8] N. Brownlowe, N. S. Larsen, N. Stammeier, On C∗-algebras associated to right LCM monoids,
+Trans. Amer. Math. Soc. 369 (2017), 31–68.
+[9] J. Burillo, S. Cleary, metrix properties of higher-dime nsional Thompson’s groups, Paciﬁc J.
+Math. 248 (2010), 49–62.
+[10] Y. Cornulier, Commensurating actions for groups of pie cewise continuous transformations,
+arXiv:1803.08572.
+[11] K. R. Davidson, D. Yang, Periodicity in rank 2 graph alge bras, Canad. J. Math. 61 (2009),
+1239–1261.
+PAGE 43
+HIGHER DIMENSIONAL GENERALIZATIONS OF THE THOMPSON GROUPS 43
+[12] K. R. Davidson, D. Yang, Representations of higher rank graph algebras, New York J. Math.
+15 (2009), 169–198.
+[13] W. Dicks, C. Mat ´ ınez-P´ erez, Isomorphisms of Brin-Hi gman-Thompson groups, Israel J.
+Math. 199 (2014), 189–218.
+[14] R. Exel, Inverse semigroups and combinatorial C∗-algebras, Bull. Braz. Math. Soc. 39 (2008),
+191–313.
+[15] C. Farthing, P. S. Muhly, T. Yeend, Higher-rank graph C∗-algebras: an inverse semigroup
+and groupoid approach, Semigroup Forum 71 (2005), 159–187.
+[16] M. Fiore, T. Leinster, An abstract characterization of Thompson’s group F , Semigroup Forum
+80 (2010), 325–340.
+[17] M. G. Fluch, M. Marschler, S. Witzel, M. C. B. Zaremsky, T he Brin-Thompson groups sV
+are of type F∞, Paciﬁc J. Math. 266 (2013), 283–295.
+[18] J. B. Fountain, Orthogonal completions of 0-bisimple m onoids, unpublished notes, University
+of York, UK, 2009.
+[19] J. B. Fountain, M. Kambites, Graph products of right can cellative monoids, J. Aust. Math.
+Soc. 87 (2009), 227–252.
+[20] N. J. Fowler, A. Sims, Product systems over right-angle d Artin semigroups, Trans. Amer.
+Math. Soc. 354 (2002), 1487–1509.
+[21] P. Gabriel, M. Zisman, Calculus of fractions and homotopy theory , Springer-Verlag, 1967.
+[22] J. Hennig, F. Matucci, Presentations for the higher-di mensional Thompson groups nV , Pa-
+ciﬁc J. Math. 257 (2012), 53–74.
+[23] D. G. Jones, M. V. Lawson, Graph inverse semigroups: the ir characterization and completion,
+J. Algebra 409 (2014), 444–473.
+[24] J. S. Kimberley, G. Robertson, Groups acting of product s of trees, tiling systems and analytic
+K-theory, New York J. Math. 8 (2002), 111-131.
+[25] D. B. Kochloukova, C. Matin´ ez-Per´ ez, B. E. A. Nucinkis, Cohomological ﬁniteness properties
+of the Brin-Thompson-Higman groups 2 V and 3 V , Proc. Edimb. Math. Soc. 56 (2013), 777–
+804.
+[26] A. Kumjian, D. Pask, Higher rank graph C∗-algebras, New York J. Math. 6 (2000), 1–20.
+[27] G. Lallement, Semigroups and combinatorial applications , John Wiley, 1979.
+[28] M. V. Lawson, Inverse semigroups , W orld Scientiﬁc, 1998.
+[29] M. V. Lawson, The structure of 0-E-unitary inverse semi groups I: the monoid case, Proc.
+Edinb. Math. Soc. 42 (1999), 497–520.
+[30] M. V. Lawson, E∗-unitary inverse semigroups, in Semigroups, algorithms, automata and
+languages (eds G M S Gomes, J-E Pin, P V Silva) W orld Scientiﬁc, 2002, 195 –214.
+[31] M. V. Lawson, Orthogonal completions of the polycyclic monoids, Communications in Alge-
+bra 35 (2007), 1651–1660.
+[32] M. V. Lawson, The polycyclic monoids Pn and the Thompson groups Vn,1, Communications
+in Algebra 35 (2007), 4068–4087.
+[33] M. V. Lawson, A non-commutative generalization of Ston e duality, J. Austral. Math. Soc.
+88 (2010), 385–404.
+[34] M. V. Lawson, Non-commutative Stone duality: inverse s emigroups, topological groupoids,
+and C∗-algebras, Int. J. Algebra Comput. 22, 1250058, (2012).
+[35] M. V. Lawson, Subgroups of the group of homeomorphisms o f the Cantor space and a duality
+between a class of inverse monoids and a class of Hausdorﬀ ´ et ale groupoids, J. Algebra 462
+(2016), 77–114.
+[36] M. V. Lawson, D. H. Lenz, Pseudogroups and their ´ etale g roupoids, Adv. Math. 244 (2013),
+117–170.
+[37] M. V. Lawson, A. Vdovina, The universal Boolean inverse semigroup presented by the ab-
+stract Cuntz-Krieger relations, arXiv:1902.02583.
+[38] J. Leech, Inverse monoids with a natural semilattice or dering, Proc. Lond. Math. Soc. 70
+(1995), 146–182.
+[39] D. Lenz, An order-based construction of a topological g roupoid from an inverse semigroup,
+Proc. Edinb. Math. Soc. 51 (2008), 387–406.
+[40] P. Lewin, A. Sims, Aperiodicity and coﬁnality for ﬁnite ly aligned higher-rank graphs, Math.
+Proc. Cambridge Phil. Soc. 149 (2010), 333–350.
+[41] C. Matin´ ez-Per´ ez, B. E. A. Nucinkis, Bredon cohomological ﬁniteness conditions for general-
+isations of Thompson groups, Groups, Geometry and Dynamics 7 (4) (2013), 931–959.
+[42] W. D. Munn, Congruence-free inverse semigroups, Quart. J. Math. 25 (1974), 385–404.
+[43] D. Pask, J. Quigg, I. Raeburn, Fundamental groupoids of k-graphs, New York J. Math. 10
+(2004), 195–207.
+[44] S. C. Power, Classifying higher rank analytic Toeplitz algebras, New York J. Math. 13 (2007),
+271–298.
+PAGE 44
+44 MARK V. LA WSON AND ALINA VDOVINA
+[45] I. Raeburn, A. Sims, T. Yeend, Higher-rank graphs and th eir C∗-algebras, Proc. Edinb. Math.
+Soc. 46 (2003), 99–115.
+[46] I. Raeburn, A. Sims, T. Yeend, The C∗-algebras of ﬁnitely aligned higher-rank graphs, Jour-
+nal of Functional Analysis 213 (2004), 206–240.
+[47] H. Matui, Topological full groups of one-sided shifts o f ﬁnite type, J. Reine Angew. Math.
+705 (2015), 35–84.
+[48] J. Renault, Cartan subalgebras in C∗-algebras, Irish Math. Soc. Bulletin 61 (2008), 29–63.
+[49] P. Resende, Lectures on ´ etale groupoids, inverse semigroups and quant ales, Lecture Notes
+for the GAMAP IP Meeting, Antwerp, 4–18 September, 2006, 115 pp. Available at
+https://www.math.tecnico.ulisboa.pt/~ pmr/.
+[50] D. I. Robertson, A. Sims, Simplicity of C∗-algebras associated to higher-rank graphs, Bull.
+London Math. Soc. 39 (2007), 337–344.
+[51] E. A. Scott, A construction which can be used to produce ﬁ nitely presented inﬁnite simple
+groups, J. Algebra 90 (1984), 294–322.
+[52] J. Spielberg, Groupoids and C∗-algebras for categories of paths, Trans. Amer. Math. Soc.
+366 (2014), 5771–5819.
+[53] J. Spielberg, Groupoids and C∗-algebras for left cancellative small categories,
+arXiv:1712:07720v2.
+[54] G. Robertson, T. Steger, Aﬃne buildings, tiling system s and higher rank Cuntz-Krieger
+algebras, J. reine Angew. Math. 72 (1999), 115–144.
+[55] F. W ehrung, Reﬁnement monoids, equidecomposability types, and Boolea n inverse semi-
+groups, Lecture Notes in Mathematics 2188, Springer, 2017.
+[56] D. Yang, The interplay between k-graphs and the Yang-Baxter equation, J. Algebra 451
+(2016), 494–525.
+[57] D. Yang, Factoriality and type classiﬁcation of k-graph von Neumann alegbars, Proc. Edinb.
+Math. Soc. 60 (2017), 499–518.
+Mark V. Lawson, Department of Mathematics and the Maxwell Ins titute for Math-
+ematical Sciences, Heriot-W att University, Riccarton, Edin burgh EH14 4AS, UNITED
+KINGDOM
+E-mail address : m.v.lawson@hw.ac.uk
+Alina Vdovina, School of Mathematics and Statistics, Herschel Building, Newcastle
+University, Newcastle-upon-Tyne NE1 7RU, UNITED KINGDOM
+E-mail address : alina.vdovina@ncl.ac.uk

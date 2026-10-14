@@ -1,0 +1,259 @@
+12 =====
+185:12 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+and /u1D711/u1D45B/u1D45F=(/u1D711′∧ /u1D45F−, /u1D713). For the speci/f_ications/u1D711/u1D45B, /u1D711/u1D45B/u1D459, /u1D711/u1D45B/u1D45Fthe following statement holds:
+(/u1D711/u1D45B/u1D459∧ /u1D711/u1D45B/u1D45F)⇐⇒ /u1D711/u1D45B (2)
+This relationship implies that verifying the parent node speci/f_ication is equivalent to verifying the
+two children node’s speci/f_ications. Formally, we can now de/f_ine the speci/f_ication tree as:
+Definition 8 (specification tree). Given a set of ReLUR, a rooted full binary tree /u1D447is a speci-
+/f_ication tree , if for a node /u1D45B∈ Nodes(/u1D447), and nodes /u1D45B/u1D459, /u1D45B/u1D45F∈ Children(/u1D45B), edge(/u1D45B, /u1D45B/u1D459) is labeled with
+predicate /u1D45F+ and edge(/u1D45B, /u1D45B/u1D45F) is labeled with predicate /u1D45F−, for /u1D45F∈R .
+Algorithm 2 Split operation
+1: function Split(/u1D447 , /u1D45B, /u1D45F)
+2: Input: Speci/f_ication tree/u1D447, a leaf node /u1D45B∈
+Leaves(/u1D447), a ReLU /u1D45F∈R for splitting the node
+3: Output: returns newly added nodes
+4: /u1D45B/u1D459← Add_Child(/u1D45B, /u1D45F+)
+5: /u1D45B/u1D45F← Add_Child(/u1D45B, /u1D45F−)
+6: return /u1D45B/u1D459, /u1D45B/u1D45F
+BaB uses a branching function /u1D43Bfor choos-
+ing the ReLU to split. We de/f_ine this branching
+function in terms of the node /u1D45Bof the speci/f_i-
+cation tree as:
+Definition 9 (Branching Heuristic).
+Given a set of ReLUR, a network /u1D441, and a node
+/u1D45Bin the speci/f_ication tree, ifP⊆R denote the
+set of ReLUs split in the path from the root node
+of the speci/f_ication tree to/u1D45Bthen the branching heuristic /u1D43B(/u1D441 , /u1D45B, /u1D45F) computes a score /uni210E∈ R estimating
+the eﬀectiveness of ReLU /u1D45F∈R/P for splitting the speci/f_ication (/u1D711/u1D45B) of the node /u1D45B.
+We next state the split operation on a speci/f_ication tree. Algorithm2 presents the steps in the
+split operation.
+• Split Operation: Every ReLU split adds two nodes to the speci/f_ication tree at a given leaf node/u1D45B.
+The BaB algorithm chooses the ReLU arg max/u1D45F∈R/P /u1D43B(/u1D441 , /u1D45B, /u1D45F) to split at node /u1D45Busing the heuristic
+function.
+4.2 Incremental Verification: Problem Formulation
+Give a set of networksN with the same architecture with a set of ReLUs R,TN be the set of all
+speci/f_ication trees de/f_ined overR. There exists a partial order(<) onTN through standard subgraph
+relation. BaB execution on a network /u1D441∈N traces a sequence of trees /u1D4470, /u1D4471 . . . /u1D447/u1D453∈TN such that
+/u1D447/u1D456< /u1D447/u1D456+1. It halts with the /f_inal tree/u1D447/u1D453when it either veri/f_ies the property or /f_inds a counterexample.
+The construction of /u1D447/u1D456+1 from /u1D447/u1D456depends on the branching function /u1D43B(De/f_inition9).
+Incremental Veri/f_ication: The incremental veri/f_ication problem is to eﬃciently reuse the infor-
+mation from the execution of veri/f_ication of network/u1D441for the faster veri/f_ication of its updated
+version /u1D441/u1D44E. Standard BaB for veri/f_ication of/u1D441/u1D44Estarts with a single node tree while the incremental
+veri/f_ier starts with a tree/u1D447/u1D441/u1D44E
+0 ∈TN that is not restricted to be a tree with a single node. We modify
+the /f_inal speci/f_ication tree/u1D447/u1D441
+/u1D453from the veri/f_ication of/u1D441to construct /u1D447/u1D441/u1D44E
+0 . The branching heuristic
+/u1D43BΔ for incremental veri/f_ication is derived from the branching heuristic/u1D43Bbased on the eﬃcacy
+of various branching decisions made during the proof for /u1D441. Formally, the complete incremental
+veri/f_ier we propose is de/f_ined as:
+Definition 10 (Complete and Incremental Verifier). A Complete and Incremental Veri/f_ier
+/u1D449Δ takes a neural network /u1D441/u1D44E, an input speci/f_ication/u1D719, an output property /u1D713, analyzer /u1D434, the branching
+heuristic /u1D43BΔ and the initial tree /u1D447/u1D441/u1D44E
+0 . /u1D449Δ(/u1D441/u1D44E, /u1D719, /u1D713, /u1D447/u1D441/u1D44E
+0 , /u1D43BΔ) returns Veri/f_iedif /u1D441/u1D44Esatis/f_ies the property
+(/u1D719, /u1D713), otherwise, it returns a Counterexample.
+Algorithm 3 presents the incremental veri/f_ier algorithm for verifying the perturbed network. It
+takes /u1D43BΔ and /u1D447/u1D441/u1D44E
+0 as input. It maintains a list of active nodes which are the nodes corresponding to
+the speci/f_ications that are yet to be checked by the analyzer. It initializes the list of active nodes
+with leaves of tree /u1D447/u1D441/u1D44E
+0 (line 2). The main loop runs until the active list is empty (line 3) or it
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+
+15 =====
+Incremental Verification of Neural Networks 185:15
+Constructing a Pruned Speci/f_ication Tree: The two reordering goals of prioritizing and depriori-
+tizing eﬀective and ineﬀective splits are diﬃcult to combine with reuse. However, instead of starting
+from scratch, we can construct a speci/f_ication tree/u1D447P from /u1D447/u1D441
+/u1D453excluding the ineﬀective splits. For
+/u1D45B∈ Nodes(/u1D447/u1D441
+/u1D453), where ReLU /u1D45Fsplits /u1D45B, we denote the set of bad splits as the set B(/u1D447/u1D441
+/u1D453) of the pairs
+(/u1D45B, /u1D45F) such that the improvement score /u1D43C/u1D441(/u1D45B, /u1D45F)≤ /u1D703. For(/u1D45B, /u1D45F)∈B( /u1D447/u1D441
+/u1D453) while constructing the
+pruned tree our algorithm chooses a child /u1D45B/u1D458of /u1D45B. If a ReLU /u1D45F/u1D458is split at /u1D45B/u1D458in /u1D447/u1D441
+/u1D453, it performs a
+split /u1D45F/u1D458in the corresponding node in /u1D447P, and skips over the bad split /u1D45F. The subtree corresponding
+to the other child /u1D45B/u1D458′ is eliminated and not added to our pruned tree. We choose /u1D45B/u1D458such that:
+/u1D45B/u1D458= arg min
+/u1D45B/u1D462∈Children(/u1D45B)
+LB/u1D441(/u1D45B/u1D462)− LB/u1D441(/u1D45B) (8)
+We choose such /u1D45B/u1D458over /u1D45B/u1D458′ since LB/u1D441(/u1D45B) is closer to LB/u1D441(/u1D45B/u1D458) than LB/u1D441(/u1D45B/u1D458′). Further, combining
+Equation 5 and 8, we can show (LB/u1D441(/u1D45B/u1D458)− LB/u1D441(/u1D45B)) < /u1D703, i.e. their diﬀerence is bounded. We
+anticipate that on the omission of the split /u1D45F, the subtree corresponding to /u1D45B/u1D458is a better match to
+the necessary branching decisions following /u1D45Bthan /u1D45B/u1D458′.
+Algorithm 4 presents the top-down construction of /u1D447P. The algorithm starts from the root of /u1D447/u1D441
+/u1D453
+and recursively traverses through the children constructing /u1D447P. It maintains a queue /u1D444of nodes yet
+to be explored and a map /u1D440that maps nodes from the tree /u1D447/u1D441
+/u1D453to the corresponding new nodes in
+/u1D447P. At a node /u1D45B, if(/u1D45B, /u1D45F) is not a bad split, it performs the split /u1D45Fat the corresponding mapping ˆ/u1D45B.
+Otherwise, if /u1D45F/u1D458is the split at /u1D45B/u1D458, it skips over /u1D45Fand performs the split of /u1D45F/u1D458at ˆ/u1D45B. The newly created
+children from a split of ˆ/u1D45Bare associated with children of /u1D45B/u1D458using /u1D440. The children of /u1D45B/u1D458are added
+in the /u1D444and they are recursively processed in the next iteration for further constructing /u1D447P. /u1D447P is
+still a speci/f_ication tree satisfying the De/f_inition4.1 by construction. The speci/f_ications/u1D711/u1D45Bof a
+node /u1D45Bin /u1D447P can be constructed using a path from the root to /u1D45B.
+Algorithm 4 Creating a Pruned Tree
+Input: speci/f_ication tree/u1D447/u1D441/u1D44E
+/u1D453, hyperparameter /u1D703
+Output: Pruned tree /u1D447P
+1: /u1D45Broot← root of /u1D447/u1D441/u1D44E
+/u1D453, ˆ/u1D45Broot← copy of /u1D45Broot
+2: /u1D447P← Initialize a new tree with ˆ/u1D45Broot
+3: /u1D444← Initialize list with /u1D45Broot
+4: /u1D440← Initialize an empty map
+5: /u1D440[/u1D45Broot]← ˆ/u1D45Broot
+6: while /u1D444is not empty do
+7: /u1D45B← /u1D444 .pop(); /u1D45F← split at node /u1D45B; ˆ/u1D45B← /u1D440[/u1D45B]
+8: if /u1D43C/u1D441(/u1D45B, /u1D45F) < /u1D703then
+9: /u1D45B/u1D458← arg min/u1D45B/u1D458∈Children(/u1D45B) LB/u1D441(/u1D45B/u1D458)− LB/u1D441(/u1D45B)
+10: /u1D45F/u1D458← split at node /u1D45B/u1D458
+11: /u1D45B/u1D459, /u1D45B/u1D45F← /u1D45B/u1D458.children; ˆ/u1D45B/u1D459, ˆ/u1D45B/u1D45F← Split(/u1D447P, ˆ/u1D45B, /u1D45F/u1D458)
+12: /u1D440[/u1D45B/u1D459]← ˆ/u1D45B/u1D459; /u1D440[/u1D45B/u1D45F]← ˆ/u1D45B/u1D45F
+13: /u1D444 .push(/u1D45B/u1D459); /u1D444 .push(/u1D45B/u1D45F)
+14: else
+15: /u1D45B/u1D459, /u1D45B/u1D45F← /u1D45B.children; ˆ/u1D45B/u1D459, ˆ/u1D45B/u1D45F← Split(/u1D447P, ˆ/u1D45B, /u1D45F)
+16: /u1D440[/u1D45B/u1D459]← ˆ/u1D45B/u1D459; /u1D440[/u1D45B/u1D45F]← ˆ/u1D45B/u1D45F
+17: /u1D444 .push(/u1D45B/u1D459); /u1D444 .push(/u1D45B/u1D45F)
+18: return /u1D447P
+Algorithm 5 Incremental Veri/f_ication
+Algorithm
+Input: Original network /u1D441,
+Perturbed network /u1D441/u1D44E,
+property (/u1D719, /u1D713),
+analyzer /u1D434,
+branching heuristic /u1D43B,
+hyperparameters
+/u1D6FCand /u1D703,
+incremental veri/f_ier/u1D449Δ
+Output: Veri/f_ication result for/u1D441and /u1D441/u1D44E
+1: resultN , /u1D447/u1D441
+/u1D453← /u1D449(/u1D441 , /u1D719, /u1D713, /u1D43B)
+2: /u1D447/u1D441/u1D44E
+0 ← PrunedTree(/u1D447/u1D441
+/u1D453, /u1D703)
+3: /u1D43BΔ← UpdateH(/u1D43B, /u1D447/u1D441
+/u1D453, /u1D703, /u1D6FC)
+4: resultN /u1D44E← /u1D449Δ(/u1D441/u1D44E, /u1D719, /u1D713, /u1D447/u1D441/u1D44E
+0 , /u1D43BΔ) ⊲
+Incremental veri/f_ication step calls Algo-
+rithm 3
+5: return resultN, resultN /u1D44E
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+
+16 =====
+185:16 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Main algorithm: Algorithm 5 presents IV AN’s main algorithm for incremental veri/f_ication that
+combines all the aforementioned techniques. It takes as inputs the original network /u1D441, a perturbed
+network /u1D441/u1D44E, input speci/f_ication/u1D719, and an output property /u1D713. It prunes the /f_inal tree/u1D447/u1D441
+/u1D453obtained
+in the veri/f_ication of/u1D441and constructs /u1D447/u1D441/u1D44E
+0 (line 2). It computes the updated branching heuristic
+/u1D43BΔ using Equation 7 (line 3). It uses /u1D447/u1D441/u1D44E
+0 and /u1D43BΔ for performing fast incremental veri/f_ication of
+networks /u1D441/u1D44E(line 4).
+We next state the following lemma that states - verifying the property (/u1D719, /u1D713) is equivalent to
+verifying the speci/f_ications for all the leaves.
+Lemma 1. The speci/f_ications encoded by the leaf nodes of a speci/f_ication tree/u1D447maintain the following
+invariance. ( /logicalanddisplay.1
+/u1D45B∈/u1D459/u1D452/u1D44E/u1D463/u1D452/u1D460(/u1D447)
+/u1D711/u1D45B
+)
+⇐⇒( /u1D719→ /u1D713)
+We next use the lemma to prove the soundness and completeness of our algorithm. All the proofs
+are in Appendix A.2.
+Theorem 2. (Soundness of Veri/f_ication Algorithm). If Algorithm 5 veri/f_ies the property(/u1D719, /u1D713) for the
+network /u1D441/u1D44E, then the property must hold.
+Theorem 3. (Completeness of Veri/f_ication Algorithm). If for the network /u1D441/u1D44E, the property(/u1D719, /u1D713)
+holds then Algorithm 5 always terminates and produces Veri/f_iedas output.
+Scope of IV AN:IV AN utilizes the speci/f_ication tree to store the trace of the BaB proof. The IV AN
+algorithm enhances this tree by reusing and re/f_ining it to enable faster BaB proof of updated
+networks. Our paper focuses on using IV AN to verify ReLU networks with BaB that implements
+ReLU splitting. However, we expect that IV AN’s principles can be extended to networks with other
+activation functions (tanh, sigmoid, leaky ReLU) for which BaB has been applied for veri/f_ication.
+4.4 Network Perturbation Bounds
+In this section, we formally characterize a class of perturbations on a network /u1D441where our proposed
+"Reuse" technique attains maximum possible speed-up. Speci/f_ically, we focus on modi/f_ications
+aﬀecting only the last layer which represent many practical network perturbations (e.g, transfer
+learning, /f_ine-tuning). The last layer modi/f_ication assumption is only for our theoretical results in
+this section. Our experiments make no such assumption and consider perturbations applied across
+the original network.
+We leave the derivation of perturbation bounds corresponding to the full IV AN to future work as
+it requires theoretically modeling the eﬀect of arbitrary network perturbations on DNN output as
+well as complex interactions between "Reuse" and "Reorder" techniques. Given a speci/f_ication tree
+/u1D447and network architectureN , we identify a set of neural networks C/u1D447(N) such that any network
+/u1D441/u1D44E∈ C/u1D447(N) can be veri/f_ied by reusing/u1D447.
+We assume the weights are changed by the weight perturbation matrixE. If /u1D441/u1D459= ReLU(/u1D434/u1D459·/u1D44B+/u1D435/u1D459)
+then last layer of /u1D441/u1D44Eis /u1D441/u1D44E
+/u1D459= ReLU((/u1D434/u1D459+E)· /u1D44B+ /u1D435/u1D459).
+Definition 11 (Last Layer Perturbed Network). Given a network /u1D441with architectureN ,
+the set of last layer perturbed networks is M( /u1D441 , /u1D6FF)⊆N , such that if /u1D441/u1D44E∈M( /u1D441 , /u1D6FF) then(∀/u1D456∈
+[/u1D459− 1])· /u1D441/u1D456= /u1D441/u1D44E
+/u1D456, /u1D441/u1D459= ReLU(/u1D434/u1D459· /u1D44B+ /u1D435/u1D459), /u1D441/u1D44E
+/u1D459= ReLU(( /u1D434/u1D459+E)· /u1D44B+ /u1D435/u1D459) and∥E∥ /u1D439≤ /u1D6FF. 1
+We next compute the upper bound of /u1D6FF, for which if the property can be proved/disproved using
+speci/f_ication tree/u1D447in /u1D441then the same property can be proved/disproved in /u1D441/u1D44Eusing the same
+/u1D447. Therefore, once we have the proof tree /u1D447that veri/f_ies the property in/u1D441we can reuse /u1D447for
+1∥·∥ /u1D439denotes the Frobenius norm of a matrix
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+
+17 =====
+Incremental Verification of Neural Networks 185:17
+Table 1. Models and the perturbation /u1D716used for the evaluation for incremental verification.
+Model Architecture Dataset #Neurons Training Method /u1D716
+ACAS-XU Networks 6× 50 linear layers ACAS-XU 300 Standard [ Julian et al. 2019 ] -
+FCN-MNIST 2× 256 linear layers MNIST 512 Standard 0.02
+CONV-MNIST 2 Conv, 2 linear layers MNIST 9508 Certi/f_ied Robust [ Balunovic and Vechev 2020] 0.1
+CONV-CIFAR 2 Conv, 2 linear layers CIFAR10 4852 Empirical Robust [ Dong et al. 2018 ] 2
+255
+CONV-CIFAR-WIDE 2 Conv, 2 linear layers CIFAR10 6244 Certi/f_ied Robust [ Wong and Kolter 2018a] 4
+255
+CONV-CIFAR-DEEP 4 Conv, 2 linear layers CIFAR10 6756 Certi/f_ied Robust [ Wong and Kolter 2018a] 4
+255
+verifying any perturbed network /u1D441/u1D44E∈M( /u1D441 , /u1D6FF). Assuming the property(/u1D719, /u1D713) and the analyzer /u1D434
+are the same for any perturbed network /u1D441/u1D44E∈M( /u1D441 , /u1D6FF) the upper bound of /u1D6FFonly depends on /u1D441
+and /u1D447.
+We next introduce some useful notations that help us explicitly compute the upper bound of /u1D6FF.
+Given /u1D447letF( /u1D441/u1D456, /u1D447) be the over-approximated region computed by the analyzer /u1D434that contains
+all feasible outputs /u1D441/u1D456of the /u1D456-th layer of the original network. NoteF( /u1D441/u1D456, /u1D447) depends on the /u1D719and
+analyzer /u1D434but we omit them to simplify the notation. Let /u1D449T(/u1D441 , /u1D447) denote whether the property
+(/u1D719, /u1D713) can be verifed on network /u1D441with /u1D447. Proof of Theorem 4 is presented in Section A.3
+/u1D43F/u1D435(F( /u1D441/u1D459, /u1D447)) = min
+/u1D44C∈F( /u1D441/u1D459,/u1D447)
+C/u1D447/u1D44C (9)
+/u1D449T(/u1D441 , /u1D447) =(/u1D43F/u1D435(F( /u1D441/u1D459, /u1D447))≥ 0) (10)
+/u1D702(/u1D441 , /u1D447) = max
+/u1D44C∈F( /u1D441/u1D459−1,/u1D447)
+∥/u1D44C∥2 (11)
+Theorem 4. If /u1D6FF≤ |/u1D43F/u1D435(F( /u1D441/u1D459,/u1D447))|
+∥C∥ 2·/u1D702(/u1D441 ,/u1D447) then for any perturbed network /u1D441/u1D44E∈M( /u1D441 , /u1D6FF) /u1D449T(/u1D441 , /u1D447) ⇐⇒
+/u1D449T(/u1D441/u1D44E, /u1D447).
+The proof of the theorem is in Appendix A.3.
+5 METHODOLOGY
+Networks and Properties. We evaluate IV AN on models with various architectures that are trained
+with diﬀerent training methods. Similar to most of the previous literature, we verify /u1D43F∞-based local
+robustness properties for MNIST and CIFAR10 networks and choose standard /u1D716values used for
+evaluating complete veri/f_iers. For the veri/f_ication of global properties in Section6.4 we use the
+standard set of ACAS-XU properties that are part of the VNN-COMP benchmarks [ Bak et al . 2021].
+Table 1 presents the evaluated models and the choice of /u1D716for the local robustness properties.
+Network Perturbation. Similar to previous works [ Paulsen et al . 2020a; Ugare et al. 2022], we
+use quantization to generate perturbed networks. Speci/f_ically, we use int8 and int16 post-training
+quantizations. The quantization scheme has the form [ TFLite 2017]: /u1D45F= /u1D460(/u1D45E− /u1D467/u1D45D). Here, /u1D45Eis the
+quantized value and /u1D45Fis the real value; /u1D460which is the scale and /u1D467/u1D45Dwhich is the zero point are the
+parameters of quantization. Our experiments use symmetric quantization with /u1D467/u1D45D= 0.
+Baseline. We use the following baseline BaB veri/f_iers:
+• For proving the local robustness properties, we use LP-based triangle relaxation for bounding
+[Bunel et al . 2020b; Ehlers 2017 ], and we use the estimation based on coeﬃcients of the
+zonotopes for choosing the ReLU splitting [ Henriksen and Lomuscio 2021 ].
+• For the veri/f_ication of ACAS-XU global properties, we use Re/f_ineZono [Singh et al. 2019c].
+Re/f_ineZono uses DeepZ [Singh et al. 2018] analyzer with input splitting. This baseline is used
+only for experiments in Section 6.4.
+Experimental Setup. We use 64 cores of an AMD Ryzen Threadripper CPU with the main memory
+of 128 GB running the Linux operating system. The code for our tool is written in Python. We use
+the GUROBI [ Gurobi Optimization, LLC 2018 ] solver for our LP-based analyzer.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+

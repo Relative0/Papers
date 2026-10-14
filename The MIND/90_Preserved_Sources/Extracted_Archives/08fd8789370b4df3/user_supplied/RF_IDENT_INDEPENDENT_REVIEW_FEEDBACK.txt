@@ -1,0 +1,220 @@
+# Independent review: bounded-height-two RF-IDENT
+
+Date: 2026-09-29. Verdict: **no blocking mathematical gap found** in the exact
+feasibility criterion or the stated polynomial construction, under the inherited
+post-T0, fixed-library model. This is a fresh model audit, not human refereeing
+or a priority determination. It does not classify general height-two RF-IDENT
+or optimize tree depth.
+
+The reviewed phase is `../RF-IDENT Bounded Height2 2026-09-29/`. All six files
+in its SHA256 manifest still match. Its theorem, verifier, evidence files and
+manifest were left unchanged. The preceding fixed-library gate was read only.
+
+## Proof reconstruction
+
+### 1. Model and local legality
+
+The inherited `FORMAL_ADAPTIVE_MODEL.md`, `BRANCH_CANCELLATION.md`, and
+`REPAIR_GRAPH_DYNAMICS.md` in the preceding gate's `research/` directory supply
+the precise model. Safety is assessed before the answer is conditioned on.
+On an answer fiber every previously added query coordinate is constant, so
+the current order is the original induced order on the surviving support.
+The original structural signature is not a free source of acquired answers.
+
+For distinct global endpoints a,z, height at most two means precisely
+P={a}+M+{z} with M an antichain: a comparison between distinct middle states
+would give three strict inequalities. Supports therefore have only four
+forms: both endpoints with some middle states, one of two stars, or an
+antichain.
+
+For S={a,z} union R, the relative boundary has the following forms. This
+reconstruction uses all comparable pairs, including a<z.
+
+| Endpoint bits | Deleted cells and boundary | Conclusion |
+|---|---|---|
+| 01 | No deleted cells | Safe |
+| 00 | For each x with q(x)=1: edge xz and triangle axz, with a unique incidence | Identity boundary; safe |
+| 11 | For each x with q(x)=0: edge ax and triangle axz, with a unique incidence | Identity boundary; safe |
+| 10 | Edge az and one additional descent edge per x; one triangle per x | |R|+1 rows and |R| columns; unsafe |
+
+The equal-endpoint cases have actual identity matrices, not merely equal
+cell counts. Equivalently, each listed relative edge is a free face of its
+unique triangle and can be collapsed. The descending case remains unsafe
+when R is empty. Thus the full-support safe family is exactly
+Q_safe={q:q(a)<=q(z)}.
+
+On a lower star {a} union R, there are no triangles, so safety requires no
+descent: q(a)=0 or the query is constant 1. On an upper star R union {z},
+safety requires q(z)=1 or the query is constant 0. Every antichain query is
+safe. Consequently, a test with q(a)=1,q(z)=0 is either unsafe or constant on
+every support containing an endpoint. It can be useful only after both
+endpoints have disappeared.
+
+### 2. Necessity
+
+Two middle states with identical Q signatures cannot ever be separated.
+For any endpoint e and other state v, follow their common path until their
+first separating query. Its pre-answer support contains both e and v, so it
+is useful there. The preceding local result forces it to belong to Q_safe.
+Therefore Q_safe must distinguish each endpoint from every other state.
+
+This argument covers arbitrary adaptive histories. It does not assume that
+full-support safety survives restriction.
+
+### 3. Equal-endpoint peeling and the core
+
+Let E comprise equal-endpoint tests and A the ascending tests in Q_safe.
+For an informative E-test, the endpoint outcome retains both endpoints and
+removes at least one middle state. The other outcome is an antichain. Global
+middle-pair separation supplies ordinary identification on each such branch:
+at any nonsingleton support, choose two states and a supplied test separating
+them, and recurse on strictly smaller supports.
+
+A middle state in
+C={x: q(x)=q(a)=q(z) for every q in E}
+survives every peel. Any surviving state outside C has an E-test witnessing
+disagreement, which is still informative because both endpoints remain.
+Thus every terminal peeling order gives exactly {a,z} union C. There is no
+assumption about a favorable ordering of E.
+
+### 4. Both residual stars
+
+Endpoint separation guarantees A is nonempty. Choose any s in A after
+peeling. Its outcomes are {a} union C_0 and C_1 union {z}.
+
+For x in C_0, Q_safe separates a,x. No E-test can do so by the definition
+of C, hence a witness r belongs to A and has r(a)=0,r(x)=1. Every such
+witness is safe on every lower-star restriction. Along the a branch, these
+tests remove all remaining leaves; every detached branch is an antichain.
+
+For x in C_1, separation from z similarly supplies r in A with
+r(x)=0,r(z)=1. These safely remove all leaves along the z branch, with
+antichain branches on the other outcomes. Middle separation persists on
+all subsets. Thus both children are identifiable for every chosen s in A.
+
+No unlisted complement, synthesized test, or global consumption rule is
+introduced. A used query is constant on descendants and cannot be useful
+again. For n>=1, the reduced tree has n singleton leaves and n-1 internal
+nodes. The n=0 case is a separate trivial convention.
+
+## Input validation and running time
+
+The stated bound is valid for an explicit Boolean order matrix and query
+table. For n>=2, scan for a unique all-ones row a and a unique all-ones
+column z, require a!=z, then check every entry against
+
+    R[i,j] = (i=j) or (i=a) or (j=z).
+
+This directly recognizes the exact class in O(n^2); a generic cubic
+transitivity check is unnecessary. For n=1 require its reflexive entry;
+n=0 is the separate trivial extension, not a poset with existing endpoints.
+Relabeling endpoints, if needed, costs O(n^2+mn) including the query table.
+
+Pairwise separation scans cost O(mn^2). At each of at most n-1 internal
+nodes, a scan of m queries on at most n states costs O(mn). Thus decision
+and construction cost O(n^2+mn^2), using ordinary explicit-table access.
+This is an algorithmic upper bound, not a benchmark guarantee for the
+Python verification harness or an optimal-depth claim.
+
+Boundary cases are consistent: n=2 requires the supplied orientation 01;
+an empty library fails for n>=2; a singleton requires no query. Constants
+and duplicate tables cannot change feasibility. The two named examples
+correctly demonstrate destructive legal choice and essential later use of
+an initially unsafe query.
+
+## Verifier audit and reproduced evidence
+
+The original `matrix_safe` enumerates exactly the relative edges and
+triangles, computes F2 rank, and requires bijectivity. Its feasibility DP
+uses that predicate on the pre-answer support, with strict child shrinkage.
+It does not consult the theorem's signature criterion. The constructor
+prioritizes all useful E-tests, then an ascending test, and uses structural
+safety on the remaining stars and antichains. The tree checker verifies
+supplied query indices, safety, outcome supports, leaves, and node count.
+
+An unchanged copy was run under Python 3.10.11 in `reproduction/`:
+
+| Reproduced check | Count |
+|---|---:|
+| Support/query matrix comparisons | 87,376 |
+| Exhaustive libraries, n=2,3,4 | 16,452 |
+| Seeded libraries, n=5..10 | 9,000 |
+| Feasible libraries | 20,582 |
+| Pooled protocol internal nodes | 83,143 |
+
+All results agree with the recorded JSON after excluding the timing field.
+The regenerated protocol JSON is byte-for-byte identical. The rerun took
+7.788 seconds as measured internally; timing is host-dependent.
+
+Fresh `review_checks.py` adds a direct elementary-collapse checker that
+does not call the structural rule or matrix routine to determine its own
+answer. Using the inherited collapse equivalence, it agrees with the
+original matrix routine on all 87,381 support/query cases for n=0..8.
+It also validates all 11 stored example protocols, comprising 50 internal
+nodes. These are the stored examples, not the whole pooled protocol set.
+
+The explicit relation recognizer above agrees with an independent check
+of reflexivity, antisymmetry, transitivity, endpoints, and absence of a
+four-chain on all 4,166 reflexive Boolean relations for n=0..4. Two malformed
+inputs are rejected. Five singleton libraries pass the original criterion,
+constructor, and tree checker. These checks support, rather than replace,
+the proof.
+
+## Two implementation clarifications
+
+Neither is a counterexample to the theorem or its reported n>=2 sweeps:
+
+1. **The supplied verifier is not a general explicit-order input solver.**
+   It hard-codes the canonical labelled poset from n and exposes no order
+   matrix argument or validator. The theorem's input-validation bound is
+   justified above, but should not be presented as an existing feature of
+   `verify_bounded_height2.py`. The review's small `recognize` routine checks
+   that step separately.
+2. **The empty carrier is not implemented in the original constructor.**
+   `canonical_tree(0, ())` raises `ValueError: negative shift count` before
+   reaching its leaf base case. Original pooled checks start at n=2.
+   Singleton calls work. Before reusing this harness as a general solver,
+   add a deliberate n=0 result convention and a corresponding tree-checker
+   case, or explicitly restrict its API to n>=1 (the current sweep to n>=2).
+
+No original files were patched: these are scope clarifications for future
+software packaging, and the published finite coverage already states its
+actual ranges. Run the original verifier without Python optimization flags
+because its checks use assertions.
+
+## Preserved boundaries and source check
+
+U2's internal-fiber order caveat, U4's long exact sequence rather than a
+direct sum, and U6's fine-measurability hypothesis remain untouched. A1's
+structural-versus-acquired-data convention is retained. This proof uses
+neither the rejected V5-06 dimension equality nor the unrepaired V5-07
+hardness argument, and retains V5-09's ambient-complex treatment including
+unsupported deleted-edge rows.
+
+The narrow comparison in AUDIT.md is supported by the introduction of
+[Jonsson, Optimal Decision Trees on Simplicial Complexes (2005), pp. 1-2](https://www.combinatorics.org/ojs/index.php/eljc/article/viewFile/v12i1r3/pdf/):
+that setup queries membership in a hidden subset or face and studies
+evasiveness. It is not the same specified identification model. This check
+does not exclude related results elsewhere and establishes no priority.
+
+## Reproduction and phase decision
+
+From this review directory:
+
+```powershell
+python reproduction\verify_bounded_height2.py
+python review_checks.py
+```
+
+The first command rewrites only reproduction/VERIFICATION.json and
+reproduction/PROTOCOL_EXAMPLES.json; the second rewrites REVIEW_CHECKS.json.
+The saved run.log records the initial review rerun and is not regenerated by
+these commands. A subsequent timing change will change the reproduction
+verification hash in this review's manifest, not the original phase manifest.
+
+The audit is complete. No further computation, thread, or model run is
+required for this review. Defer publication integration until requested;
+closely related corrections can remain in this task because the proof and
+checks are already available. A new general-classification search is a
+separate optional project and is not pursued here. There were no commits,
+pushes, external publication, or paid services.

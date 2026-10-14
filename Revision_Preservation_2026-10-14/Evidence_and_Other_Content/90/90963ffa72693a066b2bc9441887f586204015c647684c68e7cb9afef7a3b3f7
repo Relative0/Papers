@@ -1,0 +1,193 @@
+# N2/P12 Preregistration - Lazy Reuse Exactification and Pair-Density Derivation
+
+## Status
+
+Frozen before any P12 correctness, invariance, fuzz, Gate-P, natural-corpus, memory, or timing result is inspected.
+
+P12 is a pure implementation experiment. It does not retrain or modify the frozen P8/P9/P10/P11 dispatch policy, the `0.80` cutoff, the P6 profitability rule, the P6 folding backend, the Gate-P generator, the natural EPFL evaluation roots, repetition counts, or primary endpoint.
+
+## Motivation fixed from P11
+
+P11 reduced dispatch telemetry to the only predicates needed by the sole frozen annotate leaf, but it still maintained two exact statistics eagerly during every source-node construction:
+
+1. `reuse_edge_events`, using a `used` bytearray touched for every source edge;
+2. `pair_repeat_excess`, incremented on every repeated canonical binary operand pair.
+
+The frozen annotate decision is exactly the conjunction:
+
+- at least one canonical binary operand pair occurs at least five times (`shell_ge5`);
+- `reuse_edge_events / edge_count <= 0.44374121725559235`;
+- `pair_repeat_excess / binary_nodes <= 0.16333333402872086`.
+
+P12 tests whether the reuse/pair information can be obtained more cheaply without changing this decision.
+
+## Frozen P12 mechanism
+
+### Source-construction state
+
+P12 maintains only:
+
+- ordinary `Factory` cache and node list;
+- `edge_count`;
+- `binary_nodes`;
+- a dictionary from canonical binary operand-pair key to a **saturating count in {1,2,3,4,5}**;
+- `shell_ge5`.
+
+P12 deliberately does **not** maintain during source construction:
+
+- a per-node `used` bytearray;
+- `reuse_edge_events`;
+- `pair_repeat_excess` as an incremented counter;
+- depth, density, or generic feature dictionaries.
+
+### Exact pair-repeat density without eager repeat counting
+
+For canonical binary operand pairs,
+
+`pair_repeat_excess = binary_nodes - number_of_distinct_pair_keys`.
+
+Therefore P12 derives exact `pair_repeat_excess` at dispatch as:
+
+`binary_nodes - len(pair_counts)`.
+
+The pair dictionary values may saturate at five because exact counts above five are irrelevant to both:
+
+- whether `shell_ge5` is true; and
+- the number of distinct pair keys.
+
+### Lazy reuse exactification
+
+P12 evaluates predicates in a decision-equivalent short-circuit order:
+
+1. if `shell_ge5` is false: bypass immediately;
+2. derive exact pair-repeat density; if it exceeds the frozen threshold: bypass immediately;
+3. only then compute reuse density by a one-time scan of the completed source DAG.
+
+The reuse scan allocates a temporary `bytearray(len(nodes))` and visits source edges. The first incoming edge to a child marks that child; every later edge to the same child is a reuse event.
+
+Because the frozen reuse predicate is monotone in the number of reuse events, the scan may stop early as soon as the exact integer inequality proves
+
+`reuse_edge_events / edge_count > 0.44374121725559235`.
+
+Threshold comparison must use the exact binary-float rational from `float.as_integer_ratio()`; no rounded decimal approximation is permitted.
+
+If the scan completes without crossing the threshold, P12 annotates. Thus the final annotate/bypass decision is mathematically identical to P11 even though exact reuse is never computed on shell-negative or pair-repeat-negative cases.
+
+## Mandatory P11/P12 invariance
+
+Before timing interpretation, P12 must be checked on all 332 frozen policy cases:
+
+- 188 P8 training cases;
+- 98 P8 validation cases;
+- 36 Gate-P evaluation cases;
+- 10 natural evaluation cases.
+
+Require for every case:
+
+- identical ordinary Boolean source semantics / direct compiler digest;
+- identical `edge_count` and `binary_nodes` to P11;
+- exact P12-derived `pair_repeat_excess == P11.pair_repeat_excess`;
+- `P12.shell_ge5 == P11.shell_ge5`;
+- identical final annotate/bypass decision to P11;
+- whenever P12 performs a reuse scan to completion, its exact reuse count must equal P11's exact `reuse_edge_events`;
+- whenever P12 early-aborts a reuse scan, the recorded partial count must already strictly exceed the exact frozen reuse threshold and P11 must also bypass on reuse.
+
+Exact P11 bypass-leaf labels are not required when P12 short-circuits on an equivalent later predicate; only the final frozen annotate/bypass decision is normative.
+
+Any mismatch aborts performance interpretation.
+
+## Correctness gate
+
+Before timing interpretation, run 1,000 fresh fuzz formulas. Require:
+
+- ordinary, P11, and P12 source DAG semantics agree;
+- P12 exact pair-repeat derivation matches P11;
+- P11/P12 final dispatch decisions agree;
+- direct and P6 compiler outputs match the independent Boolean oracle/digest;
+- selected P12 Boolean-work metrics equal the corresponding frozen direct/P6 backend;
+- P6 accepted-fold count equals fold-lowering count.
+
+Any mismatch aborts interpretation.
+
+## Evaluation corpora
+
+### Gate-P
+
+Replay exactly the frozen 36-case Gate-P evaluation family: depths 6, 8, and 10; 12 cases per depth; original frozen RNG/order.
+
+### Natural EPFL
+
+Replay exactly the frozen ten natural cones used in P1-P11 from EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`.
+
+No natural-folding claim is permitted unless P12 dispatches to P6 and actually consumes a fold on a natural case.
+
+## Simultaneous source-inclusive arms
+
+Randomize four arms within every timing schedule:
+
+1. `direct_source_pipeline` - ordinary source Factory + direct/no-rewrite sparse ANF;
+2. `p6_source_pipeline` - ordinary source Factory + always-P6 compiler;
+3. `p11_tree_specialized_dispatch` - frozen P11 eager specialized telemetry + frozen dispatch;
+4. `p12_lazy_reuse_dispatch` - frozen P12 lazy-statistics implementation + exactly equivalent frozen dispatch.
+
+This simultaneous design isolates P12/P11 implementation cost while controlling machine drift.
+
+## Timing
+
+- Gate-P: 20 randomized repetitions per case per arm.
+- Natural: 15 randomized repetitions per case per arm.
+- Separate untimed `tracemalloc` passes are permitted.
+- Case medians are formed first.
+- Pooled ratios use case-balanced geometric means with 5,000 bootstrap resamples for 95% intervals.
+- Workload-weighted summed-median ratios and per-case wins are secondary.
+
+## Primary endpoint
+
+`P12 / direct` source-inclusive time, from source-DAG construction through selected compiler construction and sparse-ANF lowering.
+
+## Secondary endpoints
+
+Report at minimum:
+
+- P12/P11 source-inclusive ratio;
+- P12/P6 source-inclusive ratio;
+- P12/direct source-build ratio;
+- P12/P11 source-build ratio;
+- P12/direct selected-compiler ratio;
+- workload-weighted versions;
+- Gate-P depth strata;
+- exact dispatch counts;
+- number of cases requiring a reuse scan;
+- number of reuse scans ending in early threshold abort;
+- reuse-scan edge fraction when measured;
+- Boolean-work ratios versus direct;
+- traced peak-allocation ratios.
+
+## Predeclared signals
+
+### Gate-P direct-crossover PASS
+
+Requires all of:
+
+1. zero correctness failures;
+2. exact P11/P12 final-decision invariance on all 332 frozen cases;
+3. at least one Gate-P case dispatched to P6 and consuming a fold;
+4. P12/direct source-inclusive case-balanced geomean <= `0.95`;
+5. bootstrap 95% upper bound < `1.00`;
+6. no greater than 5% pooled increase in pair terms or peak monomials versus direct.
+
+### Lazy-statistics engineering success
+
+Independently report success if all hold:
+
+1. exact P11/P12 final-decision invariance;
+2. P12/P11 source-build case-balanced geomean <= `0.90`;
+3. P12/P11 source-inclusive case-balanced geomean <= `0.98`;
+4. bootstrap 95% upper bound for P12/P11 source-inclusive < `1.00`.
+
+## Guardrails
+
+- No frozen tree value, cutoff, fold threshold, case, repetition count, or endpoint may change after P12 results are seen.
+- No P12 timing may be used to modify lazy predicate order, pair-count representation, reuse-scan structure, or early-abort rule.
+- No learned gate, case-specific exception, or post-hoc dispatch threshold is permitted.
+- P12 is a CPython implementation experiment. A win would demonstrate cheaper exposure of the already-frozen folding/dispatch mechanism; it would not establish uniqueness to CM or general natural-circuit acceleration.

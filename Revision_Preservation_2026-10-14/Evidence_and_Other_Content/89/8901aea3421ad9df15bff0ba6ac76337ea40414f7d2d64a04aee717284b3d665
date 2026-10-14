@@ -1,0 +1,706 @@
+# Canonical claim registry
+
+71 stable claims. Status dimensions are independent: a theorem may be proved and still have unverified priority. A finite test is never an unbounded proof. Primary home means ownership in this proposed portfolio, not ownership of prior art.
+
+Full machine-readable fields: [JSON](claim_registry.json) and [CSV](claim_registry.csv).
+
+## CM-B-001 - Typed CM selection
+The true-first XOR-AND contraction selects C[x,y].
+
+**Model / assumptions:** CM. one-hot operands; declared (11,10,01,00) order.
+**Evidence:** Proof imported from B; Not rerun.
+**Source:** [S-B section 2.1-2.2, Proposition 1](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Cheng2011; Mizraji2008; `KNOWN_PRIOR_ART`.
+**Primary home / role:** Paper B / background.
+**Finite scope:** 16 binary tokens; B reports finite checks.
+
+## CM-B-002 - Three different linearities
+Coefficient contraction is linear; Boolean input degree and affine one-hot encoding are different notions.
+
+**Model / assumptions:** CM. fixed operands for coefficient-linearity.
+**Evidence:** Proof imported from B; Not rerun.
+**Source:** [S-B section 2.3; appendix A.2](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Cheng2011; elementary GF(2) algebra; `KNOWN_PRIOR_ART`.
+**Primary home / role:** Paper B / background.
+
+## CM-B-003 - Signed-frame fusion
+Transpose and input permutations align frames; arbitrary outer Boolean fusion is sound only after frame equality.
+
+**Model / assumptions:** CM/compiler. same ordered variables and polarities; structural admission rules.
+**Evidence:** Proof imported from B; Bench implementation tests passed; not B implementation.
+**Source:** [S-B section 3; appendix A.3-A.4](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Mishchenko2006; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / headline.
+**Boundary:** Not a new NPN canonicalizer or a proof of speed.
+
+## CM-B-004 - Structural and retabulation boundary
+Structural pair compilation, four-assignment retabulation, and unchanged IR fallback are separately sound paths.
+
+**Model / assumptions:** compiler. distinct live row/column variables; explicit support contract.
+**Evidence:** Proof imported from B; Not rerun.
+**Source:** [S-B sections 3.1 and 4](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Small-cut truth-function synthesis; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / supporting.
+**Boundary:** B focused 105-test suite was reported, not rerun here.
+
+## CM-B-005 - LM polarity orbit
+M_f has formula entries f(X,Y),f(X,not Y),f(not X,Y),f(not X,not Y); positive valuation recovers C_f.
+
+**Model / assumptions:** LM. independent formal X,Y in Boolean formula algebra.
+**Evidence:** Proof imported from B; Bridge tests rerun.
+**Source:** [S-B section 8.1; appendix A.5](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Matrix logic; Paper B; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / background.
+
+## CM-B-006 - Valuation-natural pairing
+Pairing is (A iff X) f (Y iff B) and every Boolean valuation commutes with pairing.
+
+**Model / assumptions:** LM. XOR-AND contraction in formula algebra.
+**Evidence:** Proof imported from B; Bridge tests rerun.
+**Source:** [S-B Proposition 2 and Theorem 3](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Boolean homomorphisms; Paper B; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / background.
+**Boundary:** Not physical measurement or a modal effect postulate.
+
+## CM-B-007 - Representation costs
+A 4-bit token, typed pair, IR, flat program and explicit 2^n-entry output are distinct endpoints.
+
+**Model / assumptions:** compiler. output contract must be matched.
+**Evidence:** Proof imported from B; Raw benchmark endpoint audit.
+**Source:** [S-B sections 4.1,4.3,6-7,9](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Mishchenko2006; PolyBoRi2009; `KNOWN_PRIOR_ART`.
+**Primary home / role:** Paper B / supporting.
+**Boundary:** No frozen confirmatory performance campaign is supplied.
+
+## ROT-001 - Cyclic centralizer
+The commutant of an N-cycle is F2[R] isomorphic to F2[x]/(x^N-1).
+
+**Model / assumptions:** coefficient rotation. R e_j=e_(j+1); cyclic coefficient convention.
+**Evidence:** Proof consolidated; Audit and adversarial stages passed.
+**Source:** [S-ADV D1 Proposition 1](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Group algebras; circulant literature; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / background.
+
+## ROT-002 - Chain ring and units
+For N=2^n, u=I+R gives F2[u]/u^N; valuation a has multiplication rank N-a; odd parity characterizes units.
+
+**Model / assumptions:** rotation algebra. N power of two.
+**Evidence:** Proof consolidated; 65,536-resource independent rank checks; source algebra checks.
+**Source:** [S-ADV D1 Proposition 2](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Finite local rings; cyclic codes; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / background.
+**Finite scope:** A at N=4 has 16 elements and 8 units.
+
+## ROT-003 - Full-degree reversibility
+The cyclic-convolution lift of an n-input truth vector is invertible iff the top ANF coefficient is one, equivalently deg f=n.
+
+**Model / assumptions:** Boolean functions/rotation. n>=1; full 2^n truth vector.
+**Evidence:** Proof consolidated; Adversarial degree checks passed.
+**Source:** [S-ADV D1 Corollary 3](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** ANF parity and cyclic-ring unit criterion; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** For n>=3 nonlinear does not imply invertible.
+**Correction:** Replaces overbroad nonlinearity equivalence.
+
+## ROT-004 - Reversal and complement
+In declared cyclic order argument reversal is R->R^-1; complement adds the socle u^(N-1).
+
+**Model / assumptions:** rotation/CM encoding. N=2^n; reflection indexing fixed.
+**Evidence:** Proof consolidated; Source algebra and boundary checks passed.
+**Source:** [S-ADV D0,D1 Corollary 4](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Group-algebra involution; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** Translation is not multiplication. Transpose equals inverse on N=4 units only as a special case.
+
+## ROT-005 - Two filtrations
+Cyclic u-valuation uses least numeric binomial index; elementary-abelian radical order uses Hamming weight and equals n-deg f.
+
+**Model / assumptions:** group algebras/Boolean functions. binary indexing; nonzero f.
+**Evidence:** Proof consolidated; Adversarial degree/filtration checks passed.
+**Source:** [S-ADV D2 Proposition 5](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Berman-Charpin; Andriatahiny2016; GamesChan1983; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** Do not identify entire cyclic filtration with ANF degree.
+
+## ROT-006 - Splitter identity
+W D_k W(v,0)=(v,v+R^k v), with W^2=I.
+
+**Model / assumptions:** block linear dynamics. W=[[I,0],[I,I]], D_k=diag(I,R^k).
+**Evidence:** Proof consolidated; Historical block and audit checks passed.
+**Source:** [S-ADV D3 Proposition 6](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Characteristic-two linear algebra; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** XOR interference, not a probability fringe.
+
+## ROT-007 - Maximal equivariant gates
+End_C4(V^m)=M_m(A) and Aut_C4(V^m)=GL_m(A).
+
+**Model / assumptions:** rotation restriction. simultaneous rotation on blocks.
+**Evidence:** Proof consolidated; Audit gate inventory passed.
+**Source:** [S-ADV D3 Proposition 7](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Commutant theory; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** Derives gate family, not tensor or measurement semantics.
+
+## ROT-008 - No common form for W and D
+The given W and diag(I,R), R!=I, preserve no common nondegenerate bilinear form.
+
+**Model / assumptions:** block dynamics. same doubled space; no extra ancilla representation.
+**Evidence:** Proof consolidated; Adversarial boundary checks passed.
+**Source:** [S-ADV D8 Proposition 15](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Bilinear-form linear algebra; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** SUPPLEMENT / negative.
+**Boundary:** R alone has symplectic and quadratic forms.
+
+## ROT-009 - Rotation is not a complex scalar
+R is unipotent of order four in characteristic two, not a square root of minus one implementing complex amplitudes.
+
+**Model / assumptions:** rotation. char 2; R^2!=I.
+**Evidence:** Proof consolidated; Source algebra checks passed.
+**Source:** [S-ADV D1,D8; S-CAP Q5](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Unipotent linear algebra; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / negative.
+**Boundary:** A 3-dimensional unipotent block can also have order four; no claimed 4D minimality.
+
+## MOD-001 - Tensor-base inequivalence
+u^3 tensor_A u=0 while u^3 tensor_F2 u is nonzero.
+
+**Model / assumptions:** S versus L. nonzero scalar factors.
+**Evidence:** Proof consolidated; Capability tensor checks; historical tensor tests passed.
+**Source:** [S-ADV D6 Proposition 12](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Tensor products over rings; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / headline.
+**Boundary:** The specific restricted bipartite support tables can still be isomorphic.
+
+## MOD-002 - Preparation-conditioning closure fails
+Primitive preparations are tensor closed, but conditioning diag(1,u) on the second standard outcome produces nonprimitive (0,u).
+
+**Model / assumptions:** S. primitive-only preparation; nonzero-possible readout.
+**Evidence:** Proof consolidated; Capability and bridge boundary checks passed.
+**Source:** [S-ADV D6 Proposition 12; S-LMB closure discussion](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** deBeaudrap2014; local-ring modules; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / negative.
+**Boundary:** No closed unrestricted sequential theory follows from the current rules.
+
+## MOD-003 - Residue-hyperplane criterion
+A bipartite complete-basis support model has a global assignment iff two residue hyperplanes have uniformly nonzero cross-pair lifts outside them.
+
+**Model / assumptions:** finite local ring basis support. primitive projective basis rows; every complete basis admitted.
+**Evidence:** Proof consolidated; Independent dual-number explicit 2-SAT cross-check.
+**Source:** [S-ADV D4 Lemma 8](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** AbramskyBrandenburger2011; finite-ring geometry; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P01 / headline.
+**Finite scope:** Independent q=2,length2,m=n=2 check; general proof.
+
+## MOD-004 - Smith contextuality trichotomy
+For nonzero M, one nonzero Smith factor is local; r>=2,h=1 is logical-not-strong; h>=2 is strong.
+
+**Model / assumptions:** finite commutative chain rings. r=nonzero Smith support count; h=multiplicity of least exponent; complete basis family.
+**Evidence:** Proof consolidated; Audit 15 classes; new independent dual-number all 255 states.
+**Source:** [S-ADV D4 Theorem 9; S-CAP R1](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** MQT; sheaf hierarchy; finite chain rings; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P01 / headline.
+**Finite scope:** A: 26,214 strong;34,056 logical;5,265 local;+zero.
+**Boundary:** Not all measurement restrictions; not an unspecified ring rank.
+
+## MOD-005 - Uniform Hardy witness
+F,X,C_c with c=pi^(b-a) give support 1001,0111,1110,0111 for two nonzero Smith factors.
+
+**Model / assumptions:** finite commutative chain rings. 0<=a<=b<s; minus sign retained outside char2.
+**Evidence:** Proof consolidated; Adversarial generalization checks; independent dual-number support tests.
+**Source:** [S-ADV D5 Lemma 11](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Hardy support implication pattern; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P01 / headline.
+**Boundary:** Two settings suffice for logical contextuality, not for strong contextuality in binary char2.
+
+## MOD-006 - Measurement inventory
+Primitive projective rows and unordered projective bases have the local-ring counting formulas.
+
+**Model / assumptions:** finite chain rings. unit quotients, not all nonzero rows.
+**Evidence:** Proof consolidated; Audit exact inventory passed.
+**Source:** [S-ADV D4 Corollary 10](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Finite local-ring projective geometry; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / supporting.
+**Finite scope:** A^2:24 rays,192 bases; GL2(A)=24,576.
+
+## MOD-007 - Two binary settings cannot be strong
+Any nonzero n-party F2 tensor with at most two complete binary settings per party admits a global assignment; extends to local rings with residue F2.
+
+**Model / assumptions:** F; S; declared literal local-ring expansion. binary outcomes; two settings; invertible bases; finite local coefficient ring residue F2.
+**Evidence:** Proof consolidated; 65,808 states and1,050,666 supported checks; GHZ27 restrictions.
+**Source:** [S-CAP two-setting theorem; reports/CAPABILITY_REPORT.md](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** MQT and possibilistic contextuality; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** Does not rule out Hardy logical contextuality, three settings, higher outcomes or other residues.
+
+## MOD-008 - GHZ finite witnesses
+Full ZXY GHZ scenario has112 possible events and no global assignment; six tested contexts suffice, no tested <=5 subset does.
+
+**Model / assumptions:** F GHZ diagnostic. specified state and 27-context family.
+**Evidence:** EXHAUSTIVE_FINITE_EVIDENCE_ONLY; Audit GHZ and capability ablations passed.
+**Source:** [S-AUD GHZ sections and data; S-CAP GHZ ablations](../provenance/source_snapshots/audit/paper/CM_Correctness_Audit.tex).
+**Prior art / status:** MQT; GHZ support methods; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** SUPPLEMENT / supporting.
+**Finite scope:** 27 contexts;512 assignments;101,583 subsets of size<=5.
+
+## MOD-009 - Restricted shared/literal support isomorphism
+The audited A-linear bipartite block tables agree after Bob-side transpose-involution basis relabeling.
+
+**Model / assumptions:** restricted S and restricted L. exact audited block coarse-graining and basis families.
+**Evidence:** Proof consolidated; Audit Bob-conjugation mapping and capability validation passed.
+**Source:** [S-ADV D6 final correction; S-AUD section7.4](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Regular representation and involution; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / supporting.
+**Correction:** Corrects inference that different tensors necessarily give different listed contextuality classes.
+
+## MOD-010 - Enlarged groups erase Smith distinctions
+Binary rank8-a-b classifies regular 8x8 matrices under unrestricted local GL8; equal-rank Smith classes can differ under A restrictions.
+
+**Model / assumptions:** S/structured L versus unrestricted F. regular representation; full left/right field groups.
+**Evidence:** Proof consolidated; All65,536 independent rank checks; primitive d3 witness source check.
+**Source:** [S-ADV D6 Proposition13](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Matrix equivalence; Smith form; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / headline.
+**Boundary:** d2 pair (0,2)/(1,1) includes nonprimitive member; primitive d3 rank9 pair is available.
+
+## RES-001 - Leading-layer dense codebook
+For nonzero M in M_d(K), the exact fixed-orbit codebook maximum is d*h.
+
+**Model / assumptions:** finite chain ring S. d>=2; GL_d(K) encoders; one arbitrary complete K-linear joint basis decoder; exact every outcome.
+**Evidence:** Proof consolidated; All14 A classes:24,576 encoder spans each; new14 explicit decoders.
+**Source:** [S-CAP R2](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Modal dense coding; matrix orbit span; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P01 / headline.
+**Boundary:** Codeword count, not entropy or unconstrained channel capacity.
+
+## RES-002 - Matched resource equivalence
+Dense advantage over d exists iff h>=2 iff strong contextuality under the complete chain-ring basis contract.
+
+**Model / assumptions:** finite chain ring S. same preparations, scalar ring, effect family and exactness as MOD-004/RES-001.
+**Evidence:** Proof consolidated; Same class checks as RES-001.
+**Source:** [S-CAP R2 corollary; S-ADV D4](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** MQT resource theory; chain-ring classification; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P01 / headline.
+**Boundary:** Not an operation-independent equivalence.
+
+## RES-003 - Universal teleportation criterion
+Branch transfer M^T E^T must be invertible; M invertible is sufficient with a complete invertible-matrix effect basis and allowed corrections.
+
+**Model / assumptions:** F; S. rank-one complete analyzer; exact identity on every possible input, reference systems included.
+**Evidence:** Proof consolidated; 4,194,304 branch ranks; full literal and shared protocol checks.
+**Source:** [S-CAP R3; S-ADV D9 Proposition16](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** SchumacherWestmoreland 2012; categorical protocols; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / headline.
+**Boundary:** General sufficiency requires analyzer admissibility; explicit d2 andd8 constructions supplied.
+
+## RES-004 - Dense/contextuality without universal teleportation
+pi^a I_d, 0<a<s, has h=d and d^2 codewords but noninjective transfer; epsilon I2 over dual numbers is a minimal example.
+
+**Model / assumptions:** finite chain ring S. allows nonprimitive nonzero resource preparations.
+**Evidence:** Proof consolidated; New dual-number classification and explicit decoders.
+**Source:** [S-CAP R2-R3; capability resource separation](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Chain-ring modules; teleportation/dense-coding comparisons; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P01 / headline.
+**Boundary:** Excluded by primitive-only preparations; primitive d3 examples give weaker nonmaximal advantage.
+
+## RES-005 - Field dense codebooks
+For rank-r M over a field, unrestricted invertible local encoding and full joint basis readout give d*r codewords.
+
+**Model / assumptions:** F. d>=2; fixed invertible orbit.
+**Evidence:** Proof consolidated; Literal and class span computations passed.
+**Source:** [S-CAP R4](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Modal discrimination; matrix algebra span; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / supporting.
+
+## RES-006 - Restricted literal codebooks
+Structured rank r_bin resource with GL2(A) encoders and unrestricted binary decoder gives2*r_bin codewords.
+
+**Model / assumptions:** L asymmetric restriction. encoder restricted; fine-grained decoder unrestricted.
+**Evidence:** Proof consolidated; 14-class literal restricted span checks passed.
+**Source:** [S-CAP R4](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Orbit-span linear algebra; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** Can be below8; device allowed discard/preparation still has at least ordinary8-letter baseline.
+
+## RES-007 - Full literal protocol
+Eight-dimensional literal carrier needs a complete64-outcome analyzer; tensoring four invertible2x2 effect matrices yields one.
+
+**Model / assumptions:** L with unrestricted F2-linear operations. full resource rank8; phase registers retained.
+**Evidence:** Proof consolidated; Two256x64 branch tables;64-message codebook passed.
+**Source:** [S-CAP R3; S-AUD protocols](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** MQT exact protocols; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / supporting.
+**Correction:** Four logical outcomes alone did not establish full literal teleportation.
+
+## RES-008 - Literal finite-copy extraction
+Rank-r field resource admits local rectangular extraction of I_d from k copies iff r^k>=d.
+
+**Model / assumptions:** F/unrestricted L. postselected algebraic filters allowed; no success probability asserted.
+**Evidence:** Proof consolidated; Audit literal activation witnesses passed.
+**Source:** [S-ADV D9 Proposition17](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Matrix rank tensor products; entanglement concentration; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / supporting.
+**Correction:** Corrects broad nonactivation; rank6 extracts d8 after two copies.
+
+## RES-009 - Transpose-orthogonal analyzer obstruction
+Span O_d(F2) is the common row/column-sum space of dimension(d-1)^2+1; a complete exact rank-one analyzer with orthogonal corrections is impossible.
+
+**Model / assumptions:** F restricted corrections. d>=2; complete d^2-effect analyzer.
+**Evidence:** Proof consolidated; Adversarial dimension checks; O4 enumeration.
+**Source:** [S-ADV D7 Proposition14; S-CAP E1](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** Lueneburg1988; permutation-matrix span; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** SUPPLEMENT / negative.
+**Finite scope:** d8 span50, not merely <=63.
+
+## RES-010 - No cloning and qualified no deleting
+Unknown-state universal cloning is incompatible with linearity; universal deletion is excluded for injective deterministic maps with fixed input-independent environment.
+
+**Model / assumptions:** F linear dynamics. d>=2; unknown states; full process injective for deletion.
+**Evidence:** Proof consolidated; Capability deletion checks passed.
+**Source:** [S-CAP no-go theorems and deletion counterexample](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** SchumacherWestmoreland 2010; DiamondSchumacher2023; `KNOWN_PRIOR_ART`.
+**Primary home / role:** SUPPLEMENT / negative.
+**Boundary:** Noninvertible diagonal deletion map exists over F2; linearity alone does not forbid deletion.
+
+## RES-011 - Exact distinguishable-syndrome correction
+For code embedding E and errors F_a, injective F_a E with direct-sum images admit exact syndrome separation and recovery.
+
+**Model / assumptions:** F linear codes. distinct exact syndromes; specified error list.
+**Evidence:** Proof consolidated; 45 finite checks passed.
+**Source:** [S-CAP error-correction theorem](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Gottesman1997; elementary direct sums; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** SUPPLEMENT / supporting.
+**Boundary:** Not a general degenerate-error criterion, threshold, or probability claim.
+
+## RES-012 - Remote preparation and swapping contractions
+Swapping contracts resource matrices through the joint effect; remote outputs lie in the image of the resource transpose.
+
+**Model / assumptions:** F; S with qualifications. declared vectorization; primitive preimage requirement over rings.
+**Evidence:** Proof consolidated; Capability contraction checks passed.
+**Source:** [S-CAP resource contraction results](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Categorical quantum protocols; MQT; `KNOWN_PRIOR_ART`.
+**Primary home / role:** SUPPLEMENT / supporting.
+**Boundary:** A contraction identity is not by itself a complete operational protocol.
+
+## RES-013 - No faithful no-signalling probabilities for the tested Bell support
+The 9-context support has24 possible events but normalized nonnegative no-signalling constraints force6 of them to zero.
+
+**Model / assumptions:** specified modal Bell support plus external real LP. faithful requires every possible event positive.
+**Evidence:** Proof/source affine constraints retained; Audit exact constraints and LP; capability LP passed.
+**Source:** [S-AUD probability section; S-CAP probability ablation](../provenance/source_snapshots/audit/paper/CM_Correctness_Audit.tex).
+**Prior art / status:** SchumacherWestmoreland 2012 weak versus strong resolution; `KNOWN_PRIOR_ART`.
+**Primary home / role:** SUPPLEMENT / negative.
+**Boundary:** An18-positive weak completion with CHSH4 does not assign faithful probabilities to the original support.
+
+## ALG-001 - Exact discrimination criterion
+A complete linear readout exactly distinguishes state-set labels iff their spans form a direct sum.
+
+**Model / assumptions:** field modal query model. nonzero states; injective all-branch readout; every possible outcome correct.
+**Evidence:** Proof consolidated; Source algorithm checks passed.
+**Source:** [S-CAP Q1](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** MQT distinguishability; DiamondSchumacher2023; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P02 / supporting.
+**Boundary:** Single-state independence is established prior art; do not headline basic linear algebra.
+
+## ALG-002 - Exact Deutsch query complexity
+The standard XOR pointwise oracle needs exactly2 queries in characteristic-two linear modal computation.
+
+**Model / assumptions:** QXOR field characteristic2. ancillas and complete adaptive linear branches allowed; no description access.
+**Evidence:** Proof consolidated; 270 preparations across dimensions4 and8.
+**Source:** [S-CAP Q2](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Beals2001 polynomial method; modal algorithms; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P02 / headline.
+**Boundary:** One-query obstruction extends to arbitrary fixed invertible G0/G1; two-query upper bound requires distinguishable oracle answers, in particular XOR.
+
+## ALG-003 - Deutsch-Jozsa one-query no-go
+For n>=2, no exact one-query algorithm under fixed pointwise invertible G0/G1 distinguishes constants from balanced functions.
+
+**Model / assumptions:** field characteristic2 query. standard balanced promise; complete exact readout.
+**Evidence:** Proof consolidated; 56 operator-coordinate checks passed.
+**Source:** [S-CAP Q3](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Modal algorithms; polynomial lower bounds; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P02 / headline.
+**Boundary:** For standard XOR, only2<=Q<=2^(n-1)+1 proved; no optimal general multi-query lower bound.
+
+## ALG-004 - Exact Bernstein-Vazirani n queries
+For f_s(x)=s dot x, a q-query exact characteristic-two linear algorithm needs q>=n; standard XOR queries attain n.
+
+**Model / assumptions:** field characteristic2 query. pointwise bit-control; secret-independent operations; all branch outcomes counted.
+**Evidence:** Proof consolidated; 62 finite secrets checked.
+**Source:** [S-CAP Q4](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Beals2001; Bernstein-Vazirani; finite-semiring computation; `CANDIDATE_NOVELTY_NEEDS_SEARCH`.
+**Primary home / role:** P02 / headline.
+**Boundary:** Degree bound is on amplitude vectors, not ordinary real probabilities.
+
+## ALG-005 - Kickback without invertible Fourier readout
+z=R^2 gives X(1,z)=z(1,z), but H_z has Smith form diag(1,u^2); its n-fold A-tensor has binary rank4+2n.
+
+**Model / assumptions:** shared A query/phase model. z=1+u^2; balanced tensor over A.
+**Evidence:** Proof consolidated; n1..6 rank and phase checks passed.
+**Source:** [S-CAP Q5](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Modular representation theory; Fourier analysis; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P02 / headline.
+**Boundary:** Literal independent target does not transfer an A-scalar phase to a separate control automatically.
+
+## ALG-006 - Character-transform obstruction
+Characters of C2^n into a characteristic-two field unit group are trivial; A-valued character matrices reduce to all ones and cannot be invertible.
+
+**Model / assumptions:** field/A character theory. 2-group domain; multiplicative characters.
+**Evidence:** Proof consolidated; Phase and Fourier checks passed.
+**Source:** [S-CAP Q5 and Fourier discussion](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Modular Fourier/representation theory; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P02 / supporting.
+**Boundary:** Not a no-go for every finite-field transform or odd-order hidden group.
+
+## ALG-007 - Oracle-model distinction for R
+R kickback requires a four-level cyclic target or separately synthesized oracle; R^(a xor b) need not equal R^a R^b.
+
+**Model / assumptions:** phase oracle variants. original standard bit-XOR oracle distinguished from increment oracle.
+**Evidence:** Proof consolidated; 192 primitive target vectors;32 four-level cases checked.
+**Source:** [S-CAP Q5](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Reversible oracle compilation; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P02 / supporting.
+**Boundary:** Compute-control-uncompute generally uses two bit-oracle evaluations.
+
+## ALG-008 - Scoped Simon evidence
+The enumerated n2,no-ancilla,one-query Simon contract has no exact success; fixed coset-sample label spans overlap.
+
+**Model / assumptions:** F specific Simon models. 36 standard oracles;3 shifts;dimension16 finite preparation search.
+**Evidence:** EXHAUSTIVE_FINITE_EVIDENCE_ONLY; All65,535 nonzero preparations tested.
+**Source:** [S-CAP Simon sections](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Finite-field algorithms; hidden-subgroup literature; `EXHAUSTIVE_FINITE_EVIDENCE_ONLY`.
+**Primary home / role:** SUPPLEMENT / negative.
+**Boundary:** Not an all-size or adaptive Simon impossibility theorem.
+
+## ALG-009 - Grover mechanism obstruction
+Characteristic two collapses the conventional sign/diffusion ingredients, and support alone has no probability to amplify.
+
+**Model / assumptions:** char2 standard Grover construction. ordinary sign-flip mechanism only.
+**Evidence:** Proof of scoped mechanism obstruction; Capability algorithm checks passed.
+**Source:** [S-CAP Grover discussion](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Grover; modular computation; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P02 / negative.
+**Boundary:** Not a general lower bound on every search procedure.
+
+## ALG-010 - UNIQUE-SAT positive control
+Known one-query modal UNIQUE-SAT construction works on the none-or-one-marked promise, with O(n) other gates.
+
+**Model / assumptions:** F2 unrestricted modal circuits. exact promise; standard construction; oracle cost distinct from gate cost.
+**Evidence:** Known source proof; reproduced finite cases; 132 promised instances,n1..6 passed.
+**Source:** [S-CAP UNIQUE-SAT reproduction](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** WillcockSabry2011; deBeaudrap2014; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P02 / supporting.
+**Boundary:** Not a new algorithm, not arbitrary SAT, not literally constant serial running time.
+
+## ALG-011 - Nonlinear Boolean oracle logic is compatible with linear amplitude dynamics
+Reversible compute-copy-uncompute realizes arbitrary Boolean f on basis labels while the amplitude map is linear.
+
+**Model / assumptions:** CM/compiler to modal oracle. clean ancillas; injective reversible embedding.
+**Evidence:** Proof consolidated; Capability LM/oracle truth checks passed.
+**Source:** [S-CAP oracle compilation; S-B semantics](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Bennett1973; JamesOrtizSabry2011; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P02 / background.
+
+## ALG-012 - Description access changes complexity
+Classical inspection of a full coefficient description or complete support is stronger than operational modal readout.
+
+**Model / assumptions:** access-model comparison. state description made available as classical data.
+**Evidence:** Model distinction; finite demonstrations; Deutsch4,DJ12,956,BV510 description-access cases.
+**Source:** [S-CAP description-access ablation](../provenance/source_snapshots/capability/reports/FORMAL_THEOREMS.md).
+**Prior art / status:** Query-model methodology; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P02 / negative.
+**Boundary:** Do not use such ablations as oracle-model counterexamples.
+
+## LMB-001 - Bare LM family is not a matrix algebra
+The fixed16-element polarity family is not closed under ordinary XOR-AND matrix composition.
+
+**Model / assumptions:** LM. independent X,Y; fixed coefficient family.
+**Evidence:** Proof by explicit counterexample; New independent256 products:112 inside144 outside.
+**Source:** [S-LMB LM closure section](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Paper B symbolic Boolean algebra; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** It is closed under entrywise Boolean operations; do not confuse the two products.
+
+## LMB-002 - Idempotent obstruction
+A unital Boolean-ring homomorphism into a local ring has image in {0,1}; it cannot generate u or nontrivial phases.
+
+**Model / assumptions:** Boolean ring to A/local ring. ring homomorphism, not arbitrary encoding.
+**Evidence:** Proof consolidated; Bridge checks passed.
+**Source:** [S-LMB no-canonical-scalar-bridge theorem](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Local-ring idempotents; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / negative.
+
+## LMB-003 - Scalar enrichment
+B tensor_F2 A is B[u]/u^4; valuation extends as v tensor id_A, preserving ring contractions.
+
+**Model / assumptions:** LM enrichment. A chosen as F2 algebra; valuation given.
+**Evidence:** Proof consolidated; Both bridge scripts passed.
+**Source:** [S-LMB enrichment theorem](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Base change; tensor products; `DIRECT_COROLLARY_OR_ROUTINE_SPECIALIZATION`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** Conditional canonicality after A is chosen, not a derivation of A from bare LMs. Mixed-characteristic rings need a different construction.
+
+## LMB-004 - Symbolic support bridge
+For q=sum f_j u^j, Supp(q)=OR f_j satisfies v(Supp(e psi))=1 iff v_A(e)v_A(psi)!=0.
+
+**Model / assumptions:** enriched LM/modal interface. declared u basis; chosen admissible effects; nonzero-possible postulate.
+**Evidence:** Proof consolidated; Bridge original and expanded checks passed.
+**Source:** [S-LMB symbolic support theorem](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Boolean homomorphism preservation; base change; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** Genuine interface, not a source of quantum probabilities or measurement axioms.
+
+## LMB-005 - Bare effects versus coefficient encodings
+Bare valued logical bras give only the two one-hot effects; all A coefficients can be encoded after extra basis choices without thereby deriving a modal effect family.
+
+**Model / assumptions:** LM versus modal effects. distinguish origin from encodability.
+**Evidence:** Proof consolidated; Bridge effect enumeration passed.
+**Source:** [S-LMB effects analysis](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Paper B; modular linear algebra; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / negative.
+**Boundary:** 192 A-bases or all binary bases do not follow from the two one-hot bras.
+
+## LMB-006 - Division-free basis update
+For basis-coordinate map B0, J_i=B0^-1 P_i B0 gives repeatable idempotent branches with sum I and valuation-natural updates.
+
+**Model / assumptions:** enriched A basis instruments. invertible B0; no inverse of outcome amplitude.
+**Evidence:** Proof consolidated; Bridge update checks passed.
+**Source:** [S-LMB branch-update theorem](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Linear projections; process theories; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** No normalized probability, and no repair of preparation/conditioning closure.
+
+## LMB-007 - Possibility is not a scalar homomorphism
+The nonzero test is not additive because of XOR cancellation, nor multiplicative over zero divisors.
+
+**Model / assumptions:** A/modal support. nonzero = possible.
+**Evidence:** Proof by explicit witnesses; Bridge tests passed.
+**Source:** [S-LMB support-map limitations](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Possibilistic theories; semiring distinctions; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / negative.
+
+## LMB-008 - Extensional formula power
+For finite valuation set Omega, B~F2^Omega and B tensor A~A^Omega; this is extensional semantics, not a compression theorem.
+
+**Model / assumptions:** finite Boolean algebra enrichment. all valuations of finitely many free variables.
+**Evidence:** Proof consolidated; Bridge tests passed.
+**Source:** [S-LMB enrichment discussion](../provenance/source_snapshots/bridge/report/LM_Modal_Bridge_Report.tex).
+**Prior art / status:** Finite Boolean algebras; `KNOWN_PRIOR_ART`.
+**Primary home / role:** P01 / supporting.
+**Boundary:** The number of valuations can be exponential.
+
+## CMP-001 - S1 mechanism survives matched checks
+Pre-expansion CM folding sharply reduces symbolic work against direct ANF in its admitted synthetic family; SC-A is met.
+
+**Model / assumptions:** compiler syntheticS1. frozen generated family and metric definition.
+**Evidence:** Finite empirical evidence; Raw10,500-row audit;12 benchmark tests passed.
+**Source:** [S-BENCH results and protocol; S-RAW](../provenance/source_snapshots/bench/BENCHMARK_PROTOCOL.md).
+**Prior art / status:** LUT/cut rewriting; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / supporting.
+**Boundary:** Mechanism counts are not end-to-end speedup evidence.
+
+## CMP-002 - CM/generic reduction ties
+All10,389 fully admitted cases tie on seven work/output metrics between CM and generic two-support optimizer.
+
+**Model / assumptions:** compiler S1/S2. all four arms completed; exact same inputs.
+**Evidence:** Finite empirical evidence; New independent recount;zero differences.
+**Source:** [S-RAW; independent consolidation_checks.py](../provenance/source_snapshots/bench/results/raw/gate_a_s1_s2.csv).
+**Prior art / status:** Mishchenko2006; generic two-input cuts; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / headline.
+**Finite scope:** 3,750S1 +6,639S2;111 other statuses.
+
+## CMP-003 - Corrected S2 live support
+The corrected guarded family has verified requested live support; the earlier generator reached only55.161 percent and was superseded.
+
+**Model / assumptions:** compiler S2. construction guard and support checks.
+**Evidence:** Source correction plus finite checks; Source reconciliation and raw audit passed.
+**Source:** [S-BENCH SOURCE_RECONCILIATION.md and corrected results](../provenance/source_snapshots/bench/BENCHMARK_PROTOCOL.md).
+**Prior art / status:** Benchmark methodology; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / supporting.
+**Correction:** S2 v0 is not merged with corrected benchmark population.
+
+## CMP-004 - Recognition cost remains open
+Equal final reductions do not imply equal recognition time, memory or reuse costs. CM-specific practical advantage is unresolved.
+
+**Model / assumptions:** compiler economics. matched endpoints and fresh repeated timing needed.
+**Evidence:** OPEN; No fresh timing campaign.
+**Source:** [S-B sections6-7; S-BENCH protocol](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** AIG/LUT/BDD/ZDD baselines; `OPEN`.
+**Primary home / role:** Paper B / open.
+**Boundary:** Single-pass diagnostic timing ratio0.911 in no-fold cases is not a confirmatory speed claim.
+
+## CMP-005 - Gate A versus Gate P
+SC-A symbolic mechanism is not SC-B/C/D natural-workload advantage, SC-E abstention, or Paper B Gate P performance success.
+
+**Model / assumptions:** benchmark protocols. retain different protocols and versioned scopes.
+**Evidence:** Protocol distinction; Raw-presence audit.
+**Source:** [S-B section6.2; S-BENCH BENCHMARK_PROTOCOL.md](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Reproducible benchmarking; `KNOWN_PRIOR_ART`.
+**Primary home / role:** Paper B / negative.
+**Boundary:** Natural N1-N3, external AIG/PolyBoRi and frozen Gate P raw campaigns not supplied.
+
+## CMP-006 - No CM-exclusive simplification claim
+Current data do not show a normal-form reduction inaccessible to equivalent generic cut optimization.
+
+**Model / assumptions:** compiler S1/S2. equivalent permitted local truth-function operations.
+**Evidence:** Finite empirical interpretation; Same seven-metric equality audit.
+**Source:** [S-RAW and source benchmark analysis](../provenance/source_snapshots/bench/results/raw/gate_a_s1_s2.csv).
+**Prior art / status:** Mishchenko2006; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** Paper B / negative.
+**Boundary:** Does not show CM folding is useless or that every implementation has identical overhead.
+
+## NEG-001 - No probability by fiat
+Hamming-weight normalization, CHSH numbers from arbitrary completions, and modal possible/impossible events are different structures.
+
+**Model / assumptions:** probability boundary. real probabilities extra; positivity and no-signalling checked separately.
+**Evidence:** Definition and counterexamples; Probability stages passed.
+**Source:** [S-AUD; S-CAP probability analysis](../provenance/source_snapshots/audit/paper/CM_Correctness_Audit.tex).
+**Prior art / status:** SchumacherWestmoreland 2012; `KNOWN_PRIOR_ART`.
+**Primary home / role:** SUPPLEMENT / negative.
+
+## NEG-002 - Not a closed quantum-like process theory
+Gate equivariance, tensor products, admissible preparation and instruments do not yet form one demonstrated closed process category.
+
+**Model / assumptions:** S/enriched LM. all contracts considered simultaneously.
+**Evidence:** Proof of concrete closure failures; Bridge and tensor counterexamples passed.
+**Source:** [S-ADV D6; S-LMB conclusion](../provenance/source_snapshots/adversarial/FORMAL_THEOREMS.md).
+**Prior art / status:** deBeaudrap2014; Gogioso2017; Cho2015; `KNOWN_INGREDIENT_NEW_SYNTHESIS`.
+**Primary home / role:** P01 / negative.
+**Boundary:** Do not call it an effectus, dagger theory or normalized operational theory without axioms.
+
+## NEG-003 - Historical signed extensions quarantined
+Older C8/C16 and headline CHSH/speed claims are not canonical results of the Boolean core.
+
+**Model / assumptions:** historical extensions. different scalar/gate/probability contracts.
+**Evidence:** SUPERSEDED_OR_CORRECTED; Not rerun.
+**Source:** [S-quantum CURRENT_STATE.md; final audit corrections](../provenance/SOURCE_GUIDE.md).
+**Prior art / status:** Model-dependent signed extensions; `SUPERSEDED_OR_CORRECTED`.
+**Primary home / role:** SUPPLEMENT / negative.
+**Boundary:** Keep source history; no blanket claim that every signed construction is false.
+
+## NEG-004 - No generic quantum speedup claim
+Boolean logic compilation, finite-field modal query separations, and physical quantum computational speedups are distinct.
+
+**Model / assumptions:** all models. operational and cost contracts explicit.
+**Evidence:** Scope boundary; Source and independent checks.
+**Source:** [S-B; S-CAP query sections](../provenance/inputs/operator-level-boolean-computation-with-correspondence-matrices.pdf).
+**Prior art / status:** Modal computation prior art; `KNOWN_PRIOR_ART`.
+**Primary home / role:** SUPPLEMENT / negative.
+
+## NEG-005 - Publication priority not certified
+Targeted primary-source search did not settle priority of chain-ring trichotomy/dh codebooks or exact char2 BV/Deutsch bounds.
+
+**Model / assumptions:** literature. bounded query-based search; no full citation-graph clearance.
+**Evidence:** OPEN; Not applicable.
+**Source:** [literature/SEARCH_LOG.csv](../provenance/SOURCE_GUIDE.md).
+**Prior art / status:** See prior-art matrix; `OPEN`.
+**Primary home / role:** FUTURE / open.
+
+## NEG-006 - Missing confirmatory and generalization evidence
+No fresh natural matched performance campaign, closed process repair, or optimal multi-query DJ bound is supplied by this consolidation.
+
+**Model / assumptions:** research boundary. separate absence from falsehood.
+**Evidence:** OPEN; Not applicable.
+**Source:** [computation/MISSING_RAW_EVIDENCE.md](../provenance/SOURCE_GUIDE.md).
+**Prior art / status:** Open research tasks; `OPEN`.
+**Primary home / role:** FUTURE / open.

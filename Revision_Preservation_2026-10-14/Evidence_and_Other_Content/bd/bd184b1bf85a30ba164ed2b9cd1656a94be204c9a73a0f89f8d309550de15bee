@@ -1,0 +1,88 @@
+[
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/code/datasets.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.0021263660000272,
+    "stdout": "{\n  \"cases\": 38,\n  \"external\": 26,\n  \"sha256\": \"04e0a7bd92b6a731a41472fbbd4e56b45d1c4e3387780ab7a3aa77cadb5ec41c\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/tests/test_core.py"
+    ],
+    "returncode": 0,
+    "seconds": 7.684366522999994,
+    "stdout": "{\n  \"functions\": 278,\n  \"artifacts\": 3988,\n  \"conditioning_checks\": 105292,\n  \"serialization_checks\": 3988,\n  \"corruption_rejections\": 3988,\n  \"elapsed_seconds\": 5.660762146999986,\n  \"status\": \"PASS\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/tests/test_extensions_v2.py"
+    ],
+    "returncode": 0,
+    "seconds": 13.070134015999997,
+    "stdout": "{\n  \"status\": \"PASS\",\n  \"counts\": {\n    \"matrices_4x4\": 65536,\n    \"binary_roundtrips\": 151,\n    \"trailing_data_rejections\": 151,\n    \"sequential_fused_condition_checks\": 3020,\n    \"recompression_checks\": 2000\n  },\n  \"elapsed_seconds\": 10.932855668000002\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/tests/test_field_ranks.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.0608130919999894,
+    "stdout": "[\n  {\n    \"r\": 1,\n    \"dimension\": 2,\n    \"rank_real_01\": 1,\n    \"rank_real_sign\": 2,\n    \"expected_GF2_rank\": 1,\n    \"prototype_classes\": 2\n  },\n  {\n    \"r\": 2,\n    \"dimension\": 4,\n    \"rank_real_01\": 3,\n    \"rank_real_sign\": 4,\n    \"expected_GF2_rank\": 2,\n    \"prototype_classes\": 4\n  },\n  {\n    \"r\": 3,\n    \"dimension\": 8,\n    \"rank_real_01\": 7,\n    \"rank_real_sign\": 8,\n    \"expected_GF2_rank\": 3,\n    \"prototype_classes\": 8\n  },\n  {\n    \"r\": 4,\n    \"dimension\": 16,\n    \"rank_real_01\": 15,\n    \"rank_real_sign\": 16,\n    \"expected_GF2_rank\": 4,\n    \"prototype_classes\": 16\n  },\n  {\n    \"r\": 5,\n    \"dimension\": 32,\n    \"rank_real_01\": 31,\n    \"rank_real_sign\": 32,\n    \"expected_GF2_rank\": 5,\n    \"prototype_classes\": 32\n  }\n]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/tests/test_legacy_adapter.py",
+      "--source",
+      "/tmp/sc_clean_replay_sa9cbtfg/legacy_source"
+    ],
+    "returncode": 0,
+    "seconds": 3.7168101910000075,
+    "stdout": "{\n  \"status\": \"PASS\",\n  \"counts\": {\n    \"gf2_rank\": 240,\n    \"queries\": 6750,\n    \"cofactor_blocks\": 269,\n    \"kronecker\": 162,\n    \"xor_components\": 4\n  },\n  \"scope\": \"At most 16 partitions, 2<=n<=10 cases in the shared dataset, not exhaustive legacy testing\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/tests/test_persistence_v3.py"
+    ],
+    "returncode": 0,
+    "seconds": 2.6330173440000237,
+    "stdout": "{\n  \"status\": \"PASS\",\n  \"counts\": {\n    \"fresh_three_backend_roundtrips\": 278,\n    \"fresh_instance_query_triples\": 7070,\n    \"caller_alias_mutation_checks\": 1,\n    \"constructor_rejections\": 4,\n    \"json_structure_rejections\": 3,\n    \"binary_structure_rejections\": 4,\n    \"codec_label_policy_rejections\": 1,\n    \"residual_assignment_rejections\": 3,\n    \"single_spike_rank_checks\": 510,\n    \"explicit_histogram_counterexamples\": 1,\n    \"explicit_factor_refinement_counterexamples\": 1\n  },\n  \"histogram_counterexample\": {\n    \"f\": \"x*y\",\n    \"g\": \"(1-x)*y\",\n    \"f_truth_hex\": \"0x8\",\n    \"g_truth_hex\": \"0x2\",\n    \"coefficient_histogram\": {\n      \"0\": 1,\n      \"1\": 1\n    },\n    \"column_profile_histogram\": {\n      \"0\": 1,\n      \"1\": 1\n    },\n    \"unconditional_counts\": [\n      1,\n      1\n    ],\n    \"counts_given_x_0\": [\n      0,\n      1\n    ]\n  },\n  \"factor_refinement_counterexample\": {\n    \"formula\": \"x*y*z XOR x XOR y\",\n    \"truth_hex\": \"0xbc\",\n    \"restriction\": {\n      \"z\": 0\n    },\n    \"residual_formula\": \"x XOR y\",\n    \"original_factor_count\": 1,\n    \"retained_factor_count\": 1,\n    \"rediscovered_factor_count\": 2\n  },\n  \"elapsed_seconds\": 0.6816572969999868\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/tests/test_scope_limits.py"
+    ],
+    "returncode": 0,
+    "seconds": 1.8713769339999828,
+    "stdout": "{\n  \"status\": \"PASS; policy limitation reproduced, not silently disabled\",\n  \"python_decimal_guard\": 4300,\n  \"cases\": [\n    {\n      \"n\": 14,\n      \"binary_bytes\": 2059,\n      \"binary_roundtrip\": \"PASS\",\n      \"unconditional_count\": 16384,\n      \"artifact_json\": \"rejected by Python decimal conversion guard\",\n      \"packed_json\": \"rejected by Python decimal conversion guard\"\n    },\n    {\n      \"n\": 16,\n      \"binary_bytes\": 8204,\n      \"binary_roundtrip\": \"PASS\",\n      \"unconditional_count\": 65536,\n      \"artifact_json\": \"rejected by Python decimal conversion guard\",\n      \"packed_json\": \"rejected by Python decimal conversion guard\"\n    }\n  ],\n  \"implication\": \"n<=16 is a numerical policy cap, not a guarantee that every JSON encoding works; measured cases stop at n=12\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/pyvenv/bin/python",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/code/audit_historical.py",
+      "--source",
+      "/tmp/sc_clean_replay_sa9cbtfg/legacy_source",
+      "--output",
+      "/tmp/sc_clean_replay_sa9cbtfg/reproducibility/raw_results/historical_contract_audit.json"
+    ],
+    "returncode": 0,
+    "seconds": 2.041503371999994,
+    "stdout": "{\n  \"status\": \"observations reproduced\",\n  \"events\": [\n    {\n      \"id\": \"H1\",\n      \"finding\": \"factor_bits is not recomputed by loader\",\n      \"original_factor_bits\": 16,\n      \"admitted_factor_bits\": 1,\n      \"truth_unchanged\": true\n    },\n    {\n      \"id\": \"H2\",\n      \"finding\": \"declared rank may be nonminimal inner dimension\",\n      \"actual_rank\": 1,\n      \"admitted_rank\": 2,\n      \"truth_unchanged\": true\n    },\n    {\n      \"id\": \"H3\",\n      \"finding\": \"self-supplied digest does not authenticate external source\",\n      \"admitted_changed_truth\": true,\n      \"interpretation\": \"integrity contract is not externally rooted source-equivalence certification\"\n    },\n    {\n      \"id\": \"H4\",\n      \"finding\": \"frozen dataclass does not deep-freeze document\",\n      \"post_admission_mutation_changes_truth\": true\n    },\n    {\n      \"id\": \"H5\",\n      \"finding\": \"boundary dimension unsupported\",\n      \"n_vars\": 0,\n      \"rejected\": true\n    },\n    {\n      \"id\": \"H6\",\n      \"finding\": \"boundary dimension unsupported\",\n      \"n_vars\": 1,\n      \"rejected\": true\n    }\n  ],\n  \"source_file_sha256\": \"cc862dc4f99266aa94be27c7116e62cdfffbdcee59c76d92781e86c52f5bbd37\",\n  \"scope_note\": \"No claim of a malicious use case; these are contract and metadata limits. Producer reconstruction was correct for the tested witness.\"\n}\n",
+    "stderr": ""
+  }
+]

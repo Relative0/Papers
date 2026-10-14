@@ -1,0 +1,229 @@
+PDF PAGE 6
+Table 2:Algebraic structure of the additive reals [−∞,+∞] +. Operations restricted to {−∞,+∞} behave
+like either conjunction (blue background) or disjunction (red). Positive and negative polarities relate to each
+other via De Morgan duality.
+polarity non-linear linear
+negation
+a∗ :=
+−a
+positive ⊥:= +∞
+a∪ ∞ b:= min(a, b)
+⊥:= +∞
+a∪ p b
+p/∫hortrightarrow∞
+0:= 0
+a+b
+−∞+∞:=+∞
+negative ⊤:=−∞
+a∩ ∞ b:= max(a, b)
+⊤:=−∞
+a∩ p b
+p/∫hortrightarrow∞
+0:= 0
+a+ ∗ b
+−∞+∗∞:=−∞
+order:a≥b,implication:a⊸b=a ∗ +∗ b, thusb−a.
+Table 3:Logical properties satisfied by [−∞,+∞] + (Table 2), viewed as a quantitative residuated lattice (a
+softale) with a real-valued order⊸: [−∞,+∞] 2 /∫hortrightarrow[−∞,+∞]coinciding with implication.
+identity
+0≥(a⊸a)
+modus ponens
+(a⊸b) + (b⊸c)≥(a⊸c)
+contraposition
+a⊸b=b ∗ ⊸ ∗
+residuation(currying)
+(a+b⊸c) = (a⊸(b⊸c))
+mix
+(a⊸b) + (c⊸d)≥(a+c)⊸(b+d)
+prelinearity
+(a⊸b) ∗ ≤(b⊸a)
+isomix
+0∗ = 0
+involutivity
+a∗∗ =a
+bottom
++∞⊸a= +∞
+disjunction rules 5
+(a⊸c)∩ p (b⊸c)≥(a∪ p b⊸c)and(c⊸a)∪ p (c⊸b)≥(c⊸a∪ p b)
+We think of these as a ‘quantitative’ version4 of aresiduated lattice(see Appendix A.1); which
+is the algebraic structure for semantics of substructural logics (like fuzzy and linear). The reader
+should compare it with the structure of Booleans B, where also implication and order are given by
+the same operation ⇒.
+By the no-go theorem of Varnai and Dimarogonas [2020], if we keep associativity and smooth
+monotonicity, we must drop some other property, and indeed for p <∞ our connectives are not
+idempotent. However, they are ‘idempotent up to a constant’:
+1
+p log 2≥(a∪ p a⊸a), 1
+p log 2≥(a⊸a∩ p a).(3)
+We therefore conclude our operations are ‘logically adequate’, since they respect the fundamental
+axioms of common algebraic semantics of substructural logic.
+Analytic properties.We now substantiate the ‘analytic properties’ attributed to QLL in Table 1.
+Indeed, the non-linear connectives of QLL have remarkably well-behaved and interpretable partial
+derivatives:
+∂(x∪ p y)
+∂x = epy
+epx +e py , ∂(x∩ p y)
+∂x = epx
+epx +e py .(4)
+We plot the functions and their gradients in Tables 6, 9 and 10.
+Several features conspire to make these gradients well-suited for optimization. First, the domain
+[−∞,+∞] is unbounded: unlike connectives valued in[0,1] or [0,+∞) , no amount of satisfaction or
+violation drives operands into a saturated region where derivatives flatten out. Second, the gradients
+align with logical intuition, i.e. conjunction gets gradients which focus the optimisation effort on the
+most violated term. Third, the partial derivatives never vanish at finite operands—the contribution
+of every subformula remains visible to the optimizer regardless of how thoroughly it is dominated
+by its peers. This is theshadow-liftingproperty of Varnai and Dimarogonas [2020], and it is what
+justifies preferring ∪p/∩p to their non-smooth counterparts min/max :
+Proposition 3.2(Shadow-lifting).For p <∞ , the partial derivatives of ∩p and ∪p are strictly
+positive for all finite values—no operand is ever ‘shadowed’ by the other.
+4Specifically, this is a poset enriched in[−∞,+∞] (cf. [Lawvere, 1973]), plus extra algebraic structure making it asoftale
+in the sense of [Capucci et al., 2026].
+6
+
+PDF PAGE 7
+Together, these properties give rise to what we calladversarially informative gradients. In adversarial
+min-max optimisation, gradients must decrease as constraints become satisfied, yet not vanish entirely
+so as to still expose nearby violations. As a consequence, gradient signal persists even for satisfied
+constraints, enabling gradient-based methods such as PGD to find violations while still guiding
+optimisation towards satisfaction.
+3.1 Syntax and semantics
+We now define the propositional fragment ofQLL used for constructing differentiable loss functions.
+The syntax features propositional variables (or ‘atomic formulae’)yi and ˆyi that stand for, respectively,
+the i-th output of the model and the i-th entry of the label of a data point.
+Definition 3.3.For our NeSy specifications, we consider the following subset of the QLL language:
+ϕ ::=y i |ˆyi | ¬ϕ|ϕ∧ϕ|ϕ∨ϕ|ϕ⊸ϕ(5)
+where1≤i≤n, andrranges over 6 [−∞,+∞].
+Remark 3.4.This is a simplified version of the language in which atomic propositions of the form r
+also stand in for the logical constants ⊥ (which ‘means’+∞), ⊤ (which ‘means’−∞), and 0 (which
+‘means’0). The full language can be found in [Capucci, 2024].
+We will also often writeV
+a∈A ϕa, where A is a finite set and {ϕa}a∈A is a family of formulae, to
+abbreviate a long but finitary conjunction.
+Definition 3.5(Additive semantics).The additive semantics JϕKp ∈[−∞,+∞] R2n
+is defined
+inductively on the structure of the formula, where πi denotes the i-th coordinate projection of
+R2n ∼= Rn+n:
+JˆyiKp =π i,Jy iKp =π n+i,JrK p =r,J¬ϕK p =−JϕK p,
+Jϕ∧ψK p =JϕK p ∩p JψKp,Jϕ∨ψK p =JϕK p ∪p JψKp,Jϕ⊸ψK p =JψK p −JϕK p
+(6)
+Since ⊸ is both a residuation for the lattice ([−∞,+∞],≥) and the ‘quantitative’ order structure,
+it encodes the order. Therefore we can use it in formulae to account for ≤/≥ . We think of this
+as a feature, but also note one could add an extra connective ϕ≤ϕ to be interpreted as necessary
+(e.g. ReLU, softplus, etc.).
+Many examples of QLL formalization can be found in Appendix A.4.
+In order to use QLL to write specifications, it is necessary to be able to relate the semantics of the
+QLL formula (which is quantitative) to its satisfaction in the Boolean sense.
+Definition 3.6(Boolean semantics).The boolean semantics JϕKB ∈B R2n
+is defined inductively on
+the structure of the formula (inequalities are intended pointwise):
+JˆyiKB = (π i ≤0),Jy iKB = (π n+i ≤0),JrK B = (r≤0),J¬ϕK B = (JϕK ∞ ≥0),
+Jϕ∧ψK B =JϕK B ∧JψK B,Jϕ∨ψK B =JϕK B ∨JψK B,Jϕ⊸ψK B = (JψK ∞ ≤JϕK ∞).
+(7)
+The following is then trivial to prove:
+Theorem 3.7(Soundness).Letϕbe a formula in the language defined in Definition 3.3. Then
+JϕKB =true⇐ ⇒JϕK ∞ ≤0.(8)
+Proof.By induction on the structure ofϕ, see Appendix A.2.
+Compare to DL2, for which [Fischer et al., 2019, Theorem 1] says ϕ is satisfied iff its semantics
+isexactly 0.
+6Without loss of practicality one can restrictrto rationals or a finite subset of machine-representable numbers.
+7
+
+PDF PAGE 8
+Table 4:Names and definitions of four properties ϕ that were used in the continuous verification experiments
+in this paper. Their QLL formalisations are presented in Appendix A.4, except for the Dice one which is
+simple enough to not require further discussion. Recall the semantics of yi is fθ(x)i, for all labels i, and where
+x∈B ε( ˆx).
+Name Property Description
+Strong classification
+robustness yc ≥δthe true-class logit must be above the fixed thresholdδ
+Classification
+robustness for alli∈L, y c ≥y i the true-class logit must be the largest
+Clothing/Footwear
+(V
+i∈F yc ≥y i, c∈C,V
+i∈C yc ≥y i, c∈F
+if the ground-truth class belongs to the group of clothing,
+its logit must exceed all footwear logits, and vice versa
+Exactly-One V
+(i,j)∈P (¬yi ∨ ¬yj )∧(y i ∨y j )for each pair of opposite faces, predict exactly one
+4 Evaluation of QLL
+In this section we evaluate QLL against other differentiable logics based on their ability to jointly
+achieve high prediction performance and satisfy a given logical constraint on a classification task. As
+a baseline, we consider standard supervised learning without any differentiable logics or adversarial
+training, where models are trained solely to optimise prediction accuracy. Details on the experi-
+mental setup, including datasets, model architectures, and evaluation methodology, are provided
+in Appendix A.5.
+The experiments were run using a reusable, general purpose framework for property-driven training
+we implemented in PyTorch [Paszke et al., 2019]. The framework, including all code, data, and
+scripts required to reproduce the results presented in this paper, is available at https://github.
+com/tflinkow/property-driven-ml.
+4.1 Experimental Set Up: Exhaustive Verification vs Testing and Adversarial Attacks
+Given a logical constraint ϕ, there are three ways in which adherence of a model to the constraint can
+be measured. We list them in the order of increasing rigor. The standard mathematical definitions
+ofConstraint Security(CSec) andVerified Constraint Satisfaction(CSat), following [Casadio et al.,
+2022], are given in Definitions A.1 to A.3 in Appendix A.6.
+• Constraint Security( CSec) evaluates whether a PGD attack [Madry et al., 2018] can discover
+counterexamples to ϕ in Bε( ˆx). This is thede factostandard ML method of finding examples
+violating ϕ, see [Fischer et al., 2019]. Effectiveness of this search varies based on the loss, and it
+comes with no formal guarantee of finding a counterexample if one exists7.
+• Verified Constraint Satisfaction(CSat) evaluates whether ϕ holds for all possible samples in Bε( ˆx).
+This measurement, also calledformal verification, is the most rigorous, and gives sound and
+complete guarantees of finding a counterexample if one exists. Formal verification is carried out
+with Marabou [Katz et al., 2019, Wu et al., 2024] and Vehicle [Daggitt et al., 2025].
+All metrics are evaluated on the test sets. Standard prediction accuracy of models is denotedPrediction
+Accuracy( PAcc). The CSat metric, which exhaustively analyses the entire Bε( ˆx) for a data point ˆx,
+is obtained from a fixed randomly chosen subset of the test set. For all experiments, we report the
+mean and standard deviation (in %) across 5 random seeds for all metrics.
+Given a property ϕ, CSec, seen as robustness to attack on ϕ, is thus always an optimistic approxima-
+tion of CSat forϕ. Our experiments in Tables 5 and 13 show that typically, this over-approximation
+is vastly unrepresentative. However, the gap between CSec and CSat is consistently lower when
+we train with QLL.
+8
+
+PDF PAGE 15
+Two examples of lattices relevant to this work are the extended reals ([−∞,+∞],≥) , so that
+a∨b= min(a, b) and a∧b= max(a, b) ; and the Booleans B={false,true} with false≤true ,
+where ∨ is logical disjunction and ∧ is logical conjunction.
+The main idea behind the algebraic semantics of QLL is to replace the order ≤ with a quantitative
+predicate instead, which is ⊸ in [−∞,+∞] . This makes it a kind of ‘asymmetric’ metric space,
+as observed already by Lawvere [1973]. Thus (upper bound) and (minimality) become the clauses
+appearing in Section 3 as thedisjunction rulesof QLL. The same happens for theconjunction rules,
+which are in fact formal duals.
+Residuated lattices.A (commutative)residuated latticeadds to a lattice a second pair of operations:
+a ‘multiplication’ and an ‘implication’. Concretely, it is a structure(L,∨,∧,⊗, i,/∫hortrightarrow)where
+1.(L,∨,∧)is a lattice;
+2.(L,⊗, i) is a commutative monoid, i.e. ⊗ is associative, commutative, and has i as a
+two-sided neutral element (a⊗i=i⊗a=a);
+3. (mix)(a≤b)and(c/∫hortrightarrowd)imply(a⊗c)≤(b⊗d),
+4./∫hortrightarrowis theresidualof ⊗, meaning that the two operations are linked by theresiduation
+property
+a⊗b≤c⇐ ⇒a≤b/∫hortrightarrowc.(9)
+Equation (9) pins down /∫hortrightarrowuniquely given ⊗ and the order: b/∫hortrightarrowcis the largest element a such that
+a⊗b≤c . When ⊗ happens to coincide with the meet ∧, the residual /∫hortrightarrowis exactly the implication
+ofHeyting algebras, the algebraic semantics of intuitionistic propositional logic.
+[−∞,+∞] is a commutative residuated lattice with ⊗= + as defined in Table 2, and B is too with
+⊗=∧ —in fact, B is an Heyting algebra.
+Again, in QLL we treat the laws quantitatively. In [−∞,+∞] +, unitality, associativity, and com-
+mutativity of ⊗= + still hold in the traditional sense, while our ‘mix’ and ‘residuation’ rules
+from Table 3 are a quantitative instantiation of the same rules we just introduced for residuated
+lattices. In particular, note that for [−∞,+∞] +, ⊸ is both the quantitative order and the residuation
+/∫hortrightarrow(compare the situation with B, in which also order and residuation are given by classical material
+implication ‘⇒’).
+Often the lattice carries an order-reversing involution a↦/∫hortrightarrowa∗ so that
+a⊗b≤c ∗ ⇐ ⇒a≤(b⊗c) ∗ (10)
+This is the case for both our running examples, where (−)∗ is −(−) for [−∞,+∞] and ¬(−) for
+B. Then we can prove ‘contraposition’:
+a/∫hortrightarrowb=b∗ /∫hortrightarrowa∗.(11)
+The reader interested in understanding how varieties of commutative residuated lattices form the
+semantics for both fuzzy logics can refer to [Galatos et al., 2007, Metcalfe et al., 2009] for fuzzy
+logic and to [Aglianò, 2025] for linear logic.
+A.2 Proof of Theorem 3.7
+We proceed by induction on the structure of ϕ, recalling that at p=∞ the non-linear connectives
+become Jϕ∧ψK ∞ = max(JϕK ∞,JψK ∞) and Jϕ∨ψK ∞ = min(JϕK ∞,JψK ∞).
+Propositional variables.For ϕ=y i we have JyiKB = (π i ≤0) = (Jy iK∞ ≤0) by definition;
+the cases ϕ= ˆy i and ϕ=r are identical.
+Negation.By definition J¬ϕKB = (JϕK ∞ ≥0) , which is equivalent to −JϕK∞ ≤0 , i.e. J¬ϕK∞ ≤0 .
+Conjunction.By induction hypothesis applied to ϕ and ψ,
+Jϕ∧ψK B =JϕK B ∧JψK B ⇐ ⇒JϕK ∞ ≤0andJψK ∞ ≤0⇐ ⇒max(JϕK ∞,JψK ∞)≤0,
+and the right-hand side is Jϕ∧ψK ∞ ≤0 .
+15

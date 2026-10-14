@@ -1,0 +1,856 @@
+Yes. I’d split this into **two deliberately different investigations**, because they answer different questions and should not contaminate one another.
+
+The first is the one I think has the highest chance of uncovering another genuinely structural result: **whether the symbolic LM calculus can be connected canonically to the modal measurement/effect theory**.
+
+The second is broader and more experimental: **which quantum-information constructions actually survive in a Boolean/CM/LM architecture, why they survive, and exactly where the analogy fails**.
+
+I’d give both agents the original research archive **plus** the adversarial-review archive if possible. The review gives them the corrected state and novelty boundaries; the original package gives them the actual computational artifacts rather than summaries.
+
+---
+
+# Prompt 1 — LM-to-Modal Measurement Bridge
+
+## Mission: determine whether the symbolic LM calculus canonically induces the modal measurement theory
+
+You are acting as a senior mathematical researcher specializing in algebraic logic, finite algebra, modal quantum theory, categorical/process theories, and foundations of quantum information.
+
+You will receive one or more archives containing research on Correspondence Matrices (CMs), Logical Matrices (LMs), a Boolean rotation algebra, finite-chain-ring modal models, contextuality, teleportation, Bell/GHZ constructions, and a recent adversarial novelty audit.
+
+Read the supplied artifacts first.
+
+If the archive or primary source files cannot be read, stop and report that.
+
+Do not rely only on summaries. Locate and inspect the primary definitions, proofs, source code, computational outputs, and the manuscript:
+
+**Operator-Level Boolean Computation with Correspondence Matrices**
+
+Treat results already proved there as background rather than rediscovering them.
+
+---
+
+## 1. Central research question
+
+Determine whether there is a **canonical mathematical bridge** from the formula-valued Logical Matrix framework to the later modal/effect/measurement framework.
+
+The desired bridge would look schematically like
+
+```math
+\text{formula-valued LM} \longrightarrow \text{Boolean valuation} \longrightarrow \text{CM/coefficient representation} \longrightarrow \text{state or resource} \longrightarrow \text{effect/measurement} \longrightarrow \text{logical or modal outcome}.
+```
+
+At present, there may be a conceptual gap:
+
+- Paper B contains formula-valued LMs and logical pairing/measurement-like contraction.
+- The later modal theory introduces states/resources over `\mathbb F_2` or a finite chain ring and uses nonzero bilinear pairings as possible events.
+- These should **not be assumed to be the same measurement theory** merely because both use Boolean or matrix notation.
+
+Your job is to determine whether the connection can be made mathematically natural, functorial, universal, or otherwise principled.
+
+---
+
+## 2. Hard typing requirements
+
+Keep strictly separate:
+
+1. `2\times2` Boolean CMs representing binary truth functions;
+2. formula-valued LMs;
+3. Boolean valuations of those LMs;
+4. four-component coefficient vectors;
+5. lifted `4\times4` rotation-equivariant operators;
+6. modules over `A=\mathbb F_2[u]/(u^4)` or more general finite rings;
+7. modal effects / rows / projective bases;
+8. block operators;
+9. shared-module multipartite constructions;
+10. literal independent-register tensor products.
+
+Do not identify two object types without an explicit map.
+
+For every map, state:
+
+- domain;
+- codomain;
+- algebraic structure preserved;
+- whether it is injective, surjective, faithful, full, canonical, basis-dependent, valuation-dependent, or merely convenient.
+
+---
+
+## 3. Main questions
+
+### Q1. What exactly is an LM mathematically?
+
+Strip away CM terminology and characterize the most general formula-valued LM from Paper B.
+
+Determine whether it is most naturally understood as:
+
+- a matrix over a free Boolean algebra;
+- a matrix over a Lindenbaum algebra;
+- a relation;
+- a predicate-valued matrix;
+- a tensor;
+- an element of a semiring matrix category;
+- an object in a hypergraph/process theory;
+- something else.
+
+Do not force a category-theoretic interpretation if it adds nothing.
+
+---
+
+### Q2. What is LM pairing mathematically?
+
+Formalize the Paper-B logical pairing operation independently of its terminology.
+
+Determine whether it corresponds to:
+
+- evaluation;
+- relational composition;
+- Boolean matrix multiplication;
+- predicate satisfaction;
+- an effect-state pairing;
+- a bilinear pairing after valuation;
+- a categorical scalar;
+- a support predicate.
+
+Identify exactly where AND, XOR, OR, or other connectives enter.
+
+---
+
+### Q3. Can valuation commute with measurement?
+
+Investigate diagrams of the form
+
+```math
+\begin{array}{ccc} \text{symbolic LM} & \xrightarrow{\text{symbolic pairing}} & \text{formula}\\ \downarrow\mathrm{val} && \downarrow\mathrm{val}\\ \text{valued state/effect} & \xrightarrow{\text{modal pairing}} & \{0,1\} \end{array}
+```
+
+or an appropriate corrected version.
+
+Can a theorem be proved stating that some valuation/evaluation operation commutes with LM contraction?
+
+If yes:
+
+- state the strongest theorem;
+- identify its exact hypotheses;
+- determine whether it already follows from Paper B;
+- determine whether it extends from ordinary Boolean CMs to the rotation algebra or chain-ring theory.
+
+---
+
+### Q4. Can formula-valued LMs represent modal effects?
+
+Given a modal effect `e` or projective measurement basis, can it be represented by an LM carrying formulas?
+
+Conversely, which LMs correspond to admissible modal effects?
+
+Characterize the image.
+
+Possible outcomes include:
+
+- every primitive effect has an LM representative;
+- only a restricted subset does;
+- the correspondence depends on a chosen valuation;
+- there is no natural correspondence.
+
+Any of these outcomes is acceptable.
+
+---
+
+### Q5. Is “nonzero = possible” derivable or extra structure?
+
+The later modal theory declares a joint event possible when
+
+```math
+rMt^T\neq0.
+```
+
+Determine whether this rule arises from the LM semantics or whether it is an independent modal postulate.
+
+This distinction is critical.
+
+If it is independent, state that explicitly.
+
+If an LM semantics naturally induces support-valued outcomes, formulate the theorem precisely.
+
+---
+
+### Q6. Symbolic observables
+
+Investigate whether an observable/effect can carry an actual formula rather than merely a vector label.
+
+For example, can an effect encode
+
+```math
+x\land\neg y, \qquad x\oplus z, \qquad f(x,y)=g(z,w)
+```
+
+and return symbolic or modal information before valuation?
+
+Could such objects form:
+
+- an algebra of observables;
+- a module;
+- a lattice;
+- a Boolean algebra;
+- a partial algebra;
+- a category of effects?
+
+Look for a genuinely useful theorem rather than terminology.
+
+---
+
+### Q7. Sequential measurements and update
+
+Investigate whether the LM machinery helps solve one of the current weaknesses of the ring-valued modal model: conditioning/update.
+
+Ask whether symbolic predicates can define a clean update rule of the form
+
+```math
+\text{state} \overset{e}{\longrightarrow} \text{conditioned state},
+```
+
+without requiring division by nonunits.
+
+Search:
+
+- effectus theory;
+- categorical probability;
+- restriction categories;
+- relations;
+- Boolean algebras;
+- semiring quantum theory;
+- possibilistic conditioning;
+- modal quantum theory.
+
+Do not claim an update theory unless closure is actually proved.
+
+---
+
+## 4. Strong theorem targets
+
+Actively try to prove or disprove statements of the following general forms.
+
+### Candidate A — valuation naturality
+
+For an appropriate symbolic matrix algebra `\mathcal L`, every Boolean valuation
+
+```math
+v:\mathcal L\to\mathbb F_2
+```
+
+extends entrywise and satisfies
+
+```math
+v(\langle E,S\rangle_{\mathcal L}) = \langle v(E),v(S)\rangle_{\mathbb F_2}.
+```
+
+Determine whether this is trivial, useful, false, or already in Paper B.
+
+---
+
+### Candidate B — support bridge
+
+For an admissible symbolic effect `E` and state `S`,
+
+```math
+E\text{ is symbolically satisfiable against }S \iff \exists v:\; \langle v(E),v(S)\rangle\ne0.
+```
+
+Or determine the correct replacement.
+
+This could connect symbolic satisfiability to modal possibility.
+
+---
+
+### Candidate C — universal property
+
+Determine whether formula-valued LMs form a free or initial symbolic object whose Boolean valuations generate the concrete CM/modal models.
+
+If a genuine universal property exists, prove it.
+
+If it does not, say so.
+
+---
+
+### Candidate D — measurement-family characterization
+
+Characterize exactly which modal projective effects arise from LM constructions.
+
+A negative theorem showing that the complete 192-basis family cannot be generated by the existing LM semantics would also be valuable.
+
+---
+
+## 5. Prior-art search
+
+Translate every candidate theorem into conventional mathematics before searching.
+
+At minimum investigate:
+
+- Boolean matrix logic;
+- Stern;
+- Bricken;
+- Mizraji;
+- Eigenlogic;
+- relation algebra;
+- Boolean-valued matrices;
+- predicate transformers;
+- semiring matrices;
+- allegories;
+- categorical logic;
+- Chu spaces;
+- effect algebras;
+- effectus theory;
+- categorical quantum mechanics;
+- modal quantum theory;
+- relational quantum theory;
+- possibilistic models;
+- sheaf contextuality;
+- valuation semantics;
+- free Boolean algebras and Lindenbaum algebras.
+
+Do not infer novelty from CM terminology.
+
+---
+
+## 6. Adversarial questions
+
+Try to defeat the project.
+
+Ask:
+
+- Is LM pairing just ordinary Boolean matrix multiplication?
+- Does valuation naturality amount only to homomorphism preservation?
+- Is “symbolic observable” merely a formula attached to a vector?
+- Is the later modal measurement postulate genuinely independent of Paper B?
+- Does the bridge work only after arbitrary choices?
+- Does it fail when zero divisors enter?
+- Does it survive tensor composition?
+- Is there a canonical update rule?
+- Is this really an effect theory or merely notation?
+
+Negative results are useful.
+
+---
+
+## 7. Deliverables
+
+Return:
+
+### A. Executive verdict
+
+Does a genuine LM-to-modal bridge exist?
+
+### B. Type map
+
+Every object and every map between layers.
+
+### C. Formal theorem set
+
+Corrected statements and proofs.
+
+### D. Failure results
+
+Things that cannot be unified.
+
+### E. Prior-art matrix
+
+Known / equivalent / corollary / candidate novelty.
+
+### F. Measurement semantics
+
+A rigorous specification if one exists.
+
+### G. Sequential-update assessment
+
+Whether the framework can become a closed process theory.
+
+### H. Paper implications
+
+Should this be:
+
+- part of the Boolean-modal synthesis paper;
+- a standalone theory paper;
+- merely a section;
+- abandoned?
+
+### I. Computational tests
+
+Implement finite checks wherever helpful.
+
+### J. Search log and bibliography
+
+Enough to reproduce the novelty investigation.
+
+---
+
+## 8. Desired final answer
+
+The most important question is:
+
+> **Does the formula-valued LM calculus merely coexist with the modal CM theory, or can the latter be derived as a mathematically natural semantic realization of the former?**
+
+Do not optimize for a positive answer.
+
+If the connection is weak, identify the precise missing axiom.
+
+If it is strong, formulate the strongest defensible theorem.
+
+---
+
+# Prompt 2 — Boolean Quantum-Information Capability Map
+
+## Mission: determine exactly which quantum-information phenomena survive in the CM/LM Boolean framework and why
+
+You are acting as a senior researcher in quantum information, modal quantum theory, finite algebra, reversible computation, Boolean-function theory, and mathematical logic.
+
+You will receive archives containing CM/LM papers, finite-ring modal constructions, Bell/GHZ/contextuality results, teleportation and dense-coding computations, rotation-phase constructions, and a recent adversarial novelty review.
+
+Read the actual artifacts first.
+
+If the files cannot be read, stop.
+
+Do not assume that a historical computational artifact is correct merely because it is included. Reproduce important claims independently.
+
+---
+
+## 1. Goal
+
+Construct a rigorous **capability and dependency theory** for quantum-information-like phenomena in this Boolean setting.
+
+Do not ask merely:
+
+> “Can we imitate quantum mechanics?”
+
+Instead ask:
+
+> **Which algebraic ingredients are sufficient and/or necessary for each phenomenon?**
+
+Candidate ingredients include:
+
+- XOR-linear superposition;
+- reversible linear transformations;
+- cyclic phase `R`;
+- block shears/interferometers;
+- tensor composition;
+- nonseparable states;
+- zero divisors;
+- valuation structure;
+- restricted local operation groups;
+- complete projective measurement families;
+- nonlinear Boolean oracle logic;
+- formula-valued LMs;
+- probabilities;
+- inner products;
+- conjugation/dagger structure.
+
+The desired output is a **dependency map**.
+
+---
+
+## 2. Systems to compare
+
+Do not analyze only one model.
+
+Compare at least:
+
+### Model F
+
+Ordinary finite-field state theory over `\mathbb F_2`.
+
+### Model R
+
+Rotation-derived algebra
+
+```math
+A=\mathbb F_2[R] \cong \mathbb F_2[u]/(u^4).
+```
+
+### Model L
+
+Literal independent-register tensor theory over `\mathbb F_2`.
+
+### Model S
+
+Shared-module tensor constructions over `A`.
+
+### Model LM
+
+The symbolic CM/LM logic layer.
+
+Where useful also compare:
+
+- unrestricted `GL(n,2)`;
+- restricted `A`-linear gates;
+- transpose-orthogonal transformations;
+- alternative symplectic/quadratic candidates.
+
+Keep these models strictly distinct.
+
+---
+
+## 3. Phenomena to investigate
+
+For each phenomenon:
+
+1. define the conventional quantum notion;
+2. define the exact Boolean/modal analogue;
+3. prove whether the analogue exists;
+4. identify the minimal ingredients required;
+5. identify what important quantum property is missing;
+6. compare to prior modal/finite-field literature;
+7. avoid claiming novelty unless independently supported.
+
+Study:
+
+- superposition-like state addition;
+- phase and relative phase;
+- phase kickback;
+- interference and destructive cancellation;
+- complementarity / incompatible bases;
+- nonseparability;
+- Bell support nonlocality;
+- Hardy logical contextuality;
+- strong contextuality;
+- GHZ contradictions;
+- no cloning;
+- no deleting if meaningful;
+- teleportation;
+- dense coding;
+- entanglement swapping if definable;
+- remote state preparation if meaningful;
+- error correction;
+- stabilizer-like evolution;
+- oracle algorithms.
+
+---
+
+## 4. Small quantum-algorithm suite
+
+This is a major task.
+
+Investigate whether exact Boolean/modal counterparts exist for:
+
+### Deutsch algorithm
+
+Can one determine
+
+```math
+f(0)\oplus f(1)
+```
+
+using a single oracle interaction in an appropriate query model?
+
+Be precise about what constitutes one oracle query.
+
+Do not count preprocessing or encode the answer into the oracle definition.
+
+---
+
+### Deutsch–Jozsa
+
+Can the Boolean theory distinguish constant versus balanced promised functions?
+
+If yes, identify:
+
+- state preparation;
+- oracle;
+- phase mechanism;
+- readout;
+- query count.
+
+Determine whether any apparent speedup survives a fair classical comparison.
+
+---
+
+### Bernstein–Vazirani
+
+For
+
+```math
+f_s(x)=s\cdot x,
+```
+
+can the hidden string `s` be recovered using an analogous phase-oracle mechanism?
+
+This may be particularly natural over `\mathbb F_2`.
+
+Again distinguish structural analogy from computational advantage.
+
+---
+
+### Phase kickback
+
+Investigate whether the CM rotation phase provides a genuine analogue of kickback.
+
+Can oracle information be moved into a phase degree of freedom and then converted back to a logical/readout degree of freedom?
+
+State this algebraically.
+
+---
+
+### Simon / hidden subgroup
+
+Only investigate small cases unless a clean general theorem emerges.
+
+Determine whether the Boolean theory possesses enough Fourier/character structure to formulate the algorithm faithfully.
+
+If not, identify the obstruction.
+
+---
+
+### Grover
+
+Treat this as a likely negative or altered result.
+
+Ask whether there is any analogue of amplitude amplification.
+
+If only modal possibility exists, determine exactly which step fails.
+
+Do not invent a speedup.
+
+---
+
+## 5. Nonlinear logical oracle versus linear dynamics
+
+Formalize the architectural separation:
+
+```math
+\boxed{\text{arbitrary Boolean oracle logic}} \quad+\quad \boxed{\text{XOR-linear state dynamics}} \quad+\quad \boxed{\text{modal/LM readout}}.
+```
+
+Determine whether arbitrary Boolean functions can be embedded reversibly as
+
+```math
+(x,y)\mapsto(x,y\oplus f(x))
+```
+
+inside the allowed state space.
+
+If yes, characterize required ancillas and gate sets.
+
+Then determine whether LM symbolic computation can compile those oracle maps.
+
+This may provide an important connection back to Paper B.
+
+---
+
+## 6. Stabilizer-like subtheory
+
+Investigate whether the native gate set generated by some combination of
+
+- `R`;
+- Boolean splitter/shear `W`;
+- CNOT-like transformations;
+- coordinate permutations;
+- local units of `A`;
+- admissible measurement bases
+
+forms a tractable subtheory analogous in some structural sense to stabilizer quantum mechanics.
+
+Questions:
+
+- Is the group finite?
+- What are its orbits?
+- Is there a normal form?
+- Is simulation polynomial-time?
+- Is there an analogue of Pauli operators?
+- Is there a phase group?
+- Is contextuality present inside this restricted gate set?
+- Which resource must be added to escape it?
+
+Do not use the word “Clifford” unless an actual symplectic/normalizer structure is demonstrated.
+
+---
+
+## 7. Resource hierarchy
+
+Develop a rigorous resource chart.
+
+Candidate properties:
+
+```math
+\text{nonseparable}, \quad \text{Bell-nonlocal support}, \quad \text{logical contextuality}, \quad \text{strong contextuality}, \quad \text{teleportation-capable}, \quad \text{dense-coding-capable}.
+```
+
+Determine all logical implications and non-implications available in the supplied models.
+
+Find minimal counterexamples.
+
+In particular study whether:
+
+- contextuality implies teleportation;
+- teleportation implies strong contextuality;
+- nonseparability implies Bell nonlocality;
+- equal `\mathbb F_2`-rank implies equal resource power;
+- restricted equivalence classes collapse under unrestricted linear operations.
+
+A Hasse-style diagram or implication graph would be valuable.
+
+---
+
+## 8. Dependency-ablation experiments
+
+For every phenomenon, remove one structural ingredient and rerun the model.
+
+Examples:
+
+- replace `A` by `\mathbb F_2`;
+- remove `R`;
+- remove zero divisors;
+- replace the restricted measurement set with all field-linear measurements;
+- replace shared tensor with literal tensor;
+- enlarge the local group;
+- remove nonlinear oracle logic;
+- impose transpose orthogonality;
+- substitute a symplectic form.
+
+The result should be a table of the form:
+
+| PhenomenonXORphasetensorzero divisorsrestricted measurementsprobability |
+| ----------------------------------------------------------------------- |
+
+But populate it through proofs or exhaustive evidence, not intuition.
+
+---
+
+## 9. Prior literature
+
+At minimum compare carefully against:
+
+- Schumacher–Westmoreland modal quantum theory;
+- James–Ortiz–Sabry finite-field quantum computing;
+- relational quantum mechanics/process theories;
+- Spekkens-like toy models where relevant;
+- finite-field Fourier algorithms;
+- reversible relational programming;
+- categorical quantum mechanics;
+- phase-group approaches;
+- stabilizer theory;
+- possibilistic contextuality;
+- finite-ring quantum models.
+
+The question is often not whether a phenomenon is known, but whether **the dependency structure inside this CM-derived restricted theory** has been studied.
+
+---
+
+## 10. Computational rigor
+
+Reproduce and independently test supplied claims about:
+
+- Bell tables;
+- GHZ tables;
+- teleportation;
+- dense coding;
+- contextuality;
+- separability;
+- gate groups;
+- measurement bases;
+- resource classes.
+
+For every exhaustive claim report:
+
+- state-space size;
+- gate-space size;
+- number of measurements;
+- number of resources;
+- algorithm;
+- runtime;
+- exact output file.
+
+Prefer proof over brute force where possible.
+
+---
+
+## 11. Adversarial tests
+
+Actively try to show that interesting-looking results are artifacts.
+
+Ask:
+
+- Is interference merely XOR cancellation?
+- Does phase actually contribute or can the experiment be rewritten without it?
+- Are Bell/GHZ contradictions inherited wholesale from modal quantum theory?
+- Does teleportation use anything CM-specific?
+- Is the algorithmic advantage merely a query-model bookkeeping trick?
+- Does enlarging the operation group trivialize the resource hierarchy?
+- Are zero divisors producing contextuality only because measurements were restricted?
+- Does the tensor model remain closed under conditioning?
+- Are some “quantum” effects just reversible classical computation in unusual notation?
+
+Report negative conclusions prominently.
+
+---
+
+## 12. Deliverables
+
+Return:
+
+### A. Capability map
+
+Every phenomenon and its exact Boolean analogue.
+
+### B. Dependency matrix
+
+Necessary/sufficient algebraic ingredients.
+
+### C. Algorithm suite
+
+Deutsch, Deutsch–Jozsa, Bernstein–Vazirani, phase kickback, and carefully selected negative cases.
+
+### D. Resource hierarchy
+
+Implications and explicit counterexamples.
+
+### E. Stabilizer-like assessment
+
+Whether a principled restricted subtheory exists.
+
+### F. Formal theorem set
+
+Not merely demonstrations.
+
+### G. Computational package
+
+Reproducible tests and machine-readable data.
+
+### H. Prior-art matrix
+
+Distinguish known phenomena from new structural organization.
+
+### I. Negative-results section
+
+What Boolean/modal theory cannot reproduce.
+
+### J. Paper recommendation
+
+Determine whether this supports a coherent paper such as:
+
+**A Boolean Modal Laboratory for Quantum Information: Logical Operators, Phase, Contextuality and Exact Protocols**
+
+or whether the results should be split.
+
+---
+
+## 13. Final synthesis question
+
+Answer:
+
+> **What is the minimum mathematical structure required for each quantum-information-like phenomenon observed in the CM/LM program, and which dependencies are genuinely distinctive to the restricted CM-derived theory?**
+
+A good outcome is not “everything works.”
+
+A particularly valuable outcome would be a theorem saying:
+
+> Phenomena `X,Y,Z` require only structures `A,B`; phenomenon `Q` first requires tensor structure; phenomenon `R` appears only with nilpotent valuation; probability-based phenomena cannot be recovered at all.
+
+That would turn a collection of analogies into a mathematical theory.
+
+---
+
+## One optional third investigation
+
+After those two, I would probably send a third agent specifically after the **stabilizer/process-theory question**, rather than burying it inside Prompt 2:
+
+> Given the CM-derived rotation algebra and the audited Boolean gate constructions, determine whether there exists a smallest operationally closed subtheory—closed under preparation, reversible dynamics, composition, measurement, conditioning, and classical control—that contains the CM rotation `R` and the demonstrated interferometric protocols. Characterize its state space, effect space, transformation monoid/group, tensor rule, phase group, normal forms, simulation complexity, contextuality resources, and relationship to relational/modal/stabilizer process theories. Pay particular attention to the known zero-divisor conditioning problem. A negative result proving that no such closure exists under the current tensor/measurement contract is equally valuable.
+
+I wouldn't run that one **before** the LM-interface investigation, because Prompt 1 may tell us what the measurement/update layer ought to be. If it does, the third project becomes much better defined.
+
+For agent handoff, I would attach **both** the original research package and the adversarial-review package rather than only the latter: the latter tells the agents what has survived scrutiny, while the former contains the primary Bell/GHZ/teleportation/contextuality code and datasets they need to independently interrogate.

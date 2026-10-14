@@ -1,0 +1,75 @@
+# N2/P8 Reproducibility
+
+## Frozen experiment
+
+- Preregistration: `N2_P8_PREREGISTRATION.md`
+- Harness: `n2_p8_harness.py`
+- EPFL train/validation structural selection: `P8_EPFL_TRAINVAL_SELECTION.json`
+- Frozen regression tree/cutoff: `P8_FROZEN_GATE.json`
+- Frozen cutoff: `0.80`
+
+Hash files are included beside the artifacts. `N2_P8_INDEPENDENT_VERIFY.json` must report `PASS` for the packaged result set.
+
+## Core outputs
+
+- `calibration.json`: training/validation labels, fitted tree, cutoff sweep, and selected policy.
+- `fuzz.json`: 1,000-case correctness run.
+- `gatep.json`: complete 36-case Gate-P symbolic/timing/memory payload.
+- `natural/*.json`: exact frozen natural-case payloads.
+- `N2_P8_SUMMARY.json`: pooled summary statistics.
+- `N2_P8_GATEP_CASE_SUMMARY.csv`: per-case Gate-P summary.
+- `N2_P8_NATURAL_CASE_SUMMARY.csv`: per-case natural summary.
+- `N2_P8_INDEPENDENT_VERIFY.json`: independent audit output.
+- `P8_POSTHOC_TELEMETRY_PROFILE.txt`: post-hoc source-builder profile; not used for model fitting or evaluation decisions.
+
+## Re-running the frozen stages
+
+Run from the P8 run directory with the sibling P1-P7 harness directories preserved as packaged.
+
+```bash
+python n2_p8_harness.py --mode selection --out selection_replay.json
+python n2_p8_harness.py --mode calibrate --out calibration_replay.json
+python n2_p8_harness.py --mode fuzz --out fuzz_replay.json
+python n2_p8_harness.py --mode gatep --out gatep_replay.json
+```
+
+Natural cases are executed one at a time with `--mode natural-case --case-id <case> --out <file>`. The frozen cases are:
+
+```text
+adder:f[4]
+adder:f[5]
+cavlc:17
+cavlc:35
+int2float:e4
+int2float:y6
+priority:new_n130
+priority:new_n174
+router:105
+router:92
+```
+
+The packaged `run_p8_nat_chunk.py` exists only to split the long `cavlc:35` randomized timing schedule across short execution-environment commands while preserving the exact frozen repetition indices and arm order. It is not a different algorithm or endpoint.
+
+## Correctness and verification
+
+After reproducing outputs, run:
+
+```bash
+python independent_verify.py
+```
+
+The packaged final audit reports:
+
+- 1,000 fuzz cases, zero failures;
+- 2,160 Gate-P source-inclusive timing rows;
+- 2,160 Gate-P compiler-only timing rows;
+- 450 natural source-inclusive timing rows;
+- 450 natural compiler-only timing rows;
+- frozen preregistration, harness, and gate hashes matching.
+
+## Interpretation guardrails
+
+- Gate-P is synthetic, deliberately fold-rich mechanism evidence.
+- EPFL training/validation roots are root-disjoint from evaluation roots but not fully circuit-disjoint; they do not establish circuit-disjoint natural generalization.
+- The frozen ten natural evaluation cases accepted zero P8 folds, so natural timing is an abstention/overhead control rather than natural-folding evidence.
+- The post-hoc telemetry profile and hypothetical zero-incremental-telemetry calculations are diagnostics only; they did not alter the frozen gate or evaluation.

@@ -1,0 +1,37 @@
+# Negative results
+
+Negative results are first-class evidence and must remain visible.
+
+## NR-001 — same-operand folding is not automatically CM-specific
+
+**Date:** 2026-09-17  
+**Status:** exploratory mechanism result; requires natural-corpus follow-up.
+
+On generated trees built from many Boolean operators over the same operand pair `(X,Y)`, pre-expansion folding drastically reduces sparse-ANF multiplication work relative to direct recursive ANF propagation. However, a generic optimizer that recognizes the same 2-support cut and composes its 4-entry truth function obtains the **same folded expression and the same symbolic-work counts** as the CM implementation.
+
+Implication: a benchmark against direct ANF alone would be a strawman for the "CM-specific" hypothesis. The primary comparator must include generic 2-support/cut/LUT rewriting (and ideally a stronger e-graph or logic-synthesis rewrite pipeline).
+
+## NR-002 — mixed-support trees mostly do not fold
+
+In the exploratory mixed-support generator, CM and generic 2-support folding usually leave polynomial multiplication counts unchanged. At deeper settings occasional accidental same-pair folds occur, but they are small and again shared by both optimizers.
+
+Implication: CM should have an abstention path and the benchmark must include expected-bad workloads rather than reporting only same-operand constructions.
+
+## NR-003 — public wrapper performance cannot be treated as a CM kernel win
+
+The public project's corrected 2026-08-25 audit reports that the public CM wrapper remained slower than CSE-flat even where the bare CM kernel showed a workload-specific instruction/operation reduction. This new branch therefore separates frontend preparation, backend propagation, wrapper/serialization, and warm-reuse costs.
+
+## NR-004 — corrected S1/S2 finds no CM-specific symbolic advantage over strong generic LUT/cut folding
+
+**Date:** 2026-09-17  
+**Status:** confirmatory synthetic Gate-A result for S1/S2; natural-corpus follow-up still required.
+
+After strengthening the generic comparator to include both arbitrary same-operand two-input truth-function composition and exact two-variable cut retabulation, all 10,389 admitted corrected S1/S2 rows produced identical CM-vs-generic values for multiplication count, pair-product work, peak monomials, final ANF size/degree, serialized size, output structural-node count, and function digest.
+
+The favorable S1 mechanism remains real versus direct sparse ANF, but it is not representation-specific under this comparator. On S2, requested sharing increasingly creates fold opportunities, yet CM and the generic comparator still land on the same symbolic artifact/work counts.
+
+Implication: do not describe S1/S2 as evidence of a CM-specific computational advantage. The next chance to falsify this negative result is a frozen natural corpus in which CM's typed orientation/containment/provenance layer finds a formally valid reduction that the generic cut/LUT baseline does not.
+
+## NR-005 — first S2 generator violated the semantic-support contract
+
+The initial local S2 implementation guaranteed only syntactic variable occurrence. Exact ANF audit found semantic-support equality to requested `live_k` in only 55.161% of admitted rows. That entire S2 run was superseded rather than filtered for favorable cases. The replacement generator guarantees semantic support by construction; the invalid raw data and correction note remain under `results/superseded/s2_support_generator_v0/`.

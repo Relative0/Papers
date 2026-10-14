@@ -1,0 +1,106 @@
+# Results
+
+## Gate A S1/S2 local run — 2026-09-17
+
+Status: **completed for the four matched sparse-ANF arms on S1/S2**. The natural-corpus, XAG, and specialized ZDD/FDD gates remain open.
+
+### Execution scope
+
+Four artifact-equivalent arms were run through the same canonical sparse bitmask-ANF backend:
+
+1. `direct_sparse_anf` — structural-DAG-aware sparse ANF, no frontend folding;
+2. `cse_flat_sparse` — generic structural CSE plus safe commutative/associative normalization;
+3. `generic_2support_sparse` — representation-neutral same-operand LUT composition plus exact two-variable cut retabulation;
+4. `cm_frontend_sparse` — typed CM same-operand composition with transpose/operand-order normalization.
+
+All successful arms had to produce the same canonical ANF digest, followed by an independent source-expression evaluation check. S1 uses exhaustive 4-assignment checks; S2 uses deterministic corner cases plus seeded assignments. No admitted correctness mismatch occurred.
+
+The corrected run contains **10,500 formulas**: 3,750 S1 and 6,750 S2. Of these, **10,389** were fully admitted: all 3,750 S1 rows and 6,639 S2 rows. The remaining 111 S2 rows hit the pre-execution sparse-ANF pair-product safety guard; no row was dropped for a correctness disagreement.
+
+### S2 support-generator correction
+
+The first S2 implementation was rejected after audit because only 55.161% of its admitted rows retained semantic support equal to requested `live_k`. It is preserved under `results/superseded/s2_support_generator_v0/` and is not used below.
+
+The corrected S2 generator is `parity(all live variables) XOR h`, with `h` generated from degree-2 AND atoms and closed under the BASIC two-input operators. By construction, `h` has no degree-1 ANF term, so it cannot cancel the parity linear terms. In the corrected admitted S2 data, exact semantic-support match is **1.000**.
+
+## SC-A — folding mechanism: PASS
+
+Every predeclared S1 stratum with depth >= 6 and affine fraction <= 0.75 satisfied the `CM/direct <= 0.50` multiplication-count gate. In practice the reduction was much larger. Examples of median multiplication counts:
+
+| Depth | Affine fraction | Reversed fraction | Direct | CM | CM/direct |
+|---:|---:|---:|---:|---:|---:|
+| 6 | 0.50 | 0.50 | 43 | 0.5 | 0.0116 |
+| 8 | 0.50 | 0.25 | 137 | 1 | 0.0073 |
+| 10 | 0.25 | 0.50 | 736 | 0 | 0 |
+| 10 | 0.75 | 0.50 | 247.5 | 0 | 0 |
+
+Across all S1 cases, CM reduced multiplication count relative to direct sparse ANF in 2,948/3,750 rows, tied in 802, and was never worse. CSE-flat was substantially weaker on this particular same-operand mechanism family.
+
+This establishes the mechanism only: folding before ANF expansion can eliminate nonlinear polynomial work on favorable structure.
+
+## CM-specific advantage against the strong generic comparator: not found on S1/S2
+
+This is the decisive result from the present run.
+
+Across **all 10,389 admitted S1/S2 rows**, `cm_frontend_sparse` and `generic_2support_sparse` were exactly equal in:
+
+- polynomial multiplication count;
+- attempted pairwise monomial products;
+- peak explicit monomial count;
+- final ANF monomial count and degree;
+- serialized canonical-ANF size;
+- final prepared structural-node count;
+- canonical function digest.
+
+There were **zero** admitted rows in which CM beat the generic comparator on any of those symbolic metrics, and zero rows in which it lost. The generic frontend performed more rewrite events in 6,010 admitted rows because it additionally retabulated eligible two-variable cuts, but those extra rewrites did not change the final symbolic-work metrics relative to CM.
+
+Therefore S1/S2 provide **no evidence of a CM-specific symbolic advantage** over a strong generic LUT/cut optimizer. A benchmark against direct ANF alone would substantially overstate the result.
+
+## S2 structural behavior
+
+The corrected S2 family behaves as intended: it contains both no-fold and sharing-rich cases while retaining exact requested semantic support.
+
+Median multiplication counts by requested core sharing probability:
+
+| Requested sharing | Direct | CM | Generic 2-support | Median CM folds | Median generic folds |
+|---:|---:|---:|---:|---:|---:|
+| 0.00 | 35 | 35 | 35 | 0 | 4 |
+| 0.25 | 17 | 12 | 12 | 2 | 4 |
+| 0.50 | 9 | 0 | 0 | 3 | 4 |
+
+Thus repeated/shareable structure predicts benefit relative to direct propagation, but the benefit is not unique to CM. Two S2 rows were mildly worse than direct after folding (one extra polynomial multiplication); the generic comparator was identically worse on those same rows. This is retained as a negative boundary case rather than hidden.
+
+## Resource-guard rows
+
+111/6,750 corrected S2 rows exceeded the local `2,000,000` pair-products-per-multiply safety threshold in at least one arm. Status patterns were:
+
+- 108 rows: all four arms hit the guard;
+- 2 rows: direct and CSE-flat hit the guard while both CM and generic 2-support completed;
+- 1 row: direct hit the guard, CSE-flat completed, and both CM/generic hit the guard.
+
+These rows are censored from matched ratios. They are not converted into wins. The raw CSV retains each guard reason and observed threshold crossing.
+
+## Timing boundary
+
+Row-level times are single-pass local diagnostics collected in counterbalanced case order, often in separate short-lived chunk processes to avoid long-lived Python heap effects. They are **not** used for a speed claim.
+
+For orientation only, among 1,789 admitted S2 rows where CM performed zero successful folds, the median local CM/generic end-to-end timing ratio was 0.911. Because the generic arm performs extra cut-retabulation work and timing was not repeated/isolated, this is a candidate frontend-overhead observation only; it does not satisfy a timing gate.
+
+## Gate status after S1/S2
+
+- **SC-A:** PASS — the folding mechanism is real on the favorable synthetic family.
+- **SC-B:** NOT TESTED/SATISFIED — protocol requires a predeclared natural structural stratum. Synthetic equality with the generic comparator gives no positive CM-specific evidence.
+- **SC-C:** NOT TESTED — no XAG/multiplicative-complexity backend in this run.
+- **SC-D:** NOT TESTED — no PolyBoRi/ZDD or FDD/KFDD run yet.
+- **SC-E:** descriptive local diagnostic passes the <=10% no-fold overhead threshold, but repeated isolated timing is still required before treating it as evidence.
+
+## Answers supported at this stage
+
+1. **Does CM folding reduce symbolic work beyond a well-implemented generic structural optimizer?** Not on S1/S2. It reduces work strongly versus direct sparse ANF on favorable structure, but the strong generic 2-support/LUT comparator reaches exactly the same symbolic artifacts and work counts on every admitted case.
+2. **Which structural properties predict benefit?** Repeated same-operand structure and higher share/reuse density predict lower ANF multiplication work. Affine-heavy formulas already require fewer nonlinear products. These predictors are generic structural properties, not yet CM-specific ones.
+3. **Does it reduce multiplicative/AND complexity?** Not answered by ANF propagation counts. XAG optimization is still required.
+4. **Can the advantage survive ZDD/FDD/XAG/BDD baselines on natural workloads?** Not tested yet; no such advantage has been established.
+5. **If not, can CM still be useful as a certificate/provenance/frontend layer?** Still plausible. The CM frontend reaches the same optimized symbolic result with fewer rewrite classes than the generic retabulation comparator, and it carries typed operand-frame provenance. That is a separate engineering claim requiring its own measured workflow.
+6. **Next falsifiable experiment:** N1 on frozen natural CM/EPFL-derived formulas, using the same four arms first. Only if a predeclared natural structural stratum shows a CM/generic difference should the branch proceed to ZDD/XAG survival tests for that stratum.
+
+Detailed machine-readable results are in `results/gate_a_s1_s2_summary.json` and `results/raw/gate_a_s1_s2.csv`.

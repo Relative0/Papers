@@ -1,0 +1,149 @@
+const app = document.getElementById("app");
+document.body.prepend(topbar({ brand: "Correspondence Matrices <span>· P-series study guide</span>",
+  links: [["index.html", "Knowledge base"], ["late-scan-status.html", "Late-scan status"], ["#how", "How to read"], ["#studies", "Each study"], ["#research-register", "All recent trials"], ["#structured-factorization", "Factorization"], ["#rerun", "Rerun record"]] }));
+
+const STUDIES = [
+  ["P1", "Direct sparse ANF baseline", "Profitability-aware folding on frozen natural cones", "Whether natural cones contain folds worth taking", [["Full path / direct", 1.0934, "ratio"]], "NO-GO", "No natural folds were accepted (0 of 28 candidates); the apparent generic-comparator result was abstention and optimizer overhead, not a fold win.", "N2_P1_RESULTS.md"],
+  ["P2", "P1's separate planning route", "Inline source-DAG planning", "Whether eliminating a separately executed rewrite changes the source-inclusive outcome", [["Full path / direct", 1.1124, "ratio"]], "NO-GO", "Natural folds remained zero, so inline planning still added overhead without recovered lowering work.", "N2_P2_RESULTS.md"],
+  ["P3", "P2's eager inline plan", "Demand-driven shallow fold fusion", "Whether only building plans demanded by lowering avoids inactive work", [["Gate-P folds used", 58, "count"], ["Natural folds used", 0, "count"]], "NO-GO", "The constructed Gate-P family exercised 58 folds, but natural cones still accepted none and matching/control cost exceeded saved ANF work.", "N2_P3_RESULTS.md"],
+  ["P4", "P3's demand-driven matching", "Propagated two-support signatures during construction", "Whether a stronger algebraic contraction can make lowering cheaper", [["Lowering-only / direct", 0.5752, "ratio"], ["Construction + lowering / direct", 2.2259, "ratio"]], "MECHANISM PASS — NOT A PRODUCTION RESULT", "The constructed mechanism family shows a real lower-stage contraction, but Python metadata construction dominated the full path.", "N2_P4_RESULTS.md"],
+  ["P5", "P4 object-heavy metadata", "Packed construction metadata and demand arithmetic", "Whether cheaper metadata recovers P4's full-path cost", [["Lowering-only / direct", 0.6544, "ratio"], ["Construction + lowering / direct", 1.2898, "ratio"]], "NO-GO", "Packing removed much of P4's construction tax but still did not cross the direct source-inclusive gate.", "N2_P5_RESULTS.md"],
+  ["P6", "P5 packed external metadata", "Two semantic words stored in each node", "Whether metadata locality is cheaper than P5's representation", [["Lowering-only / direct", 0.6641, "ratio"], ["Construction + lowering / direct", 1.2444, "ratio"]], "NO-GO", "Moving metadata into nodes did not remove the construction cost needed for a direct crossover.", "N2_P6_RESULTS.md"],
+  ["P7", "P6 in-node words", "C-backed 64-bit annotation buffers", "Whether a lower-level annotation representation improves the complete path", [["Full path / direct", 1.3052, "ratio"]], "NO-GO", "The buffer representation was slower than P6's in-node representation at the relevant boundary.", "N2_P7_RESULTS.md"],
+  ["P7B", "P7 annotation for all candidates", "Formula-level probe before annotation", "Whether dispatching annotation selectively is cheaper", [["Dispatch / direct", 1.3396, "ratio"]], "NO-GO", "Probe cost and false-positive annotations outweighed the work avoided; this is the corrected P7 timing interpretation.", "P7B_TIMING_CORRECTION.md and N2_P7B_RESULTS.md"],
+  ["P8", "P7B's probe-based dispatch", "Frozen zero-pass telemetry tree", "Whether a no-traversal policy can preserve decisions without a source scan", [["Decision policy invariance", 1, "gate"], ["Source-inclusive direct crossover", 0, "gate"]], "NO-GO", "Correctness and zero-pass policy invariance held, but the source-inclusive direct gate still did not pass.", "N2_P8_RESULTS.md"],
+  ["P9", "P8 frozen telemetry tree", "Seven frozen counters", "Whether minimal telemetry removes enough P8 overhead", [["Full path / direct", 1.1065, "ratio"]], "NO-GO", "P9 improved over P8 but remained above direct.", "N2_P9_RESULTS.md"],
+  ["P10", "P9 separate minimal telemetry", "Fused minimal telemetry in source construction", "Whether avoiding a separate counter pass changes the direct comparison", [["Full path / direct", 1.0674, "ratio"]], "NO-GO", "Fusing counters helped versus P9, but the confidence interval still included parity.", "N2_P10_RESULTS.md"],
+  ["P11", "P10 generic fused telemetry", "Threshold-specialized telemetry", "Whether threshold-specific work removes the remaining engineering tax", [["Full path / direct", 1.0435, "ratio"]], "ENGINEERING PASS — DIRECT CROSSOVER MISSED", "Specialization improved telemetry but did not establish a direct-baseline win.", "N2_P11_RESULTS.md"],
+  ["P12", "P11 threshold telemetry", "Lazy reuse scan and derived pair statistics", "Whether exactification can be made rare enough to win overall", [["Full path / direct", 1.0199, "ratio"]], "NO-GO", "Most scans were avoided and a workload-weighted crossover appeared, but the preregistered case-balanced endpoint remained above direct.", "N2_P12_RESULTS.md"],
+  ["P13", "P12 derived pair statistics", "Deferred C-backed pair exactification", "Whether deferring pair work removes P12's residual metadata tax", [["Full path / direct", 1.0165, "ratio"]], "NO-GO", "The direct endpoint remained above parity and no clear gain over P12 was established.", "N2_P13_RESULTS.md"],
+  ["P14", "P13 deferred exactification", "Sealed prospective exact-dispatch evaluation", "Whether the exact dispatcher beats direct lowering on sealed synthetic and natural corpora", [["Synthetic E/D", 1.0508, "ratio"], ["Natural E/D", 1.0607, "ratio"], ["Profitable synthetic encodings", 5, "count"], ["Profitable natural encodings", 0, "count"]], "NO-GO", "Five rare synthetic encodings were worth retaining as correctness exposures, but the overall exact dispatcher lost to direct on both corpora.", "P14_EXECUTION_REPORT.md"],
+  ["P15", "P14's clone-based exact observer", "Late exact scan over the owned complete factory arena", "Whether the redesign preserves the decision contract without discarding factory history", [["Fresh semantic cases passing", 490, "count"], ["Accepted timing worker artifacts", 0, "count"]], "SEMANTIC PASS / TIMING INCONCLUSIVE", "The sealed fresh-corpus semantic check passed (384 synthetic and 106 natural). Zero timing artifacts were accepted, so no timing estimand, performance result, or production recommendation exists.", "P15_FINAL_DISPOSITION_20260921.json"],
+];
+
+function statusTone(status) {
+  return status.includes("NO-GO") ? "var(--critical)" : status.includes("SEMANTIC") ? "var(--series-3)" : "var(--warning)";
+}
+function studyChart(study) {
+  const [phase, , , , metrics] = study;
+  const ratios = metrics.filter(m => m[2] === "ratio");
+  if (ratios.length) {
+    return forest(ratios.map(([label, value]) => ({ label, value, group: "current", scope: phase, basis: "Named study boundary; no confidence interval is implied by this compact guide." })), {
+      title: phase + " measured ratio", desc: "Ratio below 1 favours the named phase over direct sparse ANF at the precise boundary in the row label. Parity is 1.00.",
+      xTitle: "phase / direct ratio", arm: phase, domain: [0.45, 2.4], ref: 1, refLabel: "parity 1.00", padL: 245,
+    });
+  }
+  const gate = metrics.some(m => m[2] === "gate");
+  return groupedCols({
+    title: phase + (gate ? " evidence gates" : " retained evidence counts"),
+    desc: gate ? "A gate chart, not a speed chart: 1 means the named gate passed; 0 means it did not." : "Counts retained by the named study. This chart is not a timing comparison.",
+    xTitle: phase + " evidence", yTitle: gate ? "gate status" : "count", max: gate ? 1.2 : undefined,
+    groups: metrics.map(([label, value]) => ({ label: label.replace(" ", "\n"), values: { value }, tip: gate ? (value ? "passed" : "not passed") : String(value) })),
+    series: [{ key: "value", label: gate ? "gate" : "count", color: gate ? S3 : S1 }], labelBars: true,
+    fmtVal: value => gate ? (value ? "pass" : "not passed") : String(value), fmtTick: value => gate ? (value === 1 ? "pass" : value === 0 ? "not passed" : "") : String(Math.round(value)),
+  });
+}
+
+app.append(h("header", { class: "page" }, [
+  h("p", { class: "eyebrow", text: "P1–P15 FOLDING AND LATE-SCAN READER GUIDE · REVIEWED 2026-09-22" }),
+  h("h1", { text: "What changed in each P-series study — and what the evidence actually says" }),
+  h("p", { class: "lede", text: "This guide makes the research chain reproducible to read: each card names the predecessor, the implementation change, the question tested, the measurement boundary, the evidence graphic, and the disposition. It preserves negative results rather than treating every local speedup as a deployment candidate." }),
+]));
+
+{
+  const s = section("how", "How to read the graphs", "Every chart names its measurement boundary",
+    "Most cards plot a phase/direct ratio: below 1 is faster only for that row's named boundary, while 1.00 is parity. These ratios must not be ranked as though they were one benchmark: lowering-only, construction-plus-lowering, dispatch, synthetic, and natural measurements answer different questions. Count and gate charts are deliberately labelled as non-timing evidence.");
+  s.append(h("div", { class: "boundary-strip" }, [
+    h("h2", { text: "Claim boundaries carried through the guide" }),
+    h("ul", {}, [
+      h("li", { text: "P4's 0.5752 ratio is a lower-stage mechanism result; its complete path was 2.2259, so it is not a production speedup." }),
+      h("li", { text: "P11–P13 improved earlier implementations but missed the preregistered case-balanced direct crossover." }),
+      h("li", { text: "P14 is a NO-GO despite five useful synthetic encoding exposures." }),
+      h("li", { text: "P15 is semantic PASS / timing inconclusive: zero timing artifacts were accepted, so it has no performance or production claim." }),
+    ]),
+  ]));
+  s.append(h("p", {}, [document.createTextNode("For the headline August CM-versus-flattened-CSE result mentioned elsewhere: the same-host B2/B4 V3 repetition at 0.9049 is a distinct, accepted kernel measurement. It is evidence of a roughly 9.5% kernel-time reduction in that contract, not evidence that every later P-series source-inclusive experiment passed.") ]));
+  app.append(s);
+}
+
+{
+  const s = section("studies", "Phase-by-phase study cards", "One graph and one audit explanation for every run",
+    "The cards are ordered by the actual development sequence. “Prior” tells a reader which cost or correctness concern motivated the next modification; “lesson” explains why the next study was still needed or why the line closed.");
+  STUDIES.forEach(study => {
+    const [phase, prior, change, tested, metrics, disposition, lesson, audit] = study;
+    const card = h("article", { class: "card", id: phase.toLowerCase() });
+    card.style.borderTop = "3px solid " + statusTone(disposition);
+    card.append(h("p", { class: "scope", text: phase + " · " + disposition }));
+    card.append(h("h2", { text: change }));
+    card.append(h("p", { class: "caption", text: "Prior: " + prior + ". Tested: " + tested + "." }));
+    card.append(h("div", { class: "figwrap" }, [studyChart(study)]));
+    card.append(h("p", { class: "claim", text: "What the result means: " + lesson }));
+    card.append(h("details", { class: "card-more" }, [
+      h("summary", { text: "Exact compact record" }),
+      h("div", { class: "more-body" }, [
+        h("table", { class: "wrap" }, [
+          h("thead", {}, [h("tr", {}, ["Metric", "Value", "Role"].map(text => h("th", { scope: "col", text })))]),
+          h("tbody", {}, metrics.map(([label, value, kind]) => h("tr", {}, [
+            h("td", { text: label }), h("td", { text: kind === "ratio" ? Number(value).toFixed(4) + "×" : kind === "gate" ? (value ? "pass" : "not passed") : String(value) }),
+            h("td", { text: kind === "ratio" ? "ratio at stated boundary" : kind === "gate" ? "non-timing gate" : "non-timing count" }),
+          ]))),
+        ]),
+        h("p", { class: "prov", text: "Detailed local audit record: " + audit + ". The cross-track experiment register now links downloadable P1–P15 source and evidence snapshots; historical runtime-identity limitations remain explicit." }),
+      ]),
+    ]));
+    s.append(card);
+  });
+  app.append(s);
+}
+
+{
+  const s = section("research-register", "All recent trials: completed work and remaining gates", "Cross-track register updated 30 September 2026",
+    "The P-series is one research line. Gate A v4/v5 qualification, the September 26 compiler studies, September 28 T3 experiments and structured factorization have separate protocols and conclusions.");
+  s.append(h("div", { class: "boundary-strip" }, [
+    h("h2", { text: "Check the register before acting on an old next-step prompt" }),
+    h("p", { text: "P1–P14 completed without a general direct-baseline crossover; P15 accepted no timing artifacts. Gate A v5 has tested repair code but no performance pilot. The separate compiler natural v5 study ran: 70 complete cases favored direct packed and one calibration failure remains. T3 correctness passed, but a broad best-comparator runtime advantage was not established." }),
+    h("p", {}, [h("a", { href: "results/2026-09-30/research-register/index.html", text: "Open the experiment register and downloadable evidence" })]),
+  ]));
+  app.append(s);
+}
+
+{
+  const s = section("structured-factorization", "Related research: structured factorization", "Phase 5B, live PySDD moves, audits and prospective integration",
+    "This separate research track studies certified factor exposure and complete exact factorization. Its measurements have their own protocols and are not P1–P15 lowering results.");
+  const base = "results/2026-09-30/structured-factorization/";
+  s.append(h("div", { class: "boundary-strip" }, [
+    h("h2", { text: "Tooling and mechanism GO; complete-time improvement not established" }),
+    h("p", { text: "PySDD 1.0.6 supports local moves on a referenced compiled SDD. The repaired prospective campaign completed 756 exact Linux trials: live search cost about 18% of matched fresh search, and four held-out instances gained direct factor exposure. The selected L1/B2 complete-time ratio was 1.03798, with one-sided upper ratio 1.14154, so the registered algorithmic gate remained NO-GO." }),
+  ]));
+  const records = [
+    ["Phase 5B", "The original M5/B3 complete-time ratio was 2.212. Its algorithmic NO-GO and mathematical-note scope remain preserved.", "phase5b/PHASE5B_MASTER_REPORT.md"],
+    ["Live-vtree tooling probe", "Supported swaps, rotations, inverse restoration and exactness checks without recompiling the CNF for each candidate.", "tooling-probe/REPORT.md"],
+    ["First integration", "756 Linux trials established cheaper matched search, but selected L2/B3 complete time was 1.0382.", "first-integration/CAMPAIGN_REPORT.md"],
+    ["Independent audit", "The first dataset had no factor-exposure headroom. The audit confirmed the saved results and identified harness and hostile-check gaps.", "harness-audit/AUDIT_REPORT.md"],
+    ["Repaired prospective campaign", "New inputs followed harness repairs and capped-worker/larger-SDD checks. Full code, frozen protocol, receipts, raw rows and the preserved scale timeout are available.", "prospective-campaign/CAMPAIGN_REPORT.md"],
+  ];
+  s.append(h("div", { class: "grid2" }, records.map(([title, body, path]) => h("div", { class: "dom" }, [
+    h("h3", { text: title }), h("p", { class: "t", text: body }),
+    h("p", {}, [h("a", { href: base + path, text: "Read the report" })]),
+  ]))));
+  s.append(h("p", {}, [
+    h("a", { href: base + "index.html", text: "Browse the organized evidence archive" }),
+    document.createTextNode(" · "),
+    h("a", { href: base + "artifact-manifest.json", text: "SHA-256 artifact manifest" }),
+    document.createTextNode(" · "),
+    h("a", { href: base + "prospective-campaign/heldout_results.jsonl", text: "Revised held-out raw rows" }),
+  ]));
+  app.append(s);
+}
+
+{
+  const s = section("rerun", "Rerun and audit record", "Public evidence snapshots, with historical limitations retained",
+    "The September 30 cross-track register publishes P1–P13 source/results and audit evidence, P14 frozen trials and P15 closed-trial artifacts. Historical prompts remain as provenance. Read the dated register first: some proposed next steps were later executed, while blocked qualifications and unmeasured secondary cells remain explicitly unresolved.");
+  s.append(h("div", { class: "grid2" }, [
+    h("div", { class: "dom" }, [h("h4", { text: "Public records on this site" }), h("p", { class: "t", text: "The compact ledger, this machine-readable guide, and P15's finalized disposition are downloadable and are covered by the release verifier." }), h("p", { class: "why" }, [h("a", { href: "results/2026-09-20/p1-p15-research-ledger.json", download: "p1-p15-research-ledger.json", text: "P1–P15 ledger JSON" }), document.createTextNode(" · "), h("a", { href: "results/2026-09-22/p-series-study-guide.json", download: "p-series-study-guide.json", text: "study guide JSON" }), document.createTextNode(" · "), h("a", { href: "results/2026-09-21/P15_FINAL_DISPOSITION_20260921.json", download: "P15_FINAL_DISPOSITION_20260921.json", text: "P15 final disposition" })])]),
+    h("div", { class: "dom" }, [h("h4", { text: "Before reproducing a trial" }), h("p", { class: "t", text: "Use the linked publication snapshots and manifests in a separate directory. Do not overwrite or resume frozen runs, change old calibration limits, or reinterpret unavailable timing as a performance result." }), h("p", { class: "why", text: "The register records source/runtime gaps and distribution omissions. A changed algorithm or resource design requires a new protocol and identity." })]),
+  ]));
+  app.append(s);
+}
+
+app.append(pageFooter("P-series guide and cross-track register reviewed 2026-09-30 · P14 NO-GO · P15 semantic PASS / timing inconclusive · no performance or production claim"));

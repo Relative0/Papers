@@ -1,0 +1,32 @@
+# Reviewer 1 - Fourier and Boolean analysis
+
+**Recommendation:** return to Theory; do not use the current Q_k package as a substantial new theorem spine.
+**Confidence:** high on the displayed identities and thresholds; moderate on exhaustive historical priority.
+
+This is a role-separated adversarial report within one audit, not an externally commissioned referee report. The detailed proofs and finite evidence are in `../THEOREM_PRIORITY_AUDIT.md` and `../EVIDENCE/`.
+
+## Main attack
+
+Replacing 'low-order binary marginal' by Q_k does not create a new object for purposes of priority. The indicator expansion and inverse Walsh formula are correct, but S1 already identifies precisely which Fourier coordinates determine a marginal. The query rank is then the dimension of their span. The high-degree kernel and exact-k equivalence are useful exposition, not an independent research contribution.
+
+The minimum disagreement theorem is also sound. I reconstructed it by multiplying the difference by full parity and applying the elementary polynomial support bound. But S2's trade theory already supplies the corresponding minimum-volume statement. The two trade legs each have at least 2^k points; disagreement counts both legs. Generalized Chow uniqueness is likewise antecedented in S3/S4. The manuscript should cite these statements directly, rather than only citing a broad Fourier textbook and leaving readers to infer a novelty claim.
+
+## Strongest surviving point
+
+The rank-class threshold formula is clean: rank one requires depth max(p,q), while rank two already requires the entire hierarchy in the worst case. I accept the proof. The new finite audit addresses the missing class-level enumeration: it checks the actual injectivity statement, not just that one parity example behaves as expected.
+
+I do not, however, regard this as a substantial theorem in its present form. The rank-one half is recovery of a rectangle from row/column marginal supports; the rank-two half is the familiar parity obstruction. The same mechanism works under other rank conventions. Its precise formulation may be worth a short corollary or pedagogical note, but the audit has not proved historical firstness and firstness alone would not establish depth.
+
+## Contract concerns
+
+All query results must remain indexed by their named coordinate set and assignment. Real/Q Fourier rank cannot be replaced by GF(2) rank. Constants, k=0, k=n, and the d=0 exception for the ANF class must remain explicit. Identification within a promised class is different from uniqueness against every possible Boolean competitor.
+
+The 2026 random-function threshold preprint S5 is relevant positioning: typical and worst-case reconstruction behave differently. It does not invalidate the parity examples, nor does it supply a new result for the rank-constrained class.
+
+## Disagreement with the systems perspective
+
+The systems reviewer sees a useful reproducibility report even without deep new mathematics. I agree that this is a legitimate report. I disagree that adding the present Q_k taxonomy materially upgrades it to a theory-first paper. That upgrade needs a differentiated theorem, not more finite enumeration of standard equivalences.
+
+## Required repair
+
+Keep Q1-Q12 as tightly attributed background and Q13-Q14 as a priority-qualified small corollary. Write a precise future-state problem and attempt the nontrivial part: what coordinate-sensitive information is necessary under the intended continuation protocol, with a justified storage or update bound? Reproving the histogram pairing does not answer that question.

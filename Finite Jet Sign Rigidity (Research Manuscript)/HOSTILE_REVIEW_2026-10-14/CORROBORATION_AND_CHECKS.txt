@@ -1,0 +1,144 @@
+HOSTILE REVIEW: AUTHORING-AGENT CORROBORATION
+14 October 2026
+
+Scope and role
+The independent reviewer was given the current manuscript source, the request
+for a hostile review, and an instruction to reconstruct its arguments before
+consulting any earlier verdict. Its unedited report is preserved separately in
+INDEPENDENT_HOSTILE_FINDINGS.txt. This file records the coordinating agent's
+own mathematical checks and supplementary diagnostics; it is not a second
+independent referee report.
+
+Version examined
+REVISED_PACKAGE_2026-10-13/MANUSCRIPT/finite_jet_sign_laws_REVISED_2026-10-13.tex
+811 source lines; corresponding PDF: 18 pages.
+TeX SHA-256:
+3e4d0419d3089069ae66fbfcef1cf44268c2d7092e927174938667b18c8e2ca5
+PDF SHA-256:
+dd502b2a11e6152201ce5142c99f147e813400a446f1c49546cad638c37cb01f
+This is the manuscript after the two scope clarifications of 14 October.
+
+Direct mathematical checks
+
+1. Sections 3-6: the polynomial weak-sign lemma needs nonzero P, but permits
+interior zeros. A relatively open facet cannot be contained in the residual
+polynomial's zero set; hence a generic transverse pair really recovers the
+maximal factor multiplicity modulo two. Local Taylor polynomials need only
+inherit weak signs. The overlapping-ball argument propagates actual crossing
+ratios, avoiding any assumption of constant Taylor order. Uniform finite-order
+rigidity includes N=0; the smooth statement correctly requires a single flat
+point and is not deduced by interchanging its quantifiers. Distinct hyperplanes
+each have a generic facet, so the 2^(m+1) parity restrictions are distinct even
+though the chamber sign vectors do not generally form a Boolean cube.
+
+2. Sections 5-6: squaring a nonzero cutoff and integrating from its left support
+endpoint gives a selector positive at EVERY positive argument. Possible gaps
+in the cutoff's support do not break the construction. Log convexity and
+monotonicity supply the finite-product and primitive estimates used here; no
+unmentioned derivative-stability assumption enters. On a chamber, exactly one
+summand in the explicit formula survives, so cancellation cannot occur.
+
+3. Proposition 7.1, source lines 509-528, PDF p. 12: k=0 follows from continuity
+and F(0)=0. For k>=1, D^k F(0)=0 and its Holder bound give the ray-integral
+remainder. Its beta integral is exactly
+Gamma(alpha+1)/Gamma(k+alpha+1), including alpha=1. The Euclidean distance of
+delta*s is sqrt(n)*delta, and the ball-radius condition is stated.
+
+4. Remark 7.2, source lines 530-540, PDF p. 12: the order-j Taylor remainder
+cancels j! in the derivative budget. j=0 supplies the amplitude bound. A
+coordinate-partial estimate converts to the multilinear operator estimate via
+the product of l1 norms of unit vectors, bounded by n^(j/2). Thus replacing B
+by B*sqrt(n) is sufficient. The constants are fixed on the relevant ball or
+compact subball. The Gevrey upper estimate follows by optimizing the integer
+order; the manuscript does not claim a general matching cutoff theorem.
+
+5. Theorem 7.3(i), source line 576, PDF p. 13: nonmultilinear monomials cause no
+problem in the parity-correlation argument. A monomial of total degree below
+|S| misses at least one parity variable, so its product with parity averages
+to zero over the Boolean vertices. Strict sign agreement would instead make
+that average positive. Constant laws correctly have degree zero.
+
+6. Theorem 7.3(ii), source lines 578-608, PDF pp. 13-14: the dyadic construction
+has an everywhere positive denominator because its two nonnegative summands
+have disjoint real roots. A nearest lower dyadic node supplies the stated
+1/3 factor. Clearing the n positive denominators costs at most the stated
+total degree. The binary-face reduction is valid over F2. Non-affine binary
+laws are exactly the eight input/output-flipped copies of AND. For the lower
+bound, odd N avoids ties, and N<=1/delta ensures that the substituted majority
+averages stay in the guarded square. These substitutions do not increase
+degree. Sherstov's theorem supplies the claimed logarithmic lower bound.
+
+7. Theorem 7.3(iii), source lines 610-623, PDF p. 14: a changing Boolean edge
+fixes a univariate slice with a 2*gamma change across an interval of length
+2*delta. The whole-cube norm bound is essential for Bernstein's inequality.
+The clipped ramp composed with cos is globally periodic and 1/delta-Lipschitz.
+Symmetrizing a trigonometric Jackson approximant gives a cosine polynomial;
+Chebyshev conversion preserves degree. Dividing by 1+eta supplies the claimed
+whole-interval bound, and the expectation extension supplies the final margin.
+The degree may depend on fixed n and gamma. No growing-arity claim is inferred.
+
+8. Remark 7.4: gamma=1 is impossible for a nonconstant law, since equality in
+the amplitude bound makes the polynomial constant on an open guarded box.
+Sign-preserving denominator clearing does not preserve a normalized fixed
+margin. As an explicit stress check, in the manuscript's binary construction
+with L=1 and delta=2^(-m), the norm is q(1)^2 and its normalized corner magnitude
+is 2^(-2*m*(m+1)). For m=8 this is about 4.48e-44. This supports the separation
+between the two resource models; it does not challenge either degree theorem.
+
+9. Sections 8.3-8.4, source lines 664-680, PDF pp. 15-16: the R-conjunction
+has smooth angular part away from zero and positive homogeneity k+1. Its kth
+derivative is degree-one homogeneous with bounded derivative away from zero;
+splitting close and widely separated pairs gives the Lipschitz extension.
+If F_k were C^(k+1), homogeneity would make it a homogeneous polynomial,
+contradicting its non-affine whole-quadrant signs. The diagonal value gives
+the claimed sharp exponent for alpha=1. The regularized root is analytic
+because its radicand is strictly positive. Its guarded positive-quadrant
+minimum is (2-sqrt(3))*delta, whereas its value at the origin is -delta.
+The manuscript therefore respects the common-corner hypothesis.
+
+Primary sources checked directly by this coordinating agent
+
+Sherstov, The intersection of two halfspaces has high threshold degree:
+https://web.cs.ucla.edu/~sherstov/pdf/hshs.pdf
+Theorem 1.10 states the needed lower bound for independent majorities.
+Theorem 2.4 supplies the related Newman rational-approximation construction.
+
+Kopotun, Prymak and Shevchuk, Introduction to Approximation Theory:
+https://mathanalysis.knu.ua/wp-content/uploads/2020/07/at-study-guide-january-22-2018-1-1.pdf
+Theorem 21.1 and its k=1 remark provide the trigonometric Jackson inequality;
+Theorem 24.1 provides the precise algebraic Bernstein inequality used here.
+
+Shapiro, Semi-analytic geometry with R-functions (author-hosted preprint):
+https://ftp.cs.wisc.edu/pub/users/prem/rfuns.pdf
+Section 3.3, equations (3.4)-(3.5), has both root operations and their r^m
+finite-differentiability upgrades. Section 3.6 discusses their derivatives.
+Publisher bibliographic record:
+https://www.cambridge.org/core/journals/acta-numerica/article/abs/semianalytic-geometry-with-rfunctions/3F5E061C35CA6A712BE338FE4AD1DB7B
+
+Supplementary exact diagnostics
+Run: python hostile_diagnostics.py
+No external Python packages are needed. Results are in HOSTILE_DIAGNOSTICS.json.
+- Exhaustive Boolean face checks for n=1,2,3,4: 65,812 laws in total; every
+  non-affine law has a non-affine two-dimensional face, and no affine law does.
+- All eight non-affine binary laws are in the input/output-flip orbit of AND.
+- 432 exact rational checks of the dyadic approximant, including guarded
+  endpoints, dyadic midpoints, zero, the excluded strip, and points beyond 1.
+- 1,728 exact checks of positive-denominator clearing for all binary laws.
+- Explicit normalization stress examples with exact rational margins.
+All checks passed. These are finite diagnostics, not a proof of continuum
+claims or a replacement for the cited lower-bound theorem.
+
+PDF inspection
+Poppler rendered all 18 pages of the hashed current PDF. An all-page contact
+sheet was inspected for gross layout problems; pages 12-16 containing the
+additions and adjacent examples were inspected individually. No clipped
+formula, missing symbol, overlap, or layout blocker was found in those pages.
+PDF text was not recompiled or edited during this review.
+
+Conclusion of these checks
+No theorem-level defect or required mathematical correction found. The added
+Section 7 coheres with the older qualitative results while using distinct
+approximation inputs. The manuscript's guarded novelty language is warranted.
+The review does not establish exhaustive historical priority or guarantee a
+venue's significance threshold. This file should be read with the independent
+hostile report and the final review disposition.

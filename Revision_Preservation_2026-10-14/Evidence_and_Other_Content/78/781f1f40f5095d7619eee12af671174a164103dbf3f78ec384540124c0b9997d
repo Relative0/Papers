@@ -1,0 +1,72 @@
+# Gate A S1/S2 local results
+
+This report is generated from the frozen S1/S2 workload axes. Symbolic counters are the primary evidence. Single-pass local timings are retained only as diagnostics and are not used for an inferential speed claim.
+
+- Total rows: **10500**
+- Matched/correct admitted rows: **10483**
+- Budget/error rows: **17**
+- S1 admitted: **3750**
+- S2 admitted: **6733**
+- S2 exact semantic-support match: **0.552**
+
+## SC-A — folding mechanism
+
+Strict all-predeclared-strata result: **PASS**.
+
+| depth | affine | reversed | n | direct mult median | CM mult median | CM/direct | pass |
+|---:|---:|---:|---:|---:|---:|---:|:---:|
+| 6 | 0.00 | 0.00 | 50 | 67 | 0 | 0 | yes |
+| 6 | 0.00 | 0.25 | 50 | 74 | 0 | 0 | yes |
+| 6 | 0.00 | 0.50 | 50 | 74.5 | 0 | 0 | yes |
+| 6 | 0.25 | 0.00 | 50 | 53 | 0 | 0 | yes |
+| 6 | 0.25 | 0.25 | 50 | 58 | 0 | 0 | yes |
+| 6 | 0.25 | 0.50 | 50 | 59 | 0 | 0 | yes |
+| 6 | 0.50 | 0.00 | 50 | 37 | 0 | 0 | yes |
+| 6 | 0.50 | 0.25 | 50 | 41.5 | 0 | 0 | yes |
+| 6 | 0.50 | 0.50 | 50 | 43 | 0.5 | 0.0116 | yes |
+| 6 | 0.75 | 0.00 | 50 | 21 | 0 | 0 | yes |
+| 6 | 0.75 | 0.25 | 50 | 24.5 | 0 | 0 | yes |
+| 6 | 0.75 | 0.50 | 50 | 24 | 1 | 0.0417 | yes |
+| 8 | 0.00 | 0.00 | 50 | 228 | 0 | 0 | yes |
+| 8 | 0.00 | 0.25 | 50 | 254 | 0 | 0 | yes |
+| 8 | 0.00 | 0.50 | 50 | 258 | 0 | 0 | yes |
+| 8 | 0.25 | 0.00 | 50 | 188 | 0 | 0 | yes |
+| 8 | 0.25 | 0.25 | 50 | 200 | 0.5 | 0.0025 | yes |
+| 8 | 0.25 | 0.50 | 50 | 200 | 0 | 0 | yes |
+| 8 | 0.50 | 0.00 | 50 | 126 | 1 | 0.00794 | yes |
+| 8 | 0.50 | 0.25 | 50 | 137 | 1 | 0.0073 | yes |
+| 8 | 0.50 | 0.50 | 50 | 138 | 1 | 0.00722 | yes |
+| 8 | 0.75 | 0.00 | 50 | 64 | 0 | 0 | yes |
+| 8 | 0.75 | 0.25 | 50 | 72 | 0.5 | 0.00694 | yes |
+| 8 | 0.75 | 0.50 | 50 | 74 | 1 | 0.0135 | yes |
+| 10 | 0.00 | 0.00 | 50 | 713 | 0 | 0 | yes |
+| 10 | 0.00 | 0.25 | 50 | 864 | 0 | 0 | yes |
+| 10 | 0.00 | 0.50 | 50 | 910 | 0 | 0 | yes |
+| 10 | 0.25 | 0.00 | 50 | 633 | 0 | 0 | yes |
+| 10 | 0.25 | 0.25 | 50 | 718 | 0 | 0 | yes |
+| 10 | 0.25 | 0.50 | 50 | 736 | 0 | 0 | yes |
+| 10 | 0.50 | 0.00 | 50 | 426 | 0 | 0 | yes |
+| 10 | 0.50 | 0.25 | 50 | 478 | 1 | 0.00209 | yes |
+| 10 | 0.50 | 0.50 | 50 | 487 | 0.5 | 0.00103 | yes |
+| 10 | 0.75 | 0.00 | 50 | 204 | 0 | 0 | yes |
+| 10 | 0.75 | 0.25 | 50 | 236 | 0 | 0 | yes |
+| 10 | 0.75 | 0.50 | 50 | 248 | 0 | 0 | yes |
+
+## CM vs strong generic 2-support comparator
+
+- `S1_multiplications`: CM better 0, equal 3750, worse 0; geomean ratio 1.
+- `S1_pair_terms`: CM better 0, equal 3750, worse 0; geomean ratio 1.
+- `S1_peak_monomials`: CM better 0, equal 3750, worse 0; geomean ratio 1.
+- `S2_multiplications`: CM better 5, equal 5573, worse 1155; geomean ratio 1.03255.
+- `S2_pair_terms`: CM better 5, equal 5411, worse 1317; geomean ratio 1.01195.
+- `S2_peak_monomials`: CM better 0, equal 6731, worse 2; geomean ratio 1.00015.
+
+## SC-E local diagnostic
+
+Among 6429 admitted S2 rows with zero CM folds, the single-pass median CM/generic end-to-end timing ratio was **0.933**. This is diagnostic only; repeated isolated timing is required before treating it as evidence.
+
+## Gates not answered by S1/S2
+
+- SC-B: NOT_TESTED_BY_S1_S2: protocol requires a predeclared natural stratum
+- SC-C: NOT_TESTED: XAG backend not part of this S1/S2 run
+- SC-D: NOT_TESTED: specialized ZDD/FDD backend not part of this S1/S2 run

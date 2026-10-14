@@ -1,0 +1,72 @@
+# N2/P2 — Direct-Baseline Inline Profitability Plan
+
+Run date: 2026-09-17T18:33:57Z
+Preregistration SHA-256: `8fce1ff89f7843dc337b27fab437bd1bb018d450197241b7bd55d9baa2f84318`
+Harness SHA-256: `37e495a4baa36f17f7933dec4d47e9d4fb6b7374ae4aa69e54b55bd4b7f13d96`
+
+## Frozen design
+
+- P2 reuses the P1 selector thresholds unchanged: benefit >=16; >=10% relative benefit when unshared; >=20% when shared; monomial estimate cap 4096.
+- The P2 executable ANF input is the original source DAG. A planning pass records accepted folds only; there is no rewritten/CSE-normalized executable DAG.
+- Primary endpoint is planning + ANF lowering (`compile_ns`) versus direct/no-rewrite sparse ANF.
+
+## Natural corpus
+
+- Cases: 10 across 5 contributing circuits.
+- Selected case IDs exactly matched the frozen N2/P1 structural selection reference.
+
+| comparison | cases | ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P2 / direct_sparse_anf compile | 10 | 1.1124 | 1.0387 – 1.2255 |
+| P2 / cm_profit_sparse compile | 10 | 0.9089 | 0.8502 – 0.9645 |
+| P2 / generic_2support_sparse compile | 10 | 0.7899 | 0.6776 – 0.8958 |
+
+P2/direct **propagation-only** ratio: **1.0023** (95% CI 0.9884–1.0148).
+P2/direct outer harness ratio: **1.0453** (95% CI 1.0148–1.0789).
+
+Per-circuit P2/direct compile ratios:
+- adder: 1.0966 (n=2)
+- bar: n/a (n=0)
+- cavlc: 0.9904 (n=2)
+- int2float: 1.0569 (n=2)
+- priority: 1.0839 (n=2)
+- router: 1.3690 (n=2)
+
+Natural selector totals: selector_candidates=28, selector_accepted=0, selector_accepted_shared=0, selector_rejected_nonpositive=27, selector_rejected_min_benefit=1, selector_rejected_fraction=0, selector_estimated_benefit=0, plan_entries=0, planned_fold_lowerings=0.
+
+| natural symbolic metric | cases | P2/direct geomean | median |
+|---|---:|---:|---:|
+| multiplications | 10 | 1.0000 | 1.0000 |
+| pair_terms | 10 | 1.0000 | 1.0000 |
+| peak_monomials | 10 | 1.0000 | 1.0000 |
+| anf_nodes_evaluated | 10 | 1.0000 | 1.0000 |
+| peak_cache_entries | 10 | 1.0000 | 1.0000 |
+| python_peak_bytes | 10 | 1.1724 | 1.1072 |
+
+**Predeclared natural actual-fold speed signal: NO PASS.**
+
+## Gate-P mechanism replay
+
+| comparison | cases | ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P2 / direct_sparse_anf compile | 36 | 2.2304 | 1.9973 – 2.4695 |
+| P2 / cm_profit_sparse compile | 36 | 0.8544 | 0.8217 – 0.8926 |
+| P2 / generic_2support_sparse compile | 36 | 0.8135 | 0.7631 – 0.8669 |
+
+P2/direct propagation-only ratio: **0.7773** (95% CI 0.6600–0.8962).
+Gate-P selector totals: selector_candidates=264, selector_accepted=110, selector_accepted_shared=97, selector_rejected_nonpositive=100, selector_rejected_min_benefit=51, selector_rejected_fraction=3, selector_estimated_benefit=2315847, plan_entries=110, planned_fold_lowerings=41.
+
+**Predeclared Gate-P mechanism speed signal: NO PASS.**
+
+## Correctness
+
+- P2 fresh fuzz: 1000 cases; failures: 0.
+- Natural symbolic arm checks: 40; failures: 0.
+- Gate-P symbolic arm checks: 144; failures: 0.
+
+## Frozen interpretation rule
+
+- Propagation faster but compile not faster => accepted folding reduces ANF work, but planning overhead does not amortize.
+- Both faster => accepted folding saves enough work to pay for planning.
+- Neither faster => this frozen plan does not improve the direct path.
+- Zero natural accepted folds => only abstention overhead is measured; no natural folding-speed claim is made.

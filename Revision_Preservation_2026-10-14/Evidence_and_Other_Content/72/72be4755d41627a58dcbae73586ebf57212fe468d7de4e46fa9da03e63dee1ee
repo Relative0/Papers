@@ -1,0 +1,22 @@
+{
+  "schema": "qk-campaign-preparation/v1",
+  "status": "BLOCKED_PENDING_THEORY_T3",
+  "main_campaign_authorized": false,
+  "hypothesis": null,
+  "theory_contract_sha256": null,
+  "favorable_regime": null,
+  "proposed_depth_grid": [0, 1, 2, 4, "n"],
+  "depth_rule": "deduplicate after capping by n",
+  "proposed_executed_batch_sizes": [1, 8, 64, 256, 1024],
+  "semantics": ["independent restrictions of original", "sequential cumulative budget per episode"],
+  "controls": ["zero", "one", "rank-one rectangles", "rank-two complementary parity", "increasing-rank factors", "unstructured random", "natural primary outputs"],
+  "candidate_backends": ["packed_binary", "coordinate_rank_baseline", "cudd_fixed_order_binary", "T3_state_pending"],
+  "method_order": "preseeded balanced Latin rotations; six repetitions for three methods; re-freeze if method count changes",
+  "seed": 20260928,
+  "timeout_seconds_per_trial": 90,
+  "failure_policy": "record timeout/failure and preserve logs; never impute a winning time; retain continuation identity",
+  "analysis_unit": "source design, with synthetic families separate",
+  "primary_endpoint": null,
+  "required_before_freeze": ["T3 statement or falsifiable hypothesis", "state bit model", "permitted update semantics", "construction/update/query bounds", "predicted parameter regime", "operational falsification rule", "raw-source versus prepared-table endpoint", "exact treatment of compiler/index verification"],
+  "note": "This is a preparation schema, not a preregistered T3 hypothesis. Freeze a new protocol hash before any main results. Kappa is not a timing prediction."
+}

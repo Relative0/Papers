@@ -1,0 +1,63 @@
+# N2/P5 Interpretation
+
+## What P5 answered
+
+P5 was designed to answer a narrow engineering question: whether P4's successful propagated two-support signature could be retained without paying for per-node `Sig` and `Candidate` objects and eager candidate-cost arithmetic.
+
+The answer is **partly yes**.
+
+P5 stores only packed primitive arrays for fanout, monomial estimate, ordered pair, token, and one propagated flag. Candidate profitability arithmetic is performed only if a propagated candidate is actually demanded. On Gate-P this reduced metadata DAG-build time from **5.669x direct for P4 to 2.561x for P5**, and P5 construction itself is **0.452x P4**.
+
+That is a large improvement, and it is not confounded by a different selector: P5 and P4 make identical decisions and perform identical Boolean/ANF work case-by-case.
+
+## The cost moved rather than disappeared
+
+P4 eagerly computes candidate arithmetic during construction and then its lowering loop mostly performs an array/object lookup. P5 deliberately does the reverse: construction propagates only a tiny signature, while the demanded node computes costs at lowering time.
+
+That trade moved P5 lowering from P4's simultaneous **0.562x direct** to **0.654x direct**. P5 is still comfortably faster than direct lowering, but it is **1.164x P4 lowering**.
+
+The important change is at the whole-pipeline level: P4 was **2.228x direct**, whereas P5 is **1.290x**. P5 therefore removed a substantial fraction of the end-to-end penalty.
+
+## Why the preregistered end-to-end result still fails
+
+The packed builder remains **2.561x** the minimal ordinary Factory. P5 still does several things the direct builder never does: increments fanout, maintains the saturated estimate, writes multiple side arrays, attempts two-support propagation on binary nodes, and aligns child signatures.
+
+A post-hoc cProfile on Gate-P 10:2 confirms the new concentration. Over 100 P5 pipeline repetitions, `PackedMetaFactory._make` remains the dominant construction function. Unlike P4, `_candidate_from_children` and dataclass construction are gone; the remaining visible costs are `_propagate_pair`, `_align_code`, multiple typed-array/bytearray appends, and the estimator.
+
+So P5 has removed the large object-allocation layer but not the fundamental Python dispatch/write cost of carrying six side fields per node.
+
+## The weighted result is an important secondary clue
+
+The preregistered case-balanced pipeline ratio is **1.290x**, so P5 does not pass end-to-end. But the workload-weighted ratio is **0.967x**, and 8/36 individual cases already beat direct end-to-end.
+
+This means the basic crossover now exists: when direct ANF work is sufficiently large and the propagated fold removes enough of it, the P5 annotation cost is amortized. What is missing is making that true for the typical case rather than only the expensive/fold-rich cases.
+
+This weighted observation is secondary and should not replace the preregistered case-balanced conclusion.
+
+## What P5 says about P4's core mechanism
+
+The strongest scientific point survives unchanged. P5 takes the same 29 Gate-P folds as P4 and reduces pair terms to **0.098x**, multiplications to **0.336x**, and evaluated ANF nodes to **0.542x** direct.
+
+Because P5 and P4 are symbolically identical but have very different construction costs, the earlier P4 speedup is not an artifact of object-rich precomputation. The propagated-signature mechanism itself is responsible for the algebraic reduction; the remaining problem is carrying enough metadata cheaply.
+
+## Natural circuits remain an abstention result
+
+The frozen natural set again contains zero accepted folds. P5's natural lower result is **1.016x direct** and its pipeline is **1.110x direct**. P5 is nevertheless **0.970x P4 pipeline**, showing that packing reduces annotation overhead even where folding never fires.
+
+No natural CM-folding speed claim follows from these ten cases.
+
+## Most informative next experiment
+
+The next step should not retune the profitability thresholds. P5 shows the remaining cost is representation-level.
+
+A P6 should keep the exact P4/P5 fold semantics but reduce construction writes further. The strongest design would be a **two-word or in-node packed annotation**, rather than six independently appended Python containers:
+
+1. one packed pair/signature word containing the ordered base ids, 4-bit token, and propagated flag;
+2. one compact numeric word/field for fanout and the saturated estimate;
+3. no Candidate object and no candidate-cost arithmetic until demand, as in P5;
+4. ideally metadata fields stored directly on the compiler node at creation so there is no separate side-array append/lookup layer;
+5. preserve P5/P4 exact decision equivalence as a mandatory invariant.
+
+A separate, complementary P6 arm could test a **frozen cheap dispatch gate** that entirely skips annotated construction for formulas whose structural scale is too small to amortize it. That should be calibrated on a disjoint training subset and evaluated on held-out circuits, rather than tuned on the 36 Gate-P outcomes.
+
+The goal is now concrete: preserve the ~0.65x direct lowering path while taking the builder from ~2.56x ordinary construction toward roughly 1x. P5 shows that doing so would create a plausible path to a case-balanced end-to-end crossover.

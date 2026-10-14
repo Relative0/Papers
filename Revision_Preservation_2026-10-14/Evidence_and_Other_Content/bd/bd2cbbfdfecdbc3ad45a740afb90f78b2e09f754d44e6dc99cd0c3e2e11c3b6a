@@ -1,0 +1,27 @@
+# THEOREM LEDGER
+
+**Updated:** 2026-09-28
+
+| ID | Statement | Status | Computational check | Priority status | Manuscript relevance |
+|---|---|---|---|---|---|
+| Q1 | Indexed conditioned-count family `Q_k` is linearly equivalent over R/Q to Walsh coefficients of degree <=k, with explicit forward/inverse formulas. | PROVED | Exhaustive Boolean fibers n<=3 | Known in equivalent form / standard marginal-Fourier fact | Background infrastructure, not novelty |
+| Q2 | Integral query row lattice has basis `M_T=Q(T,1^T)`, `|T|<=k`; all assignments follow by inclusion-exclusion. | PROVED | Formula-level verification implicit in Q1 checks | Standard Möbius/inclusion-exclusion refinement | Useful for integer exactness and trade bridge |
+| Q3 | `rank(Q_k)=sum_{j<=k} C(n,j)`. | PROVED | Exact ranks n<=5 | Known in equivalent form; Barak et al. 2007 essentially count same Fourier coordinates | Background theorem |
+| Q4 | Queries on exactly k coordinates span the same row space as queries on <=k coordinates. | PROVED | Exact ranks n<=5 | Elementary marginalization; standard | Useful simplification |
+| Q5 | `f~_k g` iff low-degree Fourier data through k agree iff `f-g` lies in high-degree Fourier subspace. | PROVED | Exhaustive fibers n<=3 | Standard consequence | Core language for persistent quotient |
+| Q6 | Distinct Boolean functions in one `~_k` fiber have Hamming distance >=2^(k+1), and equality is attained. | PROVED | Exhaustive n<=3; explicit witnesses through n<=6 | Known equivalent via minimum volume of `[k]`-trades / Reed-Muller structure | Strong exact sharpening; cite prior art |
+| Q7 | Boolean `Q_k` collisions, after common support removal, are simple `[k]`-trades. | PROVED | Not needed | Known/implicit in design-trade framework; useful bridge | Useful connection and classification source |
+| Q8 | `kappa(all Boolean)=n`. | PROVED | Parity checks through n<=6 | Elementary | Baseline |
+| Q9 | `kappa(t-juntas)=t`. | PROVED | Not needed | Elementary consequence of Fourier support | Useful positive class |
+| Q10 | `kappa(Boolean real-Fourier-degree <=d)=d`. | PROVED | Not needed | Elementary | Useful positive class |
+| Q11 | `kappa(degree-d PTF)=d`. | PROVED as corollary of generalized Chow uniqueness + parity lower bound | Not needed | Underlying uniqueness known; Chow / Diakonikolas-Kane | Important prior-art benchmark |
+| Q12 | `kappa(GF(2)-ANF-degree <=d)=n` for d>=1. | PROVED | Parity witness | Elementary | Important negative contrast |
+| Q13 | For fixed p|q bipartition, `kappa(GF(2)-rank <=1)=max(p,q)`. | PROVED | Proof exact; larger enumeration not needed yet | Potentially new combination/corollary; priority unresolved | Strong candidate result |
+| Q14 | For fixed p|q bipartition, `kappa(GF(2)-rank <=r)=p+q` for every r>=2. | PROVED | Global parity witness | Potentially new combination/corollary; priority unresolved | Strong candidate result; rank-1/rank-2 jump |
+| Q15 | Any linear persistent sketch sufficient for all `Q_k` on arbitrary real functions has rank >=sum_{j<=k}C(n,j), attained by low-degree Fourier/moment data. | PROVED | Follows exact rank checks | Standard linear-algebra consequence | Framing theorem, not likely novelty alone |
+| Q16 | Adaptive sequences of <=t coordinate restrictions with count outputs have exactly the persistent information content of `Q_t`. | PROVED | Not needed | Elementary | Clarifies adaptive contract |
+
+## Next candidate theorem
+
+**Q17 — conditioned factor-histogram sufficiency/minimality for GF(2)-rank r.**  
+Status: OPEN. Formalize the conditioned row/column factor-state histograms, derive the exact count formula, then determine minimal persistent storage and query complexity for all restrictions of order <=k, including gauge invariance and lower bounds.

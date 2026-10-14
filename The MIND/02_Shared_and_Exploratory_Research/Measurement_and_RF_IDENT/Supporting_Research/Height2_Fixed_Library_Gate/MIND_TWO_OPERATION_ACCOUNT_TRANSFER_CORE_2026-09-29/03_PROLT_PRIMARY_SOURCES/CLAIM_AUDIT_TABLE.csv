@@ -1,0 +1,1153 @@
+﻿claim_id,artifact,theorem_name,source_locator,hypotheses,conclusion,correctness_status,proof_status,novelty_status,closest_prior_art,dependencies,computation_status,paper_destination,action_required,original_statement_tex,original_statement_pdf_extract
+CORE-01,propositional-logical-topology-core-v0.8.pdf,Signature quotient and order direction,Signature/specialization/T0 sections,Finite carrier; positive observation topology,Specialization is signature inclusion; indistinguishability is equal signature; quotient is P,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R01;R02,,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Preserve upper-set convention,,
+CORE-02,propositional-logical-topology-core-v0.8.pdf,Ordinary quotient homotopy equivalence,Kolmogorov quotient discussion; v0.1 canonical theorem,Finite space and representative section,q and section are ordinary finite-space homotopy inverses,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Finite-space comparable maps;R02,CORE-01,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Distinguish from weak McCord realization,,
+CORE-03,propositional-logical-topology-core-v0.8.pdf,XOR/Hamming versus directed loss,Metric and directed-observation-loss sections,Indexed observations and fixed weights,Symmetric difference presentation metric differs from directed order loss,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Weighted Hamming;information preorders,CORE-01,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Do not infer upper topology from symmetric Hamming metric,,
+CORE-04,propositional-logical-topology-core-v0.8.pdf,Compatibility is presentation-sensitive,Compatibility-complex discussion,Valuation-observation incidence,Observation nerve and topology have different invariance targets,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Dowker nerve;R02;R12,CORE-01,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Keep ghost/duplicate/tautology conventions explicit,,
+CORE-05,propositional-logical-topology-core-v0.8.pdf,Refinement versus premise update,Update/refinement sections,Fixed observations versus fixed carrier as appropriate,Adding coordinates and removing states are distinct operations,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Subspace topology and order projection,CORE-01,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Specify current carrier S when not all Boolean valuations survive,,
+OLD-01,HomoLogical Algebra.tex,Formula-level exact sequence,Exact Sequences and homotopy discussion,Original undefined formula quotients/maps,Original argument does not define a valid homological exact sequence,FALSE/COUNTEREXAMPLE,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18,,Proof or construction inspected; not an exhaustive computation,HISTORICAL_ONLY,Retain only historical record; replace by V1-11,,
+OLD-02,Logical Complexes.tex,Original logical simplices and integration narrative,Logical complexes and boundaries discussion,Original simplex and linear-dependence conventions,Telescoping fragment valid; general topological/linear claims not justified,NEEDS_MAJOR_REPAIR,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18,,Proof or construction inspected; not an exhaustive computation,HISTORICAL_ONLY,Replace with canonical order complex and ordinary cochain definitions,,
+V1-01,ProLT_Homological_Foundations_v0.1.tex,Finite-space realization of ProLT homology,Canonical ProLT homology via the order complex; label thm:canonical; TeX line 155,Finite valuation carrier and positive observation topology,Quotient ordinary homotopy equivalence; McCord weak equivalence; homology identifications,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R01;R02,CORE-01;CORE-02,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:canonical}
+\statusS/\statusA\;
+Let $X_\Phi=(\Om,\tau_\Phi)$ be a finite ProLT. Then:
+\begin{enumerate}[label=(\roman*)]
+\item the Kolmogorov quotient map $X_\Phi\to P_\Phi$ is a homotopy equivalence of finite Alexandrov spaces;
+\item the geometric realization $|\OX_\Phi|\to P_\Phi$ supplied by McCord's finite-space construction is a weak homotopy equivalence;
+\item for every coefficient ring $R$,
+\[
+H_k(X_\Phi;R)\cong H_k(P_\Phi;R)\cong H_k(\OX_\Phi;R).
+\]
+\end{enumerate}",
+V1-02,ProLT_Homological_Foundations_v0.1.tex,Functoriality,Functoriality under continuous ProLT maps; label thm:functor; TeX line 186,Continuous map of finite ProLTs,Descends to monotone quotient map and functorial simplicial/chain/homology maps,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R01;R02,V1-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:functor}
+\statusS/\statusA\;
+Let
+\[
+f:X_\Phi\longrightarrow X_\Psi
+\]
+be continuous. Then $f$ descends to a well-defined monotone map
+\[
+\bar f:P_\Phi\longrightarrow P_\Psi.
+\]
+Consequently $\bar f$ induces a simplicial map
+\[
+\Delta(\bar f):\OX_\Phi\longrightarrow\OX_\Psi,
+\]
+a chain map
+\[
+f_\#:C_*(\OX_\Phi;R)\longrightarrow C_*(\OX_\Psi;R),
+\]
+and homomorphisms
+\[
+f_*:H_k^{\mathrm{ProLT}}(\Phi;R)\longrightarrow H_k^{\mathrm{ProLT}}(\Psi;R).
+\]
+These assignments respect identities and composition.",
+V1-03,ProLT_Homological_Foundations_v0.1.tex,Premise subcomplex,Premise restriction and relative homology; label prop:premise; TeX line 228,Premise model set restricted inside current carrier,Surviving signature poset has induced order complex inclusion,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R18,CORE-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{prop:premise}
+\statusA\;
+If $S'\subseteq S\subseteq\Om$, then
+\[
+P_{\Phi,S'}\subseteq P_{\Phi,S}
+\]
+and therefore
+\[
+\OX_{\Phi,S'}\subseteq\OX_{\Phi,S}
+\]
+as a full subcomplex on the surviving realized signatures.",
+V1-04,ProLT_Homological_Foundations_v0.1.tex,Relative ProLT exact sequence,Premise restriction and relative homology; label thm:relative; TeX line 241,Premise subcomplex pair; coefficient ring,Standard long exact relative homology sequence,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R18,V1-03,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:relative}
+\statusS/\statusA\;
+For $S'\subseteq S$ there is a short exact sequence of simplicial chain complexes
+\[
+0\longrightarrow C_*(\OX_{\Phi,S'};R)
+\longrightarrow C_*(\OX_{\Phi,S};R)
+\longrightarrow C_*(\OX_{\Phi,S},\OX_{\Phi,S'};R)
+\longrightarrow0,
+\]
+and hence the long exact sequence
+\[
+\cdots\to H_k(\OX_{\Phi,S'})\to H_k(\OX_{\Phi,S})
+\to H_k(\OX_{\Phi,S},\OX_{\Phi,S'})
+\overset{\partial}{\longrightarrow}H_{k-1}(\OX_{\Phi,S'})\to\cdots.
+\]",
+V1-05,ProLT_Homological_Foundations_v0.1.tex,Refinement projection,Observation refinement and mapping-cone homology; label prop:refine; TeX line 288,Added indexed observations on same carrier,Coordinate forgetting is canonical monotone surjection of signature posets,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Finite product order;R02,CORE-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{prop:refine}
+\statusA\;
+The coordinate restriction
+\[
+r_{\Psi\Phi}:P_\Psi\longrightarrow P_\Phi,
+\qquad
+r_{\Psi\Phi}(s)=s\cap I,
+\]
+is well-defined, surjective, and monotone. Hence it induces
+\[
+r_\#:C_*(\OX_\Psi;R)\longrightarrow C_*(\OX_\Phi;R).
+\]",
+V1-06,ProLT_Homological_Foundations_v0.1.tex,Cone exact sequence,Observation refinement and mapping-cone homology; label thm:cone; TeX line 327,Chain map of refinement projection,Cone long exact sequence detects homology-map defects,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R18,V1-05,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:cone}
+\statusS/\statusA\;
+There is a natural long exact sequence
+\[
+\cdots\to H_k(\OX_\Psi)
+\overset{r_*}{\longrightarrow}H_k(\OX_\Phi)
+\to D_k(\Psi/\Phi)
+\to H_{k-1}(\OX_\Psi)\to\cdots.
+\]
+In particular, $D_*(\Psi/\Phi)=0$ in all degrees if and only if $r_*$ is an isomorphism in all degrees.",
+V1-07,ProLT_Homological_Foundations_v0.1.tex,Boolean difference is a coboundary,XOR difference as an $\F$-valued coboundary; label thm:coboundary; TeX line 354,Signature-valued zero-cochain over F2,Symmetric difference on comparable vertices is its coboundary,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R18,CORE-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:coboundary}
+\statusS/\statusA\;
+For every oriented edge $[u,v]$ of $K$,
+\[
+(\delta\lambda_\Phi)([u,v])
+=\lambda_\Phi(v)-\lambda_\Phi(u)
+=\lambda_\Phi(v)+\lambda_\Phi(u)
+=o_\Phi(u)\xor o_\Phi(v)
+=\Delta_\Phi(u,v).
+\]
+Thus the ProLT XOR-difference field is the exact $1$-cochain
+\[
+\Delta_\Phi=\delta\lambda_\Phi.
+\]
+Consequently
+\[
+\delta\Delta_\Phi=\delta^2\lambda_\Phi=0.
+\]",
+V1-08,ProLT_Homological_Foundations_v0.1.tex,Triangle and path telescoping,XOR difference as an $\F$-valued coboundary; label (unnumbered label); TeX line 374,Exact signature difference cochain,Triangle sums vanish and path sums telescope,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,R18,V1-07,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"On every triangle $[u,v,w]$,
+\[
+\Delta_\Phi(u,v)+\Delta_\Phi(v,w)+\Delta_\Phi(w,u)=0.
+\]
+Equivalently,
+\[
+\Delta_\Phi(u,v)+\Delta_\Phi(v,w)=\Delta_\Phi(u,w).
+\]
+More generally, along a path $v_0,\ldots,v_m$,
+\[
+\sum_{j=0}^{m-1}\Delta_\Phi(v_j,v_{j+1})
+=\Delta_\Phi(v_0,v_m).
+\]",
+V1-09,ProLT_Homological_Foundations_v0.1.tex,Distance as weighted norm of the coboundary,XOR difference as an $\F$-valued coboundary; label (unnumbered label); TeX line 396,Fixed nonnegative coordinate weights,Weighted Hamming distance is weighted support norm of difference,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Elementary weighted Hamming geometry,V1-07,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"With positive weights $a_i$,
+\[
+d_\Phi(u,v)=\sum_{i\in I}a_i\,(\Delta_\Phi(u,v))_i.
+\]
+Thus the symmetric ProLT logical distance is the weighted Hamming norm of the $1$-coboundary $\delta\lambda_\Phi$.",
+V1-10,ProLT_Homological_Foundations_v0.1.tex,Boolean integration criterion,XOR difference as an $\F$-valued coboundary; label thm:integration; TeX line 412,F2-valued or coordinate-valued one-cocycle on a complex,Integrable iff cohomology class zero; H1=0 integrates all cocycles,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R18;contrast R16,V1-07,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:integration}
+\statusS/\statusA\;
+Let $g\in C^1(K;\F^I)$ satisfy $\delta g=0$. There exists a global vertex potential
+\[
+\lambda\in C^0(K;\F^I)
+\]
+with
+\[
+g=\delta\lambda
+\]
+if and only if
+\[
+[g]=0\in H^1(K;\F^I).
+\]
+If $K$ is connected, such a potential is unique up to addition of one constant vector in $\F^I$ to every vertex.",
+V1-11,ProLT_Homological_Foundations_v0.1.tex,Overlap--exclusive split exact sequence,Repairing the old formula-level exact sequence; label prop:linearized; TeX line 469,Free modules on overlap and exclusive sets,Displayed exact sequence splits by basis decomposition,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Elementary split exact sequences,OLD-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{prop:linearized}
+\statusS/\statusA\;
+Let
+\[
+A=\truth(L_1\wedge L_2),\qquad
+U=\truth(L_1\vee L_2),\qquad
+E=\truth(L_1\xor L_2).
+\]
+Then
+\[
+U=A\,\dot\cup\,E,
+\]
+and there is a canonically split short exact sequence
+\[
+0\longrightarrow\F[A]
+\overset{i}{\longrightarrow}\F[U]
+\overset{q}{\longrightarrow}\F[E]
+\longrightarrow0,
+\]
+where $i$ includes basis vectors and
+\[
+q(e_u)=
+\begin{cases}
+0,&u\in A,\\
+e_u,&u\in E.
+\end{cases}
+\]
+Hence
+\[
+\F[U]/\F[A]\cong\F[E].
+\]",
+V1-12,ProLT_Homological_Foundations_v0.1.tex,Dowker duality,Observation compatibility and Dowker duality; label (unnumbered label); TeX line 528,Finite valuation-observation incidence relation,The two Dowker complexes have equivalent homotopy type,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R02 Theorem 4.4,CORE-04,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\statusS/\statusA\;
+The geometric realizations $|\K_\Phi|$ and $|\K_\Phi^{\vee}|$ are homotopy equivalent. In particular,
+\[
+H_k(\K_\Phi;R)\cong H_k(\K_\Phi^{\vee};R).
+\]",
+V1-13,ProLT_Homological_Foundations_v0.1.tex,Topology/compatibility separation by tautology,Observation compatibility and Dowker duality; label thm:tautology; TeX line 536,Adjoin tautological observation on nonempty carrier,Topology unchanged; observation compatibility complex becomes a cone,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Nerve cone observation;R02,CORE-04;V1-12,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:tautology}
+\statusA\;
+Let $\Psi$ be obtained from $\Phi$ by adjoining one tautological observation $\top$.
+Then:
+\begin{enumerate}[label=(\roman*)]
+\item $X_\Psi$ and $X_\Phi$ have the same topology;
+\item $P_\Psi$ and $P_\Phi$ are order-isomorphic by $s\mapsto s\cup\{\top\}$, so $\OX_\Psi\cong\OX_\Phi$;
+\item the new coordinate is equal at every state, so the symmetric and directed signature distances are unchanged;
+\item $\K_\Psi$ is a cone with apex $\top$, hence $\widetilde H_k(\K_\Psi;R)=0$ for every $k$.
+\end{enumerate}",
+V1-14,ProLT_Homological_Foundations_v0.1.tex,Minimal inconsistency generators,The Stanley--Reisner route into homological algebra; label prop:SR; TeX line 573,Indexed positive-observation compatibility complex,Squarefree minimal nonfaces correspond to minimally inconsistent index sets,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Stanley-Reisner definition;R11,CORE-04,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{prop:SR}
+\statusS/\statusA\;
+The minimal squarefree monomial generators of $I_\Phi$ are in bijection with inclusion-minimal jointly unsatisfiable indexed subfamilies of $\Phi$.",
+V1-15,ProLT_Homological_Foundations_v0.1.tex,Refinement anti-monotonicity,Metric complexes and persistence; label prop:ripsref; TeX line 607,Same carrier; retain old coordinate weights; add nonnegative weighted observations,Rips complex decreases at a fixed scale,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Elementary metric monotonicity;R17,CORE-03,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{prop:ripsref}
+\statusA\;
+Suppose $\Psi$ extends $\Phi$ and retains the old positive weights. Then v0.8 gives
+\[
+d_\Psi(u,v)\ge d_\Phi(u,v)
+\qquad(u,v\in\Om).
+\]
+Therefore, for every $r$ and $S\subseteq\Om$,
+\[
+\VR_r(S,d_\Psi)\subseteq\VR_r(S,d_\Phi).
+\]",
+V1-16,ProLT_Homological_Foundations_v0.1.tex,Monotone evidence-update filtration,Metric complexes and persistence; label thm:filtration; TeX line 624,Nested premise restrictions and compatible refinement/scale inequalities,Stated inclusions give a monotone evidence-update filtration,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Standard persistence;R17,V1-03;V1-15,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:filtration}
+\statusA/\statusC\;
+Let
+\[
+\Phi_0\subseteq\Phi_1\subseteq\cdots\subseteq\Phi_T
+\]
+be successive observation refinements with retained old weights, and let
+\[
+S_0\supseteq S_1\supseteq\cdots\supseteq S_T
+\]
+be successive premise restrictions. For every fixed scale $r$,
+\[
+\VR_r(S_T,d_{\Phi_T})
+\subseteq\cdots\subseteq
+\VR_r(S_1,d_{\Phi_1})
+\subseteq
+\VR_r(S_0,d_{\Phi_0}).
+\]
+Thus a monotone sequence of added observations and accumulated premises gives an ordinary nested filtration after reversing the time index. Zigzag persistence is required only if the process also permits nonmonotone operations such as removing observations, retracting premises, or otherwise expanding and contracting the complex in alternating directions.",
+V1-D1,ProLT_Homological_Foundations_v0.1.tex,Update-relative and inference-gap groups,Premise-relative definitions,Nested model sets and surviving signatures,Well-defined standard relative homology; vanishing does not characterize entailment,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18;R10,V1-03;V1-04,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,State loss of within-fiber/multiplicity information,,
+V1-EA,ProLT_Homological_Foundations_v0.1.tex,Boolean-square canonical order complex,Worked example A,"Phi=(X,Y) on its four valuations","Two filled triangles glued along an edge; contractible; chain dimensions (4,5,2)",VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Graph homology;R10,V1-01,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Use as intuition not novelty,,
+V1-EB,ProLT_Homological_Foundations_v0.1.tex,Pairwise compatible but jointly inconsistent,Worked example B,Three indexed observations with every proper subset satisfiable,Canonical order complex is path plus isolated point; compatibility is triangle boundary; inconsistency ideal (x1x2x3),NEEDS_MINOR_REPAIR,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Dowker;Stanley-Reisner,V1-12;V1-14,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,"Correct syzygetic-event terminology: beta_(1,{1,2,3})(S/I)=1 is the generator contribution; principal ideal has no first module syzygy",,
+V1-EC,ProLT_Homological_Foundations_v0.1.tex,Premise restriction creates relative one-class,Worked example C,"Phi=(X,Y); premise X XOR Y",Retained two isolated vertices inside contractible Boolean-square complex; H1 relative=F2,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18,V1-D1,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Keep stated interpretation; no logical-completeness claim,,
+V1-ED,ProLT_Homological_Foundations_v0.1.tex,Refinement cone detects a split,Worked example D,"Phi=(X), Psi=(X,NOT X)",Coarse chain; fine two-point antichain; cone D1=F2 and D0=0,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18,V1-05;V1-06,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,No repair,,
+V1-EE,ProLT_Homological_Foundations_v0.1.tex,Nonintegrable local difference on a Rips cycle,Worked example E,Unit-weight Boolean square at Rips scale1; hypothetical scalar cochain1 on one edge,Rips complex is four-cycle; hypothetical cochain closed nonexact; actual signature differences exact,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18;contrast R16,V1-07;V1-10;V1-15,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Clearly distinguish prescribed hypothetical field from actual signature field,,
+V2-01,ProLT_Observation_Refinement_Classification_v0.2.tex,Fiber-profile normal form,The fiber-profile normal form; label thm:normalform; TeX line 159,Old signature p has nonempty realized new-bit profile B_p,"Refined poset is {(p,a):a in B_p} with product order",VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Finite relation/signature representation,V1-05,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:normalform}
+\statusA/\statusC\;
+Let
+\[
+Q_{\mathcal B}
+:=\{(p,a):p\in P_\Phi,\ a\in\mathcal B_p\}
+\subseteq P_\Phi\times2^A
+\]
+with product order
+\[
+(p,a)\le(q,b)
+\iff p\le q\text{ in }P_\Phi\text{ and }a\subseteq b.
+\]
+Then
+\[
+P_\Psi\cong Q_{\mathcal B}
+\]
+as posets, under separation of old and new coordinates. Under this isomorphism the refinement map is exactly the first-coordinate projection
+\[
+r(p,a)=p.
+\]
+Consequently the family \((\mathcal B_p)_{p\in P_\Phi}\) determines the refined signature poset and the refinement projection completely.",
+V2-02,ProLT_Observation_Refinement_Classification_v0.2.tex,Redundancy/order-isomorphism theorem,Exact classification of topological redundancy; label thm:redundancy; TeX line 207,Refinement on same finite carrier,Redundancy iff fiber profiles singleton and induced label isotone; quotient projection is order isomorphism,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Finite Alexandrov topology,V2-01;CORE-01,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{thm:redundancy}
+\statusA/\statusC\;
+For a refinement \(\Psi=(\Phi,\Theta)\), the following are equivalent.
+\begin{enumerate}[label=(\roman*)]
+\item \(\tau_\Psi=\tau_\Phi\) on the fixed valuation carrier \(\Om\).
+\item Every new truth region \(\truth(\theta_a)\), \(a\in A\), is already \(\tau_\Phi\)-open.
+\item Every fiber profile is a singleton,
+\[
+\mathcal B_p=\{\alpha(p)\},
+\]
+and the resulting map
+\[
+\alpha:P_\Phi\to2^A
+\]
+is isotone:
+\[
+p\le q\Longrightarrow\alpha(p)\subseteq\alpha(q).
+\]
+\item The refinement projection \(r:P_\Psi\to P_\Phi\) is an order isomorphism.
+\end{enumerate}",
+V2-03,ProLT_Observation_Refinement_Classification_v0.2.tex,Order deletion theorem,Non-splitting refinements and chain deletion; label thm:orderdelete; TeX line 271,New labels constant on each old signature class,Identify vertices; retain p<=q exactly when labels ordered,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Suborder intersection with inverse-image product order,V2-01,Not relied upon for general proof,PAPER_A,Credit standard machinery; preserve hypotheses,"\label{thm:orderdelete}
+\statusA/\statusC\;
+For a non-splitting refinement, identify the fine and coarse vertex sets through the bijection \(r\). Then
+\[
+p\le_\Psi q
+\iff
+p\le_\Phi q\ \text{and}\ \alpha(p)\subseteq\alpha(q).
+\]
+Consequently
+\[
+\le_\Psi\ \subseteq\ \le_\Phi
+\]
+and
+\[
+\OX_\Psi\subseteq\OX_\Phi
+\]
+as a simplicial subcomplex on the same vertex set. A coarse chain
+\[
+p_0<p_1<\cdots<p_k
+\]
+survives the refinement exactly when
+\[
+\alpha(p_0)\subseteq\alpha(p_1)\subseteq\cdots\subseteq\alpha(p_k).
+\]",
+V2-04,ProLT_Observation_Refinement_Classification_v0.2.tex,One-bit descent criterion,Non-splitting refinements and chain deletion; label cor:descent; TeX line 301,One non-splitting bit,A chain is deleted iff its word has a 1-before-0 descent,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Immediate chain criterion,V2-03,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{cor:descent}
+Suppose one new Boolean observation \(\psi\) is constant on each coarse class, and write
+\[
+b(p)\in\{0,1\}
+\]
+for its value on \(C_p\). Then a coarse chain \(p_0<\cdots<p_k\) survives exactly when
+\[
+b(p_0)\le b(p_1)\le\cdots\le b(p_k).
+\]
+Equivalently, it is deleted exactly when it contains a \(1\to0\) inversion.",
+V2-05,ProLT_Observation_Refinement_Classification_v0.2.tex,Post-\(T_0\) refinement filtration,Non-splitting refinements and chain deletion; label cor:T0filtration; TeX line 313,Coarse carrier already T0; successively add observations,No splitting; order complexes form decreasing same-vertex filtration,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Immediate order inclusion,V2-03,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{cor:T0filtration}
+\statusA/\statusC\;
+If \(X_\Phi\) is already \(T_0\) on the valuation carrier, then \(o_\Phi\) is injective, so every later observation refinement is automatically non-splitting. Thus a sequence
+\[
+\Phi_0\subseteq\Phi_1\subseteq\cdots\subseteq\Phi_T
+\]
+with \(X_{\Phi_0}\) \(T_0\) yields, after identifying vertices with valuations,
+\[
+\OX_{\Phi_T}\subseteq\cdots\subseteq\OX_{\Phi_1}\subseteq\OX_{\Phi_0}.
+\]
+Hence ordinary persistence can be applied after reversing the refinement index; zigzag persistence is not required while observations are only added.",
+V2-06,ProLT_Observation_Refinement_Classification_v0.2.tex,Refinement defect becomes relative homology,Relative defect chains in the non-splitting case; label thm:relativecone; TeX line 334,Non-splitting refinement inclusion L subset K,"Cone homology naturally equals H(K,L)",VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Standard cone/relative quasi-isomorphism;R18,V1-06;V2-03,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{thm:relativecone}
+\statusS/\statusA\;
+For a non-splitting refinement, under the vertex identification of Theorem~\ref{thm:orderdelete}, the induced simplicial map is the inclusion
+\[
+\OX_\Psi\hookrightarrow\OX_\Phi.
+\]
+Therefore the mapping-cone refinement defect satisfies
+\[
+D_k(\Psi/\Phi;R)
+\cong
+H_k(\OX_\Phi,\OX_\Psi;R).
+\]",
+V2-07,ProLT_Observation_Refinement_Classification_v0.2.tex,Exact descent-chain computation,Relative defect chains in the non-splitting case; label prop:descentcomplex; TeX line 356,Non-splitting refinement; coefficient field,Relative basis consists of deleted chains with retained faces discarded,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Relative simplicial chain definition,V2-06,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{prop:descentcomplex}
+\statusA/\statusC\;
+There is a natural chain isomorphism
+\[
+C_*^{\mathrm{desc}}(\Psi/\Phi;R)
+\cong
+C_*(\OX_\Phi,\OX_\Psi;R).
+\]
+Hence
+\[
+D_k(\Psi/\Phi;R)
+\cong
+H_k(C_*^{\mathrm{desc}}(\Psi/\Phi;R)).
+\]
+For one added Boolean observation, the generators are exactly coarse chains containing a \(1\to0\) descent.",
+V2-08,ProLT_Observation_Refinement_Classification_v0.2.tex,Greatest-lower-fiber / least-upper-fiber criterion,Adjoint criteria: an elementary homotopy-neutral class; label thm:adjoint; TeX line 387,Finite profile poset and projection,Greatest principal lower fiber / least principal upper fiber gives the stated adjoint section criterion,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Poset adjunction and comparable maps;R02,V2-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:adjoint}
+\statusS/\statusA/\statusC\;
+Let
+\[
+\mathsf U(p)
+:=\bigcup_{\substack{q\le p\\a\in\mathcal B_q}}a,
+\qquad
+\mathsf L(p)
+:=\bigcap_{\substack{q\ge p\\a\in\mathcal B_q}}a.
+\]
+Then:
+\begin{enumerate}[label=(\roman*)]
+\item \(L_p\) has a greatest element if and only if
+\[
+\mathsf U(p)\in\mathcal B_p.
+\]
+When this holds, the greatest element is \((p,\mathsf U(p))\).
+\item \(U_p\) has a least element if and only if
+\[
+\mathsf L(p)\in\mathcal B_p.
+\]
+When this holds, the least element is \((p,\mathsf L(p))\).
+\end{enumerate}
+If (i) holds for every \(p\), then \(r\) has a right adjoint. If (ii) holds for every \(p\), then \(r\) has a left adjoint. Either global condition implies that
+\[
+\Delta(r):\OX_\Psi\to\OX_\Phi
+\]
+is a homotopy equivalence.",
+V2-09,ProLT_Observation_Refinement_Classification_v0.2.tex,Possible/forced monotonicity criterion,Adjoint criteria: an elementary homotopy-neutral class; label cor:possibleforced; TeX line 468,One new bit; nonempty profiles,Possible/forced truth monotonicity characterizes the two section adjoints,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Specialization of adjoint fiber extrema,V2-08,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{cor:possibleforced}
+\statusA/\statusC\;
+For a one-observation refinement:
+\begin{enumerate}[label=(\roman*)]
+\item \(r\) has a right adjoint if and only if \(M_\psi:P_\Phi\to\{0,1\}\) is isotone.
+\item \(r\) has a left adjoint if and only if \(m_\psi:P_\Phi\to\{0,1\}\) is isotone.
+\end{enumerate}
+Equivalently, either of the following is sufficient for homotopy invariance:
+\begin{itemize}
+\item the coarse states in which \(\psi\) is \emph{possible} form an upset;
+\item the coarse states in which \(\psi\) is \emph{forced} form an upset.
+\end{itemize}
+Topological redundancy is the stronger special case
+\[
+m_\psi=M_\psi=b
+\]
+with \(b\) isotone.",
+V2-10,ProLT_Observation_Refinement_Classification_v0.2.tex,Contractible-fiber criterion,Quillen--McCord/Barmak fiber criteria; label thm:quillen; TeX line 503,All principal lower fibers or all principal upper fibers have contractible order complexes,"Refinement map on order complexes is a simple homotopy equivalence, as already stated in the source",VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R02 Theorems 1.1-1.2,V2-01,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{thm:quillen}
+\statusS/\statusA\;
+If for every \(p\in P_\Phi\), the order complex
+\[
+\Delta\bigl(r^{-1}(\down p)\bigr)
+\]
+is contractible, then
+\[
+\Delta(r):\OX_\Psi\longrightarrow\OX_\Phi
+\]
+is a simple homotopy equivalence, hence a homotopy equivalence. Dually, the same conclusion follows if every
+\[
+\Delta\bigl(r^{-1}(\up p)\bigr)
+\]
+is contractible.",
+V2-11,ProLT_Observation_Refinement_Classification_v0.2.tex,Acyclic-fiber homology criterion,Quillen--McCord/Barmak fiber criteria; label thm:acyclicfiber; TeX line 524,Corresponding principal fibers acyclic over stated coefficients,Refinement induces homology isomorphisms,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R02 Theorem 5.4 and Corollary 5.5,V2-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:acyclicfiber}
+\statusS/\statusA\;
+Fix coefficients \(R\). If
+\[
+\redhom_i\!\left(\Delta(r^{-1}(\down p));R\right)=0
+\]
+for every \(p\in P_\Phi\) and every \(i\ge0\), then
+\[
+r_*:H_i(\OX_\Psi;R)\longrightarrow H_i(\OX_\Phi;R)
+\]
+is an isomorphism for every \(i\). The dual upper-fiber statement also holds.",
+V2-12,ProLT_Observation_Refinement_Classification_v0.2.tex,Exact homology-equivalence criterion,Exact homology classification by the refinement cone; label thm:coneexact; TeX line 560,Any refinement chain map,Homology-neutrality iff cone complex acyclic,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R18,V1-06,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{thm:coneexact}
+\statusS/\statusA/\statusC\;
+The following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item \(r_*:H_k(\OX_\Psi;R)\to H_k(\OX_\Phi;R)\) is an isomorphism for every \(k\);
+\item
+\[
+D_k(\Psi/\Phi;R)=0
+\qquad\text{for every }k.
+\]
+\end{enumerate}
+Thus the refinement cone gives an exact, finite homological classification of whether the refinement is homology-neutral.",
+V2-13,ProLT_Observation_Refinement_Classification_v0.2.tex,Quick obstructions,Exact homology classification by the refinement cone; label (unnumbered label); TeX line 585,Homology-neutrality as claimed,"Betti, Euler and component constraints are necessary",VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Euler characteristic;homology invariance,V2-12,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"If any of the following differs between \(\OX_\Psi\) and \(\OX_\Phi\), the refinement is not homology-neutral:
+\begin{enumerate}[label=(\alph*)]
+\item a Betti number over the chosen field;
+\item the number of connected components;
+\item the Euler characteristic.
+\end{enumerate}
+The converses are false in general.",
+V2-14,ProLT_Observation_Refinement_Classification_v0.2.tex,Connected-component criterion,Exact homology classification by the refinement cone; label prop:H0; TeX line 597,Surjective signature refinement map,H0 isomorphism iff no coarse component splits into multiple refined components,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,H0 component functor,V2-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{prop:H0}
+\statusA\;
+Let \(\pi_0(P)\) denote connected components of the undirected comparability graph of a finite poset \(P\). Since \(r\) is surjective, the induced map
+\[
+r_*:H_0(\OX_\Psi;R)\to H_0(\OX_\Phi;R)
+\]
+is always surjective. It is an isomorphism if and only if, for every connected component \(C\subseteq P_\Phi\), the inverse image
+\[
+r^{-1}(C)
+\]
+is connected.",
+V2-15,ProLT_Observation_Refinement_Classification_v0.2.tex,Universality of refined signature posets,Universality of refinement and the limit of complete homotopy classification; label thm:universality; TeX line 787,Finite target poset; point coarse quotient on suitable nonempty carrier,Every NONEMPTY finite target poset is effectively realizable,NEEDS_MINOR_REPAIR,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Principal-ideal embedding;minterm definability,V2-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Say NONEMPTY target/type on nonempty point-coarse carrier; explicitly allow empty carrier otherwise,"\label{thm:universality}
+\statusA/\statusC\;
+Every finite poset \(Q\) is isomorphic to the realized-signature poset of some finite propositional observation family. More strongly, \(Q\) can occur as \(P_\Psi\) in a refinement
+\[
+\Phi\subseteq\Psi
+\]
+for which \(P_\Phi\) is a single point.",
+V2-16,ProLT_Observation_Refinement_Classification_v0.2.tex,Every finite simplicial homotopy type occurs,Universality of refinement and the limit of complete homotopy classification; label cor:alltypes; TeX line 818,Finite NONEMPTY simplicial complex,Its face-poset/order-complex homotopy type occurs as refined quotient,NEEDS_MINOR_REPAIR,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Barycentric subdivision;R02,V2-15,Not relied upon for general proof,FOUNDATIONS_REPORT,Say NONEMPTY target/type on nonempty point-coarse carrier; explicitly allow empty carrier otherwise,"\label{cor:alltypes}
+For every finite simplicial complex \(K\), choose its face poset \(Q=\mathcal X(K)\). Then
+\[
+\Delta(Q)=\operatorname{sd}(K),
+\]
+the barycentric subdivision of \(K\). Therefore a refinement above a one-point coarse ProLT can realize the homotopy type of any finite simplicial complex.",
+V2-17,ProLT_Observation_Refinement_Classification_v0.2.tex,Undecidability of unrestricted homotopy-neutral refinement,Universality of refinement and the limit of complete homotopy classification; label thm:undecidable; TeX line 826,Unrestricted effectively encoded finite refinement; neutrality means order-complex homotopy equivalence,No deciding algorithm in general,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R05 Appendix A Theorem 11,V2-16,Not relied upon for general proof,PAPER_A_LIMITS,Credit standard machinery; preserve hypotheses,"\label{thm:undecidable}
+\statusS/\statusA/\statusC\;
+There is no algorithm that, for arbitrary finite ProLT observation refinements in unrestricted dimension, always decides whether
+\[
+\Delta(r_{\Psi\Phi})
+\]
+is a homotopy equivalence.",
+V2-18,ProLT_Observation_Refinement_Classification_v0.2.tex,Homology remains effectively computable,Universality of refinement and the limit of complete homotopy classification; label cor:decidablehomology; TeX line 839,Finite explicit observation data/posets and effective coefficient arithmetic,Homology-neutrality is decidable by finite chain algebra,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Finite matrix ranks/Smith form,V2-12,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{cor:decidablehomology}
+For any fixed computable coefficient field, homology-neutrality of a given finite refinement is decidable: construct the finite mapping-cone boundary matrices and compute their ranks. Thus the homotopy and homology classification problems diverge sharply in unrestricted generality.",
+V2-E1,ProLT_Observation_Refinement_Classification_v0.2.tex,Adding X and Y conjunction,Redundant example,"Old (X,Y); add X AND Y",Redundant,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Positive upset,V2-02,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,No repair,,
+V2-E2,ProLT_Observation_Refinement_Classification_v0.2.tex,Adding X to no observations,Adjoint-neutral nonredundant example,Indiscrete coarse two-state carrier,Nonredundant splitting but neutral,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Cone/adjoint,V2-08,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Distinguish splitting before T0,,
+V2-E3,ProLT_Observation_Refinement_Classification_v0.2.tex,XOR refinement of Boolean square,Quillen-neutral no-adjoint example,"Coarse (X,Y); new XOR",Neutral without section adjoint,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R02,V2-10;V3-04,Proof or construction inspected; not an exhaustive computation,PAPER_A_EXAMPLES,Retain as small example,,
+V2-E4,ProLT_Observation_Refinement_Classification_v0.2.tex,Both Quillen orientations fail,Alternating-profile worked example,Specified chain/profile in manuscript,Endpoint contractible yet some lower/upper principal fibers disconnected,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Ferrers/beat reductions;R09,V2-10;V3-13,Proof or construction inspected; not an exhaustive computation,PAPER_A_EXAMPLES,No converse fiber claim,,
+V2-E5,ProLT_Observation_Refinement_Classification_v0.2.tex,Adding negation,Homology-active example,Old X; add NOT X,Discrete split and active H0 defect,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Two-point graph homology,V2-14,Proof or construction inspected; not an exhaustive computation,PAPER_A_EXAMPLES,No repair,,
+V2-E6,ProLT_Observation_Refinement_Classification_v0.2.tex,Neutral splitting,Splitting can still be homotopy-neutral,Specified multiple valuations per coarse signature,Non-singleton profile may still preserve order-complex type,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Contractible fibers,V2-01;V2-10,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Do not extend same-vertex theorems to this case,,
+V2-E7,ProLT_Observation_Refinement_Classification_v0.2.tex,Acyclic noncontractible refinement,Universality discussion after decidability,Finite punctured homology-sphere model,Integral homology neutrality need not imply homotopy neutrality,VALIDATED_STANDARD,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18;finite acyclic noncontractible complexes,V2-15,Proof or construction inspected; not an exhaustive computation,PAPER_A_LIMITS,A6 gives a stronger one-bit realization,,
+V2-HIER,ProLT_Observation_Refinement_Classification_v0.2.tex,Strict hierarchy of tests,Section 10 and worked examples Section 11,"Redundancy, adjoints, principal-fiber tests, order-complex homotopy, homology","Strict sufficient-condition hierarchy, not converse equivalences",VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R02;R18,V2-08;V2-10;V2-11;V2-12,Proof or construction inspected; not an exhaustive computation,FOUNDATIONS_REPORT,Use exact names for weak/ordinary/complex homotopy,,
+V3-01,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Positive-fragment characterization,Theorem 3.2; PDF page 3; TeX file is empty,Arbitrary formula on old signatures,Redundant iff isotone signature bit iff positive formula in old observations,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Finite upset positive DNF,V2-02,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 3.2 (Positive-fragment characterization of redundancy). [S]/[A]/[C] For an arbitrary formula 𝜓,
+the following are equivalent.
+
+   (i) 𝜍(𝜓) ∈𝜏Φ.
+
+   (ii) There exists an upward-closed set 𝑈⊆𝑃Φ such that
+                                        𝜍(𝜓) = 𝑜−1Φ (𝑈).
+
+  (iii) 𝜓is constant on every coarse signature class 𝐶𝑝= 𝑜−1Φ (𝑝) and the induced bit
+                                  𝑏𝜓: 𝑃Φ →{0, 1}
+
+        is isotone.
+
+  (iv) There is a monotone Boolean function
+                              𝐹: {0, 1}𝐼→{0, 1}
+
+      such that
+                                𝑉𝑣(𝜓) = 𝐹(𝑜Φ(𝑣))    (𝑣∈Ω𝑃).
+
+   (v) On the finite valuation carrier, 𝜓is logically equivalent to a positive formula in Φ.
+
+More precisely, if 𝑀is the antichain of minimal elements of
+
+                   𝑈= {𝑝∈𝑃Φ : 𝑏𝜓(𝑝) = 1},
+
+then
+                           𝜓≡Ω𝑃 Ü Û 𝜙𝑖,                                          (3)
+                                     𝑝∈𝑀 𝑖∈𝑝
+with the empty conjunction interpreted as ⊤."
+V3-02,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Syntactic closure,Corollary 3.3; PDF page 4; TeX file is empty,Positive conjunction/disjunction of old observations,Observation redundant,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Immediate positive closure,V3-01,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Corollary 3.3 (Syntactic closure). Any observation obtained from the old observations solely by finite
+conjunctions and disjunctions is topologically redundant. It may still change a chosen weighted signature
+distance if it is added as a new weighted coordinate.
+
+Remark 3.4 (What “monotone” means here). The monotonicity in Theorem 3.2 is with respect to the old
+observation signature order, not necessarily with respect to the underlying propositional variables. When Φ
+itself consists of the base variables, the two notions coincide in the obvious way.
+
+
+3.1 The dual anti-positive fragment
+
+There is a useful dual statement even though down-sets are not the opens of the positive-observation topology.
+
+Proposition 3.5 (Anti-positive normal form). Suppose 𝜓is constant on old signature classes. Its induced bit
+𝑏𝜓is antitone,
+                       𝑝≤𝑞=⇒𝑏𝜓(𝑝) ≥𝑏𝜓(𝑞),
+
+if and only if, on the valuation carrier, 𝜓has a representation
+
+                           𝜓≡Ω𝑃 Ü Û ¬𝜙𝑖,                                          (4)
+                                        𝑝∈𝑁 𝑖∉𝑝
+
+where 𝑁can be chosen as the maximal true signatures."
+V3-03,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Anti-positive normal form,Proposition 3.5; PDF page 4; TeX file is empty,Fiberconstant bit,Antitone iff expressible positively using negated old coordinates,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Finite downset DNF,V3-01,Independent relative-chain checks where applicable,FOUNDATIONS_REPORT,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Proposition 3.5 (Anti-positive normal form). Suppose 𝜓is constant on old signature classes. Its induced bit
+𝑏𝜓is antitone,
+                       𝑝≤𝑞=⇒𝑏𝜓(𝑝) ≥𝑏𝜓(𝑞),
+
+if and only if, on the valuation carrier, 𝜓has a representation
+
+                           𝜓≡Ω𝑃 Ü Û ¬𝜙𝑖,                                          (4)
+                                        𝑝∈𝑁 𝑖∉𝑝
+
+where 𝑁can be chosen as the maximal true signatures."
+V3-04,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Adjoint rigidity after T0,Theorem 4.1; PDF page 4; TeX file is empty,T0 same-vertex refinement projection,Section adjoint exists iff no order change,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Bijective identity adjunction,V2-08;V2-03,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 4.1 (Adjoint rigidity after 𝑇0). [A]/[C] Assume 𝑋Φ is 𝑇0 and let
+
+                                     𝑟: 𝑃Ψ →𝑃Φ
+
+be any later refinement projection. Then the following are equivalent:
+
+    (i) 𝑟has a right order adjoint;
+
+   (ii) 𝑟has a left order adjoint;
+
+  (iii) 𝑟is an order isomorphism;
+
+  (iv) the refinement is topologically redundant.
+
+Thus every genuinely nonredundant post-𝑇0 homotopy-neutral refinement lies beyond the elementary adjoint
+criterion.
+
+
+
+
+                                          4
+
+=== PAGE 5 ===
+Controlled ProLT Refinement Regimes                                    Research continuation v0.3"
+V3-05,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Antitone profile decomposition,Theorem 4.2; PDF page 5; TeX file is empty,Antitone block after T0,Q decomposes into constant-profile induced pieces; neutrality iff profile constant per coarse component,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Level-set decomposition,V2-03;V2-14,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 4.2 (Antitone profile decomposition). [A]/[C] Assume 𝑋Φ is 𝑇0. Let a block of new observations
+have profile
+                                𝛼: 𝑃Φ →2𝐴
+
+which is antitone:
+                       𝑝≤𝑞=⇒𝛼(𝑝) ⊇𝛼(𝑞).
+
+Then
+                    𝑝≤Ψ 𝑞⇐⇒𝑝≤Φ 𝑞and 𝛼(𝑝) = 𝛼(𝑞).
+
+Hence
+                    𝑃Ψ = Þ  𝑃𝑎,    𝑃𝑎:= {𝑝∈𝑃Φ : 𝛼(𝑝) = 𝑎},
+                                 𝑎∈im 𝛼
+
+as a disjoint union of induced subposets.
+Consequently, the refinement is a homology equivalence if and only if 𝛼is constant on each connected
+component of 𝑃Φ; in that case no comparison is deleted and the refinement is redundant."
+V3-06,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Negation refinement,Corollary 4.3; PDF page 5; TeX file is empty,Selected negations after T0,Split by selected bits; negate all coordinates gives discrete quotient,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Immediate,V3-05,Independent relative-chain checks where applicable,FOUNDATIONS_REPORT,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Corollary 4.3 (Negation refinement). After 𝑇0, adding negations of selected old observation coordinates
+partitions the signature poset by the truth pattern on those selected coordinates. Adding negations of all
+old coordinates deletes every strict inclusion and produces an antichain, recovering the discrete two-sided
+observation topology from v0.8.
+
+
+5 Bounded-height signature posets
+
+Definition 5.1 (Height). For a finite poset 𝑃, define
+
+                               ht(𝑃) = max{𝑘: 𝑝0 < 𝑝1 < · · · < 𝑝𝑘}.
+
+Thus
+                                  dim Δ(𝑃) = ht(𝑃).
+
+
+
+                                           5
+
+=== PAGE 6 ===
+Controlled ProLT Refinement Regimes                                    Research continuation v0.3
+
+
+5.1 Height zero and height one
+
+Height zero is trivial: the coarse poset is already an antichain, hence its topology is discrete and no later
+refinement can delete a comparability.
+Theorem 5.2 (Height-one homology rigidity). [A]/[C] Assume 𝑋Φ is 𝑇0 and
+
+                                         ht(𝑃Φ) ≤1.
+
+For every later refinement Ψ,
+                                   𝑟ΨΦ : 𝑃Ψ →𝑃Φ
+
+is a homology equivalence over any field if and only if the refinement is redundant."
+V3-07,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Height-one homology rigidity,Theorem 5.2; PDF page 6; TeX file is empty,T0 and height<=1,Homology-neutral thinning must be redundant,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Relative graph chain complex,V2-06,Independent relative-chain checks where applicable,PAPER_A,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 5.2 (Height-one homology rigidity). [A]/[C] Assume 𝑋Φ is 𝑇0 and
+
+                                         ht(𝑃Φ) ≤1.
+
+For every later refinement Ψ,
+                                   𝑟ΨΦ : 𝑃Ψ →𝑃Φ
+
+is a homology equivalence over any field if and only if the refinement is redundant."
+V3-08,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,First possible nontrivial neutrality,Corollary 5.3; PDF page 6; TeX file is empty,Nonredundant homology-neutral thinning,Coarse height at least two,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Immediate,V3-07,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Corollary 5.3 (First possible nontrivial neutrality). A nonredundant post-𝑇0 refinement which is nevertheless
+homology-neutral requires coarse height at least 2.
+
+
+5.2 Height two: an exact relative boundary test
+
+Let 𝐾= OΦ and 𝐿= OΨ ⊆𝐾. Because the vertices are identical,
+
+                                    𝐶0(𝐾, 𝐿; 𝑘) = 0
+
+for any coefficient field 𝑘.
+Theorem 5.4 (Height-two matrix classification). [S]/[A]/[C] Assume 𝑋Φ is 𝑇0 and
+
+                                         ht(𝑃Φ) ≤2.
+
+Let 𝐸del be the deleted 1-simplices and 𝑇del the deleted 2-simplices. Then the relative chain complex is
+
+                                                                                 𝜕rel
+                              0 −→𝑘[𝑇del] −→𝑘[𝐸del]2      −→0.
+
+The refinement is a homology equivalence over 𝑘if and only if
+
+                                                              𝜕rel
+                                                          2
+
+is an isomorphism. Equivalently,
+                                                   |𝑇del| = |𝐸del| = rank(𝜕rel2  ).
+Over F2, this is an exact finite binary-matrix test."
+V3-09,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Height-two matrix classification,Theorem 5.4; PDF page 6; TeX file is empty,T0 height<=2; stated field,Neutral iff relative edge-triangle B square invertible,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Relative two-term complex;R03,V2-07,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 5.4 (Height-two matrix classification). [S]/[A]/[C] Assume 𝑋Φ is 𝑇0 and
+
+                                         ht(𝑃Φ) ≤2.
+
+Let 𝐸del be the deleted 1-simplices and 𝑇del the deleted 2-simplices. Then the relative chain complex is
+
+                                                                                 𝜕rel
+                              0 −→𝑘[𝑇del] −→𝑘[𝐸del]2      −→0.
+
+The refinement is a homology equivalence over 𝑘if and only if
+
+                                                              𝜕rel
+                                                          2
+
+is an isomorphism. Equivalently,
+                                                   |𝑇del| = |𝐸del| = rank(𝜕rel2  ).
+Over F2, this is an exact finite binary-matrix test."
+V3-10,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Fast obstruction,Corollary 5.5; PDF page 7; TeX file is empty,Same height-two setting,Unequal deleted edge/triangle counts obstruct neutrality,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Euler characteristic,V3-09,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Corollary 5.5 (Fast obstruction). At height two, if the number of deleted edges differs from the number of
+deleted triangles, the refinement cannot be homology-neutral.
+
+Proposition 5.6 (A simple-collapse certificate). Under the hypotheses of Theorem 5.4, suppose:
+
+
+    (i) every deleted edge is contained in exactly one deleted triangle; and
+
+   (ii) every deleted triangle contains exactly one deleted edge.
+
+Then 𝐾simplicially collapses onto 𝐿. In particular the refinement is a simple homotopy equivalence."
+V3-11,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Simple-collapse certificate,Proposition 5.6; PDF page 7; TeX file is empty,Deleted edge/triangle pair condition in PDF,Pairs yield direct simplicial collapse,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Free-face collapse;R19,V3-09,Independent relative-chain checks where applicable,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Proposition 5.6 (A simple-collapse certificate). Under the hypotheses of Theorem 5.4, suppose:
+
+
+    (i) every deleted edge is contained in exactly one deleted triangle; and
+
+   (ii) every deleted triangle contains exactly one deleted edge.
+
+Then 𝐾simplicially collapses onto 𝐿. In particular the refinement is a simple homotopy equivalence."
+V3-12,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Beat reduction for mixed chain profile,Lemma 6.1; PDF page 8; TeX file is empty,"First bit1,last0,with an intervening 0-before-1",Refined chain poset beat-contractible,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Ferrers independence complex;R09,V2-04,Independent beat/Quillen enumeration through n=12,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Lemma 6.1 (Beat reduction for a mixed chain profile).  If 𝑏1 = 1, 𝑏𝑛= 0, and some 0 occurs before a later 1,
+then 𝑄𝑏is beat-point reducible to a poset with a minimum and hence is contractible."
+V3-13,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Exact chain trichotomy,Theorem 6.2; PDF page 8; TeX file is empty,One bit on n-chain n>=1,Nondecreasing redundant; nonconstant nonincreasing two components; all other profiles nonredundant neutral,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,PRIOR_ART_EQUIVALENT,R09 announced Ferrers classification,V3-12,Independent beat/Quillen enumeration through n=12,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 6.2 (Exact chain trichotomy). [S]/[A]/[C] For one added observation over the coarse chain 𝐶𝑛,
+exactly one of the following occurs.
+
+
+  (a) Redundant regime. The bit sequence is nondecreasing,
+
+                                        0 · · · 01 · · · 1.
+
+     Then 𝑄𝑏= 𝐶𝑛and the refinement is redundant.
+
+  (b) Defective antitone-threshold regime. The bit sequence is nonconstant and nonincreasing,
+
+                                     1𝑎0𝑛−𝑎,    1 ≤𝑎≤𝑛−1.
+
+     Then
+                                𝑄𝑏  𝐶𝑎⨿𝐶𝑛−𝑎.
+
+        Its order complex is the disjoint union of two simplices, so
+
+                                    𝐻0(O𝑄𝑏; F2)   F2,                             e
+
+     and the refinement defect has
+                             𝐷1   F2,   𝐷𝑘= 0 (𝑘≠1).
+
+  (c) Nonredundant neutral regime. Every remaining bit sequence gives a beat-contractible 𝑄𝑏. Hence
+
+                            O𝑄𝑏≃O𝐶𝑛≃∗
+
+     and the refinement projection is a homotopy equivalence despite deleting comparisons."
+V3-14,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Exact enumeration,Corollary 6.3; PDF page 9; TeX file is empty,n>=1,"Class sizes n+1, n-1, 2^n-2n",VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Binary threshold-word counting,V3-13,Independent beat/Quillen enumeration through n=12,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Corollary 6.3 (Exact enumeration). Among the 2𝑛one-bit refinements of 𝐶𝑛:
+
+                                                redundant = 𝑛+ 1,
+                                                          defective =  𝑛−1,
+                        nonredundant but homotopy-neutral =  2𝑛−2𝑛.
+
+Thus the proportion of defective one-bit observations tends to zero exponentially with 𝑛inside this controlled
+chain model."
+V3-15,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Exact Quillen visibility,Theorem 6.4; PDF page 9; TeX file is empty,One bit on n-chain,Lower test iff first0 or all1; upper iff last1 or all0,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Principal chain-prefix/suffix restriction,V2-10;V3-13,Independent beat/Quillen enumeration through n=12,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 6.4 (Exact Quillen visibility on a chain). For the chain refinement 𝑄𝑏→𝐶𝑛:
+
+
+    (i) every lower principal fiber is contractible if and only if
+
+                                      𝑏1 = 0  or 𝑏= (1, . . . , 1);
+
+
+   (ii) every upper principal fiber is contractible if and only if
+
+                          𝑏𝑛= 1  or 𝑏= (0, . . . , 0).
+
+
+Consequently, a homotopy-neutral refinement can evade both orientations of the Quillen fiber test exactly
+when
+                                       𝑏1 = 1,   𝑏𝑛= 0,
+
+and the sequence contains a 0 before a later 1."
+V3-16,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Beyond both Quillen tests,Corollary 6.5; PDF page 9; TeX file is empty,n>=2,Neutral profiles missed by both tests count 2^(n-2)-(n-1),VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Elementary enumeration,V3-15,Independent beat/Quillen enumeration through n=12,PAPER_A_BACKGROUND,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Corollary 6.5 (Size of the “beyond both Quillen tests” class). For 𝑛≥2, the number of homotopy-neutral
+one-bit chain refinements for which both lower- and upper-fiber Quillen tests fail is
+
+                                        2𝑛−2 −(𝑛−1).
+
+For 𝑛= 4, the unique such pattern is
+                                             1010,
+
+which is exactly the alternating example identified in v0.2.
+
+
+                                           9
+
+=== PAGE 10 ===
+Controlled ProLT Refinement Regimes                                    Research continuation v0.3
+
+
+7 Why the chain theorem does not extend to arbitrary blocks
+
+
+The exact trichotomy above is genuinely a one-observation theorem. A sufficiently large block of new
+observations can recover arbitrary finite-poset complexity even when the coarse state space is a 𝑇0 chain.
+Theorem 7.1 (Block universality over a coarse chain). [A]/[C] Let 𝑆= {𝑣1, . . . , 𝑣𝑛} be a finite current state
+carrier on which the coarse realized-signature poset is the chain
+                                          𝑣1 <Φ · · · <Φ 𝑣𝑛.
+Let 𝑅be any finite poset on the same set for which this ordering is a linear extension. Then there exists a
+finite block of new propositional observations Θ such that the refined order on 𝑆is exactly 𝑅."
+V3-17,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Block universality over coarse chain,Theorem 7.1; PDF page 10; TeX file is empty,Finite current state set; target Q with chosen linear extension,Any target finite poset realized as block thinning of coarse chain,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Principal-ideal representation,V5-04,Independent relative-chain checks where applicable,FOUNDATIONS_REPORT,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 7.1 (Block universality over a coarse chain). [A]/[C] Let 𝑆= {𝑣1, . . . , 𝑣𝑛} be a finite current state
+carrier on which the coarse realized-signature poset is the chain
+                                          𝑣1 <Φ · · · <Φ 𝑣𝑛.
+Let 𝑅be any finite poset on the same set for which this ordering is a linear extension. Then there exists a
+finite block of new propositional observations Θ such that the refined order on 𝑆is exactly 𝑅."
+V3-18,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Refinement/update bifiltration,Theorem 8.1; PDF page 11; TeX file is empty,Nested observations and nested current state subsets,Stated commuting inclusions produce a two-parameter filtration,VALIDATED_ADAPTATION,PDF statement and proof inspected; no TeX source available,STANDARD_SPECIALIZATION,Standard multiparameter persistence;R14;R17,V2-05;V1-03,Independent relative-chain checks where applicable,FOUNDATIONS_REPORT,Restore actual TeX source; cite existing machinery; for chain classification disclose unlocated Ehrenborg-Kitaev proof,Not available: source TeX is zero bytes; audited PDF.,"Theorem 8.1 (Refinement/update bifiltration). [A]/[C] For all valid indices,
+
+                            𝐾𝑎+1,𝑏⊆𝐾𝑎,𝑏,     𝐾𝑎,𝑏+1 ⊆𝐾𝑎,𝑏,
+
+and the inclusion squares commute:
+                                       𝐾𝑎+1,𝑏+1  ⊆  𝐾𝑎,𝑏+1
+                            ∩        ∩
+                                        𝐾𝑎+1,𝑏  ⊆   𝐾𝑎,𝑏.
+Hence, after reversing both indices, 𝐾𝑎,𝑏is a two-parameter simplicial filtration. Applying homology in each
+degree yields a two-parameter persistence module."
+V3-E1,ProLT_Controlled_Refinement_Regimes_v0.3.pdf,Three-chain one-bit table,Chain examples/table,All eight profiles on three-chain,"000,001,011,111 redundant;100,110 unsafe;010,101 nonredundant neutral",VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R09,V3-13,Proof or construction inspected; not an exhaustive computation,PAPER_A_EXAMPLES,No repair,,
+V4-01,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Deleted-chain criterion,Post-$T_0$ one-bit refinement; label prop:deletedchain; TeX line 132,"One bit on same-vertex P, Q",Relative simplices are chains with a descent,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Relative chain definition,V2-04,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{prop:deletedchain}
+\statusA\;
+A coarse chain
+\[
+p_0<p_1<\cdots<p_k
+\]
+survives as a simplex of $L_b$ if and only if
+\[
+b(p_0)\le b(p_1)\le\cdots\le b(p_k).
+\]
+Thus a simplex is deleted exactly when its Boolean word contains a $1\to0$ descent.",
+V4-02,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Down-repair criterion,Repair maps: arbitrary-height sufficient criteria; label thm:downrepair; TeX line 153,Isotone idempotent down-repair satisfying stated b and order conditions,Refinement inclusion is homotopy equivalence,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Comparable-map/closure-operator argument;R02,V2-03,Not relied upon for general proof,PAPER_A,Credit standard machinery; preserve hypotheses,"\label{thm:downrepair}
+\statusS/\statusA/\statusC\;
+Suppose there exists an order-preserving map
+\[
+\rho:P\longrightarrow P
+\]
+such that, for every $p\in P$,
+\begin{equation}\label{eq:downrepair}
+\rho(p)\le p,
+\qquad
+b(\rho(p))=0.
+\end{equation}
+Then the inclusion
+\[
+i:Q_b\hookrightarrow P
+\]
+induces a homotopy equivalence
+\[
+\Delta(Q_b)\simeq\Delta(P).
+\]
+The map $\rho$, regarded as a map $P\to Q_b$, is a homotopy inverse.",
+V4-03,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Up-repair criterion,Repair maps: arbitrary-height sufficient criteria; label thm:uprepair; TeX line 194,Dual isotone idempotent up-repair conditions,Refinement inclusion is homotopy equivalence,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Dual closure-operator argument;R02,V4-02,Not relied upon for general proof,PAPER_A,Credit standard machinery; preserve hypotheses,"\label{thm:uprepair}
+\statusS/\statusA/\statusC\;
+Dually, suppose there exists an order-preserving map
+\[
+\lambda:P\longrightarrow P
+\]
+such that
+\[
+p\le\lambda(p),
+\qquad
+b(\lambda(p))=1
+\]
+for every $p$. Then $L_b\hookrightarrow K$ is a homotopy equivalence, with $\lambda:P\to Q_b$ as a homotopy inverse.",
+V4-04,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Floor/ceiling preservation,Repair maps: arbitrary-height sufficient criteria; label thm:floorceil; TeX line 238,False-floor or true-ceiling property as defined,Canonical floor/ceiling is a valid repair; inclusion neutral,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Poset extrema/closure operators,V4-02;V4-03,Not relied upon for general proof,PAPER_A,Credit standard machinery; preserve hypotheses,"\label{thm:floorceil}
+\statusS/\statusA/\statusC\;
+If $\psi$ has either the false-floor property or the true-ceiling property, then adding $\psi$ preserves the homotopy type of the canonical ProLT order complex.",
+V4-05,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Componentwise cone-anchor criterion,Repair maps: arbitrary-height sufficient criteria; label cor:anchor; TeX line 261,Componentwise preserved minimum or maximum anchors,Each component stays contractible and inclusion neutral,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Cone point;R02,V4-04,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{cor:anchor}
+\statusA/\statusC\;
+Suppose every connected component $C$ of $P$ satisfies at least one of the following:
+\begin{enumerate}[label=(\roman*)]
+\item $C$ has a least element $\bot_C$ with $b(\bot_C)=0$;
+\item $C$ has a greatest element $\top_C$ with $b(\top_C)=1$.
+\end{enumerate}
+Then refinement by $\psi$ preserves homotopy type.",
+V4-06,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Endpoint test on a Boolean-lattice signature space,Repair maps: arbitrary-height sufficient criteria; label cor:endpoint; TeX line 275,Coarse realized signature poset is full Boolean lattice,False bottom or true top suffices for neutrality,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Cone point,V4-05,Not relied upon for general proof,PAPER_A_EXAMPLES,Credit standard machinery; preserve hypotheses,"\label{cor:endpoint}
+If
+\[
+P=2^I
+\]
+with its usual inclusion order, then adding one observation $\psi$ is guaranteed to preserve homotopy whenever
+\[
+b(\varnothing)=0
+\quad\text{or}\quad
+b(I)=1.
+\]
+Consequently, only the endpoint-reversing case
+\[
+b(\varnothing)=1,
+\qquad
+b(I)=0
+\]
+can possibly change homotopy type.",
+V4-07,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Join-closed falsity gives a down-repair,Semilattice and Horn-type observation classes; label thm:joinfalse; TeX line 303,Realized poset join-semilattice; falsity join-closed and lower cofinal,Join of false predecessors defines down-repair,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Closure-system extrema,V4-04,Not relied upon for general proof,PAPER_A,Credit standard machinery; preserve hypotheses,"\label{thm:joinfalse}
+\statusS/\statusA/\statusC\;
+Assume $P$ is a finite join-semilattice. Suppose:
+\begin{enumerate}[label=(\roman*)]
+\item $F_\psi$ is closed under finite joins in $P$; and
+\item $F_\psi\cap\downarrow p\ne\varnothing$ for every $p\in P$.
+\end{enumerate}
+Then $\psi$ has the false-floor property, with
+\[
+\lfloor p\rfloor_F
+=
+\bigvee(F_\psi\cap\downarrow p),
+\]
+and therefore preserves homotopy type.",
+V4-08,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Meet-closed truth gives an up-repair,Semilattice and Horn-type observation classes; label thm:meettrue; TeX line 323,Dual meet-semilattice; truth meet-closed and upper cofinal,Meet of true successors defines up-repair,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Closure-system extrema,V4-04,Not relied upon for general proof,PAPER_A,Credit standard machinery; preserve hypotheses,"\label{thm:meettrue}
+\statusS/\statusA/\statusC\;
+Assume $P$ is a finite meet-semilattice. Suppose:
+\begin{enumerate}[label=(\roman*)]
+\item $T_\psi$ is closed under finite meets in $P$; and
+\item $T_\psi\cap\uparrow p\ne\varnothing$ for every $p\in P$.
+\end{enumerate}
+Then $\psi$ has the true-ceiling property, with
+\[
+\lceil p\rceil_T
+=
+\bigwedge(T_\psi\cap\uparrow p),
+\]
+and therefore preserves homotopy type.",
+V4-09,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Horn-type repair,Semilattice and Horn-type observation classes; label cor:horn; TeX line 339,Realized signature meet-semilattice; Horn truth restriction; upper cofinality,Up-repair and homotopy neutrality,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Horn meet closure;R20,V4-08,Not relied upon for general proof,PAPER_A_EXAMPLES,Never abbreviate to all Horn/dual-Horn formulas preserve homotopy; retain semilattice and cofinality assumptions,"\label{cor:horn}
+Suppose the realized-signature poset is a meet-subsemilattice of a Boolean cube, and the truth states of $\psi$ are the models of a Horn CNF in the old observation coordinates. If every realized signature lies below at least one such model, then $\psi$ preserves homotopy type.",
+V4-10,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Dual-Horn falsity repair,Semilattice and Horn-type observation classes; label (unnumbered label); TeX line 347,Realized join-semilattice; dual-Horn falsity; lower cofinality,Down-repair and homotopy neutrality,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Dual-Horn join closure;R20,V4-07,Not relied upon for general proof,PAPER_A_EXAMPLES,Never abbreviate to all Horn/dual-Horn formulas preserve homotopy; retain semilattice and cofinality assumptions,"Dually, suppose $P$ is a join-subsemilattice and the $\psi$-false signatures form a union-closed (equivalently, in the usual Boolean-relation setting, dual-Horn definable) family which is lower cofinal. Then $\psi$ preserves homotopy type.",
+V4-11,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Relative boundary as reduced incidence,Height two: from a boundary matrix to a repair forest; label prop:incidence; TeX line 423,One bit; coarse height<=2; same vertices,F2 relative triangle-edge matrix is reduced repair-graph incidence,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,NOVELTY_UNCLEAR,Graph incidence;R03;R04,V4-01;V3-09,"Independent 274738 height<=2 one-bit profiles over F2,F3,F5; DSU versus boundary ranks; actual collapse examples",PAPER_A_CORE,Retain as narrow adaptation/candidate; do not claim new general Morse or rooted-forest theory,"\label{prop:incidence}
+\statusS/\statusA/\statusC\;
+Over $\F$, the relative boundary matrix
+\[
+\partial_2^{\rm rel}
+\]
+is exactly the vertex-edge incidence matrix of $\mathfrak R_\psi(P)$ after deleting the rows corresponding to the formal roots.",
+V4-12,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Height-two repair-forest theorem,Height two: from a boundary matrix to a repair forest; label thm:repairforest; TeX line 438,One bit; coarse height<=2; same vertices,F2 homology neutrality iff rooted forest iff direct collapse iff homotopy neutrality,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,NOVELTY_UNCLEAR,Incidence forests plus relative collapse;R03;R19,V4-11,"Independent 274738 height<=2 one-bit profiles over F2,F3,F5; DSU versus boundary ranks; actual collapse examples",PAPER_A_CORE,Retain as narrow adaptation/candidate; do not claim new general Morse or rooted-forest theory,"\label{thm:repairforest}
+\statusS/\statusA/\statusC\;
+Assume $P$ is post-$T_0$ and $\operatorname{ht}(P)\le2$. For one added observation $\psi$, the following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item the inclusion $L_b\hookrightarrow K$ is a homotopy equivalence;
+\item it is a simple homotopy equivalence;
+\item $K$ simplicially collapses onto $L_b$ using only deleted edge--triangle pairs;
+\item it is a homology equivalence over $\F$;
+\item $\partial_2^{\rm rel}$ is invertible;
+\item the rooted repair graph $\mathfrak R_\psi(P)$ is a forest in which every connected component contains exactly one formal root.
+\end{enumerate}
+Thus, in height two for one new observation,
+\[
+\boxed{\text{homology-neutral}\iff\text{homotopy-neutral}\iff\text{repair forest}.}
+\]",
+V4-13,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Greedy logical collapse algorithm,Height two: from a boundary matrix to a repair forest; label cor:greedy; TeX line 463,Repair graph rooted forest,Leaf pruning outputs valid deleted-edge/triangle collapse sequence,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,NOVELTY_UNCLEAR,Graph leaf elimination,V4-12,"Independent 274738 height<=2 one-bit profiles over F2,F3,F5; DSU versus boundary ranks; actual collapse examples",PAPER_A_CORE,Retain as narrow adaptation/candidate; do not claim new general Morse or rooted-forest theory,"\label{cor:greedy}
+At height two, the following algorithm decides whether one added observation preserves homotopy:
+\begin{enumerate}[label=\arabic*.]
+\item list every descent edge $p<q$ with $b(p)=1,b(q)=0$;
+\item list every deleted three-chain $x<y<z$;
+\item repeatedly choose a currently deleted edge contained in exactly one currently deleted triangle and remove that edge--triangle pair;
+\item succeed if all deleted cells are exhausted; fail otherwise.
+\end{enumerate}
+The algorithm succeeds if and only if the refinement preserves homotopy.",
+V4-14,ProLT_Homotopy_Preserving_Observations_v0.4.tex,Local repair interpretation,Height two: from a boundary matrix to a repair forest; label (unnumbered label); TeX line 478,The same height-two rooted-forest setting,Every deleted implication edge has the described local triangle repair,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Interpretation of incidence elimination,V4-13,Not relied upon for general proof,PAPER_A_EXAMPLES,Credit standard machinery; preserve hypotheses,"A one-bit height-two refinement preserves homotopy exactly when every cluster of descent edges has:
+\begin{enumerate}[label=(\roman*)]
+\item a path of two-descent repair dependencies leading to a one-descent anchor triangle; and
+\item no cyclic repair dependency.
+\end{enumerate}
+Equivalently, every descent cluster has exactly one root anchor in the repair forest.",
+V4-15,ProLT_Homotopy_Preserving_Observations_v0.4.tex,General discrete-Morse preservation criterion,Beyond height two: discrete Morse repair; label thm:morse; TeX line 633,Complete relative acyclic matching on deleted chains; arbitrary height,K collapses to retained subcomplex L,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Relative discrete Morse theory;R19,V2-07,Not relied upon for general proof,PAPER_A_BACKGROUND,Credit standard machinery; preserve hypotheses,"\label{thm:morse}
+\statusS/\statusA\;
+If the deleted simplices admit a complete acyclic relative matching, then
+\[
+K\searrow L_b
+\]
+through a sequence of simple-homotopy reductions, and therefore adding $\psi$ preserves homotopy type.",
+V4-COMP,ProLT_Homotopy_Preserving_Observations_v0.4.tex / CSV,184088 height-two one-bit cases,Verification section and height2_repair_forest_summary.csv,"Naturally labelled exact-height-two posets on 3..6 vertices, all one-bit labels",184088 cases; nonredundant neutral rooted forests 38067,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,"Computational support, not proof",V4-12,Proof or construction inspected; not an exhaustive computation,REPRODUCIBILITY,Relabel last CSV column to clarify exclusion of redundant cases,,
+V4-E1,ProLT_Homotopy_Preserving_Observations_v0.4.tex,XOR and XNOR safe,Boolean examples section,Full Boolean square endpoints,Each retains a cone anchor and is neutral,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,Cone criterion,V4-06,Proof or construction inspected; not an exhaustive computation,PAPER_A_EXAMPLES,Do not extrapolate to arbitrary realized subposets,,
+V4-E2,ProLT_Homotopy_Preserving_Observations_v0.4.tex,NOR unsafe,Boolean examples section,Full Boolean square; NOR labels,"Bottom isolates, causing component defect",VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,H0 obstruction,V2-14,Proof or construction inspected; not an exhaustive computation,PAPER_A_EXAMPLES,Retain contrast,,
+V5-01,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Block refinement as order thinning,Base setting: post-$T_0$ ProLT refinement; label thm:blockorder; TeX line 110,Non-splitting block label a:P -> B^k,Refined order is P intersect inverse-image coordinate order,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Product-order intersection,V2-03,Not relied upon for general proof,PAPER_A_LIMITS,Credit standard machinery; preserve hypotheses,"\label{thm:blockorder}
+\statusA\;
+The refined signature poset has the same underlying vertices as $P$, with order
+\[
+p\le_\Psi q
+\iff
+p\le_\Phi q\quad\text{and}\quad
+\alpha_\Theta(p)\le\alpha_\Theta(q).
+\]
+In particular $P_\Psi$ is a same-vertex suborder of $P_\Phi$.",
+V5-02,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Intersection theorem,A block is the intersection of its coordinates; label thm:intersection; TeX line 141,Coordinate retained complexes K_j on common coarse P,Joint complex is intersection of K_j,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Chainwise coordinate conjunction,V5-01,Not relied upon for general proof,PAPER_A_LIMITS,Credit standard machinery; preserve hypotheses,"\label{thm:intersection}
+\statusA\;
+As order relations and as simplicial complexes,
+\[
+P_\Psi=\bigcap_{j=1}^k P_j,
+\qquad
+L_\Theta=\bigcap_{j=1}^k K_j.
+\]",
+V5-03,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Sequential safety is sufficient,A block is the intersection of its coordinates; label prop:sequential; TeX line 165,Every actual sequential inclusion is neutral,Their composite joint inclusion is neutral,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Composition;two-out-of-three,V5-01,Not relied upon for general proof,FOUNDATIONS_REPORT,Credit standard machinery; preserve hypotheses,"\label{prop:sequential}
+\statusA\;
+Every sequentially homotopy-safe block is jointly homotopy-neutral.",
+V5-04,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Order-thinning universality,Universality of simultaneous same-vertex order thinning; label thm:universality; TeX line 180,Q contained in P on same finite set,Principal Q-ideal labels realize Q by a block,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Principal-ideal Boolean embedding,V2-03,Not relied upon for general proof,PAPER_A_LIMITS,Credit standard machinery; preserve hypotheses,"\label{thm:universality}
+\statusA/\statusC\;
+Let $P$ be any finite post-$T_0$ ProLT signature poset and let $Q$ be any partial order on the same vertex set satisfying
+\[
+Q\subseteq P
+\]
+as relations. Then there is a finite block of propositional observations $\Theta$ such that the simultaneous refinement of $P$ by $\Theta$ is exactly $Q$.",
+V5-05,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Basic bounds,Observation dimension of a target refinement; label (unnumbered label); TeX line 235,Relative observation dimension as defined; n vertices,odim=0 iff P=Q; odim<=n,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,CORRECT_BUT_TRIVIAL/IMMEDIATE,Immediate representation bound,V5-04,Not relied upon for general proof,DIMENSION_NOTE_REPLACE,Credit standard machinery; preserve hypotheses,"\statusA\;
+For every same-vertex suborder $Q\subseteq P$,
+\[
+0\le\odim_P(Q)\le |P|.
+\]
+Moreover $\odim_P(P)=0$.",
+V5-06,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Connection with classical 2-dimension,Observation dimension of a target refinement; label prop:2dim; TeX line 248,P is total; Q contained in P,ORIGINAL: odim_P(Q)=classical dim_2(Q),FALSE/COUNTEREXAMPLE,Refuted by two two-vertex examples,NOT_APPLICABLE_FALSE,R06 definition contradicts asserted identification,V5-04;V5-05,dimension_checks.json; exhaustive 382 small pairs confirms corrected theorem,DIMENSION_NOTE_REPLACE,Delete equality; replace by A2 coloring/generalized Boolean-rank theorem and dim2 upper bound,"\label{prop:2dim}
+\statusS/\statusA\;
+Suppose $P$ is a total order extending $Q$ on the same vertex set. Then
+\[
+\odim_P(Q)=\dim_2(Q),
+\]
+where $\dim_2(Q)$ is the classical minimum dimension of a Boolean lattice into which $Q$ order-embeds by subset inclusion.",
+V5-07,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Complexity inheritance,Observation dimension of a target refinement; label (unnumbered label); TeX line 263,"Explicit finite P,Q and k; claimed even total P",ORIGINAL: NP-completeness inherited from classical 2-dimension,NEEDS_MAJOR_REPAIR,Original proof invalid; total-coarse-order restriction unresolved,BLOCKED_BY_CORRECTNESS,R06 does not justify reduction;A2 repairs general case,V5-06,"1099 graph reductions checked, supporting new proof, not original proof",DIMENSION_NOTE_BLOCKED,Withdraw inherited total-order hardness; use proved height-one general hardness A2,"\statusS/\statusA\;
+The decision problem
+\[
+\text{``is }\odim_P(Q)\le k\text{?''}
+\]
+is NP-complete already when $P$ is supplied as a total order extending $Q$.",
+V5-08,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Coefficient-sensitive height-two criterion,Height-two block refinements over arbitrary coefficients; label thm:coeff; TeX line 297,Height<=2; same vertices; integral relative matrix B,Field neutrality iff square invertible; integral iff unimodular; coker gives torsion,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Smith normal form;R03,V3-09,Not relied upon for general proof,PAPER_A_LIMITS,Credit standard machinery; preserve hypotheses,"\label{thm:coeff}
+\statusS/\statusA\;
+Suppose $|E_{\rm del}|=|T_{\rm del}|=m$. Then:
+\begin{enumerate}[label=(\roman*)]
+\item over a field $\Bbbk$, $L\hookrightarrow K$ is a homology equivalence iff $\det(B_{\mathbb Z})$ is nonzero in $\Bbbk$;
+\item over $\mathbb Q$, this is equivalent to $\det(B_{\mathbb Z})\ne0$;
+\item over $\mathbb Z$, the relative homology vanishes iff $\det(B_{\mathbb Z})=\pm1$;
+\item if $d:=\det(B_{\mathbb Z})\ne0$, then
+\[
+H_2(K,L;\mathbb Z)=0,
+\qquad
+|H_1(K,L;\mathbb Z)|=|d|;
+\]
+\item for a prime $p$, relative homology over $\mathbb F_p$ is nonzero exactly when $p\mid d$.
+\end{enumerate}
+If the two deleted-cell counts differ, relative homology cannot vanish over any field.",
+V5-09,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,ProLT block defect as a rooted forest,The correct prior-art framework: higher-dimensional rooted forests; label thm:rootedtranslation; TeX line 339,G generated by deleted triangles in original text; proposed root subgraph,ORIGINAL: reduced rooted-forest matrix equals full relative B,NEEDS_MINOR_REPAIR,Identification fails for omitted zero rows; nonsingular consequence salvageable,STANDARD_SPECIALIZATION,R03 rooted forests;zero-row support issue,V5-08,Two-chain with label 10 supplies missing-row counterexample,PAPER_A_BACKGROUND,Take G=K^(1) union deleted triangles and R=retained edges; or explicitly handle unsupported deleted edges first,"\label{thm:rootedtranslation}
+\statusS/\statusA\;
+With the notation above, the Bernardi--Klivans submatrix
+\[
+\partial_{\bar R,F}
+\]
+is exactly $B_{\mathbb Z}$ up to row/column orientation signs. Consequently, when the deleted-cell counts agree,
+\[
+(F,R)\text{ is a higher-dimensional rooted forest}
+\iff
+\det B_{\mathbb Z}\ne0.
+\]
+Furthermore, if this holds,
+\[
+w_{\mathbb Z}(\Theta/\Phi)
+=|H_1(F,R;\mathbb Z)|.
+\]",
+V5-10,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Acyclic fitting orientation criterion,Fitting orientations and direct collapse; label thm:morsesafe; TeX line 376,Complete acyclic fitting orientation of deleted edge-triangle incidence,Direct relative collapse and homotopy equivalence,VALIDATED_STANDARD,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,R19;R03,V4-15;V5-08,Not relied upon for general proof,PAPER_A_LIMITS,Credit standard machinery; preserve hypotheses,"\label{thm:morsesafe}
+\statusS/\statusA\;
+If a height-two block refinement is Morse-safe, then
+\[
+K\searrow L
+\]
+through a sequence encoded by the relative acyclic matching. Hence $L\hookrightarrow K$ is a simple homotopy equivalence.",
+V5-11,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Unique fitting orientation is sufficient,Fitting orientations and direct collapse; label cor:unique; TeX line 389,Unique perfect matching/fitting orientation,"Acyclic matching, hence direct collapse",VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Alternating-cycle matching criterion,V5-10,Not relied upon for general proof,PAPER_A_LIMITS,Credit standard machinery; preserve hypotheses,"\label{cor:unique}
+\statusA\;
+If the deleted-cell incidence graph has a unique perfect matching, then the block is Morse-safe and therefore homotopy-preserving.",
+V5-12,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,The $010/101$ three-chain,Interaction defects; label ex:destructive; TeX line 417,P is three-chain; bits 010 and 101,Each alone neutral; joint disconnects; explicit destructive interaction,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,STANDARD_SPECIALIZATION,Elementary intersection example;R18,V5-02,"Independent exact integer matrix, Smith form, fields 2/3/5, all perfect matchings and beat/collapse checks; see named JSON",PAPER_A_EXAMPLES,Credit standard machinery; preserve hypotheses,"\label{ex:destructive}
+Let
+\[
+p_0<p_1<p_2
+\]
+be a three-element coarse chain. Its order complex is a filled triangle. Add two observations with words
+\[
+b_1=010,
+\qquad
+b_2=101.
+\]
+The exact one-bit chain classification of v0.3 says that each coordinate separately is homotopy-neutral. Explicitly, the first leaves the two-edge tree
+\[
+p_0p_1\cup p_0p_2,
+\]
+and the second leaves
+\[
+p_1p_2\cup p_0p_2.
+\]
+Their simultaneous intersection retains only the edge $p_0p_2$ plus the isolated vertex $p_1$. Therefore the joint refinement changes $H_0$ and is not homotopy-neutral.",
+V5-13,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,A five-state compensating block,Interaction defects; label ex:compensating; TeX line 443,"Five-state specified P; two-bit labels (3,0,1,2,3)",Both single coordinates active; block neutral and collapsible,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,NOVELTY_UNCLEAR,Explicit computed/adapted example,V5-08,"Independent exact integer matrix, Smith form, fields 2/3/5, all perfect matchings and beat/collapse checks; see named JSON",PAPER_A_EXAMPLES,Retain as narrow adaptation/candidate; do not claim new general Morse or rooted-forest theory,"\label{ex:compensating}
+Let $P$ have strict comparisons
+\[
+0<1,\;0<2,\;0<3,\;0<4,\qquad
+1<2,\;1<3,\;1<4.
+\]
+Thus $K$ consists of three triangles $012,013,014$ sharing the edge $01$.
+Assign two-bit labels
+\[
+\alpha(0)=11,\quad
+\alpha(1)=00,\quad
+\alpha(2)=01,\quad
+\alpha(3)=10,\quad
+\alpha(4)=11.
+\]
+The joint refined order has strict comparisons
+\[
+0<4,
+\qquad
+1<2,\;1<3,\;1<4.
+\]
+The deleted edges are
+\[
+01,02,03
+\]
+and the deleted triangles are
+\[
+012,013,014.
+\]
+With these row and column orders,
+\[
+B_{\mathbb Z}=
+\begin{bmatrix}
+1&1&1\\
+-1&0&0\\
+0&-1&0
+\end{bmatrix},
+\qquad
+\det B_{\mathbb Z}=1.
+\]
+Its incidence graph has a unique perfect matching, so Corollary~\ref{cor:unique} gives a collapse and the block is homotopy-neutral.
+
+However, either coordinate alone deletes two edges but all three triangles. Its relative matrix is $2\times3$ of rank two, leaving a one-dimensional relative $H_2$; because $K$ is contractible, the corresponding one-coordinate refined complex has a nontrivial $H_1$. Thus neither coordinate is safe to add first, even though the pair is safe together.",
+V5-14,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Three-bit neutral block with no acyclic fitting orientation,A multi-orientation example beyond direct repair collapse; label ex:multi; TeX line 501,"Eight-state specified P; three-bit labels (1,3,4,6,0,3,4,6)",Unimodular relative B; three cyclic matchings; beat-contractible endpoints; no direct collapse,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,NOVELTY_UNCLEAR,Fitting-orientation cancellation;R03,V5-08;V5-10,"Independent exact integer matrix, Smith form, fields 2/3/5, all perfect matchings and beat/collapse checks; see named JSON",PAPER_A_LIMITS,Retain as narrow adaptation/candidate; do not claim new general Morse or rooted-forest theory,"\label{ex:multi}
+Let $P$ have vertices $0,\dots,7$ and strict comparisons
+\[
+\begin{aligned}
+&0<2,0<3,0<5,0<6,0<7,\\
+&1<3,1<4,1<5,1<6,1<7,\\
+&2<5,2<6,2<7,\\
+&3<5,3<6,3<7,\\
+&4<5,4<6.
+\end{aligned}
+\]
+Assign labels
+\[
+\begin{array}{c|cccccccc}
+p&0&1&2&3&4&5&6&7\\\hline
+\alpha(p)&001&011&100&110&000&011&100&110.
+\end{array}
+\]
+The surviving strict comparisons are
+\[
+0<5,\quad1<5,\quad2<6,\quad2<7,\quad3<7,\quad4<5,\quad4<6.
+\]
+There are eleven deleted edges and eleven deleted triangles. With the natural lexicographic orders they give the integral relative matrix
+\[
+B_{\mathbb Z}=\begin{bmatrix}
+1&1&1&0&0&0&0&0&0&0&0\\
+0&0&0&1&1&1&0&0&0&0&0\\
+0&-1&0&0&-1&0&0&0&0&0&0\\
+0&0&-1&0&0&-1&0&0&0&0&0\\
+0&0&0&0&0&0&1&1&1&0&0\\
+0&0&0&0&0&0&0&0&0&1&1\\
+0&0&0&0&0&0&0&-1&0&0&-1\\
+0&0&0&0&0&0&0&0&-1&0&0\\
+1&0&0&0&0&0&0&0&0&0&0\\
+0&0&0&1&0&0&1&0&0&0&0\\
+0&0&0&0&1&0&0&1&0&0&0
+\end{bmatrix}.
+\]
+One computes
+\[
+\det B_{\mathbb Z}=1.
+\]
+The incidence graph has exactly three fitting orientations. Exhaustive inspection of those three matchings shows that each contains a closed relative $V$-path, so there is no complete acyclic matching that pairs only the deleted edges and deleted triangles.
+
+Nevertheless both $P$ and the refined poset are dismantlable by beat-point removals. One coarse sequence is
+\[
+2,0,3,4,5,6,1
+\]
+(with suitable alternating up/down beat witnesses), leaving vertex $7$; a refined sequence is
+\[
+0,1,3,5,4,6,2,
+\]
+again leaving $7$. Hence both order complexes are contractible. Any map between nonempty contractible spaces is a homotopy equivalence, so the inclusion $L\hookrightarrow K$ is a homotopy equivalence even though the complete deleted-cell repair mechanism fails.",
+V5-15,ProLT_Simultaneous_Observation_Refinement_v0.5.tex,Failure of the one-bit collapse equivalence for blocks,A multi-orientation example beyond direct repair collapse; label thm:failure; TeX line 556,Arbitrary blocks rather than one bit at height<=2,Homotopy-neutrality no longer implies direct relative collapse,VALIDATED_ADAPTATION,Proof inspected and independently checked at mathematical level,NOVELTY_UNCLEAR,Explicit strict separation,V5-14,"Independent exact integer matrix, Smith form, fields 2/3/5, all perfect matchings and beat/collapse checks; see named JSON",PAPER_A_LIMITS,Retain as narrow adaptation/candidate; do not claim new general Morse or rooted-forest theory,"\label{thm:failure}
+\statusA/\statusC\;
+For simultaneous height-two refinement, homotopy-neutrality does not imply the existence of an acyclic fitting orientation on the deleted edge--triangle pair. Consequently the v0.4 equivalence
+\[
+\text{homotopy-neutral}\iff\text{repair collapse}
+\]
+is special to the one-bit height-two regime.",
+V5-COMP,ProLT_Simultaneous_Observation_Refinement_v0.5.tex / verifier,10468 two-bit cases,Verification section,"Naturally labelled height<=2 posets through four vertices, all two-bit labels",4459 neutral;100 destructive,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,"Computational support, not proof",V5-08;V5-12,Proof or construction inspected; not an exhaustive computation,REPRODUCIBILITY,Report exact labelled-enumeration convention,,
+A1,AUDIT_ADDITIONS_AND_PROOFS.md,Integral incidence and full relative homology,A1,One-bit thinning;height<=2,TU; integral relative groups free; ranks from rooted graph components/cycles,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,NOVELTY_UNCLEAR,R03;R04,V4-11;V4-12,Independent scripts and exact constructions where applicable,PAPER_A_CORE,"New audit proof, not present in original package; novelty not certified",,
+A2,AUDIT_ADDITIONS_AND_PROOFS.md,Conflict coloring and corrected general NP-completeness,A2,Explicit Q subset P on same vertices,odim=chromatic conflict number=generalized Boolean rank; NP-hard already height<=1,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R07;R08,V5-04;V5-05,"Independent scripts and exact constructions where applicable; named example minimum bit counts 1,2,3 certified in *_minimal_labels.json",DIMENSION_NOTE_REPLACE,"New audit proof, not present in original package; novelty not certified",,
+A3,AUDIT_ADDITIONS_AND_PROOFS.md,Relative Mayer-Vietoris interaction,A3,"Two subcomplexes A,B of K","SES and LES; if coordinate defects vanish H_n(K,A cap B)=H_(n+1)(K,A cup B)",VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R18,V5-02,Independent scripts and exact constructions where applicable,PAPER_A_LIMITS,"New audit proof, not present in original package; novelty not certified",,
+A4,AUDIT_ADDITIONS_AND_PROOFS.md,Unique matching iff direct relative collapse,A4,Arbitrary block;height<=2,Complete acyclic fitting orientation iff unique perfect matching iff direct collapse,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R03;R19,V5-10;V5-11,Independent scripts and exact constructions where applicable,PAPER_A_LIMITS,"New audit proof, not present in original package; novelty not certified",,
+A5,AUDIT_ADDITIONS_AND_PROOFS.md,Torsion realization and explicit 13/79-state blocks,A5,Height-two face-poset/tree-target construction,Arbitrary finite abelian relative H1 torsion; Smith factors2 and3 examples; 13-state torsion witness has an exact two-bit realization,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,STANDARD_SPECIALIZATION,R03;R15;R18,V5-04;V5-08,Independent scripts and exact constructions where applicable,PAPER_A_LIMITS,"New audit proof, not present in original package; novelty not certified",,
+A6,AUDIT_ADDITIONS_AND_PROOFS.md,One-bit cone/whisker universality,A6,"Any nonempty R,minimal z;add top t;bits z=t=0,others1",Coarse cone; refined R with whisker; arbitrary refined type; undecidability and height3 torsion,VALIDATED_ADAPTATION,See master report and corrections for proof/evidence scope,NOVELTY_UNCLEAR,Elementary cone;R05,V2-03,Independent scripts and exact constructions where applicable,PAPER_A_LIMITS,"New audit proof, not present in original package; novelty not certified",,

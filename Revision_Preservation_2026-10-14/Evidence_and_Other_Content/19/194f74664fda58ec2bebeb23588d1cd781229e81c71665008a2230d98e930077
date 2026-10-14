@@ -1,0 +1,208 @@
+# Formal Theorem Candidates for Abstract Novelty Search
+
+These statements intentionally strip away most CM-specific language so prior art can be searched under conventional mathematics terminology. Paper B material (basic CMs, XOR/AND contraction, operator fusion, formula-valued LMs, LM valuation and pairing) is excluded from the novelty scope of the prospective paper.
+
+## Common notation
+
+Let `F2={0,1}`. Let `V=F2^4` with ordered basis `e0,e1,e2,e3`. Define the cyclic shift
+
+`R e_j = e_(j+1 mod 4)`.
+
+For `a=(a0,a1,a2,a3)` define
+
+`Lambda(a)=a0 I XOR a1 R XOR a2 R^2 XOR a3 R^3`.
+
+Set `N=I XOR R`.
+
+## T1. Centralizer of a four-cycle
+
+`Cent_{M4(F2)}(R)={a0 I XOR a1 R XOR a2 R^2 XOR a3 R^3 : ai in F2}`.
+
+Hence the centralizer has 16 elements and
+
+`F2[R] ~= F2[x]/(x^4-1) ~= F2[u]/(u^4)` with `u -> I XOR R`.
+
+Expected status: classical algebra. The novel question is semantic origin from logical-cell rotation.
+
+## T2. Boolean degree-reversibility equivalence
+
+For `f:F2^2 -> F2`, let `a` be its cyclically ordered truth vector and write
+
+`f(x,y)=c0 XOR cx x XOR cy y XOR cxy xy`.
+
+Then the following are equivalent:
+
+1. `Lambda(a)` is invertible.
+2. `a0 XOR a1 XOR a2 XOR a3 = 1`.
+3. `cxy=1`.
+4. `deg(f)=2`.
+
+Thus a binary Boolean function is genuinely nonlinear iff its lifted cyclic operator is reversible.
+
+Priority: very high novelty/generalization search.
+
+## T3. Reversal involution
+
+Let `K e_j=e_(-j mod 4)`. Then `K^2=I`, `K R K=R^-1`, and for the reversed coefficient vector `a^vee=(a0,a3,a2,a1)`,
+
+`K Lambda(a) K = Lambda(a^vee)=Lambda(a)^T`.
+
+Also `<R,K>` is the dihedral symmetry group of the square. Investigate when `a^vee` is exactly argument exchange of the underlying Boolean function.
+
+## T4. Complement as terminal-filtration translation
+
+Let `1vec=(1,1,1,1)`. Then
+
+`Lambda(a XOR 1vec)=Lambda(a) XOR (I XOR R XOR R^2 XOR R^3)`.
+
+Since `N=I XOR R`,
+
+`N^3=I XOR R XOR R^2 XOR R^3`,
+
+so for a Boolean function `f`,
+
+`Lambda(NOT f)=Lambda(f) XOR N^3`.
+
+## T5. Nilpotent rotational-difference filtration
+
+For `N=I XOR R`,
+
+`N^4=0`, `N^3 != 0`, and `rank(N^k)=4-k` for `0<=k<=4`.
+
+The ideals of `A=F2[N]/(N^4)` form
+
+`0 < (N^3) < (N^2) < (N) < A`.
+
+Every nonzero `a in A` can be written `a=N^nu u` with a unit `u`, and as a Boolean-linear map `rank(a)=4-nu`.
+
+Abstractly standard; investigate the interpretation as successive discrete rotational differences.
+
+## T6. Boolean phase-interference identity
+
+Let
+
+`W=[[I,0],[I,I]]`, `D_k=diag(I,R^k)`.
+
+Then `W^2=I` and
+
+`W D_k W (v,0)^T = (v, v XOR R^k v)^T`.
+
+For `k=0`, the second component cancels; for suitable `v` and `k=1,2,3`, it remains nonzero. This is a precise split-relative-rotation-recombine interference identity over F2.
+
+## T7. Local-equivalence invariance of complete support measurements
+
+Let `A=F2[u]/(u^4)` and `M in M2(A)`. Let local measurement settings be ordered bases given by rows of `GL2(A)`. Define
+
+`(i,j) possible iff r_i M s_j^T != 0`.
+
+For `U,V in GL2(A)` and `M'=U M V^T`,
+
+`S_{M'}(B,C)=S_M(BU,CV)` up to setting/outcome relabeling.
+
+Hence contextuality properties invariant under relabeling depend only on the `GL2(A)xGL2(A)` orbit; Smith normal form can classify them when the measurement universe is closed under reversible basis changes.
+
+## T8. Complete contextuality classification for chain-ring normal forms
+
+Let
+
+`D_{a,b}=diag(u^a,u^b)`, `0<=a<=b<=4`, `u^4=0`.
+
+Let `M` be the complete family of unordered projective reversible local bases of `A^2` induced from `GL2(A)`, modulo independent unit rescaling of rows and outcome exchange. `|M|=192`.
+
+For every pair of local settings, outcome `(i,j)` is possible iff `r_i D_{a,b} s_j^T != 0`.
+
+Classification:
+
+- `a=b<4`: strongly contextual.
+- `a<b<4`: logically contextual but not strongly contextual.
+- `a<4, b=4`: relationally local.
+- `a=b=4`: empty support.
+
+Priority: one of the strongest theorem-level novelty candidates. Scope must always say relative to the full 192-basis A-linear measurement family.
+
+## T9. Uniform Hardy witness for all unequal nonzero valuations
+
+Let `0<=a<b<4`, `p=u^a`, `q=u^b`, `c=u^(b-a)`, so `q=pc`, and `D=diag(p,q)`.
+
+There exists a fixed 3-basis template (using reversible bases equivalent to `R`, `X`, and `D_c`) whose four support contexts have the Hardy implication pattern: a specified possible seed event has no compatible deterministic global extension. This proves logical contextuality for every off-diagonal class. The full support nevertheless admits at least one global section, proving non-strong contextuality.
+
+Priority: high model-specific theorem and target for generalization to `F_q[u]/(u^s)`.
+
+## T10. Tensor-base inequivalence over a ring with zero divisors
+
+Let `A=F2[u]/(u^4)`. There exist nonzero `a,b in A` such that
+
+`a tensor_A b = 0`
+
+while
+
+`a tensor_F2 b != 0`.
+
+Example: `a=u^3`, `b=u`. Thus tensoring over the coefficient ring and literal tensoring over the base field give inequivalent product-state and separability notions.
+
+Abstract fact standard; operational consequences in modal/resource theories are the research target.
+
+## T11. Even-dimensional transpose-orthogonal operator-basis obstruction
+
+Let `n` be even and
+
+`O(n,2)={U in GL_n(F2): U^T U=I}`.
+
+Every column of `U` has odd Hamming weight, hence every `U` has even total Hamming weight. Therefore every `vec(U)` lies in the codimension-one even-parity hyperplane of `F2^(n^2)`.
+
+Consequently the vectorizations of transpose-orthogonal matrices cannot span `M_n(F2)`; in particular no `n^2` such matrices form a complete operator basis.
+
+Priority: strong small-theorem novelty candidate; search aggressively for folklore/prior equivalents.
+
+## T12. Rank criterion for exact finite-field teleportation
+
+Let `V=F2^d`, resource matrix `M in M_d(F2)`, and branch matrix `R_m in GL_d(F2)`. If the receiver map is
+
+`T_m=M^T R_m^T`,
+
+then `rank(T_m)=rank(M)`. A correction satisfying `C_m T_m=I_d` exists iff `rank(M)=d`. Therefore with an invertible complete analyzer, universal exact linear teleportation occurs iff the resource is full rank.
+
+Expected status: background / known consequence, not central novelty.
+
+## T13. Multi-copy rank activation under unrestricted field-linear filtering
+
+If `rank(M)=r`, then `rank(M tensor^k)=r^k`. If `r^k>=d`, there exist linear filters `L,R` such that
+
+`L M^(tensor k) R^T=I_d`.
+
+Hence a one-copy singular resource may yield an exact d-dimensional full-rank resource from finitely many copies under unrestricted field-linear filtering.
+
+Expected status: generic linear algebra / resource-theory background; important as a correctness boundary.
+
+## T14. Restricted versus unrestricted orbit collapse
+
+Under local `GL2(A)xGL2(A)` actions, the Smith pair `(a,b)` of `D_{a,b}` is invariant. Under the embedded unrestricted `GL8(F2)xGL8(F2)` action, ordinary rank is complete for left-right equivalence. The Boolean rank is
+
+`r(a,b)=8-a-b`.
+
+Thus distinct A-linear classes can collapse into one unrestricted field-linear orbit; e.g. `(0,2)` and `(1,1)` are distinct over `A` but both have rank 6 and are equivalent under unrestricted `GL8(F2)` left-right transformations.
+
+## T15. Same unrestricted rank, different restricted contextuality
+
+There exist resources in the same unrestricted `GL8(F2)xGL8(F2)` orbit but with different contextuality classifications relative to the complete restricted A-linear measurement family.
+
+Candidate example:
+
+- `D_{0,2}`: logically contextual but not strongly contextual.
+- `D_{1,1}`: strongly contextual.
+
+Both have Boolean rank 6.
+
+Therefore the restricted contextuality hierarchy detects module/valuation structure erased by unrestricted field-linear rank.
+
+## Priority shortlist for exact abstract prior-art searches
+
+1. T2 degree-reversibility equivalence and higher-arity generalization.
+2. T4 complement-filtration correspondence.
+3. T3 logical reversal / cyclic inversion semantic bridge.
+4. T8 complete chain-ring contextuality classification.
+5. T9 uniform nilpotent Hardy family.
+6. T11 even-dimensional binary-orthogonal operator-basis obstruction.
+7. T15 same unrestricted rank but different restricted contextuality.
+
+The broad conceptual research object is the restricted modal/operator theory obtained by starting from a four-cycle on the coefficient positions of a binary Boolean function, taking its rotation-equivariant algebra, and restricting multipartite transformations and measurements to structures inherited from that algebra.

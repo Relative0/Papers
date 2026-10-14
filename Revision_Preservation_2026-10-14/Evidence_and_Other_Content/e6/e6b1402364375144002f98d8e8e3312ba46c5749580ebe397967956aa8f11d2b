@@ -1,0 +1,57 @@
+{
+  "version": "T3-C2-20260928-v1",
+  "theory_sha256": "a2d84288aafa9b1ec38ea794a6830aa2120028b5ec96d334e8e745c4e64abbec",
+  "contract": "supplied fixed-cut factors; named MSB coordinates; source-discarded T3; cumulative distinct updates; COUNT at every prefix",
+  "primary_storage_prediction": "(2**r-1)*((p+1)*D(p,k)+(q+2)*D(q,k)) < r*(2**p+2**q)",
+  "prediction_decision": "Check fixed-width dense counter payload exactly, and independently check whether the same inequality predicts actual full serialized byte crossover. Metadata exceptions falsify the unqualified byte criterion, not T3 correctness or asymptotic bound.",
+  "sparse_and_orientation": "secondary descriptive analyses only; never redefine dense criterion",
+  "depths": [
+    0,
+    1,
+    2,
+    4,
+    "n"
+  ],
+  "depth_rule": "cap at n and deduplicate",
+  "batches": [
+    1,
+    8,
+    64,
+    256
+  ],
+  "batch_semantics": "actual repeated COUNT calls at initial state and after each of k legal distinct-coordinate updates; no reset horizon",
+  "repetitions": 2,
+  "seed": 20260928,
+  "method_order": "seeded shuffled method order per case, k, mode, batch and repetition",
+  "methods": [
+    "t3_dense_row",
+    "t3_sparse_row",
+    "t3_sparse_column",
+    "t3_adaptive",
+    "raw_factor",
+    "draft3_histogram",
+    "packed_native",
+    "cudd_native"
+  ],
+  "natural_incidence": "all 2119 previous cut cases, all capped depth strata, all 20 source designs retained including excluded outputs",
+  "natural_timing_selection": "one case per admitted design: largest n, tie broken by SHA256(case_id); no selection using favorable outcome",
+  "synthetic": "balanced m=2,4,6,8,10; rank-one rectangles and rank-two complementary parity; random supplied widths 2,4 at m=4,8; zero, one, and width-inflated cancellation controls",
+  "modes": [
+    "warm_persistent",
+    "fresh_object_reload",
+    "fresh_process_verified_page_cold"
+  ],
+  "fresh_process_panel": "all selected natural cases and synthetic m=8 cases; k=min(2,n), batch=64, one trial per method; other cells use two in-process repetitions",
+  "counter_allocation_cap": 200000,
+  "dense_rank_cap": 12,
+  "trial_timeout_seconds": 60,
+  "supported_limits": "n<=20 for packed truth construction; C++ exact uint64 counting rejects n>62; T3 arbitrary Python integers, measured bounded cases",
+  "correctness": "exact direct factor oracle at every tested prefix; exhaustive all legal paths on small artifacts; residual binary round trips and source poisoning",
+  "cold_policy": "stage serialized file on Linux local /tmp filesystem; fsync and POSIX_FADV_DONTNEED; mincore before read must show zero resident pages; physical device cache not claimed cold",
+  "failure_policy": "retain all unsupported, failures, timeouts; no imputed times; no automatic favorable replacement",
+  "analysis_unit": "design; synthetic families separate; descriptive paired medians only; no novelty claim",
+  "lifecycle": "each measured trial includes actual construction, verification, serialization, load when applicable, indexing, updates and all executed counts; cold consumers add producer costs and parent wall time separately",
+  "build_algorithm": "per-profile superset zeta transform; measured cost, different construction schedule from Theory Walsh construction; exact same persistent moments",
+  "compiled_comparator": "CUDD via dd 0.6.0 builds and sifts a BDD from factor bit functions; C++17 -O3 exact memoized residual-count kernel with cached repeated counts; no floating point counting",
+  "decomposition_claim": "none; supplied factors fixed; CUDD sifting time charged; no cross-method cut-quality superiority claim"
+}

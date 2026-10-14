@@ -1,0 +1,202 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,booktabs,array}
+\usepackage{microtype,xurl,hyperref}
+\hypersetup{hidelinks}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\setlength{\emergencystretch}{3em}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\input{../../math/notation}
+\newcommand{\buildnote}[1]{\par\smallskip\noindent\textbf{Drafting instruction.} #1\par\smallskip}
+\newcommand{\figslot}[2]{\begin{figure}[ht]\centering\fbox{\begin{minipage}{0.9\linewidth}\textbf{Figure specification:} #1\par #2\end{minipage}}\caption{Planning placeholder; replace with the generated, source-linked figure.}\end{figure}}
+
+\title{Contextuality and Exact Information Resources\\over Finite Chain Rings}
+\author{Brian Theory\\\small Provisional article skeleton: theorem provenance retained}
+\date{18 September 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+We study possible-outcome support for bipartite matrices over finite commutative
+chain rings, using explicitly specified complete local basis measurements.
+The proposed article centers on a classification by the number of nonzero
+Smith factors and the multiplicity of the least valuation. Under a matched
+invertible-orbit communication task, the latter invariant gives an exact
+$d h$-message codebook bound. Universal exact teleportation instead requires
+invertibility and an admitted complete analyzer, giving sharp resource
+separations. We compare shared-ring and literal field tensors, explain the
+collapse of restricted distinctions under enlarged operations, and give a
+chosen symbolic-support interface back to Boolean logical matrices. These
+results concern algebraic support, not Born probabilities or a closed
+unrestricted process theory. The final introduction must distinguish candidate
+new classification/synthesis from standard ring and modal ingredients after
+the remaining theorem-level priority review.
+\end{abstract}
+\buildnote{This is a build-ready outline, not a completed submission or a claim
+of established priority. Canonical proof sources are in
+\path{../../math/THEOREM_BANK.tex}; cited section labels below are stable source
+anchors, not this skeleton's theorem numbers. Follow PAPER\_SCOPE.md and the
+claim ownership matrix.}
+
+\section{Introduction and the operational question}
+\buildnote{Open with the minimal dual-number resource $\varepsilon I_2$: four
+exact codewords and strong support contextuality, but no universal exact
+raw-state teleportation. Immediately state that it is nonprimitive. Then
+present the classification and its operation-dependent meaning. Explain why
+neither generic modal entanglement nor a circulant-coordinate change is a new
+claim. Cite Paper B only for the Boolean operator foundation.}
+
+The primary contribution paragraph should contain three connected assertions:
+a complete-basis contextuality classification, the matched $dh$ codebook
+formula, and a contrast with universal teleportation. Tensor choice, enlarged
+operations and closure limitations delimit these assertions. The arbitrary-party
+two-setting theorem identifies a separate measurement-setting boundary.
+
+\section{Algebra, effects and task contracts}
+Let $K$ be a finite commutative chain ring with radical $(\pi)$, nilpotency
+length $s$ and residue field $k$. A nonzero resource matrix has Smith exponents
+$a_1\leq\cdots\leq a_r<s$; zero factors have exponent $s$. Set
+$h=|\{j:a_j=a_1\}|$. Define primitive projective rows as unit-scaling classes
+of rows with a unit coordinate. Settings are complete invertible bases; a
+supported event has nonzero contraction.
+
+\buildnote{Insert precise definitions of global assignment and extension of
+a seed event. State whether the same ray in different settings is an additional
+identified measurement: the canonical theorem uses basis settings without
+adding further identification constraints. State DC and TP separately from
+\path{../../math/model_contracts.tex}. State exact raw-vector recovery and
+reference preservation. Do not imply a probability distribution.}
+
+\subsection{A concrete rotation-derived restriction}
+The coefficient rotation gives $\A=\F_2[R]\cong\F_2[u]/(u^4)$, $u=I+R$.
+This is a standard cyclic/chain algebra; it motivates a specified
+$\GL_m(\A)$ restriction rather than deriving a tensor or measurement rule.
+The lift is not a homomorphism for the original CM product.
+\buildnote{Import ROT-001--009 as labeled in the registry. Keep this motivation
+short; move detailed filtration/Boolean-degree calculations to a supplement.}
+
+\figslot{Typed model diagram}{Separate Paper B's Boolean formulas, coefficient
+rotation, chosen scalar algebra, shared versus literal tensor, admitted gates,
+admitted effects and support rule. Identify the choices explicitly.}
+
+\section{The complete-basis classification}
+\claimid{MOD-003}
+\begin{lemma}[Residue-hyperplane criterion]
+Over a finite commutative local ring, a global assignment exists precisely when
+there are residue hyperplanes on both sides whose complementary primitive
+lifts have uniformly nonzero cross contractions.
+\end{lemma}
+\buildnote{Insert the full selected-ray/complement-span proof from theorem-bank
+\texttt{sec:context}. Review locality versus chain-ring assumptions separately.}
+
+\claimid{MOD-005}
+\begin{lemma}[Uniform Hardy event]
+For $D=\diag(\pi^a,\pi^b)$ with $a\leq b<s$, write $c=\pi^{b-a}$.
+The displayed flip, shear and lower shear with entry $-c$ produce the supported
+Hardy event in the canonical four-context support table.
+\end{lemma}
+\buildnote{Print all four matrices and the seed-forcing contradiction; retain
+$-c$ in odd characteristic. Do not substitute a finite-field illustration for
+the valuation-uniform statement.}
+
+\claimid{MOD-004}
+\begin{theorem}[Smith contextuality trichotomy]
+Under all complete primitive projective local bases, a nonzero resource is
+local if $r=1$, logical but not strongly contextual if $r\geq2$ and $h=1$,
+and strongly contextual if $h\geq2$.
+\end{theorem}
+\buildnote{Insert all three proof directions and the embedded Hardy argument.
+The new independent dual-number SCC result is validation, not the proof.
+Add the complete15-class A table only after the theorem.}
+
+\claimid{MOD-007}
+\begin{theorem}[Two binary settings]
+Any nonzero multi-party $\F_2$ tensor with at most two complete binary settings
+per site has a global assignment. The statement extends to the specified local
+rings with residue $\F_2$.
+\end{theorem}
+\buildnote{Use the inclusion-minimal coefficient construction and leading-layer
+functional extension from \texttt{sec:settings}. Say explicitly that two-setting
+logical contextuality remains possible.}
+
+\section{Exact communication and leading layers}
+\claimid{RES-001, RES-002}
+\begin{theorem}[Fixed-orbit codebook]
+For $0\ne M\in\Mat_d(K)$, $d\geq2$, invertible local encoding followed by one
+arbitrary complete $K$-linear joint decoder permits exactly $dh$
+distinguishable messages. Advantage over $d$ is equivalent to strong
+contextuality under the matched contracts.
+\end{theorem}
+\buildnote{Insert the residue-span upper bound and invertible-encoder/basis-lift
+construction from \texttt{sec:resources}. Give at least one actual decoder and
+link all fourteen certificates. Call this a message maximum for a task, not an
+unqualified channel capacity or entropy.}
+
+\claimid{RES-003, RES-004, RES-007}
+\begin{proposition}[Teleportation boundary]
+Every nonzero universally correct raw-state branch has invertible transfer
+$T=M^TE^T$; in particular $M$ is invertible. Conversely an invertible resource
+and an admitted complete basis of invertible reshaped effects give exact
+correction. The supplied complete analyzers cover dimensions two and eight.
+\end{proposition}
+\buildnote{Prove collision in a singular branch, completeness, inverse correction
+and reference identity. Include $\pi^aI_d$ for $0<a<s$, mark it nonprimitive,
+and contrast a primitive dimension-three example. Do not silently claim
+unrestricted analyzer admissibility in every dimension.}
+
+\figslot{Resource hierarchy}{Show $r,h$, primitive/nonprimitive layers,
+$dh$, invertibility and the excluded zero resource. Include the two separators.}
+
+\section{Changing the model changes the resource}
+\claimid{MOD-001, MOD-002, MOD-009, MOD-010; RES-005, RES-006, RES-008}
+\buildnote{Prove the balanced-tensor zero-divisor witness and conditioning
+counterexample. Explain regular binary rank and full-group collapse. Include
+$\diag(1,1,u^3)$ and $\diag(1,u,u^2)$: both rank nine after regular expansion,
+but different $h$. Explain the specific restricted bipartite table isomorphism
+by Bob-side transpose involution; it does not contradict tensor inequivalence.
+Keep field extraction as a rectangular-filter identity, not a probability or a
+complete distillation protocol.}
+
+\section{A chosen symbolic-support interface}
+\claimid{LMB-001--008}
+\begin{proposition}[Enriched support]
+After choosing $\A$, valuations extend to
+$\Bool\otimes_{\F_2}\A\cong\Bool[u]/(u^4)$. For
+$q=\sum_j f_j u^j$, the formula $\bigvee_jf_j$ evaluates true exactly when the
+valued ring coefficient is nonzero. This applies to compatible enriched
+contractions.
+\end{proposition}
+\buildnote{Import Paper B's pairing naturality rather than re-proving it as new.
+State the local-ring idempotent obstruction and all additional choices. Put
+$B^{-1}P_iB$ update identities in an appendix. The interface is not an
+unrestricted closed process theory or a claim about mixed-characteristic
+F2-algebra enrichment.}
+
+\section{Evidence, related work and limitations}
+Compare MQT and generalized modal measurements \cite{Schumacher2010,Schumacher2012},
+the established contextuality hierarchy \cite{AbramskyBrandenburger2011},
+finite-chain-ring module work \cite{Byrne2021}, ring computation
+\cite{deBeaudrap2014}, and phase/process frameworks
+\cite{Coecke2010,Gogioso2017,Cho2015,CockettLack2002}.
+\buildnote{Replace this navigation paragraph with theorem-level comparisons.
+Present candidate priority as unresolved until checked. Distinguish the102
+pytest tests, source-script enumerations, and newly authored SCC/decoder
+checks. State all operation/measurement/primitivity restrictions in the main
+limitations section. Exclude Born probabilities and physical realizability.}
+
+\appendix
+\section{Proof and certificate supplement}
+\buildnote{Include basis counts, explicit decoder/analyzer matrices, field rank
+extraction, local-ring two-setting details, symbolic update identities and a
+claim-ID-to-final-theorem crosswalk. Preserve original sources and fresh rerun
+manifests. Do not repeat P02 query proofs.}
+
+% This fallback is generated from the same canonical records as references.bib.
+% For journal BibTeX tooling, use the two lines in the fallback branch directly.
+\IfFileExists{../../literature/references_static.tex}{\input{../../literature/references_static}}{
+\bibliographystyle{plain}
+\bibliography{../../literature/references}}
+\end{document}

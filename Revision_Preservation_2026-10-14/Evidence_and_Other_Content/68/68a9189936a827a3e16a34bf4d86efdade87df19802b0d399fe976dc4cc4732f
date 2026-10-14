@@ -1,0 +1,34 @@
+# Reproduction of the September 26 contract revision
+
+Run from this folder with Python 3.10.11 (or a compatible environment):
+
+```powershell
+python -m pip install -r requirements-checks.txt
+python run_checks.py
+```
+
+The pip command is setup guidance; dependencies were already installed on the revision host. The check runner uses local files only, disables third-party pytest plugin autoload, and does not execute historical timing workers or paid services. NumPy, pytest, and requests versions are pinned in `requirements-checks.txt`; additional installed optional-package versions and the host are recorded in `CHECK_RESULTS.json`. The checks require no external account.
+
+## What is reproduced
+
+`source/` is a 63-file import/test closure retrieved from public repository commit `0ab8ffd0c23ffa71ee951d375b1c170ffdcc084b`. Each downloaded file was matched to its Git tree blob SHA-1 and recorded with SHA-256 in `SOURCE_SNAPSHOT.json`; files are unmodified. It includes the actual pre-freeze protocol-v3 plan. Some modules support upstream output-budget mocks; their presence does not mean that remote-worker services were used. This is a selected correctness closure, not the complete repository or historical timing execution environment.
+
+The runner executes 90 upstream tests in `source/tests/test_cm_pair_alignment.py` and `source/tests/test_output_budget.py`, plus 27 cases in `test_contract.py`. One contract case checks 327,680 signed-frame fusion assignments over the five outer operations actually implemented by `cm_compose`. The original 1,048,576-case audit count covered all 16 abstract outer truth functions; it is a different check. The historical 116-test selection is also different and is not claimed to have been recreated.
+
+`historical_evidence.zip` recovers 95 byte-identical members from the local portfolio reproduction supplement. It contains the corrected S1/S2 CSV, scripts, generators, metadata and historical reports, plus P14 raw rows, scripts, freezes, holdouts and amendments. Redundant superseded S2 records were not promoted into current evidence. `HISTORICAL_RECOVERY.json` maps every recovered member to its original archive path and hash, records the original ZIP hash, and verifies eight P14 freeze source/holdout hashes.
+
+`check_historical.py` is a new independent recount, reading that ZIP without extracting or running historical scripts. It checks all recovered member hashes, the 10,500 S1/S2 cases, 10,389 all-arm cases, seven-metric generic/CM equality, failure counts, fold counts and S2 medians. It recomputes all four P14 primary point estimates and their case ratios from 51,102 raw timing rows. The original bootstrap interval endpoints are retained and labelled as not recomputed. No elapsed-time observations are generated anew.
+
+## Output records
+
+- `TEST_STDOUT.txt`: exact selected pytest output.
+- `CHECK_RESULTS.json`: command, environment, source revision, and all check results.
+- `HISTORICAL_CHECKS.json`: independent raw-record recount results.
+- `SOURCE_SNAPSHOT.json`: source file identity and scope.
+- `HISTORICAL_RECOVERY.json`: preserved archive-member identity and freeze checks.
+
+The manuscript's `BUILD_LOG.txt`, release manifest, and `VISUAL_QA.json` reside one directory above. Use the current runner instead of the preserved historical `check_manuscript.py`, whose old relative protocol dependency is absent from its historical folder.
+
+## Still open
+
+Recovery establishes the bytes used for this revision's checks. It does not prove that the public pinned commit produced the September 19 historical 116-test report or all historical timings. P14's imported compiler/dependency closure remains to be tied to its freeze; the complete historical bootstrap was not rerun. The primary pair-token campaign is still pre-freeze and unexecuted, and natural root-admission prevalence has not been measured. A public archive identifier and release licensing/provenance review are also still needed before a complete public artifact release. A negative or parity result is acceptable; changing the primary endpoint after observing results is not.

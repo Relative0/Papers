@@ -1,0 +1,701 @@
+PDF PAGE 1
+Checking extracted rules in Neural Networks
+Adrian Wurm ID
+Lehrstuhl Theoretische Informatik
+BTU Cottbus-Senftenberg
+Cottbus, Germany
+wurm@b-tu.de
+Abstract—In this paper we investigate formal verification of
+extracted rules for Neural Networks under a complexity theoretic
+point of view. A rule is a global property or a pattern concerning
+a large portion of the input space of a network. These rules are
+algorithmically extracted from networks in an effort to better
+understand their inner way of working. Here, three problems
+will be in the focus: Does a given set of rules apply to a given
+network? Is a given set of rules consistent or do the rules
+contradict themselves? Is a given set of rules exhaustive in the
+sense that for every input the output is determined? Finding
+algorithms that extract such rules out of networks has been
+investigated over the last 30 years, however, to the author’s
+current knowledge, no attempt in verification was made until
+now. A lot of attempts of extracting rules use heuristics involving
+randomness and over-approximation, so it might be beneficial to
+know whether knowledge obtained in that way can actually be
+trusted.
+We investigate the above questions for neural networks with
+ReLU-activation as well as for Boolean networks, each for several
+types of rules. We demonstrate how these problems can be
+reduced to each other and show that most of them are co-NP-
+complete.
+I. INTRODUCTION
+Given the huge success of utilizing Neural Networks, NN
+for short, in the last decades, such nets are nowadays widely
+used in all kind of data processing, addressing tasks of
+varying difficulty. There is a wide range of applications, the
+following exemplary references just collect non-exclusively
+some areas for further reading: Image recognition [11], natural
+language processing [7], autonomous driving [5], applications
+in medicine [12], and prediction of stock markets [4], just
+to mention a few. Khan et al. [10] provide a survey of such
+applications, a mathematically oriented textbook concerning
+structural issues related to Deep Neural Networks is [3].
+The huge expressiveness and universality of neural networks
+comes with the drawback that their inner way of working is
+barely comprehended at all. Even when given a rather small
+network, the reasons why it performs its task so well are hardly
+understandable and the input-output correspondence often can
+only be evaluated pointwise, and not fathomed in a broader
+sense. One approach to remedy this problem is rule extraction,
+that is, reading out macroscopic information from a neural
+network to obtain knowledge on larger amounts of inputs,
+which also links this topic to Explainable Artificial Intelligence
+(EAI), see [2]. A great number of algorithms performing this
+task has been introduced over the last three decades, all of
+them with different advantages and disadvantages, see for
+example [13], [16] or [6].
+A rule is a statement of the formφ(x)⇒ψ(N(x))about a
+neural network that either holds globally or fails for some input
+x. Here,φrefers exclusively to the input andψto the output.
+The optimal set of rules that one could obtain from a net by a
+rule-extracting algorithm would have the following properties:
+It is always correct in the sense that whatever it predicts is
+actually the output of the net, it covers the nets behavior in the
+sense that for every input at least one rule determines where to
+it is mapped, it is small meaning it contains only a few rules
+each of which can be represented in a low amount of space,
+and the algorithm by which it is obtained is efficient. We will
+concentrate on the first two properties, that are partly motivated
+by the fact that among the many different flavors of areas
+where the use of Neural Networks seems beneficial, some
+also involve safety-critical systems like autonomous driving
+or power grid management. In such a setting, when security
+issues become important, aspects of certification come into
+play [8].
+Our first group of main results are as follows: Checking
+whether such a property holds is a co-NP-complete problem
+when we restrict us to ReLU or Heaviside as activation. This
+holds for both real-valued and for Boolean networks. We
+also show several reductions between the types of rules that
+we introduce and conclude that the complexities of deciding
+whether the such rules hold will probably be close together
+for more complicated activation functions. The second major
+area of investigation when dealing with extracted rules is
+deciding whether they are consistent, meaning that they do
+not contradict each other, and whether for each input they
+enforce an output. We show that answering these questions
+is at least as hard as checking whether a rule holds already
+when using ReLU-activation; as soon as we allow rules with
+semi-linear descriptions these problems are co-NP-hard. When
+talking about complexities, we work in the standard Turing
+model. The paper is organized as follows: In Section II
+we collect basic notions, recall the definition of feedforward
+neural nets as well as the precise decision problems that we
+will discuss. Section III is about comparing the different types
+of extracted rules and classifying them by the computational
+complexity of verifying them. In Section IV we then determine
+the computational complexity of verifying whether a set of
+rules is consistent and/or exhaustive. We finish by outlining
+arXiv:2509.16547v1  [cs.AI]  20 Sep 2025
+
+PDF PAGE 2
+some future research.
+II. PRELIMINARIES ANDDEFINITIONS
+We start by defining the problems we are interested in.
+The networks considered are exclusively feedforward. In their
+most general form, they can process real numbers and contain
+rational weights.
+Definition 1.A (feedforward) neural network N is a layered
+graph that represents a function of formatR n →R m, for
+somen, m∈N. The first layer with labelℓ= 0is called
+theinput layerand consists ofnnodes calledinput nodes.
+The input valuex i of thei-th node is also taken as its output
+y0i :=x i. A layer1≤ℓ≤L−2is calledhiddenand consists
+ofk(ℓ)nodes calledcomputation nodes. Thei-th node of
+layerℓcomputes the outputy ℓi =σ ℓi(P
+j
+c(ℓ−1)
+ji y(ℓ−1)j +b ℓi).
+Here, theσ ℓi are (typically nonlinear)activationfunctions
+(to be specified later on) and the sum runs over all output
+neurons of the previous layer. Thec(ℓ−1)
+ji are rational constants
+which are calledweights, andb ℓi is a rational constant called
+bias. The outputs of all nodes of layerℓcombined gives
+the output(y ℓ0, ..., yℓ(k−1))of the hidden layer. The final
+layerL−1is calledoutput layerand consists ofmnodes
+calledoutput nodes. Thei-th node computes an outputy (L−1)i
+in the same way as a node in a hidden layer. The output
+(y(L−1)0, ..., y(L−1)(m−1))of the output layer is considered
+the outputN(x)of the networkN.
+We say that a network is classifying, if the outputN(x)
+is the argmax of the output layer in{0,1} m instead of the
+vector itself. This means, that an output component is 1 if the
+corresponding output node of the net returns a value that is
+at least as big as all the other entries, and 0 otherwise
+Note that it might happen that a classifying network returns
+an output where more than one entry is 1, this is, however,
+very unlikely in practice.
+We will deal a lot with logical statements and SAT-
+reductions, so in the following, when referring to the correct-
+ness of a 0-1-output or evaluating a Boolean statement on a
+numerical input, we interpret 0 as ”false” and 1 as ”true”.
+Definition 2.LetN:R n →R m be a neural network,S φ ⊆
+Rn andS ψ ⊆R m sets with indicator functionsφandψ,
+andn, m∈N. A rule is a statement of the formφ⇒ψ, that
+applies toNif for allx∈R n we have thatφ(x)⇒ψ(N(x)).
+We also denote it by(φ, ψ)and callφthe conditional part
+andψthe conclusion part. A rule is called
+i) propositional, ifφandψare given as Boolean combina-
+tions of paraxial inequalities, meaning intervals of the form
+xi ∈[a, b], where open intervals anda, b∈ {∞,−∞}are
+allowed,
+ii) oblique, ifφandψare given as Boolean combinations
+of half-spaces. Here, the hyperplanes defining the half-spaces
+do not need to be paraxial.
+iii) MofN, if there exist□∈ {≤,=,≥},t, r∈Nandφ i, i∈
+{1, ..., t}indicator functions on Boolean combinations of half-
+spaces, so that the conditional part is of the formφ(x)⇔
+|{i∈ {1, ..., t} |φ i(x)}|□r. Intuitively such a rule states
+that for allx∈R n,ψ(x)is necessarily the case wheneverx
+evaluates at least(□is≥), exactly(□is=)or at most(□
+is≤)rof theφ i to 1. 1
+For all of the above rule types, we consider the correspond-
+ing decision problem to find out whether such a rule holds or
+not.
+Example 1.Consider the following network, with all activa-
+tions being ReLU
+2
+-1
+1
+0
+-1
+1
+10
+Possible rules are:
+φ1 ⇒ψ 1, whereφ 1(x) =x 1 ∈(1,2)∨(x 2 ∈[2,5]∧x 1 ≥
+3)andψ 1(N(x)) =N(x) 1 ≥1. this rule is propositional,
+becausex 1 ∈(1,2), x 2 ∈[2,5], x 1 ≥3andN(x) 1 ≥1are
+all axial-parallel, it does apply toN.
+φ2 ⇒ψ 2, whereφ 2(x) =x 1 + 2x2 = 3∧x 1 ≤x 2
+andψ 2(N(x)) =N(x) 1 ≤N(x) 2. It is oblique, because
+x1 + 2x2 = 3, x 1 ≤x 2 andN(x) 1 ≤N(x) 2 are all linear
+conditions, but not propositional, becausex 1 + 2x2 = 3for
+example is not paraxial. It does not applyN.
+φ⇒ψ 1, whereφ(x)⇔ |{i∈ {1,2} |φ i(x)}|= 1and
+φ1, φ2, ψ1 are as above. It is MofN and it also applies toN.
+Definition 3.A neural networkN:{0,1} n → {0,1} m is
+called Boolean, if it only uses the Heaviside activation and
+all weights and biases are in{−1,0,1}; rules are defined
+analogously as above.
+Note that a Boolean network is by definition classifying. It
+is folklore that Boolean circuits can efficiently be translated to
+Boolean networks computing the same function and vice versa.
+Also we have that the framework remains as powerful if we
+demand thatφ, φ i, ψto be SAT-formulas. As consequence, it
+makes no sense to differ between oblique and propositional
+rules for Boolean networks any more, we therefore restrict
+ourselves to oblique rules.
+In the literature, see for example [14], one further type of
+frequently examined rules are so called fuzzy rules expressed
+in linguistic concepts such as: ”Ifx 1 andx 3 are big andx 2 is
+small, thenN(x) 2 is big”. In order obtain a proper decision
+problem, we interpret them as monotonicity statements, such
+as ”Ifx 1 ≥y 1,x 3 ≥y 3,x 2 ≤y 2, thenN(y) 2 ≤N(x) 2”
+Definition 4.LetNbe a NN,A∈Q ℓ×n andi∈ {1, ..., k}.
+Then we call(A, i)a monotonicity rule, it applies toNif for
+1In the literature,ris usually denoted bymandtbyn, consistent with
+the term MofN. In order to not get confused with the input dimensionnand
+the output dimensionmof the network, our notation differs.
+
+PDF PAGE 3
+allx, y∈R n
+argmax
+j
+N(x) j =i∧Ax≤Ay⇒argmax
+j
+N(y) j =i.
+(A, i)is a total monotonicity rule, if
+∀x, y∈R n :Ax≤Ay⇒N(x) i ≤N(y) i,
+whereAx≤Ayis understood componentwise, Boolean total
+monotonicity rules are defined analogously.
+In contrast to real-valued networks, it is highly likely that
+a high-dimensional output of a computation performed by a
+Boolean network does not have a unique argmax. It is therefore
+not sensible to define Boolean monotonicity rules.
+Note that a monotonicity rule(A, i)applies toNif and only
+if it applies as a total monotonicity rule to the corresponding
+classifying network.
+One general comment concerning the used computational
+model is in place here: The networks in principle are allowed
+to compute with real numbers, so the valid inputs belong to
+some spaceR n. However, the network itself is specified by
+its discrete structure and rational weights defining the linear
+combinations computed by its single neurons. Should one
+move on to more general activations, an issue to be discussed is
+the computational model in which one performs the network
+calculations. If, for example, the sigmoid activationf(x) =
+1/(1 +e−x)is used, it has to be specified in which sense it is
+computed by the net, exactly or approximately, and at which
+costs these operations are being performed. In our case, the
+networks are assumed to compute exactly, and the decision
+problems are examined in the Turing model. We presuppose
+the basic concepts of complexity theory.
+III. VERIFICATION OF EXTRACTED RULES
+We now intend to find out how difficult it is to answer the
+questions defined in Section II and whether their complexities
+can be related to each other.
+Theorem 1.LetNbe a network. The following hold for
+standard as well as for classifying networks:
+a) Propositional rules are special cases of oblique rules,
+which in turn are special cases of MofN rules.
+b) Checking monotonicity rules and total monotonicity rules
+is linear-time reducible to checking oblique rules.
+c) Checking total monotonicity rules is linear-time reducible
+to checking monotonicity rules.
+Proof.a) A propositional rule is a paraxial oblique rule, so
+obviously a special case. An oblique rule in turn is an MofN
+rule where□is=andt=r= 1.
+b) Let(A, i)be a monotonicity rule withA∈Q ℓ×n fitting
+the dimensions ofN. We construct a networkN ′ and a
+propositional rule(φ⇒ψ)so that(A, i)applies toNif
+and only if(φ⇒ψ)applies toN ′. The idea is thatN ′
+receives bothxandyas inputs, computes bothN(x)and
+N(y)in parallel,φdemands thatAx≤Ayandψdemands
+thatargmax
+j
+N(x) j =i⇒argmax
+j
+N(y) j =i. In the case of
+total monotonicity we demand thatN(x) i ≤N(y) i instead.
+It is easy to see thatAx≤Ayis semi-linear, soφis given
+trivially, the same holds forψin the case of total monotonicity.
+Forψ, observe thatargmax
+j
+N(x) j =i⇒argmax
+j
+N(y) j =i
+is equivalent to
+m^
+j=1
+N(y) j ≤N(y) i ∨
+m_
+j=1
+N(x) j > N(y) i,
+which is again semi-linear. Finally, observe that the parallel
+computation ofN(x)andN(y)inN ′ is just drawing together
+two copies ofN, which is again a network in the same model
+with the same activation functions.
+In the case of classifying networks, replace
+argmax
+j
+N(x) j =iwithN(x) i = 1.
+c) We can without loss of generality assume thatNhas only
+one output node since total monotonicity only depends on one
+output dimension, so let(A,1)be a total monotonicity rule
+forN. We want to construct a networkN ′ and an equivalent
+monotonicity rule(A ′,1). Total monotonicity is equivalent to
+∀x, y, a:N(x)≥a∧Ax≤Ay⇒N(y)≥a. We add another
+input node and propagate its value interpreted asato the
+output layer without interfering with the previous computation,
+so the new network computesN ′ :R n+1 →R 2,(x, a)7→
+(N(x) 1, a). To the matrixA, we add one zero column to avoid
+an interference betweenxanda, to the matrix obtained this
+way we add two rows(0,0, ...,0,1)and(0,0, ...,0,−1)to
+enforce thatais constant, so we have
+A′ =
+
+
+A11 . . . A 1n 0
+... ... ... ...
+Aℓ1 . . . A ℓn 0
+0 0 0 1
+0 0 0−1
+
+
+∈R (ℓ+2)×(n+1).
+Now it holds thatA ′(x, a)≤A ′(y, a′)if and only ifAx≤
+Ay∧a=a ′. This implies that the total monotonicity of(A, i)
+forNis equivalent to
+∀x, y, a:N(x)> a∧Ax≤Ay⇒N(y)≥a,
+which again is equivalent tomax(N(x), a) =N(x))∧
+A′(x, a)≤A ′(y, a′)⇒max(N(y), a) =N(y))which in
+turn is equivalent toargmax
+j
+N ′(x, a)j = 1∧A ′(x, a)≤
+A′(y, a′)⇒argmax
+j
+N ′(y, a)j = 1which finally is equivalent
+to monotonicity of(A ′,1)forN ′.
+Proposition 1.LetNbe a ReLU-net. Deciding whether a set
+of propositional rules holds for a network is co-NP complete
+for standard as well as for classifying networks. The same
+holds for monotonicity rules, oblique rules and MofN rules.
+Proof.By Theorem 1 it suffices to show that the verification of
+propositional rules and the verification of monotonicity rules
+are co-NP-hard and that the verification of MofN rules is in
+co-NP.
+
+PDF PAGE 4
+To show co-NP-hardness, letS(x 1, ..., xn)be an instance
+of 3SAT. To reduce it to an instance of the verification
+of propositional rules, we construct a networkNwithn
+input nodes by gadgets that evaluatesN(x 1, ..., xn) = 1
+wheneverS(x 1, ..., xn)holds, andN(x 1, ..., xn)<1oth-
+erwise. The first gadget we need is the functionf(x) =
+
+
+0, x≤0
+x, x∈[0,1]
+1, x≥1
+, it can be computed by a ReLU-net via
+f(x) =ReLU(ReLU(x)−ReLU(x−1)). For the con-
+struction of our problem instance, we set the conditional part
+φ(x1, ..., xn) =χ [0,1]n(x1, ..., xn)the indicator function on
+the unit cube. Furthermore, we introduce for each variable
+xi hidden nodesv i =f(2x i −1)and¯v i =f(1−2x i)
+corresponding to the literals, so that both are in[0,1], this
+can be done in two hidden layers. Note that at least one of
+them is zero, we interpret that as false, and at most one of
+them is 1, we interpret that as true. In the next two hidden
+layers, we introduce for every clauseC i = (xa ∨x b ∨x c)in
+S,1≤i≤q, a nodec i computingc i =f(x a+xb+xc), where
+xa, xb, xc ∈ {v i,¯vi |1≤i≤n}are the nodes corresponding
+to the literals. Note that since we are operating in[0,1] n, these
+nodes can have at most value 1, and this only happens if at
+least one of them is positive. In the output layer, compute
+v=ReLU(
+qP
+i=1
+ci −(q−1)). Note that in[0,1] n, this node
+can have at most value 1, and this only happens ifc i = 1are
+all true. We setψ(N(x))⇔N(x)∈[0,1), the only way that
+this will always be the case is whenSwas not satisfiable.
+To see that this also works as a reduction to monotonicity
+rules, observe that ifSis not feasible, thenNis constantly
+zero. To see this, letx= (x 1, ..., xn)∈[0,1] n be any input
+andy= (y 1, ..., yn)∈ {0,1} n the componentwise bankers
+rounding ofx. Now, due to unsatisfiability, there is a clause
+Ci inSso that all literals inC i evaluated inyare zero, and
+by construction ofv i and¯vi the same holds forx.
+It remains to show that verification of MofN rules is in co-
+NP. We do this for the case□= ”≥”, the cases□∈ {=,≤}
+are analogous. Let(φ⇒ψ)be an MofN rule, demanding that
+at leastmofφ 1, ..., φn are satisfied. Assume that this rule is
+not satisfied byx∈R n.
+We show that the existence of such anxcan be verified
+non-deterministically. The certificate is not preciselyx, but
+consists of the following four information parts:a∈ {0,1} n
+indicating which of theφ i are met inxand which ones are
+not, the information for every ReLU-node whether it is active
+(input positive) or inactive (input negative) when evaluated in
+x, and for the inputxthe information in which of the half-
+spacesAx≤bthat are used in the presentation of theφ i it is,
+as well as the same information for the outputN(x)regarding
+ψ.
+First, we can check whether the half-space-information
+actually evaluates theφ i = 1andψ= 0in polynomial
+time as well as whether the postulated amountm≤
+nP
+i=1
+ai of
+satisfied formulas is sufficient. Now we translate the remaining
+information from the certificate into an equation system:
+There is an inputxthat is in all the postulated half spaces
+Ax≤band in none of the forbidden onesAx > band for
+each active nodev=
+kP
+i=1
+vi ∧
+kP
+i=1
+vi ≥0and each inactive
+nodev= 0∧
+kP
+i=1
+vi ≤0we demand that its output is correctly
+computed as well as that the output is in all the postulated
+half spacesAN(x)≤band in none of the forbidden ones
+AN(x)> b. Observe that all of the conditions are linear. This
+leaves us with solving a system of linear equations, which is
+well known to be possible in polynomial time, see [9].
+We now want to obtain the corresponding classification
+results for the discrete case:
+Proposition 2.LetNbe a Boolean network. Then the
+following problems are co-NP complete:
+1.) The verification of Boolean propositional rules.
+2.) The verification of Boolean monotonicity rules.
+3.) The verification of Boolean MofN rules.
+Proof.Membership in co-NP is trivial for all problems, a
+suitable certificate is always an input vector in{0,1} n that
+leads to failure. It remains to show completeness:
+1.) To reduce an instanceφof SAT on the complement
+of the Boolean verification of propositional rules, setφas
+the conditional part for any networkNand a formula that is
+trivially wrong as output class.
+2.) For completeness, we reduce a SAT-formula
+F(x 1, ..., xn)onnvariables to the complement of deciding
+monotonicity rules. First, check whetherF(1, ...,1), in that
+case return true, otherwise return the instance(N F , A,1),
+whereN F :{0,1} n → {0,1}evaluates an input(x 1, ..., xn)
+to 1 if and only ifF(x 1, ..., xn)holds, andA∈ {0,1} n×n is
+the identity matrix.
+3.) As for real-valued networks, Boolean propositional rules
+are special cases of MofN rules witht=r= 1.
+IV. CONSISTENCY ANDEXHAUSTIVENESS
+One property that we want a set of rules to have is that
+it should holistically depict the network’s behaviour. In this
+section, we do not examine any more whether a single rule is
+correct or not, but start focusing on larger sets of rules. Here,
+two questions are in focus: Is a set of rules actually obeyable,
+meaning is there a network that obeys all of them at the same
+time? And are these rules so restrictive that one can make
+choices when designing a network according to them, or is
+there just one unique function that obeys all the rules? This
+is referred to as ”fidelity” or ”completeness” in literature, see
+for example [15]. We renamed those properties, because in the
+literature they often concern the accordance with training data
+rather than with the network. In this framework, we do not
+work with a given network any more, but instead start with
+a set of rules and search for possible networks obeying them,
+or we are given a set of rules and ask ourselves whether there
+is more than one network obeying all of them.
+
+PDF PAGE 5
+Definition 5.A set of rules is calledconsistent, if there exists
+a network that obeys all of these rules, otherwise it is called
+contradictory.
+A set of rules is calledexhaustive, if for every network-
+inputx∈R n, there exists at most one outputy∈R m so
+thatN(x) =yis in accordance with all rules, otherwise it is
+called defective.
+The obvious decision problems consistency and exhaustive-
+ness are defined for all of the rule types given in Section II.
+An extracting algorithm obviously made a mistake if the
+extracted rules are not consistent, consistency is therefore a
+desirable property. The same holds for exhaustiveness, because
+we want the set of rules to provide as much knowledge on
+the function as possible and to be as close as possible to
+”replacing” the network in the sense that it already contains
+all information.
+Example 2.LetS={s 1, s2}be a set of two rules.
+The optimal constellation is thatSis consistent as well as
+exhaustive. This is, for example, the case for the propositional
+ruless 1 = (φ 1 ⇒ψ 1)withφ 1(x) =x≤0, ψ 1(N(x)) =
+(N(x) = 0)ands 2 = (φ 2 ⇒ψ 2)withφ 2(x) =x≥
+0, ψ2(N(x)) = (N(x) = 0), which allow precisely the
+constant zero function. Had we droppeds 2, the rules 1
+would allow both the constant zero function and the ReLU-
+function, it is therefore consistent but not exhaustive. Note
+that a set of rules can be both defective and contradictory,
+an example iss 1 = (φ 1 ⇒ψ 1)withφ 1(x) =x≤
+0, ψ1(N(x)) = (N(x) = 0)together withs 2 = (φ 2 ⇒ψ 2)
+withφ 2(x) =x∈[−1,1], ψ 2(N(x)) = (N(x) = 1)because
+N(0)cannot be 0 and 1 at the same time, but alsoN(2)
+is not restricted at all. Also a set of exhaustive rules is not
+necessarily consistent, this is for example the case had we
+replacedφ 2(x) =x≥ −1, ψ 2(N(x)) = (N(x) = 1)in the
+previous constellation.
+Lemma 1([1]).Every continuous piecewise-linear functionf
+with rational coefficients can be realized by a ReLU-network
+N, i.e.,f(x) =N(x)for all inputsx.
+It is an easy consequence, that for any finite set of data
+points(x i, yi)∈Q n+m with pairwise different inputsi̸=j⇒
+xi ̸=x j, there exists a ReLU-networkNwithN(x i) =y i for
+alli.
+Theorem 2.LetS={s 1, ..., sn}be a set of propositional,
+MofN and oblique rules so that the sets defined by their
+conditional parts are separated by closed neighbourhoods and
+no conclusion part is the constant zero function. Then there
+exists a ReLU network obeying all the rules.
+Proof.By Lemma 1, it suffices to find a continuous semi-
+linear function obeying the rules. For each rule, choose a value
+that the conclusion part allows and tie that the function has
+that precise value all over the corresponding conditional part.
+Separability of a finite number of semi-linear sets leads to the
+existence of a constantc >0so thatφ i(x)∧φ j(y)withi̸=j
+enforcesd(x, y)≥c. The function can therefore be extended
+to a semilinear and continuous function onR n.
+Theorem 3.LetRbe a set of rules. Then:
+1.) Deciding consistency and exhaustiveness of monotonicity
+rules and total monotonicity rules is in P if we only allow
+networks to work with ReLU-activation.
+2.) Deciding consistency of propositional rules is co-NP-
+hard if we only allow networks to work with ReLU-activation.
+This also holds for obliques and MofN rules.
+3.) Deciding exhaustiveness of propositional rules is co-NP-
+hard. This also holds for obliques and MofN rules.
+Proof.1.) Every constant function obeys every monotonicity
+rule, so consistency is always and exhaustiveness never the
+case.
+2.) To reduce an instanceS(x 1, ..., xn)of 3SAT to con-
+sistency of propositional rules, it suffices to construct a set
+Rof rules on[0,1] n that are consistent if and only ifS
+is not satisfiable. The setRcontains a rule stating that the
+networkNshould compute the constant zero function along
+with rules that demand thatN(x 1, ..., xn) =S(x 1, ..., xn)for
+allx 1, ..., xn ∈ {0,1}.
+Such rules exist because the setSinterpreted as subsets
+of{0,1} n can be described by axial-parallel conditions in
+polynomial size in the representation ofS. IfSis not
+satisfiable, then the network computingN≡0obeys all the
+rules, if not then no such network exists and the rules are not
+consistent.
+This ongoing, as in 3.), obviously works the same for
+Boolean networks. By the inheritances shown in Theorem 1,
+this also holds for obliques and MofN rules, as in 3.).
+3.) Again we reduce an instanceS(x 1, ..., xn)of 3SAT,
+this timeRhas to be non-exhaustive if and only ifSis
+satisfiable. The setRcontains a rule stating that whenever
+S(x1, ..., xn) = 0, the networkNshould compute zero
+whenever all over ×
+n
+i=1[xi, xi + 1]. This means that the
+constant zero function is always possible, and as soon as
+S(x1, ..., xn) = 1at some point, the function has the choice
+either to be 0 or 1.
+Such rules exist for the same reason as in 2.)
+The following result demonstrates the limits of the frame-
+work of extracted rules:
+Theorem 4.LetRbe a finite consistent and exhaustive set of
+rules for a ReLU network assumeNobeys all rules inR.
+1.) IfRcontains only propositional, MofN and oblique
+rules, thenNcan only compute a constant function.
+2.)Rcannot solely consist of monotonicity and total mono-
+tonicity rules.
+Proof.1.) We prove the statement by contradiction, so as-
+sume there were a set of rulesR={(φ 1 ⇒ψ 1),(φ 2 ⇒
+ψ2), ...,(φ k ⇒ψ k)}and a ReLU-networkNso thatNdoes
+not compute a constant function,Nobeys all the rules in
+Rand no function other thanNthat can be computed by a
+ReLU-network obeys all the rules inR. Note that in the above,
+
+PDF PAGE 6
+by abuse of notationφ i is always the rules conditional part
+concerning the input. In the case of MofN-rules, for example,
+it does not coincide with one of theφ 1, ..., φt from Definition
+2. We now want to alterNin such a way that the function
+computed by the new networkN ′ differs, but only at an
+extend so small that all rules inRare still obeyed, this would
+obviously contradict exhaustiveness.
+First, note that for a non-constant functionNthere must
+necessarily exist some polytopeP⊆R n in the input space
+containing a full-dimensional box on whichNhas a constant
+non-zero slope. The reason is the following: Every sign-pattern
+a∈ {0,1} ℓ determining which nodes are active and which
+ones are inactive, whereℓis the overall amount of nodes,
+defines a subset of inputsX a ={x∈R n |pattern ofxisa},
+restricted on whichNis linear. By continuity, the unionS
+y∈A
+{x∈R n |N(x) =y}for a finite setAcannot have full
+measure, so there must exist a setX a with non-zero measure
+on whichNhas non-zero slope.
+Next, we argue thatPcan be chosen in a way so that
+for each rule(φ i ⇒ψ i)∈R, the premiseφ i either holds
+everywhere or nowhere inP. To see this, define for eachα∈
+{0,1} k the setP α ={x∈P| V
+αi=1
+φi(x)}. Note thatPis the
+finite union of these semi-linear setsP α, so at least one of them
+must have non-zero measure, take it as the newP. Without loss
+of generality,Pis the unit cube[0,1] n. This can be assumed
+because every semi-linear set with non-zero measue contains
+a hypercube with equal side lenghths, that can be mapped
+to the unit cube by a linear function, which can obviously be
+performed in a ReLU-network. Further, assume that the partial
+derivative in directionx 1 is not zero, otherwise permutate the
+variables. All conclusionsψare local, meaning they only ever
+consider an outputN(x)and no slope or comparison with
+another pointN(y). The idea is therefore that it suffices if the
+new function/networkN ′ has the following properties:
+1.) For allx /∈[0,1] n we haveN ′(x) =N(x).
+2.) For allx∈[0,1] n we haveN ′(x) =N(y)for some
+y∈[0,1] n.
+We claim that these rules are obeyed, if the function on
+x∈[0,1] n is computed as follows:
+Find the pointa(x)on the boundary of[0,1] n and the
+parameterλ(x)∈[0,1]so thatx=λ(x)a(x) + (1−
+λ(x))([ 1
+2]n)is a convex combination ofa(x)and the center
+of the cube[ 1
+2]n, where[x] n := (x, x, ..., x)∈R n denotes
+the vector consisting only of entriesx. We then choose
+N ′(x) =N(λ(x)a(x) + (1−λ(x))( 3
+4 ,[ 1
+2]n−1))the function
+value ofNat the same convex combination but where the
+center of the cube is moved in directionx 1 by 1
+4. Note that this
+functionN ′ does not coincide withN, becauseN ′([ 1
+2]n) =
+N( 3
+4 ,[ 1
+2]n−1)̸=N([ 1
+2]n)for the slope in directionx 1 was
+assumed to be non-zero. It remains to show that the input
+manipulation described by the convex combinations can be
+computed in a ReLU-network.
+To see this, observe that the input manipulation is equivalent
+to moving a point in directionx 1 by half of its minimal
+distance to any boundary, including the boundary facesx 1 = 0
+andx 1 = 1. These distances inside the unit cube are given by
+ReLU(x i)for the boundaryx i = 0andReLU(1−x i)for
+the boundaryx i = 1, note that they are zero on the outside of
+the cube of the respective boundary. A minimum can always
+be computed by a ReLU-network via
+min(a, b) = a+b
+2 −ReLU( a−b
+2 )−ReLU( b−a
+2 )
+The desired input manipulation
+f(x) =
+(
+x x /∈[0,1] n
+x+min{|x i|,|x i −1| |i∈ {1, ..., n}}else
+can therefore be computed andN ′ =N◦fis different from
+Nbut still obeys all the rules.
+2.) Follows by Theorem 3, 1.).
+V. CONCLUSION ANDFURTHERQUESTIONS
+We classified several verification tasks for extracted rules
+and proposed a framework in which they can be assessed. Our
+overall insight is, that these verification tasks are in co-NP,
+many of them complete for co-NP, as long as the describing
+data of the rules and the net is semi-linear, including that the
+activation function used in the net should be ReLU. Some
+remaining open questions are
+1.) Given a consistent set of MofN rules, can the size of the
+smallest witnessing network be bounded in the size/amount
+of rules? Is it polynomial? Does this imply that verifying
+consistency of MofN rules is inΣ P
+2 ? If so, is it complete
+forΣ P
+2 ?
+2.) Is it possible to efficiently transform linear conditions
+into axial-parallel ones? If yes, can this be done by a (semi-
+)linear transformation that can be performed by additional
+network layers? Under what conditions would this imply that
+oblique rules can be reduced to propositional rules?
+3.) Does Theorem 4, 1.) also hold if additionally mono-
+tonicity and total monotonicity rules are allowed? Or can a
+function be found that is uniquely determined by a set of such
+rules?
+Acknowledgment: I want to thank Klaus Meer for helpful
+discussions.
+REFERENCES
+[1] Raman Arora, Amitabh Basu, Poorya Mianjy, and Anirbit Mukherjee.
+Understanding deep neural networks with rectified linear units.CoRR,
+abs/1611.01491, 2016.
+[2] Alexey Averkin and Sergey Yarushev. Explainable artificial intelligence:
+Rules extraction from neural networks. In Rafik A. Aliev, Janusz
+Kacprzyk, Witold Pedrycz, Mo Jamshidi, Mustafa Babanli, and Fahred-
+din M. Sadikoglu, editors,11th International Conference on Theory and
+Application of Soft Computing, Computing with Words and Perceptions
+and Artificial Intelligence - ICSCCW-2021, pages 102–109, Cham, 2022.
+Springer International Publishing.
+[3] Ovidiu Calin.Deep Learning Architectures - A Mathematical Approach.
+Springer, 2020.
+[4] Matthew Dixon, Diego Klabjan, and Jin Hoonc Bang. Classification-
+based financial markets prediction using deep neural networks.Algo-
+rithmic Finance, 6:67–77, 2017.
+[5] Sorin Grigorescu, Bogdan Trasnea, Tiberiu Cocias, and Gigel Macesanu.
+A survey of deep learning techniques for autonomous driving.Journal
+of Field Robotics, 37:362–386, 2019.

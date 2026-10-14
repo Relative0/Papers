@@ -1,0 +1,250 @@
+--- reviewed_2026-09-27.tex
++++ finite_jet_sign_laws_REVISED_2026-10-13.tex
+@@ -1,4 +1,5 @@
+-% Final submission candidate after publication-readiness and hostile-editor review.
++% Revision of the 27 September reviewed manuscript; additions dated 13 October 2026.
++% The new material has not inherited the earlier package's review certification.
+ \documentclass[11pt]{article}
+ 
+ \usepackage[T1]{fontenc}
+@@ -40,7 +41,7 @@
+ 
+ \title{\vspace{-1.2cm}\textbf{Finite-Jet Sign Rigidity on Hyperplane Arrangements\\and Denjoy--Carleman Realization}}
+ \author{Brian Theory}
+-\date{27 September 2026}
++\date{13 October 2026}
+ 
+ \begin{document}
+ \maketitle
+@@ -48,12 +49,12 @@
+ \begin{abstract}
+ Let $\mathcal A$ be a finite real affine hyperplane arrangement. We study which $\{\pm1\}$-valued chamber labelings can occur as the sign of a function with prescribed regularity. A first nonzero homogeneous Taylor term inherits the chamber signs weakly, and factor multiplicities force a constant crossing parity. This gives a short arrangement-level proof of the known smooth signature-flatness obstruction and, in finite regularity, explicit $C^d$ orthant and $C^N$ arrangement rigidity statements.
+ 
+-For normalized compactwise Roumieu Denjoy--Carleman classes $\mathcal E^{\{M\}}$, the Denjoy--Carleman criterion yields an exact realization dichotomy. In the quasianalytic case the realizable chamber laws are precisely the signed parity laws; in the non-quasianalytic case every chamber labeling is realized by explicit selector formulas. Thus an arrangement of $m$ distinct hyperplanes with $r$ chambers admits exactly $2^{m+1}$ and $2^r$ realizable sign laws in the two regimes. The smooth obstruction and positive-flat existence mechanisms are classical; the contribution is the finite-order formulation, self-contained affine-arrangement proof, and unified exact realization classification.
++For normalized compactwise Roumieu Denjoy--Carleman classes $\mathcal E^{\{M\}}$, the Denjoy--Carleman criterion yields an exact realization dichotomy. In the quasianalytic case the realizable chamber laws are precisely the signed parity laws; in the non-quasianalytic case every chamber labeling is realized by explicit selector formulas. Thus an arrangement of $m$ distinct hyperplanes with $r$ chambers admits exactly $2^{m+1}$ and $2^r$ realizable sign laws in the two regimes. We also record corner-margin consequences and a fixed-dimensional polynomial comparison on a cube with coordinate-wall strips of width $\delta$ removed: signed parity has constant exact degree, non-affine laws have degree $\Theta(\log(1/\delta))$, and any nonconstant law requires degree $\Theta(1/\delta)$ under a global amplitude bound and fixed positive margin. The smooth obstruction, positive-flat existence, and approximation ingredients are classical; the contribution is their explicit formulation and synthesis, with finite-order statements and complete reductions.
+ \end{abstract}
+ 
+ \noindent\textbf{2020 Mathematics Subject Classification.} 26E10, 52C35.
+ 
+-\noindent\textbf{Keywords.} finite jets; hyperplane arrangements; Denjoy--Carleman classes; quasianalyticity; sign distributions; chamber functions.
++\noindent\textbf{Keywords.} finite jets; hyperplane arrangements; Denjoy--Carleman classes; quasianalyticity; sign distributions; polynomial sign representation.
+ 
+ \section{Introduction}
+ 
+@@ -85,10 +86,12 @@
+ 
+ The broader historical setting includes distributions of signs and signatures~\cite{Fortuna1991,AcquistapaceBroglia1992,AcquistapaceBroglia1993Correction,AcquistapaceBrogliaFortuna1994,AcquistapaceBroglia1994}, the Varchenko--Gelfand algebra of chamber functions and its later arrangement-theoretic extensions~\cite{VarchenkoGelfand1987,Moseley2017,BjornerEtAl1999}, and the classical Denjoy--Carleman theory of quasianalyticity, cutoffs, and positive-flat functions~\cite{Rainer2022,Langenbruch2003,Thilliez2008}. Stronger division and monomialization frameworks are also available~\cite{BierstoneMilman2004,BelottoBierstoneChow2018,BelottoBierstone2023}, but they are not needed for the elementary proofs below.
+ 
+-The note contributes three things in one framework: explicit finite-order rigidity statements; a self-contained leading-jet proof for arbitrary finite affine arrangements; and exact quasianalytic/non-quasianalytic realization classifications with constructive formulas and chamber counts. The purpose is therefore not historical firstness, but a compact finite-jet formulation and an exact synthesis across regularity regimes.
++Exact Boolean sign operations also have a classical constructive theory in the $R$-function literature. Shapiro's survey~\cite[Sections~3.3 and 3.6]{Shapiro2007} describes root-based conjunction and disjunction and their finite-differentiability upgrades. These supply direct examples at the boundary of the finite-jet statements; they are credited explicitly in Section~\ref{sec:rfunctions}.
++
++The note combines explicit finite-order rigidity, a self-contained proof for affine arrangements, and exact realization classifications with constructive formulas and chamber counts. Section~\ref{sec:quantitative} adds quantitative consequences: Taylor estimates turn vanishing jets into corner-margin bounds, while classical rational approximation, Sherstov's majority-conjunction lower bound~\cite{Sherstov2013}, and Bernstein--Jackson inequalities~\cite{KopotunPrymakShevchuk2018} give a fixed-dimensional degree classification after excluding the walls. These are derived consequences, with no claim of historical firstness or new approximation machinery. They distinguish exact realization near the common corner from sign correctness at a positive distance from the walls.
+ 
+ \paragraph{Organization.}
+-Section~\ref{sec:setup} fixes the sign and Denjoy--Carleman conventions. Section~\ref{sec:polynomial} proves the weak-sign polynomial lemma. Section~\ref{sec:finitejet} establishes finite-jet rigidity and the smooth arrangement theorem. Section~\ref{sec:dc} constructs one-sided selectors and proves the whole-orthant dichotomy. Section~\ref{sec:arrangements} gives the arrangement classification and exact counts. Section~\ref{sec:scope} records counterexamples that delimit the statements and clarifies the relation with normal-crossing results.
++Section~\ref{sec:setup} fixes the sign and Denjoy--Carleman conventions. Section~\ref{sec:polynomial} proves the weak-sign polynomial lemma. Section~\ref{sec:finitejet} establishes finite-jet rigidity and the smooth arrangement theorem. Section~\ref{sec:dc} constructs one-sided selectors and proves the whole-orthant dichotomy. Section~\ref{sec:arrangements} gives the arrangement classification and exact counts. Section~\ref{sec:quantitative} derives corner-margin and polynomial-degree bounds. Section~\ref{sec:scope} records counterexamples and comparisons with $R$-functions and normal-crossing results.
+ 
+ \section{Definitions, conventions, and classical input}\label{sec:setup}
+ 
+@@ -327,7 +330,7 @@
+ At each $p$ on the arrangement choose the least $d(p)\le N$ for which some derivative of order $d(p)$ is nonzero. The $C^{d(p)}$ Taylor expansion gives a nonzero leading homogeneous polynomial and therefore the same local crossing parities as in the proof of Theorem~\ref{thm:T3}. The propagation of those parities along a hyperplane, and then across the connected chamber adjacency graph, uses only continuity and nonvanishing off the arrangement. Thus the remainder of that proof applies unchanged.
+ \end{proof}
+ 
+-\begin{remark}[A quantitative obstruction]
++\begin{remark}[A finite-order obstruction]
+ Equivalently, if a $C^N$ function is nonzero off the arrangement and realizes a chamber labeling that is not signed parity, then at some point of the arrangement its entire $N$-jet must vanish. The smooth theorem is a stronger all-orders analogue: it yields a single flat point. The finite-order statements alone do not imply that conclusion by letting $N$ tend to infinity, because the point at which the $N$-jet vanishes may depend on $N$.
+ \end{remark}
+ 
+@@ -497,6 +500,133 @@
+ \end{tabularx}
+ \end{table}
+ 
++\section{Margins and exclusion of the coordinate walls}\label{sec:quantitative}
++
++The qualitative classification imposes correctness arbitrarily close to every wall. Two quantitative consequences clarify this requirement. Throughout this section $h:\{-1,+1\}^n\to\{-1,+1\}$, with positive meaning true, and $n$ is fixed. A non-affine law means one not of the form $c\prod_{i\in S}s_i$.
++
++\subsection{Corner margins under derivative bounds}
++
++\begin{proposition}[A normalized corner estimate]\label{prop:corner}
++Let $k\ge0$, $0<\alpha\le1$, and let $F\in C^{k,\alpha}(B_R(0))$ realize a non-affine orthant law. Suppose that $D^kF$ has H\"older seminorm at most $H$, using the Euclidean multilinear operator norm (absolute value for $k=0$). Then its entire $k$-jet at zero vanishes and
++\begin{equation}\label{eq:cornerbound}
++ |F(x)|\le H\frac{\Gamma(\alpha+1)}{\Gamma(k+\alpha+1)}\|x\|^{k+\alpha}
++ \qquad(x\in B_R(0)).
++\end{equation}
++In particular, if $\sqrt n\delta<R$ and $h(s)F(\delta s)\ge\gamma$ for all sign vectors $s$, then
++\[
++ \gamma\le H\frac{\Gamma(\alpha+1)}{\Gamma(k+\alpha+1)}(\sqrt n\delta)^{k+\alpha}.
++\]
++\end{proposition}
++
++\begin{proof}
++Any least nonzero derivative of order at most $k$ would contradict Theorem~\ref{thm:finiteC}. Thus all these derivatives vanish. For $k=0$, \eqref{eq:cornerbound} is the H\"older estimate from $F(0)=0$. For $k\ge1$, write $x=rv$, $\|v\|=1$, and use integral Taylor remainder:
++\[
++ |F(rv)|\le\frac{H}{(k-1)!}\int_0^r(r-t)^{k-1}t^\alpha\,dt
++ =H\frac{\Gamma(\alpha+1)}{\Gamma(k+\alpha+1)}r^{k+\alpha}.
++\]
++Substitute $r=\sqrt n\delta$ for the margin conclusion.
++\end{proof}
++
++\begin{remark}[Smooth derivative budgets]\label{rem:associated}
++For a smooth exact non-affine realization, Theorem~\ref{thm:T2} gives flatness. If, on $B_R(0)$, fixed constants $A,B>0$ satisfy
++\[
++ \|D^jF(x)\|_{\mathrm{op}}\le A B^j j!M_j\qquad(j\ge0),
++\]
++Taylor remainder at every order gives
++\begin{equation}\label{eq:associatedbound}
++ |F(x)|\le A h_M(B\|x\|),\qquad h_M(t)=\inf_{j\ge0}M_jt^j.
++\end{equation}
++For $j=0$ use the amplitude bound; for $j\ge1$ the factorial cancels in the remainder. This is the usual associated-function estimate in the factorial-out convention; compare~\cite[Section~7]{Rainer2022}. Coordinate partial-derivative bounds as in \eqref{eq:roumieu} imply the displayed operator bounds after replacing $B$ by $B\sqrt n$. In the Gevrey case $M_j=(j!)^{s-1}$, $s>1$, optimization in $j$ gives $h_M(t)\le C\exp(-c t^{-1/(s-1)})$ for small $t>0$. A matching optimal-cutoff assertion for general weights requires additional assumptions and is not used here. These estimates concern spatial derivatives and do not assert failure of an optimization or learning procedure.
++\end{remark}
++
++\subsection{Polynomial signs at positive distance from the walls}
++
++Put
++\[
++ Q_n=[-1,1]^n,\qquad
++ D_{\delta,n}=\{x\in Q_n:|x_i|\ge\delta\text{ for all }i\},\quad 0<\delta<1.
++\]
++Let $d_h(\delta)$ be the least total degree of a real polynomial $P$ satisfying
++\[
++ h(\sign x)P(x)>0\qquad(x\in D_{\delta,n}).
++\]
++There is no amplitude or coefficient bound in this definition. For fixed $0<\gamma<1$, let $d^{\mathrm{bd}}_{h,\gamma}(\delta)$ be the least total degree subject instead to
++\begin{equation}\label{eq:boundedmargin}
++ \|P\|_{Q_n,\infty}\le1,\qquad
++ h(\sign x)P(x)\ge\gamma\quad(x\in D_{\delta,n}).
++\end{equation}
++The amplitude bound covers the entire cube, including its excluded strips.
++
++\begin{theorem}[Fixed-dimensional degree comparison]\label{thm:guardeddegree}
++For fixed $n\ge1$ the following statements hold.
++\begin{enumerate}[label=(\roman*)]
++\item If $h(s)=c\prod_{i\in S}s_i$, then $d_h(\delta)=|S|$ for every $0<\delta<1$.
++\item If $h$ is non-affine, then $d_h(\delta)=\Theta_h(\log(1/\delta))$ as $\delta\downarrow0$.
++\item If $h$ is nonconstant and $0<\gamma<1$ is fixed, then
++\[
++ d^{\mathrm{bd}}_{h,\gamma}(\delta)=\Theta_{h,\gamma}(1/\delta)
++ \qquad(\delta\downarrow0).
++\]
++In fact, $d^{\mathrm{bd}}_{h,\gamma}(\delta)\ge\gamma\sqrt{1-\delta^2}/\delta$.
++\end{enumerate}
++Constants may depend on the fixed dimension, law, and margin. No uniform growing-arity, coefficient-size, or evaluation-cost assertion is intended.
++\end{theorem}
++
++\begin{proof}
++\emph{Parity.} The polynomial $c\prod_{i\in S}x_i$ proves the upper bound. On Boolean vertices, fix coordinates outside $S$. Every polynomial of degree less than $|S|$ has zero correlation with parity, by expanding into monomials and averaging over the remaining independent signs. Strict sign agreement would give positive correlation. This proves (i), including constants with $S=\varnothing$.
++
++\emph{A logarithmic upper bound for every law.} Let $m=\lceil\log_2(1/\delta)\rceil$ and choose an integer $L\ge1$. Define
++\[
++ p(t)=\prod_{j=0}^m(t+2^{-j})^{2L},\quad
++ a(t)=p(t)-p(-t),\quad q(t)=p(t)+p(-t),\quad r(t)=\frac{a(t)}{q(t)}.
++\]
++The two nonnegative polynomials $p(t)$ and $p(-t)$ have disjoint real zero sets, so $q>0$ and $|r|\le1$ on $\R$. For $2^{-m}\le t\le1$, some dyadic node $u=2^{-j}$ satisfies $u\le t\le2u$. Therefore
++\[
++ 0\le\frac{p(-t)}{p(t)}
++ =\prod_{j=0}^m\left|\frac{2^{-j}-t}{2^{-j}+t}\right|^{2L}
++ \le3^{-2L},\qquad |r(t)-1|\le2\,3^{-2L}.
++\]
++Oddness gives the negative-interval estimate. This is a dyadic rational construction of Newman type; see also~\cite[Theorem~2.4]{Sherstov2013}.
++
++For $u\in[-1,1]^n$, define the multilinear expectation extension
++\[
++ H_h(u)=\sum_{s\in\{-1,+1\}^n}h(s)\prod_{i=1}^n\frac{1+s_i u_i}{2}.
++\]
++It is bounded by one. If $|u_i-s_i|\le\eps$ for every coordinate, regard $H_h(u)$ as the expectation of $h$ under independent signs with means $u_i$. Each sign differs from $s_i$ with probability at most $\eps/2$, so the union bound gives
++\begin{equation}\label{eq:extensionmargin}
++ h(s)H_h(u)\ge1-n\eps.
++\end{equation}
++Choose $L$ with $2n3^{-2L}<1$. Substitution of $r(x_i)$ and multiplication by $\prod_iq(x_i)>0$ give a polynomial of total degree at most $2Ln(m+1)$, strictly correct on $D_{\delta,n}$. Hence $d_h(\delta)=O_n(\log(1/\delta))$.
++
++\emph{The non-affine lower bound.} Every non-affine Boolean law has a non-affine two-dimensional face: otherwise every second Boolean difference of its $\Ftwo$-valued truth function would vanish identically, forcing its multilinear algebraic normal form to have degree at most one. Fix the other coordinates at the corresponding $\pm1$ values. Each of the eight non-affine binary laws is AND after input sign flips and possibly output negation, all of which preserve degree and the guarded square.
++
++Choose an odd integer $N\le1/\delta$ with $N\asymp1/\delta$. In a polynomial for binary AND substitute
++\[
++ x=\frac1N\sum_{i=1}^N z_i,\qquad
++ y=\frac1N\sum_{i=1}^N w_i,\qquad z_i,w_i\in\{-1,+1\}.
++\]
++Each magnitude is at least $1/N\ge\delta$. Thus the substituted polynomial sign-represents the conjunction of two independent $N$-variable majorities on a finite Boolean cube, without increasing degree. Sherstov's lower bound~\cite[Theorem~1.10]{Sherstov2013} is $\Omega(\log N)$. His convention uses $-1$ for true; input and output sign changes align the conventions. This proves (ii).
++
++\emph{Bounded margin: lower bound.} A nonconstant law changes along some Boolean edge. Fix the other coordinates at that edge's $\pm1$ values. The resulting univariate slice $p$ is bounded by one on $[-1,1]$ and takes opposite values of magnitude at least $\gamma$ at $\pm\delta$. The mean value theorem gives $\xi\in(-\delta,\delta)$ with $|p'(\xi)|\ge\gamma/\delta$. Bernstein's inequality~\cite[Theorem~24.1]{KopotunPrymakShevchuk2018} gives, with $d=\deg P$,
++\[
++ \frac\gamma\delta\le |p'(\xi)|
++ \le\frac d{\sqrt{1-\xi^2}}
++ \le\frac d{\sqrt{1-\delta^2}}.
++\]
++
++\emph{Bounded margin: upper bound.} The clipped ramp
++$v_\delta(t)=\max(-1,\min(1,t/\delta))$ is $1/\delta$-Lipschitz. Jackson's inequality yields a polynomial $u$ of degree at most $k$ with
++\[
++ \|u-v_\delta\|_{[-1,1],\infty}\le\frac C{k\delta}.
++\]
++For completeness, the trigonometric form~\cite[Theorem~21.1]{KopotunPrymakShevchuk2018} applies to the even periodic function $v_\delta(\cos\theta)$. Symmetrizing its approximant preserves the error and leaves only cosine terms; $\cos(j\theta)=T_j(\cos\theta)$ converts it to an algebraic polynomial of the same degree.
++Choose a fixed error $\eta>0$ and $k\ge C/(\eta\delta)$. The polynomial $r=u/(1+\eta)$ is bounded by one on the whole interval and differs from $\sign t$ by at most $\eps=2\eta/(1+\eta)$ when $|t|\ge\delta$. Choose $\eta$ small enough that $n\eps\le1-\gamma$. Then $H_h(r(x_1),\ldots,r(x_n))$ satisfies \eqref{eq:boundedmargin}, by \eqref{eq:extensionmargin}, and has total degree at most $nk=O_{n,\gamma}(1/\delta)$. This proves (iii).
++\end{proof}
++
++\begin{remark}[Interpretation and endpoints]
++Positive denominator clearing preserves signs but need not preserve a fixed margin after normalizing the polynomial on $Q_n$. This explains why (ii) and (iii) concern different resources. Constants have degree zero in both models; when $\gamma=1$, no nonconstant law satisfies \eqref{eq:boundedmargin}, since the polynomial would equal a constant on an open box and hence everywhere. The theorem is a synthesis of established approximation inputs. It does not follow from qualitative finite-jet rigidity alone, nor does it apply that rigidity to a polynomial required to be correct only on $D_{\delta,n}$.
++\end{remark}
++
+ \section{Scope, counterexamples, and relation to nearby theory}\label{sec:scope}
+ 
+ \subsection{Real zero support is weaker than a normal-crossing divisor}
+@@ -531,6 +661,24 @@
+ \]
+ Thus \eqref{eq:punctured-or} realizes OR on the four quadrants of the punctured plane. There is no contradiction with Theorem~\ref{thm:T2}: the origin, at which the finite-jet obstruction would live, has been removed.
+ 
++\subsection{Classical R-functions and finite differentiability}\label{sec:rfunctions}
++
++The preceding root formula is the classical $R$-disjunction. Changing the plus sign to a minus sign gives an $R$-conjunction; see~\cite[Section~3.3, equations (3.4)--(3.5)]{Shapiro2007}. In particular, for any integer $k\ge0$, put $r=(x^2+y^2)^{1/2}$ and
++\[
++ F_k(x,y)=r^k(x+y-r),\qquad F_k(0,0)=0.
++\]
++This realizes AND on the open quadrants. Its smooth angular factor and positive homogeneity of degree $k+1$ give $D^jF_k=O(r^{k+1-j})$ for $j\le k$; these derivatives extend by zero at the origin. The $k$th derivative is Lipschitz: for pairs at distance comparable to their radius use its $O(r)$ size bound, and for closer pairs integrate its bounded derivative along a segment away from zero. Thus $F_k\in C^{k,1}$ and its $k$-jet vanishes. It is not $C^{k+1}$: that regularity and homogeneity would make it its homogeneous Taylor polynomial of degree $k+1$, contrary to the non-affine sign law. On $(t,t)$, $t>0$, its value is $2^{k/2}(2-\sqrt2)t^{k+1}$. Hence the exponent $k+1$ in Proposition~\ref{prop:corner} for $\alpha=1$ cannot be increased in general. The construction is classical; the estimate states its relation to the finite-order obstruction.
++
++\subsection{Analytic models and restricted domains}
++
++A finite composition of real-analytic maps is real analytic on its domain. If a scalar output realizes an orthant law on a full neighborhood of the common corner, Corollary~\ref{cor:quasiorth} therefore forces affine parity. The hypothesis concerns independently variable coordinates throughout that neighborhood; it does not cover merely fitting finitely many Boolean representatives or a restricted set of reachable inputs.
++
++Even an analytic formula can realize AND on every $D_{\delta,2}$ when it depends on $\delta$. For example,
++\[
++ F_\delta(x,y)=x+y-\sqrt{x^2+y^2+\delta^2}
++\]
++is globally real analytic. In the positive-positive guarded quadrant it is increasing in each coordinate, so its minimum is $(2-\sqrt3)\delta>0$. If $x\le-\delta$, then $F_\delta(x,y)<x+y-|y|\le-\delta$, and the other negative-input case is symmetric. At the common corner $F_\delta(0,0)=-\delta$, so it fails the positive-positive law sufficiently near zero. This example imposes no global amplitude normalization and does not contradict Theorem~\ref{thm:guardeddegree}. A nonsmooth alternative is $\min(x,y)=x-\max(0,x-y)$, which realizes AND exactly on every open quadrant.
++
+ \subsection{Smoothness alone does not imply rigidity}
+ 
+ The selector construction in \eqref{eq:booleanselector} gives $C^\infty$ realizations of every Boolean law in the non-quasianalytic case. For a non-affine law, Theorem~\ref{thm:T2} says that such a realization must be flat at the origin; the construction is consistent with exactly that requirement. The mathematical boundary is therefore not ``smooth versus nonsmooth,'' but rather the presence or absence of a nonzero finite jet at the relevant common boundary.
+@@ -547,7 +695,7 @@
+ 
+ A first nonzero Taylor term provides a compact bridge from local regularity to global chamber signs. In finite order it yields explicit $C^d$ orthant and $C^N$ arrangement obstructions; in the smooth setting the same mechanism gives an elementary proof of the established signature-flatness consequence for affine arrangements. Combined with the Denjoy--Carleman criterion, the argument gives an exact realization classification: for $m$ distinct hyperplanes with $r$ chambers, the full normalized Roumieu class realizes exactly $2^{m+1}$ signed parity laws in the quasianalytic case and all $2^r$ chamber labelings in the non-quasianalytic case.
+ 
+-The note's contribution is therefore the finite-order formulation, the direct affine-arrangement proof, and the explicit synthesis of rigidity, construction, and exact counting in one normalization. The underlying smooth obstruction and positive-flat existence theory are classical and are used here as historical and technical context rather than as claims of first discovery.
++With fixed derivative bounds, the same vanishing jets control how rapidly an exact non-affine score approaches zero at the corner. Excluding wall strips changes the polynomial problem: at fixed dimension non-affine sign laws require logarithmic degree in the inverse width, whereas a fixed margin under a whole-cube amplitude bound requires reciprocal-width degree for every nonconstant law. The complete reductions make these distinctions explicit. The finite-order formulation, arrangement proof, and synthesis remain the contribution; the smooth obstruction, $R$-function constructions, positive-flat theory, and approximation inputs retain their classical attribution.
+ 
+ \begin{thebibliography}{99}
+ \small\raggedright
+@@ -640,6 +788,24 @@
+ \newblock \emph{Expositiones Mathematicae} 26 (2008), no. 1, 1--23.
+ \newblock DOI: \href{https://doi.org/10.1016/j.exmath.2007.04.001}{10.1016/j.exmath.2007.04.001}; arXiv:math/0509273.
+ 
++\bibitem{Shapiro2007}
++V. Shapiro,
++\newblock Semi-analytic geometry with $R$-functions,
++\newblock \emph{Acta Numerica} 16 (2007), 239--303.
++\newblock DOI: \href{https://doi.org/10.1017/S096249290631001X}{10.1017/S096249290631001X}.
++
++\bibitem{Sherstov2013}
++A. A. Sherstov,
++\newblock The intersection of two halfspaces has high threshold degree,
++\newblock \emph{SIAM Journal on Computing} 42 (2013), no. 6, 2329--2374.
++\newblock DOI: \href{https://doi.org/10.1137/100785260}{10.1137/100785260}.
++
++\bibitem{KopotunPrymakShevchuk2018}
++K. A. Kopotun, A. V. Prymak, and I. O. Shevchuk,
++\newblock \emph{Introduction to Approximation Theory}, study guide, 24 January 2018,
++\newblock Theorems 21.1 and 24.1.
++\newblock \url{https://mathanalysis.knu.ua/wp-content/uploads/2020/07/at-study-guide-january-22-2018-1-1.pdf}.
++
+ \end{thebibliography}
+ 
+ \end{document}

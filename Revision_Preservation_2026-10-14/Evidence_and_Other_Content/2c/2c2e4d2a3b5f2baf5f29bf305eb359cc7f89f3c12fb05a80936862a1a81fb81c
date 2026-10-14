@@ -1,0 +1,93 @@
+{
+  "cwd": "C:\\Users\\brian\\Documents\\CM_Computation\\t3_phase2_computation_20260928",
+  "linux_interpreter": "/mnt/c/Users/brian/Documents/CM_Computation/convergence_followthrough_20260928/runtime/linux-venv/bin/python",
+  "windows_interpreter": "C:\\Users\\brian\\Documents\\CM_Computation\\.venv\\Scripts\\python.exe",
+  "linux_launcher": [
+    "wsl",
+    "-d",
+    "Ubuntu-24.04",
+    "--"
+  ],
+  "commands": [
+    {
+      "id": "C1",
+      "command": "python ../convergence_followthrough_20260928/verify_delivery.py",
+      "evidence": "prior manifest: PASS 4912"
+    },
+    {
+      "id": "freeze",
+      "command": "python prepare.py freeze",
+      "evidence": "PROTOCOL.sha256"
+    },
+    {
+      "id": "inputs",
+      "command": "python prepare.py prepare",
+      "evidence": "inputs/IDENTITY.json"
+    },
+    {
+      "id": "compile",
+      "command": "g++ -std=c++17 -O3 -DNDEBUG -fPIC -shared native_count.cpp -o native_count.so",
+      "evidence": "ENVIRONMENT.json"
+    },
+    {
+      "id": "correctness",
+      "command": "python validate.py --native",
+      "evidence": "validation_linux.log"
+    },
+    {
+      "id": "main",
+      "command": "python campaign.py main",
+      "evidence": "campaign_main.log"
+    },
+    {
+      "id": "cold",
+      "command": "python campaign.py cold",
+      "evidence": "campaign_cold.log"
+    },
+    {
+      "id": "complement-freeze",
+      "command": "python complement_controls.py freeze",
+      "evidence": "COMPLEMENT_CONTROL_ADDENDUM.json"
+    },
+    {
+      "id": "complement",
+      "command": "python complement_controls.py run",
+      "evidence": "campaign_complement.log"
+    },
+    {
+      "id": "theory",
+      "command": "python supplement.py theory",
+      "evidence": "theory_replay.log"
+    },
+    {
+      "id": "source",
+      "command": "python supplement.py sources",
+      "evidence": "source_preparation.log"
+    },
+    {
+      "id": "environment",
+      "command": "python supplement.py environment",
+      "evidence": "ENVIRONMENT.json"
+    },
+    {
+      "id": "analysis",
+      "command": "python analyze.py",
+      "evidence": "analysis.log"
+    },
+    {
+      "id": "tables",
+      "command": "python report_tables.py",
+      "evidence": "LIFECYCLE_SUMMARY.csv"
+    },
+    {
+      "id": "isolated-memory",
+      "command": "python isolated_memory.py run",
+      "evidence": "isolated_memory.log"
+    },
+    {
+      "id": "minimized-byte-witness",
+      "command": "python minimize_metadata.py",
+      "evidence": "results/MINIMIZED_MATCHED_BYTE_WITNESS.json"
+    }
+  ]
+}

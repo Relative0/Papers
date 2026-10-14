@@ -1,0 +1,84 @@
+# N2/P8 Interpretation
+
+## What P8 established
+
+P8 answers a more specific question than P7B: can the optimizer decision be made without paying for a second DAG traversal?
+
+Yes, mechanically. The dispatch decision was derived entirely from statistics accumulated during source-node creation, and evaluation required only a depth-3 frozen-tree lookup after source construction. P8 therefore removes P7B's separate profitability scan.
+
+But the current telemetry collector is not close enough to free. On Gate-P, source construction with telemetry costs about 1.85x ordinary source construction. That fixed tax turns a near-crossover compiler-only policy into a 1.141x source-inclusive result.
+
+## The strongest positive result
+
+The secondary compiler-only endpoint is the important mechanism result for P8:
+
+- P8/direct compiler-only: **0.97695x** case-balanced, CI `0.9013-1.0292`;
+- workload-weighted: **0.92856x**.
+
+This does not establish a statistically clear case-balanced win because the interval crosses 1. It does show that, once the telemetry is available, the frozen decision rule is already capable of avoiding enough bad P6 activations to move the compiler path from always-P6's `1.064x` case-balanced ratio to approximately parity/slight advantage.
+
+The gate is conservative: 5/36 cases are annotated and every annotated case consumes a fold. However, its profitability discrimination is incomplete: only 3 of the 5 annotations correspond to actual source-inclusive P6 wins, and 4 of the 7 source-inclusive P6 wins are bypassed.
+
+## Why the primary result still loses
+
+The tree itself is tiny. Evaluation does not call scikit-learn; it walks a frozen 13-node numeric tree of maximum depth 3. The expensive component is feature acquisition.
+
+The training schema exposed 16 features, but the final tree actually uses only five:
+
+1. `binary_density`
+2. `max_depth`
+3. `max_pair_shells`
+4. `pair_repeat_density`
+5. `reuse_density`
+
+The present `TelemetryFactory` still maintains all primitive counters needed for the original 16-feature model family, including counters that the frozen tree never reads. The post-hoc profile places most source-construction cost in `TelemetryFactory._make` bookkeeping.
+
+This is a particularly useful outcome because it points to an intervention that does not require changing the learned policy at all.
+
+## Natural corpus interpretation
+
+All ten frozen natural cases bypassed P6 and consumed zero folds. P8 therefore provides no natural CM-folding speed evidence.
+
+The natural result is instead a clean measurement of dispatch overhead when the optimizer should abstain. Source-inclusive P8/direct is `1.0321x`, better than paying the always-P6 path (`1.0565x`) but still above direct because the telemetry bookkeeping remains unavoidable.
+
+This is exactly the behavior a future dispatch system must improve: a no-op decision should be almost free.
+
+## Recommended P9
+
+The cleanest next experiment is **not** to retrain the model or change the P1/P4-P6 folding rules.
+
+Freeze the exact P8 tree and cutoff and replace the telemetry collector with a minimal collector that computes only the information needed by the five features actually used by the tree.
+
+Only seven primitive counters are needed:
+
+- `node_count`
+- `edge_count`
+- `binary_nodes`
+- `max_depth`
+- `reuse_edge_events`
+- `pair_repeat_excess`
+- `max_pair_shells`
+
+From those, compute the five frozen tree inputs in O(1):
+
+- `binary_density = binary_nodes / node_count`
+- `max_depth`
+- `max_pair_shells`
+- `pair_repeat_density = pair_repeat_excess / binary_nodes`
+- `reuse_density = reuse_edge_events / edge_count`
+
+P9 should require **bit-for-bit identical P8 dispatch decisions** on calibration, validation, Gate-P, and natural cases. It should change only telemetry implementation cost. That makes P9 a causal engineering test rather than another model-search experiment.
+
+The key endpoint should remain source-inclusive P9/direct. The current compiler-only result provides an approximate upper bound on what can be achieved if telemetry becomes nearly free: using measured plain source-build cost with the frozen P8 compiler decisions gives a post-hoc Gate-P ratio of about `0.9784x` case-balanced and `0.9414x` workload-weighted.
+
+Thus a full end-to-end crossover is plausible without changing any fold rule or dispatch decision, but it requires making the five-feature telemetry materially cheaper.
+
+## Scientific status after P8
+
+The sequence now separates three claims cleanly:
+
+1. **Folding mechanism:** strongly supported on Gate-P. P4-P7 repeatedly show large reductions in pair-product work and faster sparse-ANF lowering when useful propagated folds exist.
+2. **Profitability dispatch:** partially supported. P8's frozen gate is close to compiler-only parity/slight improvement and avoids most unnecessary P6 invocations, but misses profitable cases and has some false positives.
+3. **End-to-end compiler win:** not yet established case-balanced. Source-builder telemetry remains too expensive in the current Python implementation.
+
+The next uncertainty is therefore narrower than before: whether the exact same P8 dispatch policy can be made cheap enough by collecting only the five features it actually uses.

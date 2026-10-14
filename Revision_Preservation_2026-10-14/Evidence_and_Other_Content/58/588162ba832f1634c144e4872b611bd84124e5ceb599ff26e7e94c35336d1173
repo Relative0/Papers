@@ -1,0 +1,45 @@
+# P7B reproduction
+
+P7B builds on the frozen P1-P7 harness chain included in the bundle.
+
+From the `cm_n2_p7b_run` directory:
+
+```bash
+python n2_p7b_harness.py --mode calibrate --out calibration_reproduction.json
+```
+
+The published frozen gate is `P7B_FROZEN_GATE.json` with threshold T=17. Calibration is provided for audit; do not replace the frozen gate when reproducing evaluation.
+
+Correctness:
+
+```bash
+python n2_p7b_harness.py --mode fuzz --out fuzz_reproduction.json
+```
+
+Gate-P evaluation:
+
+```bash
+python n2_p7b_harness.py --mode gatep --out gatep_reproduction.json
+```
+
+Frozen natural case IDs can be listed with:
+
+```bash
+python n2_p7b_harness.py --mode selection --out selection_reproduction.json
+```
+
+Then run each with:
+
+```bash
+python n2_p7b_harness.py --mode natural-case --case-id 'adder:f[4]' --out adder_f4.json
+```
+
+`cavlc:35` was executed in deterministic chunks using `run_p7b_nat_chunk.py` because of the execution environment's per-command wall limit; the frozen randomized schedule and repetition count are unchanged.
+
+Run independent verification after assembling outputs:
+
+```bash
+python independent_verify.py
+```
+
+Important: `P7B_TIMING_CORRECTION.md` documents a wrapper-timing accounting bug found before final interpretation. All final reported evaluation timings were rerun with the corrected preregistered endpoint. The frozen threshold T=17 was not changed.

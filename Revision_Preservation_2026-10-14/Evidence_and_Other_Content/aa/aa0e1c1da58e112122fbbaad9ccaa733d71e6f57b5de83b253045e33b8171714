@@ -1,0 +1,53 @@
+# N2/P7B Interpretation
+
+## What P7B answered
+
+P7B asked a different question from P4-P7. Those passes asked whether propagated two-support folding can reduce Boolean expansion work and whether the annotation representation can be made cheap. P7B asked whether we can avoid paying that annotation cost at all by first predicting which formulas are worth annotating.
+
+For the frozen `two_support_pressure` gate, the answer is **no**.
+
+The negative result has two separable causes.
+
+### 1. A separate full-DAG probe is too expensive on the workloads where dispatch matters most
+
+On Gate-P the probe alone costs about 30% of direct compilation geometrically. That is a large tax for a policy whose job is to save a roughly similar-sized optimizer overhead. Even bypassed cases therefore become materially slower.
+
+This is especially important because P7B's direct-after-probe backend is not intrinsically degraded: after subtracting probe time, bypassed Gate-P cases are only about 1.4% above standalone direct, and natural cases about 0.3% above. The traversal itself is the problem.
+
+### 2. Immediate pair pressure is not a sufficiently precise profitability predictor
+
+The gate correctly recognized the broad fold-rich structure: it annotated none of the depth-6 Gate-P cases, half of depth 8, and nearly all depth 10; it also rejected every natural EPFL case.
+
+But end-to-end profitability depends on more than repeated same-pair shell pressure. Among 17 annotated Gate-P cases, P6 actually beat direct on only 7. Ten annotations were timing false positives, and two annotated cases consumed no folds at all.
+
+Even if the probe had zero cost, the same frozen feature/threshold family only reaches about 0.985x direct on the calibration corpus. So eliminating traversal cost alone would not create a large robust win.
+
+## What remains positive
+
+The underlying folding mechanism is still intact. On the subset selected for annotation, real P6 folds occur in 15 cases, and across the complete Gate-P corpus the dispatch policy reduces pair-product work to about 26.6% of direct geometrically. The P4-P7 conclusion therefore survives: propagated two-support folding can remove substantial ANF work.
+
+P7B instead says that **a pre-optimization pass which tries to discover whether optimization is worthwhile is itself the wrong shape**—at least when implemented as another Python DAG traversal with a single structural pressure feature.
+
+## Strongest next experiment
+
+The next pass should not be another increasingly elaborate probe over an already-built DAG.
+
+A better P8 would use **dispatch metadata that is already available or accumulated at effectively zero marginal traversal cost**. Two promising forms are:
+
+1. **Piggyback source-construction features.** While the ordinary source DAG/parser is already creating nodes, maintain a few primitive counters such as node count, depth, maximum fanout, repeated operand-pair pressure, and token diversity. The direct path pays no second walk. The final dispatch decision is O(1).
+2. **Use existing netlist/compiler metadata.** For natural circuits, source-node count, support, depth, edge count, local cube/literal counts, and fanout information may already exist before ANF lowering. A small frozen decision tree over those values can be calibrated on circuit-disjoint data without performing CM annotation or a separate semantic scan.
+
+The feature model should also predict **amortization**, not merely fold incidence. P7B pressure is good at identifying repeated pair structure but poor at predicting whether the downstream savings exceed P6 construction cost. A P8 policy should therefore be trained directly against end-to-end direct-vs-P6 cost, with a conservative false-positive penalty.
+
+A clean P8 design would keep all P6 folding rules frozen, split calibration/validation/evaluation by seed or circuit, restrict the policy to perhaps 3-5 primitive features and a depth-2 or depth-3 tree, and charge only O(1) dispatch at evaluation because feature accumulation occurs during work the baseline already performs.
+
+## Claim discipline
+
+P7B should be reported as a useful negative optimization-policy result:
+
+- not evidence against CM/two-support folding;
+- not evidence for natural-circuit folding, because all ten natural cases still abstain;
+- evidence that an extra source-DAG profitability probe can cost more than it saves;
+- evidence that same-pair structural pressure alone is too weak a proxy for end-to-end profitability.
+
+That materially narrows the engineering search space. The remaining target is no longer “find folds” but “make the decision to activate folding essentially free and more profitability-aware.”

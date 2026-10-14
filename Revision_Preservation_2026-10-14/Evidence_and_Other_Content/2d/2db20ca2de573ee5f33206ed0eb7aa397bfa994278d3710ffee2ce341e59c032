@@ -1,0 +1,63 @@
+# N2/P1 Interpretation — What the frozen replay actually shows
+
+## Short answer
+
+The preregistered **natural P1-vs-generic criterion passed**, but this is **not evidence that profitable CM folding was found on the natural corpus**.
+
+On the 10 admitted natural EPFL cones, the frozen P1 selector accepted **0 of 28 legal CM fold candidates**. P1 therefore behaved as a conservative abstaining front end. It was faster than the generic 2-support optimizer because it avoided that optimizer's unprofitable recognition/rewrite work, not because a CM fold accelerated the natural formulas.
+
+The strongest practical comparison is therefore:
+
+| Natural EPFL comparison | Result | Interpretation |
+|---|---:|---|
+| P1 / generic 2-support time | **0.9180** (95% bootstrap CI 0.8908–0.9441) | 8.2% faster; prereg criterion passes. |
+| P1 / direct sparse ANF time | **1.0934** (CI 1.0351–1.1600) | 9.3% slower than doing no rewrite/front-end optimization. |
+| Generic / direct sparse ANF time | **1.1910** | Generic optimization overhead was not repaid on this frozen natural set. |
+| P1 / generic Python traced peak | **0.7438** | ~25.6% less traced peak than generic. |
+| P1 / direct Python traced peak | **1.2107** | ~21.1% *more* traced peak than direct. |
+
+This directly addresses the concern that the earlier memory reduction might reflect discarded/reduced intermediate reuse rather than a genuine computational advantage. In this replay, the low P1-vs-generic memory number is real, but it is not a memory advantage over the simplest strong baseline. P1 retained exactly the same multiplication count, pair-term count, peak monomial count, and output-IR node count as direct sparse ANF on every natural case, while paying extra front-end allocation.
+
+## Natural symbolic mechanism
+
+For the natural set:
+
+- P1 candidate folds: **28**.
+- P1 accepted folds: **0**.
+- Rejected nonpositive estimated benefit: **27**.
+- Rejected for failing the absolute benefit threshold: **1**.
+- P1 multiplications vs direct: identical on **10/10** cases.
+- P1 pair terms vs direct: identical on **10/10** cases.
+- P1 peak monomials vs direct: identical on **10/10** cases.
+- P1 output unique nodes vs direct: identical on **10/10** cases.
+- Lost-sharing regressions (>5% pair-term increase vs direct): **0** for P1, versus **2** for unconditional CM.
+
+So P1 successfully solved the *safety/abstention* problem on these cones, but found no natural fold worth taking under the frozen cost model.
+
+## Gate-P replay
+
+Gate-P remains the deliberately fold-rich synthetic test. P1 accepted **110 of 264** candidates, including **97 shared** candidates.
+
+| Gate-P comparison | Result |
+|---|---:|
+| P1 / generic time | **0.9881** (95% CI 0.9515–1.0252) |
+| P1 / unconditional CM time | **1.2059** (CI 1.1571–1.2566) |
+| P1 / conservative fanout-guarded CM time | **1.0143** (CI 0.9649–1.0623) |
+
+Thus the profitability selector did **not** restore the large unguarded Gate-P speed signal. It preserved many symbolic savings relative to direct ANF, but the selector/front-end overhead erased those savings in wall time relative to the strong generic comparator.
+
+This is an important negative result: **substantial pre-expansion symbolic-work reduction is not sufficient by itself for an end-to-end speedup** at these problem sizes and in this Python implementation.
+
+## What can be claimed now
+
+The evidence supports a narrower and more useful conclusion:
+
+1. A frozen profitability rule can prevent the natural lost-sharing regression and can cheaply abstain from apparently bad folds.
+2. On this natural set, that abstention makes P1 materially faster than the generic 2-support optimizer, but still slower than direct sparse ANF.
+3. The ~25% traced-memory advantage over generic is not evidence of a global memory advantage; direct sparse ANF uses less traced peak memory than P1 here.
+4. On Gate-P, P1 takes many folds and reduces symbolic work, but does not produce a statistically clear end-to-end speedup over generic.
+5. No correctness failures occurred: 50 natural symbolic arm checks, 750 natural timing executions, 180 Gate-P symbolic checks, 2,880 Gate-P timing executions, and 500 fresh P1 fuzz cases all passed.
+
+## Most informative next selector test
+
+A follow-up should make **direct/no-rewrite cost the first-class profitability baseline**, not merely ask whether a fold looks cheaper than retaining the local structure. The selector should be charged for its own matching/estimation cost and should activate only when predicted total saved downstream work exceeds both selector overhead and the no-rewrite path by a frozen margin. Training/calibration should be separated from a circuit-disjoint held-out EPFL evaluation set. That would test the question that matters most now: whether any region exists where taking a fold beats simply not optimizing at all.

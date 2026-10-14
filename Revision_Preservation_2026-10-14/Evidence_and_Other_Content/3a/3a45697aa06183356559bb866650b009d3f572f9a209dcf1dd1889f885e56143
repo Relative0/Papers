@@ -1,0 +1,43 @@
+# Computational ledger
+
+## Evidence actually generated in this consolidation
+
+All code was run locally, with exact finite arithmetic where advertised. The six named pytest suites contain **102 passing tests**: audit31, historical22+10+15+12, benchmark12. This is not a count of theorem statements or of all assertions inside the enumerations. Paper B's separate105-test assertion remains source-reported and is not added to102.
+
+The final audit's algebra, inventory, contextuality, GHZ, gate/protocol, tensor, probability, CM/LM and restricted-form stages were rerun individually. The capability laboratory, ablations, phase/bridge checks, arbitrary-party two-setting implementation and cross-validator were rerun. Both bridge checkers and both adversarial extension/boundary scripts ran successfully. [EXPERIMENT_REGISTRY.csv](EXPERIMENT_REGISTRY.csv) gives commands, exact scope, logs and caveats. No timing benchmark campaign was launched.
+
+### New independent checker, not merely a script rerun
+
+[consolidation_checks.py](independent/consolidation_checks.py) contains a separate standard-library-only implementation. It imports none of the supplied mathematical kernels. Its [machine-readable output](independent/independent_results.json) verifies:
+
+| Check | Exact extent | Result |
+|---|---:|---|
+| A-valued 2x2 resource inventory |65,536 matrices|15 Smith classes;24,576 invertible;5,266 simple tensors including zero|
+| Regular binary ranks |65,536 matrices|All agree with the Smith-rank formula|
+| Dual-number complete-basis contextuality |255 nonzero matrices;12 bases/site;144 contexts/resource|81 local,72 logical-not-strong,102 strong|
+| Direct support/SCC 2-SAT work |62,463 calls;110,592 supported events|Classification and event-extension assertions pass|
+| Dense codebook construction |14 nonzero A Smith representatives;36 messages in total|14 actual decoder matrices invert and isolate their codewords|
+| Fixed-family LM ordinary composition |256 products|112 inside;144 outside|
+| Raw synthetic benchmark recount |10,500 rows;10,389 fully admitted|Zero differences in seven CM-versus-generic symbolic metrics|
+
+The 2-SAT check is deliberately a test of the proposed classification, not an implementation that simply calls that theorem. The new A inventory/rank implementation is independent of the original rotation-coordinate code. Encoder and decoder matrices are saved in [explicit_dense_decoders.json](independent/explicit_dense_decoders.json); classification records are in [dual_number_contextuality.json](independent/dual_number_contextuality.json).
+
+### Protocol and algorithm scope
+
+The supplied audit rerun checked4,194,304 resource/branch ranks. Two literal analyzers each have256 input vectors x64 branch records; the zero input gives64 null records, while16,320 records are nonzero. The capability implementation separately checks16,400 literal input/branch cases (d2 andd8) and 1,024 shared ones. These are related corroborating views, not disjoint trials to add into a statistical sample.
+
+The GHZ finite record is27 contexts,112 possible events,512 candidate assignments, and101,583 subsets of at most five contexts. The six-context witness is ZZZ,ZXX,XZY,XXX,YYZ,YYY. The two-setting general theorem is analytic; the source test enumerates65,808 states through four mobits and1,050,666 supported events in its constructed assignments.
+
+The exact Simon scan is n2, one query, no ancilla, dimension16,65,535 preparations and36 standard oracles. There are zero successful preparations under that contract only. The UNIQUE-SAT positive-control reconstruction covers132 promised functions for n1..6; it is not a new algorithm. Phase checks include192 primitive eigenvectors and tensor-Walsh ranks for n1..6.
+
+### Extra oracle-contract correction
+
+The fresh [oracle_contract_check.py](independent/oracle_contract_check.py) makes correction C17 explicit: G0=G1 erases all dependence on f, so arbitrary fixed invertible target gates do not automatically admit the standard classical upper bounds. The lower-bound proofs remain valid. Deutsch=2 and BV=n are stated for the informative standard XOR interface. This is a mathematical qualification added during consolidation, not silently attributed to the original broad wording.
+
+## Reproduction is not priority or formal verification
+
+All universal statements in the theorem bank use analytic arguments. Computation catches convention and implementation mistakes in the indicated finite domains. These proofs have not been checked in a proof assistant. Rerunning a supplied independent implementation is different from authoring an independent checker; the registry labels both explicitly. Cross-comparison can share reference data even when code differs.
+
+The original aggregate audit attempt was interrupted during its historical stage. The successful individual logs replace that execution route; they do not change the aggregate attempt to PASS. Original source snapshots remain unmodified. Selected copied data directories can include inherited outputs not overwritten by the listed scripts; only the registry and fresh logs identify fresh computations.
+
+The final portable runner subsequently completed 21 explicit stages with all PASS in a fresh copy. This validates the delivered reproduction path and repeats existing checks; it does not inflate the 102 distinct named tests. Initial launcher interruptions remain recorded in E00/E23.

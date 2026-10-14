@@ -1,0 +1,202 @@
+PDF PAGE 4
+are terms. Applying a substitution θ to an expression e (term or clause) yields
+the instantiated expression eθ where all variables Vi in e have been replaced by
+their corresponding terms ti in e. For example, applying the substitution θ = {X =
+an, Y = bob} to parent(X,Y) results in parent(an,bob). When an expression
+does not contain any variables, it is called ground. Logic programs consist of two
+main components: 1) a set of facts F that define the atoms that are considered
+true, and 2) a set of rules (or clauses) C which allow the program to derive new
+atoms from the given set of facts through resolution. A logic program, together
+with a specific semantics defines the entailment relationship ( |= ), which defines
+all the atoms that can be derived using the given facts and rules. For further details
+on logic programming, we refer to Flach (1994).
+Facts are a basic constituent of logic programs, they represent atoms that are
+true. We will now show how they can be extended to cope with discrete, continu-
+ous, neural and algebraic labels that form the basis of modern PLP.
+2.2. Probabilistic Facts
+The probabilistic fact is a generalisation of the logic fact, in which the fact is
+annotated with a probability of being true instead of being deterministically true.
+This lifts logic programming to probabilistic logic programming (PLP).
+Definition 1 (Probabilistic fact). A probabilistic fact is an expression of the form
+p :: f where f is a ground fact that is true with a probability p ∈ [0, 1].
+Introducing the probabilistic fact to the logic programming language Prolog
+resulted in the PLP language ProbLog (De Raedt et al., 2007).
+Definition 2 (ProbLog program). A ProbLog program is a triple (F , w, C) where
+F is a set of probabilistic facts, w is a function mapping each ground probabilistic
+fact f ∈ F to its probability p, and C is a set of definite clauses.
+Example 1 (Bayesian network). The ProbLog program below models a variant of
+the well-known sprinkler Bayesian network. It contains three probabilistic facts
+and three rules.
+1 % Probabilistic facts
+2 0.25 :: cloudy.
+3 0.8 :: humid.
+4 0.5 :: sprinkler.
+5
+6 % Rules
+4
+
+PDF PAGE 5
+7 rain :- cloudy, humid.
+8 wet :- rain.
+9 wet :- sprinkler.
+When considering all probabilistic facts in a program, the probability that a
+set of probabilistic facts F′ ⊆ F is true, and all other facts in the program (F \ F′)
+false, is given by (Kimmig et al., 2017):
+PF (F′) =
+ Y
+fi∈F′
+w( fi)
+ Y
+fi∈F \F′
+(1 − w( fi))
+
+(1)
+A set of facts F′ ⊆ F of a program, combined with the rules C again form
+a deterministic program. In this way, the probabilistic facts induce a probability
+distribution over all the deterministic programs. The set of all atoms that are
+entailed to be true from F′ and C together is often referred to as a possible world
+(Kimmig et al., 2017).
+Example 2 (Possible worlds). Consider the ProbLog program in Example 1. The
+set of all ground probabilistic factsF is {cloudy, humid, sprinkler}. An exam-
+ple F ′ is {cloudy, humid} ⊂ F , which has probability
+PF (F′) = (0.25 × 0.8) × (1 − 0.5) = 0.1 (2)
+The possible world entailed by F ′ in the ProbLog program is the set
+{cloudy, humid, rain, wet} (3)
+A different F′ would lead to a different possible world; the table below shows all
+the possible worlds of this ProbLog program along with their probability.
+Possible world P F (F′)
+{} 0.075
+{cloudy} 0.025
+{humid} 0.3
+{cloudy, humid, rain, wet} 0.1
+{sprinkler, wet} 0.075
+{sprinkler, cloudy, wet} 0.025
+{sprinkler, humid, wet} 0.3
+{sprinkler, cloudy, humid, rain, wet} 0.1
+5
+
+PDF PAGE 10
+Example 9. Using Definition 7 we can compute the success probability for the
+query G = wet in a similar fashion to Example 3. For the world{cloudy, humid,
+rain, wet} we get:
+Z
+⟦xc = 1⟧⟦xh > 0.6⟧⟦xh = 0⟧ dµ
+Plugging now in the expression for the differential in Example 8 and rearranging
+the factors the integrals we get:
+ Z
+⟦xc = 1⟧0.25xc(1 − 0.75)xc dxc
+!
+×
+ Z
+⟦xh > 0.6⟧ 1
+B(4, 2) x3
+h(1 − xh)1 dxh
+!
+×
+ Z
+⟦xs = 0⟧0.5xs(1 − 0.5)xs dx s
+!
+= 0.25 × 0.66304 × 0.5 = 0.08288
+We can compute in a similar fashion the probabilities of the remaining worlds.
+The program in Example 6 is rather simple in terms of functional dependencies
+between random variables. For instance, none of the parameters of any of the
+distributions depends on the parameters of another random variable. Furthermore,
+the labels of the indicator facts are all univariate. This means, e ffectively, that all
+the random variables are independent of each other. Note however that Definition
+7 is more general and does allow for functional dependencies between random
+variables and also for multivariate labels of indicator facts. We refer the interested
+reader to Zuidberg Dos Martires et al. (2023) for an in depth and formal exposition
+of such cases. We also note that De Smet et al. (2023) generalize distributional
+facts to so-called neural distributional facts , which allows them to unify neural
+and discrete-continuous PLP. The main idea is that parameters of distributional
+facts are allowed to be the output of neural networks.
+2.5. Algebraic Facts
+The previously introduced concepts of probabilistic fact, neural fact, and indi-
+cator fact can each be generalised into an algebraic fact, a concept first discussed
+in aProbLog (Kimmig et al., 2011).
+Definition 8 (Algebraic fact). An algebraic fact is an expression of the form a:: f
+where f is a fact and a is an element of a commutative semiring’s domain.
+10
+
+PDF PAGE 11
+Definition 9 (Commutative semiring). (Derkinderen and De Raedt, 2020) A com-
+mutative semiring S is an algebraic structure (A, ⊕, ⊗, e⊕, e⊗) where
+• A defines the domain of the values,
+• ⊕ and ⊗ are associative, commutative binary operations over A,
+• ⊗ distributes over ⊕,
+• e⊗ ∈ A and ∀a ∈ A : e⊗ ⊗ a = a, i.e. e⊗ is a neutral element for ⊗.
+• e⊕ ∈ A and ∀a ∈ A: e⊕ ⊕ a = a and e ⊕ ⊗ a = e⊕, i.e. e ⊕ is a neutral and
+absorbing element for ⊕ and ⊗ respectively.
+Example 10 (Commutative semiring). Examples of relevant commutative semir-
+ings include the Boolean semiring (B, ∨, ∧, ⊥, ⊤), the probability semiring (R, +,
+×, 0, 1), and the most probable explanation semiring (R, max, ×, 0, 1).
+In this generalisation a program has four components ( F , α, C, S) where S
+is a commutative semiring and w became α mapping not only facts f but also
+their negation ¬ f to elements of S’s domainA. This allows ¬ fi to be associated
+to something else than 1 − w( fi). The inference task within such a program is
+generalised to Equation 6. Note the use of the semiring operations⊗ and ⊕, which
+replaced × and +. We also replaced P(F ,α,C)(G) with AMC (F ,α,C,S)(G) since it is no
+longer necessarily a probability.
+AMC (F ,α,C,S)(G) =
+M
+F′⊆F
+F′∪C |=G
+O
+fi∈F′
+α( fi)
+ O
+fi∈F \F′
+α(¬ fi)
+
+(6)
+Example 11. Consider the program in Example 1. When using(R, max, ×, 0, 1) as
+a semiring the output of the query becomes instead the most probable explanation.
+Indeed, ⊗ = × means that the weight of a model m is still its probability, and by
+choosing ⊕ = max the most probable model is selected.
+While the example above is also solving a probabilistic task, the algebraic
+framework is certainly not restricted to probabilities alone. In fact, the semiring
+elements A can be anything as long as we define the proper operations over them:
+preference values, distances, weights, tuples, sets, . . .
+Several other extensions built around this framework include reasoning over
+second-order queries (Verreet et al., 2022), decision making via the expected util-
+ity semiring (Derkinderen and De Raedt, 2020), and parameter learning via the
+11
+
+PDF PAGE 12
+gradient semiring (Kimmig et al., 2011). More information on the latter is pro-
+vided in Section 4. Comparing Equation 6 to Equation 5 we also see that we can
+formulate the probability of a query to a discrete-continuous probabilistic program
+in terms of an algebraic model count as well:
+P(F ,σ,C)(G) =
+Z
+AMC (F ,σ,C,S)(G) dµ
+A similar formulation is also used in (Zuidberg Dos Martires et al., 2019; Miosic
+and Zuidberg Dos Martires, 2021; Zuidberg Dos Martires et al., 2023; De Smet
+et al., 2023).
+3. Inference
+We now discuss inference for algebraic logic programs. Inference happens
+in three steps: 1) logical inference, 2) translation to an algebraic model counting
+problem, 3) calculating the algebraic model count. We now discuss each step in
+detail.
+3.1. Logical inference
+The first step concerns the logical inference, for which we discern two different
+but related approaches.
+The first approach is proving, which uses SLD resolution to calculate the set
+of all proofs for a query G. SLD resolution uses a backward chaining, goal-
+oriented approach. A goal is a sequence of atoms ?– l1, ..., ln. The initial goal is
+the query. At each step, the algorithm chooses a clauseh :– b1, . . . ,bn whose head
+h unifies with the first atom l1 in the goal, with the substitution θ, i.e. hθ = l1θ.
+The application of resolution yields a new goal, ?–( b1, . . .bn, l2, . . . ,l j)θ. This is
+repeated until the goal is empty, resulting in a successful proof, or until no more
+clauses can be applied, in which case the proof fails. It is possible that multiple
+clauses can be applied to a goal, which leads to different branches in the SLD tree
+and the possibility of multiple proofs for a single query.
+The second approach is to construct the relevant ground programPG. Ground-
+ing replaces each rule c containing variables {V1, ..., Vk} by all instances cθ where
+θ is a substitution {V1 = c1, ...Vk = ck} and the ci are constants or other ground
+terms appearing in the domain. If G is not ground, the grounding will compute
+all possible answer substitutions Gθ. To keep inference tractable, it is key to only
+consider that part of the ground program that is relevant to the query (i.e. the
+grounded facts and rules are used in the derivations of the query). Again, SLD
+resolution is used to find the relevant grounding.
+12

@@ -1,0 +1,230 @@
+{
+  "status": "PASS",
+  "checks_by_family": {
+    "joint_law": 3072,
+    "dependence": 3072,
+    "composition_count_reproduction": 3,
+    "guard_pair_sums": 2025,
+    "quartic_dispatch": 2020,
+    "replay_domain_gap": 1
+  },
+  "total_assertions": 10193,
+  "independent_composition_counts": [
+    {
+      "family": "same_frame",
+      "circuits": 4096,
+      "rejected": 1880,
+      "preserved": 2216,
+      "reason_grid_is_decisive": "coordinate degrees <=2; tensor grid of three distinct points is unisolvent"
+    },
+    {
+      "family": "overlap",
+      "circuits": 4096,
+      "rejected": 1440,
+      "preserved": 2656,
+      "reason_grid_is_decisive": "coordinate degrees <=2; tensor grid of three distinct points is unisolvent"
+    },
+    {
+      "family": "disjoint",
+      "circuits": 4096,
+      "rejected": 0,
+      "preserved": 4096,
+      "reason_grid_is_decisive": "coordinate degrees <=2; tensor grid of three distinct points is unisolvent"
+    }
+  ],
+  "examples": {
+    "and_repeat": "1/4",
+    "event_repeat": "1/2",
+    "primitive_equivalence": "1/2",
+    "two_implications": "9/16",
+    "value_error_p_squared_to_p": "99/10000",
+    "input_gradient_error_sup": "1",
+    "real_switch_at_half": [
+      [
+        "1/2",
+        "1/2"
+      ],
+      [
+        "1/2",
+        "1/2"
+      ]
+    ]
+  },
+  "extraction_interface_probe": {
+    "extract_status": "UNKNOWN",
+    "replay_accepts_negative_magnitude": true,
+    "certificate": {
+      "model": "D+A*x+B*y+C*x*y; joint-box; strict-zero-threshold; v1",
+      "frame": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "bounds": {
+        "D": [
+          "0",
+          "0"
+        ],
+        "A": [
+          "1",
+          "1"
+        ],
+        "B": [
+          "1",
+          "1"
+        ],
+        "C": [
+          "1",
+          "1"
+        ],
+        "a": [
+          "-1/2",
+          "-1/2"
+        ],
+        "b": [
+          "1/2",
+          "1/2"
+        ]
+      },
+      "range_proof": "multi-affine box interpolation",
+      "rows": [
+        {
+          "alpha": [
+            1,
+            1
+          ],
+          "min": "-1/4",
+          "max": "-1/4",
+          "min_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "max_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "attained_signs": [
+            "-"
+          ],
+          "status": "STRICT"
+        },
+        {
+          "alpha": [
+            1,
+            0
+          ],
+          "min": "-3/4",
+          "max": "-3/4",
+          "min_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "max_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "attained_signs": [
+            "-"
+          ],
+          "status": "STRICT"
+        },
+        {
+          "alpha": [
+            0,
+            1
+          ],
+          "min": "5/4",
+          "max": "5/4",
+          "min_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "max_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "attained_signs": [
+            "+"
+          ],
+          "status": "STRICT"
+        },
+        {
+          "alpha": [
+            0,
+            0
+          ],
+          "min": "-1/4",
+          "max": "-1/4",
+          "min_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "max_vertex": [
+            "0",
+            "1",
+            "1",
+            "1",
+            "-1/2",
+            "1/2"
+          ],
+          "attained_signs": [
+            "-"
+          ],
+          "status": "STRICT"
+        }
+      ],
+      "status": "EXACT",
+      "truth_vector": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "contract_sha256": "37968552fb1bf7064df07b3ca8edcf3b411aab4ddd8c3444ca4e95456ce022be"
+    }
+  },
+  "elapsed_seconds": 100.21875830000499,
+  "scope": "Exact finite diagnostics and exhaustive bounded composition identities; no source-wide proof, learning or performance validation.",
+  "script_sha256": "58d2468ea6dc262ce9a986db972261dacd1b533f6f91b922687f55a8f6aa5fa8"
+}

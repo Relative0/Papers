@@ -1,0 +1,79 @@
+# Independent mathematical review of the MIND unfolding manuscript v0.4
+
+You are an independent referee with expertise in finite-poset topology, simplicial and relative homology, filtered chain complexes, spectral sequences, and integral algebra. Review this research draft for correctness, precise scope, and prior-art positioning. Your task is to test the claims, not to endorse the project's existing assessments or develop its next conjecture.
+
+This is a review request. Do not rewrite the manuscript, start a new research gate, contact anyone, publish, or modify the source archive. If you use computational tools, keep new scripts and outputs in a separate review directory. Do not overwrite existing certificates. A human reviewer may simply return the requested report.
+
+## Materials and versions
+
+For a reviewer in the same Windows workspace, the project root is:
+
+`C:\Users\brian\Documents\Math Latex etc\Papers for Publication\The MIND`
+
+Use these three directories relative to that root:
+
+- **Current manuscript:** `Manuscript Convergence 2026-09-29`
+- **Interaction supplement:** `Interaction Core Gate 2026-09-29`
+- **Transferred archive:** `Transferred Research\MIND_Unfolding_Project_Consolidated_Handoff_2026-09-29`
+
+For a reviewer outside this workspace, the requester must supply the corresponding files. Local path strings do not grant access. Identify any unavailable material and limit your conclusions accordingly; do not imply that you inspected missing files.
+
+The review target is `Observation_Refinement_Descent_and_Cone_Draft_v0.4.tex` and its matching 27-page PDF in the current-manuscript directory. The transferred `01_CURRENT_MANUSCRIPT/Observation_Refinement_Descent_and_Cone_Draft_v0.3` is the frozen historical baseline. Two formerly unmerged sections have been integrated into v0.4 only. The incoming archive and baseline are provenance records, not proof that their statements are correct.
+
+## Reading order and independence
+
+First read v0.4 itself and make your own theorem/dependency map. Prioritize Sections 7–11; assess the surrounding framework for unsupported claims and inconsistencies as well. Record initial concerns before reading earlier review verdicts.
+
+Then consult the interaction supplement's mathematical evidence:
+
+- `SPECTRAL_SEQUENCE_CONSTRUCTION.md`
+- `MAX_DEGREE_TWO_CLASSIFICATION.md`
+- `C4_COUNTEREXAMPLE_PROOF.md`
+- `FERRERS_AND_CHORDAL_CASES.md`
+- `LOCAL_INTERACTION_MODELS.md`
+- `COUNTEREXAMPLES_AND_FAILURE_BOUNDARY.md`
+- `COMPUTATIONAL_INTERACTION_AUDIT.md`
+- The Python verifiers and their JSON certificates, especially `verify_d2_certificate.py`, `verify_torsion_star.py`, and the corresponding outputs.
+
+Consult the transferred `02_LATEST_HIGHER_DIMENSIONAL_GATE/EXACT_THEOREMS_AND_PROOFS.md` and `COUNTEREXAMPLES_AND_OBSTRUCTIONS.md` for the matching results. Consult the archived companion in `07_RELATED_THEORY/` only for claims that depend on it.
+
+Finally compare your findings with the current `CONVERGENCE_REVIEW.md`, `INTEGRATION_RECEIPT.json`, `VERIFICATION_RECEIPT.json`, the interaction `LITERATURE_PRIORITY_MAP.md`, and its adversarial review files. Treat these as earlier internal assessments, not independent validation. Distinguish disagreement with a proof from disagreement with wording or novelty positioning.
+
+## Questions requiring explicit answers
+
+1. **Carrier splitting and low height.** Verify the neutral split-completion factorization and its relationship to order thinning. Check the weighted-height-two incidence matrix, boundary signs, root convention, total unimodularity, and every direction in the claimed equivalence between acyclicity, rooted forest, elementary collapse, and homotopy equivalence. Distinguish the incidence graph from the exclusive inversion graph.
+
+2. **Matching theorem and grading.** Independently derive the two-colour relative model with K=Δ(Q×2), L=ΔQ^ψ, and U=K_P∪K_Z. Check the identification of cone H_n with H_(n+1)(K,U), the edge-link suspension, and the final shift by two. Test empty links, disconnected complexes, empty exclusive graphs, low degrees, and the stated coefficient generality. Determine whether any naturality claim needs qualification.
+
+3. **Interaction spectral sequence.** Verify that the filtration is on C(K,U), that E¹_(p,q) is the sum of reduced H_q(Λ_S) for |S|=p with Λ_S=lk_K(S)[V(L)], and that cone degree is p+q−1. Check the missing-first orientation, d=v+h, augmented degree −1, d^r bidegree (−r,r−1), convergence, and page bound. Establish which statements determine actual homology and which determine only associated graded groups.
+
+4. **Exact two-column theorem.** Verify C(K,U)≅Cone(h)[2] when no mixed core has size ≥4. Derive the short exact kernel/cokernel sequence with its stated degrees. Audit the quasi-isomorphism criterion and integral splitting caveat. Do not infer a direct-sum decomposition solely from E² collapse.
+
+5. **Maximum degree two.** Check the same-colour neighbourhood inclusions imposed by transitivity, the characterization of four-cores, the E³ bound, the conditional E² result, path endpoint blocks, the shared-middle-edge case, and the length ≥6 cycle decomposition. Check that componentwise splitting does not incorrectly replace links in the whole poset by links in a component.
+
+6. **Counterexamples and torsion.** Reconstruct the three-chain profile (1,0,0), the seven-state K1,3 primitive d²: Z→Z², and the eight-state C4 unit d²: Z→Z. Check the explicit link descriptions and path fillings rather than accepting a nonzero-rank output alone. Verify the all-exclusive-star formula using ordinary H_(n−1)(ΔR), and the 32-state projective-plane example with cone H₁=Z and H₂=Z/2 despite torsion-free local links. Test whether these witnesses establish exactly the advertised failures of stronger hypotheses. Do not infer global minimality.
+
+7. **Descent correction and other claims.** v0.3 conflated gluing on X with gluing on a proper subset Y. Verify v0.4 Theorem 11.2 and Example 11.3 independently, including the precise site, cover, nerve, relative-homology, sheaf, and cosheaf hypotheses. Check whether additional qualifications are needed. Audit whole-relation meet/join neutrality and the separation between observation refinement, genuine chain differential, and semantic descent.
+
+8. **Prior art and contribution.** Compare exact statements and hypotheses with Chachólski–Jin–Scolamiero–Tombari obstruction complexes, Björner–Wachs–Welker fiber theorems, Dey–Hirani–Krishnamoorthy's TU criterion, and standard filtered-complex and functorial-nerve results. Retrieve primary sources; give theorem/page identifiers and stable links. Classify contributions as standard machinery, direct specialization, substantive specialized result, or unresolved priority. A failed search is not evidence of novelty. If a claim is an immediate corollary, exhibit the parameter identification and verify every hypothesis.
+
+## Computation standards
+
+Separate hand proofs from computation, field calculations from integral calculations, and exhaustive ranges from random/targeted samples. The earlier 90,201 small cases are over F₂; they cannot certify integral conclusions. Canonical/isomorphism counts are postprocessing, not independent experiments. The torsion-star verification uses the reduced interaction complex and local links, not a direct Smith reduction of the full doubled pair.
+
+Read code before running it. Prefer a few independent discriminating checks to repeating the entire enumeration. Inspect integer signs and Smith-normal-form logic. Record exactly what you ran, software versions, outputs, and what you did not check. The convergence receipt records historical annotation differences between regenerated and archived certificates; determine whether these affect any mathematical claim. Report uncertainty rather than manufacturing a definite result.
+
+## Required report
+
+Return a self-contained referee report containing:
+
+1. A concise verdict distinguishing mathematical correctness, proof completeness, and novelty/publication readiness. Use “not verified” where appropriate.
+2. A claim-by-claim table: manuscript identifier, status (verified / valid with repair / false / not verified), evidence, and dependencies. Do not mark a theorem verified merely because its tests passed.
+3. Prioritized findings. For each serious issue, quote or locate the exact claim, explain the gap, provide a counterexample or missing argument if available, and state the smallest repair and its downstream effects. Clearly separate fatal errors, substantive gaps, missing hypotheses, and exposition.
+4. A reproducibility record and an explicit list of unreviewed material.
+5. A prior-art comparison with precise citations and a defensible description of what, if anything, remains potentially publishable.
+6. A recommended disposition: ready for external submission review, revise before submission, or reconsider the central claim. Identify the strongest defensible mathematical core and only the changes necessary to support it.
+
+If working locally, write a new `INDEPENDENT_EXPERT_REPORT.md` and any supporting files under a separate `Independent Expert Review` directory in the project root; use a distinct directory if one already exists. Preserve v0.3, v0.4, the archive, and all prior evidence. Do not implement repairs or explore the optional nonunit-C4-d² research question during this review.
+
+A fresh AI review can provide another critical pass but is not a substitute for independent human peer review. State the review method and its limitations honestly.

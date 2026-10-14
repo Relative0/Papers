@@ -1,0 +1,93 @@
+# N2/P4 — Construction-Time CM Signatures and Edge Metadata
+
+Run completed: 2026-09-17T19:58:27Z
+Preregistration SHA-256: `052a4f097bdc9677c7d0899f5510458d788aa21ad8fb2b5e72a8f09da2d37971`
+Frozen harness SHA-256: `b01e27b95f76678f72742ce5c51fa9163d05b73c55cf6b96385fec0fb03db3d7`
+
+## Result in one sentence
+
+**P4 produced the first preregistered Gate-P speed win against direct/no-rewrite at the ANF-lowering stage: propagated construction-time two-support signatures reduced case-balanced lowering time to 0.5752× direct, while also cutting pair-product work to 0.0984× direct. However, the current Python `MetaFactory` makes DAG construction expensive enough that construction+lowering remains 2.2259× direct.**
+
+## Gate-P lowering-only result
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P4 propagated / direct | 36 | 0.5752 | 0.4416–0.7455 |
+| P4 native-only / direct | 36 | 1.1822 | 1.1031–1.2727 |
+| P4 propagated / P3 | 36 | 0.2576 | 0.2137–0.3090 |
+| P3 / direct | 36 | 2.2327 | 2.0116–2.4706 |
+
+P4-propagated was below direct in **23/36** Gate-P cases. Its case-balanced result is about **42.5% faster** than direct; the workload-weighted ratio is **0.3670×**.
+
+Gate-P symbolic P4-propagated/direct ratios:
+
+- multiplications: **0.3360×** (~66.4% fewer);
+- pair terms: **0.0984×** (~90.2% fewer);
+- evaluated ANF nodes: **0.5415×** (~45.8% fewer);
+- peak monomials: **0.8973×**;
+- lower-only traced Python peak: **0.5722×** direct. This memory figure excludes metadata construction by design.
+
+**Predeclared Gate-P lowering-only speed signal: PASS.**
+
+## Why propagated signatures mattered
+
+The native-only metadata arm reproduced P3's accepted-fold count and symbolic effect exactly, but remained **1.1822× direct**. Thus removing the P3 reference scan/recursive estimator was helpful but not sufficient.
+
+The propagated arm consumed only **29** accepted folds versus **58** for native/P3, yet did much more algebraic pruning. Relative to P3, propagated P4 used **0.1246×** the pair terms and **0.3849×** the multiplications.
+
+The reason is structural: P4 propagates the semantic fact that a subgraph is a two-input truth function of an ordered base pair even when an intermediate local fold would not itself be selected. An ancestor can therefore take one profitable fold that bypasses several lower shells. The signature is metadata, not an eager rewrite.
+
+Across Gate-P, metadata contained **520** propagated-signature nodes and **520** propagated candidate nodes; only demanded nodes reached the lowering selector, which checked **322** binary nodes and accepted 29. Accepted-fold utilization remained **100%**.
+
+Depth trend:
+
+| Gate-P depth | P4 propagated / direct lowering | cases below direct |
+|---:|---:|---:|
+| 6 | 0.7261× | 6/12 |
+| 8 | 0.5365× | 9/12 |
+| 10 | 0.4885× | 8/12 |
+
+The synthetic speedup strengthens with Gate-P depth, consistent with the benchmark deliberately containing repeated same-pair structure. This is mechanism evidence, not evidence that ordinary circuits generally have this incidence.
+
+## Construction-inclusive result
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P4 metadata build + lower / ordinary build + direct lower | 36 | 2.2259 | 1.8913–2.5988 |
+| P4 metadata DAG build / ordinary DAG build | 36 | 5.5995 | 4.6396–6.5505 |
+
+Only **3/36** Gate-P cases beat the direct construction-inclusive pipeline. The pooled pipeline result is **2.2259× direct**, so the stronger end-to-end signal does not pass.
+
+The bottleneck has moved decisively into metadata construction: the present object-heavy Python `MetaFactory` takes **5.60×** the ordinary DAG-build time. A post-hoc profile on Gate-P 10:2 localized most construction cost to `MetaFactory._make` and `_candidate_from_children`, not to the now-fast propagated ANF lowering.
+
+**Predeclared Gate-P construction-inclusive speed signal: NO PASS.**
+
+## Natural EPFL replay
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P4 propagated / direct lowering | 10 | 1.0303 | 1.0049–1.0635 |
+| P4 propagated / P3 lowering | 10 | 0.9297 | 0.8768–0.9723 |
+| P4 build+lower / direct build+lower | 10 | 1.1385 | 1.0537–1.2591 |
+
+P4 found **1** demanded natural candidate and accepted **0** folds. Therefore the natural result remains an abstention result, not evidence of a natural CM-folding speedup.
+
+The case-balanced P4/direct lower ratio was **1.0303×**; workload-weighted it was **0.9808×**. Construction-inclusive was **1.1385×** case-balanced but **1.0055×** workload-weighted, because the large CAVLC case amortizes fixed metadata overhead.
+
+Natural metadata DAG-build ratio: **3.0904×** ordinary build.
+
+**Predeclared natural lowering-only speed signal: NO PASS; construction-inclusive: NO PASS.**
+
+## Correctness and verification
+
+- Fresh randomized fuzz: **1000/1000 passed**, including independent fanout and monomial-estimate metadata checks.
+- All **6,348** recorded symbolic/timing/memory rows were successful.
+- Direct-on-metadata DAG matched original direct structural work and final ANF digest on every natural and Gate-P case.
+- The native metadata arm matched P3 accepted folds and symbolic work case-by-case.
+- All 36 Gate-P direct identities matched the frozen P3 reference.
+- All six EPFL Git blob hashes and the frozen 10-case natural selection were reverified.
+- Independent verifier status: **PASS**.
+
+## Bottom line
+
+P4 separates two questions that were conflated in P3. **Once the tiny two-support signature is already present, profitable propagated folding can beat direct sparse ANF substantially on the fold-rich Gate-P mechanism benchmark.** The unresolved engineering problem is no longer the lowering algorithm; it is making signature/fanout/estimate propagation cheap enough during DAG construction.

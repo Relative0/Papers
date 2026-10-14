@@ -1,0 +1,209 @@
+% Candidate insertion after the unmerged higher-dimensional matching section.
+% Frozen v0.3 and its existing revision section are not changed by this file.
+% Requires the theorem environments and amsmath/amssymb used by the baseline.
+\section{Interaction cores beyond matching}
+\label{sec:interaction-cores}
+
+Retain $K=\Delta(Q\times\mathbf 2)$, $L=\Delta Q^\psi$, the missing
+sets $M_0=P\times\{0\}$ and $M_1=Z\times\{1\}$, and
+$U=K_P\cup K_Z$.  Cone homology in this section is reduced homology
+of the topological homotopy cofiber, equivalently homology of the algebraic
+mapping cone.  The two-colour shift is
+\[
+ \widetilde H_n(\operatorname{Cone}(\Delta\pi);R)
+ \cong H_{n+1}(K,U;R).
+\]
+For a mixed missing core $S$, put
+$\Lambda_S=\operatorname{lk}_K(S)[V(L)]$.
+All link chain complexes below are augmented, including degree $-1$.
+
+\begin{proposition}[Interaction spectral sequence]
+\label{prop:interaction-ss}
+There is a finite convergent spectral sequence
+\[
+ E^1_{p,q}=\bigoplus_{|S|=p}\widetilde H_q(\Lambda_S;R)
+ \quad\Longrightarrow\quad H_{p+q}(K,U;R),
+\]
+with $d^r$ of bidegree $(-r,r-1)$.  The first differential is the
+signed sum of the inclusion maps obtained by deleting one missing vertex,
+omitting nonmixed faces.  If all mixed cores have size at most $M\ge2$,
+then $E^{M-1}=E^\infty$.
+\end{proposition}
+\begin{proof}
+Orient a relative simplex by listing its $p$ missing vertices first and
+its available vertices second, with the corresponding shuffle sign.
+Its boundary is
+\[
+ d(S\wedge T)=\sum_i(-1)^i(S\setminus\{s_i\})\wedge T
+                 +(-1)^pS\wedge\partial T.
+\]
+Terms with nonmixed core vanish in the relative complex.  Filtering by
+$p$ gives the displayed page and differential.  The filtration is finite.
+Only columns $2,\ldots,M$ can occur, so every $d^r$ with $r\ge M-1$
+has zero source or target.
+\end{proof}
+
+\begin{theorem}[Exact two-column interaction theorem]
+\label{thm:two-column-interaction}
+Suppose no mixed core has four or more vertices.  Define
+\[
+ A_\bullet=\bigoplus_{|S|=2}\widetilde C_\bullet(\Lambda_S;R),
+ \qquad
+ B_\bullet=\bigoplus_{|S|=3}\widetilde C_\bullet(\Lambda_S;R),
+\]
+and let $h:B_\bullet\to A_\bullet$ be the signed sum of core-deletion
+inclusions.  Then
+\[
+ C_\bullet(K,U;R)\cong\operatorname{Cone}(h)[2],\qquad
+ \widetilde H_n(\operatorname{Cone}(\Delta\pi);R)
+ \cong H_{n-1}(\operatorname{Cone}(h)).
+\]
+The interaction spectral sequence collapses at $E^2$, and there is a
+natural exact sequence
+\[
+ 0\longrightarrow\operatorname{coker}H_{n-1}(h)
+ \longrightarrow\widetilde H_n(\operatorname{Cone}(\Delta\pi);R)
+ \longrightarrow\ker H_{n-2}(h)\longrightarrow0.
+\]
+In particular the cone is $R$-acyclic if and only if $h$ is a
+quasi-isomorphism.
+\end{theorem}
+\begin{proof}
+The degree-$m$ relative group is $A_{m-2}\oplus B_{m-3}$ and its
+boundary is $(a,b)\mapsto(\partial a+hb,-\partial b)$.
+This is the asserted shifted chain cone.  Apply the two-colour shift,
+the mapping-cone long exact sequence, and
+Proposition~\ref{prop:interaction-ss} with $M=3$.
+\end{proof}
+
+The exact sequence splits noncanonically over a field.  Over $\mathbb Z$
+it splits when the right-hand kernel is free abelian; no splitting is
+asserted in general.  Thus collapse alone does not replace the integral
+answer by a direct sum of link-homology kernels and cokernels.  Signed
+incidence coefficients on link chains likewise do not imply total
+unimodularity of the induced maps on homology.
+
+\begin{theorem}[Degree-two classification and its sharp page bound]
+\label{thm:degree-two-interaction}
+Suppose the exclusive graph has maximum degree at most two.
+Every mixed core has size at most four, so $E^3=E^\infty$.
+If no $C_4$ component has both its same-colour pairs comparable in $Q$,
+Theorem~\ref{thm:two-column-interaction} applies and $E^2=E^\infty$.
+In every cycle component of length at least six the cone contribution is
+the coarse-edge-link direct sum of the matching theorem.
+\end{theorem}
+\begin{proof}
+Transitivity gives $N(p')\subseteq N(p)$ when $p<p'$ in $P$, and
+$N(z)\subseteq N(z')$ when $z<z'$ in $Z$.
+A mixed core is a biclique with each colour class a chain.  Degree two
+bounds both class sizes by two.  A four-core requires a whole $K_{2,2}$
+component with both colour pairs comparable.  This proves the bounds.
+On a longer cycle, two same-colour degree-two vertices have distinct
+neighbourhoods of the same cardinality and cannot be comparable if they
+share a neighbour.  Hence there are no triple cores.  No missing vertex
+can then lie in a product-edge link, so the original matching proof
+applies componentwise without change.
+\end{proof}
+
+More explicitly, a path with at least three edges supports triples only
+on its first two or last two edges: a comparable common-neighbour pair
+must include a leaf.  For a path of at least four edges these end triples
+have disjoint edge supports, giving independent star blocks and interior
+edge blocks.  A three-edge path has up to two triples sharing its middle
+edge and is treated by one instance of $\operatorname{Cone}(h)$.
+Every surviving relative face remains in the same exclusive graph
+component, so the component decomposition is at chain level.  Links
+must nevertheless be calculated in the whole coarse poset.
+
+For a two-edge star with ordered leaves, $h$ is the signed pair of
+inclusions from its triple link to its two edge links.  On the frozen
+three-chain profile $(1,0,0)$, all three available links have reduced
+$H_0=\mathbb Z$ and $h_0$ is the primitive signed diagonal
+$\mathbb Z\to\mathbb Z^2$.  This gives cone $H_1=\mathbb Z$,
+although both coarse edge links are contractible.
+
+\subsection{Higher differentials are necessary}
+For a $C_4$ whose two pairs are comparable, write the core order
+$a<b<x<y$.  Let $A,B,V$ be the sums of edge, triple, and four-core link
+chains respectively.  Then
+\[
+ C_m(K,U)=A_{m-2}\oplus B_{m-3}\oplus V_{m-4},\qquad
+ d(a,b,c)=(\partial a+hb,-\partial b+kc,\partial c),
+\]
+where $hk=0$.  The only possible higher differential is
+\[
+ d^2:E^2_{4,q}\longrightarrow E^2_{2,q+1}.
+\]
+If $\partial c=0$ and $\partial b=kc$, it is represented by $hb$.
+Thus a differential lowering core size by at most one can still produce
+a nonzero secondary differential.
+
+An explicit eight-state example makes this bound sharp.  Take
+$Q=A_2\oplus R\oplus A_2$, with bottom antichain $\{a,a'\}$,
+top antichain $\{y,y'\}$, and
+$R=\{v,b,w,x\}$ with relations $v<x$, $b<w$, $b<x$.
+Make $a,b$ one-only and $x,y$ zero-only; split the other states.
+The only nonzero first-page groups are
+$E^1_{2,1}=\mathbb Z$ and $E^1_{4,0}=\mathbb Z$.
+The four-core link consists of $b_1,x_0$; all triple links are
+contractible; only the edge $ay$ has a nontrivial available link, a circle
+up to homotopy.  The paths
+\[
+ x_0-v_0-v_1-a_1-b_1,\qquad
+ x_0-y_0-w_0-w_1-b_1
+\]
+in the two relevant triple links fill the four-core difference.
+Their difference generates the sole loop in the $ay$ link.  Therefore
+$d^2$ is a unit $\mathbb Z\to\mathbb Z$, and $E^3=0$.
+The supplementary signed-chain certificate verifies these fillings and
+the integral homology directly.
+
+Nor do Ferrers or chordal-bipartite graphs force $E^2$ collapse.
+The seven-state poset with covers
+$0<1$, $0<2$, $1<3$, $2<3$, $2<5$, $3<4$, $3<6$, $5<6$,
+and profile $(1,2,0,0,2,2,0)$ has exclusive graph $K_{1,3}$.
+Its integral $E^1=E^2$ has $\mathbb Z^2$ in bidegree $(2,1)$
+and $\mathbb Z$ in $(4,0)$; $d^2$ is a primitive injection.
+Its only nonzero cone group is $H_2=\mathbb Z$.
+These are explicit counterexamples, not global minimality claims.
+
+\subsection{An unbounded interacting class and new torsion}
+\begin{proposition}[All-exclusive star]
+Let $R$ be a nonempty finite poset.  Take $Q=\{p\}\oplus R$, make
+$p$ one-only and every state of $R$ zero-only.  Then $E^2=E^\infty$
+integrally and
+\[
+ \widetilde H_n(\operatorname{Cone}(\Delta\pi);\mathbb Z)
+ \cong H_{n-1}(\Delta R;\mathbb Z),
+\]
+where the right side is ordinary homology.
+\end{proposition}
+\begin{proof}
+Every core is $\{p_0\}\cup\sigma_1$ for a nonempty chain $\sigma$
+in $R$.  Its available link is the isolated vertex $p_1$ disjoint from
+the cone $\Delta(R_{\le\min\sigma}\times\{0\})$.
+The difference-of-components generators identify all nonzero link
+homology with $\mathbb Z$ in degree zero and identify their inclusion
+maps with the identity.  Consequently $d^1$ is, up to a uniform sign,
+the ordinary simplicial boundary of $\Delta R$.  The single row
+collapses on $E^2$ and has only one filtration grade in each total degree.
+\end{proof}
+
+For the nonempty-face poset of a triangulated projective plane, all these
+available links have torsion-free homology, and every coarse edge link
+is a vertex link in its barycentric subdivision, hence a circle.
+Nevertheless the interaction differential creates $\mathbb Z/2$ in
+cone degree two.  The explicit six-vertex triangulation in the
+supplement gives a 32-state example, with every link and the reduced
+interaction complex checked by integral Smith normal form.
+
+\begin{remark}[Scope and priority]
+Filtered-complex spectral sequences, link/cofiber recursions, and their
+extension issues are classical.  The complexes $\Lambda_S$ are precisely
+vertex-cover obstruction complexes in the sense of
+Chach\'olski--Jin--Scolamiero--Tombari~\cite{ChacholskiEtAl2021}.
+The results here explicitly identify which such complexes interact in
+the observation product model, with positive class restrictions and
+integral obstructions.  They do not introduce a new general obstruction
+theory or supersede poset-fiber theorems.
+\end{remark}

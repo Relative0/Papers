@@ -1,0 +1,17 @@
+# Sharing-aware fold diagnostic
+
+This is a post-hoc diagnostic prompted by the frozen N1 result; it does **not** change the pre-registered N1 outcome.
+
+- All correctness checks passed: **True**.
+- Natural legal CM folds before guard: **22** total across 7 outputs.
+- Natural folds after conservative fanout guard: **0**.
+- Guarded CM matches direct sparse-ANF multiplication and pair-term work on all natural outputs: **True**.
+- Cold medians: direct 254.69 ms; generic 274.35 ms; CM 264.42 ms; guarded CM 269.33 ms.
+- Gate-P guarded CM / generic geometric-mean timing ratio: **0.9777**.
+- Gate-P guarded fold count median/range: **0.0 / [0, 2]**.
+
+## What this says
+
+The natural regression was not a Boolean-correctness problem. It came from **legal local folds crossing shared DAG structure**: replacing a shared intermediate by a re-expressed truth function can duplicate nonlinear work downstream. The conservative guard fixes that regression, but it is too aggressive: on the fold-friendly Gate-P family it removes most of the useful folds and the earlier CM timing signal largely disappears.
+
+The next falsifiable optimization is therefore a **profitability-aware fold rule** using fanout/reuse, estimated nonlinear cost, and expected intermediate ANF size. It should fold only when the saved expansion exceeds the cost of lost sharing.

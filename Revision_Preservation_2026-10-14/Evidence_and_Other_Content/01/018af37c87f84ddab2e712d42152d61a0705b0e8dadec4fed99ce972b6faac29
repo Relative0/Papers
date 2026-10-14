@@ -1,0 +1,71 @@
+# Exact next-step instructions and acceptance evidence
+
+**Overall gate:** RETURN TO BOTH THREADS. Current report remains the baseline. These are research and experiment tasks, not a request to write a stronger abstract first.
+
+## RETURN TO THEORY THREAD
+
+### T1 - Freeze the state and query contract; repair interpretation
+
+Write a self-contained definition naming the source class C, coordinate universe/cut, allowed state space, fixed-width or variable-length bit convention, arithmetic precision, source-access model, update operation, and query operation. Explicitly select immutable restrictions from the original source, cumulative-budget destructive updates, or reset-horizon destructive updates. A system may support more than one, but its theorems must distinguish them.
+
+Keep the correct Q15 theorem on all real-valued inputs. State that kappa is a worst-case identifiability depth, not a memory or latency lower bound. Include the one-bit parity-pair counterexample and the failure of reset-horizon Q_k closure. Clarify that 'all adaptive protocols' is not 'one realized transcript'.
+
+**Acceptance evidence:** a one-page formal contract; corrected Q16 statement and proof; counterexample regression tests; revised abstract/contribution sentences that make no unsupported storage/time inference.
+
+### T2 - Close the priority and representation boundary
+
+Use S1 for Fourier marginals/rank, S2 for trades/minimum disagreement, and S3/S4 for Chow uniqueness. Check the exact Q13/Q14 formulation against rank-one binary marginal recovery and parity/rectangle formulations, including real, nonnegative and Boolean-OR rank. Report a bounded search result honestly if no exact precedent is found; do not certify firstness by absence.
+
+State Q13/Q14 as a concise minor corollary unless a genuinely stronger new characterization is proved. Cite CM-LM for rank/separability and standard factorization, rather than assigning those ingredients to the new paper. Keep ordinary sign-matrix rank distinct from sign-rank, and fixed-cut/blocked-order comparisons distinct from all-order separations.
+
+**Acceptance evidence:** revised theorem-level priority ledger with exact source locations, equivalent formulations, contribution type, and explicit unresolved firstness if applicable.
+
+### T3 - Solve the missing persistence problem, not the old count identity
+
+Under T1's model, attempt a new theorem specifying coordinate-sensitive information sufficient for all legal future counts and updates. Give construction cost, storage in bits, update cost, query cost, dependence on n, cut dimensions, r and k, and behavior under factor-basis changes. A matching lower bound may be restricted to a clearly defined representation/access class; it must not quietly claim impossibility for every encoding.
+
+The profile pairing formula and its O(r2^r) transform cost after histogram construction already occur in Draft 3. They are baseline lemmas, not completion of Q17. Investigate which coordinate-index information avoids the xy/(1-x)y counterexample, and whether the new state is actually closed under the chosen future protocol. A sharp restricted-model negative result is an acceptable outcome.
+
+**Acceptance evidence:** complete proof, precise scope, adversarial examples, and at least one quantitative prediction that can be measured by C2. If the result is still a standard identity or only an open question, report that and keep the technical-report form.
+
+## RETURN TO COMPUTATION THREAD
+
+### C1 - Integrate the direct validation already supplied
+
+Import the independent audit as a separate regression oracle, preserving its source and attribution. Cross-check coordinate conversions against the main implementation. Preserve the original frozen results; add new results with new source and query hashes.
+
+**Acceptance evidence:** exact query-rank checks, direct class-level Q13/Q14 injectivity tests, restricted rank-profile checks, zero/constant/unequal-cut edge cases, and parity/update counterexamples. The audit has already supplied these finite checks; the next task is integration and contract alignment, not claiming they were in the old baseline.
+
+### C2 - Pre-register a test of T3's actual prediction
+
+For each case record actual rank, stored width, cut/order, residual dimensions, k, total restriction budget, state type, query count and reuse mode. Separate independent queries against the original function from sequential residual-state updates. Suggested bounded-depth strata are k=0,1,2,4 capped by n, plus full-depth controls; a different grid is acceptable if frozen before results.
+
+Include rank-one rectangles, rank-two complementary parity, increasing-rank controls, and natural inputs. Vary repeated-query batch size to expose amortization, executing rather than extrapolating the claimed batches. Charge coordinate-sensitive histogram/index construction and updates, not merely their final transform.
+
+**Acceptance evidence:** frozen protocol and hypothesis; raw per-phase trials; theorem-to-experiment parameter crosswalk; exact answer validation; a result that either confirms the predicted regime or falsifies it without retrospective redefinition.
+
+### C3 - Establish natural incidence and fair comparators
+
+Use independent source designs and a design-disjoint holdout. A practical starting target is at least ten designs from two application families, with all eligible outputs accounted for; this is a planning recommendation, not a magic threshold. Publish inclusion rules and counts of unsupported, failed, timed-out and excluded cases. Report how often low rank or the actual favorable parameter occurs naturally.
+
+Add packed **binary** persistence as a matched storage comparator and at least one credible compiled-counting backend supporting the same endpoint. For decomposition-quality claims, include an appropriate established decomposition method and equalize/search-account the cut/order budget. Do not treat LUT delay mapping as the same runtime task as exact conditioned counting.
+
+**Acceptance evidence:** corpus/source hashes and upstream revisions where available, design-level splits, comparator versions/configurations, natural-regime incidence, separate synthetic results, and analysis at the independent-design level rather than pretending every output is independent.
+
+### C4 - Complete lifecycle/provenance accounting
+
+Report preprocessing from the chosen raw input, discovery/compile, source checking or certificate checking, serialized bytes, load, indexing, query/update phases, and relevant end-to-end totals. Separate same-process fresh-object replay, fresh-process/cold-load, and warm reused-state measurements. Report peak resident memory independently of serialized size.
+
+Pin source commits/hashes, runtime/dependency versions, compiler flags, seeds, method order and timeout policy. If Runpod is used, return image identity, resources, exact command, source/input hashes, logs, raw outputs, and failure/continuation records. Preserve failed trials.
+
+**Acceptance evidence:** one-command correctness reproduction; a timing reproduction guide with raw data; complete command/environment manifest; no unexplained inferred runs or extrapolated query counts.
+
+## RETURN TO MASTER THREAD
+
+### M1 - Strategic decision before integration
+
+Read `CONVERGENCE_DECISION.md` and the seven reports. Keep the current Draft 3 report as the publication baseline. Add this audit as a dated supplement, not a silent replacement of historical source/results. Preserve companion-paper boundaries.
+
+Choose a single future contribution: a differentiated persistence theorem with an experiment that tests it, or a narrowly defined empirical/negative methods claim with adequate external evidence. Do not merge background Fourier mathematics and unrelated reference timings merely to lengthen the manuscript.
+
+**Reopen the stronger-paper gate when:** T1/T2 are complete; T3 supplies a differentiated statement or a precise alternative methods hypothesis; C1-C4 provide the corresponding executable evidence; and the contribution remains distinct from the LM and pair-compiler papers. A decision to remain a technical report is also an acceptable completed research outcome.

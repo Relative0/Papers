@@ -1,0 +1,1360 @@
+
+===== PDF PAGE 1 =====
+185
+Incremental Verification of Neural Networks
+SHUBHAM UGARE, University of Illinois Urbana-Champaign, USA
+DEBANGSHU BANERJEE, University of Illinois Urbana-Champaign, USA
+SASA MISAILOVIC, University of Illinois Urbana-Champaign, USA
+GAGANDEEP SINGH, University of Illinois Urbana-Champaign and VMware Research, USA
+Complete veri/f_ication of deep neural networks (DNNs) can exactly determine whether the DNN satis/f_ies
+a desired trustworthy property (e.g., robustness, fairness) on an in/f_inite set of inputs or not. Despite the
+tremendous progress to improve the scalability of complete veri/f_iers over the years on individual DNNs, they
+are inherently ineﬃcient when a deployed DNN is updated to improve its inference speed or accuracy. The
+ineﬃciency is because the expensive veri/f_ier needs to be run from scratch on the updated DNN. To improve
+eﬃciency, we propose a new, general framework for incremental and complete DNN veri/f_ication based on the
+design of novel theory, data structure, and algorithms. Our contributions implemented in a tool named IV AN
+yield an overall geometric mean speedup of 2.4x for verifying challenging MNIST and CIFAR10 classi/f_iers and
+a geometric mean speedup of 3.8x for the ACAS-XU classi/f_iers over the state-of-the-art baselines.
+CCS Concepts: • Theory of computation→ Program analysis; Abstraction; • Computing methodolo-
+gies→ Neural networks.
+Additional Key Words and Phrases: Veri/f_ication, Robustness, Deep Neural Networks
+ACM Reference Format:
+Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh. 2023. Incremental Veri/f_ication
+of Neural Networks. Proc. ACM Program. Lang. 7, PLDI, Article 185 (June 2023), 26 pages. https://doi.org/10.
+1145/3591299
+1 INTRODUCTION
+Deep neural networks (DNNs) are being increasingly deployed for safety-critical applications in
+many domains including autonomous driving [ Bojarski et al . 2016], healthcare [ Alvarez-Valle et al.
+2020; Amato et al . 2013], and aviation [ Julian et al . 2018]. However, the black-box construction,
+vulnerability against adversarial changes to in-distribution inputs [ Madry et al . 2017; Szegedy et al .
+2014], and fragility against out-of-distribution data [ Chen et al. 2022; Gokhale et al. 2021] is the
+main hindrance to the trustworthy deployment of deep neural networks in real-world applications.
+Recent years have witnessed increasing work on developing veri/f_iers for formally checking whether
+the behavior of DNNs (see [ Albarghouthi 2021; Urban and Miné 2021 ] for a survey) on an in/f_inite
+set of inputs is trustworthy or not. For example, existing veri/f_iers can formally prove [Bak et al .
+2020; Bunel et al . 2020b,a; Ehlers 2017; Gehr et al . 2018; Wang et al. 2018] that the in/f_inite number
+of images obtained after varying the intensity of pixels in an original image by a small amount
+will be classi/f_ied correctly. Veri/f_ication yields better insights into the trustworthiness of DNNs
+than standard test-set accuracy measurements, which only check DNN performance on a /f_inite
+number of inputs. The insights can be used for selecting the most trustworthy DNN for deployment
+Authors’ addresses: Shubham Ugare, University of Illinois Urbana-Champaign, USA; Debangshu Banerjee, University
+of Illinois Urbana-Champaign, USA; Sasa Misailovic, University of Illinois Urbana-Champaign, USA; Gagandeep Singh,
+University of Illinois Urbana-Champaign and VMware Research, USA.
+Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee
+provided that copies are not made or distributed for pro/f_it or commercial advantage and that copies bear this notice and the
+full citation on the /f_irst page. Copyrights for components of this work owned by others than the author(s) must be honored.
+Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires
+prior speci/f_ic permission and/or a fee. Request permissions from permissions@acm.org.
+© 2023 Copyright held by the owner/author(s). Publication rights licensed to ACM.
+2475-1421/2023/6-ART185
+https://doi.org/10.1145/3591299
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+
+===== PDF PAGE 2 =====
+185:2 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+among a set of DNNs trained for the same task. Existing veri/f_iers can be broadly classi/f_ied as either
+complete or incomplete. Incomplete methods are more scalable but may fail to prove or disprove a
+trustworthiness property [Gehr et al . 2018; Salman et al . 2019; Singh et al . 2019a, 2018, 2019b; Xu
+et al. 2020; Zhang et al. 2018]. A complete veri/f_ier always veri/f_ies the property if the property holds
+or otherwise returns a counterexample. Complete veri/f_ication methods are more desirable as they
+are guaranteed to provide an exact answer for the veri/f_ication task [Anderson et al . 2020; Bak et al .
+2020; Bunel et al . 2020b,a; Ehlers 2017; Ferrari et al . 2022; Fromherz et al . 2021; Gehr et al . 2018;
+Palma et al. 2021 ; Wang et al. 2018, 2021; Zhang et al. 2022 ].
+Limitation of Existing Works: The deployed DNNs are modi/f_ied for reasons such as approxi-
+mation [Blalock et al . 2020; Gholami et al . 2021], /f_ine-tuning [Tajbakhsh et al. 2016], model repair
+[Sotoudeh and Thakur 2019 ], or transfer learning [ Weiss et al. 2016]. Various approximations such
+as quantization, and pruning slightly perturb the DNN weights, and the updated DNN is used for
+the same task [ Gholami et al . 2021; Laurel et al. 2021; TFLite 2017]. Similarly, /f_ine-tuning can also
+be performed to repair the network on buggy inputs while maintaining the accuracy on the original
+training inputs [ Fu and Li 2022 ]. Each time a new DNN is created, expensive complete veri/f_ication
+needs to be performed to check whether it is trustworthy. A fundamental limitation of all existing
+approaches for complete veri/f_ication of DNNs is that the veri/f_ier needs to be run from scratch
+end-to-end every time the network is even slightly modi/f_ied. As a result, developers still rely on test
+set accuracy as the main metric for measuring the quality of a trained network. This limitation of
+existing veri/f_iers restricts their applicability as a tool for evaluating the trustworthiness of DNNs.
+This Work: Incremental and Complete Veri/f_ication of DNNs: In this work, we address the
+fundamental limitation of existing complete veri/f_iers by presenting IV AN, the /f_irst general technique
+for incremental and complete veri/f_ication of DNNs. An original network and its updated network
+have similar behaviors on most of the inputs, therefore the proofs of property on these networks are
+also related. IV AN accelerates the complete veri/f_ication of a trustworthy property on the updated
+network by leveraging the proof of the same property on the original network. IV AN can be built
+on top of any Branch and Bound (BaB) based method. The BaB veri/f_ier recursively partitions the
+veri/f_ication problem to gain precision. It is currently the dominant technology for constructing
+complete veri/f_iers [Anderson et al. 2019; Bak et al. 2020; Bunel et al. 2020b,a; Ehlers 2017; Ferrari
+et al. 2022 ; Fromherz et al. 2021 ; Palma et al. 2021 ; Wang et al. 2018, 2021; Zhang et al. 2022 ].
+Challenges: The main challenge in building an incremental veri/f_ier on top of a non-incremental one
+is to determine which information to pass on and how to eﬀectively reuse this information. Formal
+methods research has developed numerous techniques for incremental veri/f_ication of programs,
+that reuse the proof from previous revisions for verifying the new revision of the program [ Johnson
+et al. 2013; Lakhnech et al . 2001; O’Hearn 2018; Stein et al . 2021]. However, often the program
+commits are local changes that aﬀect only a small part of the big program. In contrast, most DNN
+updates result in weight perturbation across one or many layers of the network. This poses a
+diﬀerent and more diﬃcult challenge than incremental program veri/f_ication. Additionally, DNN
+complete veri/f_iers employ distinct heuristics for branching. A key challenge is to develop a generic
+method that incrementally veri/f_ies a network perturbed across multiple layers and is applicable to
+multiple complete veri/f_ication methods, yet can provide signi/f_icant performance bene/f_its.
+Our Solution: IV AN computes a speci/f_ication tree – a novel tree data structure representing the
+trace of BaB – from the execution of the complete veri/f_ier on the original network. We design
+new algorithms to re/f_ine the speci/f_ication tree to create a more compact tree. At a high level,
+the re/f_inement involves reordering the branching decisions such that the decisions that worked
+well in the original veri/f_ication are prioritized. Besides, it removes the branching decisions that
+worked poorly in the original veri/f_ication by pruning nodes and edges in the speci/f_ication tree.
+IV AN also improves the branching strategy in BaB for the updated network based on the observed
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 3 =====
+Incremental Verification of Neural Networks 185:3
+Fig. 1. Workflow of IV AN from le/f_t to right. /u1D43C/u1D449 /u1D434/u1D441takes the original network /u1D441, input specification /u1D719and
+output specification /u1D713. It is built on top of a BaB-based complete verifier that utilizes an analyzer /u1D434for the
+bounding, and heuristic /u1D43Bfor branching. IV AN refines a specification tree /u1D447/u1D441
+/u1D453, result of verifying /u1D441, to create
+a compact tree /u1D447/u1D441/u1D44E
+0 and updated branching heuristic /u1D43BΔ. IV AN performs faster verification of /u1D441/u1D44Eexploiting
+both /u1D447/u1D441/u1D44E
+0 and /u1D43BΔ.
+eﬀectiveness of branching choices when verifying the original DNN. The compact speci/f_ication tree
+and the improved branching strategy guide the BaB execution on the updated network to faster
+veri/f_ication, compared to non-incremental veri/f_ication that starts from scratch. IV AN yields up to
+43x speedup over the baseline based on state-of-the-art non-incremental veri/f_ication techniques
+[Bunel et al . 2020b; Henriksen and Lomuscio 2021 ; Singh et al . 2018]. It achieves a geometric mean
+speedup of 2.4x across challenging fully-connected and convolutional networks over the baseline.
+IV AN is generic and can work with various common BaB branching strategies in the literature
+(input splitting, ReLU splitting).
+Main Contributions: The main contributions of this paper are:
+• We present a novel, general framework for incremental and complete DNN veri/f_ication by
+designing new algorithms and data structure that allows us to succinctly encode in/f_luential
+branching strategies to perform eﬃcient incremental veri/f_ication of the updated network.
+• We identify a class of network modi/f_ications that can be eﬃciently veri/f_ied by our framework
+by providing theoretical bounds on the amount of modi/f_ications.
+• We implement our approach into a tool named IV AN and show its eﬀectiveness over multiple
+state-of-the-art complete veri/f_ication techniques, using distinct branching strategies (ReLU
+splitting and input splitting), in incrementally verifying both local and global properties of
+fully-connected and convolutional networks with ReLU activations trained on the popular
+ACAS-XU, MNIST, and CIFAR10 datasets. Our results show that for MNIST and CIFAR10
+classi/f_iers, using the ReLU splitting technique [Henriksen and Lomuscio 2021 ] IV AN yields a
+geometric mean speedup of 2.4x over the state-of-the-art baseline [ Bunel et al . 2020b; Ehlers
+2017]. For ACAS-XU, using the input splitting technique IV AN achieves a geometric mean
+speedup of 3.8x over Re/f_ineZono [Singh et al. 2019c ].
+IV AN implementation is open-source, publicly available at https://github.com/uiuc-focal-lab/IV AN.
+An extended version of this paper containing all the proofs and additional experiments is available
+at https://arxiv.org/abs/2304.01874.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 4 =====
+185:4 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Fig. 2. Example original network /u1D441and its perturbation /u1D441/u1D44E(blue weights). Each layer consists of a linear
+function followed by the ReLU activation function./u1D719is the input specification and/u1D713is the output specification.
+2 OVERVIEW
+Figure 1 illustrates the high-level idea behind the workings of IV AN. It takes as input the original
+neural network /u1D441, the updated network /u1D441/u1D44E, a local or global input region /u1D719, and the output property
+/u1D713. The goal of IV AN is to check whether for all inputs in /u1D719, the outputs of networks /u1D441and /u1D441/u1D44E
+satisfy /u1D713. /u1D441and /u1D441/u1D44Ehave similar behaviors on the inputs in /u1D719, therefore the proofs of the property
+on these networks are also related. IV AN accelerates the complete veri/f_ication of the property
+(/u1D719, /u1D713) on /u1D441/u1D44Eby leveraging the proof of the same property on /u1D441.
+Neural Network Veri/f_ier: Popular veri/f_ication properties considered in the literature have/u1D713:=
+/u1D436/u1D447/u1D44C≥ 0, where /u1D436is a column vector and /u1D44C= /u1D441(/u1D44B), for /u1D44B∈ /u1D719. Most state-of-the-art complete
+veri/f_iers use BaB to solve this problem. These techniques use an analyzer that computes the linear
+approximation of the network output /u1D44Cthrough a convex approximation of the problem domain.
+This linear approximation of /u1D44Cis used to perform the bounding step to show for the lower bound
+LB(/u1D436/u1D447/u1D44C) that LB(/u1D436/u1D447/u1D44C) ≥0. If the bounding step cannot prove the property, the veri/f_ication
+problem is partitioned into subproblems using a branching heuristic /u1D43B. The partitioning splits the
+problem space allowing a more precise convex approximation of the split subproblems. This leads
+to gains in the precision of LB computation. Various choices for the analyzer and the branching
+strategies exist which represent diﬀerent trade-oﬀs between precision and speed.
+IV AN leverages a speci/f_ication tree representation and novel algorithms to store and transfer the
+proof of the property from /u1D441to /u1D441/u1D44Efor accelerating the veri/f_ication on/u1D441/u1D44E. We show the workings
+of /u1D43C/u1D449 /u1D434/u1D441through the following illustrative example.
+2.1 Illustrative Example
+We consider the two networks /u1D441and /u1D441/u1D44Ewith the same architecture as shown in Figure 2. Most
+practical network updates result in network weight perturbations e.g., quantization, model repair,
+and /f_ine-tuning. Network/u1D441/u1D44Eis obtained by updating (perturbing the weights) of network /u1D441. These
+networks apply ReLU activation at the end of each aﬃne layer except for the /f_inal layer. The weights
+for the aﬃne layers are shown on the edges. We consider the veri/f_ication property(/u1D719, /u1D713) such that
+/u1D719={(/u1D4561, /u1D4562) : /u1D4561∈[ 0, 1]∧ /u1D4562∈[ 0, 1]} and /u1D713=(/u1D45C1+ 14≥ 0). LetR ={/u1D45F1, /u1D45F2, /u1D45F3, /u1D45F4} denote the set
+of ReLUs in the considered architecture. R is a function of the architecture of the DNNs and is
+common for both /u1D441and /u1D441/u1D44E.
+Branch and Bound: We consider a complete veri/f_ier that uses a sound analyzer/u1D434based on the
+exact encoding of the aﬃne layers and the common triangle linear relaxation [ Bunel et al . 2020b,a;
+Ehlers 2017] for over-approximating the non-linear ReLU function. If due to over-approximation of
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 5 =====
+Incremental Verification of Neural Networks 185:5
+the ReLU function, the analyzer cannot prove or disprove the property, the veri/f_ier partitions the
+problem by splitting the problem domain. The analyzer is more precise if it separately analyzes the
+split subproblems and merges the results. There are two main strategies for branching considered
+in the literature, input splitting [ Anderson et al . 2020; Wang et al. 2018], and ReLU splitting [ Bunel
+et al. 2020b,a; Ehlers 2017; Ferrari et al . 2022; Palma et al . 2021]. We show IV AN’s eﬀectiveness on
+both branching strategies in our evaluation (Section 6.1, Section 6.4). However, for this discussion,
+we focus on ReLU splitting which is scalable for the veri/f_ication of high-dimensional inputs.
+ReLU splitting: An unsolved problem is partitioned into two cases, where the cases assume the
+input ˆ/u1D465/u1D456to ReLU unit /u1D45F/u1D456satis/f_ies the predicatesˆ/u1D465/u1D456≥ 0 and ˆ/u1D465/u1D456< 0 respectively. Splitting a ReLU /u1D45F/u1D456
+eliminates the analyzer imprecision in the approximation of /u1D45F/u1D456. When we split all the ReLUs in R,
+the analyzer is exact. Nevertheless, splitting allR is expensive as it requires 2|R| analyzer bounding
+calls. The state-of-the-art techniques use the heuristic function /u1D43Bto /f_ind the best ReLU to split at
+each step, leading to considerably scalable complete veri/f_ication.
+The branching function /u1D43Bscores the ReLUsR for branching at each unsolved problem to partition
+the problem. IfR′⊆R denotes the subset of ReLUs that are not split in the current subproblem,
+then the veri/f_ier computes/u1D45F= arg maxR′ /u1D43Bto choose the /u1D45Ffor the current split. /u1D43Bis a function of
+the exact subproblem that it branches and hence depends on /u1D719, /u1D713, the network, and the branching
+assumptions made for the subproblem. However, for the purpose of this running example, we
+consider a simple constant branching heuristic /u1D43Bthat ranks /u1D43B(/u1D45F1) > /u1D43B(/u1D45F3) > /u1D43B(/u1D45F4) > /u1D43B(/u1D45F2)
+independent of the subproblem and the network. This assumption is only for the illustration of our
+idea, we show in the evaluation (Section 6) that IV AN can work with state-of-the-art branching
+heuristics [Bunel et al. 2020b ; Henriksen and Lomuscio 2021 ].
+2.2 IV AN Algorithm
+Speci/f_ication Tree: IV AN uses a rooted binary tree data structure to store the trace of splitting
+decisions during BaB execution. A speci/f_ication split is a /f_iner speci/f_ication parameterized by the
+subset of ReLUs inR. The root node is associated with the speci/f_ication(/u1D719, /u1D713). All other nodes
+represent the speci/f_ication splits obtained by splitting the problem domain recursively. Each internal
+node in the tree has two children, the result of the branching of the associated speci/f_ication.
+The split decision can be represented as a predicate. For a ReLU /u1D45F/u1D456with input ˆ/u1D465/u1D456, let /u1D45F+
+/u1D456:=( ˆ/u1D465/u1D456≥ 0)
+and /u1D45F−
+/u1D456:=( ˆ/u1D465/u1D456< 0) denote the split decisions. A split of ReLU /u1D45F/u1D456at node /u1D45Bcreates two children nodes
+/u1D45B/u1D459and /u1D45B/u1D45F, each encoding the new speci/f_ication splits. Each edge in the speci/f_ication tree represents
+the split decision made at the branching step. An edge connects an internal node with its child
+node, and we label it with the additional predicate that is assumed by the child subproblem. A split
+of ReLU /u1D45Fat node /u1D45Badds nodes /u1D45B/u1D459and /u1D45B/u1D45Fthat are connected with edges labeled with predicates
+/u1D45F+
+/u1D456and /u1D45F−
+/u1D456respectively. If /u1D711/u1D45B=(/u1D719′, /u1D713) is the speci/f_ication split at/u1D45B, then /u1D711/u1D45B/u1D459=(/u1D719′∧ /u1D45F+, /u1D713) and
+/u1D711/u1D45B/u1D45F=(/u1D711′∧ /u1D45F−, /u1D713). The names of the nodes have no relation to the networks or the property, they
+are used for referencing a particular speci/f_ication. However, the edges of the tree are tied to the
+network architecture through the labels. Although the speci/f_ication tree is created as a trace of
+veri/f_ication of a particular network/u1D441, it is only a function of the ReLU units in the architecture of
+/u1D441. This allows us to use the branching decisions in the speci/f_ication tree for guiding the veri/f_ication
+of any updated network /u1D441/u1D44Ethat has the same architecture as /u1D441. We use LB/u1D441(/u1D45B) to denote the
+lower bound LB(/u1D436/u1D447/u1D44C) obtained by the analyzer /u1D434on for the subproblem encoded by /u1D45B, on the
+network /u1D441.
+Figure 3 demonstrates the steps of BaB execution on /u1D441. Each node represents the speci/f_ication
+re/f_ined by BaB. We use functionLB/u1D441(/u1D45B) to denote the LB(/u1D436/u1D447/u1D44C) = LB(/u1D45C1+ 14) value obtained by
+the analyzer /u1D434at node /u1D45B. The speci/f_ication is veri/f_ied for the subproblem of/u1D45Bif the LB/u1D441(/u1D45B)≥ 0.
+If LB/u1D441(/u1D45B) < 0, the analyzer returns a counterexample (CE). The CE is a point in the convex
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 6 =====
+185:6 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Fig. 3. Steps in Branch and Bound algorithm for complete verification of /u1D441. The nodes are labeled with a
+name and the LB/u1D441(/u1D45B). The nodes in the specification tree are annotated with their specifications. The edges
+are labeled with the branching predicates. Each step in BaB partitions unsolved specifications in /u1D447/u1D441
+/u1D456into
+specification splits in /u1D447/u1D441
+/u1D456+1. The proof is complete when all specification splits corresponding to the leaf nodes
+are solved.
+approximation of the problem domain and it may be possible that it is spurious, and does not belong
+to the concrete problem domain. If the CE is not spurious, the speci/f_ication is disproved and the
+proof halts. But, if the CE is spurious then the problem is unsolved, and it is further partitioned.
+In the /f_irst step, for the speci/f_ication(/u1D719, /u1D713) encoded by the root node /u1D45B0, the analyzer computes
+LB/u1D441(/u1D45B0) =−7, which is insuﬃcient to prove the speci/f_ication. Further, the CE provided by the
+analyzer is spurious, and thus the analyzer cannot solve the problem. The root node /u1D45B0 speci/f_ication
+(/u1D719, /u1D713) is split by ReLU split of /u1D45F1 chosen by the heuristic function /u1D43B. Accordingly, in the speci/f_ication
+tree, the node /u1D45B0 is split into two nodes /u1D45B1 and /u1D45B2, with the speci/f_ication splits(/u1D719∧ /u1D45F+
+1 , /u1D713) and
+(/u1D719∧ /u1D45F−
+1 , /u1D713) respectively. This procedure of recursively splitting the problem and correspondingly
+updating the speci/f_ication tree continues until either all the speci/f_ications of the leaf nodes are
+veri/f_ied, or a CE is found. In the /f_inal speci/f_ication tree (/u1D447/u1D441
+3 in this case), the leaf nodes are
+associated with the speci/f_ications that the analyzer could solve, and the internal nodes represent
+the speci/f_ications that the analyzer could not solve for network/u1D441. For BaB starting from scratch,
+each node in the speci/f_ication tree maps to a speci/f_ication that invoked an analyzer call in BaB
+execution. Figure 3 presents that the veri/f_ier successfully proves the property with a speci/f_ication
+tree containing 9 nodes. Thus, the veri/f_ication invokes the analyzer 9 times and performs 4 nodes
+branchings for computing LB.
+Figure 4a presents the speci/f_ication tree for/u1D441/u1D44Eat end of the verifying the property (/u1D719, /u1D713).
+Although the /u1D43F/u1D435(/u1D436/u1D447/u1D44C) computed by the analyzer for each node speci/f_ications is diﬀerent for/u1D441/u1D44E
+compared to /u1D441, the /f_inal speci/f_ication tree is identical for both networks. Our techniques in IV AN
+are motivated by our observation that the /f_inal speci/f_ication tree for network/u1D441and its updated
+version /u1D441/u1D44Ehave structural similarities. Moreover, we /f_ind that for a DNN update that perturbs the
+network weight within a /f_ixed bound, these trees are identical. We claim that there are two reasons
+for this: (i) the speci/f_ications that are solved by the analyzer for/u1D441are solved by the analyzer for /u1D441/u1D44E
+(speci/f_ications of the leaf nodes of the speci/f_ication tree) and (ii) the speci/f_ications that are unsolved
+by the analyzer for /u1D441are unsolved for /u1D441/u1D44E(speci/f_ications of the internal nodes of the speci/f_ication
+tree). In Section 4.4, we provide theoretical bounds on the network perturbations such that these
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 7 =====
+Incremental Verification of Neural Networks 185:7
+(a) BaB specification tree for /u1D441/u1D44E. It requires 9
+node boundings and 4 node branchings.
+(b) BaB specification tree for /u1D441/u1D44Ewith reuse. It
+requires 5 node boundings and 0 node branchings.
+(c) BaB specification tree for /u1D441/u1D44Ewith reorder. It
+requires 5 node boundings and 2 node branchings.
+(d) BaB specification tree for /u1D441/u1D44Ewith IV AN. It
+requires 3 node boundings and 0 node branchings.
+Fig. 4. BaB specification tree for various techniques proposed for incremental verification.
+claims hold true (Theorem 4). Nevertheless, for networks obtained by perturbation beyond the
+theoretical bounds, the speci/f_ication trees are still similar if not identical. In our evaluation, we
+observe this similarity for large networks with practical updates e.g., quantization (Section 6).
+Reuse: We /f_irst introduce our concept of speci/f_ication tree reuse which uses/u1D447/u1D441
+/u1D453, the /f_inal tree
+after verifying /u1D441, as the starting tree /u1D447/u1D441/u1D44E
+0 for the veri/f_ication of/u1D441/u1D44E. In contrast, the standard BaB
+veri/f_ication starts with a single node tree that represents the unpartitioned initial speci/f_ication
+(/u1D719, /u1D713). In the reuse technique, IV AN starts BaB veri/f_ication of /u1D441/u1D44Efrom the leaves of /u1D447/u1D441/u1D44E
+0 =
+/u1D447/u1D441
+/u1D453. For our running example, analyzer /u1D434successfully veri/f_ies/u1D441/u1D44Especi/f_ications for all the leaf
+nodes of the speci/f_ication tree/u1D447/u1D441/u1D44E
+0 (Figure 4b). We show that for any speci/f_ication tree (created
+on the same network architecture), verifying the subproblem property on all the leaves of the
+speci/f_ication tree is equivalent to verifying the main property(/u1D719, /u1D713) (Lemma 1). Verifying the
+property on /u1D441/u1D44Efrom scratch requires 9 analyzer calls and 4 node branchings. However, with the
+reuse technique, we could prove the property with 5 analyzer calls corresponding to the leaves
+of /u1D447/u1D441/u1D44E
+0 and without any node branching. Theorem 4 guarantees that the speci/f_ication of the leaf
+nodes should be veri/f_ied on/u1D441/u1D44Eby the analyzer if the network perturbations are lower than a
+/f_ixed bound. Although for larger perturbations, we may have to split leaves of /u1D447/u1D441/u1D44E
+0 further for
+complete veri/f_ication, we empirically observe that the reuse technique is still eﬀective to gain
+speedup on most practical network perturbations.
+Reorder: A split is more eﬀective if it leads to fewer further subproblems that the veri/f_ier has
+to solve to prove the property. Finding the optimal split is expensive. Hence, the heuristic /u1D43Bis
+used to estimate the eﬀectiveness of a split, and to choose the split with the highest estimated
+eﬀectiveness. Often the estimates are imprecise and lead to ineﬀective splits. We use LB/u1D441(/u1D45B) to give
+an approximation to quantifying the eﬀectiveness of a split. We discuss this exact formulation of
+the observed eﬀectiveness scores /u1D43B/u1D45C/u1D44F/u1D460in Section 4.3. Our second concept in IV AN is based on our
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 8 =====
+185:8 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Fig. 5. IV AN removes the ineﬀective split /u1D45F1 at /u1D45B0 and construct a new specification tree /u1D447P.
+insight that if a particular branching decision is eﬀective for verifying /u1D441then it should be eﬀective
+for verifying /u1D441/u1D44E. Likewise, if a particular branching decision is ineﬀective in the veri/f_ication of/u1D441, it
+should be ineﬀective in verifying /u1D441/u1D44E. Based on this insight, we use the observed eﬀectiveness score
+of splits in verifying /u1D441to modify the original branching heuristic /u1D43Bto an improved heuristic /u1D43BΔ.
+/u1D43BΔ takes the weighted sum of original branching heuristic /u1D43Band observed eﬀectiveness scores on
+/u1D441denoted by /u1D43B/u1D45C/u1D44F/u1D460. We formulate the eﬀectiveness of a split and /u1D43BΔ in Section 4.3. For simplicity,
+in the running example, we rerank the ReLUs based on the observed eﬀectiveness of the splits as
+/u1D43BΔ(/u1D45F4) > /u1D43BΔ(/u1D45F3) > /u1D43BΔ(/u1D45F2) > /u1D43BΔ(/u1D45F1). Figure 4c presents the speci/f_ication tree for verifying/u1D441/u1D44Ewith
+the updated branching heuristic /u1D43BΔ that requires 5 analyzer calls and 2 node branchings. Reorder
+technique starts from scratch with a diﬀerent branching order /u1D43BΔ and it is incomparable in theory
+to the reuse technique. In Section 6.2, we observe that reorder works better in most experiments.
+Bringing All Together:Our main algorithm combines our novel concepts of speci/f_ication tree reuse
+and reorder yielding larger speedups than possible with only reuse or reorder. Speci/f_ication tree
+reuse and reorder are not completely orthogonal and thus combining them is not straightforward.
+Since in reuse we start verifying /u1D441/u1D44Ewith the /f_inal speci/f_ication tree/u1D447/u1D441
+/u1D453, the splits are already
+performed with the original order ( /u1D45F1, /u1D45F4, /u1D45F3, /u1D45F2 in our example). Our augmented heuristic function
+/u1D43BΔ will have a limited eﬀect if we reuse /u1D447/u1D441/u1D44E
+0 = /u1D447/u1D441
+/u1D453, since the existing tree branches may already be
+suﬃcient to prove the property.
+Constructing a Pruned Speci/f_ication Tree: It is diﬃcult to predict the structure of the tree with
+augmented order. For instance, in our example, /u1D441is veri/f_ied with/u1D45F1, /u1D45F4, /u1D45F3, /u1D45F2 order and we have
+/u1D447/u1D441
+/u1D453branched in that order. However, we cannot predict the /f_inal structure of the speci/f_ication tree
+if branched with our augmented order /u1D45F4, /u1D45F3, /u1D45F2, /u1D45F1 without actually performing those splits from
+scratch (as it was done in Figure 4c).
+We solve this problem with our novel pruning operation that removes ineﬀective splits from
+/u1D447/u1D441
+/u1D453and constructs a new compact tree /u1D447P. Figure 5 shows the construction of pruned tree /u1D447P for
+our running example. We remove the split /u1D45F1 at /u1D45B0 as it is less eﬀective. Removing /u1D45F1 from /u1D447/u1D441
+3 also
+eliminates the nodes /u1D45B1 and /u1D45B2. The subtrees rooted at /u1D45B1 and /u1D45B2 are the result of split /u1D45F1. If we undo
+the split /u1D45F1 at node /u1D45B0, then /u1D45B0 should follow the branching decisions taken by one of its children.
+For this, we can choose either the subtree of /u1D45B0 or /u1D45B1, and attach it to /u1D45B0. We describe the exact
+method of choosing which subtree to keep in Section 4.3. For this example, our approach chooses to
+keep the subtree of node /u1D45B2 and eliminates the subtree at node /u1D45B1. The pruning procedure leads to
+the discarding of entire subtrees creating a tree with fewer leaf nodes (leaf nodes /u1D45B3, /u1D45B4 are deleted
+in the example along with internal nodes /u1D45B1, /u1D45B2). Consequently, we obtain a more compact tree
+with only in/f_luential splits in the speci/f_ication tree.
+We start the veri/f_ication of/u1D441/u1D44Efrom the leaf nodes of the pruned tree i.e. /u1D447/u1D441/u1D44E
+0 = /u1D447P. For our
+running example speci/f_ication splits of all leaf nodes of /u1D447P are veri/f_ied by the analyzer and no
+further splitting is needed. Figure 4d presents the /f_inal speci/f_ication tree in case we initialize the
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 9 =====
+Incremental Verification of Neural Networks 185:9
+proof with the compact tree obtained from the IV AN algorithm. We show the time complexity of
+incremental veri/f_ication in Section4.2. For the running example, the incremental proof requires
+only 3 analyzer calls and no branching calls, and it is a signi/f_icant reduction to the 9 analyzer calls
+and 5 node branchings performed by the baseline starting from scratch.
+3 PRELIMINARIES
+In this section, we provide the necessary background on complete neural network veri/f_ication.
+3.1 Neural Network Verification
+Neural Networks Neural networks are functions /u1D441: R/u1D45B0 → R/u1D45B/u1D459. In this work, we focus on
+layered neural networks obtained by a sequential composition of /u1D459layers /u1D4411 : R/u1D45B0→ R/u1D4411, . . . , /u1D441/u1D459:
+R/u1D45B/u1D459−1→ R/u1D45B/u1D459. Each layer /u1D441/u1D456applies an aﬃne function (convolution or linear function) followed by a
+non-linear activation function to its input. The choices for non-linear activation functions are ReLU,
+sigmoid, or tanh. /u1D445/u1D452/u1D43F/u1D448(/u1D465) = /u1D45A/u1D44E/u1D465(0, /u1D465) is most commonly used activation function. In Section 4, we
+focus on the most common BaB veri/f_iers that partition the problems using ReLU splitting in ReLU
+networks. The /u1D456-th layer of each network /u1D441/u1D456: R/u1D45B/u1D456−→ R/u1D45B/u1D456+1 is de/f_ined as/u1D441/u1D456(/u1D465) = ReLU(/u1D434/u1D456/u1D44B+ /u1D435/u1D456)
+where /u1D456∈[ /u1D459].
+At a high level, neural network veri/f_ication involves proving that all network outputs correspond-
+ing to a chosen set of inputs satisfying the input speci/f_ication/u1D719satisfy a given logical property /u1D713.
+We /f_irst de/f_ine the input and output speci/f_ications that we consider in this work:
+Definition 1 (Input specification). For a neural network /u1D441: R/u1D45B0→ R/u1D45B/u1D459, /u1D719/u1D461is a connected
+region and /u1D719/u1D461⊆ R/u1D45B0. Input speci/f_ication /u1D719: R/u1D45B0→{ /u1D461/u1D45F/u1D462/u1D452, /u1D453 /u1D44E/u1D459/u1D460/u1D452} is a predicate over the input
+region /u1D719/u1D461.
+Definition 2 (output specification). For a neural network with /u1D45B/u1D459neurons in the output layer.
+output speci/f_ication /u1D713: R/u1D45B/u1D459→{ /u1D461/u1D45F/u1D462/u1D452, /u1D453 /u1D44E/u1D459/u1D460/u1D452} is a predicate over the output region.
+The output property /u1D713could be any logical statement taking a truth value true or false. In our
+paper, we focus on properties that can be expressed as Boolean expressions over linear forms. Most
+DNN veri/f_ication works consider such properties.
+/u1D713(/u1D44C) =(/u1D436/u1D447/u1D44C≥ 0) (1)
+We next de/f_ine the veri/f_ication problem solved by the veri/f_iers:
+Definition 3 (Verification Problem). The neural network veri/f_ication problem for a neural
+network /u1D441, an input speci/f_ication/u1D719and a logical property /u1D713is to prove whether∀/u1D44B∈ /u1D719/u1D461. /u1D713(/u1D441(/u1D44B)) =
+true or provide a counterexample otherwise.
+A complete veri/f_ier always veri/f_ies the property if it holds or returns a counterexample otherwise.
+Formally, it can be de/f_ined as:
+Definition 4 (Complete Verifier). A complete veri/f_ier /u1D449for an input speci/f_ication/u1D719, a neural
+network /u1D441, an output property /u1D713satis/f_ies the following property:
+/u1D449(/u1D719, /u1D713, /u1D441) = Veri/f_ied⇐⇒∀/u1D44B∈ /u1D719/u1D461./u1D713(/u1D441(/u1D44B)) = true
+3.2 Branch and Bound for Verification
+In this Section, we discuss the branch and bound techniques for complete veri/f_ication of DNNs. The
+BaB approach in these techniques use a divide-and-conquer algorithm to compute the LB(/u1D436/u1D447/u1D44C) for
+proving(/u1D436/u1D447/u1D44C≥ 0) (Eq. 1). We next discuss the bounding and branching steps in BaB techniques.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 10 =====
+185:10 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Bounding: The bounding step uses an analyzer to /f_ind a lower bound LB(/u1D436/u1D447/u1D44C). In complete
+veri/f_iers, the analyzers are exact for linear functions (e.g., DeepZ [Singh et al . 2018], DeepPoly
+[Singh et al. 2019b]). However, they over-approximate the non-linear activation function through a
+convex over-approximation. We de/f_ine these sound analyzers as:
+Definition 5 (Sound Analyzer). A sound analyzer /u1D434on an input speci/f_ication/u1D719, a DNN /u1D441, an
+output property /u1D713returns Veri/f_ied, Unknown, or Counterexample. It satis/f_ies the following properties:
+/u1D434(/u1D719, /u1D713, /u1D441) = Veri/f_ied=⇒ ∀/u1D44B∈ /u1D719/u1D461./u1D713(/u1D441(/u1D44B)) = true
+/u1D434(/u1D719, /u1D713, /u1D441) = Counterexample =⇒ ∃/u1D44B∈ /u1D719/u1D461./u1D713(/u1D441(/u1D44B)) = false
+Branching: If the analyzer cannot prove a property, the BaB veri/f_ier partitions the problem into
+easier subproblems to improve analyzer precision. Algorithm 1 presents the pseudocode for the
+BaB veri/f_ication. The algorithm maintains a/u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451list of problems that are currently not proved
+or disproved. It initializes the list with the main veri/f_ication problem. Line5 performs the bounding
+step in the BaB algorithm using the analyzer /u1D434. For simplicity, we abuse the notation and use
+/u1D434(/u1D45D/u1D45F/u1D45C/u1D44F, /u1D441) for denoting the analyzer output instead of /u1D434(/u1D719, /u1D713, /u1D441). Here, the /u1D45D/u1D45F/u1D45C/u1D44Fencapsulates the
+input and output speci/f_ications/u1D719, /u1D713. Line 13 partitions the unsolved problem into subproblems.
+The algorithm halts when either the /u1D434/f_inds a counterexample on one of the subproblems or the list
+of unsolved problems is empty. There are two common branching strategies for BaB veri/f_ication,
+input splitting and ReLU splitting, which we describe next.
+Algorithm 1 Branch and Bound
+1: function BaB(/u1D441 , /u1D45D/u1D45F/u1D45C/u1D44F/u1D459/u1D452/u1D45A)
+2: /u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451←[( /u1D45D/u1D45F/u1D45C/u1D44F/u1D459/u1D452/u1D45A)]
+3: while /u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451is not empty do
+4: for /u1D45D/u1D45F/u1D45C/u1D44F∈ /u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451do
+5: /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45D/u1D45F/u1D45C/u1D44F] = /u1D434(/u1D45D/u1D45F/u1D45C/u1D44F, /u1D441) ⊲ Bounding step
+6: for /u1D45D/u1D45F/u1D45C/u1D44F∈ /u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451do
+7: if /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45D/u1D45F/u1D45C/u1D44F] = Veri/f_iedthen
+8: /u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451./u1D45F/u1D452/u1D45A/u1D45C/u1D463/u1D452(/u1D45D/u1D45F/u1D45C/u1D44F) ⊲ Remove veri/f_ied subproblems
+9: if /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45D/u1D45F/u1D45C/u1D44F] = Counterexample then
+10: return Counterexample for /u1D45D/u1D45F/u1D45C/u1D44F ⊲ Return if a counterexample is found
+11: if /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45D/u1D45F/u1D45C/u1D44F] = Unknown then
+12: /u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451./u1D45F/u1D452/u1D45A/u1D45C/u1D463/u1D452(/u1D45D/u1D45F/u1D45C/u1D44F)
+13: [subprob1, subprob2]← split(prob) ⊲ Branching step
+14: /u1D448 /u1D45B/u1D460/u1D45C/u1D459/u1D463/u1D452/u1D451./u1D456/u1D45B/u1D460/u1D452/u1D45F/u1D461(subprob1, subprob2)
+15: return Veri/f_ied
+Input Splitting: In input splitting, the input region /u1D719/u1D461for veri/f_ication is partitioned. The typical
+choice is to cut a selected input dimension in half while the rest of the dimensions are unchanged.
+The dimension to cut is decided by the branching strategy used. This technique is known to be /u1D6FF-
+complete for any activation function [Anderson et al. 2019], but does not scale for high-dimensional
+input space. In many computer vision tasks, the input is an image with 1000s of pixels. Thus, a high-
+dimensional perturbation region on such input cannot be branched eﬃciently for fast veri/f_ication.
+ReLU Splitting: State-of-the-art techniques that focus on verifying DNNs with high-dimensional
+input and ReLU activation, use ReLU splitting. We denote a ReLU unit for /u1D456-th layer and /u1D457-th index
+as a function /u1D465/u1D456,/u1D457= max( ˆ/u1D465/u1D456,/u1D457, 0), where ˆ/u1D465/u1D456,/u1D457and /u1D465/u1D456,/u1D457are the pre-activation and post-activation values
+respectively. The analyzer computes lower bounds /u1D459/u1D44Fand upper bounds /u1D462/u1D44Ffor each intermediate
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 11 =====
+Incremental Verification of Neural Networks 185:11
+variable in the DNN. If /u1D459/u1D44F( ˆ/u1D465/u1D456,/u1D457)≥ 0, then the ReLU unit simply acts as the identify function /u1D465/u1D456,/u1D457= ˆ/u1D465/u1D456,/u1D457.
+If /u1D462/u1D44F( ˆ/u1D465/u1D456,/u1D457)≤ 0, then the ReLU unit operates as a constant function /u1D465/u1D456,/u1D457= 0. In both of these cases,
+the ReLU unit is a linear function. However, if /u1D459/u1D44F( ˆ/u1D465/u1D456,/u1D457) < 0 < /u1D462/u1D44F( ˆ/u1D465/u1D456,/u1D457), we cannot linearize the
+ReLU function exactly. We call such ReLU units ambiguous ReLUs. In ReLU splitting, the unsolved
+problem is partitioned into two subproblems such that one subproblem assumes ˆ/u1D465/u1D456,/u1D457< 0 and the
+other assumes ˆ/u1D465/u1D456,/u1D457≥ 0. This partition allows us to linearize the ReLU unit in both subproblems
+leading to a boost in the overall precision of the analyzer. The heuristic used for selecting which
+ReLU to split signi/f_icantly impacts the veri/f_ier speed.
+BaB for Other Activation Functions: BaB-based veri/f_ication can work with the most commonly
+used activation functions (tanh, sigmoid, leaky ReLU).
+(1) For piecewise linear activation functions such as leaky ReLU, activation splitting approaches
+(e.g, ReLU splitting) can be used for complete veri/f_ication.
+(2) For other activation functions (tanh, sigmoid), BaB with activation splitting cannot yield
+complete veri/f_ication but can be used to improve the precision of sound and incomplete
+veri/f_ication [Dutta et al. 2017 ; Müller et al. 2021 ].
+(3) Although input splitting is less eﬃcient in the aforementioned cases for high dimensional
+DNN inputs, it can be applied with any activation function (tanh, sigmoid, ReLU, leaky ReLU).
+4 INCREMENTAL VERIFICATION
+In this section, we describe our main technical contributions and the IV AN algorithm. We /f_irst
+formally de/f_ine the speci/f_ication tree structure used for incremental veri/f_ication (Section4.1). Next,
+we formulate the problem of incremental veri/f_ication (Section4.2). In Section 4.3, we illustrate the
+techniques used in our algorithm. We characterize the eﬀectiveness of our technique by computing
+a class of networks for which our incremental veri/f_ication is eﬃciently applicable in Section 4.4.
+4.1 Specification Tree for BaB
+IV AN uses the speci/f_ication tree to store the trace of splitting decisions that the BaB veri/f_ier makes
+on its execution. A speci/f_ication tree can be used for any BaB branching method (e.g, input splitting),
+but without loss of generality, our discussion focuses on ReLU splitting. Let N denote the class of
+networks with the same architecture, and let R denote the set of ReLUs in this architecture. The
+speci/f_ication tree captures the ReLU splitting decisions and the split speci/f_ications in the execution
+of BaB for a property(/u1D719, /u1D713), where we de/f_ine(/u1D719, /u1D713) := /u1D719→ /u1D713.
+For a ReLU /u1D45F/u1D456with input ˆ/u1D465/u1D456, let /u1D45F+
+/u1D456:=( ˆ/u1D465/u1D456≥ 0) and /u1D45F−
+/u1D456:=( ˆ/u1D465/u1D456< 0). We de/f_ine a split decision as:
+Definition 6 (Split Decision). For a ReLU /u1D45F∈R , a split decision is /u1D45F?∈{ /u1D45F+, /u1D45F−} where /u1D45F? is
+assigned the predicate /u1D45F+ or /u1D45F−.
+A speci/f_ication split of(/u1D719, /u1D713) is a speci/f_ication stronger than(/u1D719, /u1D713) parameterized by the subset
+of ReLUs inR and the corresponding split decisions. Formally,
+Definition 7 (Specification Split). For a set of ReLUsR′ ={/u1D45F1, /u1D45F2 . . . /u1D45F/u1D458}⊆R , and ReLU split
+decision /u1D45F?
+/u1D456∈{ /u1D45F−
+/u1D456, /u1D45F+
+/u1D456} for each /u1D45F/u1D456, the corresponding speci/f_ication split of(/u1D719, /u1D713) is(/u1D719∧/u1D45F?
+1∧/u1D45F?
+2∧. . . /u1D45F?
+/u1D458, /u1D713).
+Since∅⊆R ,(/u1D719, /u1D713) is a split speci/f_ication of itself. LetS denote the set of speci/f_ication splits that
+can be obtained from(/u1D719, /u1D713). Each node /u1D45Bin the tree encodes a speci/f_ication split inS. Each edge
+in the speci/f_ication tree is labeled with a ReLU split decision/u1D45F?. Let Nodes(/u1D447) denote the nodes of
+the tree /u1D447and Leaves(/u1D447) denote the leaves of the tree /u1D447.
+Mapping Nodes to Speci/f_ication Splits: The speci/f_ication associated with the root node is(/u1D719, /u1D713).
+The function Children(/u1D45B) maps a node /u1D45Bto either the pair of its children or∅ if /u1D45Bhas no children. If /u1D45B/u1D459
+and /u1D45B/u1D45Fare the children of node/u1D45Band /u1D711/u1D45B=(/u1D719′, /u1D713) is the speci/f_ication split at/u1D45B, then /u1D711/u1D45B/u1D459=(/u1D719′∧/u1D45F+, /u1D713)
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 12 =====
+185:12 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+and /u1D711/u1D45B/u1D45F=(/u1D711′∧ /u1D45F−, /u1D713). For the speci/f_ications/u1D711/u1D45B, /u1D711/u1D45B/u1D459, /u1D711/u1D45B/u1D45Fthe following statement holds:
+(/u1D711/u1D45B/u1D459∧ /u1D711/u1D45B/u1D45F)⇐⇒ /u1D711/u1D45B (2)
+This relationship implies that verifying the parent node speci/f_ication is equivalent to verifying the
+two children node’s speci/f_ications. Formally, we can now de/f_ine the speci/f_ication tree as:
+Definition 8 (specification tree). Given a set of ReLUR, a rooted full binary tree /u1D447is a speci-
+/f_ication tree , if for a node /u1D45B∈ Nodes(/u1D447), and nodes /u1D45B/u1D459, /u1D45B/u1D45F∈ Children(/u1D45B), edge(/u1D45B, /u1D45B/u1D459) is labeled with
+predicate /u1D45F+ and edge(/u1D45B, /u1D45B/u1D45F) is labeled with predicate /u1D45F−, for /u1D45F∈R .
+Algorithm 2 Split operation
+1: function Split(/u1D447 , /u1D45B, /u1D45F)
+2: Input: Speci/f_ication tree/u1D447, a leaf node /u1D45B∈
+Leaves(/u1D447), a ReLU /u1D45F∈R for splitting the node
+3: Output: returns newly added nodes
+4: /u1D45B/u1D459← Add_Child(/u1D45B, /u1D45F+)
+5: /u1D45B/u1D45F← Add_Child(/u1D45B, /u1D45F−)
+6: return /u1D45B/u1D459, /u1D45B/u1D45F
+BaB uses a branching function /u1D43Bfor choos-
+ing the ReLU to split. We de/f_ine this branching
+function in terms of the node /u1D45Bof the speci/f_i-
+cation tree as:
+Definition 9 (Branching Heuristic).
+Given a set of ReLUR, a network /u1D441, and a node
+/u1D45Bin the speci/f_ication tree, ifP⊆R denote the
+set of ReLUs split in the path from the root node
+of the speci/f_ication tree to/u1D45Bthen the branching heuristic /u1D43B(/u1D441 , /u1D45B, /u1D45F) computes a score /uni210E∈ R estimating
+the eﬀectiveness of ReLU /u1D45F∈R/P for splitting the speci/f_ication (/u1D711/u1D45B) of the node /u1D45B.
+We next state the split operation on a speci/f_ication tree. Algorithm2 presents the steps in the
+split operation.
+• Split Operation: Every ReLU split adds two nodes to the speci/f_ication tree at a given leaf node/u1D45B.
+The BaB algorithm chooses the ReLU arg max/u1D45F∈R/P /u1D43B(/u1D441 , /u1D45B, /u1D45F) to split at node /u1D45Busing the heuristic
+function.
+4.2 Incremental Verification: Problem Formulation
+Give a set of networksN with the same architecture with a set of ReLUs R,TN be the set of all
+speci/f_ication trees de/f_ined overR. There exists a partial order(<) onTN through standard subgraph
+relation. BaB execution on a network /u1D441∈N traces a sequence of trees /u1D4470, /u1D4471 . . . /u1D447/u1D453∈TN such that
+/u1D447/u1D456< /u1D447/u1D456+1. It halts with the /f_inal tree/u1D447/u1D453when it either veri/f_ies the property or /f_inds a counterexample.
+The construction of /u1D447/u1D456+1 from /u1D447/u1D456depends on the branching function /u1D43B(De/f_inition9).
+Incremental Veri/f_ication: The incremental veri/f_ication problem is to eﬃciently reuse the infor-
+mation from the execution of veri/f_ication of network/u1D441for the faster veri/f_ication of its updated
+version /u1D441/u1D44E. Standard BaB for veri/f_ication of/u1D441/u1D44Estarts with a single node tree while the incremental
+veri/f_ier starts with a tree/u1D447/u1D441/u1D44E
+0 ∈TN that is not restricted to be a tree with a single node. We modify
+the /f_inal speci/f_ication tree/u1D447/u1D441
+/u1D453from the veri/f_ication of/u1D441to construct /u1D447/u1D441/u1D44E
+0 . The branching heuristic
+/u1D43BΔ for incremental veri/f_ication is derived from the branching heuristic/u1D43Bbased on the eﬃcacy
+of various branching decisions made during the proof for /u1D441. Formally, the complete incremental
+veri/f_ier we propose is de/f_ined as:
+Definition 10 (Complete and Incremental Verifier). A Complete and Incremental Veri/f_ier
+/u1D449Δ takes a neural network /u1D441/u1D44E, an input speci/f_ication/u1D719, an output property /u1D713, analyzer /u1D434, the branching
+heuristic /u1D43BΔ and the initial tree /u1D447/u1D441/u1D44E
+0 . /u1D449Δ(/u1D441/u1D44E, /u1D719, /u1D713, /u1D447/u1D441/u1D44E
+0 , /u1D43BΔ) returns Veri/f_iedif /u1D441/u1D44Esatis/f_ies the property
+(/u1D719, /u1D713), otherwise, it returns a Counterexample.
+Algorithm 3 presents the incremental veri/f_ier algorithm for verifying the perturbed network. It
+takes /u1D43BΔ and /u1D447/u1D441/u1D44E
+0 as input. It maintains a list of active nodes which are the nodes corresponding to
+the speci/f_ications that are yet to be checked by the analyzer. It initializes the list of active nodes
+with leaves of tree /u1D447/u1D441/u1D44E
+0 (line 2). The main loop runs until the active list is empty (line 3) or it
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 13 =====
+Incremental Verification of Neural Networks 185:13
+Algorithm 3 Verifying Perturbed Network
+Input: /u1D441/u1D44E, property (/u1D719,/u1D713), Initial speci/f_ication tree/u1D447/u1D441/u1D44E
+0 , branching heuristic /u1D43BΔ
+Output: Veri/f_iedif the speci/f_ication (/u1D719,/u1D713) is veri/f_ied, otherwise aCounterexample
+1: /u1D447/u1D441/u1D44E
+← Initialize /u1D447/u1D441/u1D44E
+as /u1D447/u1D441/u1D44E
+0
+2: /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452= Leaves(/u1D447/u1D441/u1D44E
+0 ) ⊲ Initialize active list as Leaves(/u1D447/u1D441/u1D44E
+0 )
+3: while /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452is not empty do
+4: for /u1D45B∈ /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452do
+5: /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45B]← /u1D434(/u1D45B) ⊲ Bounding step
+6: for /u1D45B∈ /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452do
+7: if /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45B] = Veri/f_iedthen
+8: /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452./u1D45F/u1D452/u1D45A/u1D45C/u1D463/u1D452(/u1D45B) ⊲ Remove veri/f_ied nodes
+9: if /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45B] = Counterexample then
+10: /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452./u1D452/u1D45A/u1D45D/u1D461/u1D466.alt()
+11: return Counterexamplefor /u1D45B ⊲ Return if a counterexample is found
+12: if /u1D460/u1D461/u1D44E/u1D461/u1D462/u1D460[/u1D45B] = Unknown then
+13: /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452./u1D45F/u1D452/u1D45A/u1D45C/u1D463/u1D452(/u1D45B)
+14: /u1D45F/u1D450/uni210E/u1D45C/u1D460/u1D452/u1D45B← arg max/u1D45F∈R /u1D43BΔ(/u1D441 , /u1D45B, /u1D45F) ⊲ Use /u1D43BΔ to choose the split ReLU
+15: /u1D45B/u1D459, /u1D45B/u1D45F← Split(/u1D447/u1D441/u1D44E
+, /u1D45B, /u1D45F/u1D450/uni210E/u1D45C/u1D460/u1D452/u1D45B) ⊲ Branching step
+16: /u1D434/u1D450/u1D461/u1D456/u1D463/u1D452./u1D456/u1D45B/u1D460/u1D452/u1D45F/u1D461(/u1D45B/u1D459, /u1D45B/u1D45F)
+17: return Veri/f_ied
+discovers a counterexample (line 9). At each iteration, it runs the analyzer on each node in the
+active list (line 5). The nodes that are Veri/f_iedare removed from the list (line 8), whereas the nodes
+that result in Unknown are split. The new children are added to the active list (line 12).
+Optimal Incremental Veri/f_ication: We de/f_ine the partial functionTimeΔ :TN×TN ⇁ R,
+TimeΔ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453) for a /f_ixed complete incremental veri/f_ier/u1D449Δ as the time taken by /u1D449Δ that starts
+from /u1D447/u1D441/u1D44E
+0 and halts with the /f_inal tree/u1D447/u1D441/u1D44E
+/u1D453. Time/uni210E(/u1D43B, /u1D43BΔ) and Time/u1D461(/u1D447/u1D441
+/u1D453, /u1D447/u1D441/u1D44E
+0 ) are the time for
+constructing /u1D43BΔ from H, and/u1D447/u1D441/u1D44E
+0 from/u1D447/u1D441
+/u1D453respectively. We pose the optimal incremental veri/f_ication
+problem as an optimization problem of /f_inding the best/u1D43BΔ, /u1D447/u1D441/u1D44E
+0 such that the time of incremental
+veri/f_ication is minimized. Formally, we state the problem as:
+arg min
+/u1D43BΔ,/u1D447/u1D441/u1D44E
+0
+[
+TimeΔ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453)+ Time/uni210E(/u1D43B, /u1D43BΔ)+ Time/u1D461(/u1D447/u1D441
+/u1D453, /u1D447/u1D441/u1D44E
+0 )
+]
+(3)
+The search space for /u1D447/u1D441/u1D44E
+0 is exponential in terms of R, and the search space for /u1D43BΔ is in/f_inite.
+Further, TimeΔ is a complicated function of /u1D43BΔ, /u1D447/u1D441/u1D44E
+0 that does not have a closed-form formulation.
+As a result, it is not possible to /f_ind an optimal solution.
+Simplifying Assumptions: To make the problem tractable we make a simplifying assumption that
+for all networks with the same architecture, each branching and bounding step on each invocation
+takes a constant time /u1D461H and /u1D461A respectively. We can now compute TimeΔ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453) as:
+Theorem 1. (TimeΔ for incremental veri/f_ication). If the incremenatl veri/f_ier/u1D449Δ halts with the /f_inal
+tree /u1D447/u1D441/u1D44E
+/u1D453, then Time Δ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453) =(/u1D461A+ /u1D461H)·
+(
+|Nodes(/u1D447/u1D441/u1D44E
+/u1D453)|+
+1−| Nodes(/u1D447/u1D441/u1D44E
+0 )|
+2
+)
+− /u1D461H·| Leaves(/u1D447/u1D441/u1D44E
+/u1D453)| .
+The proof of the theorem is in Appendix A.2.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 14 =====
+185:14 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+In this work, we focus on a class of algorithms for which the preprocessing times Time/uni210E(/u1D43B, /u1D43BΔ)
+and Time/u1D461(/u1D447/u1D441
+/u1D453, /u1D447/u1D441/u1D44E
+0 ) are << TimeΔ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453). Furthermore, we also focus on branching heuristics
+used in practice where /u1D461H << /u1D461A. Equation 3 simpli/f_ies to /f_inding/u1D43BΔ and /u1D447/u1D441/u1D44E
+0 such that the following
+expression TimeΔ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453) = /u1D461A·
+(
+|Nodes(/u1D447/u1D441/u1D44E
+/u1D453)|+
+1−| Nodes(/u1D447/u1D441/u1D44E
+0 )|
+2
+)
+is minimized. Rewriting and
+ignoring the constant term we get
+TimeΔ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453) = /u1D461A·
+( |Nodes(/u1D447/u1D441/u1D44E
+/u1D453)|−| Nodes(/u1D447/u1D441/u1D44E
+0 )|
+2 +
+|Nodes(/u1D447/u1D441/u1D44E
+/u1D453)|
+2
+)
+(4)
+4.3 IV AN Algorithm for Incremental Verification
+We describe the novel components of our algorithm and present the full work/f_low in Algorithm5.
+Our /f_irst technique called reuse focuses on minimizing |Nodes(/u1D447/u1D441/u1D44E
+/u1D453)|−| Nodes(/u1D447/u1D441/u1D44E
+0 )| in Equa-
+tion 4. Our second reorder technique focuses on minimizing |Nodes(/u1D447/u1D441/u1D44E
+/u1D453)| . The /u1D43BΔ, /u1D447/u1D441/u1D44E
+0 obtained
+by reuse and reorder are distinct. IV AN algorithm combines these distinct solutions, to reduce
+TimeΔ(/u1D447/u1D441/u1D44E
+0 , /u1D447/u1D441/u1D44E
+/u1D453).
+Reuse: This technique is based on the observation that the BaB speci/f_ication trees should be similar
+for small perturbations in the network. Accordingly, in the method, we use the /f_inal speci/f_ication
+tree for /u1D441as the initial tree for the veri/f_ication of/u1D441/u1D44Ei.e./u1D447/u1D441/u1D44E
+0 = /u1D447/u1D441
+/u1D453, and keep the /u1D43BΔ = /u1D43Bunchanged.
+We formally characterize a set of networks obtained by small perturbation for which /u1D447/u1D441/u1D44E
+0 = /u1D447/u1D441
+/u1D453is
+suﬃcient for verifying /u1D441/u1D44Ewithout any further splitting in Section 4.4.
+Reorder: Reorder technique focuses on improving the branching heuristic /u1D43Bsuch that it reduces
+|Nodes(/u1D447/u1D441/u1D44E
+/u1D453)| , and /u1D447/u1D441/u1D44E
+0 is single node tree with /u1D45B0 encoding the speci/f_ication(/u1D719, /u1D713). If we start
+/u1D447/u1D441/u1D44E
+0 = /u1D447/u1D441
+/u1D453,|Nodes(/u1D447/u1D441/u1D44E
+/u1D453)| is at least|Nodes(/u1D447/u1D441
+/u1D453)| , and thus, we start /u1D447/u1D441/u1D44E
+0 from scratch allowing the
+technique to minimize|Nodes(/u1D447/u1D441/u1D44E
+/u1D453)| . We create a branching function /u1D43BΔ from /u1D43Bwith the following
+two changes. (i) The splits that worked eﬀectively for the veri/f_ication of the/u1D441should be prioritized.
+(ii) The splits that were not eﬀective should be deprioritized. To formalize the eﬀectiveness of
+splits, we de/f_ine theLB/u1D441(/u1D45B) as the lower bound computed by the analyzer /u1D434on the network /u1D441
+for proving the property /u1D711/u1D45Bencoded by the node /u1D45B. Further, using the function LB/u1D441we de/f_ine an
+improvement function /u1D43C/u1D441represents the eﬀectiveness of a ReLU split at a speci/f_ic node as:
+/u1D43C/u1D441(/u1D45B, /u1D45F) = min(LB/u1D441(/u1D45B/u1D45F)− LB/u1D441(/u1D45B), LB/u1D441(/u1D45B/u1D459)− LB/u1D441(/u1D45B)) (5)
+where /u1D45B/u1D459, /u1D45B/u1D45F∈ Children(/u1D45B) in the speci/f_ication tree/u1D447/u1D441
+/u1D453. We use /u1D43C/u1D441to de/f_ine the observed eﬀective-
+ness /u1D43B/u1D45C/u1D44F/u1D460(/u1D45F) from a split /u1D45Fon the entire speci/f_ication tree for/u1D441. It is de/f_ined as the mean of the
+improvement over each node where split /u1D45Fwas made. Let /u1D444⊂ Nodes(/u1D447/u1D441
+/u1D453) denote a set of nodes
+where split /u1D45Fwas made. Then,
+/u1D43B/u1D45C/u1D44F/u1D460(/u1D45F) =
+/summationtext.1
+/u1D45B∈/u1D444/u1D43C/u1D441(/u1D45B, /u1D45F)
+|/u1D444| . (6)
+Using the /u1D43B/u1D45C/u1D44F/u1D460(/u1D45F) score we update the existing branching function as:
+/u1D43BΔ(/u1D45B, /u1D45F) = /u1D6FC· /u1D43B(/u1D45B, /u1D45F)+( 1− /u1D6FC)·( /u1D43B/u1D45C/u1D44F/u1D460(/u1D45F)− /u1D703). (7)
+Here, we introduce two hyperparameters /u1D6FCand /u1D703. The hyperparameter /u1D6FC∈[ 0, 1] controls the
+importance given to the actual heuristic score and the observed improvement from the veri/f_ication
+on /u1D441. If /u1D6FC= 1, then /u1D43BΔ depends only on the original branching heuristic score. If /u1D6FC= 0, then it fully
+relies on observed split scores. The hyperparameter /u1D703ensures that our score positively changes
+score for /u1D45Fthat have /u1D43B/u1D45C/u1D44F/u1D460(/u1D45F) > /u1D703and negatively change scores for /u1D43B/u1D45C/u1D44F/u1D460(/u1D45F) < /u1D703.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 15 =====
+Incremental Verification of Neural Networks 185:15
+Constructing a Pruned Speci/f_ication Tree: The two reordering goals of prioritizing and depriori-
+tizing eﬀective and ineﬀective splits are diﬃcult to combine with reuse. However, instead of starting
+from scratch, we can construct a speci/f_ication tree/u1D447P from /u1D447/u1D441
+/u1D453excluding the ineﬀective splits. For
+/u1D45B∈ Nodes(/u1D447/u1D441
+/u1D453), where ReLU /u1D45Fsplits /u1D45B, we denote the set of bad splits as the set B(/u1D447/u1D441
+/u1D453) of the pairs
+(/u1D45B, /u1D45F) such that the improvement score /u1D43C/u1D441(/u1D45B, /u1D45F)≤ /u1D703. For(/u1D45B, /u1D45F)∈B( /u1D447/u1D441
+/u1D453) while constructing the
+pruned tree our algorithm chooses a child /u1D45B/u1D458of /u1D45B. If a ReLU /u1D45F/u1D458is split at /u1D45B/u1D458in /u1D447/u1D441
+/u1D453, it performs a
+split /u1D45F/u1D458in the corresponding node in /u1D447P, and skips over the bad split /u1D45F. The subtree corresponding
+to the other child /u1D45B/u1D458′ is eliminated and not added to our pruned tree. We choose /u1D45B/u1D458such that:
+/u1D45B/u1D458= arg min
+/u1D45B/u1D462∈Children(/u1D45B)
+LB/u1D441(/u1D45B/u1D462)− LB/u1D441(/u1D45B) (8)
+We choose such /u1D45B/u1D458over /u1D45B/u1D458′ since LB/u1D441(/u1D45B) is closer to LB/u1D441(/u1D45B/u1D458) than LB/u1D441(/u1D45B/u1D458′). Further, combining
+Equation 5 and 8, we can show (LB/u1D441(/u1D45B/u1D458)− LB/u1D441(/u1D45B)) < /u1D703, i.e. their diﬀerence is bounded. We
+anticipate that on the omission of the split /u1D45F, the subtree corresponding to /u1D45B/u1D458is a better match to
+the necessary branching decisions following /u1D45Bthan /u1D45B/u1D458′.
+Algorithm 4 presents the top-down construction of /u1D447P. The algorithm starts from the root of /u1D447/u1D441
+/u1D453
+and recursively traverses through the children constructing /u1D447P. It maintains a queue /u1D444of nodes yet
+to be explored and a map /u1D440that maps nodes from the tree /u1D447/u1D441
+/u1D453to the corresponding new nodes in
+/u1D447P. At a node /u1D45B, if(/u1D45B, /u1D45F) is not a bad split, it performs the split /u1D45Fat the corresponding mapping ˆ/u1D45B.
+Otherwise, if /u1D45F/u1D458is the split at /u1D45B/u1D458, it skips over /u1D45Fand performs the split of /u1D45F/u1D458at ˆ/u1D45B. The newly created
+children from a split of ˆ/u1D45Bare associated with children of /u1D45B/u1D458using /u1D440. The children of /u1D45B/u1D458are added
+in the /u1D444and they are recursively processed in the next iteration for further constructing /u1D447P. /u1D447P is
+still a speci/f_ication tree satisfying the De/f_inition4.1 by construction. The speci/f_ications/u1D711/u1D45Bof a
+node /u1D45Bin /u1D447P can be constructed using a path from the root to /u1D45B.
+Algorithm 4 Creating a Pruned Tree
+Input: speci/f_ication tree/u1D447/u1D441/u1D44E
+/u1D453, hyperparameter /u1D703
+Output: Pruned tree /u1D447P
+1: /u1D45Broot← root of /u1D447/u1D441/u1D44E
+/u1D453, ˆ/u1D45Broot← copy of /u1D45Broot
+2: /u1D447P← Initialize a new tree with ˆ/u1D45Broot
+3: /u1D444← Initialize list with /u1D45Broot
+4: /u1D440← Initialize an empty map
+5: /u1D440[/u1D45Broot]← ˆ/u1D45Broot
+6: while /u1D444is not empty do
+7: /u1D45B← /u1D444 .pop(); /u1D45F← split at node /u1D45B; ˆ/u1D45B← /u1D440[/u1D45B]
+8: if /u1D43C/u1D441(/u1D45B, /u1D45F) < /u1D703then
+9: /u1D45B/u1D458← arg min/u1D45B/u1D458∈Children(/u1D45B) LB/u1D441(/u1D45B/u1D458)− LB/u1D441(/u1D45B)
+10: /u1D45F/u1D458← split at node /u1D45B/u1D458
+11: /u1D45B/u1D459, /u1D45B/u1D45F← /u1D45B/u1D458.children; ˆ/u1D45B/u1D459, ˆ/u1D45B/u1D45F← Split(/u1D447P, ˆ/u1D45B, /u1D45F/u1D458)
+12: /u1D440[/u1D45B/u1D459]← ˆ/u1D45B/u1D459; /u1D440[/u1D45B/u1D45F]← ˆ/u1D45B/u1D45F
+13: /u1D444 .push(/u1D45B/u1D459); /u1D444 .push(/u1D45B/u1D45F)
+14: else
+15: /u1D45B/u1D459, /u1D45B/u1D45F← /u1D45B.children; ˆ/u1D45B/u1D459, ˆ/u1D45B/u1D45F← Split(/u1D447P, ˆ/u1D45B, /u1D45F)
+16: /u1D440[/u1D45B/u1D459]← ˆ/u1D45B/u1D459; /u1D440[/u1D45B/u1D45F]← ˆ/u1D45B/u1D45F
+17: /u1D444 .push(/u1D45B/u1D459); /u1D444 .push(/u1D45B/u1D45F)
+18: return /u1D447P
+Algorithm 5 Incremental Veri/f_ication
+Algorithm
+Input: Original network /u1D441,
+Perturbed network /u1D441/u1D44E,
+property (/u1D719, /u1D713),
+analyzer /u1D434,
+branching heuristic /u1D43B,
+hyperparameters
+/u1D6FCand /u1D703,
+incremental veri/f_ier/u1D449Δ
+Output: Veri/f_ication result for/u1D441and /u1D441/u1D44E
+1: resultN , /u1D447/u1D441
+/u1D453← /u1D449(/u1D441 , /u1D719, /u1D713, /u1D43B)
+2: /u1D447/u1D441/u1D44E
+0 ← PrunedTree(/u1D447/u1D441
+/u1D453, /u1D703)
+3: /u1D43BΔ← UpdateH(/u1D43B, /u1D447/u1D441
+/u1D453, /u1D703, /u1D6FC)
+4: resultN /u1D44E← /u1D449Δ(/u1D441/u1D44E, /u1D719, /u1D713, /u1D447/u1D441/u1D44E
+0 , /u1D43BΔ) ⊲
+Incremental veri/f_ication step calls Algo-
+rithm 3
+5: return resultN, resultN /u1D44E
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 16 =====
+185:16 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Main algorithm: Algorithm 5 presents IV AN’s main algorithm for incremental veri/f_ication that
+combines all the aforementioned techniques. It takes as inputs the original network /u1D441, a perturbed
+network /u1D441/u1D44E, input speci/f_ication/u1D719, and an output property /u1D713. It prunes the /f_inal tree/u1D447/u1D441
+/u1D453obtained
+in the veri/f_ication of/u1D441and constructs /u1D447/u1D441/u1D44E
+0 (line 2). It computes the updated branching heuristic
+/u1D43BΔ using Equation 7 (line 3). It uses /u1D447/u1D441/u1D44E
+0 and /u1D43BΔ for performing fast incremental veri/f_ication of
+networks /u1D441/u1D44E(line 4).
+We next state the following lemma that states - verifying the property (/u1D719, /u1D713) is equivalent to
+verifying the speci/f_ications for all the leaves.
+Lemma 1. The speci/f_ications encoded by the leaf nodes of a speci/f_ication tree/u1D447maintain the following
+invariance. ( /logicalanddisplay.1
+/u1D45B∈/u1D459/u1D452/u1D44E/u1D463/u1D452/u1D460(/u1D447)
+/u1D711/u1D45B
+)
+⇐⇒( /u1D719→ /u1D713)
+We next use the lemma to prove the soundness and completeness of our algorithm. All the proofs
+are in Appendix A.2.
+Theorem 2. (Soundness of Veri/f_ication Algorithm). If Algorithm 5 veri/f_ies the property(/u1D719, /u1D713) for the
+network /u1D441/u1D44E, then the property must hold.
+Theorem 3. (Completeness of Veri/f_ication Algorithm). If for the network /u1D441/u1D44E, the property(/u1D719, /u1D713)
+holds then Algorithm 5 always terminates and produces Veri/f_iedas output.
+Scope of IV AN:IV AN utilizes the speci/f_ication tree to store the trace of the BaB proof. The IV AN
+algorithm enhances this tree by reusing and re/f_ining it to enable faster BaB proof of updated
+networks. Our paper focuses on using IV AN to verify ReLU networks with BaB that implements
+ReLU splitting. However, we expect that IV AN’s principles can be extended to networks with other
+activation functions (tanh, sigmoid, leaky ReLU) for which BaB has been applied for veri/f_ication.
+4.4 Network Perturbation Bounds
+In this section, we formally characterize a class of perturbations on a network /u1D441where our proposed
+"Reuse" technique attains maximum possible speed-up. Speci/f_ically, we focus on modi/f_ications
+aﬀecting only the last layer which represent many practical network perturbations (e.g, transfer
+learning, /f_ine-tuning). The last layer modi/f_ication assumption is only for our theoretical results in
+this section. Our experiments make no such assumption and consider perturbations applied across
+the original network.
+We leave the derivation of perturbation bounds corresponding to the full IV AN to future work as
+it requires theoretically modeling the eﬀect of arbitrary network perturbations on DNN output as
+well as complex interactions between "Reuse" and "Reorder" techniques. Given a speci/f_ication tree
+/u1D447and network architectureN , we identify a set of neural networks C/u1D447(N) such that any network
+/u1D441/u1D44E∈ C/u1D447(N) can be veri/f_ied by reusing/u1D447.
+We assume the weights are changed by the weight perturbation matrixE. If /u1D441/u1D459= ReLU(/u1D434/u1D459·/u1D44B+/u1D435/u1D459)
+then last layer of /u1D441/u1D44Eis /u1D441/u1D44E
+/u1D459= ReLU((/u1D434/u1D459+E)· /u1D44B+ /u1D435/u1D459).
+Definition 11 (Last Layer Perturbed Network). Given a network /u1D441with architectureN ,
+the set of last layer perturbed networks is M( /u1D441 , /u1D6FF)⊆N , such that if /u1D441/u1D44E∈M( /u1D441 , /u1D6FF) then(∀/u1D456∈
+[/u1D459− 1])· /u1D441/u1D456= /u1D441/u1D44E
+/u1D456, /u1D441/u1D459= ReLU(/u1D434/u1D459· /u1D44B+ /u1D435/u1D459), /u1D441/u1D44E
+/u1D459= ReLU(( /u1D434/u1D459+E)· /u1D44B+ /u1D435/u1D459) and∥E∥ /u1D439≤ /u1D6FF. 1
+We next compute the upper bound of /u1D6FF, for which if the property can be proved/disproved using
+speci/f_ication tree/u1D447in /u1D441then the same property can be proved/disproved in /u1D441/u1D44Eusing the same
+/u1D447. Therefore, once we have the proof tree /u1D447that veri/f_ies the property in/u1D441we can reuse /u1D447for
+1∥·∥ /u1D439denotes the Frobenius norm of a matrix
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 17 =====
+Incremental Verification of Neural Networks 185:17
+Table 1. Models and the perturbation /u1D716used for the evaluation for incremental verification.
+Model Architecture Dataset #Neurons Training Method /u1D716
+ACAS-XU Networks 6× 50 linear layers ACAS-XU 300 Standard [ Julian et al. 2019 ] -
+FCN-MNIST 2× 256 linear layers MNIST 512 Standard 0.02
+CONV-MNIST 2 Conv, 2 linear layers MNIST 9508 Certi/f_ied Robust [ Balunovic and Vechev 2020] 0.1
+CONV-CIFAR 2 Conv, 2 linear layers CIFAR10 4852 Empirical Robust [ Dong et al. 2018 ] 2
+255
+CONV-CIFAR-WIDE 2 Conv, 2 linear layers CIFAR10 6244 Certi/f_ied Robust [ Wong and Kolter 2018a] 4
+255
+CONV-CIFAR-DEEP 4 Conv, 2 linear layers CIFAR10 6756 Certi/f_ied Robust [ Wong and Kolter 2018a] 4
+255
+verifying any perturbed network /u1D441/u1D44E∈M( /u1D441 , /u1D6FF). Assuming the property(/u1D719, /u1D713) and the analyzer /u1D434
+are the same for any perturbed network /u1D441/u1D44E∈M( /u1D441 , /u1D6FF) the upper bound of /u1D6FFonly depends on /u1D441
+and /u1D447.
+We next introduce some useful notations that help us explicitly compute the upper bound of /u1D6FF.
+Given /u1D447letF( /u1D441/u1D456, /u1D447) be the over-approximated region computed by the analyzer /u1D434that contains
+all feasible outputs /u1D441/u1D456of the /u1D456-th layer of the original network. NoteF( /u1D441/u1D456, /u1D447) depends on the /u1D719and
+analyzer /u1D434but we omit them to simplify the notation. Let /u1D449T(/u1D441 , /u1D447) denote whether the property
+(/u1D719, /u1D713) can be verifed on network /u1D441with /u1D447. Proof of Theorem 4 is presented in Section A.3
+/u1D43F/u1D435(F( /u1D441/u1D459, /u1D447)) = min
+/u1D44C∈F( /u1D441/u1D459,/u1D447)
+C/u1D447/u1D44C (9)
+/u1D449T(/u1D441 , /u1D447) =(/u1D43F/u1D435(F( /u1D441/u1D459, /u1D447))≥ 0) (10)
+/u1D702(/u1D441 , /u1D447) = max
+/u1D44C∈F( /u1D441/u1D459−1,/u1D447)
+∥/u1D44C∥2 (11)
+Theorem 4. If /u1D6FF≤ |/u1D43F/u1D435(F( /u1D441/u1D459,/u1D447))|
+∥C∥ 2·/u1D702(/u1D441 ,/u1D447) then for any perturbed network /u1D441/u1D44E∈M( /u1D441 , /u1D6FF) /u1D449T(/u1D441 , /u1D447) ⇐⇒
+/u1D449T(/u1D441/u1D44E, /u1D447).
+The proof of the theorem is in Appendix A.3.
+5 METHODOLOGY
+Networks and Properties. We evaluate IV AN on models with various architectures that are trained
+with diﬀerent training methods. Similar to most of the previous literature, we verify /u1D43F∞-based local
+robustness properties for MNIST and CIFAR10 networks and choose standard /u1D716values used for
+evaluating complete veri/f_iers. For the veri/f_ication of global properties in Section6.4 we use the
+standard set of ACAS-XU properties that are part of the VNN-COMP benchmarks [ Bak et al . 2021].
+Table 1 presents the evaluated models and the choice of /u1D716for the local robustness properties.
+Network Perturbation. Similar to previous works [ Paulsen et al . 2020a; Ugare et al. 2022], we
+use quantization to generate perturbed networks. Speci/f_ically, we use int8 and int16 post-training
+quantizations. The quantization scheme has the form [ TFLite 2017]: /u1D45F= /u1D460(/u1D45E− /u1D467/u1D45D). Here, /u1D45Eis the
+quantized value and /u1D45Fis the real value; /u1D460which is the scale and /u1D467/u1D45Dwhich is the zero point are the
+parameters of quantization. Our experiments use symmetric quantization with /u1D467/u1D45D= 0.
+Baseline. We use the following baseline BaB veri/f_iers:
+• For proving the local robustness properties, we use LP-based triangle relaxation for bounding
+[Bunel et al . 2020b; Ehlers 2017 ], and we use the estimation based on coeﬃcients of the
+zonotopes for choosing the ReLU splitting [ Henriksen and Lomuscio 2021 ].
+• For the veri/f_ication of ACAS-XU global properties, we use Re/f_ineZono [Singh et al. 2019c].
+Re/f_ineZono uses DeepZ [Singh et al. 2018] analyzer with input splitting. This baseline is used
+only for experiments in Section 6.4.
+Experimental Setup. We use 64 cores of an AMD Ryzen Threadripper CPU with the main memory
+of 128 GB running the Linux operating system. The code for our tool is written in Python. We use
+the GUROBI [ Gurobi Optimization, LLC 2018 ] solver for our LP-based analyzer.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 18 =====
+185:18 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Hyperparameters. We use Optuna tuner [ Akiba et al . 2019] for tuning the hyperparameters. We
+present more details and sensitivity analysis of the hyperparameters in Section 6.3.
+6 EXPERIMENTAL EV ALUATION
+We evaluate the eﬀectiveness of IV AN in verifying the local robustness properties of the quantized
+networks. We then analyze how various tool components contribute to the overall result. We further
+show the sensitivity of speedup obtained by IV AN to the hyperparameters. We also stress-test
+IV AN on large random perturbation to the network. Finally, we evaluate the eﬀectiveness of IV AN
+on global property veri/f_ication with input splitting.
+6.1 Eﬀectiveness of IV AN
+(a) FCN-MNIST with INT16 quantization
+ (b) FCN-MNIST with INT8 quantization
+Fig. 6. IV AN speedup for the verification of local robustness properties on FCN-MNIST .
+Figure 6 presents the speedup obtained by IV AN on FCN-MNIST . The x-axis displays the time
+taken by the baseline veri/f_ier for the veri/f_ication in Seconds. The y-axis denotes the speedup
+obtained by IV AN over the baseline on a speci/f_ic veri/f_ication instance. Each cross in the plot shows
+results for a speci/f_ic veri/f_ication property. The vertical line denotes the timeout for the experiment
+and the dashed line is to separate instances that have a speedup greater than 1x.
+We observe that IV AN gets higher speedup on hard instances that take more time for veri/f_ication
+on the baseline. IV AN has a small overhead for storing the speci/f_ication tree compared to the
+baseline. For hard speci/f_ications that result in large speci/f_ication trees, this overhead is insigni/f_icant
+compared to the improvement in the veri/f_ication time. Our techniques that reuse and re/f_ine the
+tree focus on speeding up such hard speci/f_ications. However, for speci/f_ications that are easy to
+prove with small speci/f_ication trees, we see a slight slowdown in veri/f_ication time. Since these easy
+speci/f_ications are veri/f_ied quickly by both IV AN and the baseline, they are irrelevant in overall
+veri/f_ication time over all the speci/f_ications. For instance, the box labeled by/u1D4502 in Figure 6a contains
+all of the 83 cases with low (< 1.2/u1D465) speedup on int16 quantized network. Despite low speedup, all
+of them take 16.27s to verify with IV AN. Whereas the case labeled by /u1D4501 alone takes 75.54s on the
+baseline and 1.73s on IV AN, leading to a 43x speedup – caused by reducing BaB tree size from 345
+nodes to 28 nodes on pruning, out of which only 14 leaf nodes are active and lead to analyzer calls.
+We observe a similar pattern in the case of the int8 quantized network in Figure 6b. It shows
+that the cases con/f_ined in box/u1D4503, despite having lower speedup, take relatively less time. The cases
+included in box /u1D4504 in Figure 6b have a much higher impact on the overall veri/f_ication time. Box/u1D4503
+includes the majority of the low-speedup 83 cases that take a total of 18.44s time for veri/f_ication
+with IV AN. Whereas for 5 cases in box/u1D4504 with higher speedups, take 401 analyzer calls with baseline
+and 118 analyzer calls with IV AN. Accordingly, solving them takes 130.6s with the baseline and
+40.26s with IV AN, leading to a 3.3x speedup.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 19 =====
+Incremental Verification of Neural Networks 185:19
+(a) CONV-MNIST with INT16 quantization
+ (b) CONV-MNIST with INT8 quantization
+(c) CONV-CIFAR-WIDE with INT16 quant.
+ (d) CONV-CIFAR-WIDE with INT8 quant.
+Fig. 7. IV AN speedup for the verification of local robustness properties.
+Figure 7 presents speedup for several other networks. IV AN is notably more eﬀective on hard-to-
+verify speci/f_ications that take more than 10s to verify using the baseline. It achieves 3.1x geomean
+speedup on such cases. In many cases, we see more solved cases by IV AN over the baseline. For in-
+stance, the box /u1D4505 in Figure 7a contains 2 cases that baseline does not solve within the timeout of 100s,
+but IV AN solves them in 90.6s and 95.8s each. We show speedup vs. time plots for other networks
+(CONV-CIFAR , CONV-CIFAR-DEEP ) and more statistics of our evaluation in Appendix A.1.
+6.2 Overall Speedup
+We observe no cases when the baseline veri/f_ies the property and IV AN exceeds the timeout. We
+cannot compute the speedup for the cases where the baseline exceeds the timeout. Therefore, we
+compute the overall speedup over the set /u1D446that denotes all the cases that are solved by the baseline
+within the time limit. /u1D70FB(/u1D450) and /u1D70FIV AN(/u1D450) denote the time taken by baseline and IV AN on the case /u1D450
+respectively, then we compute the overall speedup as Sp =
+/summationtext.1
+/u1D450∈/u1D446/u1D70FB(/u1D450)/summationtext.1
+/u1D450∈/u1D446/u1D70FIV AN(/u1D450) .
+Table 2 presents the comparison of the contribution of each technique used in IV AN for each
+model. Column +Solved in each case displays the number of extra veri/f_ication problems solved
+by the technique in comparison to the baseline. Columns in IV AN[Reuse] present results on only
+using the reuse technique. Columns in IV AN[Reorder] show results on using the reorder technique.
+Columns in IV AN present the results on using all techniques from Section 4. Column Sp for each
+technique demonstrates the overall speedup obtained compared to the baseline. We observe that in
+most case combination of all techniques performs better than reuse and reordering. We see that
+reorder performs better than reuse except for one case (FCN-MNIST on int8).
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 20 =====
+185:20 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Table 2. Ablation study for overall speedup across all properties for diﬀerent techniques in IV AN.
+Model Approximation IV AN[Reuse] IV AN[Reorder] IV AN
+Sp +Solved Sp +Solved Sp +Solved
+FCN-MNIST int16 2.51x 0 2.71x 0 4.43x 0
+int8 1.07x 0 1.64x 0 2.02x 0
+CONV-MNIST int16 1.62x 0 2.15x 0 3.09x 2
+int8 1.27x 2 1.34x 3 1.71x 4
+CONV-CIFAR int16 1.02x 0 1.57x 2 2.52x 2
+int8 1.08x 0 1.53x 0 1.78x 0
+CONV-CIFAR-WIDE int16 1.43x 1 1.51x 0 1.87x 2
+int8 0.75x 0 1.62x 1 1.53x 2
+CONV-CIFAR-DEEP int16 1.64x 0 2.29x 0 3.21x 0
+int8 1.15x 0 1.13x 1 1.25x 1
+6.3 Hyperparameter Sensitivity Analysis
+(a) IV AN[Reorder]
+ (b) IV AN
+Fig. 8. Speedup for the combination of hyperparameter values on FCN-MNIST with int16 quantization.
+Figure 8 plots the heatmap for IV AN speedup on various hyperparameter values. The x-axis
+shows the hyperparameter /u1D6FCvalue and the y-axis shows the /u1D703value. Each point in the greed is
+annotated with the observed Sp on setting the corresponding hyperparameter values. Figure 8a
+presents the plot for IV AN with on reorder technique.(/u1D6FC, /u1D703) =(0.25, 0.01) is the highest speedup
+point. Choosing /u1D703= 0 implies that are not deprioritizing the splitting decisions that did not work
+well. In that case, we observe no speedup with reordering, showing the necessity of /u1D703in our /u1D43BΔ
+formulation. Figure 8b presents the same plot for our main algorithm that also reuses the pruned
+tree. We observe that the speedup is less sensitive to hyperparameter value changes in this plot.
+This is expected since reordering starts from single node /u1D447/u1D441/u1D44E
+0 and purely relied on /u1D43BΔ formulation
+for the speedup. While our main technique also reuses the tree, even when /u1D703= 0 it can get∼2.5x
+speedup.
+6.4 Global Properties with Input Spli/t_ting
+We show that IV AN is eﬀective in speeding up the state-of-the-art veri/f_ier Re/f_ineZono [Singh
+et al. 2019c] when verifying global properties. This baseline employs input splitting based on a
+strong branching strategy. Figure 9 presents the speedup achieved by IV AN over this baseline.
+Overall, IV AN achieves a 9.5x speedup in the int16 quantization case and a 3.1x speedup in the int8
+quantization case. Previous work has observed that ACAS-XU properties take a large number of
+splits with most analyzers. For the int16 case, the average value of |/u1D447/u1D441/u1D44E
+/u1D453| with our baseline is 285.4.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 21 =====
+Incremental Verification of Neural Networks 185:21
+(a) ACAS-XU networks with INT16 quantization
+ (b) ACAS-XU networks with INT8 quantization
+Fig. 9. IV AN speedup for the verification of global ACAS-XU properties.
+The baseline takes a total of 305s time for verifying cases that have large tree |/u1D447/u1D441/u1D44E
+/u1D453| > 5. IV AN
+veri/f_ies those properties in 32s.
+6.5 Random Weight Perturbations
+Table 3. IV AN speedup on uniform random weight per-
+turbations
+Weight perturbation
+Model 2% 5% 10%
+FCN-MNIST 1.65x 1.57x 0.87x
+CONV-MNIST 1.97x 0.57x 0.57x
+CONV-CIFAR 1.29x 1.09x 0.69x
+CONV-CIFAR-WIDE 1.42x 1.08x 0.96x
+CONV-CIFAR-DEEP 1.32x 1.06x 1.05x
+In this experiment, we stress-test IV AN for in-
+cremental veri/f_ication by applying uniform ran-
+dom perturbation on the DNN weights. Here,
+we perturbed each weight in the network by
+2%, 5%, and 10%. Even the smallest of these per-
+turbations (2%) to each of the weights already
+induces larger overall changes in the network
+than those caused by practical methods such as
+quantization, pruning, and /f_ine-tuning that of-
+ten non-uniformly aﬀect speci/f_ic layers of the
+network. For each network and perturbation,
+we run IV AN and the baseline to verify 100 properties and compute the average speedup of IV AN
+over the baseline.
+Table 3 presents the average speedups obtained by IV AN. Each row shows the IV AN speedup
+under various weight perturbations for a particular network. We see that in most cases IV AN
+speedup reduces as the perturbations to the weights increase. It is because the speci/f_ication tree for
+the perturbed network is no longer similar to the one for the original network. If IV AN is used in
+such cases, it uses suboptimal splits leading to higher veri/f_ication time.
+7 RELATED WORK
+Neural Network Veri/f_ication:Recent works introduced several techniques for verifying properties
+of neural networks [Anderson et al. 2019, 2020; Bunel et al. 2020b; Ehlers 2017; Kabaha and Drachsler-
+Cohen 2022; Katz et al . 2017b; Laurel et al . 2022; Tjeng et al . 2017; Wang et al. 2018, 2021; Yang
+et al. 2022]. For BaB-based complete veri/f_ication, previous works used distinct strategies for ReLU
+splitting. Ehlers [2017] and Katz et al. [2017a] used random ReLU selection for splitting. Wang et al.
+[2018] computes scores based on gradient information to rank ambiguous ReLU nodes. Similarly,
+Bunel et al. [2020b] compute scores based on a formula based on the estimation equations in [ Wong
+and Kolter 2018b]. Henriksen and Lomuscio [2021] use coeﬃcients of zonotopes for these scores.
+Incremental Neural Network Veri/f_ication: Fischer et al. [2022] presented the concept of sharing
+certi/f_icates between speci/f_ications. They reuse the proof for/u1D43F∞ speci/f_ication computed with abstract
+interpretation-based analyzers based on the notion of proof templates, for faster veri/f_ication of
+patch and geometric perturbations. Ugare et al . [2022] showed that the reusing of proof is possible
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 22 =====
+185:22 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+between networks. It uses a similar concept of network adaptable proof templates. It is limited to
+certain properties (patch, geometric, /u1D43F0) and works with abstract interpretation-based incomplete
+veri/f_iers.Wei and Liu [2021] considers incremental incomplete veri/f_ication of relatively small
+DNNs with last-layer perturbation. All of these works cannot handle incremental and complete
+veri/f_ication of diverse speci/f_ications, which is the focus of our work
+Diﬀerential Neural Network Veri/f_ication: ReluDiﬀ [ Paulsen et al. 2020a] presented the concept
+of diﬀerential neural network veri/f_ication. The follow-up work of [Paulsen et al. 2020b] made it
+more scalable. ReluDiﬀ can be used for bounding the diﬀerence in the output of an original network
+and a perturbed network corresponding to an input region. ReluDiﬀ uses input splitting to perform
+complete diﬀerential veri/f_ication. Our method is complementary to ReluDiﬀ and can be used to
+speed up the complete diﬀerential veri/f_ication with multiple perturbed networks, performing it
+incrementally. Cheng and Yan [2020] reuse previous interval analysis results for the veri/f_ication of
+the fully-connected networks where the speci/f_ications are only de/f_ined over the last linear layer of
+an updated network. In contrast, IV AN performs end-to-end veri/f_ication and operates on a more
+general class of networks, speci/f_ications, and perturbations.
+Warm Starting Mixed Integer Linear Programming (MILP) Solvers: State-of-the-art MILP
+solvers such as GUROBI [ Gurobi Optimization, LLC 2018 ] and CPLEX [ Cplex 2009] support warm
+starting that can accelerate the optimization performance. MILP can warm start based on initial
+solutions that are close to the optimal solution. This allows MILP solvers to avoid exploring paths
+that do not improve on the provided initial solution and can help the solver to converge faster. The
+exact implementation details of these closed-sourced commercial solvers are unavailable. Regardless,
+our experiments with MILP warm starting of GUROBI for incremental DNN veri/f_ication showed
+insigni/f_icant speedup.
+Incremental Program Veri/f_ication: Incremental veri/f_ication has improved the scalability of
+traditional program veri/f_ication to an industrial scale [Johnson et al. 2013; Lakhnech et al. 2001;
+O’Hearn 2018; Stein et al. 2021]. Incremental program analysis tasks reuse partial results [ Yang et al.
+2009], constraints [ Visser et al . 2012] and precision information [ Beyer et al. 2013] from previous
+runs for faster analysis of individual commits. Frequently, the changes made by the program are
+limited to a small portion of the overall program (and its analysis requires signi/f_icant attention
+to the impact on control /f_low). whereas DNN updates typically alter the weights of multiple
+layers throughout the network (but with no impact on control /f_low). Therefore, incremental DNN
+veri/f_ication presents a distinct challenge compared to the incremental veri/f_ication of programs.
+Incremental SMT Solvers: Modern SMT solvers such as Z3 [ De Moura and Bjørner 2008 ] and
+CVC5 [Barbosa et al . 2022] during constraint solving learn lemmas, which are later reused to solve
+similar problems. The incrementality of these solvers is restricted to the addition or deletion of
+constraints. They do not consider reuse in cases when the constraints are perturbed as in our case.
+8 CONCLUSION
+Current complete approaches for DNN veri/f_ication re-run the veri/f_ication every time the network
+is modi/f_ied. In this paper, we presented IV AN, the /f_irst general, incremental, and complete DNN
+veri/f_ier. IV AN captures the trace of the BaB-based complete veri/f_ication through the speci/f_ication
+tree. We evaluated our IV AN on combinations of networks, properties, and updates. IV AN achieves
+up to 43x speedup and geometric mean speedup of 2.4x in verifying DNN properties.
+ACKNOWLEDGMENTS
+We thank the anonymous reviewers for their comments. This research was supported in part by NSF
+Grants No. CCF-1846354, CCF-1956374, CCF-2008883, CCF-2217144, CCF-2238079, CNS-2148583,
+USDA NIFA Grant No. NIFA-2024827 and Qualcomm innovation fellowship.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 23 =====
+Incremental Verification of Neural Networks 185:23
+REFERENCES
+Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama. 2019. Optuna: A Next-generation
+Hyperparameter Optimization Framework. In Proceedings of the 25rd ACM SIGKDD International Conference on Knowledge
+Discovery and Data Mining .
+Aws Albarghouthi. 2021. Introduction to Neural Network Veri/f_ication. veri/f_ieddeeplearning.com. arXiv:2109.10317 [cs.LG]
+http://veri/f_ieddeeplearning.com.
+Javier Alvarez-Valle, Pratik Bhatu, Nishanth Chandran, Divya Gupta, Aditya Nori, Aseem Rastogi, Mayank Rathee, Rahul
+Sharma, and Shubham Ugare. 2020. Secure Medical Image Analysis with CrypTFlow. arXiv: 2012.05064 [cs.CR]
+Filippo Amato, Alberto López, Eladia María Peña-Méndez, Petr Vaňhara, Aleš Hampl, and Josef Havel. 2013. Arti/f_icial
+neural networks in medical diagnosis. Journal of Applied Biomedicine 11, 2 (2013).
+Greg Anderson, Shankara Pailoor, Isil Dillig, and Swarat Chaudhuri. 2019. Optimization and Abstraction: A Synergistic
+Approach for Analyzing Neural Network Robustness. In Proc. Programming Language Design and Implementation (PLDI) .
+Ross Anderson, Joey Huchette, Will Ma, Christian Tjandraatmadja, and Juan Pablo Vielma. 2020. Strong mixed-integer
+programming formulations for trained neural networks. Mathematical Programming (2020).
+Stanley Bak, Changliu Liu, and Taylor T. Johnson. 2021. The Second International Veri/f_ication of Neural Networks
+Competition (VNN-COMP 2021): Summary and Results. CoRR abs/2109.00498 (2021). arXiv: 2109.00498 https://arxiv.org/
+abs/2109.00498
+Stanley Bak, Hoang-Dung Tran, Kerianne Hobbs, and Taylor T. Johnson. 2020. Improved Geometric Path Enumeration for
+Verifying ReLU Neural Networks. In Computer Aided Veri/f_ication - 32nd International Conference, CA V 2020, Los Angeles,
+CA, USA, July 21-24, 2020, Proceedings, Part I (Lecture Notes in Computer Science, Vol. 12224) , Shuvendu K. Lahiri and
+Chao Wang (Eds.). Springer, 66–96. https://doi.org/10.1007/978-3-030-53288-8_4
+Mislav Balunovic and Martin Vechev. 2020. Adversarial Training and Provable Defenses: Bridging the Gap. In International
+Conference on Learning Representations . https://openreview.net/forum?id=SJxSDxrKDr
+Haniel Barbosa, Clark W. Barrett, Martin Brain, Gereon Kremer, Hanna Lachnitt, Makai Mann, Abdalrhman Mohamed,
+Mudathir Mohamed, Aina Niemetz, Andres Nötzli, Alex Ozdemir, Mathias Preiner, Andrew Reynolds, Ying Sheng,
+Cesare Tinelli, and Yoni Zohar. 2022. cvc5: A Versatile and Industrial-Strength SMT Solver. In Tools and Algorithms
+for the Construction and Analysis of Systems - 28th International Conference, TACAS 2022, Held as Part of the European
+Joint Conferences on Theory and Practice of Software, ETAPS 2022, Munich, Germany, April 2-7, 2022, Proceedings, Part
+I (Lecture Notes in Computer Science, Vol. 13243) , Dana Fisman and Grigore Rosu (Eds.). Springer, 415–442. https:
+//doi.org/10.1007/978-3-030-99524-9_24
+Dirk Beyer, Stefan Löwe, Evgeny Novikov, Andreas Stahlbauer, and Philipp Wendler. 2013. Precision Reuse for Eﬃcient
+Regression Veri/f_ication. InProceedings of the 2013 9th Joint Meeting on Foundations of Software Engineering (Saint
+Petersburg, Russia) (ESEC/FSE 2013) . Association for Computing Machinery, New York, NY, USA, 389–399. https:
+//doi.org/10.1145/2491411.2491429
+Davis W. Blalock, Jose Javier Gonzalez Ortiz, Jonathan Frankle, and John V. Guttag. 2020. What is the State of Neural
+Network Pruning?. In Proceedings of Machine Learning and Systems 2020, MLSys 2020, Austin, TX, USA, March 2-4, 2020 .
+Mariusz Bojarski, Davide Del Testa, Daniel Dworakowski, Bernhard Firner, Beat Flepp, Prasoon Goyal, Lawrence D Jackel,
+Mathew Monfort, Urs Muller, Jiakai Zhang, et al . 2016. End to end learning for self-driving cars. arXiv preprint
+arXiv:1604.07316 (2016).
+Rudy Bunel, Jingyue Lu, Ilker Turkaslan, Pushmeet Kohli, P Torr, and P Mudigonda. 2020b. Branch and bound for piecewise
+linear neural network veri/f_ication.Journal of Machine Learning Research 21, 2020 (2020).
+Rudy R Bunel, Oliver Hinder, Srinadh Bhojanapalli, and Krishnamurthy Dvijotham. 2020a. An eﬃcient nonconvex reformu-
+lation of stagewise convex optimization problems. Advances in Neural Information Processing Systems 33 (2020).
+Jiefeng Chen, Yixuan Li, Xi Wu, Yingyu Liang, and Somesh Jha. 2022. Robust Out-of-distribution Detection for Neural
+Networks. In AAAI-22 Workshop on Adversarial Machine Learning and Beyond .
+Chih-Hong Cheng and Rongjie Yan. 2020. Continuous Safety Veri/f_ication of Neural Networks. arXiv:2010.05689 [cs.LG]
+IBM ILOG Cplex. 2009. V12. 1: User’s Manual for CPLEX. International Business Machines Corporation 46, 53 (2009), 157.
+Leonardo De Moura and Nikolaj Bjørner. 2008. Z3: An Eﬃcient SMT Solver. In Proceedings of the Theory and Practice of
+Software, 14th International Conference on Tools and Algorithms for the Construction and Analysis of Systems (Budapest,
+Hungary) (TACAS’08/ETAPS’08). Springer-Verlag, Berlin, Heidelberg, 337–340.
+Yinpeng Dong, Fangzhou Liao, Tianyu Pang, Hang Su, Jun Zhu, Xiaolin Hu, and Jianguo Li. 2018. Boosting Adversarial
+Attacks With Momentum. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR) .
+Souradeep Dutta, Susmit Jha, Sriram Sankaranarayanan, and Ashish Tiwari. 2017. Output Range Analysis for Deep Neural
+Networks. CoRR abs/1709.09130 (2017). arXiv: 1709.09130 http://arxiv.org/abs/1709.09130
+Ruediger Ehlers. 2017. Formal veri/f_ication of piece-wise linear feed-forward neural networks. In International Symposium
+on Automated Technology for Veri/f_ication and Analysis.
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 24 =====
+185:24 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Claudio Ferrari, Mark Niklas Mueller, Nikola Jovanović, and Martin Vechev. 2022. Complete Veri/f_ication via Multi-Neuron
+Relaxation Guided Branch-and-Bound. In International Conference on Learning Representations . https://openreview.net/
+forum?id=l_amHf1oaK
+Marc Fischer, Christian Sprecher, Dimitar I. Dimitrov, Gagandeep Singh, and Martin T. Vechev. 2022. Shared Certi/f_icates
+for Neural Network Veri/f_ication. InComputer Aided Veri/f_ication - 34th International Conference, CA V 2022, Haifa, Israel,
+August 7-10, 2022, Proceedings, Part I (Lecture Notes in Computer Science, Vol. 13371) , Sharon Shoham and Yakir Vizel
+(Eds.). Springer, 127–148. https://doi.org/10.1007/978-3-031-13185-1_7
+Aymeric Fromherz, Klas Leino, Matt Fredrikson, Bryan Parno, and Corina Pasareanu. 2021. Fast Geometric Projections for
+Local Robustness Certi/f_ication. InInternational Conference on Learning Representations . https://openreview.net/forum?
+id=zWy1uxjDdZJ
+Feisi Fu and Wenchao Li. 2022. Sound and Complete Neural Network Repair with Minimality and Locality Guarantees. In
+International Conference on Learning Representations . https://openreview.net/forum?id=xS8AMYiEav3
+Timon Gehr, Matthew Mirman, Dana Drachsler-Cohen, Petar Tsankov, Swarat Chaudhuri, and Martin Vechev. 2018. Ai2:
+Safety and robustness certi/f_ication of neural networks with abstract interpretation. In2018 IEEE Symposium on Security
+and Privacy (SP).
+Amir Gholami, Sehoon Kim, Zhen Dong, Zhewei Yao, Michael W. Mahoney, and Kurt Keutzer. 2021. A Survey of Quantization
+Methods for Eﬃcient Neural Network Inference. CoRR abs/2103.13630 (2021). arXiv: 2103.13630
+Tejas Gokhale, Rushil Anirudh, Bhavya Kailkhura, Jayaraman J. Thiagarajan, Chitta Baral, and Yezhou Yang. 2021. Attribute-
+Guided Adversarial Training for Robustness to Natural Perturbations. In AAAI. AAAI Press, 7574–7582.
+Gurobi Optimization, LLC. 2018. Gurobi Optimizer Reference Manual.
+Patrick Henriksen and Alessio Lomuscio. 2021. DEEPSPLIT: An Eﬃcient Splitting Method for Neural Network Veri/f_ication
+via Indirect Eﬀect Analysis. In Proceedings of the Thirtieth International Joint Conference on Arti/f_icial Intelligence, IJCAI-
+21, Zhi-Hua Zhou (Ed.). International Joint Conferences on Arti/f_icial Intelligence Organization, 2549–2555. https:
+//doi.org/10.24963/ijcai.2021/351 Main Track.
+Kenneth Johnson, Radu Calinescu, and Shinji Kikuchi. 2013. An Incremental Veri/f_ication Framework for Component-
+Based Software Systems. In Proceedings of the 16th International ACM Sigsoft Symposium on Component-Based Software
+Engineering (Vancouver, British Columbia, Canada) (CBSE ’13). Association for Computing Machinery, New York, NY,
+USA, 33–42. https://doi.org/10.1145/2465449.2465456
+Kyle D. Julian, Mykel J. Kochenderfer, and Michael P. Owen. 2018. Deep Neural Network Compression for Aircraft Collision
+Avoidance Systems. CoRR abs/1810.04240 (2018).
+Kyle D. Julian, Mykel J. Kochenderfer, and Michael P. Owen. 2019. Deep Neural Network Compression for Aircraft Collision
+Avoidance Systems. Journal of Guidance, Control, and Dynamics 42, 3 (mar 2019), 598–608. https://doi.org/10.2514/1.
+g003724
+Anan Kabaha and Dana Drachsler-Cohen. 2022. Boosting Robustness Veri/f_ication of Semantic Feature Neighborhoods.
+https://doi.org/10.48550/ARXIV.2209.05446
+Guy Katz, Clark Barrett, David L Dill, Kyle Julian, and Mykel J Kochenderfer. 2017a. Reluplex: An eﬃcient SMT solver for
+verifying deep neural networks. In International Conference on Computer Aided Veri/f_ication.
+Guy Katz, Clark W. Barrett, David L. Dill, Kyle Julian, and Mykel J. Kochenderfer. 2017b. Reluplex: An Eﬃcient SMT Solver
+for Verifying Deep Neural Networks. In Computer Aided Veri/f_ication - 29th International Conference, CA V 2017, Heidelberg,
+Germany, July 24-28, 2017, Proceedings, Part I (Lecture Notes in Computer Science, Vol. 10426) . https://doi.org/10.1007/978-
+3-319-63387-9_5
+Yassine Lakhnech, Saddek Bensalem, Sergey Berezin, and Sam Owre. 2001. Incremental Veri/f_ication by Abstraction. InTools
+and Algorithms for the Construction and Analysis of Systems: 7th International Conference, TACAS 2001 , T. Margaria and
+W. Yi (Eds.), Vol. 2031. Springer-Verlag, Genova, Italy, 98–112.
+Jacob Laurel, Rem Yang, Atharva Sehgal, Shubham Ugare, and Sasa Misailovic. 2021. Statheros: Compiler for Eﬃcient
+Low-Precision Probabilistic Programming. In 2021 58th ACM/IEEE Design Automation Conference (DAC) . 787–792. https:
+//doi.org/10.1109/DAC18074.2021.9586276
+Jacob Laurel, Rem Yang, Shubham Ugare, Robert Nagel, Gagandeep Singh, and Sasa Misailovic. 2022. A General Construction
+for Abstract Interpretation of Higher-Order Automatic Diﬀerentiation. Proc. ACM Program. Lang. 6, OOPSLA2, Article
+161 (oct 2022), 29 pages. https://doi.org/10.1145/3563324
+Aleksander Madry, Aleksandar Makelov, Ludwig Schmidt, Dimitris Tsipras, and Adrian Vladu. 2017. Towards deep learning
+models resistant to adversarial attacks. arXiv preprint arXiv:1706.06083 (2017).
+Christoph Müller, Francois Serre, Gagandeep Singh, Markus Püschel, and Martin Vechev. 2021. Scaling Polyhedral Neural
+Network Veri/f_ication on GPUs.Proc. Machine Learning and Systems (MLSys) (2021).
+Peter W. O’Hearn. 2018. Continuous Reasoning: Scaling the impact of formal methods. In Proceedings of the 33rd Annual
+ACM/IEEE Symposium on Logic in Computer Science, LICS 2018, Oxford, UK, July 09-12, 2018 , Anuj Dawar and Erich
+Grädel (Eds.). ACM, 13–25. https://doi.org/10.1145/3209108.3209109
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 25 =====
+Incremental Verification of Neural Networks 185:25
+Alessandro De Palma, Harkirat S. Behl, Rudy R. Bunel, Philip H. S. Torr, and M. Pawan Kumar. 2021. Scaling the Convex
+Barrier with Active Sets. In 9th International Conference on Learning Representations, ICLR 2021, Virtual Event, Austria,
+May 3-7, 2021.
+Brandon Paulsen, Jingbo Wang, and Chao Wang. 2020a. ReluDiﬀ: diﬀerential veri/f_ication of deep neural networks. In
+ICSE ’20: 42nd International Conference on Software Engineering, Seoul, South Korea, 27 June - 19 July, 2020 . https:
+//doi.org/10.1145/3377811.3380337
+Brandon Paulsen, Jingbo Wang, Jiawei Wang, and Chao Wang. 2020b. NEURODIFF: Scalable Diﬀerential Veri/f_ication of
+Neural Networks using Fine-Grained Approximation. In 35th IEEE/ACM International Conference on Automated Software
+Engineering, ASE 2020, Melbourne, Australia, September 21-25, 2020 . https://doi.org/10.1145/3324884.3416560
+Hadi Salman, Greg Yang, Huan Zhang, Cho-Jui Hsieh, and Pengchuan Zhang. 2019. A Convex Relaxation Barrier to Tight
+Robustness Veri/f_ication of Neural Networks. InAdvances in Neural Information Processing Systems 32: Annual Conference
+on Neural Information Processing Systems 2019, NeurIPS 2019, December 8-14, 2019, Vancouver, BC, Canada .
+Gagandeep Singh, Rupanshu Ganvir, Markus Püschel, and Martin Vechev. 2019a. Beyond the single neuron convex barrier
+for neural network certi/f_ication. InAdvances in Neural Information Processing Systems .
+Gagandeep Singh, Timon Gehr, Matthew Mirman, Markus Püschel, and Martin Vechev. 2018. Fast and eﬀective robustness
+certi/f_ication.Advances in Neural Information Processing Systems 31 (2018).
+Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev. 2019b. An abstract domain for certifying neural
+networks. Proceedings of the ACM on Programming Languages 3, POPL (2019).
+Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev. 2019c. Boosting Robustness Certi/f_ication of Neural
+Networks. In International Conference on Learning Representations .
+Matthew Sotoudeh and Aditya V. Thakur. 2019. Computing Linear Restrictions of Neural Networks. In Advances in Neural
+Information Processing Systems 32: Annual Conference on Neural Information Processing Systems 2019, NeurIPS 2019,
+December 8-14, 2019, Vancouver, BC, Canada .
+Benno Stein, Bor-Yuh Evan Chang, and Manu Sridharan. 2021. Demanded abstract interpretation. In PLDI ’21: 42nd ACM
+SIGPLAN International Conference on Programming Language Design and Implementation, Virtual Event, Canada, June
+20-25, 2021, Stephen N. Freund and Eran Yahav (Eds.). ACM, 282–295. https://doi.org/10.1145/3453483.3454044
+Christian Szegedy, Wojciech Zaremba, Ilya Sutskever, Joan Bruna, Dumitru Erhan, Ian J. Goodfellow, and Rob Fergus. 2014.
+Intriguing properties of neural networks. In 2nd International Conference on Learning Representations, ICLR 2014, Banﬀ,
+AB, Canada, April 14-16, 2014, Conference Track Proceedings .
+Nima Tajbakhsh, Jae Y Shin, Suryakanth R Gurudu, R Todd Hurst, Christopher B Kendall, Michael B Gotway, and Jianming
+Liang. 2016. Convolutional neural networks for medical image analysis: Full training or /f_ine tuning? IEEE transactions
+on medical imaging 35, 5 (2016), 1299–1312.
+TFLite. 2017. TF Lite post-training quantization. https://www.tensor/f_low.org/lite/performance/post_training_quantization.
+Vincent Tjeng, Kai Xiao, and Russ Tedrake. 2017. Evaluating robustness of neural networks with mixed integer programming.
+arXiv preprint arXiv:1711.07356 (2017).
+Shubham Ugare, Gagandeep Singh, and Sasa Misailovic. 2022. Proof transfer for fast certi/f_ication of multiple approximate
+neural networks. Proc. ACM Program. Lang. 6, OOPSLA (2022), 1–29. https://doi.org/10.1145/3527319
+Caterina Urban and Antoine Miné. 2021. A Review of Formal Methods applied to Machine Learning. https://doi.org/10.
+48550/ARXIV.2104.02466
+Willem Visser, Jaco Geldenhuys, and Matthew B. Dwyer. 2012. Green: Reducing, Reusing and Recycling Constraints in
+Program Analysis. In Proceedings of the ACM SIGSOFT 20th International Symposium on the Foundations of Software
+Engineering (Cary, North Carolina) (FSE ’12). Association for Computing Machinery, New York, NY, USA, Article 58,
+11 pages. https://doi.org/10.1145/2393596.2393665
+Shiqi Wang, Kexin Pei, Justin Whitehouse, Junfeng Yang, and Suman Jana. 2018. Eﬃcient formal safety analysis of neural
+networks. In Advances in Neural Information Processing Systems .
+Shiqi Wang, Huan Zhang, Kaidi Xu, Xue Lin, Suman Jana, Cho-Jui Hsieh, and J Zico Kolter. 2021. Beta-CROWN: Eﬃcient
+Bound Propagation with Per-neuron Split Constraints for Complete and Incomplete Neural Network Veri/f_ication.arXiv
+preprint arXiv:2103.06624 (2021).
+Tianhao Wei and Changliu Liu. 2021. Online Veri/f_ication of Deep Neural Networks under Domain or Weight Shift. CoRR
+abs/2106.12732 (2021). arXiv: 2106.12732 https://arxiv.org/abs/2106.12732
+Karl Weiss, Taghi M Khoshgoftaar, and DingDing Wang. 2016. A survey of transfer learning. Journal of Big data 3, 1 (2016),
+1–40.
+Eric Wong and Zico Kolter. 2018a. Provable defenses against adversarial examples via the convex outer adversarial polytope.
+In International Conference on Machine Learning .
+Eric Wong and Zico Kolter. 2018b. Provable Defenses against Adversarial Examples via the Convex Outer Adversarial
+Polytope. In Proceedings of the 35th International Conference on Machine Learning .
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.
+
+===== PDF PAGE 26 =====
+185:26 Shubham Ugare, Debangshu Banerjee, Sasa Misailovic, and Gagandeep Singh
+Kaidi Xu, Zhouxing Shi, Huan Zhang, Yihan Wang, Kai-Wei Chang, Minlie Huang, Bhavya Kailkhura, Xue Lin, and Cho-Jui
+Hsieh. 2020. Automatic Perturbation Analysis for Scalable Certi/f_ied Robustness and Beyond. (2020).
+Guowei Yang, Matthew B. Dwyer, and Gregg Rothermel. 2009. Regression model checking. In 2009 IEEE International
+Conference on Software Maintenance . 115–124. https://doi.org/10.1109/ICSM.2009.5306334
+Rem Yang, Jacob Laurel, Sasa Misailovic, and Gagandeep Singh. 2022. Provable Defense Against Geometric Transformations.
+arXiv:2207.11177 [cs.LG]
+Huan Zhang, Shiqi Wang, Kaidi Xu, Linyi Li, Bo Li, Suman Jana, Cho-Jui Hsieh, and J Zico Kolter. 2022. General Cutting Planes
+for Bound-Propagation-Based Neural Network Veri/f_ication. InAdvances in Neural Information Processing Systems, Alice H.
+Oh, Alekh Agarwal, Danielle Belgrave, and Kyunghyun Cho (Eds.). https://openreview.net/forum?id=5haAJAcofjc
+Huan Zhang, Tsui-Wei Weng, Pin-Yu Chen, Cho-Jui Hsieh, and Luca Daniel. 2018. Eﬃcient neural network robustness
+certi/f_ication with general activation functions. InAdvances in neural information processing systems .
+Proc. ACM Program. Lang., Vol. 7, No. PLDI, Article 185. Publication date: June 2023.

@@ -1,0 +1,101 @@
+# N2/P5 — Packed Construction Metadata with Demand-Time Profitability Arithmetic
+
+Run completed: 2026-09-17T20:14:58Z
+
+Preregistration SHA-256: `c91961a3665c2ec0a87b3e7da47c38cd39f5c62def3f68ce911733d1c6621ff8`  
+Frozen harness SHA-256: `2829424b0d70516f10409fc10e04adc3fdf68c01e1f6a1c36a5787401b800d0b`
+
+## Result in one sentence
+
+**P5 cut P4's Gate-P metadata-build cost by about 54.8% and cut the full P4 pipeline by about 42.1%, while preserving P4's fold decisions and algebra exactly. The P5 lowering stage still beat direct/no-rewrite at 0.6544x, but the case-balanced construction+lowering result remained 1.2898x direct, so the preregistered end-to-end signal did not pass.**
+
+## Gate-P primary results
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI | cases below direct/reference |
+|---|---:|---:|---:|---:|
+| P5 packed / direct lowering | 36 | **0.6544x** | 0.4930-0.8717 | 23/36 |
+| P5 packed / P4 lowering | 36 | 1.1644x | 1.1226-1.2082 | 3/36 |
+| P5 pipeline / direct pipeline | 36 | **1.2898x** | 1.0754-1.5190 | 8/36 |
+| P5 pipeline / P4 pipeline | 36 | **0.5790x** | 0.5288-0.6424 | 31/36 |
+| P5 DAG build / direct DAG build | 36 | 2.5611x | 2.4344-2.6741 | 0/36 |
+| P5 DAG build / P4 DAG build | 36 | **0.4518x** | 0.3997-0.5229 | 31/36 |
+
+Predeclared Gate-P lowering-only signal: **PASS**.  
+Predeclared Gate-P construction-inclusive signal: **NO PASS**.
+
+The secondary workload-weighted ratios were **0.4294x** for lowering and **0.9669x** for the complete pipeline. The latter is below 1 because several expensive Gate-P cases already amortize the metadata cost, even though the preregistered case-balanced endpoint remains above 1.
+
+## P5 reproduced P4 exactly
+
+Across all natural and Gate-P symbolic cases, P5 matched P4-propagated exactly on final digest, multiplications, pair terms, peak monomials, evaluated ANF nodes, candidate decisions, reject reasons, accepted/shared counts, estimated costs, and folds consumed.
+
+Gate-P totals for both P4 and P5:
+
+- demanded binary nodes checked: **322**;
+- demanded propagated candidates: **181**;
+- accepted/consumed folds: **29 / 29**;
+- accepted shared folds: **22**;
+- propagated signature/candidate nodes present in the constructed DAG: **520**.
+
+Thus P5 changed representation and cost placement, not the optimization policy or mathematical work.
+
+## Gate-P work reduction versus direct
+
+The P5/P4 fold behavior is identical, so the symbolic reductions remain the P4 reductions:
+
+- multiplications: **0.3360x** direct;
+- pair terms: **0.0984x** direct;
+- evaluated ANF nodes: **0.5415x** direct;
+- peak monomials: **0.8973x** direct.
+
+P5 lowering is therefore still substantially faster than direct, but it is **16.4% slower than P4 lowering** because P5 deliberately moves candidate-cost arithmetic from construction to demand time.
+
+## Construction cost improvement
+
+P4's simultaneous Gate-P metadata build was **5.6693x** ordinary construction. P5 reduced that to **2.5611x**, or **54.8% less build time than P4**.
+
+The full P5 pipeline is **0.5790x P4**, a **42.1% reduction**. It crosses below direct in **8/36** Gate-P cases, versus only 3/36 for P4 in the previous architecture.
+
+Depth-stratified P5/direct lowering ratios:
+
+| depth | ratio | cases below direct |
+|---:|---:|---:|
+| 6 | 0.8264x | 6/12 |
+| 8 | 0.6110x | 9/12 |
+| 10 | 0.5550x | 8/12 |
+
+## Memory diagnostics
+
+Predeclared full-pipeline traced Python peak on Gate-P:
+
+- P5 / direct: **0.7910x**;
+- P5 / P4: **0.6989x**.
+
+A separate post-hoc build-only `tracemalloc` diagnostic found P5 construction peak **1.1753x direct** but only **0.5841x P4**. In other words, the packed metadata itself still costs memory relative to an unannotated builder, but much less than P4's object-rich metadata; downstream ANF savings then make the complete P5 pipeline peak lower than direct on Gate-P.
+
+## Natural EPFL replay
+
+P5 reproduced P4's natural abstention behavior exactly: **1** demanded propagated candidate and **0 accepted folds** across the frozen ten cases.
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI |
+|---|---:|---:|---:|
+| P5 / direct lowering | 10 | 1.0157x | 0.9982-1.0396 |
+| P5 / P4 lowering | 10 | 1.0002x | 0.9901-1.0105 |
+| P5 pipeline / direct | 10 | 1.1096x | 1.0401-1.2022 |
+| P5 pipeline / P4 | 10 | 0.9701x | 0.9472-0.9876 |
+| P5 DAG build / direct | 10 | 2.4831x | 2.1655-2.7816 |
+
+Because no natural fold was accepted, these are abstention/annotation overhead measurements, not evidence of a natural CM-folding speedup.
+
+## Verification
+
+- Fresh randomized fuzz: **1000/1000 passed**.
+- Recorded benchmark rows: **5842**, all successful.
+- Independent verifier: **PASS**.
+- All P5/P4 symbolic decision/work fields matched exactly on all benchmark cases.
+- All six pinned EPFL Git blobs reverified.
+- Frozen natural selection reverified: 10 cases across five timed circuits; `bar` again had zero admissible timed cases.
+
+## Bottom line
+
+P5 solved a large part of P4's engineering bottleneck without changing the folding algorithm: construction became roughly half as expensive as P4 and the full Gate-P pipeline became roughly 42% faster than P4. But **packed Python-side annotation is still too expensive to deliver a case-balanced end-to-end win over the minimal direct builder**. The remaining gap is much smaller and is now concentrated in the annotated node-construction path rather than in symbolic folding itself.

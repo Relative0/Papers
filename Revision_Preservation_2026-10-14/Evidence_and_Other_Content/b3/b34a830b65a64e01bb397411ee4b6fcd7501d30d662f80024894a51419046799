@@ -1,0 +1,131 @@
+# N2/P7B Preregistration — Cheap Formula-Level Dispatch Before Annotation
+
+Frozen before P7B calibration labels, threshold selection, fuzz, Gate-P evaluation, or natural evaluation are inspected.
+
+## Goal
+
+Test whether the P4-P7 propagated-signature optimizer can become end-to-end useful by avoiding annotation entirely on formulas that are unlikely to amortize it.
+
+P7B is a dispatch-policy experiment. The folding mathematics, P1 profitability thresholds, P4-P7 propagated-signature semantics, sparse-ANF lowerer, Gate-P evaluation corpus, and frozen EPFL evaluation corpus are unchanged.
+
+## Annotated backend
+
+When dispatch chooses `annotate`, use the frozen P6 in-node two-word backend (`cm_innode_sig_build_sparse`). P6 is fixed before calibration because among P5-P7 it had the lowest previously measured case-balanced full-pipeline ratio versus direct. No P6 folding threshold or implementation rule may change in P7B.
+
+When dispatch chooses `bypass`, execute the exact direct/no-rewrite build + sparse-ANF path.
+
+## Cheap dispatch probe
+
+The probe may inspect only the already-existing source Boolean DAG. It must not construct P4-P7 metadata, run ANF, estimate monomial counts, perform semantic token composition, or inspect evaluation timing.
+
+Frozen probe feature: `two_support_pressure`.
+
+1. Traverse the reachable source DAG once and count incoming reachable edge uses for each node.
+2. For each reachable binary truth-function node (`and`, `or`, `xor`, `tf`), form the canonical unordered immediate operand pair `(min(child_nid), max(child_nid))`.
+3. Group binary shell nodes by that pair.
+4. A group is eligible only if it contains at least two distinct immediate truth tokens after orientation is ignored for grouping.
+5. Group pressure is the sum of `max(1, reachable_incoming_uses(shell_node))` over shell nodes in the group.
+6. `two_support_pressure` is the maximum eligible group pressure, or zero if none exists.
+7. Dispatch annotates iff `two_support_pressure >= T`, where `T` is chosen by the frozen calibration procedure below.
+
+The evaluation endpoint includes the complete probe time. No evaluation-specific short circuit, node-count threshold, depth threshold, or secondary feature may be added after calibration.
+
+## Calibration — disjoint synthetic corpus only
+
+Evaluation Gate-P seeds and all frozen EPFL evaluation cones are excluded from calibration.
+
+Calibration seed family: `20260918 ^ 0x7BCA1`.
+
+Calibration corpus: 120 cases:
+- 48 fresh Gate-P-like cases: depths 4, 6, 8, 10, 12, 14; 8 cases/depth;
+- 36 pair-noise controls: depths 6, 8, 10, 12, 14, 16; 6 cases/depth; these retain sharing/repeated Boolean shells but rotate among multiple base operand pairs so no single same-pair family dominates;
+- 36 ordinary random DAG formulas, 8 variables, depths 6-12.
+
+For every calibration case, measure direct and P6 full pipelines in a randomized paired schedule with 9 repetitions per arm. Probe timing is measured separately with 9 repetitions per candidate threshold.
+
+Candidate threshold set is the fixed integer range `T = 2..32`.
+
+For each T, define per-case predicted dispatch median as:
+
+`median_probe_T + (median_P6 if pressure >= T else median_direct)`.
+
+Calibration objective: minimize the case-balanced geometric mean of predicted dispatch/direct ratios across all 120 calibration cases. Ties within 0.25 percentage points choose the *larger* T (more conservative annotation).
+
+No evaluation case or EPFL case may influence T.
+
+## Frozen validation — no retuning
+
+After T is selected, evaluate it without retuning on a second disjoint 60-case synthetic validation corpus using seed family `20260918 ^ 0x7BVA1` conceptually encoded as integer `20260918 ^ 0x7B0A1`:
+- 24 Gate-P-like cases: 4/depth at depths 4,6,8,10,12,14;
+- 18 pair-noise controls: 3/depth at depths 6,8,10,12,14,16;
+- 18 ordinary random formulas, 8 variables, depths 6-12.
+
+Validation uses 9 randomized paired repetitions of direct, always-P6, and dispatch. The selected T is retained regardless of validation outcome. Validation is diagnostic, not a second fitting stage.
+
+After calibration, write `P7B_FROZEN_GATE.json` containing T, corpus seeds, calibration objective table, and validation summary; hash it before any evaluation benchmark is run.
+
+## Evaluation corpora
+
+### Gate-P
+
+Replay the exact frozen P1-P7 36-case family: depths 6/8/10, 12 cases/depth, unchanged seed/order.
+
+### Natural EPFL
+
+Replay the exact frozen ten P1-P7 selected cones from EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`. No natural case is used in calibration.
+
+## Evaluation arms and timing
+
+Arms:
+- `direct_build_sparse`;
+- `cm_innode_sig_build_sparse` (always annotate P6 control);
+- `dispatch_p6_or_direct` (P7B).
+
+Each P7B repetition includes probe time plus the selected backend's fresh DAG construction and lowering. Source generation/parsing and oracle construction remain outside timing.
+
+Repetitions:
+- Gate-P: 20 randomized paired repetitions/case/arm;
+- natural: 15 randomized paired repetitions/case/arm;
+- memory: separate untimed pass.
+
+Record probe decision, pressure, probe_ns, backend, DAG-build ns, lowering ns, total pipeline ns, correctness, digest, and ANF work.
+
+Case medians first. Pooled ratios are geometric means of paired case-median ratios with case-bootstrap 95% intervals.
+
+## Correctness
+
+Before interpreting evaluation timing:
+- 1000 fresh random fuzz formulas;
+- P7B result must equal direct and P6 oracle/digest;
+- if dispatch chooses P6, its symbolic decision/work must equal frozen P6;
+- if dispatch bypasses, its ANF work must equal direct;
+- accepted P6 folds must equal consumed folds.
+
+Any correctness mismatch aborts interpretation.
+
+## Predeclared evaluation signals
+
+### Gate-P policy PASS
+
+Requires:
+1. zero correctness failures;
+2. at least one Gate-P case dispatched to P6 and consuming a fold;
+3. pooled P7B/direct full-pipeline ratio <= 0.95;
+4. bootstrap 95% upper bound < 1.00;
+5. no >5% pooled increase in pair terms or peak monomials relative to direct.
+
+### Natural overhead control
+
+Because prior P1-P7 accepted zero folds on the frozen natural set, natural evaluation is an out-of-distribution negative control. A useful dispatch gate should ideally bypass all ten. Report P7B/direct timing, false-positive annotation count, and probe overhead. Do not call a natural speedup a folding result unless a fold is actually consumed.
+
+### Mixed practical signal
+
+Also report the 46-case Gate-P + natural case-balanced geometric mean P7B/direct ratio and the workload-weighted ratio. These are secondary and do not replace the Gate-P preregistered PASS.
+
+## Guardrails
+
+- Do not retune T after validation or evaluation.
+- Do not add features after calibration.
+- Do not use P7B evaluation outcomes to choose between P5/P6/P7.
+- A dispatch win is evidence that selective annotation amortizes the known optimizer tax; it is not a new folding theorem.
+- Gate-P remains synthetic fold-rich evidence and must not be generalized to ordinary circuits without natural cases that actually trigger folds.

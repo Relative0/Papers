@@ -1,0 +1,76 @@
+# N2/P13 Results - Deferred C-Backed Pair Exactification
+
+## Status
+
+P13 is complete. It preserved the frozen P12/P11/P8 dispatch policy, the `0.80` cutoff, P6 folding backend, Gate-P family, natural EPFL controls, and timing endpoints. P13 changed only pair telemetry: source construction appends canonical packed pair keys, while exact distinct-pair and multiplicity work is deferred to C-backed builtins at dispatch.
+
+Mandatory P12/P13 invariance passed on **332/332** frozen policy cases, and fresh fuzz passed **1000/1000**. The independent verifier reports PASS.
+
+## Gate-P primary endpoint
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P13 / direct, source-inclusive | **1.016459x** | **0.950719-1.063606** | **0.980269x** | 3/36 |
+| P13 / P12, source-inclusive | **0.996897x** | **0.990522-1.003201** | **0.997617x** | 20/36 |
+| P13 / direct, source build+dispatch | **1.271686x** | **1.243704-1.298599** | **1.286860x** | 0/36 |
+| P13 / P12, source build+dispatch | **0.992477x** | **0.980345-1.003794** | **0.994002x** | 19/36 |
+| P13 / direct, selected compiler | **0.957886x** | **0.853190-1.037952** | **0.814362x** | 10/36 |
+
+The preregistered **direct-crossover criterion did not pass**. P13 remains about **1.65% above direct case-balanced**, and the confidence interval crosses 1. The workload-weighted endpoint remains below direct at **0.980269x**, about **1.97% faster** in aggregate, but this is still a secondary endpoint.
+
+Against simultaneous P12, P13's point estimate is only **0.31% faster source-inclusive** and **0.75% faster in source build+dispatch**. Both confidence intervals include 1, so the deferred-pair implementation is not a clear improvement over P12 under the preregistered criteria.
+
+Median-of-case-median Gate-P source build+dispatch was approximately **47.4 us direct**, **60.5 us P12**, and **60.2 us P13**. Whole-pipeline medians were approximately **234.4 us**, **247.0 us**, and **246.7 us**.
+
+## Deferred pair behavior
+
+Only **7/36** Gate-P cases required Stage-2 exact multiplicity counting with `_collections._count_elements`; **6/36** required the reuse scan, with **1** early reuse abort.
+
+Thus P13 successfully removes the per-binary Python pair-count dictionary from the construction path. The fact that timing changes only marginally indicates that the remaining cost is not primarily Python-level count updates. Packing/storing one pair identity per binary node plus the dispatch-time exact distinct-pair pass remains enough to preserve most of the telemetry tax.
+
+## Depth strata
+
+| Depth | P13/direct source-inclusive | P13/P12 source-inclusive | P13/direct source-build+dispatch |
+|---:|---:|---:|---:|
+| 6 | 1.032307x | 0.988236x | 1.226265x |
+| 8 | 0.979704x | 0.996628x | 1.293334x |
+| 10 | 1.038404x | 1.005905x | 1.296716x |
+
+Depth 8 remains below direct on the point estimate, driven by the same fold-profitable cases as the frozen policy; this is a stratum result, not a corpus-wide PASS.
+
+## Dispatch and Boolean work
+
+P13 preserves the frozen policy exactly: **5/36** Gate-P cases annotate and all **5** consume a fold. Boolean work is therefore unchanged from P8-P12:
+
+- multiplications: **0.812451x direct**;
+- pair terms: **0.570459x direct**;
+- peak monomials: **0.978577x direct**;
+- ANF nodes evaluated: **0.873553x direct**.
+
+## Memory
+
+Gate-P whole-pipeline traced peak allocation was **0.993050x direct** and **0.978928x P12**. The list-plus-temporary-set/count design is slightly lower than P12 on the geometric-mean peak metric, but memory is not the limiting endpoint here.
+
+## Natural EPFL control
+
+P13 annotated **0/10** natural cases and consumed **0 folds**. These remain abstention/overhead controls only.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P13 / direct, source-inclusive | **1.000918x** | **0.992646-1.008769** | **1.011995x** | 5/10 |
+| P13 / P12, source-inclusive | **1.010566x** | **0.997694-1.027243** | **1.008558x** | 5/10 |
+| P13 / direct, source build+dispatch | **1.193051x** | **1.144220-1.241250** | **1.111727x** | 0/10 |
+| P13 / P12, source build+dispatch | **0.951665x** | **0.814252-1.062589** | **0.936622x** | 5/10 |
+
+The case-balanced natural full pipeline is essentially parity with direct, but because zero cases fold this is not evidence of natural CM acceleration.
+
+## Post-hoc diagnostic
+
+Keeping P13's exact frozen dispatch decisions and measured compiler medians, but replacing P13 source-build+dispatch cost with ordinary direct source-build cost, gives **0.958020x direct case-balanced** and **0.872678x workload-weighted**. This remains diagnostic only.
+
+## Predeclared outcomes
+
+- Gate-P direct-crossover PASS: **False**.
+- Deferred-pair engineering success: **False**.
+
+P13 therefore gives a useful negative engineering result: moving exact pair counting into C-backed dispatch work is mathematically clean and decision-identical, but does **not** remove enough CPython telemetry cost to make the case-balanced source-inclusive pipeline win.

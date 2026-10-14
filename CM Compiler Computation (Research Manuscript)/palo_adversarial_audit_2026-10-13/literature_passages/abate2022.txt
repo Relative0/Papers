@@ -1,0 +1,165 @@
+PDF PAGE 4
+2 Neural Abstractions of Dynamical Models
+We study the formal veriﬁcation question of whether ann-dimensional, continuous-time, autonomous
+dynamical model with possibly uncertain (bounded) disturbances, considered within a region of
+interest, is safe with respect to a region of bad states when initialised from a region of initial states.
+Deﬁnition 1 (Dynamical Model). A dynamical model F deﬁned over a region of interest X ⊆ Rn
+consists of a nonlinear function f : Rn → Rn and a possibly null disturbance radius δ ≥ 0. Its
+dynamics are given by the system of nonlinear ODEs
+˙x =f(x) +d, ∥d∥ ≤ δ, x ∈ X, (1)
+where ∥ · ∥ denotes a norm operator (unless explicitly stated, we assume the norm operator to be
+given the same semantics across the paper). A trajectory of F deﬁned over time horizonT >0 is
+a functionξ : [0,T ] → Rn that admits derivative at each point in [0,T ] such that, for allt ∈ [0,T ],
+it holds true that ξ(t) ∈ X and ˙ξ(t) = f(ξ(t)) +dt for some ∥dt∥ < δ. Notably, symbol d in
+Equation (1) is interpreted as a non-deterministic disturbance that at any time can take any possible
+value within the bound provided byδ.
+Let the sets X0 ⊂ X be a region of initial states and XB ⊂ X be a region of bad states. We say that a
+trajectoryξ deﬁned over time horizonT is initialised ifξ(0) ∈ X 0; additionally, we say that it is safe
+ifξ(t) ̸∈ XB for allt ∈ [0,T ]; dually, we say that it is unsafe ifξ(t) ∈ XB for somet ∈ [0,T ]. The
+safety veriﬁcation question for consists of determining whether all initialised trajectories are safe. If
+this is the case, then we say that the model is safe with respect to X0 and XB. If there exist at least
+one initialised trajectory that is unsafe, then we say that the model is unsafe.
+We tackle safety veriﬁcation by abstraction, that is, we construct an abstract dynamical model that
+captures all behaviours of the concrete nonlinear model. This implies that if the abstract model is safe
+then the concrete model is necessarily safe too, and we can thus apply a veriﬁcation procedure over the
+abstraction to determine whether the concrete model is safe. Notably, the converse may not hold: lack
+of safety of the abstract model does not carry over to the concrete model, because our abstraction is
+an overapproximation. We ultimately obtain a sound (but not complete) safety veriﬁcation procedure.
+Our approach synthesises an abstract dynamical model deﬁned in terms a feed-forward neural network
+with ReLU activation functions and endowed with a bounded non-deterministic disturbance. This
+can be seen as a neural ODEs [33] augmented with an additive non-deterministic drift that ensures
+the abstract model to overapproximate the concrete model. To the best of our knowledge, this is the
+ﬁrst work to consider neural ODEs with non-deterministic semantics.
+Our feed-forward neural network consists of an n-dimensional input layer y0, k hidden layers
+y1,...,y k with dimensionsh1,...,h k respectively, and ann-dimensional output layeryk+1. Each
+hidden or output layer with indexi are respectively associated matrices of weightsWi ∈ Rhi×hi−1
+and a vectors of biasesbi ∈ Rhi. Upon a valuation of the input layer, the value of every subsequent
+hidden layer is given by the following equation:
+yi = ReLU(Wiyi−1 +bi). (2)
+Whereas many activation functions exist, we focus our study on ReLU activation functions, applying
+function max{x, 0} to every elementx ∈ R of itshi-dimensional argument. Finally, the value of the
+output layer is given by the afﬁne mapyk+1 =Wk+1xk +bk+1. Altogether, the network results in a
+function N whose output is N (x) =yk+1 for every given inputy0 =x.
+Deﬁnition 2 (Neural Abstraction). Let F be a dynamical model given by functionf : Rn → Rn and
+disturbance radiusδ ≥ 0 and let X ⊆ Rn be a region of interest. A feed-forward neural network
+N : Rn → Rn deﬁnes a neural abstraction of F with error boundϵ> 0 over X , if it holds true that
+∀x ∈ X : ∥f(x) − N (x)∥ ≤ ϵ −δ. (3)
+Then, the neural abstraction consists of the dynamical model A deﬁned by N and disturbance ϵ,
+whose dynamics are given by the following neural ODE with bounded additive disturbances:
+˙x = N (x) +d, ∥d∥ ≤ ϵ, x ∈ X. (4)
+Theorem 1 (Soundness of Neural Abstractions). If A is a neural abstraction of a dynamical system
+F over a region of interest X ⊆ Rn, then every trajectory of F is also a trajectory of A.
+4
+
+PDF PAGE 5
+Abstraction
+SynthesisLearner Certiﬁer
+Counterexamplescex
+CandidateN
+Valid neural
+abstraction
+AF, X,ϵF,S,ϵ Safety
+Veriﬁcation
+F, X,S,ϵ
+X, X0, XB
+Figure 2: Architecture for the safety veriﬁcation of nonlinear dynamical models using neural abstrac-
+tions. The inputs to our architecture are a concrete model F and its domain of interest X , a ﬁnite set
+of initial datapointsS, a desired approximation errorϵ, and regions of initial X0 and bad states XB.
+Proof of Theorem 1. Letξ be a trajectory of F andT be the time horizon over whichξ is deﬁned.
+Then, let t ∈ [0,T ]. By deﬁnition of trajectory we have that (i) ξ(t) ∈ X and there exists dt s.t.
+(ii) ∥dt∥ ≤ δ and (iii) ˙ξ(t) =f(ξ(t))+dt. By (i) and condition(3) we have that∥f(ξ(t))−N (ξ(t))∥+
+δ ≤ ϵ. Then, by (ii) we have that ∥f(ξ(t)) − N (ξ(t))∥ + ∥dt∥ ≤ ϵ which, by triangle inequality,
+implies that ∥f(ξ(t)) +dt − N (ξ(t))∥ ≤ ϵ. Using (iii), we rewrite it into ∥ ˙ξ(t) − N (ξ(t))∥ ≤ ϵ.
+Finally, we deﬁned′
+t = ˙ξ(t) − N(ξ(t)). As a result, we have that ∥d′
+t∥ ≤ ϵ and ˙ξ(t) = N (ξ(t)) +d′
+t
+which, together with (i), shows thatξ is a trajectory of A.
+Corollary 1. Let X0 ⊂ X be a region of initial states and XB ⊂ X and region of bad states. It holds
+true that if A is safe with respect to X0 and XB then also F is safe with respect to X0 and XB.
+Proof of Corollary 1. By Theorem 1, if there exists an initialised trajectory of F that is unsafe, then
+the same is an initialised trajectory of A that is unsafe. The statement follows by contraposition.
+Remark 1 (Existence of Neural Abstractions) . Let F be a dynamical model deﬁned by function
+f and disturbance radius δ ≥ 0, and let X ⊆ Rn be a domain of interest. A neural abstraction
+of F with arbitrary error boundϵ> 0 over X exists if a neural network that approximatesf with
+error boundϵ −δ (cf. condition (3)) exists over the same domain. In this work, we do not prescribe
+conditions on either width or depth of the network to ensure existence of a neural abstraction. Such
+conditions are given by universal approximation theorems for neural networks with ReLU activation
+functions, which have been developed in seminal work in machine learning [25, 42, 63, 74, 90, 93].
+Altogether, we deﬁne the neural abstraction of a non-linear dynamical systemF as a neural ODE with
+an additive disturbanceA that approximates the dynamics while also accounting for the approximation
+error. Notably, we place no assumptions on the vector ﬁeld f. In particular, Theorem 1 does not
+requiref to be Lipschitz continuous: the soundness of a neural abstraction relies on condition (3),
+whose certiﬁcation we ofﬂoad to an SMT solver (cf. Section 3.2). The resulting neural abstraction is
+to a hybrid automaton with afﬁne dynamics and non-deterministic disturbance (cf. Section 4), which
+does not rely on the Picard-Lindelof theorem to ensure uniqueness or existence of a solutions.
+3 Formal Synthesis of Neural Abstractions
+Our approach to abstraction synthesis follows two phases—alearning phase and acertiﬁcation phase—
+that alternate each other in a CEGIS loop [1, 3, 43, 78, 101, 108, 109] (cf. Figure 2, left). Our learning
+phase trains the parameters of a neural network N to approximate the system dynamics over a ﬁnite
+set of samplesS ⊂ X of the domain of interest. Learning uses gradient descent algorithms, which can
+possibly scale to large amounts of samples. Then, our certiﬁcation phase either conﬁrms the validity
+of condition (3) or produces a counterexample which we use to sample additional states and repeat the
+loop. Certiﬁcation is based on SMT solving, which reasons symbolically over the continuous domain
+X and assures soundness. As a consequence, when certiﬁcation conﬁrms condition(3) formally valid,
+then as per Theorem 1 our neural abstraction A is a sound overapproximation of the concrete model
+F and is thus passed to safety veriﬁcation (cf. Figure 2, right).
+Neural networks have been used in the past as representations of formal certiﬁcates for the correctness
+of systems such as Lyapunov neural networks, neural barrier certiﬁcates, neural ranking functions
+5
+
+PDF PAGE 6
+and supermartingales [1, 2, 4, 31, 32, 44, 67, 89, 97, 111, 117–119]. In the present work, we use
+neural networks for the ﬁrst time as abstractions, and we instantiate this idea in safety veriﬁcation
+of nonlinear models. We shall now present the components of our abstraction synthesis procedure:
+learner (cf. Section 3.1) and certiﬁer (cf. Section 3.2).
+3.1 Learning Phase
+As with many machine learning-based algorithm, learning neural abstractions hinges on the loss
+function used as part of the gradient descent scheme for optimising parameters. The task is that of a
+regression problem, so the choice of loss function to be minimised is simple, namely,
+L =
+∑
+s∈S
+∥f(s) − N (s)∥2, (5)
+where ∥ · ∥ 2 represents the 2 − norm of its input, and S ⊂ X is a ﬁnite set of data points that are
+sampled from the domain of interest. In other words, the neural abstractions are synthesised using a
+scheme based on gradient descent to ﬁnd the parameters that minimise the mean square error overS.
+The main inputs to the learning procedure are the vector ﬁeldf of the concrete dynamical model,
+an initial set of pointsS sampled uniformly from the domain of interest X . Additional parameters
+include the hyper-parameters for the learning scheme such as the learning rate, and a stopping
+criterion for the learning procedure. For the latter, there are two possible options: a target error which
+all data points must satisfy, or a bound on the value of the loss function.
+If a target error smaller than ϵ −δ is provided, this is when all points in the data set S satisfy the
+speciﬁcation(3) and certiﬁcation subsequently check that this generalises over the entireX . If an
+alternative loss-based stopping criterion is provided, then an error bound on the approximation is
+estimated using the maximum approximation error over the data setS for use in certiﬁcation. This
+estimated bound is conservative, i.e., greater than the maximum, to allow for successful certiﬁcation
+to be more likely.
+After learning, the network N is translated to symbolic form and passed to the certiﬁcation block,
+which checks condition (3) as described in Section 3.2. The certiﬁer either determines condition(3)
+valid, and thus the CEGIS loop terminates, or computes a counterexample that falsiﬁes the condition.
+The counterexample is returned to the learning procedure and augmented by sampling for additional
+points nearby in order to maximise the efﬁciency of learning and the overall synthesis.
+3.2 Certiﬁcation Phase
+The purpose of the certiﬁcation is to check that at no point in the domain of interestX is the maximum
+error greater than the upper bound ϵ −δ, as per the speciﬁcation in condition (3). Therefore, the
+certiﬁer is provided with the negation of the speciﬁcation, namely
+∃x: x ∈ X ∧ ∥f(x) − N (x)∥>ϵ −δ  
+φ
+. (6)
+The certiﬁer seeks an assignment scex of the variable x such that the quantiﬁer-free formula φ
+is satisﬁable, namely that the speciﬁed bound is violated. If this search is successful, then the
+network N has not achieved the speciﬁed accuracy overX , and is thus not a valid neural abstraction.
+The corresponding assignmentscex forms the counterexample that is provided back to the learner
+(the machine learning procedure from Section 3.1). Alternatively, if no assignment is found then
+speciﬁcation(3) is proven valid; networkN and error boundϵ are then passed to the safety veriﬁcation
+procedure (cf. Section 4).
+Certiﬁcation of the accuracy of the neural abstractions is performed by an SMT solver. Several
+options exist for the selection of the SMT solver, with the requirement that the solver should reason
+over quantiﬁer-free nonlinear real arithmetic formulae [57,64]. This is because the vector ﬁeldf may
+contain nonlinear terms. In our experiments, we employ dReal [64], which supports polynomial and
+non-polynomial terms such as transcendental functions like trigonometric or exponential ones.
+A successful veriﬁcation process allows for the full abstraction to be constructed using the achieved
+errorϵ and neural network N . CEGIS has been shown to perform well and terminate successfully
+across a wide variety of problems. We demonstrate the robustness of our procedure in Appendix B.
+6

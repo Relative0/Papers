@@ -1,0 +1,1066 @@
+=== PDF PAGE 1 ===
+Algebraic Model Counting
+Angelika Kimmiga,∗, Guy Van den Broeck b, Luc De Raedt a
+aDepartment of Computer Science, KU Leuven,
+Celestijnenlaan 200a – box 2402, 3001 Heverlee, Belgium.
+bUCLA – Computer Science Department,
+4531E Boelter Hall, Los Angeles, CA 90095-1596A, USA.
+Abstract
+Weighted model counting (WMC) is a well-known inference task on knowledge
+bases, and the basis for some of the most eﬃcient techniques for probabilistic
+inference in graphical models. We introduce algebraic model counting (AMC),
+a generalization of WMC to a semiring structure that provides a uniﬁed view
+on a range of tasks and existing results. We show that AMC generalizes many
+well-known tasks in a variety of domains such as probabilistic inference, soft
+constraints and network and database analysis. Furthermore, we investigate
+AMC from a knowledge compilation perspective and show that all AMC tasks
+can be evaluated using sd-DNNF circuits, which are strictly more succinct, and
+thus more eﬃcient to evaluate, than direct representations of sets of models.
+We identify further characteristics of AMC instances that allow for evaluation
+on even more succinct circuits.
+Keywords: Knowledge Compilation, Model Counting, Logic
+1. Introduction
+Today, some of the most eﬃcient techniques for probabilistic inference em-
+ploy reductions to weighted model counting (WMC) both for propositional and
+for relational probabilistic models (Park, 2002; Sang et al., 2005; Darwiche,
+2009; Fierens et al., 2011; Van den Broeck et al., 2011). The resulting weighted
+model counting task is often solved by a single pass over a propositional circuit,
+which is a compact graphical representation of the models of interest. This
+approach makes it possible to perform the possibly expensive knowledge com-
+pilation step, that is, the construction of the circuit, only once, and to then
+evaluate this circuit repeatedly, for instance, under diﬀerent evidence or with
+diﬀerent parameters.
+On the other hand, it is well-known that probabilistic inference as well as
+many other tasks can be generalized to a sum of products computation over
+∗Corresponding author
+Email addresses: angelika.kimmig@cs.kuleuven.be (Angelika Kimmig),
+guyvdb@cs.ucla.edu (Guy Van den Broeck), luc.deraedt@cs.kuleuven.be (Luc De Raedt)
+Preprint submitted to Journal of Applied Logic July 28, 2016
+
+=== PDF PAGE 2 ===
+models with suitable operators from a semiring structure. This has led to com-
+mon inference algorithms for a variety of diﬀerent inference problems in many
+ﬁelds, including parsing (Goodman, 1999), dynamic programming (Eisner et al.,
+2005), constraint programming (Meseguer et al., 2006), databases (Green et al.,
+2007), Bayesian inference (Bacchus et al., 2009), propositional logic (Larrosa
+et al., 2010), networks (Baras & Theodorakopoulos, 2010) and logic program-
+ming (Kimmig et al., 2011). The work presented here provides a uniﬁed view
+on these two lines of work by introducing both a general deﬁnition of model
+counting in a semiring setting and a solution approach for this task based on
+knowledge compilation.
+As our ﬁrst contribution, we introduce the task of algebraic model counting
+(AMC). AMC generalizes weighted model counting to the semiring setting and
+supports various types of labels (or weights), including numerical ones as used
+in WMC, but also sets (e.g., to collect relevant variables), Boolean formulae
+(e.g., to obtain explicit representations of models), polynomials (e.g., for sen-
+sitivity analysis in probabilistic models), and many more. It thus provides a
+framework that covers many diﬀerent tasks from a variety of diﬀerent ﬁelds.
+As our second contribution, we investigate how to solve AMC problems using
+knowledge compilation. As AMC is deﬁned in terms of the set of models of a
+propositional logic theory, we can exploit the succinctness results of the know-
+ledge compilation map of Darwiche & Marquis (2002). We show that AMC can
+in general be evaluated using sd-DNNF circuits, which are more succinct, and
+thus more eﬃcient to evaluate, than a direct representation of the set of models.
+Furthermore, we identify a number of characteristics of AMC tasks that allow
+for evaluation on even more succinct types of circuits. Our results provide a
+uniﬁed view on existing results, which also allows us to generalize well-known
+insights for satisﬁability and model counting in circuits to broad classes of AMC
+tasks and to extend the task classiﬁcation in algebraic Prolog (Kimmig et al.,
+2011) to more succinct types of circuits. As our third contribution, we further
+broaden the applicability of the AMC framework by linking it to semiring sums
+of products deﬁned over derivations, that is, sequences of possibly repeated
+variables, instead of over models.
+This paper is organized as follows. We introduce algebraic model counting
+in Section 2. Section 3 provides task characteristics that allow for correct eval-
+uation on speciﬁc classes of circuits and shows how these generalize previous
+results. We discuss future work and conclude in Section 4.
+2. Algebraic Model Counting
+Our deﬁnition of algebraic model counting builds upon the well-known task
+of weighted model counting for propositional logic theories. Given a proposi-
+tional logic theory T over a set of variables V, an interpretation ofV assigns
+a truth value from the set {true, false} to every variable in V. The set M(T )
+of models of theory T contains exactly those interpretations of V for which T
+evaluates to true. We here view interpretations (and models) as sets of literals,
+that is, for each variable v∈V , an interpretation contains either the positive
+2
+
+=== PDF PAGE 3 ===
+literalv or the negative literal¬v. We useL to denote the set of literals for the
+variables inV. In weighted model counting, non-negative real-valued weights
+are associated with all literals, and the weighted model count of a propositional
+theory is obtained by multiplying these weights for each model of the theory,
+and summing the results for all models. 1
+Deﬁnition 1 (Weighted Model Counting (WMC)). Given
+• a propositional logic theory T over a set of variablesV and
+• a weight function w :L→ R≥0, mapping literals of the variables in V to
+non-negative real-valued weights,
+the task of weighted model counting (WMC) is to compute
+WMC(T ) =
+∑
+I∈M(T )
+∏
+l∈I
+w(l). (1)
+Algebraic model counting generalizes multiplication and summation of real-
+valued weights to corresponding operations from an arbitrary commutative semi-
+ring. It thus extends WMC to more general classes of weights, which are not
+necessarily real-valued. To emphasize the latter, we use the terms labeling func-
+tion and label in the context of algebraic model counting.
+Deﬁnition 2 ((Commutative) Semiring) . A semiring is a structure
+(A,⊕,⊗,e⊕,e⊗), where
+• addition⊕ is an associative and commutative binary operation over the
+setA,
+• multiplication⊗ is an associative binary operation over the set A,
+• ⊗distributes over⊕,
+• e⊕∈A is the neutral element of ⊕, i.e., for all a∈A , a⊕e⊕ =a,
+• e⊗∈A is the neutral element of ⊗, i.e., for all a∈A , a⊗e⊗ =a, and
+• e⊕ is an annihilator for ⊗, i.e., for all a∈A , e⊕⊗a =a⊗e⊕ =e⊕.
+In a commutative semiring,⊗ is commutative as well.
+Examples of commutative semirings can be found in columns 2–6 of Table 1;
+these will be discussed below. Generalizing weighted model counting to labeling
+functions deﬁned over commutative semirings, we now deﬁne algebraic model
+counting as follows:
+Deﬁnition 3 (AMC Problem). Given
+1The case where weights are associated with joint assignments to groups of variables, as in
+factor graphs, can be mapped to the case considered here; cf. Section 2.2.
+3
+
+=== PDF PAGE 4 ===
+• a propositional logic theory T over a set of variablesV,
+• a commutative semiring (A,⊕,⊗,e⊕,e⊗), and
+• a labeling function α :L→A , mapping literalsL of the variables inV to
+values from the semiring set A,
+the task of algebraic model counting (AMC) is to compute
+A(T ) =
+⨁
+I∈M(T )
+⨂
+l∈I
+α(l). (2)
+That is, starting from semiring values associated with individual literals via
+the labeling function, AMC assigns a value to each interpretation of the variables
+by combining the values of corresponding literals with semiring multiplication,
+and a value to the theory by combining values of all its models with semiring
+addition.
+2.1. Examples of AMC Tasks
+To provide a better idea of the variety of tasks covered by this general
+deﬁnition, we next discuss examples of AMC tasks based on semirings and
+labeling functions found in the literature, as summarized in Table 1. Probably
+the most basic instance of AMC is the evaluation of a Boolean formula for a given
+interpretation (Bool), where the labeling function assigns the truth values given
+by the interpretation to the literals, i.e., labels are Boolean, α(v) =true if v is
+true in the given interpretation (and α(v) =false else), negative literals¬v are
+labeled¬α(v), and those labels are combined using the usual Boolean semiring
+with⊕ =∨ and⊗ =∧. In fact, this instance can be seen as providing the
+basis for the evaluation of AMC tasks via knowledge compilation as discussed
+in Section 3. Using the same Boolean semiring, but in combination with a
+labeling function that assigns true to all literals, we obtain an instance of AMC
+that corresponds to the satisﬁability task of propositional logic ( SAT).
+As can already be seen from their deﬁnitions, weighted model counting
+(WMC) itself is another instance of AMC, which combines non-negative real
+numbers as labels with ordinary multiplication and addition. The well-known
+task of model counting ( #SAT) corresponds to the special case where all lit-
+eral weights are 1 (and counts thus restricted to the natural numbers), whereas
+probabilistic inference (Prob) in a setting where all variables are independently
+assigned truth values at random restricts the labeling function of WMC to val-
+ues from [0, 1] such that labels of positive and negative literals for each variable
+sum to one, i.e., for every variable v, α(v)∈ [0, 1] and α(¬v) = 1−α(v).
+We can extend the Prob setting to an AMC task to perform sensitivity
+analysis (Sens) by allowing the use of variables instead of constant probabilities
+as labels, i.e., a positive literal v can be labeled with a value in [0 , 1] as before,
+or with variable v, and negative literals are still labeled α(¬v) = 1−α(v). The
+corresponding semiring uses summation and multiplication of polynomials as ⊕
+and⊗, respectively. That is, the algebraic model count is an explicit function
+4
+
+=== PDF PAGE 5 ===
+task A e⊕ e⊗ ⊕ ⊗ α(v) α(¬v) ref idp.
+⊕
+neut.
+(⊕,α )
+icp.
+(⊗,α )
+Bool {true, false} false true ∨ ∧ ∈{ true, false} ¬α(v) ✓ ✓ ✓
+SAT {true, false} false true ∨ ∧ true true
+B, BT, G,
+GK, K, L,
+M
+✓ ✓ −
+WMC R≥0 0 1 + · ∈ R≥0 ∈ R≥0 − − −
+#SAT N 0 1 + · 1 1 B, G, GK,
+K, L − − −
+Prob R≥0 0 1 + · ∈ [0, 1] 1−α(v) B, BT, E,
+G, K − ✓ −
+Sens R[V] 0 1 + · v or∈ [0, 1] 1−α(v) K − ✓ −
+Grad R≥0× R (0, 0) (1, 0) Eq. (5) Eq. (6) Eq. (3) Eq. (4) E, K − ✓ −
+MPE R≥0 0 1 max · ∈ [0, 1] 1−α(v) B, BT, G,
+K, L, M ✓ − −
+S-Path∗ N∞ ∞ 0 min + ∈ N 0 BT, GK,
+K ✓ ✓ −
+W-Path∗ N∞ 0 ∞ max min ∈ N ∞ BT ✓ ✓ −
+Fuzzy [0, 1] 0 1 max min ∈ [0, 1] ∈ [0, 1] GK, M ✓ − −
+kWeight {0,...,k } k 0 min +k ∈{ 0,...,k } ∈{ 0,...,k } M ✓ − −
+OBDD< OBDD<(V) OBDD<(0) OBDD<(1) ∨ ∧ OBDD<(v) ¬OBDD<(v) K ✓ ✓ ✓
+Why∗ P(V) ∅ ∅ ∪ ∪ {v} ∅ GK ✓ − −
+RA+∗
+N[V] 0 1 + · v 1 GK − − −
+Table 1: Examples of AMC tasks based on commutative semirings and labeling functions that have been used in various contexts in the literature.
+Tasks marked with∗ are examples of algebraic derivation count tasks mapped to AMC, see Section 3.5 for details. Reference key: B (Bacchus et al.,
+2009), BT (Baras & Theodorakopoulos, 2010), E (Eisner, 2002), G (Goodman, 1999), GK (Green et al., 2007), K (Kimmig et al., 2011), L (Larrosa
+et al., 2010), M (Meseguer et al., 2006); more examples can be found in these references. The last three columns classify the tasks based on the
+semiring properties studied in Sections 3.2 and 3.3: idempotent ⊕ (Def. 11), neutral ( ⊕,α ) (Def. 12), and idempotent and consistency-preserving
+(⊗,α ) (Def. 13).
+5
+
+=== PDF PAGE 6 ===
+of the probabilities of the literals labeled with variables, which can directly
+be evaluated for various choices of these model parameters. Still within the
+same probabilistic setting, calculating the gradient with respect to one variable,
+which is an important subtask in many parameter learning approaches, can be
+formulated as AMC task as well ( Grad). In this case, literal labels are tuples
+(pi,gi) with pi∈ [0, 1] the probability of the literal and gi the gradient with
+respect to the kth variable2:
+α(vi) =
+{
+(pi, 1) if i =k
+(pi, 0) if i⁄=k (3)
+α(¬vi) =
+{ (1−pi,−1) if i =k
+(1−pi, 0) if i⁄=k (4)
+(a1,a 2)⊕ (b1,b 2) = (a1 +b1,a 2 +b2) (5)
+(a1,a 2)⊗ (b1,b 2) = (a1·b1,a 1·b2 +a2·b1) (6)
+If the second element of the label denotes a cost, the GRAD semiring calculates
+expected costs.
+Another well-known task in the probabilistic setting is ﬁnding the probability
+of the most likely model (MPE), which is formulated as AMC task by using the
+Prob setting except for⊕, which now is maximization rather than summation.
+The next two settings, ﬁnding the length of the shortest path ( S-Path) and
+ﬁnding the width of the widest path ( W-Path), are inspired by optimization
+tasks in weighted networks. 3 In both cases, positive literals are labeled with a
+natural number, and negative literals with the neutral element e⊗ of the cor-
+responding semiring multiplication, which ensures that the latter are not taken
+into account when calculating labels of models. Furthermore, the choice of semi-
+ring operators ensures that optimization ⊕ always selects the value of a model
+containing a minimal set (w.r.t. cardinality) of positive literals (corresponding
+to the edges on a path). In the case of shortest path, ⊗ sums labels of literals
+and⊕ minimizes over these sums, whereas in the case of widest path, ⊗ mini-
+mizes over labels of literals (thus ﬁnding the narrowest part or bottleneck of a
+path), and⊕ maximizes over those.
+The Fuzzy AMC task is closely related to W-Path, also using ⊕ = max
+and⊗ = min, but assigns values from the interval [0 , 1] to literals, reﬂecting
+their degree of membership in a fuzzy model. The algebraic model count then
+corresponds to the highest minimal degree of membership of a literal in a model.
+Similarly, kWeight is closely related to S-Path and also uses ⊕ = min, but
+imposes an upper bound on the value of any model by restricting literal weights
+to integers{0,...,k } and using bounded addition +k as⊗. The algebraic model
+count then is the minimal value of a model, ork if no model has a smaller value.
+As illustrated by the OBDD< task, labels in AMC can also be complex struc-
+2By using (n + 1)-tuples, this can directly be extended to calculate gradients with respect
+to n variables in parallel.
+3We will discuss the relationship between algebraic path problems and AMC in Section 3.5.
+6
+
+=== PDF PAGE 7 ===
+tures. OBDD< circuits, which are canonical representations of Boolean functions,
+are a popular data structure in many ﬁelds of computer science, ranging from
+hardware veriﬁcation to artiﬁcial intelligence. To use them for AMC, we la-
+bel each literal with its OBDD< circuit, and set ⊕ and⊗ to disjunction and
+conjunction on OBDD<, respectively.
+The last two tasks in the table originate from probabilistic databases under
+the positive relational algebra RA+ and are thus deﬁned in terms of (possibly
+repeated) positive literals only. We will discuss such algebraic derivation count
+(ADC) tasks and their relation to AMC in Section 3.5. In contrast to S-Path
+and W-Path, which also are instances of ADC originally, expressing Why
+andRA+-provenance requires to bring the propositional theory into a speciﬁc
+form; we will come back to the details in Section 3.5. Negative literals are
+again labeled with the neutral element e⊗ of semiring multiplication. Why-
+provenance (Why) collects the set of identiﬁers of all tuples an answer depends
+on. It labels positive literals with α(v) = {v}, and uses set union as both ⊕
+and⊗.RA+-provenance constructs polynomials that also take into account the
+number of times the tuples are used. Positive literals are labeled with α(v) =v,
+and⊕ and⊗ are summation and multiplication on polynomials, respectively.
+Both settings thus provide insight into the way answers to database queries have
+been derived, and can be used for instance to understand unexpected answers
+and to identify possible causes of wrong answers.
+As a summary of this discussion, we obtain:
+Theorem 1. Evaluation of Boolean formulae ( Bool), satisﬁability ( SAT),
+model counting ( #SAT), weighted model counting ( WMC), probabilistic in-
+ference ( Prob), sensitivity analysis ( Sens), gradient ( Grad), probability of
+most likely states ( MPE), shortest ( S-Path) and widest ( W-Path) paths,
+fuzzy ( Fuzzy) and k-weighted (kWeight) constraints, and OBDD< construc-
+tion are instances of AMC, with the semirings and labeling functions provided
+in Table 1.
+While all tasks listed in Table 1 are representative examples from the litera-
+ture, cf. the references given in the table, this is by no means an exhaustive list
+of semirings and labeling functions that can be used for AMC.
+2.2. Related Work
+As the examples discussed above illustrate, the AMC task shares its use of
+semirings with a number of other tasks. The class of sum-of-products prob-
+lems generalizes factor graphs to the algebraic setting, but uses factors over
+discrete valued variables as basic building blocks (Bacchus et al., 2009), that
+is, the task is to compute ⨁
+I(V)
+⨂n
+i=1fi(Ei), where I(V) are all possible value
+assignments to the set of variables V, and the fi are functions on sets of vari-
+ablesEi⊆V taking values from the underlying semiring. In this context, aﬃne
+algebraic decision diagrams (Sanner & McAllester, 2005) and AND/OR multi-
+valued decision diagrams (Mateescu et al., 2008) have been used for inference
+with real-valued semirings. It has been shown before that the factor representa-
+tion can be transformed into a propositional logic representation by introducing
+7
+
+=== PDF PAGE 8 ===
+additional variables corresponding to factors (Chavira et al., 2006; Sang et al.,
+2005). Consider for example an algebraic factor f(x1,x 2) associating a label
+with each of the four joint assignments of Boolean variables x1 and x2:
+x1 x2 f (x1,x 2)
+0 0 α00
+0 1 α01
+1 0 α10
+1 1 α11
+This factor could for instance represent the conditional probabilities Pr(x2|x1) =
+f(x1,x 2) for the edge x1→x2 in a Bayesian network. In this case, the equiv-
+alent AMC Prob task would consist of one logical equivalence for every row
+of the table, e.g., θ01≡¬x1∧x2 for the second row, and the labeling function
+would assign α(θij) = αij, and α(l) = 1 for all other literals l. This principle
+generalizes to arbitrary AMC tasks, where we use the neutral element of mul-
+tiplication e⊗ instead of 1 as the label of all other literals. For more details on
+the transformation, we refer to Chavira et al. (2006); Sang et al. (2005). The
+restriction to two-valued variables allows us to directly compile AMC tasks to
+propositional circuits without adding constraints on legal variable assignments
+to the theory.
+In soft constraint programming, additional constraints are imposed on the
+semiring, which ensure that addition optimizes the degree of constraint satis-
+faction (Meseguer et al., 2006). Wilson (2005) provides an algorithm that com-
+piles semiring-based systems into semiring-labelled decision diagrams, which are
+closely related to unordered binary decision diagrams (also known as free binary
+decision diagrams or FBDDs), to compute valuations. Semiring-induced propo-
+sitional logic labels clauses with semiring elements with a weight associated to
+their falsiﬁcation and is restricted to semirings whose induced pre-order is par-
+tial (Larrosa et al., 2010). In algebraic Prolog (aProbLog), a semiring-labeled
+logic program is reduced to AMC for inference (Kimmig et al., 2011).
+In the context of knowledge compilation and algebraic frameworks, Fargier
+& Marquis (2007) introduce valued negation normal form (VNNF) , a general-
+ization of NNF circuits from the Boolean domain to valuation structures over
+ordered sets, and study the complexity of a range of queries and transforma-
+tions on diﬀerent subclasses of VNNFs. In contrast, we generalize a single task
+(model counting) to the semiring setting and relate it to well-established sub-
+classes of NNF. In both cases, properties of the circuit classes such as determinism
+and decomposability (cf. Sec. 3) as well as of the valuation structure (such as
+distributivity) play key roles.
+While AMC sums over models, other tasks sum over sequences of possibly re-
+peated variables. Examples include algebraic path problems (Baras & Theodor-
+akopoulos, 2010), semiring parsing (Goodman, 1999), provenance semirings
+for positive relational algebra queries in databases (Green et al., 2007), and
+semiring-weighted dynamic programs (Eisner et al., 2005). We will discuss the
+diﬀerence between such derivation-based settings and AMC in more detail in
+Section 3.5.
+8
+
+=== PDF PAGE 9 ===
+3. AMC using Knowledge Compilation
+Propositional circuits represent Boolean formulae as rooted acyclic graphs
+where terminal nodes are labeled with literals and inner nodes with Boolean
+operators applied to their child nodes, cf. Figure 1 for examples. Given such a
+representation, the underlying formula can be evaluated (as in the Bool task)
+by a single bottom-up pass from the terminal nodes to the root, which ﬁrst
+assigns truth values to literals and then combines truth values of subcircuits
+at each inner node. In their knowledge compilation map, Darwiche & Marquis
+(2002) provide an overview of succinctness relationships between various types
+of propositional circuits. Furthermore, they show which other reasoning tasks
+in propositional logic, such as (weighted) model counting ( #SAT/WMC) or
+satisﬁability checking (SAT), can be evaluated on which circuits in time poly-
+nomial in the size of the circuit. In these cases, the operations performed during
+circuit evaluation are adapted according to the problem at hand, for instance,
+assigning weights to literals and replacing disjunction by summation and con-
+junction by multiplication for WMC. Propositional circuits are often used as a
+representation language in weighted model counting and similar tasks, includ-
+ing for instance probability calculation and sensitivity analysis in probabilistic
+databases (Jha & Suciu, 2011; Kanagal et al., 2011) and inference in probabilis-
+tic and algebraic Prolog (Fierens et al., 2011; Kimmig et al., 2011).
+In the following, we extend this approach to AMC, stating a single generic
+evaluation algorithm that operates on a propositional circuit. Using knowledge
+compilation for AMC allows one to only perform the expensive compilation
+step once and to then evaluate the resulting circuit many times, for instance,
+to repeatedly calculate gradients during parameter learning, to explore diﬀerent
+parameter combinations (by keeping some variables’ values ﬁxed and varying
+others) for sensitivity analysis, or to even perform diﬀerent AMC tasks for the
+same theory.
+In this section, we use conjunction ( ∧), disjunction ( ∨), true ( ⊤), false
+(⊥), and propositional literals to denote generic labels of propositional circuits.
+Given an AMC task, evaluation interprets these as semiring multiplication (⊗),
+semiring addition (⊕), the neutral element of semiring multiplication ( e⊗), the
+neutral element of semiring addition ( e⊕), and the labels α(l) of these liter-
+als, respectively. We ﬁrst repeat the relevant knowledge compilation concepts,
+closely following Darwiche & Marquis (2002).
+Deﬁnition 4 (NNF). A sentence in negation normal form (NNF) over a set of
+propositional variables V is a rooted, directed acyclic graph where each leaf
+node is labeled with true (⊤), false (⊥), or a literal of a variable in V, and each
+internal node with disjunction (∨) or conjunction (∧).
+Deﬁnition 5 (Decomposability). An NNF is decomposable if for each conjunc-
+tion node ⋀n
+i=1φi, no two children φi and φj share any variable.
+Deﬁnition 6 (Determinism). An NNF is deterministic if for each disjunction
+node⋁n
+i=1φi, each pair of diﬀerent children φi and φj is logically inconsistent.
+9
+
+=== PDF PAGE 10 ===
+∧
+∨
+¬a b a ¬b
+∧
+(a) sd-DNNF
+∨
+∧
+¬a¬b a b
+∨ (b) NNF
+Figure 1: Example of an sd-DNNF and NNF circuit.
+Deﬁnition 7 (Smoothness). An NNF is smooth if for each disjunction node⋁n
+i=1φi, each child φi mentions the same set of variables.
+DNNF, d-NNF, s-NNF, sd-NNF, d-DNNF, s-DNNF, and sd-DNNF are the sub-
+sets of NNF satisfying (combinations of) these properties, where D stands for
+decomposable, d for deterministic, and s for smooth. For instance, the circuit
+in Figure 1a is in sd-DNNF, while the one in Figure 1b has none of the three
+properties. DNF (disjunctive normal form) is the subset of NNF where every sen-
+tence is a disjunction of conjunctions, and MODS is the subset of DNF where every
+sentence is deterministic and smooth.
+A key characteristic when comparing diﬀerent subsets of NNF is their ability
+to compactly represent propositional sentences, which is captured by the notion
+of succinctness.
+Deﬁnition 8 (Succinctness (Darwiche & Marquis, 2002)) . Let L1 and L2 be
+two subsets of NNF.L1 is at least as succinct asL2 iﬀ there exists a polynomialp
+such that for every sentenceφ2∈L2, there exists an equivalent sentenceφ1∈L1
+with|φ1|≤ p(|φ2|), where|φi| is the size of φi.
+The algebraic model count A(T ) is deﬁned as a summation over the set
+of models M(T ) of a propositional theory T , which corresponds to the MODS
+language in the knowledge compilation map. However, as MODS is exponentially
+less succinct than any other representation ofT included in the map, converting
+to MODS in order to evaluate Equation (2) directly is undesirable. In the follow-
+ing, we therefore establish a connection between characteristics of AMC tasks
+and properties of the NNF circuits they can be evaluated on, resulting in the
+classiﬁcation scheme summarized in Table 2. The last three columns of Table 1
+indicate for each example task which of the semiring characteristics it satisﬁes;
+the tasks are also included in the corresponding ﬁeld of Table 2.
+The key idea underlying NNF evaluation is to perform a bottom-up pass
+over the circuit, labeling each node with the value of the subcircuit rooted at
+that node. For disjunction nodes, the values of all their children are combined
+using⊕, for conjunction nodes using ⊗.
+Deﬁnition 9 (NNF Evaluation). The function Eval speciﬁed in Algorithm 1
+10
+
+=== PDF PAGE 11 ===
+idempotent and
+general⊗ consistency-pres. (⊗,α )
+neutral non-neutral neutral non-neutral
+(⊕,α ) (⊕,α ) (⊕,α ) (⊕,α )
+DNNF s-DNNF NNF s-NNF
+idempotent⊕ (Th. 5) (Th. 3) (Th. 7) (Th. 7)
+SAT, S-Path, MPE, Fuzzy, Bool,
+W-Path kWeight OBDD<
+d-DNNF sd-DNNF d-NNF sd-NNF
+non-idempotent⊕ (Th. 4) (Th. 2) (Th. 7) (Th. 6)
+Prob, Sens, Grad #SAT, WMC
+Table 2: Semiring characteristics and corresponding circuits that allow for correct AMC eval-
+uation, with example tasks from Table 1.
+Algorithm 1 Evaluating an NNF circuit N for a commutative semiring
+(A,⊕,⊗,e⊕,e⊗) and labeling function α.
+1: function Eval(N,⊕,⊗,e⊕,e⊗,α )
+2: if N is a true node ⊤ then return e⊗
+3: if N is a false node ⊥ then return e⊕
+4: if N is a literal node l then return α(l)
+5: if N is a disjunction ⋁m
+i=1Ni then
+6: return⨁m
+i=1 Eval(Ni,⊕,⊗,e⊕,e⊗,α )
+7: if N is a conjunction ⋀m
+i=1Ni then
+8: return⨂m
+i=1 Eval(Ni,⊕,⊗,e⊕,e⊗,α )
+evaluates an NNF circuit for a commutative semiring (A,⊕,⊗,e⊕,e⊗) and label-
+ing function α.
+Consider for example #SAT for the two circuits in Figure 1, which both
+represent an exclusive OR of two variables. Evaluation of the sd-DNNF in Fig-
+ure 1a, which in fact is aMODS representation, assigns label 1 to each leaf, 1·1 = 1
+to each conjunction node, and 1 + 1 = 2 to the disjunction node at the root
+and thus the entire circuit, which is correct. On the other hand, evaluation on
+the general NNF in Figure 1b assigns 1 + 1 = 2 to each disjunction node and
+2·2 = 4 to the conjunction node at the root. This overestimation is due to mod-
+els shared by the children of the same disjunction node and variables shared by
+the children of the conjunction node, as we will see in more detail in Section 3.2
+and 3.3.
+Deﬁnition 10 (Correctness). Evaluating an NNF representationNT of a propo-
+sitional theory T for a semiring (A,⊕,⊗,e⊕,e⊗) and labeling function α is a
+correct AMC computation iﬀ Eval(NT,⊕,⊗,e⊕,e⊗,α ) = A(T ).
+In the following, we establish a general correctness result for AMC evalu-
+ation on sd-DNNF circuits as well as properties of AMC tasks that guarantee
+11
+
+=== PDF PAGE 12 ===
+correctness for various other subclasses of NNF. Given correctness, we inherit
+the polynomial complexity results of the knowledge compilation map (Darwiche
+& Marquis, 2002) for semiring operators with constant cost, cf. also Section 3.4.
+Note however that there are semirings with more expensive operators. For in-
+stance, labels in OBDD< may grow exponentially in the circuit size.
+3.1. sd-DNNF Evaluation
+We show that AMC evaluation is correct on sd-DNNF circuits. As these are
+strictly more succinct than MODS representations, they allow for more eﬃcient
+inference.
+Theorem 2 (sd-DNNF Evaluation). Evaluating an sd-DNNF representation of
+the propositional theory T is a correct AMC computation.
+Proof. We show that Eval(NT,⊕,⊗,e⊕,e⊗,α ) for an sd-DNNF representation
+NT of the theory T computes A(T ) with respect to all variables in NT :
+1. Line 2: A(⊤) =⨁
+I∈{∅}
+⨂
+l∈Iα(l) =e⊗
+2. Line 3: A(⊥) =⨁
+I∈{}
+⨂
+l∈Iα(l) =e⊕
+3. Line 4: A(l) =⨁
+I∈{{l}}
+⨂
+k∈Iα(k) =α(l)
+Due to associativity and commutativity of the semiring operators, operands of
+each summation and each multiplication can be evaluated in arbitrary order.
+We therefore restrict ourselves to binary disjunction and conjunction nodes here.
+In the following, we assume we have already correctly evaluated the two subcir-
+cuits φ1 and φ2 over sets of variablesV1 andV2, respectively. Let the circuits’
+sets of models with respect to those variables be M1 andM2. We now obtain:
+4. Lines 5-6: Disjunction node φ1∨φ2: Forφ1 =⊥, we have A(⊥)⊕A(φ2) =
+e⊕⊕ A(φ2) = A(φ2) = A(⊥∨ φ2) by neutrality of e⊕ (and similarly for
+φ2 =⊥ by commutativity). As the circuit is deterministic, the φi cannot
+be⊤. We now consider the case where none of the φi is⊥ or⊤. As the
+circuit is smooth, we haveV1 =V2, and this is also the set of variables used
+by the circuit rooted at the disjunction. The set of models of this circuit is
+thusM(φ1∨φ2) =M1∪M2, which is a disjoint union due to determinism.
+Therefore, A(φ1)⊕A(φ2) =
+(⨁
+I∈M1
+⨂
+l∈Iα(l)
+)
+⊕
+(⨁
+I∈M2
+⨂
+l∈Iα(l)
+)
+=⨁
+M1∪M2
+⨂
+l∈Iα(l) = A(φ1∨φ2).
+5. Lines 7-8: Conjunction node φ1∧φ2: For the case ofφ1 =⊤ (or symmetri-
+callyφ2 =⊤), we have A(⊤)⊗A(φ2) =e⊗⊗A(φ2) = A(φ2) = A(⊤∧φ2)
+by neutrality of e⊗. For the case of φ1 =⊥ (or symmetrically φ2 =⊥),
+we have A(⊥)⊗ A(φ2) = e⊕⊗ A(φ2) = e⊕ = A(⊥) = A(⊥∧ φ2) as e⊕
+is an annihilator for⊗. We now consider the case involving neither ⊤ nor
+⊥ as one of the disjuncts. As V1∩V 2 =∅ due to decomposability, we
+obtain all models of the conjunction by combining each model of φ1 with
+each model of φ2, that is,M(φ1∧φ2) ={I1∪I2|I1∈M 1,I 2∈M 2}. To-
+gether with distributivity, we get A(φ1)⊗A(φ2) =
+(⨁
+I∈M1
+⨂
+l∈Iα(l)
+)
+⊗(⨁
+I∈M2
+⨂
+l∈Iα(l)
+)
+=⨁
+M(φ1∧φ2)
+⨂
+l∈Iα(l) = A(φ1∧φ2).
+12
+
+=== PDF PAGE 13 ===
+Clearly, the correctness of AMC evaluation on sd-DNNF depends on all three
+properties of this subclass of NNF. On the other hand, circuits without these
+properties may be exponentially smaller and thus allow for more eﬃcient infer-
+ence. In the following, we therefore analyze evaluation in the absence of these
+properties, which allows us to identify characteristics of the semiring and la-
+beling function that ensure correct evaluation on the corresponding classes of
+circuits.
+3.2. Evaluation on other Decomposable Circuits
+If a circuit is not deterministic, children of a disjunction node may have
+common models, in which case evaluation sums over such shared models multiple
+times. For instance, consider the circuit in Figure 1b with Prob, α(a) = 0.6
+andα(b) = 0.3. Evaluation on this circuit results in 0.6 + 0.3 = 0.9 for the right
+disjunction node, while A(a∨b) = 0.6·0.3+(1−0.6)·0.3+0.6·(1−0.3) = 0.72.
+Deﬁnition 11 (Idempotent Operator) . A binary operator ⊙ over a set A is
+idempotent iﬀ∀a∈A :a⊙a =a.
+Theorem 3 (s-DNNF Evaluation). Evaluating an s-DNNF representation of the
+propositional theory T for a semiring with idempotent ⊕ (a dioid) is a correct
+AMC computation.
+Proof. Reconsider point (4) of the proof of Theorem 2. Without determinism,
+φ1 =⊤ is possible, and with smoothness, we have φ2 =⊤ in this case. Then,
+A(⊤)⊕ A(⊤) = e⊗⊕e⊗ = e⊗ = A(⊤) = A(⊤∨⊤ ) as ⊕ is idempotent.
+The proof for φ1 =⊥ still holds. If both subformulae involve variables, with
+smoothness, but without determinism, M1(φ1)∪M 2(φ2) is no longer a union
+of disjoint sets, and A(φ1)⊕ A(φ2) = ⨁
+i=1,2
+⨁
+Mi
+⨂
+l∈Iα(l) sums over the
+models in M1(φ1)∩M 2(φ2) twice. Due to associativity and commutativity,
+this is correct for idempotent ⊕.
+If a circuit is not smooth, the children of a disjunction node may use diﬀerent
+sets of variables. Each model of a child node corresponds to a set of models
+for the full set of variables, but evaluation on a non-smooth circuit ignores the
+labels of unmentioned variables. For instance, consider the circuit in Figure 1b
+with MPE, α(a) = 0.6 and α(b) = 0.3. Evaluating the right disjunction node
+of this circuit results in max(0.6, 0.3) = 0.6, while A(a∨b) = max(0.6· 0.3, (1−
+0.6)· 0.3, 0.6· (1− 0.3)) = 0.42.
+Deﬁnition 12 (Neutral (⊕,α )). A semiring addition and labeling function pair
+(⊕,α ) is neutral iﬀ∀v∈V :α(v)⊕α(¬v) =e⊗.
+For instance, the semiring addition and labeling function of theProb task in
+Table 1 are neutral, as for allv∈V , we haveα(v)⊕α(¬v) =α(v)+(1−α(v)) =
+1 =e⊗ in this case.
+13
+
+=== PDF PAGE 14 ===
+Theorem 4 (d-DNNF Evaluation). Evaluating a d-DNNF representation of the
+propositional theory T for a semiring and labeling function with neutral (⊕,α )
+is a correct AMC computation.
+Proof. Reconsider point (4) of the proof of Theorem 2. The cases involving ⊤
+or⊥ still hold. For the remaining case of both subformulae involving variables
+to be correct, the sum of the AMCs computed by the children over their sets of
+variablesVi has to be equal to the AMC of the entire disjunction over the full
+set of variablesV1∪V 2. Given the child AMC AVi(φi), adding a variable v to
+Vi replaces each model I ofφi by two models I + =I∪{v} andI− =I∪{¬v}.
+Due to distributivity, commutativity and the neutral sum property, the algebraic
+sum of these two models equals the AMC of the original model:
+AVi∪{v}(I) = AVi∪{v}(I +)⊕ AVi∪{v}(I−)
+= (α(v)⊕α(¬v))⊗
+⨂
+l∈I
+α(l)
+=
+⨂
+l∈I
+α(l) = AVi(I)
+Evaluation therefore computes AV1(φ1)⊕AV2(φ2) = AV1∪V2(φ1)⊕AV1∪V2(φ2),
+which due to determinism is equal to AV1∪V2(φ1∨φ2).
+Note that from a complexity point of view, non-neutral ( ⊕,α ) does not
+inﬂuence the tractability of inference, as any NNF can be smoothed in polytime
+preserving determinism and decomposability (Darwiche & Marquis, 2002).
+The previous two results can directly be combined for DNNF circuits that are
+neither smooth nor deterministic.
+Theorem 5 (DNNF Evaluation). Evaluating a DNNF representation of the propo-
+sitional theory T for a semiring and labeling function with idempotent and neu-
+tral (⊕,α ) is a correct AMC computation.
+Proof. Reconsider point (4) of the proof of Theorem 2. Due to neutral ( ⊕,α ),
+values for all children of a disjunction node (including⊤) are correct with respect
+to the full set of variables (cf. proof of Theorem 4). Due to idempotent ⊕,
+multiple occurrences of the same model do not inﬂuence the result (cf. proof of
+Theorem 3).
+This completes the left part of Table 2, where no conditions are imposed on
+semiring multiplication.
+3.3. Evaluation on Non-Decomposable Circuits
+If a circuit is not decomposable, the children of a conjunction node may
+share variables. In this case, simply combining results for all pairs of their
+models may produce results corresponding to (multi-)sets of literals that are not
+models, because they either contain contradicting literals, or several copies of
+the same literal, which results in erroneous extra multiplications. For instance,
+14
+
+=== PDF PAGE 15 ===
+in Figure 1b, {¬a,b} is a model of both disjunction nodes, and {a,b} of the
+right one only. The conjunction node sums among others the products α(¬a)⊗
+α(b)⊗α(a)⊗α(b), which does not correspond to a model, and α(¬a)⊗α(b)⊗
+α(¬a)⊗α(b), where labels of both literals are multiplied twice.
+Deﬁnition 13 (Consistency-Preserving (⊗,α )). A semiring multiplication and
+labeling function pair (⊗,α ) is consistency-preserving iﬀ∀v∈V :α(v)⊗α(¬v) =
+e⊕.
+For instance, Boolean evaluation (BOOL) is consistency-preserving, asα(v)∧
+¬α(v) = false =e⊕.
+Theorem 6 (sd-NNF Evaluation). Evaluating an sd-NNF representation of the
+propositional theoryT for a semiring and labeling function with idempotent and
+consistency-preserving (⊗,α ) is a correct AMC computation.
+Proof. Reconsider point (5) of the proof of Theorem 2. The set of models
+of φ1∧φ2 contains exactly all pairwise combinations of models of its parts
+that agree on all shared variables. The circuit evaluates the AMC of φ1∧φ2
+as A(φ1)⊗ A(φ2), which due to distributivity is the sum over all pairwise
+combinations of models. Without decomposability, each such combination I
+contains two literals for each v∈V 1∩V 2. As ⊗ is associative, commutative
+and idempotent, repeated occurrences of a literal l in⊗i∈Iα(i) do not aﬀect the
+result. If {l,¬l}⊆ I,⊗i∈Iα(i) includes a multiplication by α(l)⊗α(¬l) = e⊕,
+which in a semiring means ⊗i∈Iα(i) = e⊕. Such inconsistent I thus do not
+contribute to the semiring sum.
+Theorem 6 aﬀects only conjunction nodes, whereas Theorems 3, 4 and 5
+only aﬀect disjunction nodes. Their combination thus extends our results to
+non-decomposable circuits that do not satisfy (one of) the other two properties
+either:
+Theorem 7 (s-NNF, d-NNF, and NNF Evaluations). For a semiring and label-
+ing function with idempotent and consistency preserving (⊗,α ), evaluating the
+following representation of the propositional theory T is a correct AMC compu-
+tation:
+• s-NNF if⊕ is idempotent
+• d-NNF if (⊕,α ) is neutral
+• NNF if (⊕,α ) is idempotent and neutral
+This completes the right part of Table 2, where using non-decomposable
+circuits is possible as a consequence of restrictions on semiring multiplication.
+Given a new AMC instance, this table allows one to immediately choose the
+appropriate type of circuit for eﬃcient evaluation. Table 2 provides this classi-
+ﬁcation for the examples discussed earlier, cf. Table 1.
+15
+
+=== PDF PAGE 16 ===
+neutral (⊕,α ) non-neutral (⊕,α )
+idempotent⊕ DNF s-DNF
+non-idempotent⊕ d-DNF sd-DNF
+OBDD s-OBDD
+Table 3: Overview of AMC settings used in algebraic Prolog (Kimmig et al., 2011).
+3.4. Discussion
+The results summarized in Table 2 provide a uniﬁed view on a number of
+known results. They generalize the complexity results for evaluation of SAT
+and #SAT using knowledge compilation to broad classes of tasks, provide more
+succinct types of circuits for inference in algebraic Prolog, and show that all
+circuits that are practically relevant for AMC are well-studied in the knowledge
+compilation map. We now address these points in more detail.
+First, Darwiche & Marquis (2002) show that SAT is correctly evaluated
+in polynomial time on DNNF, while #SAT is correctly evaluated in polynomial
+time on d-DNNF, as the required smoothing to obtain an sd-DNNF is possible
+in polynomial time. We generalize these results to broad classes of semirings,
+always ensuring correctness, and, as discussed above, preserving polynomial
+time complexity as long as each semiring operation has constant cost. More
+speciﬁcally, our Theorem 5 generalizes correctness of DNNF evaluation from SAT
+to all commutative semirings and labeling functions with idempotent and neutral
+(⊕,α ), and our Theorem 2 generalizes correctness of sd-DNNF evaluation from
+#SAT to arbitrary commutative semirings and labeling functions. As part of
+their tractability study of inference in weighted bases, that is, propositional
+theories with penalties on unsatisﬁed formulae, Darwiche & Marquis (2004)
+have shown that the weight of a weighted base in normal form, that is, with
+all penalties on literals, can eﬃciently be computed on its DNNF representation.
+This directly translates to an instance of AMC with ⊕ = min and⊗ = + that
+satisﬁes our criteria for DNNF evaluation.
+Second, Kimmig et al. (2011) reduce inference in algebraic Prolog (aProbLog)
+to AMC evaluation on disjunctive normal form ( DNF). For non-idempotent ad-
+dition, a DNF whose conjunctions are not mutually exclusive is then compiled
+into an ordered binary decision diagram (OBDD). For non-neutral (⊕,α ), circuits
+are smoothed before evaluation. This results in the settings listed in Table 3.
+Table 2 uses the same characteristics of semiring operators and labeling func-
+tion, but does not require to transform the theory to a DNF as starting point.
+The left half of Table 2 directly generalizes the aProbLog scheme to strictly
+more succinct superclasses of circuits, namely ( s-)DNNF instead of ( s-)DNF,
+and ( s)d-DNNF instead of ( s)d-DNF or ( s-)OBDD. As probabilistic inference in
+ProbLog has recently been improved by replacing OBDD-based approaches with
+weighted model counting on sd-DNNF (Fierens et al., 2011), our results promise
+practical improvements for aProbLog as well.
+Third, we observe that while there are interesting inference tasks that are
+16
+
+=== PDF PAGE 17 ===
+correctly evaluated on the more succinct class of DNNF instead of the general
+sd-DNNF evaluation, the conditions for correct evaluation on non-decomposable
+circuits are too strict in most practical cases. This is in line with the knowledge
+compilation map, which excludes non-decomposable circuits (with the exception
+of the most general class NNF) as they do not support any of the studied tasks
+in polytime (Darwiche & Marquis, 2002).
+Fourth, extending weighted model counting towards negative probabilities
+makes it possible to use existential quantiﬁcation when deﬁning probabilistic
+models based on ﬁrst order logic (Van den Broeck et al., 2014; Beame et al.,
+2015). The correctness of this generalization follows immediately from our re-
+sults.
+Finally, we note that our results imply general complexity bounds for AMC
+in terms of the size of the original logical theory T . For example, when T is
+given in conjunctive normal form (CNF), an equivalent sd-DNNF can be compiled
+in time polynomial in the size of T and exponential in its treewidth (Darwiche,
+2001). Hence, all AMC tasks in CNF with constant-cost⊕ and⊗ can be evaluated
+in time polynomial in the size and exponential in the treewidth of T , and are
+thus tractable for bounded treewidth. Similar results for ( d-)NNF state that
+these circuits can be compiled starting from CNF or DNF in time polynomial in
+the size of T (Darwiche & Marquis, 2002, Lemma A.8).
+3.5. AMC and Algebraic Derivation Counting
+While AMC is a sum over models, or sets of literals, many other semiring-
+based tasks require a sum over derivations, that is, sequences of possibly re-
+peated variables. Examples include algebraic path problems (Baras & Theodor-
+akopoulos, 2010), semiring parsing (Goodman, 1999), provenance semirings
+for positive relational algebra queries in databases (Green et al., 2007), and
+semiring-weighted dynamic programs (Eisner et al., 2005). We refer to this
+type of task as algebraic derivation counting (ADC), and restrict the discussion
+to the case of ﬁnite, distinct sequences.
+Deﬁnition 14 (ADC Problem). Given
+• a set S of ﬁnite sequences of variables from a set V,
+• a commutative semiring (A,⊕,⊗,e⊕,e⊗), and
+• a labeling function δ :V→A , mapping variables in V to values from the
+semiring setA,
+the task of algebraic derivation counting (ADC) is to compute
+D(S) =
+⨁
+(v1,...,vn)∈S
+n⨂
+i=1
+δ(vi). (7)
+For instance, consider a graph with three nodess,t andr, and three directed
+edges e1 = (s,t ), e2 = (s,r ) and e3 = (r,t ). A derivation in this context is a
+17
+
+=== PDF PAGE 18 ===
+path in the graph represented as its sequence of edges, e.g., ( e2,e 3) represents
+the path from s to t via r. The ADC of the set of all paths from s to t in the
+graph is then given by
+D({(e1), (e2,e 3)}) =δ(e1)⊕ (δ(e2)⊗δ(e3)) (8)
+For instance, if δ assigns a cost to every edge, we could use the S-Path or W-
+Pathsemirings to compute the cost of the shortest or widest path, respectively.
+As a second example, consider the following context free grammar, where we
+add the variable we will use to refer to an application of the rule in a derivation
+in parentheses:
+S→ aS ( s1) A → AA ( a1)
+S→ AA ( s2) A → a ( a2)
+S→ϵ (s3)
+The word aa has two leftmost derivations in this grammar: S→aS→aaS→
+aa, using the rule sequence ( s1,s 1,s 3), and S → AA → aA → aa, using
+(s2,a 2,a 2). The ADC of this set of derivations is given by
+D({(s1,s 1,s 3), (s2,a 2,a 2)}) = (δ(s1)⊗δ(s1)⊗δ(s3))⊕(δ(s2)⊗δ(a2)⊗δ(a2)) (9)
+For instance, using the probability semiring, this corresponds to computing the
+probability of aa in a probabilistic context free grammar with these rules. 4
+While both ADC and AMC are semiring sums over semiring products, their
+key diﬀerence is that computing ADC is based on the structure of a set of
+sequences of positive variables, whereas computing the AMC is based on the
+models of a propositional theory represented as an arbitrary NNF. Nevertheless,
+it is possible to map each of the tasks onto the other, as we will show now.
+Reducing AMC to ADC. Reducing an AMC task to an ADC task is straightfor-
+ward. The set of variables in the ADC task contains one variable for each literal
+in the AMC task, labeled with that literal’s label. For each model of the AMC
+theoryT , the ADC derivation set S contains one sequence enumerating exactly
+the variables corresponding to the literals in the model. Then, Equation (7)
+and Equation (2) have the same structure, and the ADC of the translation thus
+equals the original AMC.
+However, this reduction is clearly not desirable from a complexity point of
+view, as it requires bringing T into MODS form. Alternatively, one could adapt
+the semiring used. For instance, Baras & Theodorakopoulos (2010) provide
+an ADC encoding of network reliability under probabilistic edge failure, that
+is, the Prob AMC task for a positive propositional formula. They essentially
+modify multiplication to ﬁlter repeated literals from derivations (i.e., repeated
+edges from cyclic paths), and addition to subtract shared models of its operands
+4Note that the input to ADC is a set of ﬁnite derivations, not the grammar, i.e., ADC does
+not solve the parsing problem.
+18
+
+=== PDF PAGE 19 ===
+(i.e., subgraphs containing multiple paths), which, while operating on the ADC
+structure, drastically increases complexity of these operations. Under which
+general conditions such transformations are possible is an open question.
+Reducing ADC to AMC. To reduce an arbitrary ADC task to AMC, we con-
+struct a propositional theory that has one model for every sequence in the ADC
+task. The construction (a) systematically uses diﬀerent variables for repeated
+occurrences of the same variable in a derivation, and (b) makes explicit that (re-
+named) variables not appearing in a derivation do not contribute to the semiring
+product by adding their negation, labeled with e⊗, to the derivation. That is, if
+variablev occurs at most k times in any sequence s∈S, we introduce k copies
+v1,...,v k, all labeled with δ(v). Thus, Equation (9) becomes
+D({(s1
+1,s 2
+1,s 1
+3), (s1
+2,a 1
+2,a 2
+2)}) = (δ(s1
+1)⊗δ(s2
+1)⊗δ(s1
+3))⊕ (δ(s1
+2)⊗δ(a1
+2)⊗δ(a2
+2))
+Clearly, this construction in general does not change the ADC. Second, we
+expand derivations to all variables by adding negative literals, labeled withe⊗5:
+D({(s1
+1,s 2
+1,s 1
+3,¬s1
+2,¬a1
+2,¬a2
+2), (s1
+2,a 1
+2,a 2
+2,¬s1
+1,¬s2
+1,¬s1
+3)})
+=(δ(s1
+1)⊗δ(s2
+1)⊗δ(s1
+3)⊗δ(¬s1
+2)⊗δ(¬a1
+2)⊗δ(¬a2
+2))
+⊕ (δ(s1
+2)⊗δ(a1
+2)⊗δ(a2
+2)⊗δ(¬s1
+1)⊗δ(¬s2
+1)⊗δ(¬s1
+3))
+This step again maintains the ADC, as can easily be veriﬁed using the properties
+of commutative semirings. Furthermore, as we now have a 1-1-correspondence
+between derivations and models, setting α to δ and T to the disjunction of the
+conjunctions of elements in derivations, i.e.,
+(
+s1
+1∧s2
+1∧s1
+3∧¬s1
+2∧¬a1
+2∧¬a2
+2
+)
+∨(
+s1
+2∧a1
+2∧a2
+2∧¬s1
+1∧¬s2
+1∧¬s1
+3
+)
+, completes the reduction to AMC.
+While this two-step reduction from ADC to AMC on a MODS representation
+is possible for any commutative semiring and ADC labeling functionδ, for some
+semirings, AMC eﬀectively selects the desired model for a derivation without
+need to make this explicit in the propositional theory.
+First, for commutative semirings and labeling functions with idempotent,
+consistency-preserving (⊗,α ) and idempotent, neutral ( ⊕,α ) such as for in-
+stance OBDD<, neither variable renaming nor model restriction are required. The
+reason is that repetition within derivations is handled by idempotent⊗, whereas
+idempotent, neutral (⊕,α ) implies that summing out unmentioned variables
+maps them to the label of the negative literal, e⊗ (cf. Theorem 5). However, as
+noted above, such tasks are rare.
+Second, if derivations do not contain repeated variables, there is no need to
+rename variables. If furthermore⊕ is idempotent and (⊕,α ) is neutral, as in the
+ﬁrst case, we do not need to explicitly restrict models. This is for instance the
+case for the S-Pathand W-Pathsemirings in Table 1. Intuitively, if we do not
+restrict models, instead of directly summing over the products for all (acyclic)
+5Strictly speaking, ADC would require new, positive variables for those negative literals,
+but we use negation for ease of exposition.
+19
+
+=== PDF PAGE 20 ===
+paths, AMC additionally sums for each path over all subgraphs containing that
+path, but the properties of the semiring and labeling function ensure that the
+results coincide. For instance, as absent edges are labeled with the minimal
+value 0 in shortest path, among all graphs containing the same path, semiring
+addition (using min) eﬀectively selects the one containing no additional edges.
+On the other hand, the Why andRA+ semirings also listed in Table 1 do
+not fall into this category (as can be veriﬁed by inspecting the properties of
+their deﬁnitions), but require the full translation. Intuitively, Why collects all
+variables appearing in derivations, or, in its original database context, all tuples
+contributing to a query answer. Evaluating this on all models instead of the
+models constructed in the translation would result in the full set of variables
+(all tuples in the database) instead of just the relevant ones. RA+ reﬁnes
+Why by constructing a polynomial that keeps track of how often each variable
+(positively) contributes to each derivation. Again, summing over all extensions
+of a derivation would add too much information to the result.
+4. Conclusions and Future Work
+We have introduced the task of algebraic model counting, which generalizes
+weighted model counting to a semiring setting and thus to various types of
+labels, including numerical ones as used in WMC, but also sets, polynomials, or
+Boolean formulae. We have shown that evaluating AMC is correct on sd-DNNF
+circuits, which are known to be more succinct than the MODS language used in
+the problem deﬁnition. Furthermore, we have provided characteristics of AMC
+tasks that guarantee correct evaluation on more succinct classes of circuits,
+which provides a means of directly choosing a circuit type that allows for eﬃcient
+inference given a new AMC task. AMC also provides a uniﬁed view on a number
+of known results as well as a framework to connect algebraic derivation counts
+to AMC tasks.
+Given the results presented here, it is worth investigating which other al-
+gebraic representations can be reduced to algebraic model counting. Another
+line of future work concerns the introduction of additional operators that would
+make it possible to express additional tasks, for instance, partial MAP, which
+requires a maximization operator in addition to summation and multiplication.
+Acknowledgements. This work has been supported by the Research Foundation
+Flanders (FWO Vlaanderen).
+References
+Bacchus, F., Dalmao, S., & Pitassi, T. (2009). Solving #SAT and Bayesian
+inference with backtracking search.Journal of Artiﬁcial Intelligence Research,
+34, 391–442.
+Baras, J. S., & Theodorakopoulos, G. (2010). Path Problems in Networks vol-
+ume 3 ofSynthesis Lectures on Communication Networks. Morgan & Claypool
+Publishers.
+20
+
+=== PDF PAGE 21 ===
+Beame, P., Van den Broeck, G., Gribkoﬀ, E., & Suciu, D. (2015). Symmetric
+weighted ﬁrst-order model counting. In Proceedings of the 34th ACM Sympo-
+sium on Principles of Database Systems (PODS) (pp. 313–328).
+Chavira, M., Darwiche, A., & Jaeger, M. (2006). Compiling relational Bayesian
+networks for exact inference. International Journal of Approximate Reason-
+ing, 42, 4 – 20.
+Darwiche, A. (2001). On the tractable counting of theory models and its ap-
+plication to truth maintenance and belief revision. Journal of Applied Non-
+Classical Logics, 11, 11–34.
+Darwiche, A. (2009). Modeling and Reasoning with Bayesian Networks . Cam-
+bridge University Press.
+Darwiche, A., & Marquis, P. (2002). A knowledge compilation map. Journal of
+Artiﬁcial Intelligence Research, 17, 229–264.
+Darwiche, A., & Marquis, P. (2004). Compiling propositional weighted bases.
+Artiﬁcial Intelligence , 157, 81–113.
+Eisner, J. (2002). Parameter estimation for probabilistic ﬁnite-state transducers.
+In Proceedings of the 40th Annual Meeting of the Association for Computa-
+tional Linguistics (ACL) (pp. 1–8). Philadelphia.
+Eisner, J., Goldlust, E., & Smith, N. (2005). Compiling Comp Ling: Weighted
+dynamic programming and the Dyna language. In Proceedings of the Human
+Language Technology Conference and Conference on Empirical Methods in
+Natural Language Processing (HLT/EMNLP) (pp. 281–290).
+Fargier, H., & Marquis, P. (2007). On valued negation normal form formulas.
+In IJCAI (pp. 360–365).
+Fierens, D., Van den Broeck, G., Thon, I., Gutmann, B., & De Raedt, L. (2011).
+Inference in probabilistic logic programs using weighted CNF’s. InProceedings
+of the 27th Conference on Uncertainty in Artiﬁcial Intelligence (UAI) (pp.
+211–220).
+Goodman, J. (1999). Semiring parsing. Computational Linguistics, 25, 573–605.
+Green, T. J., Karvounarakis, G., & Tannen, V. (2007). Provenance semirings.
+In Proceedings of the 26th ACM SIGMOD-SIGACT-SIGART Symposium on
+Principles of Database Systems (PODS) (pp. 31–40).
+Jha, A. K., & Suciu, D. (2011). Knowledge compilation meets database theory:
+compiling queries to decision diagrams. In Proceedings of the 14th Interna-
+tional Conference on Database Theory (ICDT) (pp. 162–173).
+21
+
+=== PDF PAGE 22 ===
+Kanagal, B., Li, J., & Deshpande, A. (2011). Sensitivity analysis and explana-
+tions for robust query evaluation in probabilistic databases. In Proceedings of
+the ACM SIGMOD International Conference on Management of Data (SIG-
+MOD) (pp. 841–852).
+Kimmig, A., Van den Broeck, G., & De Raedt, L. (2011). An algebraic Prolog for
+reasoning about possible worlds. In Proceedings of the 25th AAAI Conference
+on Artiﬁcial Intelligence (AAAI) (pp. 209–214).
+Larrosa, J., Oliveras, A., & Rodr´ ıguez-Carbonell, E. (2010). Semiring-induced
+propositional logic: Deﬁnition and basic algorithms. In E. M. Clarke, &
+A. Voronkov (Eds.), Revised Selected Papers of the 16th International Con-
+ference on Logic for Programming, Artiﬁcial Intelligence, and Reasoning
+(LPAR) (pp. 332–347). Springer volume 6355 of Lecture Notes in Computer
+Science.
+Mateescu, R., Dechter, R., & Marinescu, R. (2008). And/or multi-valued deci-
+sion diagrams (AOMDDs) for graphical models. Journal of Artiﬁcial Intelli-
+gence Research, 33, 465–519.
+Meseguer, P., Rossi, F., & Schiex, T. (2006). Soft constraints. In F. Rossi,
+P. Van Beek, & T. Walsh (Eds.), Handbook of constraint programming (pp.
+281–328). Elsevier Science.
+Park, J. D. (2002). Using weighted MAX-SAT engines to solve MPE. In Pro-
+ceedings of the 18th AAAI Conference on Artiﬁcial Intelligence (AAAI) (pp.
+682–687).
+Sang, T., Beame, P., & Kautz, H. (2005). Solving Bayesian networks by weighted
+model counting. In Proceedings of the 20th AAAI Conference on Artiﬁcial
+Intelligence (AAAI) (pp. 475–482).
+Sanner, S., & McAllester, D. A. (2005). Aﬃne algebraic decision diagrams
+(AADDs) and their application to structured probabilistic inference. In Pro-
+ceedings of the 19th International Joint Conference on Artiﬁcial Intelligence
+(IJCAI) (pp. 1384–1390).
+Van den Broeck, G., Meert, W., & Darwiche, A. (2014). Skolemization for
+weighted ﬁrst-order model counting. In Proceedings of the 14th International
+Conference on Principles of Knowledge Representation and Reasoning (KR)
+(pp. 1–10).
+Van den Broeck, G., Taghipour, N., Meert, W., Davis, J., & De Raedt, L. (2011).
+Lifted probabilistic inference by ﬁrst-order knowledge compilation. In Pro-
+ceedings of the 22nd International Joint Conference on Artiﬁcial Intelligence
+(IJCAI) (pp. 2178–2185).
+Wilson, N. (2005). Decision diagrams for the computation of semiring valua-
+tions. In Proceedings of the 19th International Joint Conference on Artiﬁcial
+Intelligence (IJCAI) (pp. 331–336).
+22

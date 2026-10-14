@@ -1,0 +1,2485 @@
+=== PDF PAGE 1 ===
+Adequate Losses via Quantitative Linear Logic
+MATTEO CAPUCCI ∗,University of Strathclyde and Independent Researcher, IT
+ROBERT ATKEY∗,University of Strathclyde, UK
+CHARLES GRELLOIS,Department of Computer Science, University of Sheffield, UK
+EKATERINA KOMENDANTSKAYA∗,Heriot-Watt and Southampton Universities, UK
+MATTHEW DAGGITT,University of Western Australia, AU
+As “neural” components are increasingly embedded in existing “symbolic” software—including safety-
+critical systems—the question arises of how to specify and enforce the safety of the newly introduced neural
+parts. Unlike traditional logical specifications, these must be amenable not only to the standard Boolean
+interpretation, but also to training and optimisation. The latter calls for a quantitative interpretation of
+the logical syntax, subject to further requirements such as smoothness and differentiability. Moreover,
+the qualitative and quantitative sides of the logic must share a unifying proof-theoretic and categorical
+semantics. Finally, the new logic should link cleanly to the substructural and program logics that underpin
+the verification of existing symbolic programs.
+In this paper, we present a logic that ticks all of these boxes. We introduce a family of calculi, 𝑝QLL,
+indexed by a hardness degree𝑝, prove a cut-elimination theorem for them, and establish completeness with
+respect to enriched residuated ‘soft’ lattices. At𝑝=∞ ,𝑝QLL reduces to multiplicative additive linear logic
+(MALL), and provability in𝑝QLL converges to provability in MALL as𝑝→∞ . We express optimisation
+objectives in the syntax of this logic and prove the quantitative adequacy of neuro-symbolic loss functions—a
+result that has eluded the neuro-symbolic machine learning community for nearly a decade.
+CCS Concepts:•Theory of computation → Linear logic;Proof theory;Semantics and reasoning;
+Logic and verification;•Computing methodologies → Machine learning approaches.
+Additional Key Words and Phrases: Linear Logic, Differentiable Logic, Fuzzy Logic, Sequent Calculus,
+Neuro-Symbolic AI, Neural Network Verification, Property-Driven Training, Enriched Category Theory
+∗Author supported by ARIA grant MSAI-PR01-P05.
+Authors’ Contact Information: Matteo Capucci, University of Strathclyde and Independent Researcher, Modena, IT,
+matteo.capucci@gmail.com; Robert Atkey, University of Strathclyde, Glasgow, UK, robert.atkey@strath.ac.uk; Charles
+Grellois, Department of Computer Science, University of Sheffield, Sheffield, UK, c.grellois@sheffield.ac.uk; Ekaterina
+Komendantskaya, Heriot-Watt and Southampton Universities, Edinburgh and Southampton, UK, ek1u23@soton.ac.uk;
+Matthew Daggitt, University of Western Australia, Perth, AU, matthew.daggitt@uwa.edu.au.
+1
+arXiv:2605.13348v3  [cs.LO]  16 Jul 2026
+
+=== PDF PAGE 2 ===
+Adequate Losses via Quantitative Linear Logic 2
+1 Introduction
+Neural networks are rapidly becoming ordinary software components: they are embedded in
+controllers, pipelines, and safety-critical systems, and so inherit the specification and verification
+obligations that programming language research has long articulated for conventional code.
+Unfortunately, Neural Network Verification (NNV) is hard [23]: it can be difficult both to formulate
+safety specifications and to ensure that networks satisfy them.
+To address the former, the field has produced numerous domain-specific languages (DSLs) for
+encoding the interaction between logical reasoning and neural networks. These DSLs span a
+broad design space. Systems such as Scallop [43] and DeepProbLog [44] treat the outputs of neural
+networks as probabilistic inputs to a symbolic reasoning engine, so that logical inference can
+be integrated into the learning pipeline without directly constraining the learned function. In
+contrast, systems such as Logic Tensor Networks [ 9], DL2 [30], andVehicle[ 25, 26] compile
+logical specifications into architectures or loss functions that push the network itself to satisfy the
+specified properties. This paper is motivated by the latter class of systems, and studiesproperty-
+driven training, a set of methods that train neural networks directly on a spec 1.
+These methods share a common computational abstraction: given an architecture𝑓𝜃 : R𝑚→R 𝑛
+parameterised by weights𝜃∈R 𝑣, and a Boolean predicate𝜑 :(R𝑚→R 𝑛)→Prop over functions
+expressed in some domain-specific DSL, it is then translated into a differentiable real-valued
+function over the instances of the architecture J𝜑K : R𝑣→R . This translation is performed using
+what practitioners commonly call adifferentiable logic: an interpretation of logical connectives
+and quantifiers as differentiable operations over real-valued truth degrees that allows the compiler
+to perform a compositional translation of the Boolean specification. Subsequently, the gradient
+𝜕𝜃 J𝜑K(𝑓𝜃) can be used during training to guide the optimisation process towards a 𝜃 such that
+𝜑(𝑓𝜃) holds.
+At first glance, differentiable logics appear to be little more than a modern incarnation of many-
+valued logics. Logics with truth values in some subset of the real line have been studied for at least
+a century, counting from the works of Łukasiewicz [60] and Gödel [48], and moving on to fuzzy
+logic [19, 59], continuous model theory [56], and recent work on quantitative algebra [6–8, 45].
+Consequently, many differentiable logics and associated tools have been proposed and stud-
+ied [9, 10, 30, 53, 54]. The central claim common to all of these works is that performing gradient
+descent to minimise the output of the compiled specification drives the network to satisfy the
+1Note that training is but one form of model repair/synthesis, see e.g. [35, 58] for other forms.
+
+=== PDF PAGE 3 ===
+Adequate Losses via Quantitative Linear Logic 3
+specification’s Boolean interpretation. From a logical perspective, this amounts to claimingade-
+quacyof the differentiable logic (and hence of the real-valued semantics of the DSL) as a proxy
+for satisfaction: the logic should besound, in the sense that a low loss guarantees the model
+satisfies the specification, andcomplete, in the sense that a satisfying model is reflected by a
+correspondingly low loss.
+1.1 The problems
+optimisation
+satisfaction provability
+adequacy
+completeness
+justification
+Fig. 1.The three facets a differentiable logic
+must reconcile.
+Yet a century of real-valued logic has not settled the
+matter [1, 2, 32, 53], because the mismatch runs deeper
+than the truth values of formulae. Using loss functions
+as logical semantics demands three things (Figure 1)
+that no existing logic can meet at once, which we now
+examine in turn.
+The first aspect concerns the match betweensatisfac-
+tionof the specification and the result ofoptimisation
+of the loss: we call thisadequacy(Figure 1). Consider,
+for example, the result in [30] that proves that the pro-
+posed differentiable logic (DL2) is adequate in the sense that J𝜑K= 0if and only if the network
+satisfies𝜑, as verified by a second Boolean semantics. This kind ofextremaladequacy is of little
+use since, in practice, the loss is neverexactly0! Even worse, such a notion does not explain why
+optimisingthe logical loss should lead to bettersatisfactionof the spec—which, empirically, it does.
+The hard-to-swallow pill here is that aqualitative, ‘yes or no’ notion of satisfaction has
+little hope of ever being adequate. Indeed, the logical loss is a real-valued quantity that ranges
+over a broad spectrum of values: if we want these values to mean something logical, then the logic
+must be able to accommodate this variation and the nuance that comes with it at a syntactic/proof-
+theoretic level. Secondly, the properties we are checking are seldom qualitative, clear-cut ones:
+they amount to measuring errors, distances, ratios, and the like.
+For instance, a common specification enforced in neural classifiers isrobustness[ 16], which is
+the property of predictions being robust under small perturbations of the input. One can formulate
+such a property as
+∀𝑥∈𝑋,|𝑥− ˆ𝑥|<𝜀=⇒ |𝑓 𝜃(𝑥)−𝑓 𝜃( ˆ𝑥)|<𝛿(robustness)
+
+=== PDF PAGE 4 ===
+Adequate Losses via Quantitative Linear Logic 4
+−𝜀 +𝜀
+−𝛿
++𝛿
+( ˆ𝑥,𝑓 𝜃( ˆ𝑥))
+−𝜀 +𝜀
+−𝛿
++𝛿
+( ˆ𝑥,𝑓 𝜃( ˆ𝑥))
+Fig. 2.Two near-identical behaviours judged very differently by a binary notion of satisfaction.
+for chosen constants𝜀 and𝛿 and a fixed datapoint( ˆ𝑥, ˆ𝑦)∈𝐷 . Our intuition tells us that there are
+degrees to the violation of this spec, and it is somewhat unreasonable that two nearly identical
+functions, like those in Figure 2, should receive completely opposite verdicts. The main thesis
+of this paper is thus that
+the verification of machine learning models should be
+founded on aquantitativereconception of logic.
+The second aspect concerns the seemingly irreconcilable tension plaguing differentiable logic:
+the trade-off between the algebraic/proof-theoretic and analytic properties of the connectives. In
+fact, to behave well during gradient-descent, the connectives of a differentiable logic should be
+entrywise strictly increasing differentiable operations, i.e. such that𝜕𝑖⊙> 0for both arguments
+𝑖= 1, 2of⊙. This allows both operands to receive a meaningful gradient signal, avoiding situations
+in which oneshadows(in the words of [ 54]) the other since its truth already ‘suffices’ to guarantee
+the truth of the whole expression. The paradigmatic example is max (∨): when𝑓(𝑥)>𝑔(𝑥) then
+none of the gradient signal coming from 𝑓(𝑥)∨𝑔(𝑥) will flow in the right branch, leading to
+fragile results (see [ 32, 53]).
+On the other hand, if we entrust substructural logic as a proof-theoretical foundation, we are
+led to organize our logical connectives in eitheradditiveormultiplicativeones (using Girard’s
+terminology for linear logic [34]). Roughly speaking, additives are the connectives users expect to
+write their specs in, since their rules reflect the most intuitive usage, compared to multiplicatives.
+Then the established algebraic semantics based on residuated lattices2 [20, 33] forces the additives
+to be interpreted as the lattice operations of join (∨) and meet (∧).
+2Specifically, residuated structures on sublattices of ([−∞,+∞],≤) . Recall that a residuated lattice is given by
+(𝑅,∧,∨,⊙, 1,⊸) , where(𝑅,∧,∨) is a lattice,(𝑅,⊙, 1) is a monoid with a neutral element1, and the followingresiduation
+propertyholds:𝑎⊙𝑏≤𝑐iff𝑎≤𝑏⊸𝑐.
+
+=== PDF PAGE 5 ===
+Adequate Losses via Quantitative Linear Logic 5
+Here’s then the dilemma: the lattice operations on R do not enjoy the analytical properties
+mentioned above, and thus differentiable logics are forced to choose between empirical perfor-
+mance and logical elegance (thejustificationarrow in Figure 1). As one might expect, it is often
+the latter which takes the fall. For example, Varnai et al. prove a famousno-go resultthat no
+logic can have connectives that are simultaneously idempotent, associative and shadow-lifting,
+and propose to sacrifice associativity [ 54].
+And yet, on the reals there are obvious candidate ‘additive’ and ‘multiplicative’ operations,
+namely addition and multiplication themselves! Most importantly, these are readily interpretable
+operations which are already used in quantitative mathematics (probability theory, statistics,
+machine learning, etc.), in the very losses where the semantics of a spec is put in property-driven
+training.
+When thisnaturality principleis not respected, even sacrificing logic for analysis does not
+guarantee success: [31] shows that, on a representative set of verification problems, none of the
+most popular differentiable logics can successfully translate minimisation of the logical loss into
+good verification performance, as measured by special-purpose verifiers such as Marabou [37].
+Hence our second thesis is that
+a logic for NNV should have semantics innaturalandanalytically adequateoperations,
+without sacrificing the additives of the proof calculus.
+1.2 Our contribution: quantitative logic as a new paradigm
+In this paper we propose a new logical paradigm to solve all these challenges at once,quantitative
+logic. Logicsabout quantity(such as fuzzy logics, continuous model theory [ 56], or the logics
+of the Lawvere quantale from [ 6, 7]), concern formulae with intended semantics in the reals,
+but their notion of logical validity remains a yes-or-no affair. Rather, following Martin-Löf [46]
+and Lawvere [41], we maintain thata quantitative logic shall have quantitativeproofsand
+quantitativejudgments, and thus also a quantitative notion ofsatisfaction. In particular, Lawvere
+argued convincingly that suchgeneralized logics[ 41] arise byenrichingthe entailment relation in
+a suitably structuredalethic theory(our terminology) V—for us, a structure of extended reals.
+Our first contribution is to propose a proof-theoretic counterpart to Lawvere’s ideas in the
+quantitative realm. We introducequantitative sequent calculi, which are calculi ‘enriched’ in
+one of the algebraic structures presented in Table 1 (and later in Section 2). In such an ‘enriched’
+calculus, we can choose any operation onV to join the premises of a rule and any constant on
+
+=== PDF PAGE 6 ===
+Adequate Losses via Quantitative Linear Logic 6
+polarity additive multiplicative
+duality
+𝑎∗ :=1/𝑎
+positive
+⊥:=0
+𝑎⊕ 𝑝𝑏
+⊥:=0
+𝑎⊕∞𝑏:=𝑎∨𝑏𝑝→∞
+1:=1
+𝑎⊗𝑏 ∞⊗0 :=0
+negative
+⊤:=∞
+𝑎⊕−𝑝𝑏
+⊤:=∞
+𝑎⊕−∞𝑏:=𝑎∧𝑏𝑝→∞
+1:=1
+𝑎⊗∗𝑏 ∞⊗∗ 0 :=∞
+Table 1.The family of algebraic structures we collectively refer to as themultiplicative reals [0,∞]⊕𝑝,⊗ .
+Each0 <𝑝≤∞ gives a choice of additives. Red and blue backgrounds denote, respectively, disjunctive and
+conjunctive operations, based on the behaviour of their restriction to{0,+∞}. Positive and negative polarities
+relate to each other via De Morgan duality.
+V to be the premise of an axiom. The proof-theoretic properties of the calculus become then
+tightly related to the way this assignment is done.
+Thus the choices of Table 1 and Figure 3 are essentially dictated by cut-elimination (Theorem 4.1),
+for which we need that the operations used for multiplicative rules distribute over the ones we
+choose for additive ones. Indeed, having decided to use multiplication for multiplicative rules, our
+additives must necessarily [3, 42] be𝑝-sums3 which are the operations defined as:
+0<𝑝<∞, 𝑎⊕ 𝑝𝑏=(𝑎 𝑝+𝑏𝑝)1/𝑝, 𝑎⊕ −𝑝𝑏=(𝑎 −𝑝+𝑏−𝑝)−1/𝑝,
+with the convention𝑎+∞=∞ . Notably, by taking the limit𝑝→∞ one recovers⊕−∞ =∧ and
+⊕∞ =∨ . We describe this structure in more detail in Section 2.
+By decorating multiplicative rules with multiplication and additive rules with (harmonic) 𝑝-
+sums, we then obtain a family of quantitative analogues to (isomix) MALL, which we call𝑝QLL
+(𝑝-hard Quantitative Linear Logic)—see Figure 3. The annotations on the rules are then used to
+define a quantitative notion ofvalidity, in the form of a function |−| that evaluates proof trees by
+traversing them and aggregating the constants in the leaves using the operations specified by the
+rules. A sequent’s provability is then the supremum of the validity of all its proofs.
+With this notion in hand, we can solve all the aforementioned problems. Here is an outline
+of the paper and of such a solution:
+(1) After elaborating on Table 1 in Section 2, in Section 3 we introduce quantitative calculi and
+𝑝QLL specifically. In Section 4, we prove various proof-theoretic results:𝑝QLL admits cut-
+elimination (Theorem 4.1 proven in Appendix B), with all its usual consequences; we show
+provability of a sequent in MALL is equivalent to that sequent having positive provability in
+3Note these are Yager’s ‘𝑠-norms’ from [57] but without truncation to[0,1].
+
+=== PDF PAGE 7 ===
+Adequate Losses via Quantitative Linear Logic 7
+(a)Structural Rules
+1 AX𝐴⊢𝐴
+1 EMP⊢
+0 EFQΓ⊢Δ
+Γ⊢𝐴,Δ⊗Γ ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+Γ⊢Δ⊗Γ ′⊢Δ′
+MIXΓ,Γ′⊢Δ,Δ ′
+(b)Rules for Multiplicatives
+1 1L1⊢
+Γ⊢𝐴,Δ (−)⊥
+LΓ,𝐴⊥⊢Δ
+Γ,𝐴⊢Δ (−)⊥
+RΓ⊢𝐴 ⊥,Δ
+1 1R⊢1
+Γ,𝐴⊢Δ⊗Γ ′,𝐵⊢Δ ′ &
+L
+Γ,Γ′,𝐴 &𝐵⊢Δ,Δ ′
+Γ,𝐴,𝐵⊢Δ ⊗L
+Γ,𝐴⊗𝐵⊢Δ
+Γ⊢𝐴,𝐵,Δ &
+R
+Γ⊢𝐴 &𝐵,Δ
+Γ⊢𝐴,Δ⊗Γ ′,⊢𝐵,Δ ′
+⊗R
+Γ,Γ′⊢𝐴⊗𝐵,Δ,Δ ′
+(c)Rules for Additives
+∞ ⊥L
+Γ,⊥⊢Δ
+∞ ⊤R
+Γ⊢⊤,Δ
+Γ,𝐴⊢Δ⊕ −𝑝 Γ,𝐵⊢Δ ∨LΓ,𝐴∨𝐵⊢Δ
+Γ,𝐴⊢Δ⊕ 𝑝 Γ,𝐵⊢Δ ∧LΓ,𝐴∧𝐵⊢Δ
+Γ⊢𝐴,Δ⊕ 𝑝 Γ⊢𝐵,Δ ∨RΓ⊢𝐴∨𝐵,Δ
+Γ⊢𝐴,Δ⊕ −𝑝 Γ⊢𝐵,Δ ∧RΓ⊢𝐴∧𝐵,Δ
+Fig. 3.Rules of𝑝-hard Quantitative Linear Logic (𝑝QLL).
+𝑝QLL (Theorem 4.4) or provability above1in∞QLL (Theorem 4.7); and finally that provability
+in𝑝QLL converges to provability in∞QLL as𝑝→+∞.
+(2) Then, in Section 5 we look at the model theory. We formulate a notion of algebraic model,
+softales, which generalizes residuated lattices and metric spaces by enriching the order
+structure in the multiplicative reals, and supports a ‘soft’ notion of lattice connectives: in
+this way, for𝑝<∞ ,the proof calculi 𝑝QLL provide the first instance in the literature
+of additive rules with a differentiable semantics, specifically in the canonical model
+V=[ 0,∞]⊗. This also allows us to have a quantitative notion of satisfaction, for which we
+prove a kind of completeness result (Theorem 5.18)—this addresses the last of the arrows in
+Figure 1.
+(3) Finally, in Section 6 we show how our theory works as a foundation for NNV in the restricted
+case of propositional specifications. There we formulate thefirst quantitative adequacy
+theorem for a differentiable logic(Theorem 6.4), in the form 𝑒−J𝜑K =|⊢T𝜑| where T is a
+suitably defined𝑝QLL-theory pertaining to the specific verification problem at hand.
+Acknowledgments.We thank Jairo Marulanda–Giraldo, Enrico Marchioni, and David Jaz Myers
+for helpful discussions. We also thank Janis Bailitis for proof-reading an early draft of this paper,
+
+=== PDF PAGE 8 ===
+Adequate Losses via Quantitative Linear Logic 8
+and for mechanizing most of the paper [ 12]. We thank the anonymous reviewers of an earlier
+draft of this paper for their helpful corrections and suggestions.
+2 The positive reals
+Consider the extended positive reals [0,∞] with their usual order≤. It supports a breadth of
+structure we now describe. We start from(conjunctive) multiplication, i.e. the following
+extension of the usual arithmetic multiplication:
+𝑎⊗𝑏 0𝑎∈(0,∞) ∞
+0 0 0 0
+𝑏∈(0,∞) 0𝑎𝑏∞
+∞ 0∞ ∞
+(1)
+To see why we call it conjunctive, look at its action on{0,∞} . It is commutative, associative, and
+unital, and we call the resulting ordered monoid themultiplicative realsand denote it by[0,∞]⊗.
+Crucially,inversionyields a duality (−)∗ :[0,∞] op→[ 0,∞]
+𝑎∗ 0𝑎∈(0,∞) ∞
+∞1/𝑎0
+(2)
+which is also uniquely characterized by the property
+𝑎⊗𝑏≤𝑐 ∗ ⇐⇒𝑎≤(𝑏⊗𝑐) ∗.(3)
+This makes([ 0,∞],≤, 1,⊗,(−) ∗) into a∗-autonomous monoidal poset [13], which is a kind of
+(totally ordered and) involutive commutative residuated lattice (see [19, Chapter IV]).
+By De Morgan duality, we obtain a second ‘multiplicative’ operation,⊗∗ (disjunctive multipli-
+cation), which differs from the first only in that0⊗∗∞=∞ . In particular,⊗ linearly distributes
+over⊗∗ in the sense of [ 22]:
+(𝑎⊗∗𝑏)⊗𝑐≤𝑎⊗ ∗(𝑏⊗𝑐).(4)
+Moreover, since1∗ = 1—and thus 𝑎⊗𝑏≤𝑎⊗ ∗𝑏—we say the operations areisomix, in the
+terminology of [21]. The residuation is explicitly given by 𝑎⊸𝑏=𝑎 ∗⊗∗𝑏. This means 𝑎≤
+
+=== PDF PAGE 9 ===
+Adequate Losses via Quantitative Linear Logic 9
+𝑏⊸𝑐⇐⇒𝑎⊗𝑏≤𝑐 .
+𝑎⊸𝑏 0𝑎∈(0,∞) ∞
+0 ∞0 0
+𝑏∈(0,∞) ∞𝑏/𝑎0
+∞ ∞ ∞ ∞
+(5)
+We sometimes abuse notation and write 𝑏/𝑎 for𝑎⊸𝑏 .
+Now, on the poset[0,∞] , considersum ⊕, trivially extended to∞, and its De Morgan dual,
+harmonic sum[ 36]:
+𝑎⊕∗𝑏:=(𝑎 ∗⊕𝑏∗)∗.(6)
+Choosing0 <𝑝<∞ , we can conjugate these operations by exponentiation4 to obtain𝑝-sums
+andharmonic 𝑝-sums:
+𝑎⊕ 𝑝𝑏:=(𝑎 𝑝⊕𝑏𝑝)1/𝑝, 𝑎⊕ −𝑝𝑏:=(𝑎 𝑝⊕∗𝑏𝑝)1/𝑝.
+These operations are all commutative and associative. The𝑝-sums have unit0and absorbing
+element∞, while harmonic𝑝-sums have unit∞ and absorbing element0. It is well-known that,
+as𝑝→∞ , these ‘soft’ operations converge pointwise to ‘hard’ ones, namely max (∨) and min
+(∧) on [0,∞] :
+Lemma 2.1(Additive Collapse).
+𝑎⊕ 𝑝𝑏−→
+𝑝→∞
+𝑎∨𝑏, 𝑎⊕ −𝑝𝑏−→
+𝑝→∞
+𝑎∧𝑏,(7)
+Proof.Classical, see e.g. [49].□
+Thus we can consider𝑝 as adegree of hardness(with its inverse1 /𝑝 beingsoftnessproper 5),
+which governs, ultimately, how much idempotency we have renounced, since2−1/𝑝≤𝑎/(𝑎⊕ 𝑝𝑎)
+for𝑝<∞ . Despite this difference,⊕𝑝 and⊕−𝑝 behave remarkably like their hard counterparts:
+Lemma 2.2.Let0<𝑝≤∞, then:
+(1) for𝑎≤𝑎 ′, we have𝑎⊕ −𝑝𝑏≤𝑎 ′⊕−𝑝𝑏,and𝑎⊕ 𝑝𝑏≤𝑎 ′⊕𝑝𝑏;
+4Extended by0𝑝 =0and∞ 𝑝 =∞for all𝑝. We do not exponentiate either by0or∞.
+5These are similar to ‘temperature’ and ‘coldness’ in statistical mechanics [11].
+
+=== PDF PAGE 10 ===
+Adequate Losses via Quantitative Linear Logic 10
+(2) for all𝑎,𝑏∈[0,∞],𝑎⊕ −𝑝𝑏≤𝑎≤𝑎⊕ 𝑝𝑏;
+(3) for𝑝≤𝑞 ,𝑎⊕−𝑝𝑏≤𝑎⊕ −𝑞𝑏, 𝑎⊕ 𝑞𝑏≤𝑎⊕ 𝑝𝑏;and thus 𝑎⊕−𝑝𝑏≤𝑎∧𝑏 and𝑎∨𝑏≤𝑎⊕ 𝑝𝑏;
+The most important fact about𝑝-sums and multiplication, however, is the following:
+Lemma 2.3.Conjunctive multiplication distributes over𝑝-sum, i.e.:
+(𝑎⊗𝑏)⊕ 𝑝(𝑎⊗𝑐)=𝑎⊗(𝑏⊕ 𝑝𝑐).(8)
+Dually, disjunctive multiplication distributes over harmonic𝑝-sum:
+(𝑎⊗∗𝑏)⊕ −𝑝(𝑎⊗∗𝑐)=𝑎⊗ ∗(𝑏⊕−𝑝𝑐).(9)
+Corollary 2.3.1.
+𝑐⊸(𝑎⊕ −𝑝𝑏)=(𝑐⊸𝑎)⊕ −𝑝(𝑐⊸𝑏),(𝑎⊕ 𝑝𝑏)⊸𝑐=(𝑎⊸𝑐)⊕ −𝑝(𝑏⊸𝑐). (10)
+Lemma 2.4.We also have
+0≤𝑎⊗ ∗ 0and(𝑎⊗ ∗𝑏)⊕ 𝑝(𝑎⊗∗𝑐)=𝑎⊗ ∗(𝑏⊕ 𝑝𝑐),
+and dually
+𝑎⊗∞≤∞and𝑎⊗(𝑏⊕ −𝑝𝑐)=(𝑎⊗𝑏)⊕ −𝑝(𝑎⊗𝑐).
+Corollary 2.4.1.
+𝑐⊸(𝑎⊕ 𝑝𝑏)=(𝑐⊸𝑎)⊕ 𝑝(𝑐⊸𝑏),(𝑎⊕ −𝑝𝑏)⊸𝑐=(𝑎⊸𝑐)⊕ 𝑝(𝑏⊸𝑐). (11)
+As an anticipation of the logical meaning these operations will assume later, and in order to
+introduce the necessary terminology, we recommend revisiting Table 1.
+2.1 Varying hardness
+All in all, for each0 <𝑝≤∞ , we get a structure we denote as[0,∞]⊕𝑝,⊗. Later, in Section 5, we will
+introduce its abstract algebraic form—that ofsoftale. For now, note that[0,∞]⊕𝑞,⊗ [ 0,∞]⊕𝑝,⊗
+for every0 <𝑝,𝑞<∞ , where the isomorphism means that there is a bijection, given by the
+power map(−)𝑝/𝑞, that commutes with duality, tensor, and𝑝-sums. For𝑞=∞ this map is not
+bijective and onlylaxsum-preserving, i.e. 𝑎0⊕𝑝𝑏0≤(𝑎∨𝑏) 0.
+
+=== PDF PAGE 11 ===
+Adequate Losses via Quantitative Linear Logic 11
+Thus there really are two isomorphism classes of the structure we just presented, thesoftone,
+epitomized by[0,∞]⊕1,⊗, and ahardone, [0,∞]⊕∞,⊗≡[ 0,∞]∨,⊗. When it comes to practical
+verification, however, the choice of𝑝 influences the denotations and therefore the loss values,
+motivating our study for any value of 𝑝.
+Finally, while the algebraic structure just described is particularly natural on[0,∞] ,[−∞,+∞] op
+supports precisely the same structure, as witnessed by the so-calledNapier’s isomorphism([ 15,
+§2.2])−log⊣ 1/exp. Through this isomorphism, theLawvere quantale L [6, 41] can be identified
+with the restriction at[1,∞] of the hard (multiplicative) reals.
+2.2 Qualitative truth
+When using[0,∞]⊕𝑝,⊗ as the object of truth values, we will often feel the need to compare it back
+to the usual truth values Prop. There are various possibilities, that we callqualitative modes,
+with different desirable properties. 6
+In theadditive mode, we consider 𝑎= 0‘false’ and everything else ‘true’. Thus the map casting
+from ‘quantitative’ to ‘qualitative’ truth is
+0<_:[0,∞]−→Prop(12)
+Notice this commutes with the conjunctive operations (⊗ and⊕−𝑝), which are both mapped to
+∧. Likewise⊕𝑝 is mapped to∨, but note⊗∗ is not preserved. Rather, we can only say that𝑎> 0
+and𝑏> 0imply 𝑎⊗∗𝑏> 0(so ⊗∗ laxly commutes with∧), and that𝑎⊗∗𝑏> 0implies 𝑎> 0or
+𝑏> 0(⊗∗ colaxlycommutes with ∨). Negation is not preserved either way.
+In themultiplicative mode, we pick1as threshold of truth and consider
+1≤_:[0,∞]−→Prop(13)
+Conjunctive operations (⊗ and⊕−𝑝) laxly commute with∧, while disjunctive ones (⊗∗ and⊕𝑝)
+colaxly commute with∨. When𝑝=∞ ,⊕𝑝 and⊕−𝑝 are preserved strongly. We also have𝑎> 1
+implies1 ≤𝑎 ∗.
+6Other choices are discussed in [15, §2.3].
+
+=== PDF PAGE 12 ===
+Adequate Losses via Quantitative Linear Logic 12
+3 Quantitative Calculi
+We now fix0 <𝑝≤∞ , and thus[0,∞]⊕𝑝,⊗ as the ‘alethic theory’ (as introduced in Section 1)
+in which to ‘enrich’ our logic. We now define precisely how we make use of the structure of
+[0,∞]⊕𝑝,⊗ in a quantitative calculus.
+3.1 Definitions
+Let Φ be alanguage, i.e. a set offormulae. A 𝑝-hard (quantitative) calculuspertaining Φ deals
+with sequents Γ⊢Δ where Γ,Δ are cedents Γ,Δ... , i.e. finite multisets7 of formulae, including
+the empty one.
+In a quantitative calculus, sequents are combined instructures, which are entities defined
+as follows
+HFΓ⊢Δ|𝑟|H⊗H|H⊗ ∗H|H⊕ 𝑝H|H⊕ −𝑝H(14)
+where Γ⊢Δ ranges in the possible sequents in the language Φ while𝑟 ranges in[0,∞] .
+A structure of sequents involving no sequent is calledclosed, while a structure of sequents
+consisting of a single sequent is calledunary. We remark that closed structures can beevaluated
+to real numbers, butper seare syntactic objects. We call the result of evaluating a closed structure
+K itsalethic valueorvalidity, and write it as |K|.
+Arulehas the form H
+H′. Itspremisesare the sequents appearing in H and itsconclusions
+those appearing inH′. It is anaxiomif the top structure of sequents is closed. A set of rules
+R is acalculus.
+Definition 3.1.Aderivationin the calculus R is defined inductively as follows (where∗∈
+{⊗,⊗∗,⊕𝑝,⊕−𝑝}):
+(1) for eachH, theidentity derivation H idH
+H is a derivation;
+(2) every instantiation of a rule inRis a derivation,
+(3) if
+H.....𝛿1
+I
+and
+I.....𝛿2
+K
+are derivations, so is
+H.........
+𝛿1
+𝛿2
+K
+7Being multisets, we do not considered them ordered, and thus omit exchange rules from the calculi.
+
+=== PDF PAGE 13 ===
+Adequate Losses via Quantitative Linear Logic 13
+(4) if
+H1.....𝛿1
+K1
+and
+H2.....𝛿2
+K2
+are derivations, so is
+H1∗H 2.....𝛿1∗𝛿 2
+K1∗K 2
+We stress that a derivation can only mention finitely many rules.
+Notation 3.2.A derivation 𝛿 ofH is thus denoted as
+.....𝛿
+H
+or
+.....𝛿′
+𝑅
+H
+if we want to make the last
+rule explicit. It follows that a composite derivation in which the last rule of each operand is explicit
+can be written in either of two ways:
+.....𝛿′
+1∗𝛿′
+2
+𝑅1∗𝑅 2
+H1 ∗ H2 𝑅
+K
+.....𝛿′
+1
+𝑅1
+H1 ∗
+.....𝛿′
+2
+𝑅2
+H2 𝑅
+K
+(15)
+Even though this definition accommodates derivations with DAG structure, when a calculus
+iscounary(i.e. all of its rules have conclusions given by unary structures), derivations are in
+the shape of forests. This will be the case for 𝑝QLL.
+Aclosedderivation is a derivation where the top structure of sequents is closed. Aproofis a
+closed derivation where the bottom structure of sequents is unary. Thevalidity|𝛿| of a closed
+derivation𝛿 is the alethic value of its top structure of sequents.
+Example 3.3.Here is the computation of the validity of a proof in1QLL:
+
+1 AX𝐴⊢𝐴⊕ −1
+1 AX𝐴⊢𝐴 ∨L𝐴∨𝐴⊢𝐴
+ =
+ 1 AX𝐴⊢𝐴
+⊕−1
+ 1 AX𝐴⊢𝐴
+ =1⊕ −1 1=1/2.(16)
+Theprovability |Γ⊢Δ |R of a sequent Γ⊢Δ in the calculusR is the supremum of the validity
+of its proofs:
+|Γ⊢Δ |R :=
+Ü(
+|𝜋|
+
+....𝜋
+Γ⊢Δ
+closed
+)
+(provability)
+By replacing Γ⊢Δ with a structure of sequents, we extend the above definition8. Observe that, as
+a consequence, any derivation fromH toH′ witnesses that|H|≤|H′|.
+8Observe there is a different way to extend the definition of provability to structures of sequents, by induction on their
+structure. For a counary calculus these two coincide, but not in general.
+
+=== PDF PAGE 14 ===
+Adequate Losses via Quantitative Linear Logic 14
+Thus the mere existence of a proof does not qualify a sequent as provable, since a sequent
+might admit proofs of provability0(invalidproofs); likewise, when a given sequent does not
+admit any proof, its provability is Ô∅= 0.
+Note, therefore, that to know the provability of a sequent it is not enough to findaproof, but
+potentiallyall proofsare necessary. For 𝑝QLL below, we prove cut-elimination and thus are able to
+decidethe provability of a sequent, i.e. find in finite time its provability, by showing only finitely
+many proofs need to be checked, see Theorem 4.3. In any case, in applications one is usually
+concerned with bounding below the provability of a sequent, rather than establishing its precise
+value, and for that a single proof suffices.
+Finally, we say that a ruleH 𝑅
+H′ isadmissiblein a calculus R when|K|R =|K|R∪{𝑅} for any
+structure of sequentsK. Usually this means there is an effective procedure which, given a closed
+derivation ofH yields a closed derivation ofH′ of equal or greater validity. This is an important
+notion that arises variously in the rest of the paper, most prominently in Theorem 4.1.
+3.1.1 Hypersequent calculi & enriched calculi.Quantitative calculi are reminiscent of hypersequent
+calculi9, in which sequents are also organized in a further level of structure. Indeed, the fact that
+some fuzzy logics require more complex sequent structures has been observed many times [5, 17,
+18]. Let us show that our enriched setting coheres with (and generalises) that tradition. Formally,
+a hypersequent is just a (possibly empty) multiset of sequents, written
+H=Γ 1⊢Δ 1|···|Γ 𝑛⊢Δ 𝑛 (17)
+Rules in a hypersequent calculus have a conjunctive structure of hypersequents as premises,
+where a distinguished sequent is accompanied by ahypercontext(orside sequents), the Gs below:
+G|Γ⊢Δ··· G ′|Γ ′⊢Δ′
+𝑅
+G′′|Γ ′′⊢Δ′′ (18)
+We now comment on their link.
+The above definitions can be easily generalized to alethic values other than[0,∞]⊕𝑝,⊗. It suffices
+to fix such an objectV and some algebraic structure on it, and then a notion of V-enriched
+calculusensues. Specifically, one can pick the usual truth values Prop and consider various
+structures on it. In sequent calculus the tacit choice of(Prop,⊤,∧) is made: premises of rules are
+conjunctive structures of sequents and the only closed structure is ⊤.
+9Due to Pottinger [51] and Avron [4], see [48] for a modern account.
+
+=== PDF PAGE 15 ===
+Adequate Losses via Quantitative Linear Logic 15
+Hypersequent calculi can be seen as Prop-enriched calculi, but where Prop is now also consid-
+ered with∨. Then hypersequents become truly disjunctive expressions of sequents:
+H=Γ 1⊢Δ 1∨···∨Γ 𝑛⊢Δ 𝑛 (19)
+and rules are expressions in conjunctive normal form. In fact, most hypersequent calculi have rules
+whose premises all share the same hypercontextG, in which case they reduce to ones of the form
+G ∨ (Γ′⊢Δ′ ∧···∧Γ ′⊢Δ′) 𝑅G ∨Γ ′′⊢Δ′′ (20)
+When presented in this way the hypercontext can be dropped since, by our definition of derivation
+in a quantitative calculus, those can always be added back. This makes the translation from a
+sequent calculus completely trivial.
+In Section 4.2, we will use these considerations to compare quantitative calculi such as𝑝QLL
+with its hypersequent relatives.
+3.2 The𝑝QLL Calculus
+We are finally ready to introduce the quantitative calculi this work is about, parametric in a
+choice of0 <𝑝≤ ∞ .
+Notation 3.4.We deviate from traditional linear logic notation in denoting by ⊤ and⊥ the
+additiveunits and with1the (coinciding)multiplicativeones. We keeptensoras ⊗ andparas &
+but use∧/∨for the additive connectives.
+Definition 3.5.Fix a set ofpropositional variables 𝑉 . Aformula of 𝑝QLL with propositional
+variables in𝑉is defined inductively as follows:
+𝐴F𝑎,𝑎 ⊥ ((negated) propositional variable𝑎∈𝑉)
+|1|𝐴⊗𝐴|𝐴 &𝐴(multiplicatives)
+|⊥|⊤|𝐴∨𝐴|𝐴∧𝐴(additives)
+
+=== PDF PAGE 16 ===
+Adequate Losses via Quantitative Linear Logic 16
+Negation(−)⊥ is a syntactic transformation defined by
+(𝑎)⊥≡𝑎⊥,(𝑎 ⊥)⊥≡𝑎,1 ⊥≡1,⊥ ⊥≡⊤,⊤ ⊥≡⊥,
+(𝐴⊗𝐵) ⊥≡𝐴⊥ &𝐵⊥,(𝐴 &𝐵)⊥≡𝐴⊥⊗𝐵⊥,
+(𝐴∨𝐵) ⊥≡𝐴⊥∧𝐵⊥,(𝐴∧𝐵) ⊥≡𝐴⊥∨𝐵⊥,
+(21)
+We also employ the abbreviation 𝐴⊸𝐵≡𝐴 ⊥ &𝐵.
+𝑝QLL is the calculus presented in Figure 3. For conceptual clarity it is laid out as a two-sided
+calculus, though there is a perfect duality which makes the left rules derivable from the right ones,
+andvice versa. This is due to the definition of negation we just gave and the rules (−)⊥
+L /(−)⊥
+R .
+𝑝QLL is conceived as an analogue of the usual (two-sided) sequent calculus of MALL (see
+Section 4.2) ‘in the alethic metatheory of the 𝑝-reals’—giving asoftversion when 𝑝<∞ , or
+ahardone at 𝑝=∞ . Like in MALL, the rules for connectives are split into multiplicative and
+additive fragments (Figure 3c–3b).
+The multiplicative fragment of𝑝QLL is essentially identical to that of MALL, with the notable
+exception of being ‘isomix’ [21], in the sense that the units for⊗ (tensor) and &(par) coincide—this
+is implicit by having left and right introduction rules for the same constant1, i.e.1 L and1 R.
+The additive fragment is also essentially identical to the corresponding rules in hypersequent
+calculi for MALL (see e.g. Figure 8), though being quantitative has its consequences. Let’s look
+at∨R: to introduce a disjunction𝐴∨𝐵 on the right of the sequent, either𝐴 or𝐵 do not suffice—
+rather we need tosuma proof of 𝐴 and one of𝐵 in the same context. The result is a suggestive
+‘superposition principle’ for proofs involving additives, whereby we never make a choice of what
+we prove but we have obligations for all possible branches, which are then accumulated by sum
+(or dually, harmonic sum).
+Remark 3.6.Note that this ‘disjunctive branching’ is optional in hypersequent MALL (Figure 8),
+since the usual rules inherited from the sequent calculus (in which only one premise in∧L and
+∨R is sufficient) are interadmissible with these ones—see [48, Lemma 4.30]. This is also true for
+𝑝=∞in this calculus (Lemma 4.5), but not in the soft versions.
+As for the structural rules (Figure 3a), these also merit some attention.CUT and AX are standard.
+We note that, while AX is restricted to the introduction of unary cedents, by MIX (and EMP) we
+can easily extend it to arbitrary cedents. Note that EMP is derivable by cutting1 L against1 R,
+though we keep it in the core calculus to avoid having to add it back in the cut-free calculus.
+
+=== PDF PAGE 17 ===
+Adequate Losses via Quantitative Linear Logic 17
+Finally, EFQ (Ex Falso Quodlibet) is also quite innovative, since usually adding ‘invalid’ rules
+to the calculus is not something considered desirable. Despite allowing to construct a proof of
+any sequent, proofs thus constructed have validity0, thus we remain perfectly consistent (as
+proven later in Theorem 4.2).
+Still, EFQ is far from useless! To see why, consider a proof like
+1 AX𝐴⊢𝐴⊕ 𝑝
+0 EFQ𝐴⊢𝐵 ∨L𝐴⊢𝐴∨𝐵
+(22)
+Even though the branch for𝐴⊢𝐵 does not contribute to the validity of the proof, the whole proof—
+which has positive validity—could not be written down if we did not have a proof for 𝐴⊢𝐵 10.
+Predictably, this argument falls through at𝑝=∞ and there EFQ iseliminable, see Lemma 4.6.
+In fact, EFQ might be considered a catch-all axiom for external structural rules, as can be
+evidenced by the proof of the following:
+Lemma 3.7(Admissibility of the structural schema).Consider the algebraic structure defined in (14),
+and suppose𝑡(𝑥 1,...,𝑥 𝑛) and𝑠(𝑥 1,...,𝑥 𝑛) be terms11 of it. If|𝑡|≤|𝑠| pointwise when evaluated 12in
+[0,∞]⊕𝑝,⊗ , then the rule
+𝑡(Γ 1⊢Δ 1, ...,Γ 𝑛⊢Δ 𝑛)
+𝑠(Γ 1⊢Δ 1, ...,Γ 𝑛⊢Δ 𝑛) (𝔰𝔱𝔯)
+is admissible in any𝑝-hard counary calculus admitting EFQ.
+Proof. Consider a closed derivation𝛿 ending in 𝔰𝔱𝔯. Since the calculus is counary (all rules
+end in a sequent), the derivation above 𝔰𝔱𝔯 will be given by a combination of proofs of each of
+its premises, which in turn correspond to a variable occurrence in𝑡. Thus, for each variable𝑥𝑖
+in the context of 𝑡, we define 𝜋𝑖 to be the proof of maximal validity amongst those that insist
+(in𝛿) on an occurrence of Γ𝑖⊢Δ 𝑖 in the premise of 𝔰𝔱𝔯—note that𝑥∗𝑦≤(𝑥∨𝑦)∗(𝑥∨𝑦) for
+every connective∗∈{⊗,⊗ ∗,⊕𝑝,⊕−𝑝}. If𝑥𝑖 does not appear in 𝑡, then𝜋𝑖 =EFQ . Excising the
+derivation above 𝔰𝔱𝔯 and replacing it with the derivation𝑠(𝜋 1,...,𝜋 𝑛), we obtain a new derivation
+with validity𝑠(|𝜋1|,..., |𝜋𝑛|)≥𝑡( |𝜋1|,..., |𝜋𝑛|)≥ |𝛿|, as desired.□
+10Note that𝐴 and𝐵 are metavariables, thus the actual validity of𝐴⊢𝐴∨𝐵 might differ. Still, there are instances of
+sequents𝐴⊢𝐵 which are not provable otherwise, e.g.𝑎⊢𝑏 for𝑎,𝑏 propositional variables, and thus the argument still
+applies.
+11Thus, rather than ‘structures of sequents’,𝑡 and𝑠 are constructed out of a countable supply of fresh variables–rather
+than sequents—and the same red connectives considered in (14).
+12Here we mean that, for all 𝑎1,...,𝑎 𝑛∈[ 0,∞] , we can prove|𝑡|(𝑎1,...,𝑎 𝑛)≤ |𝑠|(𝑎1,...,𝑎 𝑛) in the ambient theory
+where the structure of the alethic values live.
+
+=== PDF PAGE 18 ===
+Adequate Losses via Quantitative Linear Logic 18
+This result effectively grants us the use of any of the properties of ⊗,⊗∗,⊕𝑝, and⊕−𝑝 in
+[0,∞]⊕𝑝,⊗ at the level of structures of sequents, since any such ‘generalized’ derivation is in fact
+rewritable to a proper derivation, as illustrated by the proof.
+Its significance is in granting𝑝QLL (and other calculi to which it applies) the same ergonomics
+that traditional sequent calculi enjoy, in which we do not worry about discharging premises in a
+particular order. For instance, we can show that the following ‘external structural rules’ familiar
+from hypersequent calculi [ 48, Chapter 4] are admissible:
+Γ⊢Δ EW
+Γ⊢Δ⊕ 𝑝 Γ′⊢Δ′
+Γ⊢Δ⊕ −𝑝 Γ′⊢Δ′
+ECOWΓ⊢Δ
+Γ⊢Δ•Γ ′⊢Δ′
+EE•
+Γ′⊢Δ′ •Γ⊢Δ
+for•∈{⊗,⊗ ∗,⊕𝑝,⊕−𝑝}
+(23)
+Example 3.8.To illustrate the proof of Lemma 3.7, consider EW, which corresponds to taking
+𝑡(𝑥 1)=𝑥 1 and𝑠(𝑥 1,𝑥 2)=𝑥 1⊕𝑝 𝑥2: indeed𝑎≤𝑎⊕ 𝑝𝑏 for all𝑎,𝑏∈[ 0,∞] . A closed derivation
+𝛿= 𝜋
+EW is depicted below left. Following the recipe in the proof, we set 𝜋1 :=𝜋 (the unique
+premise insisting on𝑥1), and𝜋2 :=EFQ since𝑥2 does not occur in𝑡. Excising the application of
+EW and replacing it with𝑠(𝜋 1,𝜋 2)=𝜋 1⊕𝑝 𝜋2, we obtain the rewritten derivation below right
+whose validity is|𝜋|⊕𝑝 0= |𝜋| =|𝛿|, as desired.
+....𝜋
+Γ⊢Δ EW
+Γ⊢Δ⊕ 𝑝 Γ′⊢Δ′
+↦→
+....𝜋
+Γ⊢Δ⊕ 𝑝
+0 EFQΓ′⊢Δ′
+id
+Γ⊢Δ⊕ 𝑝 Γ′⊢Δ′
+(24)
+4 Proof-theoretic and computational properties
+In this section, we discuss the common results traditionally expected from a sequent system, and
+explain the key technical challenges that arise in our journey towards a combination oflinearity
+andquantitativityof the truth values.
+4.1 Cut-elimination and its consequences
+Cut-elimination is a desirable property of sequent calculi as it affords the subformula property,
+the consistency, and even, in some cases, completeness [14] of the logic in question. Because of
+this, any new logic introduced in the last century is subject to the test, and so is ours:
+Theorem 4.1(Cut-elimination).Let 𝑝QLLCUT be the calculus obtained by removing CUT from
+𝑝QLL. Then|Γ⊢Δ |𝑝QLL =|Γ⊢Δ |𝑝QLLCUT.In other words,𝑝QLL CUT admits CUT.
+
+=== PDF PAGE 19 ===
+Adequate Losses via Quantitative Linear Logic 19
+Proof. Since𝑝QLLCUT⊆𝑝QLL (as rule-sets), then clearly provability for the latter cannot be
+smaller than provability for the first (there are more proofs in𝑝QLL, which means the supremum of
+(provability) runs over a larger set). Conversely, in Appendix B, we describe a proof transformation
+from𝑝QLL to𝑝QLLCUT that is non-decreasing in validity. Our proof method is very classical, and
+follows Melliès’ [47] and the Linear Logic Handbook’s [ 52]13. The reader can read it in full in
+Appendix B. Here we sketch the rough idea: given a proof
+....𝜋
+Γ⊢𝐴,Δ⊗Γ ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+we rewrite it to a proof𝜋′ with the same conclusion Γ,Γ′⊢Δ,Δ ′, such that either of the three
+conditions on applications of CUT in𝜋′ holds: their number decreases, or they appear at a lower
+depth in the proof, or the cut formulae pertain to a structurally smaller sequent. We also show
+that in this case|𝜋|≤|𝜋′|.
+This defines a deterministic, terminating, validity non-decreasing, proof transformation, as
+required. □
+This cut-elimination result offers support for our general agenda—to show that the proposed
+quantitative upgrade to the sequent calculus is (1) non-trivial and (2) natural from the point of
+view of preceding proof-theoretic tradition.
+For (1), note that our cut-elimination result relies on the notion of proof validity understood
+in a quantitative way, and directly reasons about quantitative validity of proofs that are subject
+to cut-elimination. To the best of our knowledge, this is the first result of this kind, as all prior
+cut-elimination proofs for fuzzy logic (given in e.g. [48]), while relying on quantitative formula
+validity, still had a Boolean validity of sequents and proofs at the alethic level.
+For (2), notice that, despite a seemingly radical revision of the prior tradition, the structure of
+the inductive argument and the termination proof largely follows a classical scheme.
+We observe, moreover, that in most cases that do not involve additives (∨ and∧) we can in
+fact establish that|𝜋| =|𝜋′|. In the other cases, proof validity actually increases, showing that
+the quantitative upgrade did not break the key structural principles that any cut-elimination
+result relies on. In fact, this result generalises cut elimination for MALL, where only one proof
+validity is possible: |𝜋| =|𝜋′| = 1.
+13We followed the latter in our reconstruction of the termination argument.
+
+=== PDF PAGE 20 ===
+Adequate Losses via Quantitative Linear Logic 20
+As an illustration of such matters, consider the following exemplar case from our cut-elimination
+proof. We are aiming to show that the proof that introduces𝐴∨𝐵 as a cut formula:
+....𝜋1
+Γ⊢𝐴,Δ⊕ 𝑝
+....𝜋2
+Γ⊢𝐵,Δ ∨RΓ⊢𝐴∨𝐵,Δ⊗
+....𝜋3
+Γ′,𝐴⊢Δ ′ ⊕−𝑝
+....𝜋4
+Γ′,𝐵⊢Δ ′
+∨LΓ′,𝐴∨𝐵⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+can be transformed into a proof with the same root sequent and an application of CUT on a
+structurally smaller formula. We see that, from the above, we can obtain either of these two proofs:
+....𝜋1
+Γ⊢𝐴,Δ⊗
+....𝜋3
+Γ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+....𝜋2
+Γ⊢𝐵,Δ⊗
+....𝜋4
+Γ′,𝐵⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+Following the standard inductive argument, we obtain that in either of these two cases, the CUT
+is applied on a structurally smaller formula, that is 𝐴 or𝐵, instead of𝐴∨𝐵 . This is analogous
+to the additive disjunction case in Melliès in [47]. However, we are not done—we also need to
+show that we can guarantee that the proof transformation increases proof validity! To proceed,
+we need to prove that
+(|𝜋1|⊕𝑝|𝜋2|)⊗( |𝜋3|⊕−𝑝|𝜋4|)≤( |𝜋1|⊗|𝜋3|)∨( |𝜋2|⊗|𝜋4|),
+which holds in the reals (Lemma A.3). Thus we can, in a deterministic way, pick the option of
+maximal validity (and, by convention, the one involving𝐴 if both validities are equal)14.
+Thus we can guarantee that our proof transformation will construct a proof that has equal or
+greater validity than the one we started from. This completes our argument.
+Cut-elimination still grants the usual consequences, namely, the subformula property and
+consistency.
+Theorem 4.2(Consistency).For every0 <𝑝≤∞ ,𝑝QLL is consistent, i.e. there are sequents whose
+provability is0.
+Proof.In𝑝QLL CUT,⊢⊥can only possibly be proved via EFQ, which has validity0.□
+14Note that we can’t ‘keep both proofs’ by putting them together using EC since(𝑎⊕ 𝑝 𝑏)⊗(𝑐⊕ −𝑝 𝑑)≰ 2−1/𝑝⊗
+((𝑎⊗𝑐)⊕ 𝑝(𝑏⊗𝑑)) . Still, the proof transformation that makes EC admissible (described in Lemma 3.7) acts exactly by
+choosing the maximal validity option, as we do here.
+
+=== PDF PAGE 21 ===
+Adequate Losses via Quantitative Linear Logic 21
+Theorem 4.3(Decidability).For any 𝑝QLL sequent Γ⊢Δ , the supremum defining provability is in
+fact a maximum, i.e. there is a proof𝜋that realizes its provability.
+Proof. The subformula property means there are only a finite number of distinct proofs; see
+Appendix B.6 for full proof.□
+The main take-away message of this section is that, despite the addition of the quantitative
+proof validity, the calculus still retains the constructive nature of the sequent calculus. As further
+evidence of this fact, Bailitis et al. [12] have recently formalised QLL in Rocq, following closely
+the formalisation by Laurent [40], and adding the validity calculation via an ad-hoc recursive
+function, rather than as a part of the inductive relation that defines the calculus rules. As a result,
+the cut-elimination proof by Bailitis follows a structurally identical argument to that of Laurent,
+modulo an additional argument concerning the increase of validity in the cut-free proofs.
+4.2 Hard and qualitative𝑝QLL
+𝑝QLL is related to MALL in two different ways. The first is in astructuralway: ‘qualitatively’,
+𝑝QLL is equivalent to (the isomix15 variant of) the hypersequent calculus for MALL. The second
+way is ‘in the limit’: as mentioned in Section 2, at 𝑝=∞ the additive operations in[0,∞]⊕𝑝,⊗
+collapse to their ‘hard’ variants, i.e. max and min. The corresponding logic,∞QLL (“hard QLL”),
+is thus even closer to MALL, due to the fact that now the rules for additives are interadmissible
+with the classical ones.
+To unburden proofs of inessential bureaucracy, we adopt the same language for formulae of
+both calculi. We thus liberally confuse the sequents of both calculi 16.
+4.2.1 Qualitative 𝑝QLL.By ‘qualitative 𝑝QLL’ we mean the calculus𝑝QLL >0 obtained by replacing
+every⊗,⊕−𝑝 appearing in its rules with∧ and every⊕𝑝 with∨.
+In Appendix C, the reader can find a detailed argument leading to the following theorem—the
+crucial observations have already been made in Section 3.1.1.
+Theorem 4.4.LetΓ⊢Δbe a sequent in qualitative𝑝QLL, then
+Γ⊢Δprovable in HMALL⇔ |Γ⊢Δ |𝑝QLL >0.
+15i.e. MALL + MIX + EMP (which in particular makes the units for tensor and par coincide), terminology from [21].
+16The reader may find it helpful to consult Figures 6 to 8 in Appendix C, laying out a sequent calculus and a hypersequent
+calculus for MALL (HMALL), as well as the qualitative version of𝑝QLL.
+
+=== PDF PAGE 22 ===
+Adequate Losses via Quantitative Linear Logic 22
+4.2.2 Hard QLL.We now turn to ∞QLL: this calculus is still quantitative, unlike 𝑝QLL >0, but
+validity of proofs will always be either0,1, or∞, unless axioms of a different validity are introduced.
+Indeed, the additives at𝑝=∞ are ‘hard’ and thus expected to behave as usual.
+Lemma 4.5.The rules below are admissible in ∞QLL and,vice versa, adding these to ∞QLL∨∞
+R
+make∨∞
+R admissible again.
+Γ⊢𝐴,Δ ∨∞
+R 1Γ⊢𝐴∨𝐵,Δ
+Γ⊢𝐵,Δ ∨∞
+R 2Γ⊢𝐴∨𝐵,Δ
+Proof. Note that one can derive these two rules from ∨𝑝
+R even for finite 𝑝, by using EW
+to introduce the neglected branch. Conversely, suppose given∨∞
+R 1 and∨∞
+R 2, now a derivation
+involving
+....𝜋𝐴
+Γ⊢𝐴,Δ⊕ ∞
+....𝜋𝐵
+Γ⊢𝐵,Δ ∨∞
+RΓ⊢𝐴∨𝐵,Δ
+(25)
+will have validity at least|𝜋𝐴|∨|𝜋𝐵|, which is the same lower bound we get from the unary rules.
+Note this reasoning only works for𝑝=∞.□
+The above obviously dualize to the case of additive conjunction.
+We can also show that:
+Lemma 4.6( EFQ-elimination).Let ∞QLLEFQ be the calculus obtained by removing EFQ from∞QLL.
+Then
+|Γ⊢Δ |∞QLL =|Γ⊢Δ |∞QLLEFQ,(26)
+in other words,∞QLL EFQ admits EFQ.
+Proof. Let∞QLL′ be the calculus obtained by replacing∨∞
+R and∧∞
+L with their unary versions.
+As proven in Lemma 4.5,|Γ⊢Δ |∞QLL =|Γ⊢Δ |∞QLL′, As discussed previously, removing EFQ is
+only problematic in the presence of rules involving additive disjunctive structures as their premise.
+However,∞QLL′ has no such rules.□
+Thus∞QLL is even more similar to MALL than the soft calculi, and in fact we have a stronger
+conservativity theorem:
+Theorem 4.7.LetΓ⊢Δbe a sequent in MALL or∞QLL, then
+Γ⊢Δprovable in MALL⇔ |Γ⊢Δ |∞QLL≥1.(27)
+
+=== PDF PAGE 23 ===
+Adequate Losses via Quantitative Linear Logic 23
+Proof.See Appendix C.□
+We could summarize the section as follows: in the ‘additive’ mode of truth (i.e. being strictly
+positive),𝑝QLL is equivalent to MALL, while in the ‘multiplicative’ mode (i.e. being equal or
+greater than1) only [0,∞]⊕∞,⊗ (the Lawvere quantale) recovers MALL.
+Joining Theorem 4.4 and Theorem 4.7 with the well-known fact that HMALL is equivalent to
+MALL, we have that ifΓ⊢Δ is a sequent in eitherMALL or𝑝QLL or∞QLL, then Γ⊢Δprovable in MALL
+iff|Γ⊢Δ |∞QLL≥ 1iff |Γ⊢Δ |𝑝QLL > 0.
+4.2.3 Approximation.A major motivation for the choice of ⊕𝑝/⊕−𝑝 as semantics for soft additives
+is that the parameter 𝑝 can be used to tune the detachment from hard additives (Lemma 2.1).
+Here we reap the logical consequences of this fact.
+Write as(−)𝑝 the obvious translation of proofs from1 QLL (or really, any𝑞QLL for𝑞<∞ )
+to 𝑝QLL.
+Theorem 4.8(Approximation Theorem).LetΓ⊢Δbe a𝑝QLL sequent, then
+|Γ⊢Δ |𝑝QLL −→
+𝑝→∞
+|Γ⊢Δ |∞QLL.(28)
+Proof. Let𝜋 be a proof of Γ⊢Δ in1 QLL, and consider|𝜋𝑝| as a function of𝑝. Since it is an
+expression involving⊕𝑝,⊕−𝑝, and⊗ only, it is continuous on the interior of[0,∞] . Thus assume
+the top structure of sequents in𝜋, call itH, does not involve either0or ∞—by continuity and
+Lemma 2.1, we get the desired claim. Now suppose insteadH involves just0and ∞, then|𝜋𝑝| is
+constant and hence the claim is met. The remaining cases trivially reduce to these two.□
+4.2.4 A Resource Interpretation.Finally, we want to hint at an intuitive ‘interpretation’ of QLL.
+Linear Logic has aresource interpretationwhereby a sequent Γ⊢𝐴 asserts the convertibility of
+the resources in Γ to the resource 𝐴. Quantitative Linear Logic, especially1 QLL, refines this
+interpretation by quantifying convertibility: the provability of a sequent Γ⊢𝐴 represents a
+conversion ratefrom the resources in Γ to𝐴. For example,|1AC⊢Pizza| = 5means a pizza costs
+5AC. The 𝑝QLL calculus rules can then be interpreted as a calculus of conversion rates, e.g. if
+|1AC⊢Soda| = 4then, by∨1
+R,|1AC⊢Pizza∨Soda| = 9. Clearly, if the conversion rate from𝐴 to𝐵
+is > 0, then we are right to say 𝐴 is convertible to𝐵—this is Theorem 4.4.
+
+=== PDF PAGE 24 ===
+Adequate Losses via Quantitative Linear Logic 24
+5 Softales
+Following [41], the algebraic/categorical semantics of 𝑝QLL takes place in a kind of enriched
+preorder we callsoftale. These are[0,∞]⊗-enriched preorders equipped with a monoidal structure,
+a suitable duality, and having all ‘soft 𝑝-joins’. In order to explain the definition, we start by
+recalling some standard notions of enriched category theory [ 39].
+Definition 5.1.A [0,∞]⊗-preorderA=(𝐴,⊑) is a set𝐴 equipped with a function⊑ :𝐴×𝐴→
+[0,∞]satisfying for all𝑎,𝑏,𝑐∈𝐴,
+1≤(𝑎⊑𝑎),(reflexivity)
+(𝑎⊑𝑏)⊗(𝑏⊑𝑐)≤(𝑎⊑𝑐).(transitivity)
+Amaporfunctor of [0,∞]⊗-preorders𝐹 :A→B is a function between their underlying sets
+such that for all𝑎,𝑎 ′∈𝐴,
+(𝑎⊑𝑎 ′)≤(𝐹𝑎⊑𝐹𝑎 ′).(29)
+We denote all enriched order relations as ⊑, since their arguments suffice to disambiguate.
+Every[0,∞]⊗-preorder has two associatedunderlying preorders: themultiplicativeone
+A≥1 =(𝐴,⊑ ≥1) and theadditiveone, defined as
+𝑎⊑≥1𝑏⇐⇒1≤(𝑎⊑𝑏), 𝑎⊑ >0𝑏⇐⇒0<(𝑎⊑𝑏).(30)
+The first is the one enriched category theory defaults to. We say𝑎,𝑏∈A aremultiplicativelyor
+additively isomorphicand write 𝑎 ≥1𝑏 or𝑎 >0𝑏 when they are equivalent in the respective
+underlying preorder.
+Definition 5.2(Softale).A(𝑝-)softaleis a[0,∞] ⊗-enriched preorderSequipped with
+(1) amultiplicative structureconsisting of aunitelement1 ∈𝑆 and atensormap • :𝑆×𝑆→𝑆
+satisfying
+(𝑎⊑𝑏)⊗(𝑐⊑𝑑)≤(𝑎•𝑐)⊑(𝑏•𝑑),(31)
+𝑎•1 ≥1 𝑎,(𝑎•𝑏)•𝑐 ≥1 𝑎•(𝑏•𝑐), 𝑎•𝑏 ≥1𝑏•𝑎,(32)
+
+=== PDF PAGE 25 ===
+Adequate Losses via Quantitative Linear Logic 25
+and aduality(−) ⊥ :𝑆→𝑆satisfying
+1⊥ =1, 𝑎 ⊥⊥ =𝑎,(33)
+(𝑎⊑𝑏)=(𝑏 ⊥⊑𝑎⊥),(34)
+(𝑎•𝑏⊑𝑐 ⊥)=  𝑎⊑(𝑏•𝑐) ⊥ ;(35)
+(2) and anadditive structure, consisting of abottomelement ⊥∈𝑆 , and a choice of𝑝-join
+𝑎∨𝑏for all𝑎,𝑏∈S, satisfying
+(⊥⊑𝑎)=∞,(36)
+(𝑎⊑𝑐)⊕ −𝑝(𝑏⊑𝑐)≤(𝑎∨𝑏⊑𝑐),(37)
+(𝑐⊑𝑎)⊕ 𝑝(𝑐⊑𝑏)≤(𝑐⊑𝑎∨𝑏),(38)
+A(strict) map of softales𝐹:S→Tis a map of[0,∞] ⊗-preorders such that
+1=𝐹1, 𝐹𝑎•𝐹𝑏=𝐹(𝑎•𝑏), 𝐹(𝑎 ⊥)=(𝐹𝑎) ⊥,⊥=𝐹⊥, 𝐹𝑎∨𝐹𝑏=𝐹(𝑎∨𝑏).(39)
+Softales and their maps form a category namedSftl.
+Remark 5.3.The multiplicative structure on a softale, by itself, could be classified as a ∗-
+autonomous[0,∞]⊗-preorder, and indeed induces a∗-autonomous structure on the underlying
+(Set-)preorder. Just as in the Set-enriched case (see [13]), we have an induced monoidal product
+par:𝑎◦𝑏:=(𝑎 ⊥•𝑏⊥)⊥. Moreover, from (35) and then (33) we can prove
+1≤(𝑎•(𝑏◦𝑐)⊑(𝑎•𝑏)◦𝑐),1≤(𝑎•𝑏⊑𝑎◦𝑏)(40)
+where the last is the so-called ‘mix’ property [ 21]. This makes itclosedtoo, in the sense that
+𝑏→𝑐:=𝑏 ⊥•𝑐is a residuation in the enriched sense, that is
+(𝑎•𝑏⊑𝑐)=(𝑎⊑𝑏→𝑐).(41)
+Remark 5.4.We let our definition of 𝑝-joins be inspired by the calculus, but also by the following
+observation on the ‘categorical’ definition of joins in the hard case. Usually, the definition by
+representability
+(𝑎⊑𝑐)∧(𝑏⊑𝑐) ⇐⇒ (𝑎∨𝑏)⊑𝑐(representability)
+
+=== PDF PAGE 26 ===
+Adequate Losses via Quantitative Linear Logic 26
+is equivalent to the one given as a universal property, which can be split in two statements:
+(𝑎⊑𝑐)∧(𝑏⊑𝑐)=⇒ (𝑎∨𝑏)⊑𝑐,(minimality)
+(𝑐⊑𝑎)∨(𝑐⊑𝑏)=⇒𝑐⊑(𝑎∨𝑏).(majorization)
+This equivalence, however, breaks in the quantitative setting, since to prove majorization from
+representability one crucially needs∧ to distribute over∨, and that does not apply to their soft
+versions17. Conversely, given majorization and minimality one relies on the idempotence of∧ to
+conclude representability.
+Just as we defined◦, one can define𝑝-meetsfor a softale by setting 𝑎∧𝑏≡(𝑎 ⊥∨𝑏⊥)⊥. Clearly
+they satisfy dual properties to (37)–(38).
+When (37) and (38) hold in the converse direction too we say the additives arerepresentable,
+and note they make the multiplicative underlying preorder a lattice in the traditional sense.
+Example 5.5(Multiplicative reals).The structure on [0,∞] we sketched in Section 2 is that of
+a softale, where⊑ :=⊸ ,• :=⊗ ,(−)⊥ :=(−) ∗,◦≡⊗ ∗,∨ :=⊕ 𝑝, and∧≡⊕ −𝑝. This softale has
+representable additives, as seen in Corollaries 2.3.1 and 2.4.1.
+Example 5.6(Varying hardness).Observe that every [0,∞]⊕𝑞,⊗ can become a1-softale[0,∞] 1/𝑞
+⊕𝑞,⊗
+whose preorder is𝑎⊸ 1/𝑞𝑏 :=(𝑎⊸𝑏) 1/𝑞, including when𝑞=∞ . However, we have[0,∞]⊕1,⊗ 
+[0,∞] 1/𝑞
+⊕𝑞,⊗ as1-softales only when𝑞<∞.
+Example 5.7(Involutive commutative residuated lattices).Every commutative residuated lattice
+(𝑅,⪯, 1,⊙,∨) such that 𝑎⊥ ≡𝑎→ 1is involutive and satisfies (34), is a 𝑝-softale, by setting
+𝑎⊑𝑏=0if𝑎⪯𝑏and∞otherwise.
+Conversely, we have an analogous of the results we have seen in Section 4.2:
+Proposition 5.8.The additive underlying preorder of a 𝑝-softale and the multiplicative underlying
+preorder of an∞-softale are always involutive commutative residuated lattices. 18
+Proof. By the above considerations,S≥1 would clearly be commutative residuated monoidal
+(and the same applies toS>0, since laws holding at1hold positively too), as well as have joins in
+the traditional sense. The duality(−) ⊥ coincides with𝑎→1, making this involutive too.□
+17Specifically, the needed direction is(𝑥∧𝑦)∨(𝑥∧𝑧)≤𝑥∧(𝑦∨𝑧) , whereas in[0,∞]⊕𝑝,⊗ is the other one which holds.
+18Such terms are defined in [19, Chapter IV].
+
+=== PDF PAGE 27 ===
+Adequate Losses via Quantitative Linear Logic 27
+Recall (e.g. from [ 39]) that forA,B[ 0,∞]⊗-enriched, thepreorder of maps BA is again
+[0,∞]⊗-enriched, with order
+𝐹⇒𝐺≡
+Û
+𝑎∈𝐴
+(𝐹𝑎⊑𝐺𝑎).(42)
+Example 5.9.Let A an enriched order, consider the order of maps[0,∞]A. This is always a
+𝑝-softale with all the structure defined pointwise. The key observation is that, for any binary
+operation∗ on[0,∞] , ‘Ó∗Ó≤ Ó∗’ since the latter corresponds to taking the infimum over a
+smaller set.
+Interestingly,[0,∞]A does not admit a softale structure given by convolution19: in fact1 ⊑− is
+not a valid unit since it does not coincide with its dual, namely(−⊑ 1)∗. Note also that[0,∞]A
+does not have representable additives because infima do not commute with (harmonic)𝑝-sums.
+5.1 Model theory
+We prove soundness in𝑝QLL by showing that the axioms of softales make each rule of𝑝QLL into
+a valid reasoning scheme within a softale. We then show completeness by constructingclassifying
+softales, that is, softales of𝑝QLL formulae and whose enriched order is given by provability of
+sequents. Finally, we discuss a version of completeness for [0,∞] , limited to a certain kind of
+theories which arise in applications to neural network verification.
+5.1.1 Soundness and completeness.Fix a 𝑝-softaleS. Acedent in S is a multiset Γ={𝐴 1,...,𝐴 𝑛}
+of elements ofS. We write Γ• for the element𝐴1•···•𝐴 𝑛, and Γ◦ for𝐴1◦···◦𝐴 𝑛. The empty
+cedent reduces to1in both ways. Asequent in S is an inequality expression of the form Γ•⊑Δ◦
+for Γ and Δ cedents inS. Astructure of sequents in S is formed as per the grammar in (14), by
+replacing sequents with sequents in S.
+Thesemantic validity of a sequent in S, written Γ•⊑Δ ◦, is just its value as assigned by the
+enriched order relation⊑ ofS. This extends to structures of sequents inS by induction, yielding
+a semantic valuation |−|S.
+Proposition 5.10(Soundness).For every rule H
+H′ of𝑝QLL, |H|S≤|H′|S.
+Proof. The proof is rather straightforward as the algebraic properties of softales are directly
+related to the rules of𝑝QLL. We cover the argument in detail in Appendix D.□
+19In the sense of Day, see [27].
+
+=== PDF PAGE 28 ===
+Adequate Losses via Quantitative Linear Logic 28
+Furthermore, we can get completeness by exhibiting a ‘syntactic softale’ construction, simply
+by constructing their order relations out of the rules of𝑝QLL and potentially additional axioms.
+Definition 5.11.A 𝑝QLL theory T is a choice of atomic propositions𝑉 plus a set ofaxioms
+given by rules of the form 𝑟
+Γ⊢Δ .
+Definition 5.12.Let T be a𝑝QLL theory, itsclassifying 𝑝-softale LT𝑝[T] is defined as follows:
+(1) its elements are the formulae of Definition 3.5 with the atomic propositions ofT,
+(2) its order relation is defined by provability in the theory
+𝜑⇒𝜓:= |𝜑⊢ T𝜓|,(43)
+where the right hand side denotes the provability of a sequent;
+(3) its multiplicative and additive structures are given by the connectives of𝑝QLL, i.e. respectively
+by⊗,(−) ∗, and∨.
+The proof of the necessary laws is in Appendix E.
+Definition 5.13.Any map M : LT𝑝[T]→S exhibits amodel(orsound interpretation) of T in
+the𝑝-softaleS, meaning syntactic validity (provability) bounds below semantic validity:
+|𝜑⊢𝜓 |≤(M(𝜑)⊑M(𝜓)).(44)
+In particular a model satisfies the axioms of T, i.e.𝑟≤(M(Γ)⊑M(Δ)) for every axiom 𝑟
+Γ⊢Δ in
+T.
+The classifying softale LT𝑝[T] enjoys the following universal property: for everyM as above
+that satisfies the axioms of T there exists a unique lift ˆM (defined identically toM on formulae):
+LT𝑝[𝑉] S
+LT𝑝[T]
+M
+∃! ˆM
+(45)
+When T is the empty theory on a set of atoms𝑉 , a model LT𝑝[𝑉]→S is completely determined
+by its value on propositional variables, andvice versa: on compound formulae the value of M
+is forced by preservation of the connectives, while (44) ensures that this assignment is enriched
+functorial. Thus we get:
+
+=== PDF PAGE 29 ===
+Adequate Losses via Quantitative Linear Logic 29
+Proposition 5.14.The classifying𝑝-softales of empty theories are free over sets, i.e.
+Sftl(LT𝑝[𝑉],S)Set(𝑉,𝑆).(46)
+Therefore for any valuation𝑣 :𝑉→𝑆 of the propositional variables, we get a unique model
+J−K𝑣 that exhibits soundness in the sense of provability.
+Corollary 5.14.1(Completeness). 𝑝QLL is sound and complete for softales, i.e. for every 𝑝QLL
+sequent𝜑⊢𝜓 , any𝑝-softale and any valuation 𝑣 :𝑉→𝑆 , we have|𝜑⊢𝜓 |≤(J𝜑K 𝑣⊑J𝜓K 𝑣), and in
+fact the left hand side is a minimum:
+Û
+S∈Sftl
+Û
+𝑣:𝑉→𝑆
+(J𝜑K𝑣⊑J𝜓K 𝑣)= |𝜑⊢𝜓 |.(47)
+5.2 Grounded completeness
+Despite its technical elegance, 𝑝QLL falls short of having a complete semantics in [0,∞]⊕𝑝,⊗.
+However, for our goals, a milder form of completeness suffices, which is satisfied by some theories
+for the following extension of 𝑝QLL.
+Definition 5.15.Let 𝑝QLL∗ be the quantitative calculus obtained by adding the following rule to
+𝑝QLL:
+Γ1⊢Δ 1 ⊗∗ Γ2⊢Δ 2 MIX∗
+Γ1,Γ 2⊢Δ 1,Δ 2
+(48)
+Correspondingly, call a𝑝-softalemix*when it satisfies
+(𝑎⊑𝑏)⊗ ∗(𝑐⊑𝑑)≤(𝑎•𝑐)⊑(𝑏•𝑑);(49)
+All the definitions we gave in the previous section apply trivially to𝑝QLL∗ too (note also that
+𝑝QLL∗ enjoys the same proof-theoretic properties as𝑝QLL, including cut-elimination). Moreover,
+Proposition 5.10 still applies (note how soundness of MIX∗ can be proven just like that of MIX
+by swapping (31) for (49)), and therefore we have:
+Proposition 5.16. 𝑝QLL∗ theories admit a classifying mix* 𝑝-softale construction, and it is sound
+and complete in mix*𝑝-softales.
+We follow the usual terminology and say that a formula isgroundedif it does not contain
+propositional variables. Similarly, in𝑝QLL∗, we consider theories defined via a set of atoms 𝑉
+
+=== PDF PAGE 30 ===
+Adequate Losses via Quantitative Linear Logic 30
+together with a valuation𝑣 :𝑉→[ 0,∞] that is used to axiomatically ground such atoms. The
+grounded𝑝QLL∗-theory T𝑣 is defined by the following axiom schema:
+𝑣(𝑎) 𝑎R⊢𝑎
+𝑣(𝑎)∗
+𝑎L𝑎⊢ for all𝑎∈𝑉. (50)
+We denote its classifying mix* softale as LT𝑝[𝑉,𝑣].
+Example 5.17(Bayesian probability).As a natural example, we consider the grounded theory
+associated to a finite set Ω ofoutcomes, endowed with a probability density 𝑝:Ω→[0,1] —we
+claim this is a logic environment for Bayesian probability.
+Indeed, every event𝐴⊆Ω corresponds to a formula in this theory, namelyÔ
+𝑎∈𝐴 ⌜𝑎⌝ (where
+⌜𝑎⌝ means𝑎 considered as constant of the theory), which we denote20 again by𝐴. Every sequent
+𝐴⊢𝐵 where𝐴,𝐵 are such propositions, corresponds then to the relative probability of𝐵 compared
+to𝐴, i.e. theoddsof 𝐵 to𝐴.21 In particular, in such a theory the sequents𝐴⊢𝐴∩𝐵 evaluate to
+𝑝(𝐵|𝐴): É
+𝑏∈𝐴∩𝐵
+É∗
+𝑎∈𝐴 𝑝(𝑎)∗⊗𝑝(𝑏) É
+𝑏
+É∗
+𝑎(𝑎L⊗𝑏 R)É
+𝑏∈𝐴∩𝐵
+É∗
+𝑎∈𝐴(𝑎⊢⊗⊢𝑏) É
+𝑏
+É∗
+𝑎 MIXÉ
+𝑏∈𝐴∩𝐵
+É∗
+𝑎∈𝐴 𝑎⊢𝑏 É
+𝑏∨1
+LÉ
+𝑏∈𝐴∩𝐵 𝐴⊢𝑏
+∨1
+R𝐴⊢𝐴∩𝐵
+(51)
+and this proof has validity
+É
+𝑏∈𝐴∩𝐵 𝑝(𝑏)É
+𝑎∈𝐴𝑝(𝑎) = 𝑝(𝐴∩𝐵)
+𝑝(𝐴) =𝑝(𝐵|𝐴).(52)
+Note when𝑝(𝐴)=0,1QLL ∗ says𝑝(𝐵|𝐴)=∞when𝑝(𝐵)>0and0otherwise.
+For grounded theories, we have the following completeness theorem:
+Theorem 5.18(Grounded Completeness).Let 𝜑 be a𝑝QLL formula and let𝑣 :𝑉→[ 0,∞] be a
+grounding, and letJ−K 𝑣 :LT 𝑝[𝑉,𝑣]→[0,∞]be the unique model ofT 𝑣 induced by𝑣. Then
+J𝜑K𝑣 =
+⊢T𝑣 𝜑
+.(53)
+20This encoding is not perfect, since 𝐴 is considered a multiset in this way. A first-order encoding is much more
+satisfactory.
+21This encoding of Bayesian probability in line with the conversion rate interpretation seen in Section 4.2.4, sinceodds
+can be conceived as a conversion rate between bets and payoffs (see [28]).
+
+=== PDF PAGE 31 ===
+Adequate Losses via Quantitative Linear Logic 31
+Proof. Since we have soundness already, it suffices to prove the left hand side is≤ than the
+right hand side. The result follows from an easy induction on 𝜑 which the reader can find in
+Appendix F. In particular, the grounding schema (50) is used for the base case when𝜑 is an atom
+or the dual of an atom, while MIX∗ is used to prove the induction step for𝜑=𝜑 1
+&𝜑2.□
+6 QLL in neuro-symbolic learning and verification
+In this section, we finally deploy our theoretical framework in the context of neuro-symbolic
+learning, and specifically property-driven training. We start with an opinionated account of
+property-driven training of neural models.
+We assume to be training a parameterised model𝑓𝜃 :𝑋→𝑌with trainable parameters𝜃∈Θ,
+where𝑋=R 𝑚,𝑌=R 𝑛 and Θ=R 𝑣 are task-specific smooth manifolds. In the following, we
+conceive of 𝑓𝜃 as a classifier, so that we think of 𝑛 as asetofclassesorlabels, and each 𝑓𝜃(𝑥)𝑖
+as a logit assigned to class 𝑖∈𝑛 .
+We are also given a logical property specifying the desired behaviour of𝑓𝜃 on certain regions of
+the input space. Here, we always assume the property to have the following form
+∀𝑥∈𝑋, 𝑎≤𝑥≤𝑏=⇒𝜑(𝑥)(54)
+where𝑎,𝑏, and𝜑 may depend on a choice of point( ˆ𝑥, ˆ𝑦)∈D in a sample of the training data.
+The robustness property we presented in the introduction is an example of this.
+We call𝜑 thespecificationproper, and we conceive it as a proposition in a propositional theory
+parameterized by ˆ𝑥, ˆ𝑦,𝑥 and 𝑓𝜃 that we describe in Section 6.1 below.
+Common practice in machine learning [31, 32, 53] broadly follows the work of Fischer et al. [30]
+in incorporating (54) into the optimisation objective as follows:
+argmin𝜃 E( ˆ𝑥, ˆ𝑦)∼D
+
+Lpred(𝑓𝜃( ˆ𝑥), ˆ𝑦) ∩1 𝜆sup
+𝑎≤𝑥≤𝑏
+J𝜑K(𝑓𝜃(𝑥), ˆ𝑦)
+
+,(55)
+where (1)D⊆𝑋×𝑌 is a sample of the data distribution, (2)Lpred is any standard loss function
+concerning the prediction task, (3) ∩1 is an operation we define and motivate below (usually
+it’s just+), and (4) J−K is the logic-specific semantic function that interprets the property𝜑 as
+a real-valued function.
+The inner supremum, computed via Projected Gradient Descent (PGD) [ 24, 50], makes the
+optimisationadversarial: at each step the optimiser searches for a worst-case violator of J𝜑K
+
+=== PDF PAGE 32 ===
+Adequate Losses via Quantitative Linear Logic 32
+in𝐻={𝑎≤𝑥≤𝑏} , and then nudges 𝜃 so as to reduce the violation. The latter part of the
+optimisation objective is responsible for “property-driven training”.
+The function J−K is where a differentiable logic comes in, ‘compiling’ the specification language
+to (differentiable) real-valued functions. As discussed in Section 1, the state of the art treats this
+compiler as a heuristic: each choice of J−K comes with its own ad-hoc justification, and none with
+a theorem relating thevalueof J𝜑K to the logical status of 𝜑.
+Rather, we consider J−K to be amodel(Definition 5.13), so that we can directly tie the value of
+J𝜑K to a notion of logical satisfaction of a certain theory, namely the theory of neuro-symbolic
+specifications at hand. This is adequacy (Figure 1). By Theorem 5.18, we can furthermore equate
+satisfaction in the model with provability in the theory—alogicalform of adequacy.
+The rest of this section constructs such a result in the framework of QLL.
+6.1 Specifications as formulae in a theory
+The property (54) is really a first-order sequent, so it would ideally be accounted for in the logic
+via first-order facilities, but given a propositional calculus, we content ourselves with accounting
+for it externally: the adversarial search for𝑥∈𝐻 described above discharges the quantifier, and
+we are left with the propositional specification 𝜑, instantiated at concrete reals. These are the
+formulae of the following 𝑝QLL∗-theory:
+Definition 6.1.Thetheory of neuro-symbolic specificationsfor 𝑓𝜃 at( ˆ𝑥, ˆ𝑦)∈D and𝑥∈𝑋 ,
+is the grounded theory with set of propositional variables
+𝐾={⌜ ˆ𝑦1⌝,...,⌜ ˆ𝑦𝑛⌝,⌜𝑦 1⌝,...,⌜𝑦 𝑛⌝}(56)
+and induced by the valuation
+J⌜ ˆ𝑦𝑖⌝K𝑝 = ˆ𝑦𝑖,J⌜𝑦 𝑖⌝K𝑝 =𝑒−𝑓𝜃(𝑥) 𝑖.(57)
+This amounts to the rules of𝑝QLL plus MIX∗ plus the following grounding schema
+ˆ𝑦𝑖
+⊢⌜ ˆ𝑦𝑖⌝
+𝑒−𝑓𝜃(𝑥) 𝑖
+⊢⌜𝑦𝑖⌝
+ˆ𝑦∗
+𝑖
+⊢⌜ ˆ𝑦𝑖⌝⊥
+𝑒𝑓𝜃(𝑥) 𝑖
+⊢⌜𝑦𝑖⌝⊥ (grounding schema)
+We denote such theory byT𝑥, ˆ𝑦,𝑓𝜃 .
+
+=== PDF PAGE 33 ===
+Adequate Losses via Quantitative Linear Logic 33
+The propositional variables ⌜𝑦𝑖⌝ represent the outputs of the network, while ⌜ ˆ𝑦𝑖⌝ represent the
+labels. The key idea here is to interpret a classifier’s outputs and labels as quantitative propositions
+in their own right: the atoms of the theory are not statementsaboutthe network, they are the
+network’s outputs, read logically.
+6.2 Losses as elements of a model
+Loss functions for neural models are most commonly given byadditivequantities: the predictions
+coming out of classifiers are logits (logarithms of unnormalized probabilities), and so is the
+cross-entropy used in the prediction part of the loss—with this attitude,[−∞,+∞] is commonly
+known aslogspace[ 10].
+Therefore, when augmenting a loss function with a logical termJ𝜑K as in (55), we need to target
+the same ‘units’—this is ournaturalityprinciple from Section 1, guiding our choice of semantics.
+We therefore adopt theadditivesemantics of QLL, which is the family of softales defined by
+the data in Table 2. Note thissemantic‘additive’ vs ‘multiplicative’ distinction is unrelated to the
+proof-theoreticone involving the connectives. The semantic distinction concerns which arithmetic
+operation naturally aggregates such quantities, specifically when the objects they pertain to
+are combined ‘independently’ (e.g. the entropy of independent random variables, the energy of
+non-interacting physical systems, etc.).
+Clearly, additive and multiplicative reals form isomorphic softales for any choice of 𝑝, as
+witnessed byNapier’s isomorphism −log⊣ 1/exp: conjunctive multiplication⊗ becomes ordinary
+addition,⊕𝑝 becomes ‘harmonic’ log-sum-exp, and⊕−𝑝 becomes plain log-sum-exp. To avoid
+confusion with Table 1, let us use a different notation for additive⊕𝑝 and⊕−𝑝, and write instead
+∩𝑝 and∪𝑝:
+𝑎∩𝑝𝑏:=− 1
+𝑝 log 𝑒−𝑝𝑎+𝑒−𝑝𝑏, 𝑎∪ 𝑝𝑏:= 1
+𝑝 log 𝑒𝑝𝑎+𝑒𝑝𝑏.(58)
+Note that this isomorphism is order-reversing, meaning additive quantities will be ‘more true’ as
+they get minimised, and this indeed matches how training losses are interpreted.
+Remark 6.2(Analytical considerations).Crucially, for finite 𝑝, the operations are still smooth,
+strictly entrywise monotone, and have non-vanishing partial derivatives:
+𝜕𝑥(𝑥∩ 𝑝𝑦)= 𝑒𝑝𝑦
+𝑒𝑝𝑥+𝑒𝑝𝑦, 𝜕 𝑥(𝑥∪ 𝑝𝑦)= 𝑒𝑝𝑥
+𝑒𝑝𝑥+𝑒𝑝𝑦.(59)
+
+=== PDF PAGE 34 ===
+Adequate Losses via Quantitative Linear Logic 34
+polarity additive multiplicative
+duality
+𝑎∗ :=−𝑎
+positive
+⊥:=+∞
+𝑎∪𝑝𝑏
+⊥:=+∞
+𝑎∪∞𝑏:=min(𝑎,𝑏)𝑝→∞
+1:=0
+𝑎+𝑏 −∞+∞:=+∞
+negative
+⊤:=−∞
+𝑎∩𝑝𝑏
+⊤:=−∞
+𝑎∩∞𝑏:=max(𝑎,𝑏)𝑝→∞
+1:=0
+𝑎+−𝑏 −∞+−∞:=−∞
+implication:𝑎⊸𝑏=𝑎 ∗+−𝑏, thus𝑏−𝑎,enriched order:𝑎⊑𝑏:=𝑒 −(𝑎⊸𝑏) ,
+Table 2.The family of softales we collectively refer to as theadditive reals [−∞,+∞]∪𝑝,⊕ , analogue of
+Table 1.
+The price for this—loss of idempotency—is precisely quantified by Derivation 16: idempotency
+can be paid for by a factor of 1
+𝑝 log 2, a cost which vanishes as𝑝→∞ and is only relevant in the
+proof-theory, where this is addressed otherwise.
+An independent experimental evaluation of this version ofQLL against the existing differentiable
+logics is given by Flinkow et al. [ 31]—we refer the reader there for the particulars from the
+optimisation point of view.
+6.3 Adequacy and completeness: loss is satisfaction is provability
+Every theory of neuro-symbolic specifications has then a canonical interpretation in[−∞,+∞]∪𝑝,⊕,
+induced by the valuation of propositional variables
+J⌜ ˆ𝑦𝑖⌝K𝑝 =−log ˆ𝑦𝑖,J⌜𝑦 𝑖⌝K𝑝 =𝑓 𝜃(𝑥)𝑖.(60)
+For each0 <𝑝≤∞ , we thus get a model we can suggestively denote as
+ˆ𝑥, ˆ𝑦,𝑥,𝑓 𝜃|=𝑝−:LT 𝑝
+T𝑥, ˆ𝑦,𝑓𝜃
+
+→[−∞,+∞] ∪𝑝,⊕ (61)
+Definition 6.3.Thequantitative satisfactionof a specification 𝜑 by𝑓𝜃 at( ˆ𝑥, ˆ𝑦) and𝑎≤𝑥≤𝑏
+is the semantic validity of⊢𝜑 according to the canonical interpretation of LT𝑝
+T𝑥, ˆ𝑦,𝑓𝜃
+
+in the
+additive reals:
+ˆ𝑥, ˆ𝑦,𝑥,𝑓 𝜃|=𝑝 𝜑=1⊑J𝜑K 𝑝 =𝑒 −J𝜑K𝑝.(62)
+This is adequacy (Figure 1): every value of the loss J𝜑K has an interpretation in terms of
+satisfaction by a model. By Theorem 5.18, we can also conclude a logical adequacy result for
+property-driven training:
+
+=== PDF PAGE 35 ===
+Adequate Losses via Quantitative Linear Logic 35
+Surface
+language
+Core
+Language
+Intermediate
+ITP Language
+Loss Functions
+for Training
+VNNLIB
+Queries
+for Verification
+Isabelle/HOL
+code
+Rocq
+code
+Agda
+code
+Imandra
+code
+Type-
+checker
+Symbolic worldInterfaceNeural world
+The correspon-
+dance justified
+by this paper
+Fig. 4.The architecture ofVehicle: a surface language in which neural network specifications are written and
+type-checked, and then connected to both “neural” and “symbolic” backends.
+Theorem 6.4.Given𝑓 𝜃 as above, given( ˆ𝑥, ˆ𝑦)∈Dand for each𝑎≤𝑥≤𝑏, we have
+ˆ𝑥, ˆ𝑦,𝑥,𝑓 𝜃|=𝑝 𝜑=|⊢ 𝑝
+T𝑥, ˆ𝑦,𝑓𝜃
+𝜑|.(63)
+These results finally allow us to (1) interpret every value of the loss logically, not just the
+extremal ones, and (2) formally motivate logical loss minimisation as a way toimprovesatisfaction
+of the specification, since J𝜑K𝑝 decreases as ˆ𝑥, ˆ𝑦,𝑥,𝑓 𝜃 |=𝑝 𝜑 increases.
+Moreover, the theorem holds for every 𝑝, thus working both for the soft semantics used at
+training time and for the hard semantics which can be used at test time to give ˆ𝑥, ˆ𝑦,𝑥,𝑓 𝜃|=∞𝜑 a
+more traditional logical interpretation. In fact, by Theorem 4.7 (and Proposition 5.8), we can also
+deduce a traditional, binary, satisfaction result: ˆ𝑥, ˆ𝑦,𝑥,𝑓 𝜃|=𝜑 if and only if|⊢ 𝑝
+T𝑥, ˆ𝑦,𝑓𝜃
+𝜑|> 0.
+7 Conclusions, related and future work
+We have set out to supply logical meaning to neuro-symbolic methods by rethinking the fundamentals—
+calculi, proof validity, and satisfaction—in a quantitative way. We hope that our results invite
+the community to reconceive differentiable logics not as numerical heuristics, but as bona fide
+logics in their own right.
+From a practical perspective, the long-term goal of this work is to give a formal account of
+why property-driven training succeeds. More precisely, we seek to characterise the relationship
+between minimising the differentiable loss generated from a logical specification and satisfying
+that specification after training. Although this correspondence motivates much of the existing
+literature on differentiable logics, it has largely remained implicit.
+
+=== PDF PAGE 36 ===
+Adequate Losses via Quantitative Linear Logic 36
+1@parameter
+2p: Real
+3
+4qllAdditive: DifferentiableTensorLogic
+5qllAdditive=
+6{ trueElement=-infinity
+7, falseElement=infinity
+8, pointwiseNegation=\x->-x
+9, pointwiseConjunction=\{dims} x y->
+10const (1/p) dims *
+11log(exp(const p dims * x) +
+12exp(const p dims * y))
+13, pointwiseDisjunction=\{dims} x y->
+14const (1/p) dims *
+15log(exp(const (-p) dims * x) +
+16exp(const (-p) dims * y))
+17, pointwiseLessEqualThan=\x y->x - y
+18, pointwiseEqual=\x y->
+19max (x - y) (y - x)
+20, pointwiseNotEqual=\x y->
+21- max (x - y) (y - x)
+22, ...
+23}
+24
+25type Image = Tensor Real[28, 28]
+26type Label = Index10
+27
+28validImage: Image -> Bool
+29validImage x=forall i j . 0 <= x ! i ! j <= 1
+31@network
+32classifier: Image -> Tensor Real[10]
+33
+34advises: Image -> Label -> Bool
+35advises x i=
+36forall j . classifier x ! i >= classifier x
+! j↩→
+37
+38@parameter
+39epsilon: Real
+40
+41boundedByEpsilon: Image -> Bool
+42boundedByEpsilon x=
+43forall i j . -epsilon <= x ! i ! j <=
+epsilon↩→
+44
+45robustAround: Image -> Label -> Bool
+46robustAround image label=forall
+perturbation .↩→
+47boundedByEpsilon perturbation and
+48validImage (image + perturbation)=>
+49advises (image + perturbation) label
+50
+51@dataset
+52image: Vector Imagen
+53
+54@dataset
+55label: Vector Labeln
+56
+57@property
+58robust: Bool
+59robust=forall i .
+60robustAround (image ! i) (label ! i)
+Listing 1.AVehiclespecification expressing the robustness property for MNIST task. It starts by
+specifying the additive semantics of QLL (Equation(58)). Here x ! i means accessing the𝑖-th row of
+the tensor𝑥.
+Vehicle[ 25, 26] provides a concrete illustration of why such a correspondence is valuable.
+Vehicleunifies property-driven training, neural network verification, and interactive theorem
+proving through a single dependently typed specification language, as illustrated in Figure 4. A
+specification is written and type-checkedonce, before being compiled to loss functions for training,
+to satisfiability queries for neural network verifiers [38, 55] , and to code for interactive theorem
+provers. Listing 1 shows aVehiclespecification of the classic robustness property introduced in
+Section 1.1. Using additive𝑝QLL, which is itself expressible in theVehicleDSL (lines 1-23), this
+specification can be used to train a neural network and then verify that the resulting network
+satisfies it. Our results provide the first crucial step towards providing a formal justification for
+why success in the former compilation target should assist success in the latter. The red arrow in
+Figure 4 is a place where Theorem 6.4 can be applied to give a such a justification.
+
+=== PDF PAGE 37 ===
+Adequate Losses via Quantitative Linear Logic 37
+However, the present work is restricted to the propositional fragment of the language. Conse-
+quently, it naturally handles quantification over finite index sets, such as the quantifiers on Lines
+29, 36, 43, 59 of Listing 1, which are simply syntactic sugar for finite conjunctions. In contrast, the
+quantifier on Line 46 ranges over the continuous space R28×28 and therefore lies beyond the scope
+of the current theory. The natural next step is therefore to extend𝑝QLL with first-order quantifica-
+tion. We envisagesoftquantifiers interpreted as integration over probability spaces, following the
+ideas of [15]. In the longer term, we view𝑝QLL as the foundation of a quantitative metatheory for
+increasingly expressive neuro-symbolic specification languages, ultimately encompassing the full
+range of compilation targets supported by systems such asVehicle. Initial evidence suggests that
+such an approach will have practical as well as theoretical benefits: a recent, yet to be reviewed, em-
+pirical study [31] has shown that deploying𝑝QLL connectives as part of standard neuro-symbolic
+Python libraries that implement the optimisation objective of Equation (55) outperforms other
+differentiable logics as measured by the verifiability of the trained network.
+Even at the propositional level, many questions remain open. From a linear logic perspective,
+we would like to study normal forms for𝑝QLL proofs (‘quantitative proof nets’), understand how
+the exponential modalities fit into the picture, and probe potential connections with differential
+linear logic [29]. Closer to𝑝QLL itself, the most pressing puzzle is the status of MIX∗ as a logical
+rule, which hints at a duality theory at the sequent level that we have yet to uncover; questions
+of completeness likewise remain, alongside the further exploration of links with fuzzy logics
+and hypersequent calculi, and a clarification of the peculiar ‘additive universal properties’ we
+only touched upon in Section 5.
+Ultimately, the programme we envision requires work on all three sides of the logic-computation-
+categories trinity. Indeed, while Lawvere tackled the latter aspect and this work begins to approach
+the first, we are unaware of a computational reading of these ideas.
+References
+[1] Reynald Affeldt, Alessandro Bruni, Ekaterina Komendantskaya, Natalia Slusarz, and Kathrin Stark. 2024. Taming
+Differentiable Logics with Coq Formalisation. In15th International Conference on Interactive Theorem Proving (ITP
+2024), September 9–14, 2024, Tbilisi, Georgia (LIPIcs, Vol. 309). Schloss Dagstuhl - Leibniz-Zentrum für Informatik,
+4:1–4:19. doi:10.4230/LIPICS.ITP.2024.4
+[2] Reynald Affeldt, Alessandro Bruni, Ekaterina Komendantskaya, Natalia Ślusarz, and Kathrin Stark. 2026. A
+Foundation for Differentiable Logics using Dependent Type Theory.Journal of Automated Reasoning(2026).
+https://arxiv.org/abs/2602.23878
+[3] Guillaume Aubrun and Ion Nechita. 2011. The Multiplicative Property Characterizesℓ𝑝 and𝐿𝑝 Norms.Confluentes
+Mathematici03, 04 (Dec. 2011), 637–647. arXiv:1102.2618 [math] doi:10.1142/S1793744211000485
+
+=== PDF PAGE 38 ===
+Adequate Losses via Quantitative Linear Logic 38
+[4] Arnon Avron. 1987. A Constructive Analysis of RM.The Journal of symbolic logic52, 4 (1987), 939–
+951. https://www.cambridge.org/core/journals/journal-of-symbolic-logic/article/constructive-analysis-of-rm/
+342F0DE51D0878BEC48C03E65FBA03BC
+[5] Matthias Baaz, Agata Ciabattoni, and Christian G. Fermüller. 2003. Hypersequent Calculi for Gödel Logics - a
+Survey.J. Log. Comput.13, 6 (2003), 835–861. doi:10.1093/LOGCOM/13.6.835
+[6] Giorgio Bacci, Radu Mardare, Prakash Panangaden, and Gordon Plotkin. 2023. Propositional Logics for the Lawvere
+Quantale. arXiv:2302.01224 [cs] doi:10.48550/arXiv.2302.01224
+[7] Giorgio Bacci, Radu Mardare, Prakash Panangaden, and Gordon Plotkin. 2024. Polynomial Lawvere Logic.
+arXiv:2402.03543 doi:10.48550/arXiv.2402.03543
+[8] Giorgio Bacci and Rasmus Ejlers Møgelberg. 2026. Induction and Recursion Principles in a Higher-Order Quanti-
+tative Logic for Probability. InProceedings of the 41st Annual ACM/IEEE Symposium on Logic in Computer Science
+(LICS 2026). arXiv:2501.18275 https://arxiv.org/abs/2501.18275
+[9] Samy Badreddine, Artur d’Avila Garcez, Luciano Serafini, and Michael Spranger. 2022. Logic Tensor Networks.
+Artificial Intelligence303 (Feb. 2022), 103649. arXiv:2012.13635 [cs.AI] doi:10.1016/j.artint.2021.103649
+[10] Samy Badreddine, Luciano Serafini, and Michael Spranger. 2023. logLTN: Differentiable Fuzzy Logic in the
+Logarithm Space. arXiv:2306.14546 [cs.AI] doi:10.48550/arXiv.2306.14546
+[11] John C. Baez. 2024. What Is Entropy? arXiv:2409.09232 [cond-mat] doi:10.48550/arXiv.2409.09232
+[12] Janis Bailitis, Reynald Affeldt, Alessandro Bruni, Alessio Coltellacci, Ekaterina Komendantskaya, and Kathrin
+Stark. 2026. Towards Quantitative Logics in Rocq.The Rocqshop(2026).
+[13] Michael Barr. 1979.∗-Autonomous Categories. Lecture Notes in Mathematics, Vol. 752. Springer, Berlin, Heidelberg.
+doi:10.1007/BFb0064579
+[14] Samuel R. Buss. 1998. An Introduction to Proof Theory. InHandbook of Proof Theory, Samuel R. Buss (Ed.). Elsevier,
+1–78.
+[15] Matteo Capucci. 2024. On Quantifiers for Quantitative Reasoning. arXiv:2406.04936 [cs, math] doi:10.48550/arXiv.
+2406.04936
+[16] Marco Casadio, Ekaterina Komendantskaya, Matthew L. Daggitt, Wen Kokke, Guy Katz, Guy Amir, and Idan Refaeli.
+2022. Neural Network Robustness as a Verification Property: A Principled Case Study. arXiv:2104.01396 [cs]
+doi:10.48550/arXiv.2104.01396
+[17] Agata Ciabattoni and Francesco A. Genco. 2018. Hypersequents and Systems of Rules: Embeddings and Applications.
+ACM Trans. Comput. Log.19, 2 (2018), 11:1–11:27. doi:10.1145/3180075
+[18] Agata Ciabattoni, Timo Lang, and Revantha Ramanayake. 2021. Bounded-analytic Sequent Calculi and Embeddings
+for Hypersequent Logics.J. Symb. Log.86, 2 (2021), 635–668. doi:10.1017/JSL.2021.42
+[19] Petr Cintula, Petr Hajek, and Carles Noguera. 2011.Handbook of Mathematical Fuzzy Logic. Studies in Logic, Vol. 1.
+College Publications, London, UK.
+[20] Petr Cintula, Petr Hajek, and Carles Noguera. 2011.Handbook of Mathematical Fuzzy Logic. Studies in Logic, Vol. 2.
+College Publications, London, UK.
+[21] J. R. B. Cockett and R. A. G. Seely. 1997. Proof Theory for Full Intuitionistic Linear Logic, Bilinear Logic, and MIX
+Categories.Theory and Applications of Categories3 (1997), 85–131. http://www.tac.mta.ca/tac/volumes/1997/n5/
+n5.pdf
+[22] J. R. B. Cockett and R. A. G. Seely. 1999. Linearly Distributive Functors.Journal of Pure and Applied Algebra143, 1
+(Nov. 1999), 155–203. doi:10.1016/S0022-4049(98)00110-8
+
+=== PDF PAGE 39 ===
+Adequate Losses via Quantitative Linear Logic 39
+[23] Lucas C. Cordeiro, Matthew L. Daggitt, Julien Girard-Satabin, Omri Isac, Taylor T. Johnson, Guy Katz, Ekaterina
+Komendantskaya, Augustin Lemesle, Edoardo Manino, Artjoms Sinkarovs, and Haoze Wu. 2025. Neural Network
+Verification is a Programming Language Challenge. In34th European Symposium on Programming (ESOP 2025),
+Hamilton, ON, Canada, May 5–8, 2025 (Lecture Notes in Computer Science, Vol. 15694). Springer, 206–235. doi:10.
+1007/978-3-031-91118-7_9
+[24] Francesco Croce, Jonas Rauber, and Matthias Hein. 2020. Scaling up the Randomized Gradient-Free Adversarial
+Attack Reveals Overestimation of Robustness Using Established Attacks.International Journal of Computer Vision
+128, 4 (April 2020), 1028–1046. doi:10.1007/s11263-019-01213-0
+[25] Matthew L. Daggitt, Wen Kokke, Robert Atkey, Ekaterina Komendantskaya, Natalia Slusarz, and Luca Arnaboldi.
+2025. Vehicle: Bridging the Embedding Gap in the Verification of Neuro-Symbolic Programs.LIPIcs, Volume 337,
+FSCD 2025337 (2025), 2:1–2:20. doi:10.4230/LIPICS.FSCD.2025.2
+[26] Matthew L. Daggitt, Ekaterina Komendantskaya, Alistair Sirman, Alessandro Bruni, Samuel Teuber, Josh Smart,
+and Grant Passmore. 2026. Compositional Neural-Cyber-Physical System Verification in the Interactive Theorem
+Prover of Your Choice.Proceedings of the ACM on Programming Languages10, ICFP (2026). To appear.
+[27] Brian Day. 1970. On Closed Categories of Functors. InReports of the Midwest Category Seminar IV, S. MacLane,
+H. Applegate, M. Barr, B. Day, E. Dubuc, Phreilambud, A. Pultr, R. Street, M. Tierney, and S. Swierczkowski (Eds.).
+Vol. 137. Springer Berlin Heidelberg, Berlin, Heidelberg, 1–38. doi:10.1007/BFb0060438
+[28] Bruno De Finetti. 2017.Theory of Probability: A Critical Introductory Treatment. John Wiley & Sons.
+[29] Thomas Ehrhard. 2018. An Introduction to Differential Linear Logic: Proof-Nets, Models and Antiderivatives.
+Mathematical Structures in Computer Science28, 7 (Aug. 2018), 995–1060. doi:10.1017/S0960129516000372
+[30] Marc Fischer, Mislav Balunovic, Dana Drachsler-Cohen, Timon Gehr, Ce Zhang, and Martin Vechev. 2019. DL2:
+Training and Querying Neural Networks with Logic. InProceedings of the 36th International Conference on
+Machine Learning (ICML 2019) (Proceedings of Machine Learning Research, Vol. 97), Kamalika Chaudhuri and Ruslan
+Salakhutdinov (Eds.). PMLR, 1931–1941. https://proceedings.mlr.press/v97/fischer19a.html
+[31] Thomas Flinkow, Ekaterina Komendantskaya, Matteo Capucci, and Rosemary Monahan. 2026. Quantitative Linear
+Logic for Neuro-Symbolic Learning and Verification. doi:10.48550/ARXIV.2605.13845
+[32] Thomas Flinkow, Barak A Pearlmutter, and Rosemary Monahan. 2025. Comparing differentiable logics for learning
+with logical constraints.Science of Computer Programming244 (2025), 103280.
+[33] Nikolaos Galatos, Peter Jipsen, Tomasz Kowalski, and Hiroakira Ono. 2007.Residuated Lattices: An Algebraic
+Glimpse at Substructural Logics, Volume 151. Elsevier Science.
+[34] Jean-Yves Girard. 1995. Linear logic: its syntax and semantics. InProceedings of the Workshop on Advances in
+Linear Logic. Cambridge University Press, USA, 1–42.
+[35] Eleonora Giunchiglia, Mihaela Catalina Stoian, and Thomas Lukasiewicz. 2022. Deep Learning with Logical Con-
+straints. In31st International Joint Conference on Artificial Intelligence (IJCAI-22). International Joint Conferences
+on Artificial Intelligence Organization, 5478–5485. doi:10.24963/ijcai.2022/767 Survey Track.
+[36] Marco Grandis. 2007. Categories, Norms and Weights.Journal of Homotopy and Related Structures2 (2007).
+[37] Guy Katz, Derek A Huang, Duligur Ibeling, Kyle Julian, Christopher Lazarus, Rachel Lim, Parth Shah, Shantanu
+Thakoor, Haoze Wu, Aleksandar Zeljić, et al. 2019. The marabou framework for verification and analysis of deep
+neural networks. InComputer Aided Verification: 31st International Conference, CA V 2019, New York City, NY, USA,
+July 15-18, 2019, Proceedings, Part I 31. Springer, 443–452.
+
+=== PDF PAGE 40 ===
+Adequate Losses via Quantitative Linear Logic 40
+[38] Guy Katz, Derek A. Huang, Duligur Ibeling, Kyle Julian, Christopher Lazarus, Rachel Lim, Parth Shah, Shantanu
+Thakoor, Haoze Wu, Aleksandar Zeljić, David L. Dill, Mykel J. Kochenderfer, and Clark Barrett. 2019. The Marabou
+Framework for Verification and Analysis of Deep Neural Networks. InComputer Aided Verification (Lecture Notes
+in Computer Science), Isil Dillig and Serdar Tasiran (Eds.). Springer International Publishing, Cham, 443–452.
+doi:10.1007/978-3-030-25540-4_26
+[39] Max Kelly. 1982.Basic Concepts of Enriched Category Theory. Vol. 64. CUP Archive.
+[40] Olivier Laurent. 2026. YALLA: Yet Another Deep Embedding of Linear Logic in Rocq.Journal of Automated
+Reasoning70, 1 (2026), 9. doi:10.1007/S10817-026-09755-Y
+[41] F. William Lawvere. 1973. Metric Spaces, Generalized Logic, and Closed Categories.Rendiconti del seminario
+matématico e fisico di Milano43 (1973), 135–166.
+[42] Tom Leinster. 2012. A Multiplicative Characterization of the Power Means.Bulletin of the London Mathematical
+Society44, 1 (Feb. 2012), 106–112. arXiv:1103.2574 [cs, math] doi:10.1112/blms/bdr073
+[43] Ziyang Li, Jiani Huang, and Mayur Naik. 2023. Scallop: A Language for Neurosymbolic Programming.Proceedings
+of the ACM on Programming Languages7, PLDI, Article 166 (June 2023), 1463–1487 pages. doi:10.1145/3591280
+[44] Robin Manhaeve, Sebastijan Dumančić, Angelika Kimmig, Thomas Demeester, and Luc De Raedt. 2018. Deep-
+ProbLog: Neural Probabilistic Logic Programming. InAdvances in Neural Information Processing Systems 31 (NeurIPS
+2018) (Advances in Neural Information Processing Systems, Vol. 31), S. Bengio, H. Wallach, H. Larochelle, K. Grauman,
+N. Cesa-Bianchi, and R. Garnett (Eds.). Curran Associates, Inc., 3753–3763. https://proceedings.neurips.cc/paper_
+files/paper/2018/hash/dc5d637ed5e62c36ecb73b654b05ba2a-Abstract.html
+[45] Radu Mardare, Prakash Panangaden, and Gordon Plotkin. 2016. Quantitative Algebraic Reasoning. InProceedings
+of the 31st Annual ACM/IEEE Symposium on Logic in Computer Science. ACM, New York NY USA, 700–709.
+doi:10.1145/2933575.2934518
+[46] Per Martin-Löf. 1996. On the Meanings of the Logical Constants and the Justifications of the Logical Laws.Nordic
+Journal of Philosophical Logic1, 1 (1996), 11–60.
+[47] Paul-André Melliès. 2009. Categorical semantics of linear logic. InInteractive models of computation and program
+behaviour, panoramas et synthèses, Vol. 27. Société Mathématique de France, 1–196.
+[48] George Metcalfe, Nicola Olivetti, and Dov Gabbay. 2009.Proof Theory for Fuzzy Logics. Applied Logic Series,
+Vol. 36. Springer Netherlands, Dordrecht. doi:10.1007/978-1-4020-9409-5
+[49] D. S. Mitrinovic. 1970.Analytic Inequalities. Springer-Verlag.
+[50] Marius Mosbach, Maksym Andriushchenko, Thomas Trost, Matthias Hein, and Dietrich Klakow. 2019. Logit
+Pairing Methods Can Fool Gradient-Based Attacks. arXiv:1810.12042 [cs] doi:10.48550/arXiv.1810.12042
+[51] Garrel Pottinger. 1983. Uniform, cut-free formulations of T, S4 and S5.Journal of Symbolic Logic48, 3 (1983), 900.
+[52] The LLHandbook project. 2023. Handbook of Linear Logic. online draft.
+[53] Emile van Krieken, Erman Acar, and Frank van Harmelen. 2022. Analyzing Differentiable Fuzzy Logic Operators.
+Artificial Intelligence302 (Jan. 2022), 103602. arXiv:2002.06100 [cs.AI] doi:10.1016/j.artint.2021.103602
+[54] Peter Varnai and Dimos V. Dimarogonas. 2020. On Robustness Metrics for Learning STL Tasks. In2020 American
+Control Conference (ACC). 5394–5399. doi:10.23919/ACC45564.2020.9147692
+[55] Haoze Wu, Omri Isac, Aleksandar Zeljić, Teruhiro Tagomori, Matthew Daggitt, Wen Kokke, Idan Refaeli, Guy
+Amir, Kyle Julian, Shahaf Bassan, Pei Huang, Ori Lahav, Min Wu, Min Zhang, Ekaterina Komendantskaya, Guy
+Katz, and Clark Barrett. 2024. Marabou 2.0: A Versatile Formal Analyzer of Neural Networks. arXiv:2401.14461 [cs]
+doi:10.48550/arXiv.2401.14461
+
+=== PDF PAGE 41 ===
+Adequate Losses via Quantitative Linear Logic 41
+[56] I. Ben Yaacov, Alexander Berenstein, C. Ward Henson, and Alexander Usvyatsov. 2008. Model Theory for Metric
+Structures.London Mathematical Society Lecture Note Series350 (2008), 315. http://math.univ-lyon1.fr/homes-
+www/begnac/articles/mtfms.pdf
+[57] Ronald R. Yager. 1980. On a General Class of Fuzzy Connectives.Fuzzy Sets and Systems4, 3 (1980), 235–242.
+doi:10.1016/0165-0114(80)90013-5
+[58] Tom Yuviler and Dana Drachsler-Cohen. 2025. Enhancing Neural Network Robustness via Synthesis of Repair
+Programs. InStatic Analysis (SAS 2025) (Lecture Notes in Computer Science, Vol. 16100), Hakjoo Oh and Yulei Sui
+(Eds.). Springer, 221–248. doi:10.1007/978-3-032-07106-4_10
+[59] Lotfi Asker Zadeh. 1965. Fuzzy Sets.Information and control8, 3 (1965), 338–353. https://www.sciencedirect.com/
+science/article/pii/S001999586590241X
+[60] J Łukasiewicz. 1920.O logice trójwartościowej (in Polish). English translation: On Three-Valued Logic, in Borkowski,
+L.(ed.) 1970. Jan Łukasiewicz: Selected Works, Amsterdam: North Holland. Ruch Filozoficzny. 87—-88 pages.
+
+=== PDF PAGE 42 ===
+Adequate Losses via Quantitative Linear Logic 42
+A Algebraic lemmata
+Lemma A.1(Arithmetic of generalized fractions).For all𝑎,𝑏,𝑐,𝑑∈[0,∞]:
+(1)1≤𝑎⊸𝑎,
+(2)(𝑏⊸𝑎)⊗(𝑐⊸𝑏)≤(𝑐⊸𝑎),
+(3)(𝑏⊸𝑎)⊗(𝑑⊸𝑐)≤(𝑏⊗𝑑)⊸(𝑎⊗𝑐),
+(4)𝑎⊸(𝑏⊸𝑐)=(𝑎⊗𝑏)⊸𝑐.
+Proof. For (1), start from1 ⊗𝑎≤𝑎 ∗∗ and apply the defining property of (−)∗ to get1 ≤
+(𝑎⊗𝑎 ∗)∗ =(𝑎∗⊗∗𝑎)=𝑎⊸𝑎 . Claim (2)–(4) hold in any symmetric monoidal closed category. □
+Remark A.2.Note the above inequalities are all equalities as soon as the numbers involved are
+finite and non-zero.
+Lemma A.3.Let𝑎,𝑏,𝑐,𝑑∈[0,∞],0<𝑝≤∞. Then
+(𝑎⊕ 𝑝𝑏)⊗(𝑐⊕ −𝑝𝑑)≤(𝑎⊗𝑐)∨(𝑏⊗𝑑).(64)
+Proof. For simplicity, and without risk of ambiguity, below we write⊗ as juxtaposition, i.e.
+we default to conjunctive multiplication as our multiplication of choice. We also assume, without
+loss of generality, that𝑎𝑐=𝑎𝑐∨𝑏𝑑. We proceed by case disjunction.
+If𝑎,𝑏,𝑐,𝑑∈(0,∞), then:
+𝑏𝑑≤𝑎𝑐
+⇐⇒𝑏 𝑝𝑑𝑝≤𝑎 𝑝𝑐𝑝
+⇐⇒𝑏 𝑝≤𝑎 𝑝𝑐𝑝𝑑−𝑝
+⇐⇒𝑎 𝑝+𝑏𝑝≤𝑎 𝑝+𝑎𝑝𝑐𝑝𝑑−𝑝
+⇐⇒𝑎 𝑝+𝑏𝑝≤𝑎 𝑝𝑐𝑝  𝑐−𝑝+𝑑−𝑝
+⇐⇒  𝑎𝑝+𝑏𝑝  𝑐−𝑝+𝑑−𝑝−1≤𝑎 𝑝𝑐𝑝
+⇐⇒  𝑎𝑝+𝑏𝑝 1/𝑝  𝑐−𝑝+𝑑−𝑝−1/𝑝≤𝑎𝑐
+⇐⇒ (𝑎⊕𝑝𝑏)(𝑐⊕ −𝑝𝑑)≤𝑎𝑐
+(65)
+If 𝑎= 0or 𝑐= 0, since 𝑎𝑐≥𝑏𝑑 , it follows that 𝑏= 0or 𝑑= 0. We need to prove that
+(𝑎⊕ 𝑝𝑏)(𝑐⊕ −𝑝𝑑)=0.
+•If𝑎=0and𝑏=0then𝑎⊕ 𝑝𝑏=0and 0 is absorbing for⊗.
+
+=== PDF PAGE 43 ===
+Adequate Losses via Quantitative Linear Logic 43
+• If𝑎= 0and 𝑑= 0then 𝑐⊕ −𝑝𝑑= 0as 0 is absorbing for ⊕−𝑝. Then we conclude using that0
+is absorbing for⊗.
+By symmetry, the same proof works for𝑐=0.
+If𝑏=0or𝑑=0then either𝑎⊕ 𝑝𝑏=0or𝑐⊕ −𝑝𝑑=0, so that(𝑎⊕ 𝑝𝑏)⊗(𝑐⊕ −𝑝𝑑)=0.
+If𝑎=∞ or𝑐=∞ , since𝑎= 0and 𝑐= 0have already been treated, we consider here that either
+𝑎=∞ and𝑐> 0(∞ included) or the converse way. This rules out0⊗∞= 0, and forces𝑎𝑐=∞ ,
+from which we conclude.
+If𝑏=∞ or𝑑=∞ , the case𝑑= 0has already been treated. So we can assume 𝑑> 0, but then
+𝑏𝑑=∞. Since𝑎𝑐≥𝑏𝑑by hypothesis,𝑎𝑐=∞and the statement holds.□
+B Cut-elimination
+As𝑝QLL’s closest relative is multiplicative-additive linear logic [34], our cut-elimination proof
+resembles the cut-elimination proof given for linear logic in [47] by Melliès. Note that Melliès’
+presentation is forintuitionisticlinear logic, so that a sequent always has a single formula as
+consequence. We have carefully adapted the argument to 𝑝QLL, in which multiple formulas
+are allowed in the conclusion of a sequent. The Linear Logic Handbook [52], in which another
+cut-elimination proof is provided for classical linear logic (but in a single-sided sequent style),
+has been an inspiration for this adaptation in several cases.
+B.1 The General Setup
+Consider a proof 𝜋 ending in CUT:
+....𝜋1
+𝑅1
+Γ⊢𝐴,Δ⊗
+....𝜋2
+𝑅2
+Γ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+(66)
+Here𝐴 is called thecut formula, and the formulae appearing in the other cedents of the premises
+are thusnon-cut. Since 𝑝QLL is counary (recall Section 3), we know𝜋 does indeed decompose
+into two proofs as depicted above. The sequent Γ⊢𝐴,Δ is called theconclusionwhile Γ′,𝐴⊢Δ ′
+is thehypothesis. We thus say that this proof presents ‘ 𝑅1 vs𝑅2’.
+Here we present an inductive argument that proceeds by rewriting𝜋 so as to make CUT either
+appear deeper in the proof or concerning ‘smaller’ cut formulae. Formally, for each occurrence
+
+=== PDF PAGE 44 ===
+Adequate Losses via Quantitative Linear Logic 44
+Rules preceding CUT
+Structural Rules
+(Appendix B.2):
+(AX B.2.1);
+(EFQ B.2.2); ( MIX
+B.2.3); ( EMP B.2.4)
+Logical Rules
+(Appendices B.3
+and B.4)
+Principal vs Principal
+(Appendix B.3)
+(⊗: B.3.2), ( &: B.3.3),
+(∨: B.3.4), (∧: B.3.5),
+((−)⊥: B.3.1), (1:
+B.3.6), (⊥/⊤: B.3.7)
+Non-principal
+vs principal
+(Appendix B.4)
+Principal in An-
+tecedent of Conclusion
+(Appendix B.4.1)
+Principal in Conse-
+quent of Conclusion
+(Appendix B.4.2)
+Fig. 5.The structure of the cut-elimination cases, with active hyperreferences to the relevant subsec-
+tions.
+𝑐 of a CUT in𝜋, we define itsdepth depth(𝑐) as the number of rules from the leaves of 𝜋 to𝑐,
+and itsrank rank(𝑐) as the number of connectives in the cut formula.
+In line with other linear logic approaches to cut-elimination [47, 52], our inductive argument
+proceeds by induction on the depth of the CUT and the formula rank.
+The cases to analyze are distinguished by whether𝑅1 and𝑅2 are structural (i.e. from Figure 3a)
+or non-structural. In the former case, we will proceed, in Appendix B.2, by showing that𝜋 can be
+rewritten to a𝜋′ that either contains fewer CUTs or where the CUTs decrease their depth. In the
+latter case, we must additionally reason by induction on the formula rank. Recall that a formula
+in the conclusion of a rule (from e.g.𝑝QLL) isprincipalwhen it does not occur in the cedents of
+its premises—note that, by definition, non-structural rules (Figures 3b and 3c) have precisely one
+principal formula.22 This will be the formula whose rank decreases in this case of rewriting.
+Thus, we first consider cases when the cut formula appears as principal formula in either𝑅1 or
+𝑅2 (Appendix B.3), and then when a non-cut formula appears as the principal formula in either
+the hypothesis or conclusion (Appendix B.4). The resulting case structure is shown in Figure 5,
+with references to our subsections detailing the proof.
+Finally, we give a more rigorous termination argument in Appendix B.5.
+22Note all the formulae in the conclusion of EFQ are principal. However, for the purposes of cut-elimination, we still
+treat this rule as a structural one in Section B.2.2.
+
+=== PDF PAGE 45 ===
+Adequate Losses via Quantitative Linear Logic 45
+B.2 Structural rules
+For these cases, we consider rules applied on the left branch. By admissibility of EE, the other
+case is completely analogous.
+As for termination, note that for Sections B.2.1, B.2.2 and B.2.4 the number of CUT applications
+decreases from the original proof to its transformed version, while for Section B.2.3 the depth
+of the CUT application decreases.
+B.2.1 AX vs hypothesis.Rewrite
+1 AX𝐴⊢𝐴⊗
+....𝜋
+Γ,𝐴⊢Δ CUTΓ,𝐴⊢Δ
+to ....𝜋
+Γ,𝐴⊢Δ
+Validity is preserved since1 ⊗|𝜋| =|𝜋|.
+B.2.2 EFQ vs hypothesis.Rewrite
+0 EFQΓ⊢𝐴,Δ⊗
+....𝜋
+Γ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+to
+0 EFQΓ,Γ′⊢Δ,Δ ′
+Validity is preserved as0 ⊗|𝜋| = 0.
+B.2.3 MIX vs hypothesis.Rewrite
+....𝜋1
+Γ′
+1⊢Δ′
+1 ⊗
+....𝜋2
+Γ′
+2⊢Δ′
+2,𝐴
+MIXΓ′
+1,Γ′
+2⊢𝐴,Δ ′
+1,Δ′
+2 ⊗
+....𝜋3
+Γ,𝐴⊢Δ
+CUTΓ,Γ′
+1,Γ′
+2⊢Δ,Δ ′
+1,Δ′
+2
+
+=== PDF PAGE 46 ===
+Adequate Losses via Quantitative Linear Logic 46
+to ....𝜋2
+Γ′
+2⊢Δ′
+2,𝐴⊗
+....𝜋3
+Γ,𝐴⊢Δ
+CUTΓ,Γ′
+2⊢Δ,Δ ′
+2 ⊗
+....𝜋1
+Γ′
+1⊢Δ′
+1 MIXΓ,Γ′
+1,Γ′
+2⊢Δ,Δ ′
+1,Δ′
+2
+Then(|𝜋1|⊗|𝜋2|)⊗ |𝜋3|≤|𝜋1|⊗(|𝜋2|⊗|𝜋3|) holds by associativity of⊗.The case in which
+𝐴 appears in the other branch of MIX is analogous.
+B.2.4 EMP vs hypothesis.This case is vacuous since the conclusion of EMP does not contain
+any formula, and thus cannot be the premise of a CUT.
+B.3 Principal formula vs principal formula
+In all the cases of this subsection (except for B.3.6 and B.3.7), our proof shows that the rank of
+the cut formula decreases from the original proof to its transformed version. In those last two
+cases, we reduce the number of cut occurrences.
+B.3.1 Dualities (rules (−)⊥
+R and(−)⊥
+L ).Rewrite
+....𝜋1
+Γ,𝐴⊢Δ (−)⊥
+RΓ⊢𝐴 ⊥,Δ⊗
+....𝜋2
+Γ⊢𝐴,Δ ′
+(−)⊥
+LΓ′,𝐴⊥⊢Δ′
+CUTΓ,Γ′⊢Δ,Δ ′
+to ....𝜋2
+Γ′⊢𝐴,Δ ′ ⊗
+....𝜋1
+Γ,𝐴⊢Δ CUTΓ,Γ′⊢Δ,Δ ′
+We know that|𝜋1|⊗|𝜋2| =|𝜋2|⊗|𝜋1| since⊗ is commutative.
+B.3.2 Tensor (rules ⊗L and⊗R).Rewrite
+....𝜋1
+Γ⊢𝐴,Δ⊗
+....𝜋2
+Γ′⊢𝐵,Δ ′
+⊗R
+Γ,Γ′⊢𝐴⊗𝐵,Δ,Δ ′ ⊗
+....𝜋3
+Γ′′,𝐴,𝐵⊢Δ ′′
+⊗L
+Γ′′,𝐴⊗𝐵⊢Δ ′′
+CUTΓ,Γ′,Γ′′⊢Δ,Δ ′,Δ′′
+
+=== PDF PAGE 47 ===
+Adequate Losses via Quantitative Linear Logic 47
+to
+....𝜋1
+Γ⊢𝐴,Δ⊗
+....𝜋2
+Γ′⊢𝐵,Δ ′ ⊗
+....𝜋3
+Γ′′,𝐴,𝐵⊢Δ ′′
+CUTΓ′,Γ′′,𝐴⊢Δ ′,Δ′′
+CUTΓ,Γ′,Γ′′⊢Δ,Δ ′,Δ′′
+Then(|𝜋1|⊗|𝜋2|)⊗ |𝜋3| =|𝜋1|⊗(|𝜋2|⊗|𝜋3|), by associativity of tensor.
+B.3.3 Par (rules &
+L and &
+R).Follows by Appendix B.3.1 and Appendix B.3.2, since, by duality,
+a cut along𝐴 &𝐵 corresponds to a cut along 𝐴⊥⊗𝐵⊥. Indeed the proof:
+....𝜋1
+Γ⊢Δ,𝐴,𝐵 &
+R
+Γ⊢Δ,𝐴 &𝐵⊗
+....𝜋2
+Γ′,𝐴⊢Δ ′ ⊗
+....𝜋3
+Γ′′,𝐵⊢Δ ′′ &
+L
+Γ′,Γ′′,𝐴 &𝐵⊢Δ ′,Δ′′
+CUTΓ,Γ′,Γ′′⊢Δ,Δ ′,Δ′′
+can be rewritten to the following proof, which falls into the cases previously covered:
+....𝜋2
+Γ′,𝐴⊢Δ ′
+(−)⊥
+RΓ′⊢𝐴⊥,Δ′ ⊗
+....𝜋3
+Γ′′,𝐵⊢Δ ′′
+(−)⊥
+RΓ′′⊢𝐵⊥,Δ′′
+⊗R
+Γ′,Γ′′⊢𝐴⊥⊗𝐵⊥,Δ′,Δ′′ ⊗
+....𝜋1
+Γ⊢Δ,𝐴,𝐵 (−)⊥
+LΓ,𝐵⊥⊢Δ,𝐴 (−)⊥
+LΓ,𝐴⊥,𝐵⊥⊢Δ ⊗L
+Γ,𝐴⊥⊗𝐵⊥⊢Δ CUTΓ′,Γ′′,Γ⊢Δ ′,Δ′′,Δ
+B.3.4 Soft Disjunction (rules ∨L and∨R).We have:
+....𝜋1
+Γ⊢𝐴,Δ⊕ 𝑝
+....𝜋2
+Γ⊢𝐵,Δ ∨RΓ⊢𝐴∨𝐵,Δ⊗
+....𝜋3
+Γ′,𝐴⊢Δ ′ ⊕−𝑝
+....𝜋4
+Γ′,𝐵⊢Δ ′
+∨LΓ′,𝐴∨𝐵⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+There are two possible cut-elimination strategies here.
+Choice𝐴.Rewrite to: ....𝜋1
+Γ⊢𝐴,Δ⊗
+....𝜋3
+Γ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+
+=== PDF PAGE 48 ===
+Adequate Losses via Quantitative Linear Logic 48
+Choice𝐵.Rewrite to: ....𝜋2
+Γ⊢𝐵,Δ⊗
+....𝜋4
+Γ′,𝐵⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+We showed in Lemma A.3 that:
+(|𝜋1|⊕𝑝|𝜋2|)⊗( |𝜋3|⊕−𝑝|𝜋4|)≤( |𝜋1|⊗|𝜋3|)∨( |𝜋2|⊗|𝜋4|).
+Thus perform the rewrite of maximal validity (and, by convention, the one involving𝐴 if both
+validities are equal). Note this is a deterministic rewrite strategy.
+B.3.5 Soft Conjunction (rules ∧L and∧R).Follows by Appendix B.3.1 and Appendix B.3.4, since a
+cut along𝐴∧𝐵 corresponds to a cut along𝐴⊥∨𝐵⊥ (analogously to Appendix B.3.3).
+B.3.6 Multiplicative unit (1 L and1 R).Due to the context restrictions of1 L and1 R, there is only
+one possible such proof:
+1 1R⊢1⊗
+1 1L1⊢ CUT⊢
+Rewrite this to
+1 EMP⊢
+Clearly1 ⊗ 1 = 1, and the number of cut applications decreases.
+B.3.7 Additive units ( ⊥L and⊤R).Since ⊥ (resp.⊤) only has an introduction rule for the left (resp.
+right) side of a sequent, the only way for a CUT to use⊤ or⊥ as cut formula is to rely on EFQ to
+cover the missing introduction rule. Then we proceed as in (Section B.2.2), by rewriting the cut to a
+EFQ rule introducing the same conclusion, and this is validity-preserving (always with validity 0).
+B.4 Non-principal formula vs principal formula
+The final case we consider is when the cut formula is not principal in both of the rules applied to
+the premises of the CUT. Let us use the usual terminology and say that in Γ⊢Δ , the cedent Γ is
+the antecedent and Δ is the consequent. This case splits into four subcases, depending on:
+• whether the principal formula appears in the conclusion or in the hypothesis of theCUT rule,
+
+=== PDF PAGE 49 ===
+Adequate Losses via Quantitative Linear Logic 49
+• and whether the principal formula is in the antecedent or the consequent of that conclu-
+sion/hypothesis.
+We treat all the cases in which this principal formula belongs to the conclusion (left premise) of
+the CUT. The cases when the principal formula belongs to the CUT’s hypothesis are symmetric.
+B.4.1 Principal Formula is in the antecedent of the conclusion of the CUT.In this subsection, we
+consider the following cases when a principal formula 𝐴•𝐵 is contained in the antecedent of
+the conclusion of the CUT. In all cases of this section, the proof transformation decreases the
+depth of the cut.
+B.4.1.1Rule⊗ L.Rewrite
+....𝜋1
+Γ,𝐶,𝐷⊢𝐴,Δ ⊗L
+Γ,𝐶⊗𝐷⊢𝐴,Δ⊗
+....𝜋2
+Γ′,𝐴⊢Δ ′
+CUTΓ,𝐶⊗𝐷,Γ ′⊢Δ,Δ ′
+to ....𝜋1
+Γ,𝐶,𝐷⊢𝐴,Δ⊗
+....𝜋2
+Γ′,𝐴⊢Δ ′
+CUTΓ,𝐶,𝐷,Γ ′⊢Δ,Δ ′
+⊗L
+Γ,𝐶⊗𝐷,Γ ′⊢Δ,Δ ′
+B.4.1.2 Rule &
+L.Without loss of generality, suppose the cut formula comes from the left premise
+of &
+L. Rewrite:
+....𝜋1
+Γ1,𝐶⊢𝐴,Δ 1 ⊗
+....𝜋2
+Γ2,𝐷⊢Δ 2 &
+L
+Γ1,𝐶 &𝐷,Γ 2⊢𝐴,Δ 1,Δ 2 ⊗
+....𝜋3
+Γ′,𝐴⊢Δ ′
+CUTΓ1,𝐶 &𝐷,Γ 2,Γ′⊢Δ 1,Δ 2,Δ′
+to ....𝜋1
+Γ1,𝐶⊢𝐴,Δ 1 ⊗
+....𝜋3
+Γ′,𝐴⊢Δ ′
+CUTΓ1,𝐶,Γ ′⊢Δ 1,Δ′ ⊗
+....𝜋2
+Γ2,𝐷⊢Δ 2 &
+L
+Γ1,𝐶 &𝐷,Γ 2,Γ′⊢Δ 1,Δ 2,Δ′
+
+=== PDF PAGE 50 ===
+Adequate Losses via Quantitative Linear Logic 50
+We have(|𝜋1|⊗|𝜋2|)⊗|𝜋3| =(|𝜋1|⊗|𝜋3|)⊗|𝜋2| by associativity and commutativity of
+⊗.
+B.4.1.3Rule∨ L.Rewrite
+....𝜋1
+Γ,𝐴⊢𝐶,Δ⊕ −𝑝
+....𝜋2
+Γ,𝐵⊢𝐶,Δ ∨LΓ,𝐴∨𝐵⊢𝐶,Δ⊗
+....𝜋3
+Γ′,𝐶⊢Δ ′
+CUTΓ,𝐴∨𝐵,Γ ′⊢Δ,Δ ′
+to
+....𝜋1
+Γ,𝐴⊢𝐶,Δ⊗
+....𝜋3
+Γ′,𝐶⊢Δ ′
+CUTΓ,𝐴,Γ ′⊢Δ,Δ ′ ⊕−𝑝
+....𝜋2
+Γ,𝐵⊢𝐶,Δ⊗
+....𝜋3
+Γ′,𝐶⊢Δ ′
+CUTΓ,𝐵,Γ ′⊢Δ,Δ ′
+∨LΓ,𝐴∨𝐵,Γ ′⊢Δ,Δ ′
+Validity is preserved by Lemma 2.4.
+B.4.1.4Rule∧ L.Rewrite
+....𝜋1
+Γ,𝐴⊢𝐶,Δ⊕ 𝑝
+....𝜋2
+Γ,𝐵⊢𝐶,Δ ∧LΓ,𝐴∧𝐵⊢𝐶,Δ⊗
+....𝜋3
+Γ′,𝐶⊢Δ ′
+CUTΓ,𝐴∧𝐵,Γ ′⊢Δ,Δ ′
+to
+....𝜋1
+Γ,𝐴⊢𝐶,Δ⊗
+....𝜋3
+Γ′,𝐶⊢Δ ′
+CUTΓ,𝐴,Γ ′⊢Δ,Δ ′ ⊕𝑝
+....𝜋2
+Γ,𝐵⊢𝐶,Δ⊗
+....𝜋3
+Γ′,𝐶⊢Δ ′
+CUTΓ,𝐵,Γ ′⊢Δ,Δ ′
+∧LΓ,𝐴∧𝐵,Γ ′⊢Δ,Δ ′
+Validity is preserved by Lemma 2.3.
+
+=== PDF PAGE 51 ===
+Adequate Losses via Quantitative Linear Logic 51
+B.4.1.5Rule(−) ⊥
+L .Rewrite
+....𝜋1
+Γ⊢𝐴,𝐵,Δ (−)⊥
+LΓ,𝐴⊥⊢𝐵,Δ⊗
+....𝜋2
+Γ′,𝐵⊢Δ ′
+CUT
+Γ,𝐴⊥,Γ′⊢Δ,Δ ′
+to ....𝜋1
+Γ⊢𝐵,𝐴,Δ⊗
+....𝜋2
+Γ′,𝐵⊢Δ ′
+CUTΓ,Γ′⊢𝐴,Δ,Δ ′
+(−)⊥
+LΓ,𝐴⊥,Γ′⊢Δ,Δ ′
+B.4.1.6 Rule1 L.This rule’s conclusion has no side cedents, therefore it cannot appear as non-
+principal, and this case is vacuous.
+B.4.1.7Rule⊥ L.Rewrite
+∞ ⊥L
+Γ,⊥⊢𝐴,Δ⊗
+....𝜋
+Γ′,𝐴⊢Δ ′
+CUTΓ,⊥,Γ ′⊢Δ,Δ ′
+to ∞ ⊥L
+Γ,⊥,Γ ′⊢Δ,Δ ′
+Validity is non-decreasing since ∞⊗ |𝜋| ≤∞ , and the number of cut occurrences
+decreases.
+B.4.2 Principal Formula is in the consequent of the conclusion of the CUT.We consider now the
+case in which the cut formula is again not principal inbothpremises of the CUT, but now we
+focus on a principal formula that appears as the consequent of the conclusion of the CUT rule.
+This case is perfectly dual to the previous one.
+Indeed, consider the following case of induction, where CUT needs to be commuted with a
+right introduction rule for some logical connective we denote by •:
+....𝜋1
+•R
+Γ⊢Δ,𝐶•𝐷,𝐴⊗
+....𝜋2
+Γ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′,𝐶•𝐷
+
+=== PDF PAGE 52 ===
+Adequate Losses via Quantitative Linear Logic 52
+This can be rewritten to the following proof, which falls into the cases previously covered:
+....𝜋3
+•⊥
+RΓ,𝐶⊥•⊥𝐷⊥⊢Δ,𝐴⊗
+....𝜋2
+Γ′,𝐴⊢Δ ′
+CUT
+Γ,Γ′,𝐶⊥•⊥𝐷⊥⊢Δ,Δ ′
+(−)⊥
+RΓ,Γ′⊢Δ,Δ ′,𝐶•𝐷
+To define𝜋3, note that•⊥
+R has the same amount of hypotheses as•L does. In the unary case,
+𝜋3 is obtained by applying(−)⊥
+L twice (to𝐶 and𝐷), and then composing with𝜋1. In the binary
+case,𝜋1 has for conclusion hypersequent a tensor of two sequents, so that𝜋1 =𝜋 1𝐿•𝜋 1𝑅 for the
+appropriate• used by the rule under study. Then define𝜋3𝐿 (resp.𝜋3𝑅) by applying(−)⊥
+L twice
+(to𝐶 and𝐷), and then composing with 𝜋1𝐿 (resp.𝜋1𝑅). Remark that 𝜋3 =𝜋 3𝐿•𝜋 3𝑅 provides
+a proof of the same validity.
+B.5 The Termination argument
+Let us use the notation from Appendix B.1. For a proof𝜋, define the metricsmet(𝜋)=(𝑟 𝑚,𝑛𝑚,𝑛,𝑑)
+such that if 𝜋 is cut-free, then met(𝜋)=( 0, 0, 0, 0), and else:
+(1)𝑟 𝑚 is the maximal rank of the cut formula of a cut occurrence in𝜋,
+(2)𝑛 𝑚 is the number of cut occurrences of maximal rank in𝜋,
+(3)𝑛is the total number of cut occurrences in𝜋,
+(4)𝑑is the sum of the depths of all cut occurrences in𝜋.
+We consider the lexicographic order over such tuples, which is well-founded. Now every step
+of the cut-elimination process is strictly decreasing for this order, so that the process needs to
+terminate. Note that the process is defined for every possible case involving a cut occurrence, so
+it can only halt on a cut-free proof: else, a rewrite could be applied.
+B.6 Decidability
+Recall the definition of provability. As observed above, the cut-elimination process is validity
+non-decreasing and thus we know the provability of a sequent, if it is realized, can be realized
+by a CUT-free proof. Note moreover that:
+(1) Explicit dualities in𝑝QLL (introduced via the rules(−)⊥
+L and(−)⊥
+R ) can be eliminated without
+affecting validity, so that we can restrict our attention to derivations of Γ⊢Δ that do not use
+CUT nor(−) ⊥
+L nor(−) ⊥
+R . Call thesereduced.
+
+=== PDF PAGE 53 ===
+Adequate Losses via Quantitative Linear Logic 53
+(2) We can, again without change in validity, remove anyMIX which uses the empty sequent in
+one of its branches.
+(3) By inspecting the remaining rules and cases, we observe a form of subformula property:
+each premise of a rule, if any, is of strictly smaller complexity (understood in the traditional
+sense as the sum of the number of logical connectives in each formula, over all the formulas
+appearing in contexts on both sides of the turnstile).
+Due to this subformula property, reduced proofs are in finite number, and they can be effectively
+enumerated. The validity of each𝑝QLL derivation is computable up to any desired precision by real
+arithmetic.23 It follows that provability is realized by at least one proof (since there are finitely many
+proofs of potential maximal validity), and that proof is computable via the arguments just raised.
+C Equivalence of MALL and∞QLL
+C.1 Proof of Theorem 4.4
+To show that qualitative𝑝QLL is equivalent to HMALL we turn to the observations of Section 3.1.1
+regarding hypersequent and Prop-enriched calculi. In particular, it is straightforward to translate
+proof rules from a hypersequent calculus to admissible proof rules in aProp-enriched one admitting
+EFQ, following the same procedure outlined in Lemma 3.7. Specifically, given proofs𝜋𝑖 as below
+left, any of them either provesG orH𝑖. Thus define𝜋G to be any of those provingG, or EFQ in
+case there is none, and likewise for 𝜋H𝑖 . We thus obtain a proof as below right:
+....𝜋1
+(G∨H 1) ∧···∧
+....𝜋𝑛
+(G∨H 𝑛)
+G∨K
+↦→
+.....𝜋G
+G ∨
+.....𝜋H1∧···∧𝜋 H𝑛
+(H1∧···∧H 𝑛)
+G∨K
+23Observe, in particular, that it is trivial to decide whether the validity of a proof is non-zero, since such validity is
+given as a finite expression involving only0,1, and∞whose positivity can be checked inductively.
+
+=== PDF PAGE 54 ===
+Adequate Losses via Quantitative Linear Logic 54
+(a)Structural Rules
+AX𝐴⊢𝐴 EMP⊢
+Γ⊢𝐴,Δ Γ ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+Γ⊢Δ Γ ′⊢Δ′
+MIXΓ,Γ′⊢Δ,Δ ′
+(b)Rules for Multiplicatives
+Γ,𝐴,𝐵⊢Δ ⊗L
+Γ,𝐴⊗𝐵⊢Δ
+Γ⊢𝐴,𝐵,Δ &
+R
+Γ⊢𝐴 &𝐵,Δ
+Γ,𝐴⊢Δ Γ ′,𝐵⊢Δ ′ &
+L
+Γ,Γ′,𝐴 &𝐵⊢Δ,Δ ′
+Γ⊢𝐴,Δ Γ ′⊢𝐵,Δ ′
+⊗R
+Γ,Γ′⊢𝐴⊗𝐵,Δ,Δ ′
+1L1⊢
+Γ⊢𝐴,Δ ⊥
+LΓ,𝐴⊥⊢Δ
+Γ,𝐴⊢Δ ⊥
+RΓ⊢𝐴 ⊥,Δ
+1R⊢1
+(c)Rules for Additives
+Γ,𝐴⊢Δ Γ,𝐵⊢Δ ∨L
+Γ,𝐴∨𝐵⊢Δ
+Γ⊢𝐴,Δ Γ⊢𝐵,Δ ∧R
+Γ⊢𝐴∧𝐵,Δ
+Γ,𝐴𝑖⊢Δ ∧L𝑖Γ,𝐴 1∧𝐴 2⊢Δ 𝑖=1,2 Γ⊢𝐴 𝑖,Δ ∨R𝑖Γ⊢𝐴 1∨𝐴 2,Δ
+⊥L
+Γ,⊥⊢Δ ⊤R
+Γ⊢⊤,Δ
+Fig. 6.MALL
+Vice versa, given proofs in a Prop-enriched calculus like qualitative𝑝QLL, we define
+....𝜋1
+H1 ∨
+....𝜋2
+H2
+K
+↦→
+.....𝜋2|𝜋 2
+∅|H 1|H 2
+∅|K
+....𝜋1
+H1 ∧
+....𝜋2
+H2
+K
+↦→
+....𝜋2
+∅|H 1
+....𝜋2
+∅|H 2
+∅|K
+(67)
+The language of MALL is, up to relabeling of connectives, the same as the one introduced in
+Definition 3.5 for𝑝=∞ . We can then easily draw a correspondence between the rules of one and
+the other (compare Figure 7 and Figure 8), with a few exceptions to highlight:
+
+=== PDF PAGE 55 ===
+Adequate Losses via Quantitative Linear Logic 55
+(a)Structural Rules
+𝑇 AX𝐴⊢𝐴
+𝑇 EMP⊢
+𝐹 EFQΓ⊢Δ
+Γ⊢𝐴,Δ∧Γ ′,𝐴⊢Δ ′
+CUTΓ,Γ′⊢Δ,Δ ′
+Γ⊢Δ∧Γ ′⊢Δ′
+MIXΓ,Γ′⊢Δ,Δ ′
+(b)Rules for Multiplicatives
+Γ,𝐴,𝐵⊢Δ ⊗L
+Γ,𝐴⊗𝐵⊢Δ
+Γ⊢𝐴,𝐵,Δ &
+R
+Γ⊢𝐴 &𝐵,Δ
+Γ,𝐴⊢Δ∧Γ ′,𝐵⊢Δ ′ &
+L
+Γ,Γ′,𝐴 &𝐵⊢Δ,Δ ′
+Γ⊢𝐴,Δ∧Γ ′,⊢𝐵,Δ ′
+⊗R
+Γ,Γ′⊢𝐴⊗𝐵,Δ,Δ ′
+𝑇 1L1⊢
+Γ⊢𝐴,Δ ⊥
+LΓ,𝐴⊥⊢Δ
+Γ,𝐴⊢Δ ⊥
+RΓ⊢𝐴 ⊥,Δ
+𝑇 1R⊢1
+(c)Rules for Additives
+Γ,𝐴⊢Δ∧Γ,𝐵⊢Δ ∨𝑝
+LΓ,𝐴∨𝐵⊢Δ
+Γ⊢𝐴,Δ∧Γ⊢𝐵,Δ ∧𝑝
+RΓ⊢𝐴∧𝐵,Δ
+Γ,𝐴⊢Δ∨Γ,𝐵⊢Δ ∧𝑝
+LΓ,𝐴∧𝐵⊢Δ
+Γ⊢𝐴,Δ∨Γ⊢𝐵,Δ ∨𝑝
+RΓ⊢𝐴∨𝐵,Δ
+𝑇 ⊥L
+Γ,⊥⊢Δ
+𝑇 ⊤R
+Γ⊢⊤,Δ
+Fig. 7.The qualitative version of𝑝QLL.
+(1) EFQ in qualitative 𝑝QLL actually translates to external weakening in the hypersequent
+calculus, withG=∅,
+(2) vice versa, the analogue of Lemma 3.7 for Prop-enriched calculi makes the translations of
+external weakening and contraction admissible in quantitative𝑝QLL.
+Thus we obtain Theorem 4.4.
+C.2 Proof of Theorem 4.7
+The claim boils down to a correspondence between rules that allows us to translate proofs directly
+between the two systems. Such a correspondence is mostly evident by comparing Figure 3 with
+Figure 6.
+
+=== PDF PAGE 56 ===
+Adequate Losses via Quantitative Linear Logic 56
+(a)Internal Structural Rules
+AX
+G|𝐴⊢𝐴
+EMP
+G|⊢
+G|Γ⊢𝐴,ΔG|Γ ′,𝐴⊢Δ ′
+CUT
+G|Γ,Γ ′⊢Δ,Δ ′
+G|Γ⊢ΔG|Γ ′⊢Δ′
+MIX
+G|Γ,Γ ′⊢Δ,Δ ′
+(b)External Structural Rules
+G EW
+G|H
+G|H|H EC
+G|H
+(c)Rules for Multiplicatives
+G|Γ,𝐴,𝐵⊢Δ ⊗L
+G|Γ,𝐴⊗𝐵⊢Δ
+G|Γ⊢𝐴,𝐵,Δ &
+R
+G|Γ⊢𝐴 &𝐵,Δ
+G|Γ,𝐴⊢ΔG|Γ ′,𝐵⊢Δ ′ &
+L
+G|Γ,Γ ′,𝐴 &𝐵⊢Δ,Δ ′
+G|Γ⊢𝐴,ΔG|Γ ′⊢𝐵,Δ ′
+⊗R
+G|Γ,Γ ′⊢𝐴⊗𝐵,Δ,Δ ′
+1L
+G|1⊢
+G|Γ⊢𝐴,Δ ⊥
+LG|Γ,𝐴 ⊥⊢Δ
+G|Γ,𝐴⊢Δ ⊥
+RG|Γ⊢𝐴 ⊥,Δ
+1R
+G|⊢1
+(d)Rules for Additives
+G|Γ,𝐴⊢ΔG|Γ,𝐵⊢Δ ∨L
+G|Γ,𝐴∨𝐵⊢Δ
+G|Γ⊢𝐴,ΔG|Γ⊢𝐵,Δ ∧R
+G|Γ⊢𝐴∧𝐵,Δ
+G|Γ,𝐴⊢Δ|Γ,𝐵⊢Δ ∧L
+G|Γ,𝐴∧𝐵⊢Δ
+G|Γ⊢𝐴,Δ|Γ⊢𝐵,Δ ∨R
+G|Γ⊢𝐴∨𝐵,Δ
+⊥L
+G|Γ,⊥⊢Δ
+⊤R
+G|Γ⊢⊤,Δ
+Fig. 8.The hypersequent calculus for isomix MALL (adapted from [48, Fig 4.1]), HMALL.
+Indeed, when going from MALL to∞QLL, the only sticking point is the admissibility of the
+additive fragment of the former in the latter, which we established in Lemma 4.5. As for the
+converse, note that a proof in∞QLL can only have0,1, or ∞ as validities. Moreover, a proof
+translated from MALL does not use EFQ, and thus has validity greater or equal than1, thus
+proving one half of the claim.
+Conversely, let𝑃 be a∞QLL proof of Γ⊢Δ of validity greater than1. By Lemma 4.5 and
+Lemma 4.6, we can assume𝑃 is EFQ-free and only uses the unary versions of∨∞
+R and∧∞
+L . Then
+
+=== PDF PAGE 57 ===
+Adequate Losses via Quantitative Linear Logic 57
+the translation of rules in this direction is straightforward, once noted that, since 𝑎⊗𝑏= 0iff
+either𝑎= 0or 𝑏= 0, the rules of∞QLL involving⊗ can be replaced as-is with those in MALL.
+D Soundness
+We prove now Proposition 5.10.
+For brevity and without loss of generality, when a cedent Γ• or Δ◦ has to appear, we replace
+it by a single variable for an element of S.
+We start by noting that our translation of cedents is well-posed (that is, respects multiset
+structure) thanks to the unitality, associativity, and commutativity axioms, that is (32). Likewise,
+we can use1on both sides because1 ⊥⊥ = 1, that is (33). We thus employ these facts tacitly below.
+We start from the following rules, which together with the axioms for involutivity (33) and
+duality (34) allow us to cut the subsequent cases in half.
+(−)⊥
+R is sound by (35):(𝑎,𝑏⊑𝑐)=(𝑎⊑(𝑏•𝑐 ⊥)⊥)=(𝑎⊑𝑏 ⊥◦𝑐).
+(−)⊥
+L holds by duality, whose application we illustrate here once and for all:
+(𝑎⊑𝑏◦𝑐)
+(34)
+=(𝑏•𝑐⊑𝑎)
+(−)⊥
+R
+=(𝑐⊑𝑏 ⊥◦𝑎)
+(34)
+=(𝑎•𝑏⊑𝑐) (68)
+Note the use of commutativity as well as the fact𝑎◦𝑏=(𝑎 ⊥•𝑏⊥)⊥.
+We then have:
+AX1≤(𝑎⊑𝑎)by (reflexivity) for enriched categories.
+EMP,1 L, and1 R These all amount (thanks also to1⊥ = 1from (33)) to checking that1≤( 1⊑
+1), which holds by (reflexivity).
+EFQThis rule corresponds to the trivial fact0≤(𝑎⊑𝑏).
+CUT After moving the context to the outer cedents, it is enough to check that(𝑎⊑𝑏)⊗(𝑏⊑
+𝑐)≤(𝑎⊑𝑐), which holds by (transitivity).
+MIXThis follows from (31) and (40) (right):
+(𝑎⊑𝑏)⊗(𝑎 ′⊑𝑏′)⊗1
+(31)⊗(40)
+≤ ((𝑎•𝑎 ′)⊑(𝑏•𝑏 ′))⊗((𝑏•𝑏 ′)⊑(𝑏◦𝑏 ′))
+≤(𝑎•𝑎 ′)⊑(𝑏◦𝑏 ′).
+(69)
+⊗L and &
+R hold by definition,
+⊗R and &
+L It suffices to prove the first as the second is formally dual, and, once the context is
+all moved on the left side, the first is directly (31).
+
+=== PDF PAGE 58 ===
+Adequate Losses via Quantitative Linear Logic 58
+∨L and∧ R It suffices to prove the first as the second is formally dual, and the first is directly
+(37). Specifically, we move all the context on the right then invoke (37).
+∧L and∨ R It suffices to prove the first as the second is formally dual, and the first is directly
+(38).
+⊥L and⊤ R It suffices to prove the first as the second is formally dual, and the first is directly
+(36).
+E Construction of the classifying softale
+Here we prove that Definition 5.12 is well-posed.
+We start by observing LT𝑝[T] is a[0,∞]⊗-preorder. Indeed, reflexivity is granted by AX and
+transitivity by CUT. The way this is proven is paradigmatic for all the other inequations below,
+namely by exhibiting a derivation starting from the left-hand side and ending in the right-hand
+side, e.g.
+1≤ |𝐴⊢𝐴 | ⇐⇒ 1 AX𝐴⊢𝐴
+|𝐴⊢𝐵 |⊗|𝐵⊢𝐶 |≤|𝐴⊢𝐶 | ⇐⇒ 𝐴⊢𝐵⊗𝐵⊢𝐶 CUT𝐴⊢𝐶
+We now similarly prove each structural equation (the items below are numbered by the equation
+they prove in Definition 5.2).
+(31)|𝐴⊢𝐵 |⊗|𝐷⊢𝐶 |≤|𝐴⊗𝐷⊢𝐵⊗𝐶 | is witnessed by the following derivation:
+𝐴⊢𝐵⊗𝐷⊢𝐶 ⊗R
+𝐴⊗𝐷⊢𝐵,𝐶 ⊗L
+𝐴⊗𝐷⊢𝐵⊗𝐶
+(70)
+(32) We must prove1≤ |𝐴⊗1⊢𝐴 | and1≤ |𝐴⊢𝐴⊗1 |:
+1 AX𝐴⊢𝐴⊗
+1 1L1⊢ MIX𝐴,1⊢𝐴 ⊗L
+𝐴⊗1⊢𝐴
+1 AX𝐴⊢𝐴⊗
+1 1R⊢1 ⊗R
+𝐴⊢𝐴⊗1
+(71)
+The associativity and commutativity of ⊗ are witnessed by the same proofs that witness
+them for MALL. Here are the two directions of associativity, both witnessed to have validity
+
+=== PDF PAGE 59 ===
+Adequate Losses via Quantitative Linear Logic 59
+greater than1:
+1 AX𝐴⊢𝐴⊗
+1 AX𝐶⊢𝐶⊗
+1 AX𝐵⊢𝐵 ⊗R
+𝐵,𝐶⊢𝐵⊗𝐶 ⊗R
+𝐴,𝐵,𝐶⊢𝐴⊗(𝐵⊗𝐶) ⊗L
+𝐴⊗𝐵,𝐶⊢𝐴⊗(𝐵⊗𝐶) ⊗L
+(𝐴⊗𝐵)⊗𝐶⊢𝐴⊗(𝐵⊗𝐶)
+(72)
+1 AX𝐴⊢𝐴⊗
+1 AX𝐵⊢𝐵 ⊗R
+𝐴,𝐵⊢𝐴⊗𝐵⊗
+1 AX𝐶⊢𝐶 ⊗R
+𝐴,𝐵,𝐶⊢(𝐴⊗𝐵)⊗𝐶 ⊗L
+𝐴,𝐵⊗𝐶⊢(𝐴⊗𝐵)⊗𝐶 ⊗L
+𝐴⊗(𝐵⊗𝐶)⊢(𝐴⊗𝐵)⊗𝐶
+(73)
+Commutativity is witnessed in both directions by the same proof:
+1 AX𝐴⊢𝐴⊗
+1 AX𝐵⊢𝐵 ⊗R
+𝐵,𝐴⊢𝐵⊗𝐴
+𝐴,𝐵⊢𝐵⊗𝐴 ⊗L
+𝐴⊗𝐵⊢𝐵⊗𝐴
+(74)
+where we freely reordered the antecedent by means of our convention that cedents are not
+considered to have an order (see theincipitof Section 3.1).
+(33) holds definitionally, recall (21),
+(34)|𝐴⊢𝐵 | =|𝐵⊥⊢𝐴⊥| by(−) ⊥
+L and(−) ⊥
+R ,
+(35)|𝐴⊗𝐵⊢𝐶 ⊥| =|𝐴⊢(𝐵⊗𝐶) ⊥| is witnessed by the proofs
+𝐴,𝐵⊢𝐶 ⊥
+(−)⊥
+L𝐴,𝐵,𝐶⊢ ⊗L
+𝐴,𝐵⊗𝐶⊢ (−)⊥
+R𝐴⊢(𝐵⊗𝐶) ⊥
+1 AX𝐵⊢𝐵⊗
+1 AX𝐶⊢𝐶 ⊗R
+𝐵,𝐶⊢𝐵⊗𝐶⊗
+𝐴⊢(𝐵⊗𝐶) ⊥
+(−)⊥
+L𝐴,𝐵⊗𝐶⊢ CUT𝐴,𝐵,𝐶⊢ (−)⊥
+R𝐴,𝐵⊢𝐶 ⊥
+(75)
+(36)|⊥⊢𝐴 | =∞is directly witnessed by⊥ L.
+(37)and(38) are proven by∨ R and∨ L, respectively.
+
+=== PDF PAGE 60 ===
+Adequate Losses via Quantitative Linear Logic 60
+F Proof of Grounded Completeness (Theorem 5.18)
+In the following, we fix the valuation 𝑣 :𝑉→[ 0,∞] and work in the grounded theory T𝑣, so
+that⊢ will mean entailment in that theory.
+We start by noting that MIX∗ does not interfere with cut-elimination: inspecting the proof
+at Appendix B for the cases involving MIX, one can note that Equation (3) suffices to make the
+analogous proof transformations go through for MIX∗.
+The next tool is the following observation:
+Lemma F.1.For all formulae𝐴,𝐵in the language ofT 𝑣,
+|𝐴⊢𝐵 |∗≤|𝐵⊢𝐴 | (76)
+Proof. We start by observing that 24|𝐴⊢𝐵 | =|⊢𝐴⊥,𝐵| =|⊢𝐴⊥ &𝐵|, thus without loss of
+generality we can prove|𝐴⊢ |≥|⊢𝐴|∗. Moreover, we also have|𝐴⊢ | =|⊢𝐴⊥|, and thus proving
+the inequality for𝐴 proves it for𝐴⊥ too. Therefore, without loss of generality, we can assume𝐴
+is positive (i.e. made of propositional variables,⊥,1,∨, and⊗).
+We prove the theorem by induction on the structure of𝐴.
+For constants, we show that for every proof 𝜋 of𝐴⊢ there is a proof 𝜋 of ⊢𝐴 such that
+|𝜋|≥|𝜋|∗. It follows that|𝐴⊢ |≥|𝜋|≥|𝜋|∗≥|⊢𝐴|∗. This is how we get𝜋:
+𝑣(𝑎) 𝑎R
+𝑎⊥⊢
+↦→ 𝑣(𝑎)∗
+𝑎L
+⊢𝑎⊥ (77)
+𝑣(𝑎)∗
+𝑎L𝑎⊢ ↦→ 𝑣(𝑎) 𝑎R⊢𝑎 (78)
+∞ ⊥L⊥⊢ ↦→ 0 EFQ⊢⊥ (79)
+1 1L1⊢ ↦→ 1 1R⊢1 (80)
+For⊗, we first observe that |𝐴⊗𝐵⊢ | =|𝐴,𝐵⊢ | by invertibility of⊗ L. We then have
+|𝐴⊗𝐵⊢ |≥|𝐴⊢ |⊗∗|𝐵⊢|≥|⊢𝐴|∗⊗∗|⊢𝐵|∗,(81)
+24This holds because &
+R is invertible. Its inverse is obtained by cutting⊢𝐴 &𝐵with𝐴 &𝐵⊢𝐴,𝐵.
+
+=== PDF PAGE 61 ===
+Adequate Losses via Quantitative Linear Logic 61
+with the first inequality witnessed by MIX∗ and the second being the induction hypothesis. Now
+since|⊢𝐴⊗𝐵 |≥|⊢𝐴|⊗|⊢𝐵| as witnessed by⊗ R, we have
+|⊢𝐴|∗⊗∗|⊢𝐵|∗ =(|⊢𝐴|⊗|⊢𝐵|)∗≥|⊢𝐴⊗𝐵 |∗.(82)
+Similarly,|𝐴∨𝐵⊢ |≥|𝐴⊢ |⊕∗|𝐵⊢| by∨ L, and thus
+|𝐴∨𝐵⊢ |≥|⊢𝐴|∗⊕∗|⊢𝐵|∗.(83)
+Now since|⊢𝐴∨𝐵 |≥|⊢𝐴|⊕|⊢𝐵| because of∨ R, we have
+|⊢𝐴|∗⊕∗|⊢𝐵|∗ =(|⊢𝐴|⊕|⊢𝐵|)∗≥|⊢𝐴∨𝐵 |∗.(84)
+□
+Proof of Theorem 5.18.By induction on𝜑:
+(1)𝜑=1, then1≤1,
+(2)𝜑=⊥, then0is smaller than anything,
+(3)𝜑=⊤, then∞≤∞,
+(4)𝜑=𝑎propositional variable, then by definition ofJ𝑎K 𝑣 and the subformula property,
+𝑣(𝑎)=J𝑎K 𝑣 =
+⊢T𝑣 𝑎
+ =𝑣(𝑎),(85)
+(5)𝜑=𝑎 ⊥—same as above.
+(6)𝜑=𝜓 ⊥, thenJ𝜓⊥K𝑣 =J𝜓K∗
+𝑣 =
+⊢T𝑣𝜓
+∗ and by Lemma F.1
+⊢T𝑣𝜓
+∗≤
+⊢T𝑣𝜓⊥.
+(7)𝜑=𝛼∗𝛽for∗∈{⊗, &,∧,∨}, we have
+J𝛼∗𝛽K 𝑣 =J𝛼K 𝑣∗J𝛽K 𝑣≤
+⊢T𝑣 𝛼
+∗
+⊢T𝑣 𝛽
+≤
+⊢T𝑣 𝛼∗𝛽
+ (86)
+Here the last inequality is induced by the right introduction rule of⊗,∨,∧ for those connec-
+tives, and by MIX∗ for &.
+□

@@ -1,0 +1,1081 @@
+=== PDF PAGE 1 ===
+arXiv:2502.18406v1  [cs.AI]  25 Feb 2025
+The Gradient of Algebraic Model Counting
+Jaron Maene1, Luc De Raedt 1,2
+1KU Leuven, Belgium
+2 ¨Orebro University, Sweden
+jaron.maene@kuleuven.be, luc.deraedt@kuleuven.be
+Abstract
+Algebraic model counting uniﬁes many inference tasks on
+logic formulas by exploiting semirings. Rather than focusi ng
+on inference, we consider learning, especially in statisti cal-
+relational and neurosymbolic AI, which combine logical,
+probabilistic and neural representations. Concretely, we show
+that the very same semiring perspective of algebraic model
+counting also applies to learning. This allows us to unify va r-
+ious learning algorithms by generalizing gradients and bac k-
+propagation to different semirings. Furthermore, we show
+how cancellation and ordering properties of a semiring can be
+exploited for more memory-efﬁcient backpropagation. This
+allows us to obtain some interesting variations of state-of-the-
+art gradient-based optimisation methods for probabilistic log-
+ical models. We also discuss why algebraic model counting
+on tractable circuits does not lead to more efﬁcient second-
+order optimization. Empirically, our algebraic backpropa ga-
+tion exhibits considerable speed-ups as compared to existi ng
+approaches.
+Code — https://github.com/ML-KULeuven/amc-grad
+1 Introduction
+Algebraic model counting (AMC) generalizes the well-
+known satisﬁability task on propositional logic formulas t o
+semirings (Kimmig, V an den Broeck, and De Raedt 2017).
+Using AMC various probabilistic inference tasks can be
+solved using the same unifying algorithm, including calcu-
+lating marginals with evidence, entropy, and the most prob-
+able explanation (MPE). The principles of AMC are rem-
+iniscent of those underlying the sum- and max-product al-
+gorithms for probabilistic graphical models (Friesen and
+Domingos 2016).
+In the current machine learning age, inference is often
+combined with learning. This is the focus of statistical-
+relational learning (De Raedt et al. 2016) and neurosym-
+bolic AI (Garcez and Lamb 2023), which aim to integrate
+the inference and learning paradigms of logic, probability
+and neural networks. Our goal is to extend the unifying al-
+gebraic perspective that AMC brought to inference to the
+learning setting. To this end, we show how gradients can be
+Copyright © 2025, Association for the Advancement of Artiﬁc ial
+Intelligence (www.aaai.org). All rights reserved.
+generalized over semirings, by taking inspiration from dif -
+ferentiable algebra. This algebraic gradient provides a ne w
+toolkit of tractable operations, which can be used to real-
+ize a wide variety of learning algorithms, including gradie nt
+descent, expectation-maximization, entropy maximizatio n,
+and low variance gradient estimation.
+From a theoretical perspective, the algebraic viewpoint
+provides a unifying framework and solver for computing
+many concepts that are used in learning. This is timely, as
+Marra et al. (2024) relate that “[t]he situation in neurosym -
+bolic computation today is very much like that of the early
+days in statistical relational learning, in which there wer e
+many competing formalisms, sometimes characterized as
+the statistical relational learning alphabet soup”. Ott et al.
+(2023) even state that “the ﬁeld of neurosymbolic AI ex-
+hibits a progress-hampering level of fragmentation”.
+From a practical perspective, we create a single opti-
+mized algorithm that subsumes many existing ones as spe-
+cial cases. For example, the forward-backward algorithm of
+Darwiche (2003) and the gradient estimator of De Smet,
+Sansone, and Zuidberg Dos Martires (2023) have a worst-
+case quadratic complexity in the number of nodes. However,
+these are special cases of our algebraic backpropagation al -
+gorithm which has linear complexity. We provide an efﬁ-
+cient implementation for the algebraic backpropagation al -
+gorithm which takes the semiring properties into account. I n
+our experiments, our implementation outperforms PyTorch
+and Jax, which are the de facto standard for neurosymbolic
+learning, by several orders of magnitude.
+Finally, we consider algebraic learning algorithms that
+rely on second-order information. Indeed, empirical evi-
+dence of e.g. Liu, Zhang, and V an den Broeck (2022) sug-
+gests that the existing ﬁrst-order optimization methods fo r
+circuits might be suboptimal. Second-order optimization has
+quadratic complexity in general, which explains its lack
+of popularity in machine learning. However, specialized
+tractable circuit representations such as sd-DNNF have bee n
+developed which support many operations in linear time
+which are otherwise NP-hard (Darwiche and Marquis 2002).
+Unfortunately, we show that this tractability does not carr y
+over to second-order derivatives and Newton’s method is un-
+likely to be feasible in linear time on these tractable circu its.
+In summary, we make the following contributions.
+1. We introduce the ∇AMC for computing algebraic gradi-
+
+=== PDF PAGE 2 ===
+ents within a logical semiring framework and show that
+many tasks related to gradients and learning can be im-
+plemented as such an algebraic gradient.
+2. We provide an optimized ∇AMC algorithm for the alge-
+braic gradient by exploiting dynamic programming and
+semiring properties.
+3. The ∇AMC algorithm is implemented in a user-friendly
+Rust library called Kompyle, and empirically outper-
+forms state-of-the-art algorithms used in neurosymbolic
+learning
+4. We prove that a second-order algebraic gradient cannot
+be computed by a circuit in linear time.
+2 Preliminaries
+We ﬁrst review some relevant background on abstract al-
+gebra and propositional logic, before turning to algebraic
+model counting and algebraic circuits.
+2.1 Algebra
+Deﬁnition 2.1 (Commutative Monoid) . A commutative
+monoid (A,⊙, e ) is a set A with a binary operation ⊙ :
+A× A→ A and an identity element e∈ A such that the
+following properties hold for all a, b, and c in A.
+• Associativity: (a⊙ b)⊙ c = a⊙ (b⊙ c)
+• Commutativity: a⊙ b = b⊙ a
+• Neutrality of Identity : e⊙ a = a
+An element a∈ A is idempotent when a⊙ a = a. A
+monoid is idempotent when all its elements are idempotent.
+Note that the identity e is always idempotent ( e⊙ e = e).
+Deﬁnition 2.2 (Commutative Semiring) . A commutative
+semiring (A,⊕,⊗, e ⊕, e ⊗) combines two commutative
+monoids (A,⊕, e ⊕) and (A,⊗, e ⊗) where the following
+properties hold for all a, b, and c in A.
+• Distributivity. (a⊕ b)⊗ c = (a⊗ c)⊕ (b⊗ c)
+• Absorption. e⊕⊗ a = e⊕
+We will from on now write monoid or semiring for
+brevity, and leave the commutativity implied. A ring is a
+semiring with additive inverses, meaning that for every a in
+A, there is an inverse element−a such that a⊕− a = e⊕.
+A simple example of a semiring is the Boolean semiring,
+which has true (⊤) and false (⊥) as the domain and uses the
+logical OR and AND operations as sum and product, respec-
+tively. Table 1 gives an overview of relevant semirings along
+with the shorthand name we employ for them. For example,
+we denote the Boolean semiring as B OOL .
+2.2 Propositional Logic
+Syntax We writeV for a set of propositional variables. The
+inﬁnite set of logical formulas FV over the variables V is
+deﬁned inductively as follows. A formula φ∈F V is either
+true⊤, false⊥, a propositional variable v∈V , a negation
+of a formula ¬φ 1, a conjunction of formulas φ 1∧ φ 2, or
+a disjunction of formulas φ 1∨ φ 2. Literals are variables or
+negated variables, and the set of all literals is denoted asL =
+V ∪{¬v| v∈V} .
+Deﬁnition 2.3. Given a formula φ, the conditioned formula
+φ|x with x∈L equals the formula φ where every occur-
+rence of the literal x is replaced with⊤ and every occurrence
+of¬x is replaced with⊥. When x⁄∈L, φ|x is deﬁned as ⊥.
+Semantics An interpretation I ⊂ Lis a set of literals
+which denotes a truth assignment. This means that for each
+variable v∈V , either v∈ I or¬v∈ I. When a formula φ is
+satisﬁed in the interpretation I according to the usual seman-
+tics, we say that I is a model of φ, written as I|= φ. The set
+of all models of a formula is denotedM(φ) ={I| I|= φ}.
+From the algebraic view, the propositional formulas also
+form a semiring (FV ,∨,∧,⊥,⊤). As opposed to the B OOL
+semiring, the operations∨ and∧ are structural here and cre-
+ate new formulas from their arguments. This is also known
+as the free commutative semiring generated by the literalsL.
+2.3 Algebraic Model Counting
+The task of algebraic model counting (AMC) consists of
+evaluating the models of a formula in a given semiring (Kim-
+mig, V an den Broeck, and De Raedt 2017).
+Deﬁnition 2.4 (Algebraic Model Counting). Given a semir-
+ing (A,⊕,⊗, e ⊕, e ⊗) and a labelling function α :L→ A
+which maps literals into the semiring domain, the algebraic
+model count is a mapping from formulas into the semiring
+domain.
+AMC(φ; α ) =
+⨁
+I∈M(φ )
+⨂
+x∈I
+α (x)
+AMC generalizes many existing inference tasks. For ex-
+ample, the satisﬁability (SA T) task, which asks whether a
+formula has a model, can be solved by AMC in the B OOL
+semiring. Model counting (#SA T), which asks how many
+models a formula has, is solved using the N AT semiring, and
+weighted model counting (WMC) using the P ROB semiring.
+WMC is of particular signiﬁcance, as probabilistic inferen ce
+in e.g. Bayesian networks can be reduced to WMC (Chavira
+and Darwiche 2008).
+Example 1. Consider the formula φ = ( x∨ y)∧ z over
+the set of variables V ={x, y, z }. This formula has three
+models:M(φ) ={{x, y, z },{¬x, y, z },{x,¬y, z}}. So for
+the AMC, we get
+AMC(φ; α ) = ( α (x)⊗ α (y)⊗ α (z))
+⊕ (α (¬x)⊗ α (y)⊗ α (z))
+⊕ (α (x)⊗ α (¬y)⊗ α (z))
+To compute the model count, we evaluate in the N AT
+semiring with a constant labelling function ∀x ∈ L :
+α (x) = 1 , giving AMC NAT(φ; α ) = 3 . Similarly, setting
+all weights in α to⊤ in the B OOL semiring shows that φ is
+satisﬁable. If we assign weights to the literals, e.g.
+α (x) = 0 . 5, α (¬x) = 0 . 5, α (y) = 0 . 1,
+α (¬y) = 0 . 9, α (z) = 0 . 8, α (¬z) = 0 . 2
+we get AMC PROB (φ; α ) = 0 . 44 for the WMC.
+The algebra of propositional logic (the Boolean algebra ,
+not to be confused with the Boolean semiring) observes ad-
+ditional properties on top of the semiring such as idem-
+potency. This difference between the Boolean algebra and
+
+=== PDF PAGE 3 ===
+Semiring Domain A ⊕ ⊗ e⊕ e⊗ Labels α (x) AMC Task ∇AMC Task
+BOOL {⊤,⊥} ∨ ∧ ⊥ ⊤ ⊤ SA T Cond. SA T
+∼ p(x) Sampling IndeCateR
+NAT N + × 0 1 1 #SA T Cond. #SA T
+PROB R≥0 + × 0 1 p(x) WMC Gradient
+LOG {−∞}∪R≤0 logaddexp + −∞ 0 log p(x) Log WMC Log Gradient
+VITERBI R≥0 max × 0 1 p(x) MPE MGE
+TROPICAL R≥0 max + −∞ 0 log p(x) Log MPE Log MGE
+FUZZY [0, 1] max min 0 1 p(x) Fuzzy /
+GRAD y R≥0× R Eq. 3 Eq. 4 (0, 0) (0 , 1) ( p(x), ∂p (x)
+∂y ) Gradient Hessian
+SENS R[V] + × 0 1 x Sensitivity Cond. Sens.
+OBDD OBDD(V) ∨ ∧ OBDD(0) OBDD(1) OBDD( x) OBDD Cond. OBDD
+Table 1: Overview of relevant commutative semirings with th eir corresponding interpretation in AMC and∇AMC.
+the free semiring is precisely what makes AMC hard; two
+equivalent formulas might not be equivalent under a speciﬁc
+semiring. For example, φ∧φ equals φ in the Boolean algebra
+but not in the free semiring.
+2.4 Circuits
+By reusing subformulas, circuits are a more compact repre-
+sentation for Boolean formulas (V ollmer 1999).
+Deﬁnition 2.5 (Boolean Circuit). A Boolean circuit is a di-
+rected acyclic graph representing a propositional formula .
+This means that every leaf node contains a literal, and all
+other nodes are either∨-nodes or∧-nodes.
+Algebraic circuits generalize Boolean circuits to semiring
+operations (Derkinderen and De Raedt 2020). Algebraic cir-
+cuits in the P ROB semiring are better known as arithmetic
+circuits.
+Example 2. The formula φ = (x∨y)∧z can be represented
+by the algebraic circuit below.
+x ⨂
+z⨁
+⨂
+¬x y
+The tractability of queries on a circuit are related to the
+structural properties of that circuit (Darwiche and Marqui s
+2002; V ergari et al. 2021). For example, determinism is re-
+quired to compute the model count in polynomial time. A
+circuit is deterministic if all the children of an ∨-node are
+mutually exclusive, meaning they do not share any model.
+The circuit in Example 2 is deterministic.
+Transforming circuits to achieve structural properties
+such as determinism is achieved with knowledge compi-
+lation (Darwiche and Marquis 2002). Kimmig, V an den
+Broeck, and De Raedt (2017) proved that the properties of
+the semiring determine are linked to structural properties of
+the algebraic circuit. For example, determinism is needed
+to evaluate in a semiring that is not additively idempotent
+(of which model counting in the N AT semiring is an exam-
+ple). From an algebraic viewpoint, knowledge compilation
+tries to generate the smallest circuit representing the mod els
+M(φ) within a speciﬁc semiring.
+3 Conditionals as Gradients
+Due to the inclusion of neural networks, neurosymbolic
+methods are typically trained using gradient descent. As
+probabilistic inference is differentiable, these neurosy m-
+bolic models are end-to-end trainable with off-the-shelf o p-
+timizers such as Adam (Kingma and Ba 2017). Some ex-
+amples of this approach include the semantic loss (Xu
+et al. 2018) and DeepProbLog (Manhaeve et al. 2018).
+Other statistical-relational techniques are frequently t rained
+by expectation-maximization (EM), which is also closely
+linked to gradients (Xu and Jordan 1996). For these reasons,
+we focus on the computation of gradients.
+It is known that the gradient of probabilistic inference is
+the same as conditional inference (Darwiche 2003). In AMC
+with the P ROB semiring, better known as weighted model
+counting, we have that
+∂AMCPROB (φ; α )
+∂α (x) = AMCPROB (φ|x; α )
+We hence propose to generalize the notion of gradients to
+algebraic model counting as follows.
+Deﬁnition 3.1. The AMC gradient is deﬁned as the vector
+of AMC conditionals to each literal xi∈L .
+∇AMC(φ; α ) = [ AMC(φ|x1; α ), . . . , AMC(φ|xn; α )]⊤
+Observe that∇AMC is well-deﬁned in any semiring, even
+when the semiring domain is discrete or otherwise non-
+differentiable such as in the B OOL or N AT semirings.
+Literal vs V ariable Gradients Our deﬁnition of ∇AMC
+is the gradient towards a literal and not a variable. However ,
+when maximizing the labels of the positive and negative lit-
+eral separately, the global optimum is trivial. In practice , the
+positive and negative labels of a variable v are often linked,
+e.g. as α (v)⊕ α (¬v) = e⊗. In this case, it follows that the
+AMC derivative to a variable v is
+AMC(φ|v; α )⊕− AMC(φ|¬v; α )
+
+=== PDF PAGE 4 ===
+We will not further make this distinction, as the above can
+be computed straightforwardly from the AMC gradient from
+Deﬁnition 2.4 and is only well-deﬁned on rings.
+Example 3. Consider again φ = (x∨ y)∧ z, the formula of
+Example 1. Then∇AMC(φ; α ) is
+[AMC(φ|x; α ), . . . , AMC(φ|¬z; α )]⊤
+= [α (y)⊗α (z)⊕ α (¬y)⊗α (z),
+α (x)⊗α (z)⊕ α (¬x)⊗α (z),
+α (x)⊗α (y)⊕ α (¬x)⊗α (y)⊕ α (x)⊗α (¬y),
+α (y)⊗α (z),
+α (x)⊗α (z),
+α (e⊕)]
+3.1 Conditionals as Semiring Derivations
+We further motivate the deﬁnition of ∇AMC by its relation
+to differentiable algebra (Kolchin 1973). Differentiablealge-
+bra studies generalizations of derivatives, through funct ions
+which observe the same linearity and product rule as con-
+ventional derivatives.
+Deﬁnition 3.2 (Semiring Derivation) . A derivation δ on a
+semiring (A,⊕,⊗, e ⊕, e ⊗) is a map δ : A→ A on itself
+which satisﬁes the following properties for all a and b in A.
+• Linearity: δ(a⊕ b) = δ(a)⊕ δ(b)
+• Product rule: δ(a⊗ b) = ( a⊗ δ(b))⊕ (b⊗ δ(a))
+Many properties that hold for conventional derivation are
+retained for semiring derivations. For example, δ(e⊕) =
+δ(e⊗) = e⊕ in any derivation. We refer to e.g. Dimitrov
+(2017) for a summary of existing results on semiring deriva-
+tions. Interestingly, semiring derivations themselves in duce
+an algebraic structure, which gets generated by ∇AMC.
+Theorem 1. Every derivation δ is a linear combination of
+the elements in∇AMC. More formally,∇AMC is a basis of
+theFV -semimodule overD(FV ).
+Proof. In appendix.
+Here, we denote the set of all possible derivations on A
+asD(A). Theorem 1 says that every semiring derivation
+inD(FV ) can be seen as computing a dot product with
+∇AMC. So in this sense, calculating ∇AMC is a sufﬁcient
+notion for algebraic derivation.
+4 Computing ∇AMC
+Conditioning a formula is straightforward, and hence com-
+puting∇AMC can be done with any off-the-shelf AMC
+solver. In other words, all the results of Kimmig, V an den
+Broeck, and De Raedt (2017) that link circuit and semiring
+properties transfer directly to ∇AMC. Naively computing
+each element in ∇AMC closely equals forward mode dif-
+ferentiation and was already proposed for WMC by Sang,
+Bearne, and Kautz (2005) to compute the conditionals of
+Bayesian inference.
+Forward mode differentiation is well-known for scaling
+linearly in the number of input variables. Reverse mode dif-
+ferentiation, better known as backpropagation, is a dynamic
+programming algorithm that scales linearly in the number of
+output variables, which is usually constant. The backpropa -
+gation algorithm can easily be extended to work over semir-
+ings (Du et al. 2023), and can hence compute ∇AMC.
+As a dynamic programming algorithm, the downside of
+backpropagation is its memory use. More precisely, the
+naive backpropagation algorithm on a circuit has linear
+memory complexity in the number of edges the circuit. Shih
+et al. (2019) already demonstrated that when the semiring
+is a semiﬁeld, i.e. there is a division operation, this memor y
+complexity reduces to linear in the number of nodes of the
+circuit. Given that the number of edges in a circuit can be up
+to the square of the number of nodes, this forms a substantial
+improvement. We show that this semiﬁeld requirement can
+be dropped while retaining the same memory complexity.
+Theorem 2. The backward pass on an algebraic circuit C
+has O(e) time and O(n) memory complexity, where e and n
+are the number of edges and nodes in C respectively.
+Theorem 2 is realised by Algorithm 1. This algorithm as-
+sumes that the forward pass already computed the values
+of sum nodes as α (n) = ⨁
+c∈children(n) α (c) and product
+nodes as α (n) = ⨂
+c∈children(n) α (c). Algorithm 1 then per-
+forms backpropagation in the usual way, going over the cir-
+cuit from the root to the leaves and calculating the gradient s
+of the children of each node using the chain rule. Concretely,
+the derivative towards a node n is
+γ(n) =
+⨁
+p∈parents(n)
+γ(p) (1)
+when n has sum nodes as parents (lines 5-7), or
+γ(n) =
+⨁
+p∈parents(n)
+⨂
+c∈children(p)\{n}
+α (c) (2)
+when n has product nodes as parents (lines 9-19).
+Algorithm 1 relies on some dynamic programming to
+avoid recomputing the inner product in Equation 2 for every
+parent. For example, taking the gradient of c1⊗ c2⊗ c3 re-
+quires us to compute [c2⊗c3, c 1⊗c3, c 1⊗c2]. Naively, com-
+puting these individually will result in quadratic time com -
+plexity. We avoid this using two cumulative products: the
+forward [e⊗, c 1, c 1⊗ c2] and the backward [c3⊗ c2, c 2, e ⊗].
+Both of these cumulative products can be computed in linear
+time, and their element-wise product results in the desired
+gradient.
+Further optimizations on Algorithm 1 are possible de-
+pending on the semiring structure to avoid the need to store
+the cumulative products in the backpropagation of the prod-
+uct nodes (lines 9-14). A ﬁrst property that can achieve this
+is cancellation.
+Deﬁnition 4.1. A semiring element a∈ A is (multiplica-
+tively) cancellative if, for each b and c in A, a⊗ b = a⊗ c
+implies b = c.
+Cancellation can be seen as a generalization of inverses.
+So when c = a⊗ b and a is cancellative we can write b =
+c⊘ a. Indeed, the inverse c⊘ a must exist as c = a⊗ b,
+and the cancellation property furthermore assures that it i s
+unique. The semiring of the natural numbers N AT form an
+
+=== PDF PAGE 5 ===
+Algorithm 1: Algebraic Backpropagation
+Input: A circuit C over the literals L, a labelling of the
+nodes α (computed in the forward pass), and a semiring
+(A,⊕,⊗, e ⊕, e ⊗).
+Output: The algebraic gradient∇AMC(C; α ).
+1: γ← [e⊕, . . . , e ⊕], a vector with e⊕ for each node in C
+2: γ[root of C]← e⊗
+3: for nodes n in the circuit C, parents before children do
+4: if n is a sum node then
+5: for c in children(n) do
+6: γ[c]← γ[c]⊕ γ[n]
+7: end for
+8: else if n is a product node then
+9: r← [e⊗, . . . , e ⊗], with length|children(n)|
+10: t← e⊗
+11: for c in children(n) do
+12: r[c]← t
+13: t← t⊗ α [c]
+14: end for
+15: t← e⊗
+16: for c in children(n) in reverse order do
+17: γ[c]← γ[c]⊕ γ[n]⊗ t⊗ r[c]
+18: t← t⊗ α [c]
+19: end for
+20: end if
+21: end for
+22: return γ
+example where we can use cancellation even though it is not
+a ring and there is no inverse in general.
+If a product node n is multiplicatively cancellative, we
+can simply compute the product gradient as
+γ(n) =
+⨁
+p∈parents(n)
+α (p)⊘ α (n)
+A second property we can exploit is ordering.
+Deﬁnition 4.2. We call a, b ∈ A (multiplicatively) ordered
+when a⊗ b = a or a⊗ b = b.
+Observe that a≤ b⇔ a⊗ b = a forms a partial order
+in semirings with idempotent multiplication. So when the
+children of a node n are all ordered, the product derivatives
+are simply γ[n]⊗ α [n] for all children except the largest
+child. For the largest child, the derivative is γ[n] times the
+one-but-largest child.
+The F UZZY semiring is an example of a semiring where
+all elements are multiplicatively ordered. Note that barri ng
+the identity, ordering and cancellation are mutually exclu -
+sive, meaning they can be used complementarily. For exam-
+ple, in the P ROB and N AT semirings, all elements are can-
+cellative except zero which is ordered. So we can always ex-
+ploit either cancellation or ordering, depending on the val ue
+of the node. We present a variation of Algorithm 1 in the ap-
+pendix which exploits both these cancellation and ordering
+properties.
+5 Semirings for ∇AMC
+We now explore the use of ∇AMC for ﬁrst-order optimiza-
+tion and related applications. In the probabilistic settin g, we
+assume that our formula φ has weights α (x)∈ [0, 1] with
+α (¬x) = 1 − α (x). In other words, the variables corre-
+spond to Bernoulli distributions, and we have a probability
+distribution over interpretations p(I; α ) = ∏
+l∈I α (l). The
+weighted model count can then also be seen as a probability,
+which we denote p(φ; α ) = AMCPROB (φ; α ).
+PROB semiring By construction, the algebraic gradient
+∇AMC in the P ROB semiring is just the usual gradient.
+∇AMCPROB (φ; α ) =∇α p(φ; α )
+LOG semiring Next, if we take the L OG semiring, we in-
+stead get the logarithm of the gradient. Note that this is dif -
+ferent from∇α log p(φ; α ), the gradient of the log probabil-
+ity.
+∇AMCLOG (φ; α ) = log∇α p(φ; α )
+Backpropagation with the L OG semiring provides a more
+numerically stable way to compute gradients. It can also be
+applied for Expectation-Maximization (EM), as the expec-
+tation step on logic formulas reduces to computing the con-
+ditionals p(x| φ) (Peharz et al. 2020).
+p(x| φ) = exp (∇AMCLOG (φ; α ) + α− AMCLOG (φ; α ))
+The above also closely relates to the PC ﬂow as deﬁned by
+Choi, Dang, and V an den Broeck (2021).
+VITERBI semiring In the V ITERBI semiring, the AMC
+gradient computes the maximum gradient over all models.
+Here, max computes the element-wise maximum of the gra-
+dient vectors of each model of φ.
+∇AMCVITERBI (φ; α ) = max
+I∈M(φ )
+∇α p(I; α )
+Use cases for this include greedily approximating the true
+gradient or gradient-based interpretability. Similarly, the
+TROPICAL semiring gives the log-space equivalent of the
+VITERBI semiring.
+∇AMCTROPICAL (φ; α ) = log max
+I∈M(φ )
+∇α p(I; α )
+GRAD semiring AMC with the G RAD semiring computes
+the Shannon entropy (Li and Eisner 2009).
+H(φ) =−
+∑
+I∈M(φ )
+p(I; α ) log p(I; α )
+Taking the gradient of the AMC in G RAD hence results in
+the conditional Shannon entropy towards each literal.
+∇AMCGRAD (φ) = [ H(φ| x1),··· H(φ| xn)]⊤
+This conditional entropy is used as the information gain
+for learning, or for interpretability or regularization pu r-
+poses. Several other statistical quantities such as the KL d i-
+vergence can be framed as the difference between the en-
+tropy and conditional entropy, and can hence easily be com-
+puted from the G RAD semiring.
+
+=== PDF PAGE 6 ===
+BOOL semiring with sampled labels By sampling from
+the labels α , we can combine the Boolean semiring B OOL
+with a stochastic labelling. This implements a naive Monte
+Carlo approximation, which equals the true probability in
+expectation.
+Ew∼α [AMCBOOL (φ; w)] = p(φ; α )
+Interestingly, we can immediately take the algebraic gra-
+dient here to get an unbiased gradient estimator.
+Ew∼α [∇AMCBOOL (φ; w)] =∇α p(φ; α )
+Upon closer inspection, this equals IndeCateR (De Smet,
+Sansone, and Zuidberg Dos Martires 2023), a state-of-the-
+art unbiased estimator for gradients of discrete distribut ions
+that Roa-Blackwellizes REINFORCE. Moreover, by using
+backpropagation we estimate the gradient in linear time in
+the size of the formula, as opposed to the quadratic time re-
+quired in the original formulation by De Smet, Sansone, and
+Zuidberg Dos Martires (2023).
+Other semirings Some remaining semirings have less
+clear gradient-based interpretations, but might still be o f
+note. The gradient in the SENS semiring computes sensi-
+tivity polynomials for the conditioned formulas. The gradi -
+ent of the FUZZY semiring computes the highest minimal
+membership of a literal in each conditioned formulas. Or-
+dered binary decision diagrams (OBDD) are a canonical cir-
+cuit representation supporting conjunction and disjuncti on
+in polytime (Bryant 2018), and can hence also be employed
+as a semiring. Taking the gradient in the OBDD semiring
+creates a multi-rooted circuit for the gradient using botto m-
+compilation (i.e. an OBDD circuit which explicitly com-
+putes the forward and backward pass).
+6 Second-Order Derivations
+So far, we only considered ﬁrst-order methods such as
+gradient descent. Second-order methods such as Newton’s
+method take curvature into account by preconditioning the
+gradient using the inverse Hessian. For a function f param-
+eterized by θ, Newton’s method updates the parameters as
+θ← θ + [∇2f (θ)]−1∇f (θ)
+Computing the full Hessian matrix has quadratic com-
+plexity, making the cost of second-order methods for ma-
+chine learning often prohibitive. However, tractable circ uits
+support a wide range of inference operations in polytime that
+are otherwise NP-hard (V ergari et al. 2021). The question
+hence poses itself whether tractable circuits could improv e
+upon this quadratic complexity.
+Similar to the gradient, we ﬁrst generalize the Hessian
+matrix to AMC as follows.
+∇2AMC(φ) =
+
+
+AMC(φ|x1, x 1) . . . AMC(φ|x1, x n)
+... ...
+AMC(φ|xn, x 1) . . . AMC(φ|xn, x n)
+
+
+We ignore the labels α here to simplify notation. By con-
+struction,∇2AMC is the conventional Hessian in the P ROB
+semiring. Note that although the algebraic Hessian is well-
+deﬁned in any semiring, applying Newton’s method requires
+that the Hessian can be inverted.
+By using∇AMC in the GRAD semiring, we get a straight-
+forward way to calculate ∇2AMC for the P ROB semiring.
+Indeed, the G RAD semiring calculates partial derivatives us-
+ing dual numbers, so in algebraic backpropagation this give s
+a row of the Hessian.
+[ ∂ 2AMCPROB (φ)
+∂α (x)∂α (y1) , . . . , ∂ 2AMCPROB (φ)
+∂α (x)∂α (yn)
+]
+Next, we prove that ∇2AMC on tractable circuits still
+lacks structure, meaning that the expensive quadratic mem-
+ory cost cannot avoided.
+Theorem 3. Representing∇2AMC(C) of a circuit C over
+v variables has a O(v2) memory complexity, even when C
+is smooth, decomposable, and deterministic.
+Proof sketch. Take for example the binary Galois ﬁeld as the
+semiring. Given a sequence of v2 bits, we can now construct
+a formula φ such that the (ﬂattened) Hessian equals this bit
+sequence. This means that, in general, the Hessian has no
+structure and a sub-quadratic memory complexity would im-
+ply lossless compression.
+One might give two counter-arguments to the above the-
+orem. First, gradient descent takes linear memory in the cir -
+cuit size, but this circuit size might be up to exponential in
+the number of variables. Indeed, Theorem 3 does not rule
+out that the Hessian can be stored in linear memory com-
+plexity in the size of the circuit. Second, calculating the Hes-
+sian is typically not the true goal. The above result does not
+rule out the tractability of a matrix-free approach, where t he
+preconditioned gradient [∇2AMC(φ)]−1∇AMC(φ) is com-
+puted directly without constructing the Hessian explicitl y.
+However, even when considering these arguments, the ex-
+istence of an algorithm for Newton’s method which runs in
+linear time complexity in the circuit size remains unlikely .
+Theorem 4. Given a circuit C with n nodes, there cannot
+exist a circuit C′ with size O(n) that computes the precon-
+ditioned gradient [∇2AMC(C)]−1∇AMC(C), even when C
+is deterministic, decomposable and smooth.
+Proof. In appendix.
+We further discuss in the appendix that relaxing the com-
+putational model of arithmetic circuits does not improve th e
+situation much. More precisely, if there would exist any kind
+of algorithm that computes the preconditioned gradient in
+linear time in the size of the circuit, a quadratic matrix mul -
+tiplication algorithm would be implied. The above results
+indicate that, much like for deep learning, ﬁrst-order opti -
+mization might still be preferable. Our theorems do not rule
+out that there might exist speciﬁc semirings which are not
+ﬁelds where the situation is better. However, the practical
+relevance of Hessians in these semirings is more limited.
+
+=== PDF PAGE 7 ===
+Time (ms) P ROB BOOL LOG FUZZY
+Kompyle 7.8 ± 0.1 4.1 ± 0.0 13.9 ± 0.4 9.8 ± 0.3
+- dynamic (Algorithm 1) 19.8 ± 0.2 14.6 ± 0.1 24.4 ± 0.2 16.9 ± 0.1
+- naive + cancel. (Shih et al. 2019) 203.1 ± 0.8 10.6 ± 0.0 167.0 ± 0.5 /
+- naive (Du et al. 2023) 289.0 ± 1.3 10.9 ± 0.0 238.0 ± 1.2 174.7 ± 0.7
+Pytorch 7662.0 ± 155.1 / 7620.6 ± 136.7 /
+Jax Out of Memory / Out of Memory /
+Table 2: Runtime in milliseconds to compute the algebraic gr adient∇AMC averaged over 100 instances from the MC2021
+competition (track 2). We report the average and standard de viation over 10 runs. See Section 8 for an explanation of the
+ablations of Kompyle. Methods that did not run on all circuit s within 16GB of memory are denoted “Out of Memory”. PyTorch
+and Jax cannot compute∇AMC in the B OOL and F UZZY semirings.
+7 Related Work
+Semirings & Inference The semiring perspective in ar-
+tiﬁcial intelligence has its roots in weighted automata
+(Sch¨ utzenberger 1961), as the weights of an automata can be
+deﬁned over a semiring. These ideas have been carried over
+to various other paradigms such as constraint satisfaction
+problems (Bistarelli, Montanari, and Rossi 1997), parsing
+(Goodman 1999), dynamic programs (Eisner, Goldlust, and
+Smith 2005), database provenance (Green, Karvounarakis,
+and Tannen 2007), logic programming (Kimmig, V an den
+Broeck, and De Raedt 2011), propositional logic (Kimmig,
+V an den Broeck, and De Raedt 2017), answer set program-
+ming (Eiter and Kiesel 2020), Turing machines (Eiter and
+Kiesel 2023), and tensor networks (Goral et al. 2024).
+Semirings & Learning While semirings have mostly
+been applied to inference problems, some works also investi-
+gated learning in semirings. Li and Eisner (2009) introduce d
+the expectation semiring, which can compute gradients and
+perform expectation-maximization. Pavan et al. (2023) stud-
+ied the complexity of constraint optimization in some semir -
+ings. On the other hand, we provide a more general frame-
+work to compute derivations of any semiring.
+Darwiche (2001) already described a forward-backward
+algorithm for computing conditionals of a formula. Back-
+propagation on semirings has been described recently by
+(Du et al. 2023). Most similar to our work, Shih et al. (2019)
+already included an algorithm for computing the condition-
+als on algebraic circuits, which they call All-Marginals in -
+stead of∇AMC. This algorithm can be seen as a special case
+of our cancellation optimization, as all cancellative com-
+mutative monoids can be embedded in a group using the
+Grothendieck construction.
+Neurosymbolic Learning Several neurosymbolic meth-
+ods rely on (probabilistic) circuits and hence could apply t he
+algebraic learning framework we outlined. Some examples
+include DeepProbLog (Manhaeve et al. 2018), the seman-
+tic loss (Xu et al. 2018), and probabilistic semantic layers
+(Ahmed et al. 2022). Dickens, Pryor, and Getoor (2024) pro-
+posed another overarching view of neurosymbolic learning
+by framing it as energy-based models. On the other hand,
+our work focuses on algebraic circuits where inference and
+learning can be performed exactly.
+8 Experiments
+We implemented the algebraic backpropagation in a Rust li-
+brary called Kompyle, and empirically demonstrate the run-
+time performance of the algebraic backpropagation algo-
+rithm on several semirings.
+Setup As a benchmark, we take 100 formulas of the 2021
+Model Counting Competition (Fichte, Hecher, and Hamiti
+2021) and compile them to d-DNNF circuits using the d4
+knowledge compiler (Lagniez and Marquis 2017). We ran-
+domly generate weights for the formulas, with on average
+1%
+Results Table 2 contains the results. PyTorch and Jax per-
+form poorly, as these frameworks are not optimized for very
+large computational graphs. Jax does not run within the
+16GB of RAM, even on comparatively small circuits (ca.
+100MB). Even though real-world circuits are far from the
+worst-case quadratic complexity, the dynamic programming
+considerably outperforms the naive variants of Kompyle.
+The semiring optimizations yield smaller but still conside r-
+able speed-ups, depending on the semiring.
+9 Conclusion
+We proposed a notion of gradients for algebraic model
+counting as conditional inference. We showed that many
+quantities of interest in learning, such as gradients, Hessians,
+conditional entropy, etc. can be seen as this algebraic grad i-
+ent in different semirings. Furthermore, we introduced an
+optimized backpropagation algorithm for a broad class of
+semirings. Finally, we gave an indication that second-orde r
+optimization is still expensive on tractable circuits.
+Appendix
+Gradient Semiring
+For completeness, the addition and multiplication operations
+in the G RAD semiring are:
+(a, b )⊕ (c, d ) = ( a + c, b + d) (3)
+(a, b )⊗ (c, d ) = ( a· c, a· d + c· b) (4)
+
+=== PDF PAGE 8 ===
+Proofs for Section 3
+We denote the derivation which maps all inputs to e⊕ as δ0.
+We furthermore lift addition and multiplication to deriva-
+tions as follows. The addition of two derivations δ1⊕ δ2
+is a derivation δ3 such that δ1(a)⊕ δ2(a) = δ3(a) for all
+a in A. Similarly, the scalar multiplication of an element
+a in A with a derivation δ is a new derivation δ′ such that
+∀b∈ A : δ′(b) = a⊗ δ(b).
+Theorem 5. The derivations over the commutative semiring
+(A,⊕,⊗, e ⊕, e ⊗) are a commutative monoid (D(A),⊕, δ 0).
+Proof. We verify the monoid axioms. First, we can see that
+the set of derivations is closed under addition as follows.
+(δ1⊕ δ2)(a⊕ b) = δ1(a⊕ b)⊕ δ2(a⊕ b)
+= δ1(a)⊕ δ2(a)⊕ δ1(b)⊕ δ2(b)
+= (δ1⊕ δ2)(a)⊕ (δ1⊕ δ2)(b)
+(δ1⊕ δ2)(a⊗ b) = δ1(a⊗ b)⊕ δ2(a⊗ b)
+= b⊗(δ1(a)⊕ δ2(a))⊕ a⊗(δ1(b)⊕ δ2(b))
+= (b⊗(δ1⊕ δ2))(a)⊕ (a⊗(δ1⊕ δ2))(b)
+Second, the neutrality of δ0 holds as
+(δ⊕ δ0)(a) = δ(a)⊕ δ0(a) = δ(a)⊕ e⊕ = δ(a)
+Third, the commutativity of adding derivations follows di-
+rectly from the commutativity of the semiring addition.
+(δ1⊕δ2)(a) = δ1(a)⊕δ2(a) = δ2(a)⊕δ1(a) = ( δ2⊕δ1)(a)
+Associativity can be shown analogously.
+Theorem 6. The derivations over the commutative semiring
+(A,⊕,⊗, e ⊕, e ⊗) are an A-semimodule.
+Proof. By veriﬁcation of the semimodule axioms.
+(a⊗(δ1⊕ δ2)) (b) = a⊗((δ1⊕δ2)(b)) = a⊗(δ1(b)⊕δ2(b))
+((a⊕ b)⊗ δ)(c) = ( a⊕ b)⊗ δ(c) = ( a⊗ δ⊕ b⊗ δ)(c)
+((a⊗ b)⊗ δ)(c) = ( a⊗ (b⊗ δ))(c)
+(e⊗⊗ δ)(a) = e⊗⊗ δ(a) = δ(a)
+(e⊕⊗ δ)(a) = e⊕ = δ0(a)
+Theorem 7.∇AMC is a basis for theFV -semimodule over
+semiring derivations.
+Proof. We write δl for the derivation towards the literal l,
+meaning that δl(l) = e⊗ and δl(l′) = e⊕ for all other literals
+l′⁄= l.∇AMC consists precisely of the literal derivations
+δl(φ) = φ|l. To show that it is a basis, we show that the δl
+are indepedent can generate any derivation.
+To see the linear indepedence, consider that a⊗ δ′
+l(l) =
+e⊕ for all a ∈ A and l′ ⁄= l. In other words, any linear
+combination of the other literal derivations outputs zero o n
+l. To see that the basis spans all derivations, consider that we
+can decompose any derivation δ as follows.
+δ =
+⨁
+l∈L
+δ(l)⊗ δl
+To see that this decomposition is correct, observe that for
+any literal l′∈L :
+( ⨁
+l∈L
+δ(l)⊗ δl
+)
+(l′) = δ(l′)⊗ δl′ (l′) = δ(l′)
+So the decomposition behaves the same on literals, and by
+an induction argument on all other elements in FV .
+Proofs for Section 6
+We ﬁrst introduce an auxiliary construction to convert from
+matrices to formulas. By abuse of notation, the following
+theorems will refer to the algebraic gradient and Hessian
+of a formula/circuit as those only to the positive literals.
+As the semiring, we use the binary Galois ﬁeld F2 over
+the Booleans, where addition is XOR and multiplication is
+AND.
+Theorem 8. Given a binary n× n matrix M , a circuit C
+over n variables can be created in quadratic time such that
+• the Hessian of the positive literals of C equals M in F2.
+• the size of C is Θ( n2).
+• the circuit C is smooth, deterministic and decomposable.
+Proof. First, note that each entry in the algebraic Hessian
+has a unique model, meaning that no other entry has this
+model. Namely, for AMC(C|xi, x j) this is the model where
+xi and xj are positive and all other literals negative. This
+means that given a binary matrix M , we can easily construct
+a circuit C which has∇2AMCF2(C) = M in the following
+fashion. For each element i, j which is 1 in M add a cube
+for the unique model. This procedure creates a DNF formula
+that is smooth, deterministic, and decomposable; also known
+as the MODS representation.
+The above naive encoding creates a circuit of O(n3), as
+there can be up to n2 cubes in the DNF and each cube has
+length n. However, using a dynamic programming approach
+we can reduce the circuit size to O(n2). First, we precom-
+pute a circuit for the elements of the following matrix, where
+li are all the negative literals.
+
+
+l1 l1∧ l2 . . . ⋀ n−2
+1 li
+l2 l2∧ l3 . . . ⋀ n−1
+2 li
+l3 l3∧ l4 . . . ⋀ n
+2 li
+. . .
+ln−1 ln−1∧ ln
+ln
+
+
+Each row can be represented in linear time as a cumulative
+conjunction, and hence there is a circuit for this matrix of
+size Θ( n2). Now we represent each cube in the DNF as xi∧
+xj∧ r, where the remainder r for all the negative literals
+is a conjunction of at most 3 elements of the precomputed
+matrix above.
+Theorem 9. Given a binary n× n matrix M and a vector v
+with n elements, a circuit C over n variables can be created
+in quadratic time such that
+• ∇2AMCF2(C) = M .
+
+=== PDF PAGE 9 ===
+• ∇AMCF2(C) = v.
+• the size of C is Θ( n2).
+• the circuit C is smooth, deterministic and decomposable.
+Proof. We start with the same circuit construction as in
+Theorem 8. Now, we only need to additionally guarantee
+that this circuit has the correct algebraic gradient. For ea ch
+AMC(C|xi), we again have a unique model where xi is true
+and all literals are false. We ﬁrst marginalize over the hes-
+sian entries for this gradient entry ⨁
+j AMC(C|xixj), and
+then set the model such that the XOR results in vi. Clearly,
+this procedure adds at most n models to our DNF, and hence
+remains quadratic.
+Theorem 10. If there exists an algorithm that computes the
+inverse of the Hessian∇2AMC(C) of a circuit C in O(|C|),
+matrix inversion over F2 is possible in O(n2).
+Proof. We construct a quadratic time matrix inversion algo-
+rithm as follows. Given a matrix M , we can create a circuit
+C which as M as its Hessian as described in Theorem 8.
+Now if we apply the assumed algorithm, we get the inverse
+Hessian which is just M −1. As the assumed algorithm works
+in linear time in the circuit, and the circuit is quadratic in n,
+this full method has O(n2) time complexity.
+Theorem 11. If there exists an algorithm that computes the
+preconditioned gradient∇2AMC(C)−1∇AMC(C) of a cir-
+cuit C in O(|C|), linear systems over F2 can be solved in
+O(n2).
+Proof. Idententical to the proof of Theorem 10, but now us-
+ing the construction of Theorem 9.
+The impossibility statement in Theorem 4 follows due to
+the Ω( n2 log n) lower bound on the circuit complexity of
+matrix multiplication by Raz (2002).
+Optimizations of Algebraic Backpropagation
+We reconsider Algorithm 1 with the optimizations discussed
+in Section 4. As only the backpropagation of products is af-
+fected, we just restate this part of the algorithm.
+Algorithm 2: Algebraic backpropagation through a product,
+exploiting cancellation and ordering.
+Input: product node n.
+1: for child c in children(n) do
+2: if α (c) is cancellative then
+3: γ(c)← γ(c)⊕ α (n)⊘ α (c)
+4: else if α (n) is the maximal element of children( n)
+and α (n)⁄= α (c) or α (c) occurs twice then
+5: γ(c)← γ(c)⊕ α (n)
+6: else
+7: // Naive fall-back.
+8: γ(c)← γ(c)⊕⨂
+c′∈children(n)\{c} α (c′)
+9: end if
+10: end for
+Acknowledgments
+This research received funding from the Flemish Govern-
+ment (AI Research Program), the Flanders Research Foun-
+dation (FWO) under project G097720N, KUL Research
+Fund iBOF/21/075, and the European Research Coun-
+cil (ERC) under the European Union’s Horizon 2020 re-
+search and innovation programme (Grant agreement No.
+101142702). Luc De Raedt is also supported by the Wal-
+lenberg AI, Autonomous Systems and Software Program
+(W ASP) funded by the Knut and Alice Wallenberg Foun-
+dation.
+JM wants to thank Pedro Zuidberg Dos Martires for
+stimulating discussions, as well as Vincent Derkinderen,
+David Debot, and Sieben Blocklandt for proofreading a draft
+manuscript.
+References
+Ahmed, K.; Teso, S.; Chang, K.-W .; V an den Broeck, G.; and
+V ergari, A. 2022. Semantic Probabilistic Layers for Neuro-
+Symbolic Learning. In Advances in Neural Information Pro-
+cessing Systems.
+Bistarelli, S.; Montanari, U.; and Rossi, F. 1997. Semiring -
+based constraint satisfaction and optimization. Journal of
+the ACM, 44(2): 201–236.
+Bryant, R. E. 2018. Binary Decision Diagrams. In Clarke,
+E. M.; Henzinger, T. A.; V eith, H.; and Bloem, R., eds.,
+Handbook of Model Checking, 191–217. Cham: Springer In-
+ternational Publishing. ISBN 978-3-319-10575-8.
+Chavira, M.; and Darwiche, A. 2008. On probabilistic in-
+ference by weighted model counting. Artiﬁcial Intelligence ,
+172(6): 772–799.
+Choi, Y .; Dang, M.; and V an den Broeck, G. 2021. Group
+Fairness by Probabilistic Modeling with Latent Fair Deci-
+sions. Proceedings of the AAAI Conference on Artiﬁcial In-
+telligence, 35(13): 12051–12059. Number: 13.
+Darwiche, A. 2001. On the Tractable Counting of The-
+ory Models and its Application to Truth Maintenance and
+Belief Revision. Journal of Applied Non-Classical Log-
+ics, 11(1-2): 11–34. Publisher: Taylor & Francis eprint:
+https://doi.org/10.3166/jancl.11.11-34.
+Darwiche, A. 2003. A differential approach to inference in
+Bayesian networks. Journal of the ACM, 50(3): 280–305.
+Darwiche, A.; and Marquis, P . 2002. A Knowledge Compi-
+lation Map. Journal of Artiﬁcial Intelligence Research , 17:
+229–264.
+De Raedt, L.; Kersting, K.; Natarajan, S.; and Poole, D.
+2016. Statistical Relational Artiﬁcial Intelligence: Logic,
+Probability, and Computation , volume 10 of Synthesis lec-
+tures on artiﬁcial intelligence and machine learning . Mor-
+gan & Claypool Publishers. ISBN 978-1-62705-841-4.
+De Smet, L.; Sansone, E.; and Zuidberg Dos Martires, P .
+2023. Differentiable Sampling of Categorical Distributio ns
+Using the CatLog-Derivative Trick. In Advances in Neural
+Information Processing Systems.
+Derkinderen, V .; and De Raedt, L. 2020. Algebraic Circuits
+for Decision Theoretic Inference and Learning. In ECAI
+2020, 2569–2576. IOS Press.
+
+=== PDF PAGE 10 ===
+Dickens, C.; Pryor, C.; and Getoor, L. 2024. Modeling Pat-
+terns for Neural-Symbolic Reasoning Using Energy-based
+Models. Proceedings of the AAAI Symposium Series , 3(1):
+90–99. Number: 1.
+Dimitrov, S. 2017. Derivations on semirings. AIP Confer-
+ence Proceedings, 1910(1): 060011.
+Du, K.; Torroba Hennigen, L.; Stoehr, N.; Warstadt, A.;
+and Cotterell, R. 2023. Generalizing Backpropagation
+for Gradient-Based Interpretability. In Rogers, A.; Boyd-
+Graber, J.; and Okazaki, N., eds., Proceedings of the 61st
+Annual Meeting of the Association for Computational Lin-
+guistics (V olume 1: Long Papers) , 11979–11995. Toronto,
+Canada: Association for Computational Linguistics.
+Eisner, J.; Goldlust, E.; and Smith, N. A. 2005. Compiling
+Comp Ling: practical weighted dynamic programming and
+the Dyna language. In Proceedings of the conference on Hu-
+man Language T echnology and Empirical Methods in Natu-
+ral Language Processing, HLT ’05, 281–290. USA: Associ-
+ation for Computational Linguistics.
+Eiter, T.; and Kiesel, R. 2020. Weighted LARS for Quantita-
+tive Stream Reasoning. In ECAI 2020, 729–736. IOS Press.
+Eiter, T.; and Kiesel, R. 2023. Semiring Reasoning Frame-
+works in AI and Their Computational Complexity. Journal
+of Artiﬁcial Intelligence Research , 77: 207–293.
+Fichte, J. K.; Hecher, M.; and Hamiti, F. 2021. The Model
+Counting Competition 2020. ACM Journal of Experimental
+Algorithmics, 26: 13:1–13:26.
+Friesen, A.; and Domingos, P . 2016. The Sum-Product The-
+orem: A Foundation for Learning Tractable Models. In Pro-
+ceedings of The 33rd International Conference on Machine
+Learning, 1909–1918. PMLR. ISSN: 1938-7228.
+Frostig, R.; Johnson, M. J.; and Leary, C. 2018. Compiling
+machine learning programs via high-level tracing. Systems
+for Machine Learning , 4.
+Garcez, A. d.; and Lamb, L. C. 2023. Neurosymbolic AI:
+the 3rd wave. Artiﬁcial Intelligence Review .
+Goodman, J. 1999. Semiring parsing. Comput. Linguist. ,
+25(4): 573–605.
+Goral, A.; Giesen, J.; Blacher, M.; Staudt, C.; and Klaus,
+J. 2024. Model Counting and Sampling via Semiring Ex-
+tensions. Proceedings of the AAAI Conference on Artiﬁcial
+Intelligence, 38(18): 20395–20403. Number: 18.
+Green, T. J.; Karvounarakis, G.; and Tannen, V . 2007.
+Provenance semirings. In Proceedings of the twenty-sixth
+ACM SIGMOD-SIGACT-SIGART symposium on Principles
+of database systems , PODS ’07, 31–40. New Y ork, NY ,
+USA: Association for Computing Machinery. ISBN 978-
+1-59593-685-1.
+Kimmig, A.; V an den Broeck, G.; and De Raedt, L. 2011. An
+Algebraic Prolog for Reasoning about Possible Worlds. Pro-
+ceedings of the AAAI Conference on Artiﬁcial Intelligence ,
+25(1): 209–214.
+Kimmig, A.; V an den Broeck, G.; and De Raedt, L. 2017.
+Algebraic model counting. Journal of Applied Logic , 22:
+46–62.
+Kingma, D. P .; and Ba, J. 2017. Adam: A Method for
+Stochastic Optimization. ArXiv:1412.6980 [cs].
+Kolchin, E. R. 1973. Differential Algebra & Algebraic
+Groups. Academic Press. ISBN 978-0-08-087369-5.
+Lagniez, J.-M.; and Marquis, P . 2017. An improved
+decision-DNNF compiler. In Proceedings of the 26th
+International Joint Conference on Artiﬁcial Intelligence ,
+IJCAI’17, 667–673. Melbourne, Australia: AAAI Press.
+ISBN 978-0-9992411-0-3.
+Li, Z.; and Eisner, J. 2009. First- and second-order expec-
+tation semirings with applications to minimum-risk traini ng
+on translation forests. In Proceedings of the 2009 Confer-
+ence on Empirical Methods in Natural Language Process-
+ing: V olume 1 - V olume 1, EMNLP ’09, 40–51. USA: Asso-
+ciation for Computational Linguistics. ISBN 978-1-932432 -
+59-6.
+Liu, A.; Zhang, H.; and V an den Broeck, G. 2022. Scaling
+Up Probabilistic Circuits by Latent V ariable Distillation.
+Manhaeve, R.; Dumancic, S.; Kimmig, A.; Demeester, T.;
+and De Raedt, L. 2018. DeepProbLog: Neural Probabilis-
+tic Logic Programming. In Advances in Neural Information
+Processing Systems, volume 31. Curran Associates, Inc.
+Marra, G.; Dumanˇ ci´ c, S.; Manhaeve, R.; and De Raedt, L.
+2024. From Statistical Relational to Neurosymbolic Artiﬁ-
+cial Intelligence: a Survey. Artiﬁcial Intelligence , 104062.
+Ott, J.; Ledaguenel, A.; Hudelot, C.; and Hartwig, M. 2023.
+How to Think About Benchmarking Neurosymbolic AI? In
+17th International W orkshop on Neural-Symbolic Learning
+and Reasoning. Sienne, Italy.
+Paszke, A.; Gross, S.; Massa, F.; Lerer, A.; Bradbury, J.;
+Chanan, G.; Killeen, T.; Lin, Z.; Gimelshein, N.; Antiga, L. ;
+Desmaison, A.; Kopf, A.; Y ang, E.; DeVito, Z.; Raison, M.;
+Tejani, A.; Chilamkurthy, S.; Steiner, B.; Fang, L.; Bai, J. ;
+and Chintala, S. 2019. PyTorch: An Imperative Style, High-
+Performance Deep Learning Library. In Advances in Neural
+Information Processing Systems , volume 32. Curran Asso-
+ciates, Inc.
+Pavan, A.; Meel, K. S.; Vinodchandran, N. V .; and Bhat-
+tacharyya, A. 2023. Constraint Optimization over Semir-
+ings. Proceedings of the AAAI Conference on Artiﬁcial In-
+telligence, 37(4): 4070–4077. Number: 4.
+Peharz, R.; Lang, S.; V ergari, A.; Stelzner, K.; Molina, A.;
+Trapp, M.; Broeck, G. V . D.; Kersting, K.; and Ghahramani,
+Z. 2020. Einsum Networks: Fast and Scalable Learning
+of Tractable Probabilistic Circuits. In Proceedings of the
+37th International Conference on Machine Learning , 7563–
+7574. PMLR. ISSN: 2640-3498.
+Raz, R. 2002. On the complexity of matrix product. In
+Proceedings of the thiry-fourth annual ACM symposium on
+Theory of computing , STOC ’02, 144–151. New Y ork, NY ,
+USA: Association for Computing Machinery. ISBN 978-1-
+58113-495-7.
+Sang, T.; Bearne, P .; and Kautz, H. 2005. Performing
+Bayesian inference by weighted model counting. In Pro-
+ceedings of the 20th national conference on Artiﬁcial intel -
+ligence - V olume 1 , AAAI’05, 475–481. Pittsburgh, Penn-
+sylvania: AAAI Press. ISBN 978-1-57735-236-5.
+
+=== PDF PAGE 11 ===
+Sch¨ utzenberger, M. P . 1961. On the deﬁnition of a family of
+automata. Information and Control, 4(2): 245–270.
+Shih, A.; V an den Broeck, G.; Beame, P .; and Amarilli, A.
+2019. Smoothing Structured Decomposable Circuits. In
+Advances in Neural Information Processing Systems , vol-
+ume 32. Curran Associates, Inc.
+V ergari, A.; Choi, Y .; Liu, A.; Teso, S.; and V an den Broeck,
+G. 2021. A Compositional Atlas of Tractable Circuit Op-
+erations for Probabilistic Inference. In Advances in Neural
+Information Processing Systems , volume 34, 13189–13201.
+Curran Associates, Inc.
+V ollmer, H. 1999. Introduction to Circuit Complexity: A
+Uniform Approach . Springer Science & Business Me-
+dia. ISBN 978-3-540-64310-4. Google-Books-ID: 55ZT-
+gOJs8bsC.
+Xu, J.; Zhang, Z.; Friedman, T.; Liang, Y .; and V an den
+Broeck, G. 2018. A Semantic Loss Function for Deep
+Learning with Symbolic Knowledge. In Proceedings of the
+35th International Conference on Machine Learning , 5502–
+5511. PMLR. ISSN: 2640-3498.
+Xu, L.; and Jordan, M. I. 1996. On Convergence Properties
+of the EM Algorithm for Gaussian Mixtures. Neural Com-
+putation, 8(1): 129–151.

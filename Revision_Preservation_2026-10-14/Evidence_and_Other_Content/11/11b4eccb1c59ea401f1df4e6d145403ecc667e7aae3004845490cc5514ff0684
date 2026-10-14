@@ -1,0 +1,262 @@
+{
+  "scope": "Existing completed P14 records; fresh arithmetic/manifest verification, not a new timing campaign",
+  "command": [
+    "output\\cm_lm_publication_20260918\\audit_p14_records.py"
+  ],
+  "script_sha256": "83282318abc9094c75ee398319a524645748237c46252a80f5fb71e6d05aa9a9",
+  "manifest_verified": {
+    "P14_FREEZE_V1_ORIGINAL.json": true,
+    "P14_FREEZE.json": true,
+    "P14_BUDGET_EXTENSION.json": true,
+    "P14_ANALYSIS_EXECUTION_AMENDMENT.json": true,
+    "synthetic_holdout.json": true,
+    "natural_holdout.json": true,
+    "correctness_results.json": true,
+    "timing_s0_w0.json": true,
+    "timing_s1_w0.json": true,
+    "timing_s2_w0.json": true,
+    "memory_results.json": true,
+    "P14_MEMORY_SUMMARY.json": true,
+    "P14_RESULTS.json": true,
+    "P14_CASE_RATIOS.csv": true,
+    "P14_EXECUTION_REPORT.md": true
+  },
+  "raw_rows": 51102,
+  "raw_metadata": [
+    {
+      "schema": "p14-py0-timing-worker/v1",
+      "session": 0,
+      "worker": 0,
+      "seed": 2026091904,
+      "freeze_sha256": "f5e849d709b3a4c94bf9c0efb9a6e2b341152bea9dcbe75f1283a8cea46be27a",
+      "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+      "platform": "Windows-10-10.0.19045-SP0",
+      "pid": 40380,
+      "gc_enabled": true,
+      "gc_threshold": [
+        700,
+        10,
+        10
+      ],
+      "power": "Balanced",
+      "affinity": "uncontrolled",
+      "warm_blocks": 1,
+      "measured_blocks": 3,
+      "target_batch_ns": 10000000,
+      "max_predicted_arm_ns": 40000000,
+      "checks": 25167,
+      "wall_seconds": 4960.837113618851
+    },
+    {
+      "schema": "p14-py0-timing-worker/v1",
+      "session": 1,
+      "worker": 0,
+      "seed": 2026092004,
+      "freeze_sha256": "f5e849d709b3a4c94bf9c0efb9a6e2b341152bea9dcbe75f1283a8cea46be27a",
+      "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+      "platform": "Windows-10-10.0.19045-SP0",
+      "pid": 11512,
+      "gc_enabled": true,
+      "gc_threshold": [
+        700,
+        10,
+        10
+      ],
+      "power": "Balanced",
+      "affinity": "uncontrolled",
+      "warm_blocks": 1,
+      "measured_blocks": 3,
+      "target_batch_ns": 10000000,
+      "max_predicted_arm_ns": 40000000,
+      "checks": 25167,
+      "wall_seconds": 4416.054146289825
+    },
+    {
+      "schema": "p14-py0-timing-worker/v1",
+      "session": 2,
+      "worker": 0,
+      "seed": 2026092104,
+      "freeze_sha256": "f5e849d709b3a4c94bf9c0efb9a6e2b341152bea9dcbe75f1283a8cea46be27a",
+      "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+      "platform": "Windows-10-10.0.19045-SP0",
+      "pid": 2904,
+      "gc_enabled": true,
+      "gc_threshold": [
+        700,
+        10,
+        10
+      ],
+      "power": "Balanced",
+      "affinity": "uncontrolled",
+      "warm_blocks": 1,
+      "measured_blocks": 3,
+      "target_batch_ns": 10000000,
+      "max_predicted_arm_ns": 40000000,
+      "checks": 25167,
+      "wall_seconds": 3657.673052549362
+    }
+  ],
+  "comparisons": [
+    {
+      "corpus": "synthetic",
+      "endpoint": "recipe",
+      "comparison": "E/F",
+      "cases": 384,
+      "geomean": 0.9606159144454475,
+      "all_case_ratios_match": true,
+      "ci98_75": [
+        0.9454674888855255,
+        0.9811402291767519
+      ],
+      "bootstrap_reproduced": true
+    },
+    {
+      "corpus": "synthetic",
+      "endpoint": "recipe",
+      "comparison": "E/D",
+      "cases": 384,
+      "geomean": 1.050842631357668,
+      "all_case_ratios_match": true,
+      "ci98_75": [
+        0.9683143025870368,
+        1.1075073405116616
+      ],
+      "bootstrap_reproduced": true
+    },
+    {
+      "corpus": "synthetic",
+      "endpoint": "recipe",
+      "comparison": "A/D",
+      "cases": 384,
+      "geomean": 0.607675118973516,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "synthetic",
+      "endpoint": "recipe",
+      "comparison": "G/D",
+      "cases": 384,
+      "geomean": 0.5937967620662843,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "recipe",
+      "comparison": "E/F",
+      "cases": 107,
+      "geomean": 0.9610361761126052,
+      "all_case_ratios_match": true,
+      "ci98_75": [
+        0.9411428869579086,
+        1.000051222181085
+      ],
+      "bootstrap_reproduced": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "recipe",
+      "comparison": "E/D",
+      "cases": 107,
+      "geomean": 1.060667085385537,
+      "all_case_ratios_match": true,
+      "ci98_75": [
+        1.0176482939384681,
+        1.092694647134635
+      ],
+      "bootstrap_reproduced": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "recipe",
+      "comparison": "A/D",
+      "cases": 107,
+      "geomean": 1.7364238757631527,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "recipe",
+      "comparison": "G/D",
+      "cases": 107,
+      "geomean": 1.7342865549709563,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "canonical",
+      "endpoint": "recipe",
+      "comparison": "CA/CD",
+      "cases": 384,
+      "geomean": 0.5921130524179608,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "synthetic",
+      "endpoint": "ir",
+      "comparison": "E/F",
+      "cases": 384,
+      "geomean": 0.9652285541973529,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "synthetic",
+      "endpoint": "ir",
+      "comparison": "E/D",
+      "cases": 384,
+      "geomean": 1.7469217647511857,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "synthetic",
+      "endpoint": "ir",
+      "comparison": "A/D",
+      "cases": 384,
+      "geomean": 0.8153037017912256,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "synthetic",
+      "endpoint": "ir",
+      "comparison": "G/D",
+      "cases": 384,
+      "geomean": 0.8017182512741752,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "ir",
+      "comparison": "E/F",
+      "cases": 107,
+      "geomean": 0.9680712680708395,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "ir",
+      "comparison": "E/D",
+      "cases": 107,
+      "geomean": 1.9594719241826923,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "ir",
+      "comparison": "A/D",
+      "cases": 107,
+      "geomean": 2.791902488218025,
+      "all_case_ratios_match": true
+    },
+    {
+      "corpus": "natural",
+      "endpoint": "ir",
+      "comparison": "G/D",
+      "cases": 107,
+      "geomean": 2.8128850453893164,
+      "all_case_ratios_match": true
+    }
+  ],
+  "seconds": 13.578000000008615,
+  "bootstrap_seed": 2026091902,
+  "bootstrap_draws": 10000,
+  "memory_scope": "Inherited separate tracemalloc pass, not RSS; no new memory samples",
+  "source_root": "C:\\Users\\brian\\Documents\\CM_Computation\\audit_p1_p13_20260918\\p14_py0"
+}

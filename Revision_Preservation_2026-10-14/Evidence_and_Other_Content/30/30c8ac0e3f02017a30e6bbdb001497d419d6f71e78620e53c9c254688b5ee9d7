@@ -1,0 +1,47 @@
+# Canonical model and type system
+
+## Scalars and representation types
+
+| Type | Elements / order | Allowed native operations | What it is not |
+|---|---|---|---|
+| CM C_f | 2x2 bits, true-first row-major (11,10,01,00) | XOR-AND contraction; declared frame permutations; pointwise outer Boolean functions | Not a physical observable; not a four-dimensional amplitude without a new interpretation |
+| LM M_f | 2x2 formulas in Boolean ring B, entries f at four polarities | Pointwise Boolean algebra and logical pairing; valuation | Fixed16-element polarity family is not closed under ordinary matrix composition |
+| Cyclic coefficients c | Four truth bits in (11,10,00,01) | F2 vector operations; cyclic permutation | Not the row-major CM storage order |
+| Rotation lift Lambda(c) | sum c_j R^j in M4(F2) | Operator composition = cyclic convolution | Not a homomorphism of original CM matrix multiplication or entrywise AND |
+| A | F2[u]/u^4, u=I+R | Ring operations; free-module maps | Not a field; not complex amplitudes |
+| K | Finite commutative chain ring, radical(pi), length s, residue F_q | Smith theory, primitive basis maps | General K need not be an F2-algebra |
+| B_A | B tensor_F2 A = B[u]/u^4 | Formula-valued A arithmetic and coefficientwise valuations | Does not itself choose modal states/effects/probability |
+
+Addition in B and A is XOR; multiplication in B is AND. The nonzero support test uses an OR across coefficient bits, **not** their XOR. Ordinary real linear programs appear only in the separately labeled probability-completion analysis.
+
+## Operational contracts
+
+**F.** A nonzero vector of F2^d; composite spaces use tensor_F2; reversible maps are declared subgroups of GL_d(F2); the unrestricted readout is any dual basis with nonzero scalar = possible. No real probabilities are given. A known classical coefficient description is not an available measurement outcome.
+
+**S(K), principally S(A).** Local carrier K^d; composites tensor_K; static nonzero resource tensors; local reversible maps GL_d(K); a complete measurement is a primitive projective basis. An outcome is possible iff its K coefficient is nonzero. A projective effect quotients only by units, not all nonzero scalars. Each basis is its own setting; no additional context-independent identification of identical effect rays is imposed. All-nonzero preparations fail tensor closure; primitive-only preparations fail conditioning closure. State these failures rather than silently selecting a normalization.
+
+**L.** One literal logical-plus-phase carrier is F2^2 tensor_F2 F2^4 = F2^8. n such carriers have dimension 8^n. The shared logical carrier A^2 has n-fold shared dimension 4*2^n after binary expansion. Literal independent phase factors cannot be moved between registers as shared scalars. When L restricts local gates to regular GL2(A) blocks and measures logical blocks coarsely, that is a particular restricted contract; when it admits arbitrary GL8(F2) analyzers it is a different one.
+
+**DC(K).** Fixed nonzero M in M_d(K), d>=2; sender chooses U in GL_d(K), producing U M; receiver applies one arbitrary invertible K-linear map on the d^2 joint coefficients and reads a complete coordinate basis. Every possible outcome identifies the message. The optimal count is d*h. No discard/reprepare option is included in that fixed-orbit count.
+
+**TP(K).** Source dimension d, resource M, complete rank-one joint analyzer with reshaped effects E_m, correction C_m, and C_m M^T E_m^T=I on every nonzero branch. The statement is an exact identity, not equality only on tested basis labels or only on a favored subset of inputs. Analyzer completeness and every E_m's invertibility are separate properties. Admissibility under an orthogonal or phase-linear restriction must be checked independently.
+
+**QXOR.** Standard pointwise bit oracle U_f|x,y> = |x,y XOR f(x)>; arbitrary finite ancillary dimension; oracle-independent linear processing; complete recorded branch maps whose direct sum is injective; every possible final outcome correct. No free support-table inspection, state-description access, arbitrary answer-dependent gates or ignored failure branches. Lower bounds also apply to a fixed invertible G0/G1 pointwise oracle. Matching upper bounds are stated for QXOR, not for arbitrary G0,G1: if G0=G1, f is unobservable.
+
+**PROB.** An additional real, nonnegative, normalized, no-signalling completion problem for an already specified support table. A faithful completion has positive weight on every possible event. A weak completion may set further events to zero; the resulting CHSH number is not a probability prediction of the original modal support.
+
+## Typed maps and preservation
+
+| Map | Required choices | Preserves | Does not preserve / establish |
+|---|---|---|---|
+| f -> C_f | True-first ordered operands | Binary truth function bijectively | Input linearity, compression |
+| C_f -> M_f | Independent symbolic X,Y | Pointwise Boolean algebra; F2 linearity | Ordinary matrix-product closure |
+| M_f -> v(M_f) | Boolean valuation v | Boolean operations and logical contraction | Modal possibility without extra rule |
+| Cyclic coefficients -> Lambda | Cyclic order and R | F2 vector structure, newly defined convolution | Original CM multiplication |
+| M_d(A) -> M_(4d)(F2) | Faithful regular representation and basis | Ring matrix products, injectivity, ranks after expansion | Shared tensor functor or separability |
+| B -> B_A | Chosen F2-algebra A | Unital embedding / scalar extension | A choice-free derivation of A |
+| v -> v tensor id_A | Chosen v | Enriched matrix and tensor contractions | Unchosen effects or probabilities |
+| q -> OR coefficient formulas | Coefficient basis (zero test itself invariant under invertible rebasing) | Valuation/nonzero equivalence | Additivity or multiplicativity |
+| Shared to literal bipartite table | Particular regular-block readout and Bob involution | Those support tables after relabeling | Equivalence of the whole tensor theories |
+
+Use a different notation B0 for a coordinate readout matrix and B for the Boolean formula ring. Reserve r for the number of nonzero Smith factors and h for the least-exponent multiplicity; do not call either simply 'rank' without its definition. In binary-expanded formulas use r_bin.

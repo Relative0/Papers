@@ -1,0 +1,982 @@
+--- Observation_Refinement_Descent_and_Cone_Draft_v0.3.tex
++++ Observation_Refinement_Descent_and_Cone_Draft_v0.4.tex
+@@ -34,21 +34,44 @@
+ \newcommand{\Updown}{\mathbin{\Updownarrow}}
+ 
+ \title{\textbf{Successive Concept Differentiation as Observation Refinement}\\
+-\large Carrier Splitting, Descent, Mapping-Cone Defects, and Boolean Unfolding Complexes}
++\large Carrier Splitting, Interaction-Core Homology, and Descent}
+ \author{Brian Droncheff}
+-\date{Research draft v0.3 --- 29 September 2026}
++\date{Convergence draft v0.4 --- 29 September 2026}
+ 
+ \begin{document}
+ \maketitle
+ 
+ \begin{abstract}
+-A 2015 thesis proposed a mathematical model of Ignacio Matte-Blanco's ``unfolding function'' in which a concept is decomposed into distinguished logical pieces and later reconstructed by gluing.  The proposal mixed three mathematically different operations: Boolean distinction, simplicial boundary, and local-to-global reconstruction.  This paper separates them.
+-
+-First, the historical logical rule is reconstructed as an exact-one-false operator on a chosen factorization.  It is meaningful but representation-sensitive and is not a chain differential.  Its repeated, provenance-preserving version traverses the Boolean lattice by Hamming layers.  The exact $k$th layer is the vertex set of a hypersimplex, while the cumulative complex of distinction sets is a simplex skeleton with an explicit mapping-cone profile.
+-
+-Second, observation refinement that actually splits a current $T_0$ state is given an exact finite-poset model.  The refined quotient factors canonically as a homotopy-neutral lexicographic split completion followed by a one-bit monotonicity thinning.  Consequently its mapping-cone homology is the relative homology of an explicit inversion-chain complex.  In weighted height at most two this defect has a complete integral classification by a rooted incidence graph, including torsion-freeness, a closed Betti formula, and an exact collapse criterion.
+-
+-Third, unfolding at the cover level is modeled by refinement of covers and induced maps between nerves.  Under a relative good-cover hypothesis, the mapping cone of a refinement map computes the relative homology of the support change.  Semantic reconstruction is treated separately by sheaf descent and cosheaf colimits.  The general topological ingredients are classical.  The candidate contribution is therefore the exact observation-theoretic factorization of carrier splitting, its transfer to the one-bit defect theory, the Boolean unfolding model, and the integration of structural cone defects with semantic descent; no novelty is claimed for the underlying beat-point, nerve, poset-fiber, or sheaf theorems.
++A 2015 proposal for concept unfolding combined Boolean distinction, simplicial
++boundary, and local-to-global reconstruction.  We separate these operations
++and study one precise refinement model: a new Boolean observation splits the
++states of a finite observational poset $Q$, producing an induced subposet
++$Q^\psi\subseteq Q\times\{0<1\}$ with projection $\pi$.
++
++Carrier splitting factors through a homotopy-neutral split completion followed
++by order thinning.  In weighted height at most two its cone has a complete
++integral rooted-incidence classification.  At arbitrary height, a two-colour
++missing-copy model identifies the obstruction.  If the exclusive inversion
++graph is a matching, cone homology is the direct sum of coarse edge-link
++reduced homology shifted by two, with no torsion-freeness assumption.
++
++Beyond matching, a filtration by mixed-core size has first page given by
++available-link homology.  When cores have at most three vertices, an explicit
++chain mapping cone computes the defect and the spectral sequence collapses at
++$E^2$, with integral extensions retained.  Maximum-degree-two exclusive graphs
++stabilize at $E^3$; an eight-state $K_{2,2}$ example proves this bound sharp.
++A seven-state star rules out unconditional $E^2$ collapse for forests, Ferrers
++graphs, and chordal-bipartite graphs.  An all-exclusive star family further
++shows that interaction can create torsion even when all local links have
++torsion-free homology.
++
++The Boolean historical reconstruction and cover/descent framework are retained
++as separate interpretations.  The general cofiber, obstruction-complex,
++spectral-sequence, nerve, and sheaf machinery is classical.  The contribution
++claimed here is the explicit observation-product specialization and its
++positive classifications and integral failure boundaries; publication priority
++for the exact specialization remains subject to review.
++
+ \end{abstract}
+ 
+ \tableofcontents
+@@ -78,6 +101,39 @@
+ \]
+ where $d$ is the ordinary chain differential and $U_k$ is induced by an unfolding/refinement map.  When $U_k$ is a chain map, it induces homology maps; when the represented support changes, $H_*(\Cone(U_k))$ measures the change relative to the chosen representation.
+ 
++\subsection{Conventions and result hierarchy}
++Finite observational posets are assumed nonempty.  An order complex includes
++the empty face.  Its augmented chain complex is denoted $\widetilde C_*$;
++in particular $\widetilde H_{-1}(\Delta\varnothing;R)=R$.
++Joins and suspensions of empty links use this simplicial convention; the
++formal $(-1)$-sphere has no vertices.  Ordinary homology is zero in negative
++degrees.  A coefficient ring is commutative with identity.
++
++For a chain map $f:A_*\to B_*$, use
++$\Cone(f)_n=B_n\oplus A_{n-1}$ and
++$d(b,a)=(d_Bb+f(a),-d_Aa)$.
++For a map of spaces or simplicial complexes, $\Cone(f)$ denotes its homotopy
++cofiber and its homology is explicitly reduced.  For nonempty source and
++target these conventions agree under the usual chain comparison.  A simplicial
++map that repeats an image vertex sends that oriented simplex to zero on
++normalized chains.  A shift $C[k]_n=C_{n-k}$ has differential $(-1)^k d_C$.
++
++The main mathematical results are organized as follows.
++\begin{enumerate}[label=(\arabic*)]
++\item Theorem~\ref{thm:split-factorization} converts a changing observational
++carrier into a neutral split completion followed by order thinning.
++\item Theorem~\ref{thm:carrier-graph} gives the exact integral low-height result;
++Theorem~\ref{thm:exclusive-matching} gives the all-height coarse-edge-link formula.
++\item Theorems~\ref{thm:two-column-interaction} and
++\ref{thm:degree-two-interaction} describe controlled overlap, including the
++sharp distinction between $E^2$ and $E^3$ collapse.
++\item Theorem~\ref{thm:main} treats cover refinement and descent separately.
++It reconstructs data on the support actually covered; restriction from $X$ to
++a proper subspace $Y$ need not preserve or uniquely extend global sections.
++\end{enumerate}
++The historical Boolean and simplex-skeleton constructions motivate the model;
++they are not a claim to new general Boolean, polyhedral, or sheaf theory.
++
+ \section{Historical operator: what survives and what does not}
+ 
+ \subsection{Fixed-factor unfolding}
+@@ -171,7 +227,7 @@
+ \]
+ and cyclically.  Here $\{0,D,E,F\}$ is the even-parity plane in $\Ftwo^3$.  This closure does not persist for general $m$: XOR of two one-flip children of $1^m$ has Hamming weight $2$, not $m-1$.
+ 
+-\subsection{Why the signs disappear over $\Ftwo$}
++\subsection{Why the signs disappear over \texorpdfstring{$\Ftwo$}{F2}}
+ The notes also anticipate a valid characteristic-two phenomenon.  If $[v_0,\dots,v_n]$ is a formal simplex, then over $\Ftwo$
+ \[
+ d[v_0,\dots,v_n]
+@@ -210,7 +266,7 @@
+ \end{enumerate}
+ \end{theorem}
+ \begin{proof}
+-Parts (i) and (iii) follow because choosing $S$ is equivalent to choosing the $k$ zero coordinates, or equivalently the $m-k$ one coordinates.  For (ii), if $u_i=\mathbf1\Updown e_i$, then $u_i-\mathbf1=-e_i$ in $\mathbb R^m$, so the $m$ difference vectors are linearly independent.  Part (iv) is the standard dimension and vertex description of the hypersimplex; in the two extremal nontrivial weights its vertices are the standard simplex vertices up to complementation.
++Parts (i) and (iii) follow because choosing $S$ is equivalent to choosing the $k$ zero coordinates, or equivalently the $m-k$ one coordinates.  For (ii), if $u_i=\mathbf1\Updown e_i$, then $u_i-\mathbf1=-e_i$ in $\mathbb R^m$, so the $m$ difference vectors are linearly independent.  Part (iv) is the standard dimension and vertex description of the hypersimplex~\cite{GelfandEtAlHypersimplex}; in the two extremal nontrivial weights its vertices are the standard simplex vertices up to complementation.
+ \end{proof}
+ 
+ For $m=4$ the exact layers have the particularly transparent geometry
+@@ -254,7 +310,7 @@
+ \]
+ \end{theorem}
+ \begin{proof}
+-The relative chain complex $C_*(K_r,K_{r-1};R)$ has no new cells below degree $r$ and has one degree-$r$ basis element for every $(r+1)$-subset of $[m]$.  There are no relative cells above degree $r$.  Hence every relative differential is zero and the displayed relative homology follows.  The mapping cone of an inclusion computes the relative homology of the pair.
++The relative chain complex $C_*(K_r,K_{r-1};R)$ has no new cells below degree $r$ and has one degree-$r$ basis element for every $(r+1)$-subset of $[m]$.  There are no relative cells above degree $r$.  Hence every relative differential is zero and the displayed relative homology follows.  The mapping cone of an inclusion computes the relative homology of the pair~\cite{Hatcher2002}.
+ \end{proof}
+ 
+ \begin{corollary}[Absolute homology of intermediate distinction stages]
+@@ -542,21 +598,23 @@
+ \]
+ It therefore contains either one or two inversion edges.  Introduce one formal root
+ for each connected component of $Q$ (equivalently of $\widehat Q^\psi$).  The
+-\emph{carrier-split defect graph} $G_\psi(Q)$ has one vertex for every inversion edge;
++\emph{carrier-split defect graph} $\mathcal D_\psi(Q)$ has one vertex for every inversion edge;
+ a deleted triangle with two inversion edges joins their vertices, while a deleted
+ triangle with one inversion edge joins that vertex to the root of its component.
+-Parallel graph edges are allowed.
++Parallel graph edges are allowed.  Here a rooted forest means a forest
++with exactly one formal root in each graph component.  This incidence graph
++$\mathcal D_\psi$ is different from the exclusive inversion graph introduced later.
+ 
+ \begin{theorem}[Carrier-splitting cone classification in weighted height two]
+ \label{thm:carrier-graph}
+-Assume $h_\psi(Q)\leq2$.  Let $c_0(G_\psi)$ be the number of connected components
+-of $G_\psi(Q)$ containing no formal root.  Then
++Assume $h_\psi(Q)\leq2$.  Let $c_0(\mathcal D_\psi)$ be the number of connected components
++of $\mathcal D_\psi(Q)$ containing no formal root.  Then
+ \[
+  \widetilde H_n\!\left(\Cone(\Delta\pi);\mathbb Z\right)
+  \cong
+  \begin{cases}
+-   \mathbb Z^{\beta_1(G_\psi)},&n=2,\\
+-   \mathbb Z^{c_0(G_\psi)},&n=1,\\
++   \mathbb Z^{\beta_1(\mathcal D_\psi)},&n=2,\\
++   \mathbb Z^{c_0(\mathcal D_\psi)},&n=1,\\
+    0,&\text{otherwise}.
+  \end{cases}
+ \]
+@@ -565,7 +623,7 @@
+ \begin{enumerate}[label=(\roman*)]
+ \item the carrier-splitting cone is acyclic over $\mathbb Z$;
+ \item it is acyclic over every field;
+-\item $G_\psi(Q)$ is a rooted forest;
++\item $\mathcal D_\psi(Q)$ is a rooted forest;
+ \item $\Delta(\widehat Q^\psi)$ collapses onto $\Delta(Q^\psi)$ through deleted
+ edge--triangle pairs;
+ \item $\Delta\pi:\Delta(Q^\psi)\to\Delta(Q)$ is a homotopy equivalence.
+@@ -573,23 +631,33 @@
+ \end{theorem}
+ 
+ \begin{proof}
+-By Theorem~\ref{thm:split-factorization}, the mapping-cone homology is the relative
+-homology of the one-bit thinning
+-$\Delta(Q^\psi)\subseteq\Delta(\widehat Q^\psi)$.  Lemma~\ref{lem:split-height}
+-places the split completion in dimension at most two.  The one-bit height-two
+-incidence theorem from the companion order-thinning analysis applies verbatim: the
+-relative $C_2\to C_1$ boundary is the oriented incidence matrix of the rooted defect
+-graph with root rows deleted.  Ordinary graph incidence gives the two displayed free
+-homology groups and total unimodularity; the rooted-forest condition is equivalent to
+-perfect relative cancellation and to an elementary collapse.  Finally
+-$\Delta(p)$ is already a homotopy equivalence, so two-out-of-three identifies
+-homotopy neutrality of the inclusion with homotopy neutrality of $\Delta\pi$.
++The relative complex has only $C_2\to C_1$, since all vertices are retained
++and the split completion has dimension at most two.  A deleted triangle of
++bit type $100$ or $110$ has two inversion edges with opposite boundary signs;
++a triangle of type $010$ or $101$ has one.  Consequently its matrix is the
++oriented incidence matrix of $\mathcal D_\psi$ with formal-root rows deleted.
++Each graph component contains at most one root, because triangles cannot
++connect different coarse components.  Relative graph homology therefore gives
++$H_2=\mathbb Z^{\beta_1(\mathcal D_\psi)}$ and
++$H_1=\mathbb Z^{c_0(\mathcal D_\psi)}$.  Incidence matrices and their row
++submatrices are totally unimodular.
++
++Vanishing of both groups is exactly the rooted-forest condition.  In a rooted
++tree with an edge, choose a nonroot leaf.  Its inversion edge occurs in just
++one remaining deleted triangle and in no retained triangle, so the pair is
++an elementary simplicial collapse.  Iterating leaf removal deletes every
++relative edge and triangle.  Conversely a relative collapse gives a homotopy
++equivalence and hence vanishing relative homology.  Finally the split-completion
++projection is a homotopy equivalence, so two-out-of-three gives the statement
++about $\Delta\pi$.  The free groups displayed above also show the equivalence
++with acyclicity over every field.
+ \end{proof}
+ 
+ \begin{remark}[Status of the low-height theorem]
+ The graph-incidence algebra, total unimodularity, rooted forests, and beat-point
+-technology are standard.  The exact height-two theorem for one-bit thinning is proved
+-in the companion structural-computation manuscript.  The new point here is the
++technology are standard.  The same height-two one-bit result is developed in the companion
++order-thinning manuscript~\cite{DroncheffThinning2026}; the proof above makes
++the transfer used here self-contained.  The new point here is the
+ carrier-splitting reduction that makes that theorem applicable to a process which
+ changes the $T_0$ carrier.  Accordingly, this theorem should be positioned as an
+ exact transfer theorem, not as a new general theory of rooted forests.
+@@ -599,7 +667,7 @@
+ 
+ No coefficient-independent forest criterion can hold in unrestricted dimension.
+ The carrier-splitting family contains the no-split case $C=\varnothing$, which is
+-exactly arbitrary same-carrier one-bit thinning.  Companion results show that one-bit
++exactly arbitrary same-carrier one-bit thinning.  Companion results~\cite{DroncheffThinning2026} show that one-bit
+ thinning in height three can already have relative integral torsion, and in unrestricted
+ height can encode arbitrary finite-poset homotopy types inside a contractible coarse
+ cone.  If one insists that at least one old state genuinely split, a disjoint neutral
+@@ -609,9 +677,503 @@
+ 
+ The appropriate all-height object is therefore the inversion-chain complex of
+ Theorem~\ref{thm:inversion-chain}, supplemented where useful by poset-fiber or
+-homotopy-colimit methods.  A realistic next target is not another universal forest
+-theorem, but a classification of higher-dimensional inversion complexes under
+-additional structural hypotheses on $Q$ and on the split profile $(A_0,A_1)$.
++homotopy-colimit methods.  The next two sections give all-height results under
++matching and interaction-core hypotheses, together with explicit obstructions
++to stronger graph-class conclusions.
++
++
++\section{All-height carrier splitting under noninteracting exclusive inversions}
++\label{sec:exclusive-matching}
++
++The low-height rooted-incidence theorem gives a complete answer when the
++weighted height is at most two.  In higher dimensions a universal rooted-forest
++criterion is impossible: the same-carrier boundary case already supports
++integral torsion and arbitrary finite-poset homotopy types.  Nevertheless, an
++all-height exact classification survives when the genuinely incompatible
++carrier outcomes do not interact.
++
++Let
++\[
++A_a=\{s\in Q:(s,a)\in Q^\psi\},\qquad a\in\{0,1\},
++\]
++and put
++\[
++P=A_1\setminus A_0,\qquad Z=A_0\setminus A_1,\qquad
++C=A_0\cap A_1.
++\]
++Thus $P$ consists of the $1$-only coarse states, $Z$ of the $0$-only coarse
++states, and $C$ of the states that genuinely split.
++
++\begin{definition}[Exclusive inversion graph]
++\label{def:exclusive-inversion-graph}
++The \emph{exclusive inversion graph} is the bipartite graph
++\[
++G_\psi=(P\sqcup Z,E_\psi),\qquad
++E_\psi=\{(p,z)\in P\times Z:p<z\text{ in }Q\}.
++\]
++An edge records a coarse comparison whose earlier endpoint admits only the new
++outcome $1$ while its later endpoint admits only $0$.
++\end{definition}
++
++\subsection{The full-doubling model}
++
++Let
++\[
++D=Q\times\{0<1\},\qquad K=\Delta D,\qquad L=\Delta Q^\psi.
++\]
++The actual refined carrier is the induced subposet of $D$ obtained by deleting
++exactly
++\[
++M_0=\{(p,0):p\in P\},\qquad
++M_1=\{(z,1):z\in Z\}.
++\]
++Let $K_P$ be obtained by deleting $M_0$, let $K_Z$ be obtained by deleting
++$M_1$, and put
++\[
++U=K_P\cup K_Z,\qquad L=K_P\cap K_Z.
++\]
++The complex $K_P$ closes upward to the full top row, while $K_Z$ closes
++downward to the full bottom row.  Hence both $K_P\hookrightarrow K$ and
++$K_Z\hookrightarrow K$ are homotopy equivalences.  Since $H_*(K,K_P)=H_*(K,K_Z)=0$, the triple $(K,K_P,L)$,
++simplicial excision for $U=K_P\cup K_Z$, and the triple $(K,U,K_Z)$ give
++$H_n(K,L)\cong H_n(K_P,L)\cong H_n(U,K_Z)\cong H_{n+1}(K,U)$.
++Thus
++\begin{equation}
++H_n(K,L;R)\cong H_{n+1}(K,U;R)
++\label{eq:two-colour-shift}
++\end{equation}
++for every coefficient ring $R$.  Since $D\to Q$ is a homotopy equivalence,
++$H_n(K,L;R)$ is the reduced homology of the homotopy cofiber of the refined
++projection $\Delta\pi:\Delta Q^\psi\to\Delta Q$.
++
++A simplex of $K\setminus U$ contains at least one missing lower copy $(p,0)$
++and at least one missing upper copy $(z,1)$.  Because it is a product-order
++chain, every such pair satisfies $p<z$.  Therefore the missing vertices of a
++relative simplex project to a complete bipartite subgraph of $G_\psi$.  This
++observation isolates the source of higher interaction: bicliques with more than
++one edge couple otherwise local defects.
++
++\begin{proposition}[Empty-exclusive-graph neutrality]
++\label{prop:empty-exclusive}
++If $E_\psi=\varnothing$, then $\Delta\pi$ is a homotopy equivalence.
++\end{proposition}
++\begin{proof}
++Set $b(s)=1$ exactly when some $p\in P$ satisfies $p\le s$.
++This isotone choice takes an available value at every state: it is $1$ on $P$
++and cannot be $1$ on $Z$ without an exclusive edge.  The section
++$r(s)=(s,b(s))$ obeys $\pi r=\mathrm{id}$.
++On $Q^\psi$, the map $c(s,a)=(s,\max\{a,b(s)\})$ is available and isotone,
++with $\mathrm{id}\le c\ge r\pi$.  Comparable poset maps are homotopic,
++so $r$ is a homotopy inverse.
++\end{proof}
++
++\begin{theorem}[Exclusive-Inversion Matching Theorem]
++\label{thm:exclusive-matching}
++Suppose that the exclusive inversion graph $G_\psi$ is a matching.  Then, for
++every coefficient ring $R$ and every integer $n$,
++\begin{equation}
++\widetilde H_n\!\left(\Cone(\Delta\pi);R\right)
++\cong
++\bigoplus_{(p,z)\in E_\psi}
++\widetilde H_{n-2}\!\left(
++\operatorname{lk}_{\Delta Q}[p,z];R
++\right).
++\label{eq:exclusive-matching}
++\end{equation}
++Consequently $\Delta\pi$ is an $R$-homology equivalence if and only if every
++coarse edge link $\operatorname{lk}_{\Delta Q}[p,z]$ indexed by an exclusive
++inversion is $R$-acyclic.
++\end{theorem}
++
++\begin{proof}
++A relative simplex of $(K,U)$ contains at least one vertex of $M_0$ and one
++vertex of $M_1$.  If it contained two missing lower vertices and one missing
++upper vertex, the corresponding upper endpoint would have degree at least two
++in $G_\psi$; the dual statement holds for two missing upper vertices.  The
++matching hypothesis therefore forces every relative simplex to contain a unique
++mixed pair
++\[
++e=((p,0)<(z,1)),\qquad (p,z)\in E_\psi.
++\]
++Deleting either endpoint of $e$ sends the simplex into $U$, while deleting any
++other vertex preserves the same pair.  Reorienting each simplex with the two core vertices first gives an even
++chain shift.  Hence the relative chain complex splits
++as
++\[
++C_m(K,U;R)=\bigoplus_{e\in E_\psi}C_m^{(e)},
++\qquad
++C_m^{(e)}\cong
++\widetilde C_{m-2}(\operatorname{lk}_K e;R).
++\]
++Thus
++\[
++H_m(K,U;R)\cong
++\bigoplus_{e\in E_\psi}
++\widetilde H_{m-2}(\operatorname{lk}_K e;R).
++\]
++
++It remains to identify the product-order link.  For
++$e=((p,0)<(z,1))$, its link factors into the lower interval, the open middle
++interval, and the upper interval.  The open middle interval is covered by two
++contractible subposets: delete $(z,0)$ and close upward to the bit-$1$ row, or
++delete $(p,1)$ and close downward to the bit-$0$ row.  Their intersection is
++$(p,z)_Q\times\{0<1\}$, homotopy equivalent to $(p,z)_Q$.  Since $(p,1)$ and
++$(z,0)$ are incomparable, every middle-chain lies in one of these two pieces;
++therefore
++\[
++\Delta((p,0),(z,1))\simeq\Sigma\Delta(p,z)_Q.
++\]
++Joining with the lower and upper factors gives
++\[
++\operatorname{lk}_{\Delta(Q\times\mathbf2)}e
++\simeq
++\Sigma\operatorname{lk}_{\Delta Q}[p,z].
++\]
++Combining this suspension shift with~\eqref{eq:two-colour-shift} yields
++\eqref{eq:exclusive-matching}.
++\end{proof}
++
++\begin{corollary}[Bounded-poset localization]
++\label{cor:bounded-localization}
++Assume that $Q$ has a global minimum $\hat0$ and maximum $\hat1$, and that
++$G_\psi$ is a matching.  Then every exclusive edge except possibly
++$(\hat0,\hat1)$ has contractible coarse edge link.  Hence only the global
++endpoint inversion can contribute to the cone homology.
++\end{corollary}
++
++\begin{proof}
++If $p\ne\hat0$, the lower factor $\Delta Q_{<p}$ has the minimum $\hat0$; if
++$z\ne\hat1$, the upper factor $\Delta Q_{>z}$ has the maximum $\hat1$.  In
++either case the edge link is a join with a nonempty contractible complex.
++\end{proof}
++
++\begin{corollary}[Distributive endpoint profile]
++\label{cor:distributive-endpoint}
++Let $Q=J(R)$ be the lattice of order ideals of a nonempty finite poset $R$.  Make the
++bottom state $1$-only, the top state $0$-only, and every other state split.  If
++$R$ is an $r$-element antichain, so that $Q=B_r$, then
++\[
++\widetilde H_r(\Cone(\Delta\pi);\mathbb Z)\cong\mathbb Z
++\]
++and all other reduced cone homology vanishes.  If $R$ is not an antichain,
++the cone is integrally acyclic.
++\end{corollary}
++
++\begin{proof}
++Corollary~\ref{cor:bounded-localization} reduces the answer to the reduced
++homology of the proper part of $J(R)$, shifted by two.  By the classical crosscut theorem~\cite{Bjorner1995}, the atom crosscut is a
++full simplex unless the atoms join to the top element.  In $J(R)$ the atoms
++correspond to the minimal elements of $R$, and they join to the top exactly
++when every element of $R$ is minimal, i.e. exactly when $R$ is an antichain.
++In that case $J(R)=B_r$ and its proper part is homotopy equivalent to
++$S^{r-2}$.
++\end{proof}
++
++\subsection{Sharpness: interaction begins at the first shared endpoint}
++
++The matching condition cannot be weakened merely to ``$G_\psi$ is a
++forest.''  For the three-element chain $0<1<2$ with availability profile
++\[
++0:\{1\},\qquad 1:\{0\},\qquad 2:\{0\},
++\]
++the exclusive graph is the two-edge star $K_{1,2}$.  Direct integral Smith
++normal form gives
++\[
++\widetilde H_1(\Cone(\Delta\pi);\mathbb Z)\cong\mathbb Z,
++\]
++while the sum of the two individual coarse-edge-link contributions is zero.
++The shared endpoint creates a three-vertex interaction core and a differential
++between the two edge defects.
++
++Nor does matching imply total unimodularity or torsion-freeness.  Given any
++nonempty finite poset $R$, take
++\[
++Q=\hat0\oplus R\oplus\hat1
++\]
++and use the endpoint profile above.  There is exactly one exclusive inversion,
++and Theorem~\ref{thm:exclusive-matching} gives
++\[
++\widetilde H_n(\Cone(\Delta\pi);\mathbb Z)
++\cong
++\widetilde H_{n-2}(\Delta R;\mathbb Z).
++\]
++Thus arbitrary finite-poset homology, including torsion, can occur even inside
++the matching class.  In particular, total unimodularity must be controlled by
++stronger conditions on the relevant links; global torsion-freeness alone is
++not a TU criterion~\cite{DeyHiraniKrishnamoorthy2011}.
++
++The matching hypothesis is sufficient, not necessary: the same proof applies
++whenever there is no mixed three-vertex core.  Section~\ref{sec:interaction-cores}
++makes this criterion and the nonmatching interaction maps explicit.
++
++\begin{remark}[Priority boundary]
++The deletion/cofiber technology used here is classical.  In particular,
++vertex-cover obstruction complexes already provide general homotopical tools
++for comparing a complex with unions of induced subcomplexes
++\cite{ChacholskiEtAl2021}, while poset-fiber decompositions give broad results
++under fiber-connectivity hypotheses \cite{BjornerWachsWelker2005}.  The
++candidate contribution of Theorem~\ref{thm:exclusive-matching} is the
++observation-theoretic two-colour recognition and the resulting exact coarse
++edge-link formula.  No claim is made that simplicial vertex deletion or
++homotopy cofibers themselves are new.
++\end{remark}
++
++
++\section{Interaction cores beyond matching}
++\label{sec:interaction-cores}
++
++Retain $K=\Delta(Q\times\mathbf 2)$, $L=\Delta Q^\psi$, the missing
++sets $M_0=P\times\{0\}$ and $M_1=Z\times\{1\}$, and
++$U=K_P\cup K_Z$.  Cone homology in this section is reduced homology
++of the topological homotopy cofiber, equivalently homology of the algebraic
++mapping cone.  The two-colour shift is
++\[
++ \widetilde H_n(\operatorname{Cone}(\Delta\pi);R)
++ \cong H_{n+1}(K,U;R).
++\]
++For a mixed missing core $S$, put
++$\Lambda_S=\operatorname{lk}_K(S)[V(L)]$.
++All link chain complexes below are augmented, including degree $-1$.
++
++\begin{proposition}[Interaction spectral sequence]
++\label{prop:interaction-ss}
++The finite-filtration construction~\cite{Weibel1994} gives a convergent spectral sequence
++\[
++ E^1_{p,q}=\bigoplus_{|S|=p}\widetilde H_q(\Lambda_S;R)
++ \quad\Longrightarrow\quad H_{p+q}(K,U;R),
++\]
++with $d^r$ of bidegree $(-r,r-1)$.  The first differential is the
++signed sum of the inclusion maps obtained by deleting one missing vertex,
++omitting nonmixed faces.  If all mixed cores have size at most $M\ge2$,
++then $E^{M-1}=E^\infty$.
++\end{proposition}
++\begin{proof}
++Orient a relative simplex by listing its $p$ missing vertices first and
++its available vertices second, with the corresponding shuffle sign.
++Its boundary is
++\[
++ d(S\wedge T)=\sum_i(-1)^i(S\setminus\{s_i\})\wedge T
++                 +(-1)^pS\wedge\partial T.
++\]
++Terms with nonmixed core vanish in the relative complex.  Filtering by
++$p$ gives the displayed page and differential.  The filtration is finite and exhaustive.  The abutment is the associated
++graded of homology, so integral extension data may remain.
++Only columns $2,\ldots,M$ can occur, so every $d^r$ with $r\ge M-1$
++has zero source or target.
++\end{proof}
++
++\begin{theorem}[Exact two-column interaction theorem]
++\label{thm:two-column-interaction}
++Suppose no mixed core has four or more vertices.  Define
++\[
++ A_\bullet=\bigoplus_{|S|=2}\widetilde C_\bullet(\Lambda_S;R),
++ \qquad
++ B_\bullet=\bigoplus_{|S|=3}\widetilde C_\bullet(\Lambda_S;R),
++\]
++and let $h:B_\bullet\to A_\bullet$ be the signed sum of core-deletion
++inclusions.  Then
++\[
++ C_\bullet(K,U;R)\cong\operatorname{Cone}(h)[2],\qquad
++ \widetilde H_n(\operatorname{Cone}(\Delta\pi);R)
++ \cong H_{n-1}(\operatorname{Cone}(h)).
++\]
++The interaction spectral sequence collapses at $E^2$, and there is a
++natural exact sequence
++\[
++ 0\longrightarrow\operatorname{coker}H_{n-1}(h)
++ \longrightarrow\widetilde H_n(\operatorname{Cone}(\Delta\pi);R)
++ \longrightarrow\ker H_{n-2}(h)\longrightarrow0.
++\]
++In particular the cone is $R$-acyclic if and only if $h$ is a
++quasi-isomorphism.
++\end{theorem}
++\begin{proof}
++The degree-$m$ relative group is $A_{m-2}\oplus B_{m-3}$ and its
++boundary is $(a,b)\mapsto(\partial a+hb,-\partial b)$.
++This is the asserted shifted chain cone.  Apply the two-colour shift,
++the mapping-cone long exact sequence, and
++Proposition~\ref{prop:interaction-ss} with $M=3$.
++\end{proof}
++
++The exact sequence splits noncanonically over a field.  Over $\mathbb Z$
++it splits when the right-hand kernel is free abelian; no splitting is
++asserted in general.  Thus collapse alone does not replace the integral
++answer by a direct sum of link-homology kernels and cokernels.  Signed
++incidence coefficients on link chains likewise do not imply total
++unimodularity of the induced maps on homology.
++
++\begin{theorem}[Degree-two classification and its sharp page bound]
++\label{thm:degree-two-interaction}
++Suppose the exclusive graph has maximum degree at most two.
++Every mixed core has size at most four, so $E^3=E^\infty$.
++If no $C_4$ component has both its same-colour pairs comparable in $Q$,
++Theorem~\ref{thm:two-column-interaction} applies and $E^2=E^\infty$.
++In every cycle component of length at least six the cone contribution is
++the coarse-edge-link direct sum of the matching theorem.
++\end{theorem}
++\begin{proof}
++Transitivity gives $N(p')\subseteq N(p)$ when $p<p'$ in $P$, and
++$N(z)\subseteq N(z')$ when $z<z'$ in $Z$.
++A mixed core is a biclique with each colour class a chain.  Degree two
++bounds both class sizes by two.  A four-core requires a whole $K_{2,2}$
++component with both colour pairs comparable.  This proves the bounds.
++On a longer cycle, two same-colour degree-two vertices have distinct
++neighbourhoods of the same cardinality and cannot be comparable if they
++share a neighbour.  Hence there are no triple cores.  No missing vertex
++can then lie in a product-edge link, so the original matching proof
++applies componentwise without change.
++\end{proof}
++
++More explicitly, a path with at least three edges supports triples only
++on its first two or last two edges: a comparable common-neighbour pair
++must include a leaf.  For a path of at least four edges these end triples
++have disjoint edge supports, giving independent star blocks and interior
++edge blocks.  A three-edge path has up to two triples sharing its middle
++edge and is treated by one instance of $\operatorname{Cone}(h)$.
++Every surviving relative face remains in the same exclusive graph
++component, so the component decomposition is at chain level.  Links
++must nevertheless be calculated in the whole coarse poset.
++
++For a two-edge star with ordered leaves, $h$ is the signed pair of
++inclusions from its triple link to its two edge links.  On the frozen
++three-chain profile $(1,0,0)$, all three available links have reduced
++$H_0=\mathbb Z$ and $h_0$ is the primitive signed diagonal
++$\mathbb Z\to\mathbb Z^2$.  This gives cone $H_1=\mathbb Z$,
++although both coarse edge links are contractible.
++
++\subsection{Higher differentials are necessary}
++For a $C_4$ component whose two pairs are comparable, restrict to its
++relative chain summand and write the core order
++$a<b<x<y$.  Let $A,B,V$ be the sums of edge, triple, and four-core link
++chains respectively.  Then
++\[
++ C_m(K,U)=A_{m-2}\oplus B_{m-3}\oplus V_{m-4},\qquad
++ d(a,b,c)=(\partial a+hb,-\partial b+kc,\partial c),
++\]
++where $h,k$ are the signed core-deletion inclusions and $hk=0$.
++In triple order $(abx,aby,axy,bxy)$, the signs of $k$ are $(-,+,-,+)$,
++while $h(abx)=bx-ax$, $h(aby)=by-ay$, $h(axy)=ax-ay$, and
++$h(bxy)=bx-by$, each term meaning its corresponding inclusion.
++The only possible higher differential is
++\[
++ d^2:E^2_{4,q}\longrightarrow E^2_{2,q+1}.
++\]
++If $\partial c=0$ and $\partial b=kc$, it is represented by $hb$.
++Thus a differential lowering core size by at most one can still produce
++a nonzero secondary differential.
++
++An explicit eight-state example makes this bound sharp.  Take
++$Q=A_2\oplus R\oplus A_2$, with bottom antichain $\{a,a'\}$,
++top antichain $\{y,y'\}$, and
++$R=\{v,b,w,x\}$ with relations $v<x$, $b<w$, $b<x$.
++Make $a,b$ one-only and $x,y$ zero-only; split the other states.
++The only nonzero first-page groups are
++$E^1_{2,1}=\mathbb Z$ and $E^1_{4,0}=\mathbb Z$.
++The four-core link consists of $b_1,x_0$.  The triple links $abx$ and
++$bxy$ are cones with apex $y'_1$ and $a'_0$, respectively; the links $aby$
++and $axy$ are the two paths displayed below.  The edge links $ax$, $by$,
++and $bx$ are cones, with apex $y'_1$, $a'_0$, and either of those vertices.
++The remaining edge link $ay$ has maximal simplices
++\[
++ [a_1,b_1,w_1],\quad[v_0,x_0,y_0],\quad
++ [a_1,v_1],\quad[v_0,v_1],\quad[w_0,w_1],\quad[w_0,y_0].
++\]
++Collapsing its two triangle ears leaves a cycle.  Thus the stated first-page
++groups follow directly from all nine available links.  The paths
++\[
++ x_0-v_0-v_1-a_1-b_1,\qquad
++ x_0-y_0-w_0-w_1-b_1
++\]
++in the two relevant triple links fill the four-core difference.
++Give each path orientation from $x_0$ to $b_1$.  In the $ay$ component
++of the signed zigzag, the first path minus the second traverses the loop once;
++the other edge components are cycles in contractible links.  Therefore
++$d^2$ is a unit $\mathbb Z\to\mathbb Z$, and $E^3=0$.
++The supplementary signed-chain certificate verifies these fillings and
++the integral homology directly.
++
++Nor do Ferrers or chordal-bipartite graphs force $E^2$ collapse.
++The seven-state poset with covers
++$0<1$, $0<2$, $1<3$, $2<3$, $2<5$, $3<4$, $3<6$, $5<6$,
++and profile $(1,2,0,0,2,2,0)$ has exclusive graph $K_{1,3}$.
++Its integral $E^1=E^2$ has $\mathbb Z^2$ in bidegree $(2,1)$
++and $\mathbb Z$ in $(4,0)$; $d^2$ is a primitive injection.
++Its only nonzero cone group is $H_2=\mathbb Z$.
++Here profile value $2$ means split.  To check the star example directly,
++the available links for the missing pairs $\{0_0,2_1\}$ and
++$\{0_0,6_1\}$ have homotopy type $S^1$; the third pair link and all
++three triple links are contractible, and the four-core link is
++$\{0_1,2_0\}\simeq S^0$.
++For the abutment, write $T=Q\setminus\{0\}$ and $C=\{1,4,5\}$.
++The complex $\Delta T$ is contractible: its two maximal-element lower ideals
++are cones whose intersection is the lower ideal of $3$.
++The complex $\Delta C$ is an edge and an isolated point.
++In a star profile $Q=\{p\}\oplus T$, with $p$ one-only, $C$ split, and
++$T\setminus C$ zero-only, the refined complex is the union of
++$\Delta((T\times\{0\})\cup(C\times\{1\}))$ and the cone
++$\Delta((\{p\}\times\{1\})\cup(C\times\{1\}))$.
++The first piece retracts to $\Delta T$, and the intersection is $\Delta C$.
++The homotopy-pushout description consequently gives
++$\widetilde H_n(\Cone(\Delta\pi))\cong H_{n-1}(\Delta T,\Delta C)$.
++Here this is $\mathbb Z$ only at $n=2$; the sole possible $d^2$ must be a
++primitive injection.  The supplementary certificate records all link matrices
++and signed chains.  These are explicit counterexamples, not global minimality claims.
++
++\subsection{An unbounded interacting class and new torsion}
++\begin{proposition}[All-exclusive star]
++Let $R$ be a nonempty finite poset.  Take $Q=\{p\}\oplus R$, make
++$p$ one-only and every state of $R$ zero-only.  Then $E^2=E^\infty$
++integrally and
++\[
++ \widetilde H_n(\operatorname{Cone}(\Delta\pi);\mathbb Z)
++ \cong H_{n-1}(\Delta R;\mathbb Z),
++\]
++where the right side is ordinary homology.
++\end{proposition}
++\begin{proof}
++Every core is $\{p_0\}\cup\sigma_1$ for a nonempty chain $\sigma$
++in $R$.  Its available link is the isolated vertex $p_1$ disjoint from
++the cone $\Delta(R_{\le\min\sigma}\times\{0\})$.
++The difference-of-components generators identify all nonzero link
++homology with $\mathbb Z$ in degree zero and identify their inclusion
++maps with the identity.  Consequently $d^1$ is, up to a uniform sign,
++the ordinary simplicial boundary of $\Delta R$.  The single row
++collapses on $E^2$ and has only one filtration grade in each total degree.
++\end{proof}
++
++For the nonempty-face poset of a triangulated projective plane, all these
++available links have torsion-free homology, and every coarse edge link
++is a vertex link in its barycentric subdivision, hence a circle.
++Nevertheless the interaction differential creates $\mathbb Z/2$ in
++cone degree two.  The explicit six-vertex triangulation in the
++supplement gives a 32-state example, with every link and the reduced
++interaction complex checked by integral Smith normal form.
++
++\subsection{Whole-relation Horn closure is neutral}
++\begin{proposition}
++If the nonempty refined Boolean relation is closed under coordinatewise meet,
++then $\Delta\pi$ is a homotopy equivalence.  The dual statement holds for
++coordinatewise join closure.
++\end{proposition}
++\begin{proof}
++Finiteness and meet closure give a minimum in the refined relation.
++Its coordinate projection is again meet closed and nonempty, so also has a
++minimum.  Both order complexes are contractible.  Join closure gives maxima.
++\end{proof}
++The hypothesis concerns the whole realized refined relation; it is not merely
++a closure assumption on a selected subset of observations.  This is an
++elementary application of closure-system topology, not a new Horn theorem.
++
++\begin{remark}[Scope and priority]
++Filtered-complex spectral sequences, link/cofiber recursions, and their
++extension issues are classical.  The complexes $\Lambda_S$ are precisely
++vertex-cover obstruction complexes in the sense of
++Chach\'olski--Jin--Scolamiero--Tombari~\cite{ChacholskiEtAl2021}.
++The results here explicitly identify which such complexes interact in
++the observation product model, with positive class restrictions and
++integral obstructions.  They do not introduce a new general obstruction
++theory or supersede poset-fiber theorems.
++\end{remark}
+ 
+ 
+ \section{Cover refinement and canonical homology maps}
+@@ -642,7 +1204,7 @@
+ If $\sigma\in\Nrv(\mathcal V)$, choose $x\in\bigcap_{j\in\sigma}V_j$.  Then $x$ belongs to every $U_{\rho(j)}$ and every $U_{\rho'(j)}$.  Hence the union of the two image vertex sets spans a simplex of $\Nrv(\mathcal U)$, which is precisely contiguity.
+ \end{proof}
+ 
+-This lemma is standard.  In particular, Leit\~ao's 2026 framework for persistent homology of cover refinements makes this contiguity principle explicit at the cover level.  It should not be presented here as a new theorem.
++This lemma is standard.  In particular, Leit\~ao's 2026 framework~\cite{Leitao2026} for persistent homology of cover refinements makes this contiguity principle explicit at the cover level.  It should not be presented here as a new theorem.
+ 
+ \section{Observation--Refinement Descent and Cone Theorem}
+ 
+@@ -682,13 +1244,23 @@
+ \]
+ naturally up to the standard nerve identifications;
+ \item in the conservative case $Y=X$, the cone is acyclic, equivalently $u$ is a quasi-isomorphism;
+-\item if the cover members are admissible objects of the chosen site (for example, open sets for an ordinary sheaf) and $\mathcal F$ is a sheaf of sets or abelian groups on $X$, then compatible local sections on either cover reconstruct a unique global section; refinement changes the presentation of the local data but not the reconstructed global section;
+-\item dually, under the same site/admissibility convention, if $\mathcal G$ is a cosheaf, the global assembled object is the colimit of its local intersection diagram, and this assembly is compatible with refinement.
++\item assume additionally that $X$, $Y$, the cover members, and their
++intersections are admissible objects of the chosen site, and the displayed
++families are covers in that site.  For a sheaf $\mathcal F$, compatible data
++on $\mathcal U$ reconstruct $\mathcal F(X)$; compatible data on
++$\mathcal U|_Y$ or $\mathcal V$ reconstruct $\mathcal F(Y)$.
++Refinement between the latter two covers preserves that section on $Y$.
++No unique extension from $Y$ to $X$ is asserted;
++\item under the same site hypothesis, a cosheaf $\mathcal G$ is assembled
++as the colimit of the intersection diagram on each covered support: the
++colimits are $\mathcal G(X)$ and $\mathcal G(Y)$, respectively.
++Refinement on $Y$ preserves its colimit; inclusion induces the comparison
++$\mathcal G(Y)\to\mathcal G(X)$, which need not be an isomorphism.
+ \end{enumerate}
+ \end{theorem}
+ 
+ \begin{proof}
+-Part (a) is Lemma~\ref{lem:contiguity}.  For (b), both $\mathcal V$ and $\mathcal U|_Y$ are good covers of $Y$.  The functorial/relative form of the nerve theorem identifies their nerves with $Y$ and identifies the refinement map with the identity of $Y$ up to homotopy.  Hence $N(\rho)$ is a homotopy equivalence.
++Part (a) is Lemma~\ref{lem:contiguity}.  For (b), both $\mathcal V$ and $\mathcal U|_Y$ are good covers of $Y$.  The functorial/relative form of the nerve theorem~\cite{BauerEtAl2023,Ramras2026} identifies their nerves with $Y$ and identifies the refinement map with the identity of $Y$ up to homotopy.  Hence $N(\rho)$ is a homotopy equivalence.
+ 
+ Let $j:\Nrv(\mathcal U|_Y)\hookrightarrow\Nrv(\mathcal U)$.  Since $N(\rho)$ is a homotopy equivalence, the mapping cones of $j\circ N(\rho)$ and $j$ have isomorphic homology; this follows, for example, by comparing the long exact sequences of the two cones and applying the five lemma.  The mapping cone of the chain inclusion $C_*(j)$ computes
+ \[
+@@ -696,8 +1268,22 @@
+ \]
+ The relative nerve theorem identifies this with $H_n(X,Y;R)$, proving (c).  If $Y=X$, the relative groups vanish, giving (d).
+ 
+-For (e), assuming the cover belongs to the site on which $\mathcal F$ is defined, the sheaf axiom identifies global sections with compatible local families: $\mathcal F(X)$ is the equalizer of the first two \v{C}ech restriction maps.  Since both covers represent the same global object, refinement transports compatible families without changing their unique glue.  Part (f) is the dual cosheaf statement: $\mathcal G(X)$ is the colimit of the local intersection diagram, and refinement induces the canonical comparison maps between such colimits.
+-\end{proof}
++For (e), apply the sheaf axiom~\cite{Curry2013} separately on each support: compatible
++families on a cover of $S$ are the equalizer describing $\mathcal F(S)$,
++for $S=X$ or $S=Y$.  The covers $\mathcal U|_Y$ and $\mathcal V$ cover
++the same $Y$, so their gluing maps agree with refinement.  Restriction
++$\mathcal F(X)\to\mathcal F(Y)$ is a separate map and need not be bijective.
++Part (f) is the dual cosheaf colimit statement, again on each support separately.
++\end{proof}
++
++\begin{example}[Restriction is not unique extension]
++Take the discrete space $X=\{a,b\}$, $Y=\{a\}$, and the sheaf of
++integer-valued functions.  Singleton covers satisfy the stated good-cover
++conditions.  Data on $Y$ determine an element of $\mathbb Z$, whereas
++$\mathcal F(X)=\mathbb Z^2$; restriction is the projection onto the first
++coordinate.  A section on $Y$ therefore has many extensions to $X$.
++This distinguishes descent on a fixed support from an extension problem.
++\end{example}
+ 
+ \subsection{What the theorem means for unfolding}
+ The theorem separates two questions that were previously mixed:
+@@ -837,7 +1423,7 @@
+ 
+ However, the passage from observation topology to complex must be chosen explicitly.  The nerve of the indexed truth regions records joint satisfiability but is not an invariant of the generated topology.  This is why the present paper uses a cover-refinement contract when applying the nerve theorem.
+ 
+-There is also an important same-carrier subcase.  If a new Boolean observation factors through the current $T_0$ quotient, it does not split observational states; it only removes comparisons incompatible with the new bit.  Companion work shows that, for a height-two current signature poset and one new bit, homotopy neutrality can be recognized exactly by a rooted-forest criterion and certified by simplicial collapse.  That result complements the present theorem: the current paper handles refinement through covers, relative cone defects, and descent, while the order-thinning paper handles a special same-carrier refinement regime with sharper combinatorial recognition.
++There is also an important same-carrier subcase.  If a new Boolean observation factors through the current $T_0$ quotient, it does not split observational states; it only removes comparisons incompatible with the new bit.  Companion work shows that, for a height-two current signature poset and one new bit, homotopy neutrality can be recognized exactly by a rooted-forest criterion and certified by simplicial collapse.  That result complements the present theorem: the present paper treats changing carriers, matching and interacting cone defects, and cover-level descent, while the companion order-thinning paper develops the same-carrier incidence theorem and its separate sharpness results.
+ 
+ \section{Persistence and zigzags}
+ 
+@@ -854,53 +1440,67 @@
+ Cover-level persistence is already an active theory.  In particular, Leit\~ao develops persistent homology directly from cover refinements and proves stability statements that propagate through nerve and co-nerve functors.  Therefore any novelty claim here must be made at the level of the specific observation semantics, relative defect interpretation, or descent coupling, not at the level of cover-refinement persistence itself.
+ 
+ \section{Priority and novelty position}
+-
+-The following ingredients are standard and are used as machinery rather than claimed as new:
+-\begin{itemize}
+-\item Boolean lattices, Hamming layers, and hypersimplices;
+-\item simplicial chain complexes and $d^2=0$;
+-\item nerves and good-cover nerve theorems;
+-\item contiguity of refinement choices and the induced equality on homology;
+-\item mapping cones and their relation to relative homology;
+-\item sheaf descent and cosheaf colimits;
+-\item persistent and zigzag homology.
+-\end{itemize}
+-
+-The potentially publishable contribution is narrower:
+-\begin{enumerate}[label=(\arabic*)]
+-\item a faithful mathematical audit of the historical unfolding rule and proof of its representation sensitivity;
+-\item an exact Boolean-layer/hypersimplex reconstruction of successive distinction;
+-\item the canonical distinction-history skeleton filtration and its closed-form cone profile;
+-\item an observation-refinement contract that separates vocabulary refinement, carrier splitting, cover refinement, and genuine chain boundary;
+-\item an integrated structural/semantic defect formalism combining cone homology with descent defects;
+-\item a mathematically explicit replacement for the original gluing intuition.
+-\end{enumerate}
+-
+-A submission should not advertise Lemma~\ref{lem:contiguity} or the ordinary nerve theorem as new.  The 2026 cover-refinement literature makes that especially important.
+-
+-\section{Next theorem targets}
+-
+-The present main theorem is a strong structural foundation, but its most general parts are assembled from classical results.  The next research step should therefore attack a model-specific theorem that is not automatic from standard topology.
+-
+-\begin{question}[Observation-generated pair-goodness]
+-Given a finite observation system, characterize when its natural concept cover and all relevant support restrictions are pair-good.  Can this be decided from the observation-incidence table without constructing all intersections geometrically?
++The standard ingredients include Boolean/Hamming and hypersimplex geometry,
++chain cones, beat-point reductions, relative nerve theorems, sheaf descent,
++poset-fiber methods, and filtered-complex spectral sequences.
++For the cover $X_0=V(K)\setminus M_0$, $X_1=V(K)\setminus M_1$, with
++$A=X_0\cap X_1=V(L)$, each $\Lambda_S$ is precisely the available-vertex
++obstruction complex $\operatorname{St}(S,A)$ of
++Chach\'olski--Jin--Scolamiero--Tombari~\cite{ChacholskiEtAl2021}, with
++our augmented empty-face convention.  Their published Corollary~7.2 treats
++several outside vertices and Theorem~8.6 controls the homotopy fibers of the
++vertex-cover inclusion through these obstruction complexes.
++
++The Bj\"orner--Wachs--Welker fiber theorem~\cite{BjornerWachsWelker2005}
++gives decompositions under explicit fiber-connectivity or null-attachment
++hypotheses.  Here the attachment maps are retained and may produce torsion
++or higher differentials.  This is a narrower exact computation, not a
++replacement for general fiber theory.  Likewise, Ferrers graph resolutions,
++graph independence complexes, and unweighted biclique complexes do not by
++themselves identify the available-link diagram used here.
++
++The candidate contribution is the explicit observation-product recognition,
++the coarse-edge-link matching formula, the transitivity restrictions on
++interacting cores, and the sharp integral positive and negative examples.
++The historical audit and descent framework provide interpretation rather
++than priority for classical machinery.  No claim of first discovery of the
++exact specialization is made solely from its absence in a targeted search.
++The separate convergence report records the primary-source comparison and
++the remaining publication-level judgment.
++
++\section{Next theorem target}
++The matching case, the two-column interaction case, and the degree-two
++$E^3$ bound are now established.  Unrestricted $E^2$ collapse in the
++proposed graph classes is false, so it is no longer an open target.
++
++\begin{question}[Integral secondary maps in a four-cycle]
++For each integer $k\ge2$, can an exclusive $K_{2,2}$ profile with
++torsion-free available-link homology realize
++$d^2:\mathbb Z\to\mathbb Z$ as multiplication by $k$?
++Alternatively, what restrictions does the product-poset geometry impose
++on the possible integral secondary maps?
+ \end{question}
+-
+-\begin{question}[Exact descent under attribute refinement]
+-For a specified presheaf/cosheaf of semantic concept data on the observation poset, characterize exactly which observation refinements preserve descent and which create a nonzero existence defect.
+-\end{question}
+-
+-\begin{question}[Higher-dimensional inversion classification]
+-For the carrier-splitting inversion complex of Theorem~\ref{thm:inversion-chain}, identify structural hypotheses on the coarse signature poset and split profile under which the all-height mapping-cone homology admits a closed local classification.  Natural candidates are bounded treewidth of the comparability structure, shellability/Cohen--Macaulay conditions on coarse intervals, or explicit connectivity hypotheses on the lower fibers of $\pi$.
+-\end{question}
+-
+-The carrier-splitting gate is therefore no longer open in general form: Theorem~\ref{thm:split-factorization} gives an exact reduction, and Theorem~\ref{thm:carrier-graph} gives a nontrivial complete classification in weighted height two.  The strongest remaining target is to extend exact recognition beyond that sharp low-dimensional regime without merely restating a generic poset-fiber theorem.
++This isolates interaction-created torsion at the smallest exclusive graph
++that supports a four-core.  The unit example above does not resolve it.
++The smallest possible higher-differential or interaction-torsion realization
++also remains open globally; induced-restriction minimality is weaker.
+ 
+ \section{Conclusion}
+-
+-Successive concept differentiation can be represented rigorously as transformations between complexes, but not by identifying every form of ``unfolding'' with the chain boundary.  The historical logical rule is best understood as a factorization-sensitive Hamming-layer operator.  Its provenance-preserving iteration has a clean Boolean-lattice geometry, with exact layers given by hypersimplices and a canonical cumulative simplex-skeleton filtration.
+-
+-At the observational $T_0$ level, genuine carrier splitting now has a canonical exact model: first split coarse states in a homotopy-neutral lexicographic completion, then thin the resulting fixed carrier by the monotonicity of the new bit.  Its cone is therefore an inversion-chain defect, with a complete rooted-forest classification in weighted height two.  At the cover level, unfolding is more naturally a refinement map.  Under good-cover hypotheses, the mapping cone measures relative structural change; under sheaf/cosheaf hypotheses, compatible local pieces reconstruct global data.  These are independent mechanisms and should be reported separately.  This separation preserves the strongest intuition of the original Mental Space proposal while replacing its defective boundary, gluing, and symmetry identifications with standard, verifiable mathematics.
++Observation refinement is a transformation between representations, not a
++chain boundary.  Carrier splitting has a neutral-completion factorization,
++an exact low-height incidence description, and an all-height matching
++edge-link formula.  Beyond matching, available-link inclusions form the
++interaction complex.  Two core columns give an exact chain cone and
++$E^2$ collapse; degree two permits a genuine $d^2$ and only the sharp
++$E^3$ bound in general.  Interaction can create integral torsion even from
++torsion-free local links.
++
++Cover refinement and descent answer a separate question on the support
++actually covered.  The historical Boolean reconstruction, local-to-global
++data, and structural homology therefore remain distinct.  The mathematical
++claims of this draft are the stated specialized formulas and failure
++boundaries; general topological machinery and publication priority are not
++silently strengthened.
+ 
+ \appendix
+ \section{Reproducibility}
+@@ -914,6 +1514,32 @@
+ \end{itemize}
+ The earlier audit scripts separately verify the non-congruence counterexample, the gated Boolean derivative identity, the characteristic-two incidence differential, and the failure of the thesis's printed gluing identity.
+ 
++\subsection{Carrier-splitting and interaction verification}
++The transferred matching gate records 3,242 integral matching cases through
++four coarse states, 1,707 product-link checks over $\mathbb F_2$, and 639
++additional nonempty matching five-state checks over $\mathbb F_2$.
++The interaction gate enumerates 90,201 naturally labelled poset/profile
++cases through five states over $\mathbb F_2$, plus 5,000 seeded six-state
++trials.  Coarse-poset isomorphism postprocessing yields 87 poset types and
++16,761 profiles; exclusive graphs give 70 colour-preserving types with
++isolated exclusive vertices retained.  These are different counts of the
++same bounded exhaustive evidence, not additional independent cases.
++
++The main interaction run makes 435 selected integral comparisons, supplemented
++by nine exact local models, signed integer certificates for both $d^2$
++witnesses, and a separate 32-state torsion construction.  The latter checks
++181 available links, 31 coarse edge links, and the proved reduced interaction
++matrix by Smith normal form, not the whole doubled pair.  The projective-plane
++triangulation has facets
++\[
++012,013,024,035,045,125,134,145,234,235.
++\]
++An additional 20,000 targeted $K_{2,2}$ trials locate the sharp secondary
++differential; these trials are not an exhaustive or uniform isomorphism sample.
++All coefficients, seeds, scripts, and integer certificates are recorded in
++the accompanying interaction-gate reports.  Computations support the proofs
++and do not establish global minimality or publication priority.
++
+ \begin{thebibliography}{99}
+ \small
+ 
+@@ -1031,9 +1657,40 @@
+ \bibitem{FernandezMinian2020}
+ X.~Fern\'andez and E.~G.~Minian,
+ ``The cylinder of a relation and generalized versions of the Nerve Theorem,''
+-\emph{Discrete \& Computational Geometry} 63 (2020).
++\emph{Discrete \& Computational Geometry} 63 (2020), 549--559.
+ DOI: 10.1007/s00454-018-0028-7.
+ 
++\bibitem{ChacholskiEtAl2021}
++W.~Chach\'olski, A.~Jin, M.~Scolamiero, and F.~Tombari,
++``Homotopical decompositions of simplicial and Vietoris--Rips complexes,''
++\emph{Journal of Applied and Computational Topology} 5 (2021), 215--248.
++DOI: 10.1007/s41468-021-00066-2.
++
++\bibitem{DeyHiraniKrishnamoorthy2011}
++T.~K.~Dey, A.~N.~Hirani, and B.~Krishnamoorthy,
++``Optimal homologous cycles, total unimodularity, and linear programming,''
++\emph{SIAM Journal on Computing} 40(4) (2011), 1026--1044.
++DOI: 10.1137/100800245.
++
++\bibitem{DroncheffThinning2026}
++B.~Theory,
++\emph{Binary Order Thinning of Finite Posets: Homology, Collapses, and Sharp Limits},
++unpublished companion research manuscript, 27 September 2026, reviewed v3.
++The archived title page uses the name Brian Theory.
++
++\bibitem{Bjorner1995}
++A.~Bj\"orner,
++``Topological methods,''
++in \emph{Handbook of Combinatorics}, Vol.~2,
++R.~L.~Graham, M.~Gr\"otschel, and L.~Lov\'asz (eds.),
++Elsevier, 1995, pp.~1819--1872.
++
++\bibitem{BauerEtAl2023}
++U.~Bauer, M.~Kerber, F.~Roll, and A.~Rolle,
++``A unified view on the functorial nerve theorem and its variations,''
++\emph{Expositiones Mathematicae} 41(4) (2023), 125503.
++\href{https://doi.org/10.1016/j.exmath.2023.04.005}{doi:10.1016/j.exmath.2023.04.005}.
++
+ \end{thebibliography}
+ 
+ \end{document}

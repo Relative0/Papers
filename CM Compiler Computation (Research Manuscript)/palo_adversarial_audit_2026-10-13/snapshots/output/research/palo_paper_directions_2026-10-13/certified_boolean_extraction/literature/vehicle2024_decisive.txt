@@ -1,0 +1,363 @@
+2 =====
+34:2 Vehicle: Bridging the Embedding Gap
+1 Introduction
+With the proliferation of neuro-symbolic systems that blend machine learning with symbolic
+reasoning, the formal verification of the reliability and safety of such systems is an increasingly
+important concern [57, 67]. Examples include: ensuring the correctness of decision-making
+software (e.g. insurance assessments [79]) where symbolic software delegate certain cases to
+trained neural models, and proving the safety of cyber-physical systems (e.g. cars [7] and
+drones [69]) where neural agents must be proved safe with respect to a symbolic representation
+of the environment in which they act. Unfortunately, the non-interpretable nature of neural
+networks means that reasoning formally about these systems is significantly harder than
+reasoning about purely symbolic systems. Despite this, the formal verification community
+has achieved notable successes, including the development of automatic theorem provers
+specialised for reasoning about neural network components in isolation [13], and proving
+reachability results for neuro-symbolic systems [58]. Nonetheless, current efforts verifying
+neuro-symbolic systems in general still face substantial challenges, with inconsistencies arising
+between different stages of training, implementation, verification and deployment [19].
+The contributions of this paper are as follows. In Section 2 we propose a general
+decomposition of the problem of training, constructing and verifying neural-symbolic systems.
+This decomposition reveals the difficulty of integrating proofs about the neural components
+with proofs about the symbolic components, which we callthe embedding gap. In particular,
+in the general case, we argue that neither interactive theorem provers nor existing automatic
+theorem provers (even those specialised in verifying neural networks) are suitable for carrying
+out this integration step. We illustrate the applicability of our analysis by describing a proof
+of temporal correctness of a simple autonomous car model operating in a non-deterministic,
+imperfect information environment.
+In Section 4, we present ourVehicle tool which is designed to enable the verification of
+neuro-symbolic systems by facilitating the decomposition we identified in the previous section
+and to close the embedding gap. The core ofVehicle is a high-level, dependently-typed
+language designed for writing specifications for the neural components of neuro-symbolic
+systems. It is optimised for expressivity and readability with support for tensors, neural
+networks, large datasets, first-class quantifiers and higher-order functions. TheVehicle
+compiler then translates these specifications to i) machine learning frameworks for training
+of the neural components, ii) automatic theorem provers for verification of the neural
+components and iii) interactive theorem provers where proofs about the neural components
+can be integrated with proofs about the symbolic components. This paper also explains how,
+although Vehicle’s dependent type-system is used directly when writing specifications in a
+limited fashion, its primary use is internally to translate code between the different backends
+and provide clear diagnostic error messages to users when their specifications cannot be
+compiled to a given backend.
+2 Analysing the Problem of Neural-Symbolic Verification
+2.1 Decomposing the Problem
+We will begin by considering an abstract symbolic programs(·), whose completion requires
+computing an unknown functionH :P→R , whereH maps objects in theproblem spaceP
+to those in theresult spaceR. The setsP andR may contain a mixture of discrete and
+continuous components, and crucially are semantically rich, by which we mean they refer to
+quantities interpretable by humans (e.g. measurements in real world units, images, text etc.).
+
+
+3 =====
+M.L. Daggitt et al. 34:3
+AsH is a complex function, the goal is to train a neural network to approximate it.
+However, neural networks can only learn functions between continuous spaces and perform
+best when the input data is normalised, whereas in generalP andR may contain a mix
+of discrete and unnormalised continuous values. The standard approach is to construct an
+embedding functione :P→ Rm and an unembedding functionu : Rn→R that map the
+semantically meaningful objects to and from values in a continuous vector space, and then
+train a neural networkf : Rm→ Rn such thatu◦f◦e≈H . We will refer toRm and Rn as
+the input spaceand output spacerespectively. Unlike objects in the problem/result spaces, in
+general, embedded objects in the input/output spaces are unitless, normalised quantities and
+are therefore not semantically interpretable. Furthermore, for real systemsm and n may be
+very large, e.g. for image classification networksm will correspond to the number of pixels.
+The completed neuro-symbolic program is then modelled ass(u◦f◦e). Our end goal
+is to prove thats(u◦f◦e) satisfies some propertyΨ, which we will refer to as thesystem
+property. The natural way to proceed is to establish asolution property Φ and anetwork
+property Ξ such that the proof ofΨ is decomposable into the following three lemmas:
+∀h. Φ(h)⇒ Ψ(s(h)) (1)
+∀g. Ξ(g)⇒ Φ(u◦g◦e) (2)
+Ξ(f) (3)
+i.e. Lemma 1 proves that the system satisifes the propertyΨ for any implementation ofH that
+satisfies Φ. Crucially, this property requires only reasoning about the symbolic portion of the
+system. Lemma 2 links the symbolic and neural components of the proof by proving that if any
+network satisfiesΞ then when composed with the embedding functions it satisfiesΦ. Finally
+Lemma 3 proves that the actual concrete networkf obeys the network propertyΞ. Together
+they can be composed in the obvious way to show that the neuro-symbolic programs(u◦f◦e)
+obeys the program propertyΨ.
+2.2 The Embedding Gap
+We now discuss how we can implement this proof strategy, starting with finding a suitable
+property Φ and proving Lemma 1 which reasons about the symbolic component of the
+system. Determining what propertyΦ should be will usually require deep expertise in the
+problem domain, but fundamentally requires no new insights or methodology as we can rely
+on insights from the formal verification community which has many decades of experience in
+decomposing proofs about symbolic systems down into constituent parts. Likewise, onceΦ
+has been found, the community is well placed to prove results of this form using a variety of
+powerful interactive theorem provers (ITPs) (e.g. [9, 65]).
+We will come back to methods for finding a suitable propertyΞ and proving Lemma 2
+later. Instead we turn our attention to Lemma 3, the proof about the neural component
+of the system. Assuming one does have a suitableΞ, experience has shown that proving
+properties about neural networks directly in an ITP is challenging. The first issue is that
+the modular reasoning that ITPs excel at is not well suited to the non-interpretable and
+semantically non-compositional nature of neural networks. Furthermore the sheer size of the
+networks, often millions or billions of parameters [44, 80], make even representing the network,
+let alone proving anything about it, impractical in an ITP. For example, the largest neural
+network verified to date purely in an ITP is a few hundreds of neurons (or a few thousand of
+weights) [8, 14, 27, 29]. In contrast, the automated theorem prover (ATP) community has
+been significantly more successful at proving properties of the form of Lemma 3. Starting
+FSCD 2025
+
+
+4 =====
+34:4 Vehicle: Bridging the Embedding Gap
+Embedding
+gap
+Problem space Embedding space
+Specification
+of Φ, e, u
+Specification
+language
+Training
+with Ξ
+Training platform
+Tensorflow etc.
+Verification
+of Ξ
+ATPs
+Marabou etc.
+Integration
+of Φ with Ψ
+ITPs
+Agda etc.
+Figure 1The architecture ofVehicle for neuro-symbolic program verification. Dashed lines
+indicate information flow and solid lines automatic compilation.
+with Reluplex [51], the community has rapidly developed highly specialised SMT and abstract
+interpretation-based solvers which are capable of verifying properties of neural networks with
+up to millions of neurons [52, 63, 78, 81]. There is, however, a further consideration. Unlike
+conventional software which is usually at least morally (if not actually) correct at verification
+time, neural networks often struggle to learn propertyΞ from data alone [74]. Consequently,
+we also need propertyΞ to influence the training of the networkf, e.g. using techniques
+such as differentiable logic [33] and linear temporal logic-based reward functions [40].
+This leaves the problem of how to link the proofs about the symbolic and the neural
+components of the system, by finding a suitable propertyΦ and proving Lemma 2. Firstly,
+even finding a suitableΞ is difficult as it refers to a semantically uninterpretable input and
+output spaces. This strongly suggests that we need a method of automatically deriving it
+from Φ and the embedding functions. Suppose we did have such an automatic procedure.
+ATPs are ill-suited to proving Lemma 2, as they are not designed to reason about a) the
+discrete components present inP andR and b) the arbitrary computation present in the
+embedding functionsu and e. Unfortunately, ITPs are equally ill-suited to proving Lemma 2
+it would require the user to manually write down and then reason about propertyΦ in the
+ITP directly (rememberΦ is often uninterpretable and scales with the size of the embedding
+space i.e. potentially tens of thousands of inputs). We call this lack of practical methodology
+for establishing the results that link the symbolic and neural components of the proof the
+embedding gap.
+Given the analysis above, it is clear that in general to construct and verify a neuro-
+symbolic program, we need machine learning frameworks, ATPs and ITPs to work together.
+Unfortunately, usually each of these have their own specialised input formats and semantics
+and currently the default approach is to write out the specification three times for the three
+different tools. This is deeply suboptimal as it requires an informal judgement that each of
+the three representations encode the same property.
+2.3 Our Vision of the Solution
+Figure 1 shows our vision of a tool that overcomes these problems and enables thegeneral
+verification of neuro-symbolic systems. Firstly, users should verify Lemma 1 about the
+symbolic component of the system using whichever existing ITP best meets their needs.
+Next the user expresses the specificationΦ and the embedding functionse and u in terms of
+the semantically-meaningful problem space using a suitable domain-specific language (DSL).
+This specification ofΦ is then automatically compiled down to representations ofΞ in the
+
+
+7 =====
+M.L. Daggitt et al. 34:7
+type Input = Tensor Rat [2]
+currentPosition = 0
+previousSensor = 1
+type Output = Tensor Rat [1]
+velocity = 0
+@network
+controller : Input -> Output
+normalise : Input -> Input
+normalise x = forall i . (x ! i + 4.0) / 8.0
+safeInput : Input -> Bool
+safeInput x = -3.25 <= x ! currentSensor <= 3.25 and
+-3.25 <= x ! previousSensor <= 3.25
+safeOutput : Output -> Bool
+safeOutput x = let y = controller (normalise x) ! velocity in
+-1.25 < y + 2 * x ! currentSensor - x ! previousSensor < 1.25
+@property
+safe : Bool
+safe = forall x . safeInput x => safeOutput x
+Figure 3The safety property for the car’s neural network controller expressed inVehicle surface
+syntax .
+The unembedding functionu is the identity function. Again, as discussed in Section 2.3,
+neither the choice of architecture nor the choice of embedding functions are relevant to the
+central proposal in the paper.
+4 The Vehicle Tool
+Our Vehicle tool implements the vision we described in Section 2.3: users are provided
+a simple domain-specific language with types to write a single specification about the
+neural component of the neuro-symbolic system (see Figure 3).Vehicle then compiles this
+specification into forms suitable for both training and verification and can export the verified
+specification to ITPs. Vehicle can be installed by running “pip install vehiclepy ”,
+which provides both a Python and a command line interface. A user manual and tutorials
+can be found online [20, 24].
+4.1 Specification Language
+The Vehicle Condition Language (VCL) is designed for writing high-level, problem space
+specifications for neural networks. At its core is a dependently-typedλ-calculus extended
+with operations for logic, arithmetic and manipulating tensors. The abstraction capabilities of
+theλ-calculus enable users to write modular and reusable specifications, while the dependent
+FSCD 2025
+
+
+8 =====
+34:8 Vehicle: Bridging the Embedding Gap
+⟨prog⟩∋ p ::= [ ] | d ::p
+⟨decl⟩∋ d ::=
+| function⟨id⟩ :e =e
+| @network⟨id⟩ :e
+| @dataset⟨id⟩ :e
+| @parameter⟨id⟩ :e
+| @property⟨id⟩ :e =e
+⟨expr⟩∋ e ::=
+Type | Π(x :e).e | λ (x :e).e | x | ee |
+Bool | true | false | note | e ande | e ore |
+forall (x :e).e | exists (x :e).e |
+if e then e else e |
+Real | r∈ R | e +e | e *e | e ==e | e !=e | e <=e | e <e |
+Tensoree | Indexe | n∈ N | [e,... ,e ] | e !e |
+foreach (x : n) . e | foldreee
+Figure 4Syntax for the core calculus ofVehicle
+types allow tensor dimensions to be tracked at the type level, preventing common specification
+errors such as dimensions mismatches and out-of-bounds indexing. A standard instance
+resolution mechanism allows for the overloading of operators in the surface syntax. The
+syntax of the core language is shown in Figure 4.
+A Vehicle program consists of a list of declarations. There are four non-standard
+declaration types inVCL that describe how a specification links to the outside world. Firstly,
+@network declarations introduce an abstract neural network into scope. Next@parameter
+and @dataset declarations can be used to introduce external values that either may not be
+known in advance or are too big to represent directly in the specification. Crucially, only the
+user only needs to provide the types of these declarations when writing the specification. As
+discussed in Section 4.2, the user provdies the compiler with their actual implementation
+or value at compile time. Finally,@property declarations are used to explicitly designate a
+constraint the neural networks are expected to satisfy. A complete description of the syntax
+is available in the user manual [24].
+Figure 3 illustrates how the specification,Φ, for the car controller from Section 3 is
+expressed in Vehicle. The embedding functione is represented by the “normalise” function
+on Lines 11-12. Crucially, the safety conditions specified on Lines 14-20 are written in terms of
+the problem space, using units such as metres, rather than being expressed in the embedding
+space. This makes them interpretable and meaningful to readers of the specification.
+4.2 The Vehicle Compiler
+The Vehicle compiler translates VCL specifications into formats suitable for three different
+backends: Tensorflow loss functions for training, Marabou queries for verification and Agda
+code for integration with the proof about the surrounding symbolic system. The compiler is
+implemented in Haskell, and its overall architecture is illustrated in Figure 5.
+4.2.1 The Verification Backend
+Given a trained networkf and a Vehicle specification representing Φ, u ande, the purpose
+of the verifier backend is to determine ifΦ(u◦f◦e) holds and if not to find a counter-example.
+Vehicle accomplishes this goal by compiling the specification into a set of satisfiability
+queries for the Marabou verifier [52].
+Figure 6 shows the two queries generated from the specification in Figure 3. The queries
+are equisatifiable to the original specification in the sense that a neural network satisfies
+the specification if and only if no satisfying assignment to variablesx0 and x1 can be found
+for either query. Collectively, the queries represent the propertyΞ. It is important to note
+that, unlike the original specification which referenced physical quantities such as speed and
+
+
+9 =====
+M.L. Daggitt et al. 34:9
+Scoping Standard
+type-checking Queries Marabouverification
+Linearity
+error
+Linearity
+type-checking
+Error
+message
+Quantifier
+error
+Quantifier
+type-checking
+Error
+message
+Differentiability
+type-checking Loss function Tensorflow
+training
+Decidability
+type-checking ITP code Agda
+export
+Figure 5Overview of theVehicle compiler. The same unification-based type-checker is re-used
+in five different ways to provide support for the different backends.
+x0 >= 0.09375
+x0 <= 0.90625
+x1 >= 0.09375
+x1 <= 0.90625
+16.0 x0 - 8.0 x1 + y0 <= 2.75
+x0 >= 0.09375
+x0 <= 0.90625
+x1 >= 0.09375
+x1 <= 0.90625
+-16.0 x0 + 8.0 x1 - y0 <= -5.25
+Figure 6The two Marabou queries, representingΞ, generated by theVehicle compiler from the
+specification in Figure 3. Both queries are implicitly existentially quantified over the variablesx0
+and x1 which represent the inputs to the neural network, andy0 which represents the output of the
+network. These queries are not seen by aVehicle user in normal operation.
+distances, the Marabou queries refer solely to quantities in the input/output spaces. As a
+result, the variables and numeric values in these queries are not directly interpretable in
+terms of the symbolic model of the environment.
+The compilation algorithm interleaves a normalisation-by-evaluation algorithm [10] with
+a procedure for the elimination of the quantified problem-space variables. These variables are
+eliminated by rewriting them in terms of the variables representing the input and outputs
+of the networks using Gaussian [6] and Fourier-Motzkin [25] elimination, producing a final
+representation entirely in the network’s input/output space. Notably, the algorithm supports
+complex specifications , including those with nested applications of multiple networks and
+quantifiers embedded within the conditions of ‘if‘ statements. Ensuring that this procedure
+remains computationally efficient, particularly for networks with tens of thousands of inputs
+and outputs, introduces significant complexity. A full description of the compilation procedure
+is provided in [22].
+The output of the compilation process is a tree structure, where each internal node
+represents a conjunction or disjunction, and the leaves correspond to individual verifier
+queries. The tree is then stored on disk as the basis of the “proof cache". When verification
+is requested, Vehicle loads the cache and traverses the tree, invoking Marabou on each
+query to decide if there exists a satisfying assignment for the current network and query.
+The outcome of each query is recorded in the cache. If any counterexamples forΞ are found
+in the input-output space, the compiler lifts them to counterexamples forΦ in the origin
+FSCD 2025
+
+
+10 =====
+34:10 Vehicle: Bridging the Embedding Gap
+problem/result space. Depending on the output of Marabou for each query, Vehicle can then
+determine that the statementΦ(u◦f◦e) holds.
+It is important to emphasise that Vehicle does not expand the class of verifiable
+specifications beyond what is supported by Marabou. Instead, it enhances the interpretability
+of those specifications and streamlines the process of generating verification queries. Critically,
+Marabou only supports linear constraints with existential quantifiers. Therefore if a user
+writes a Vehicle specification involving non-linear constraints or alternating quantifiers
+Vehicle will produce an error.
+In such cases, explaining why a specification is not verifiable is an important usability
+feature. Some of example specifications exceed 300 lines, making it difficult to identify where
+non-linearities or alternating quantifiers have been introduced. To provide meaningful error
+messages, we leverageVehicle’s dependent type-checker and instance resolution mechanism
+to construct a proof of why the original specification is non-linear or has alternating quantifiers.
+In particular, we replace all types with meta-variables and then re-type check the specification
+according to a new set of typing rules for the builtin operations. Because type-checking is
+constructive, the type-checker produces a proof term that the compiler can use to generate
+clear, actionable explanations. Full details of this procedure are available in [21].
+4.2.2 The ITP Backend
+The ITP backend is responsible for exporting the the proof ofΦ(u◦f◦e) to an ITP, enabling
+it to be combined with the proof of Lemma 1 in order to establishΨ(s(u◦f◦e)) in the ITP.
+Currently, Vehicle supports exporting specifications to Agda, with Rocq support nearing
+completion. The Agda code generated for the specification in Figure 3 is shown in Figure 7.
+Given that most ITP languages are more expressive thanVehicle this translation may
+appear straightforward, however there are two main challenges.
+Firstly, as discussed in Section 2, in the general case the network and the proof of
+correctness cannot be represented directly in Agda itself for performance reasons. Instead,
+as shown in Figure 7, the network is included as apostulate and an Agdamacro is used
+to delegate checking the proof to Vehicle. The new challenge lies in preserving Agda’s
+interactivity while ensuring the integrity of the proof. In particular, the Agda proof should
+fail if the ONNX network file on disk is changed (for example, if the network is retrained
+after verification). At the same time, Agda’s often invoke Agda’s type-checker several times
+per minute and re-verifying the proof on every interaction is impractical. The solution is the
+proof cache discussed in Section 4.2.1. Alongside the query tree,Vehicle stores the hash
+and location of all networks and datasets used during verifier query compilation within the
+proof cache. When Agda queries the validity of the proof,Vehicle uses these hashes to
+verify the integrity of the verification result without having to invoke Marabou again. As we
+discuss further in Section 5, we are exploring the feasability of replacing these hashes with
+efficiently checkable proof-certificates in the style of [28].
+The second challenge arises because users write specifications as Boolean expressions
+in Vehicle, implicitly assuming that the property is decidable. However, ITPs such as
+Agda require the specification to be encoded at the type-level (e.g.safe in Figure 7 and
+finalState-onRoad in Section 3), where decidability does not generally hold. Despite this, the
+conditional term in an ‘If‘ expression must be decidable and the therefore the same term in
+the Vehicle specification can be used at both the type level and the Boolean level in the
+generated ITP code. To determine how to translate the term, we use the same approach as
+generating error messages for specificationc containing non-linear or alternating quantifiers
+described in Section 4.2.1. Namely, we leverageVehicle’s dependently-type checker and
+

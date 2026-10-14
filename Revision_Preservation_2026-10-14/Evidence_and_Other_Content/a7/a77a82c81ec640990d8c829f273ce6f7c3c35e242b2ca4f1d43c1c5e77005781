@@ -1,0 +1,28 @@
+# N2/P1 reproducibility bundle
+
+This bundle records the frozen profitability-aware folding replay requested on 18 September 2026.
+
+## Frozen evidence
+
+- `N2_P1_PREREGISTRATION.md` — frozen rule/protocol before N2/P1 result inspection.
+- `PREREGISTRATION.sha256` — preregistration digest.
+- `n2_p1_harness.py` — frozen benchmark harness.
+- `natural_selection_frozen.json` — deterministic structural EPFL selection. During short-command orchestration this JSON was re-emitted with a later `created_utc` timestamp; selected roots and source hashes did not change.
+- `EPFL_SOURCE_MANIFEST.json` — exact source hashes at pinned `lsils/benchmarks` commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`.
+
+## Final results
+
+- `N2_P1_RESULTS.md` — protocol/result report.
+- `N2_P1_INTERPRETATION.md` — mechanism-focused interpretation, including the key qualification that P1 accepted zero natural folds.
+- `n2_p1_results.json` — full final raw result payload.
+- `N2_P1_NATURAL_CASE_SUMMARY.csv` — per-natural-case medians, ratios, symbolic work, and traced peak allocation.
+- `N2_P1_GATEP_CASE_SUMMARY.csv` — per-Gate-P-case timing and mechanism summary.
+- `N2_P1_INDEPENDENT_VERIFY.json` — independent post-run coverage/hash/ratio verification.
+
+## Execution note
+
+The execution environment enforces a short per-command wall limit. The frozen benchmark was therefore executed in deterministic case/chunk orchestration (`run_nat_chunk.py`) and merged (`combine_results.py`). The selector, source selection, arms, random schedules, seeds, repetition counts, endpoints, and pass criterion were not changed. The long `cavlc:35` timing schedule was split into consecutive schedule ranges while retaining its frozen randomized order and rep indices.
+
+## EPFL sources
+
+The six pinned BLIF files are included under `epfl/`. `bar` produced zero admissible cones under the preregistered support/node limits, so 10 cones from five circuits entered timing. All six source Git blob hashes match the pinned commit.

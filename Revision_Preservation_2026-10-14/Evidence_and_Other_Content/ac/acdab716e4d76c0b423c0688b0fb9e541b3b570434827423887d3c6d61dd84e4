@@ -1,0 +1,281 @@
+# Theorem and priority audit
+
+**Decision context:** RETURN TO BOTH THREADS; preserve the current technical report.
+**Evidence keys:** T = uploaded Theory milestone; B = frozen computation handoff; P = recovered three-draft archive. Exact archives/hashes and paths are listed in `EVIDENCE/INPUTS_AND_PROVENANCE.md`. Literature keys S1-S17 refer to `EVIDENCE/PRIMARY_SOURCES.md`.
+
+## 1. Common contract and notation
+
+Let n >= 0, 0 <= k <= n, and f:{0,1}^n -> {0,1}, unless a theorem explicitly extends scalars. Coordinates are named and their order is fixed. Define
+
+\[
+Q(f;S,a)=\sum_{x:x_S=a} f(x),\qquad
+Q_k(f)=(Q(f;S,a))_{|S|\leq k,\ a\in\{0,1\}^S}.
+\]
+
+These are integer counts, not conditional probabilities, not an unordered multiset, and not merely the counts for one realized adaptive path. The empty restriction is included. Define chi_T(x)=(-1)^{sum_{i in T}x_i} and fhat(T)=2^{-n} sum_x f(x)chi_T(x). All Fourier rank statements below are over R or Q, not GF(2).
+
+For a **known promised class** C, kappa(C) is the least k for which Q_k is injective on C. This is not a number of oracle calls, not a bit bound, and not an efficient reconstruction algorithm.
+
+## 2. Disposition ledger
+
+The formal classification and historical priority assessment are separate columns. A correct minor corollary can still have unresolved exact priority.
+
+| ID | Formal classification | Novelty/priority finding |
+|---|---|---|
+| Q1 | CORRECT BUT STANDARD | Marginal/Fourier equivalence; explicit antecedent S1. |
+| Q2 | CORRECT BUT STANDARD | Boolean-lattice inclusion-exclusion and integral moments. |
+| Q3 | CORRECT BUT STANDARD | Dimension of low-degree character space; S1. |
+| Q4 | CORRECT BUT STANDARD | Extension and marginalization of exact-k queries. |
+| Q5 | CORRECT BUT STANDARD | Kernel/fibre reformulation of Q1. |
+| Q6 | CORRECT BUT STANDARD | Minimum support bound, equivalently minimum [k]-trade volume; S2. |
+| Q7 | CORRECT BUT STANDARD | Simple trade reformulation after cancelling common support; S2. |
+| Q8 | CORRECT BUT STANDARD | Full assignment upper bound and parity lower bound. |
+| Q9 | CORRECT BUT MINOR | Immediate bounded-Fourier-degree consequence for juntas. |
+| Q10 | CORRECT BUT MINOR | Immediate Fourier inversion consequence. |
+| Q11 | CORRECT BUT STANDARD | Generalized Chow uniqueness; S3, S4. |
+| Q12 | CORRECT BUT MINOR | Affine GF(2) parity already gives the obstruction. |
+| Q13 | CORRECT BUT MINOR | Exact rank-one threshold formulation: PRIORITY UNCERTAIN. |
+| Q14 | CORRECT BUT MINOR | Rank-two threshold jump: PRIORITY UNCERTAIN; parity corollary. |
+| Q15 | CORRECT BUT STANDARD | Linear factorization/row-space necessity on all real inputs. |
+| Q16 | CORRECT WITH REPAIR | Make cumulative budget and all-continuations quantifiers explicit. |
+| Q17 | UNPROVED | Sufficiency formula already in B; a new minimality/update/complexity theorem is not supplied. |
+
+No item is classified CORRECT AND SUBSTANTIVE as a newly differentiated central theorem on the present evidence. This does not downgrade mathematical truth; it evaluates the proposed research contribution.
+
+## 3. Q1-Q5: exact queries, moments, rank, and fibres
+
+### Precise statements and reconstruction
+
+Expanding the literal indicator gives
+
+\[
+Q(f;S,a)=2^{n-|S|}\sum_{T\subseteq S}(-1)^{\sum_{i\in T}a_i}\widehat f(T).
+\]
+
+Conversely,
+
+\[
+\widehat f(T)=2^{-n}\sum_{a\in\{0,1\}^T}(-1)^{\sum_{i\in T}a_i}Q(f;T,a).
+\]
+
+Thus Q_k and the Fourier coefficients of degree at most k determine each other. The factors of two are essential; an implementation cannot silently replace integer arithmetic with arithmetic modulo two.
+
+For the integer row lattice put M_T=Q(f;T,1^T)=sum_x f(x)prod_{i in T}x_i. For disjoint positive and negative literal sets P,Z,
+
+\[
+Q(f;P\cup Z,(1_P,0_Z))=
+\sum_{U\subseteq Z}(-1)^{|U|}M_{P\cup U}.
+\]
+
+The M_T rows themselves occur among the queries, so they form an integral basis of the query row lattice. With W_T=2^n fhat(T),
+
+\[
+W_T=\sum_{U\subseteq T}(-2)^{|U|}M_U,
+\quad
+M_T=2^{-|T|}\sum_{U\subseteq T}(-1)^{|U|}W_U.
+\]
+
+The latter change is invertible over Q; it is **not** generally unimodular over Z. The milestone's lattice statement is valid with the moment basis, not a license to identify the integer Walsh and moment lattices without divisibility constraints.
+
+The characters indexed by |T|<=k are linearly independent. Therefore
+
+\[
+\operatorname{rank}_{\mathbb Q} Q_k
+=\operatorname{rank}_{\mathbb R}Q_k
+=\sum_{j=0}^{k}\binom nj.
+\]
+
+For |S|<k, extend S to a k-element set U and sum Q(f;U,b) over completions b of a. Hence exactly-k queries span the same space. Finally, Q_k(f)=Q_k(g) iff the Fourier coefficients of f-g through degree k vanish. Over all real functions the kernel is the span of characters of degrees greater than k; on Boolean functions a fibre is the intersection of its affine coset with the Boolean cube. The real kernel dimension is not the logarithm of the size of every Boolean fibre.
+
+### Attacks and edges
+
+At n=k=0 there is one truth entry and one count. At k=n the map is injective. Omitting labels or the empty query changes the theorem. Extending 'exactly k' beyond n is invalid. A simple unordered-marginal multiset can conflate coordinate permutations, whereas the stated indexed operator does not.
+
+### Computation and priority
+
+The original verifier checked exact ranks through n=5 and Boolean fibres through n=3. The independent audit checked both operator ranks for all 28 pairs through n=6 and exhaustive Boolean Fourier/query fibre equivalence through n=4. These test the relevant statements, not just sample marginal values.
+
+S1, Theorem 5 and equation (11), explicitly identify the Fourier information necessary and sufficient for a marginal. The same paper counts the low-order Fourier coordinates. Q1/Q3/Q5 are not new through renaming marginals as Q_k. Q2/Q4 are elementary transformations, useful for exposition and implementation rather than a priority claim.
+
+## 4. Q6-Q7: collision size and design trades
+
+For 0<=k<n, if distinct Boolean f,g have Q_k(f)=Q_k(g), then
+
+\[
+|\{x:f(x)\ne g(x)\}|\geq 2^{k+1}.
+\]
+
+Proof reconstruction: h=f-g has no Fourier terms of degrees <=k. Multiplication by chi_[n] complements the character indices, so h chi_[n] is a nonzero real multilinear polynomial of degree at most n-k-1 with exactly the same support. A nonzero degree-d multilinear polynomial on an n-cube has support at least 2^{n-d}. One proof is induction: if a variable appears, write p=x_i q+r with nonzero q of degree at most d-1; at every point where q is nonzero at least one of the two extensions has nonzero p. The constant case starts the induction. Applying this bound gives the claimed distance.
+
+Equality is realized by opposite parity halves on a (k+1)-dimensional coordinate subcube, both zero outside it. The two disjoint supports have equal inclusion counts for every set of at most k coordinates; this is a simple [k]-trade. Conversely, the all-positive moments plus inclusion-exclusion turn every such trade into a Q_k collision. Common ones of f and g must first be cancelled.
+
+The k=n case has no distinct collisions and no sharp witness. For k=0, two functions with equal weight can differ at exactly two points, as the formula predicts.
+
+The original program exhausts collision minima only through n=3, with explicit witnesses beyond that. The new audit did not conduct an all-pairs distance search at n=4; its exhaustive fibre comparison is a different check. The proof supplies the general bound.
+
+**Priority:** S2 gives the existing minimum-volume trade theory. Minimum trade volume is 2^k per leg; the corresponding Boolean disagreement is twice that, 2^{k+1}. The factor two must not be lost. The bridge is useful synthesis, not a new distance theorem.
+
+## 5. Q8-Q12: class reconstruction thresholds
+
+Assume parameters t,d lie between 0 and n, with the explicit d>=1 qualification for Q12.
+
+**Q8, all Boolean functions.** kappa=n. Point queries recover f, and complementary global parity have identical proper marginals.
+
+**Q9, at-most-t juntas.** kappa=t. Each function has Fourier degree at most t, even if its active coordinates are unknown. Equality of data through t therefore gives equality. Opposite parity on a chosen t-element set supplies the lower bound; constants give t=0.
+
+**Q10, Boolean functions of real Fourier degree at most d.** kappa=d. All nonzero Fourier information is included by depth d, and opposite d-variable parity proves sharpness.
+
+**Q11, degree-d polynomial threshold functions.** kappa=d under a declared threshold convention. Let f be represented by a polynomial p of degree <=d with sign agreeing with 2f-1 and no zero on the finite cube. If Boolean g has the same degree-d moments, then sum_x p(x)(f(x)-g(x))=0. Every nonzero summand is strictly positive, so g=f. A consistent tie convention can be perturbed on the finite cube to obtain a strict representation. Opposite parity on d variables gives the lower bound. This is generalized Chow uniqueness; it does not give a fast inversion algorithm by itself. S3 states and strengthens the known theorem; S4 is an earlier primary antecedent.
+
+**Q12, GF(2) ANF degree at most d, d>=1.** kappa=n because the class already contains global affine parity and its complement. GF(2) polynomial degree and real Fourier degree are different parameters. For d=0 the class consists of constants and kappa=0; omitting this exception is wrong.
+
+The proof mechanisms are standard or immediate consequences. Direct enumeration is not required to establish them; the submitted evidence correctly relies on proofs here. The 2026 random-function work S5 concerns typical functions and does not contradict these worst-case parity bounds. Neither its threshold nor its claimed novelty can be imported into this manuscript as a rank-class result.
+
+## 6. Q13-Q14: rank-one/rank-two jump
+
+### Contract
+
+Fix disjoint nonempty coordinate blocks A,B, |A|=p, |B|=q. Every truth table is flattened into a 2^p by 2^q binary matrix, using this same named cut. Let C_r be the full class of matrices of GF(2) rank at most r, including zero. Class membership is promised. There is no optimization over cuts in the theorem.
+
+### Rank one: independent proof
+
+A nonzero rank-one binary matrix over GF(2) is u v^T for nonzero Boolean vectors u,v. Set w_u=sum u, w_v=sum v. Its row sums equal w_v u, and its column sums equal w_u v. Fixing all A variables obtains every row sum; fixing all B variables obtains every column sum. Data through max(p,q) therefore recover the supports of u and v and hence M. A zero total count identifies the zero matrix.
+
+For the lower bound assume p>=q. Choose complementary parity functions u and 1-u on all p A variables and let v be identically one. Both matrices have rank one. A restriction of fewer than p total variables leaves at least one A variable free, so the conditioned counts coincide. Thus kappa(C_1)=max(p,q).
+
+### Rank at least two: independent proof
+
+Let a and b denote parities of the A and B variables. For odd global parity,
+
+\[
+M=a(\mathbf 1-b)^T+(\mathbf 1-a)b^T,
+\]
+
+where the two rectangles are disjoint. For even global parity use a b^T+(1-a)(1-b)^T. Across a nonempty cut both have rank exactly two over GF(2). They have equal conditioned counts whenever fewer than p+q variables are fixed. They differ on every complete assignment. Consequently kappa(C_r)=p+q for every r>=2.
+
+This is an exact worst-case statement. It is not a reconstruction-time or storage lower bound. If r=0, the class has one member and kappa=0. Empty blocks are outside the stated jump; rank two cannot occur there. The upper bound remains n even if the declared r exceeds maximum feasible matrix rank.
+
+### Additional hostile comparison
+
+The two witnesses also have ordinary real rank two, nonnegative rank two, and Boolean-OR rank two. Rank-one binary matrices in these senses are the same rectangles. Thus the same threshold jump holds for the corresponding binary rank-bounded classes. This is an audit-derived observation with the proof above, not a claim that its exact sentence has been independently published. It weakens positioning as a uniquely GF(2) phenomenon.
+
+### Direct computation now available
+
+All truth functions were examined for cuts (1,1), (1,2), (2,1), (1,3), (2,2), (3,1), filtering separately to rank <=1 and <=2. For the 4x4 cut, class sizes are 226 and 7,576. At k=3 the latter has 7,575 fibres, and at k=4 it has 7,576. Complete rank-one classes for cuts (2,3) and (3,3), of sizes 3,826 and 65,026, respectively, also attain threshold 3.
+
+These new checks directly address a gap in the original Theory verifier. They do not change the short proof into a stronger theorem, and they must be credited as audit-added evidence rather than retroactively attributed to the new Computation thread.
+
+### Novelty assessment
+
+No inspected primary source was found asserting this exact kappa formula. The constituent rectangle characterization, row/column marginal recovery, and parity obstruction are elementary or standard; the former is also already in the companion LM paper. Classify as **CORRECT BUT MINOR, PRIORITY UNCERTAIN**. It is a plausible concise corollary, not yet a substantial theory-first paper on its own.
+
+## 7. Q15-Q17: persistent information
+
+### Q15: real-linear sketch theorem survives
+
+Suppose L:R^(2^n)->R^m is linear and some arbitrary decoder D satisfies Q_k(f)=D(Lf) for **every real-valued f**. For any v in ker L, L(f+v)=Lf, hence Q_k(v)=0. Therefore ker L is contained in ker Q_k, and rank L >= rank Q_k = sum_{j<=k}binom(n,j). Low-degree moments attain this dimension.
+
+No linearity of D is needed. The domain quantifier is crucial. On the finite Boolean domain, the one-dimensional linear map f -> sum_{i=0}^{2^n-1}2^i f_i is injective and admits a nonlinear decoder; its output uses up to 2^n bits. Thus scalar dimension and bit complexity cannot be exchanged. The milestone itself states the real-domain limitation; retain it prominently.
+
+For deterministic fixed-width b-bit summaries sufficient for a query family L on a finite class C, the general counting bound is
+
+\[
+b\geq\left\lceil\log_2 |L(C)|\right\rceil.
+\]
+
+If the queries include every point value, |L(C)|=|C|. That is an information bound, not a guarantee that a minimal encoding is efficiently computable or supports efficient updates.
+
+### Q16: cumulative adaptivity, not resetting persistence
+
+A correct precise statement is: two functions are indistinguishable by **every** adaptive coordinate-restriction protocol fixing at most t distinct coordinates in total, and returning counts along its path, iff their Q_t data agree. Every output is one Q_t component. Conversely, any Q_t component is obtainable by a nonadaptive sequence, which is a permitted special case.
+
+One observed path does not reveal the entire Q_t family. Repeatedly assigning an already fixed coordinate does not increase the number of distinct fixed variables; incompatible assignments give zero and need a stated convention. A path-length bound and a distinct-coordinate budget should not be silently interchanged.
+
+For a restriction rho fixing s<=k coordinates, original Q_k determines Q_{k-s}(f|rho), since the union of old and new fixed coordinates has size <=k. It does not generally determine Q_k(f|rho) with a reset horizon. Take odd and even parity on k+1 variables: their Q_k data agree, but after fixing one variable the residual k-variable full query data differ. This counterexample was checked for n=2,...,10.
+
+Accordingly classify Q16 **CORRECT WITH REPAIR** at the contract/presentation level. Its cumulative interpretation is elementary and sound; any resetting interpretation is false.
+
+### Q17: what remains genuinely open in this package
+
+For M=UW over GF(2), and compatible row/column index sets I,J, let alpha_a count restricted rows of U with state a and beta_b count restricted columns of W with state b. The identity
+
+\[
+N(I,J)=\tfrac12\left(|I||J|-\sum_{a,b}\alpha_a\beta_b(-1)^{a\cdot b}\right)
+\]
+
+is already proved as Draft 3 Theorem 7.1. The new audit checks it for every restriction of every rank-at-most-two 4x4 matrix. Its sufficiency **for that selected query** is not open.
+
+What is not supplied is a new theorem giving a minimal coordinate-aware persistent state, efficient transformation of that state under the declared restriction protocol, sharp bit bounds under an explicit model, and matching query/update complexity. Gauge changes U->UG, W->G^{-1}W for invertible G relabel states while preserving the pairing; a claimed canonical or minimal state must account for this redundancy. Unconditional histograms erase coordinate membership and fail even on f=xy versus g=(1-x)y.
+
+**Classification:** UNPROVED for the proposed new minimality/complexity result. The mere profile identity is correct but standard and already belongs to the prior report.
+
+## 8. Draft 3 theorem-by-theorem attack
+
+### B1. Theorem 5.1 - family-wise conditioning
+
+Restrict each disjoint XOR/product component on its own coordinates; restrict rank factors to compatible rows/columns; restrict cofactor selectors and prototypes and merge equal/complementary prototypes. Each operation denotes precisely the residual truth function. This follows entrywise or by substitution. Named coordinate axes and retained irrelevant-variable multiplicities are part of the contract. Empty residual universes have one assignment, not zero. **CORRECT BUT STANDARD.** Small-function exhaustive and sequential/fused tests exercise the claim.
+
+### B2. Proposition 5.2 - monotonicity of a retained representation
+
+Submatrix rank cannot increase; restricting existing factors need not increase their stored width; restricting existing cofactor rows cannot increase the number of used prototypes. A fixed-width factor payload r(R'+C') decreases with retained dimensions. These statements do not claim that freshly rediscovered disjoint components are monotone. Indeed xyz XOR x XOR y has one connected ANF support component, but z=0 leaves x XOR y, with two disjoint components. **CORRECT BUT MINOR**, with the retained-versus-reoptimized distinction essential.
+
+### B3. Theorem 6.1 - exact counts for disjoint artifacts
+
+For disjoint exhaustive blocks with zero/one counts z_i,o_i and t_i=z_i+o_i, an XOR with constant c has
+
+\[
+\#1=\frac{\prod_i t_i-(-1)^c\prod_i(z_i-o_i)}2.
+\]
+
+For conjunction/product the count is prod_i o_i. Cofactor counts are selector multiplicities times prototype weights, with complements replacing weight w by residual column volume minus w. Disjointness, declared free-variable scope, and constant handling are indispensable. The formulas are **CORRECT BUT STANDARD**; see decomposition/semiring antecedents S9-S11. No new exact-counting framework follows from these identities alone.
+
+### B4. Theorem 7.1 - GF(2) rank-profile algorithm
+
+The profile identity above follows from the bit equality z=(1-(-1)^z)/2. A Walsh-Hadamard transform evaluates the bilinear sum using O(r 2^r) integer additions plus a length-2^r dot product after histogram construction. Workspace is O(2^r) integers, not O(2^r) bits. Counts can require O(log(|I||J|+1)) bits. Profile construction and coordinate indexing must be charged.
+
+An explicit row-stream method is polynomial in the explicit factor dimensions, with a straightforward O(r R' C') bit-operation bound and a retained row-sized buffer; native bitsets change the word-level constant/model. Neither algorithm is polynomial in n just because the function has n variables. **CORRECT BUT STANDARD/SYNTHESIS**. S12 supplies the transform antecedent; S11/S16 place counting in existing algebraic/tensor frameworks. The timed baseline uses its implemented grouped/row-stream paths, not a newly benchmarked transform-optimal persistence engine.
+
+### B5. Proposition 7.2 - factor-only minimal recompression
+
+Factor U=AB with A full column rank. Let D=BW and factor D=EF minimally. Then UW=(AE)F, and injectivity of A implies rank(UW)=rank(D), so the width is minimal. A factorization of inner width t is minimal iff both left and right factors have rank t. Cancellation matters; one factor's rank alone is not sufficient. Standard elimination gives a bound O((R'+C')r^2) in GF(2) operations for the declared input sizes. **CORRECT BUT STANDARD.** The 2,000 seeded recompressions test instances, not exhaustive dimensions.
+
+### B6. Theorem 8.1 - complementary cofactor classes
+
+Let W be the GF(2) row space of a nonempty binary matrix with rank r. Put delta=1 if the all-ones row is in W and 0 otherwise, and let c be the number of occurring row classes modulo complementation. Then
+
+\[
+r\leq c+\delta,\qquad
+1\leq c\leq\min(R,2^{r-\delta}).
+\]
+
+If delta=0, no two elements of W are complementary; the observed rows are distinct representatives and span a space of dimension at most c. If delta=1, quotienting W by the line generated by the all-ones row has dimension r-1, and representatives together with that row span dimension at most c+1. These observations give both bounds. Zero matrices fit with r=0,delta=0,c=1. **CORRECT BUT MINOR; exact packaging PRIORITY UNCERTAIN.** It is a quotient-space count, not an optimal compressed-file bound.
+
+### B7. Proposition 8.2 - the inner-product example
+
+For M_r(x,y)=x dot y over GF(2), x,y in {0,1}^r, the GF(2) rank is r and all 2^r rows are different, with none complementary because every row is zero at y=0. An explicit whole-row dictionary therefore stores 2^(2r) prototype bits, whereas the displayed rank factors use 2r2^r bits. This is a correct separation of these **fixed-cut explicit payload formats**.
+
+The ordinary real rank of the 0/1 matrix is 2^r-1; the ordinary real rank of the sign matrix (-1)^(x dot y) is 2^r. The latter is Walsh orthogonality. It must not be described as communication-complexity sign-rank. The fields and encodings differ; S8 is useful context on rank conventions.
+
+The example is not an all-order OBDD lower bound: blocked x-then-y order has 2^r different residuals, whereas interleaving x_i,y_i permits constant-width parity accumulation and O(r) nodes. It also has an obvious disjoint XOR of pairwise products. **CORRECT BUT STANDARD/MINOR REPRESENTATION COMPARISON**, not a new optimized-KC or tensor separation. S6/S7 already demand query- and order-specific comparisons.
+
+### B8. Proposition 9.1 - unconditional profiles fail as future state
+
+For f=xy and g=(1-x)y, suitable rank-one factorizations have identical unconditioned state histograms and equal total count one. Restricting x=0 gives counts zero and one. Thus unordered aggregate factor-state histograms are insufficient to answer later coordinate-specific queries without extra information. **CORRECT BUT MINOR.** It is a valid counterexample, not a lower bound on every compressed coordinate-aware representation.
+
+### B9. Proposition 9.2 - full-query storage lower bound
+
+A fixed-width exact state for a finite function class F answering all restrictions, including full assignments, must distinguish all |F| functions; hence b>=ceil(log2 |F|). For all Boolean functions this is 2^n bits. **CORRECT BUT STANDARD.** It says nothing like 'every low-rank function needs a full truth table'; the class cardinality and allowed variable metadata must remain explicit.
+
+### B10. Proposition 9.3 - zero-transcript black-box verification
+
+A deterministic exact verifier receiving a claimed zero artifact and accessing the true source only by individual value queries must query every point on the all-zero transcript. Otherwise an unqueried single-spike Boolean function is a rank-one outer product and is consistent with all observations. **CORRECT BUT STANDARD.** This does not apply to a verifier given an intensional formula, a proof certificate, authenticated compiler provenance, or stronger aggregate queries. S15 demonstrates an existing certificate-based route in knowledge compilation, outside this lower-bound model.
+
+### Computational status across B1-B10
+
+The original suite passed unchanged and its non-timing results match the frozen receipt. The new 613,656 restricted rank-profile checks supply independent direct evidence for B4 at rank <=2, not an exhaustive security audit or proof of its asymptotic runtime. None of the submitted formal B statements was refuted under the scoped contracts above.
+
+## 9. Required priority repair
+
+Cite S1 for the marginal/Fourier equivalence and dimension; S2 for collision/trade volume; S3/S4 for threshold uniqueness. Position Q13/Q14 explicitly as a short class-threshold corollary until exact priority is resolved, noting that the mechanism is not field-specific. Compare the proposed representation/query framework to S6/S7 rather than asserting that retaining operator structure is new. Cite the companion LM paper for rank/separability and the pair compiler for frame normalization and fusion.
+
+A future main theorem must state its novelty independently of the term 'CM' and remain interesting after replacing that term by 'binary truth matrix'. The most promising target is a precisely costed coordinate-sensitive persistence theorem, not another proof of the existing Walsh profile identity.

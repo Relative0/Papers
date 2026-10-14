@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/mnt/c/Users/brian/Documents/CM_Computation/convergence_followthrough_20260928/runs/final_correctness_linux/baseline/input/CM_COMPUTATION_BASELINE_HANDOFF/reproducibility/run_correctness.py", line 54, in <module>
+    main(parser.parse_args().output)
+  File "/mnt/c/Users/brian/Documents/CM_Computation/convergence_followthrough_20260928/runs/final_correctness_linux/baseline/input/CM_COMPUTATION_BASELINE_HANDOFF/reproducibility/run_correctness.py", line 35, in main
+    if result.returncode:raise RuntimeError(json.dumps(record,indent=2))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: {
+  "command": [
+    "/mnt/c/Users/brian/Documents/CM_Computation/convergence_followthrough_20260928/runtime/linux-venv/bin/python",
+    "tests/test_legacy_adapter.py",
+    "--source",
+    "<CLEAN_ROOT>/legacy_source"
+  ],
+  "returncode": 1,
+  "elapsed_seconds": 0.1369745999982115,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/sc_clean_replay_wj2s6hny/reproducibility/tests/test_legacy_adapter.py\", line 34, in <module>\n    out=run(args.source);(ROOT/'raw_results/legacy_adapter_v2.json').write_text(json.dumps(out,indent=2)+'\\n');print(json.dumps(out,indent=2))\n        ^^^^^^^^^^^^^^^^\n  File \"/tmp/sc_clean_replay_wj2s6hny/reproducibility/tests/test_legacy_adapter.py\", line 13, in run\n    from cmbench.recognition.gf2_decomposition import analyze_exact_gf2\n  File \"/tmp/sc_clean_replay_wj2s6hny/legacy_source/cmbench/recognition/gf2_decomposition.py\", line 20, in <module>\n    from .proved_rules import canonical\n  File \"/tmp/sc_clean_replay_wj2s6hny/legacy_source/cmbench/recognition/proved_rules.py\", line 11, in <module>\n    from cm_exprlib import And, Eqv, Expr, Imp, Not, Or, Var, Xor\n  File \"/tmp/sc_clean_replay_wj2s6hny/legacy_source/cm_exprlib.py\", line 5, in <module>\n    import numpy as np\nModuleNotFoundError: No module named 'numpy'\n"
+}

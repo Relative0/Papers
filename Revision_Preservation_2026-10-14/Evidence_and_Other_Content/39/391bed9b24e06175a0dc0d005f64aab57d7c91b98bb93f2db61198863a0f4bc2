@@ -1,0 +1,54 @@
+# N2/P12 Interpretation
+
+## Main conclusion
+
+P12 moved the complete selective-folding pipeline closer to direct/no-rewrite than P11 did, without altering a single frozen dispatch decision or fold rule.
+
+The primary case-balanced result is **1.019888x direct** with CI **0.950964-1.066939**. That is not a preregistered direct-crossover PASS. The workload-weighted result, however, is **0.982339x**, so the measured aggregate workload has now crossed below direct by about **1.8%** while the case-balanced estimator remains about **2.0%** above direct.
+
+This distinction should be preserved: P12 establishes a secondary measured end-to-end crossover, not the stronger case-balanced one that was preregistered.
+
+## What the lazy-statistics idea accomplished
+
+P11 eagerly touched a per-node first-use bitmap for every edge and eagerly incremented pair-repeat excess. P12 removes both operations from ordinary source construction.
+
+The pair-repeat statistic needs no eager counter at all: because every binary node belongs to exactly one canonical operand-pair key, `pair_repeat_excess = binary_nodes - distinct_pairs`.
+
+Reuse is even more selective. The frozen annotate decision can only be true after a five-shell exists and pair-repeat density has already passed. P12 therefore computes exact reuse only after both conditions hold. On Gate-P, this reduced reuse scanning to **6/36 cases** and **21.9% of the all-case edge volume**; one scan terminated early as soon as reuse was provably too high.
+
+The implementation effect is statistically clear relative to P11: P12/P11 source-inclusive is **0.978766x** with CI entirely below 1, and source construction is **0.934496x**.
+
+## Why the strict source-build engineering target missed
+
+The preregistered engineering target required P12/P11 source build <=0.90. The observed value, **0.934496x**, is a meaningful ~6.6% improvement but not enough for that deliberately aggressive threshold.
+
+Post-hoc profiling also shows why the remaining tax is hard to remove inside pure Python: P12 still maintains a canonical-pair dictionary for every binary node in order to detect a five-shell. The `used` bytearray work is gone from the common path, but pair-key construction and dictionary lookup remain.
+
+## Strongest remaining bottleneck
+
+After P12, the remaining dispatch-specific source state is essentially:
+
+- `edge_count`;
+- `binary_nodes`;
+- canonical pair dictionary membership/counts capped at five;
+- one Boolean `shell_ge5`.
+
+This suggests that the next meaningful implementation experiment should target **five-shell detection itself**, not reuse accounting.
+
+A P13 could preserve the frozen P12/P11 decision while testing a cheaper pair-shell detector. Plausible exact approaches include:
+
+1. a compact/open-addressed integer table specialized to the small DAG-node-id domain;
+2. an integer-key counter structure implemented in C/Cython/Rust rather than a Python dictionary;
+3. a two-stage exact method that first uses a very cheap duplicate signal and materializes exact pair counts only after a mathematically safe trigger, provided decision equivalence can be proved.
+
+The third option must be genuinely exact; an approximate Bloom/filter-style signal would contaminate the frozen policy unless followed by exactification that guarantees the same final decision.
+
+## Policy versus implementation
+
+The simultaneous run again shows that the frozen gate is not an optimal profitability classifier: always-P6 happened to beat direct on 7 cases, while the gate annotated only 5. P12 deliberately does not change this. The purpose of P9-P12 has been to isolate implementation overhead under a fixed policy.
+
+Once the telemetry path is exhausted, a separate policy-retraining study could reasonably revisit those missed profitable cases using disjoint training/evaluation data. That should remain a separate experiment from P12's implementation claim.
+
+## Natural control
+
+The natural corpus still contains zero annotated/folded cases, and P12 performs zero reuse scans there. Its near-parity natural timing is therefore evidence only that abstention has become inexpensive, not that natural EPFL cones benefit from CM folding.

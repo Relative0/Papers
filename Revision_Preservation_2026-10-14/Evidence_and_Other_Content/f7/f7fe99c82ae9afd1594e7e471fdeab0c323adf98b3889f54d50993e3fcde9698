@@ -1,0 +1,141 @@
+# CM Computation and Benchmarking Protocol — frozen v0.1
+
+**Freeze date:** 2026-09-17  
+**Status:** pre-registered before any final/evidentiary timing run. The small mechanism smoke in `results/exploratory/` preceded this freeze and is explicitly excluded from confirmatory timing claims.
+
+## Research question
+
+Does CM-specific operator normalization/folding reduce compressed Boolean/ANF work **beyond** what a strong generic structural optimizer can obtain under an artifact-equivalent contract?
+
+The primary hypothesis is not "CM can avoid truth tables." The primary hypothesis is that CM's operator layer can remove nonlinear work before polynomial expansion in cases that generic methods do not remove as effectively.
+
+## Semantic contract
+
+- Boolean values are in `F2` for ANF coefficients.
+- Paper notation `m` means XOR.
+- Ordinary coefficient multiplication means Boolean AND.
+- Quotient is `A \\ B = A AND NOT B`.
+- Two-input CM order is `(Theta_11, Theta_12, Theta_21, Theta_22)` corresponding to `(X,Y)=(1,1),(1,0),(0,1),(0,0)`.
+- CM-to-ANF coefficients are exactly `a=t22`, `b=t12 XOR t22`, `c=t21 XOR t22`, `d=t11 XOR t12 XOR t21 XOR t22`.
+- Odd feature parity (`d=1`) means a nonlinear quadratic `P_X P_Y` term; even parity (`d=0`) is affine.
+- The pure-Boolean phase `star` product, if benchmarked later, is a distinct cyclic-convolution algebra and must never be substituted for ordinary matrix multiplication or pointwise Boolean composition.
+
+## Correctness gate
+
+A row is inadmissible unless all enabled arms compute the same Boolean function. Small-support cases use exhaustive assignments. Larger cases use two independent checks where practical: (1) canonical ANF equality or packed truth digest on a reduced support, and (2) SAT/miter or independent evaluator sampling with fixed seeds. Any mismatch aborts that benchmark instance and is recorded as a failure, never timed as evidence.
+
+Every CM rewrite emits a deterministic certificate containing the rule, before/after structural keys, orientation action, input operator tables, and resulting operator table. Certificates are replay-checkable from 4-entry truth tables.
+
+## Optimizer arms
+
+Primary artifact contract: **canonical ANF polynomial** plus optional optimized XOR-AND network derived from exactly that function.
+
+1. `direct_sparse_anf`: DAG-aware sparse ANF propagation, no CM folding.
+2. `cm_frontend_sparse`: CM orientation normalization + same-operand folding + formally justified quotient/containment rewrites, then the same sparse ANF backend.
+3. `generic_2support_sparse`: same parser/DAG and backend, but generic 2-support truth-function/LUT folding rather than CM terminology. This is the **primary structural comparator** for the claimed CM-specific mechanism.
+4. `cse_flat_sparse`: sharing-aware CSE plus safe associative flattening, matched to the corrected public CM project's strongest generic structural comparator.
+5. `mobius_anf`: packed truth evaluation followed by Boolean Mobius transform; full evaluation + transform time is included when the required artifact is ANF.
+6. `polybori_zdd`: PolyBoRi/Sage Boolean polynomial/ZDD backend when available. No fallback may be silently relabeled as PolyBoRi.
+7. `cudd_bdd`: CUDD ROBDD build/query arm. Build-only timings are reported under a distinct BDD contract. If compared under ANF artifact equivalence, conversion/extraction cost is included.
+8. `fdd_kfdd`: FDD/KFDD/Reed-Muller DD implementation only if a maintained/reproducible implementation is frozen. If unavailable, record `UNAVAILABLE`, do not substitute a weak homebrew implementation as a headline baseline.
+9. `xag_mockturtle`: convert equivalent Boolean networks to XAG and apply a frozen mockturtle optimization pipeline; used for AND count, multiplicative complexity proxies, depth, and AND-depth. Timing is not mixed with ANF timing unless both arms have identical input/output artifacts.
+10. `egraph_or_cut`: generic equality-saturation/cut-rewrite structural optimizer if a reproducible implementation is frozen; otherwise `generic_2support` + `cse_flat` are mandatory minimum generic structural baselines.
+
+## Workload matrix
+
+Synthetic workloads are mechanism tests and remain separate from domain evidence.
+
+### S1 — same-operand fold ladder (favorable)
+Axes: depth `{2,4,6,8,10}`, operator distribution with affine fraction `{0,0.25,0.5,0.75,1}`, reversed-operand fraction `{0,0.25,0.5}`, seeds `0..49`. Designed to expose pre-expansion folding.
+
+### S2 — mixed-support DAG (unfavorable)
+Axes: `live_k={4,8,12,16,20}`, depth `{3,5,7}`, shared-subgraph fraction `{0,0.25,0.5}`, affine fraction `{0.25,0.5,0.75}`, seeds `0..49`.
+
+### S3 — dense/random functions (expected bad case)
+For `live_k <= 16`, random truth functions converted to a fixed canonical source form; seeds `0..49`. Expected to defeat structural folding and stress ANF/ZDD size.
+
+### S4 — version/edit locality
+Start from S1/S2 DAGs; apply deterministic local edits affecting `{1,2,5,10}%` of nodes. Measure warm incremental rebuild and cache invalidation.
+
+### S5 — restrictions
+For each frozen function, apply repeated partial assignments fixing `{10,25,50,75}%` of live variables. Measure first restriction and subsequent restrictions with cache reuse.
+
+### N1 — public CM project corpora
+Reuse frozen/corrected public-project formulas and EPFL-derived cones when their exact corpus hashes and source snapshots are available. Preserve existing labels (`tuning`, `validation_reused`, etc.) and do not relabel reused data as held out.
+
+### N2 — EPFL combinational circuits
+Use a frozen subset selected mechanically before results (alphabetical/hash order plus size bins), preserving source hashes and input/output selection rules. Extract single-output cones and multi-output groups separately.
+
+### N3 — RevLib reversible functions/circuits
+Use a frozen mechanically selected subset spanning arithmetic, symmetric, encoding, and worst-case categories. ANF/function comparisons use the function specification; reversible/quantum cost comparisons are a separate contract.
+
+## Required metrics
+
+Per instance/arm:
+
+- correctness status + function digest;
+- cold build time;
+- warm/reuse time where applicable;
+- peak RSS when measured by an OS-supported isolated runner;
+- peak symbolic node count;
+- peak explicit monomial count;
+- polynomial multiplications performed;
+- estimated pairwise monomial products attempted;
+- multiplications avoided relative to `direct_sparse_anf`;
+- final ANF monomial count and degree;
+- serialized artifact bytes and reload time where supported;
+- XAG: AND count, XOR count, total nodes, depth, AND-depth;
+- optional reversible/oracle contract: Toffoli/T count, depth, ancilla, with exact synthesis pipeline and version frozen.
+
+## Scheduling and statistics
+
+- Separate compile/preparation from backend propagation and from serialization.
+- Timed competitors receive the same parsed DAG object or byte-identical serialized input.
+- Correctness checks occur outside timing windows but before row admission.
+- Alternate/counterbalance arm order in a fixed cycle.
+- Minimum confirmatory repetitions: 20 rounds per natural instance when a kernel timing is under 10 ms; otherwise enough rounds for >=1 s aggregate measured time, capped and recorded.
+- Report per-instance ratios and formula-balanced geometric means. Bootstrap confidence intervals resample by formula/circuit, not by repeated timing row.
+- Never pool different machines as independent formula samples.
+
+## Pre-registered success criteria
+
+All claims require zero admitted correctness failures.
+
+**SC-A — folding mechanism exists:** On S1, `cm_frontend_sparse / direct_sparse_anf <= 0.50` in polynomial-multiplication count for at least the depth >=6, affine-fraction <=0.75 strata. This only establishes a folding mechanism, not CM uniqueness.
+
+**SC-B — CM-specific symbolic advantage:** Relative to the strongest generic structural arm (`generic_2support` or a stronger frozen e-graph/cut optimizer), CM must improve **both** polynomial multiplications and a backend-size metric (peak monomials or ZDD nodes) by at least 5% formula-balanced geometric mean, with a paired 95% bootstrap CI entirely below 1.0, in at least one predeclared natural structural stratum. The exact predictive stratum must be defined by input structure (e.g. same-operand alignment rate), not selected after seeing outcomes. A synthetic-only win cannot satisfy SC-B.
+
+**SC-C — multiplicative complexity:** After identical XAG optimization, CM-derived networks must have at least 5% fewer AND nodes or lower AND-depth in the same predeclared natural stratum, paired CI below parity. Runtime alone does not satisfy SC-C.
+
+**SC-D — survives specialized backends:** In the SC-B stratum, the CM frontend must retain at least one material advantage (>=5% time, memory, or canonical-node reduction with CI below parity where timing applies) against PolyBoRi/ZDD and/or an FDD-style backend under the same ANF/query contract. If neither specialized backend is available, no SC-D claim is made.
+
+**SC-E — abstention quality:** On S2/S3, CM may abstain. It must not impose >10% median overhead versus the generic structural optimizer on strata where it performs no successful fold, unless that overhead is separately reported as a cost of provenance/certification rather than a performance win.
+
+## Claim policy
+
+- A result satisfying only SC-A is described as "operator folding can reduce ANF work on constructed same-operand workloads."
+- "CM-specific computational advantage" requires SC-B and, for network complexity language, SC-C.
+- A negative result against generic 2-support/cut rewriting is retained prominently.
+- No crossover, winner, or favorable subgroup may be introduced after looking at final results unless explicitly labeled exploratory and independently revalidated on a newly frozen corpus.
+
+## Source-integration addendum (2026-09-17; protocol semantics preserved)
+
+The supplied operator-level paper contains an earlier frozen practical-performance gate. That gate is preserved as **Gate P** and is not weakened by this protocol:
+
+- >=20% median structural-over-retabulation improvement in exact/signed-pair strata with interval above parity;
+- at least one predeclared cell with >=20% end-to-end improvement over a sharing-aware external baseline;
+- <=10% median peak-memory increase.
+
+The present protocol adds the stricter **Gate A** for any claim of a *CM-specific compressed-ANF advantage*: SC-B/SC-C/SC-D must hold against generic 2-support/cut rewriting and specialized backends under artifact-equivalent contracts. A result may pass Gate P and fail Gate A; that would support the typed CM compiler as an effective frontend without establishing unique CM algebraic advantage.
+
+## S2 implementation correction addendum (2026-09-17, before corrected rerun)
+
+The first local S2 generator implementation did not satisfy the protocol's semantic-support meaning of `live_k`: only 55.161% of admitted formulas had exact semantic support equal to the requested value. That run is superseded in `results/superseded/s2_support_generator_v0/` and is not used for confirmatory S2 claims.
+
+The corrected generator keeps the frozen axes and success criteria unchanged but makes support exact by construction:
+
+`F = parity(x0,...,x{k-1}) XOR h`.
+
+The mixed core `h` begins from two-variable AND atoms and is recursively combined using the same BASIC operator family with the frozen affine/share/depth axes. Every atom has ANF degree at least two. The set of polynomials containing no degree-one monomial is closed under an arbitrary two-input Boolean operator `a XOR bP XOR cQ XOR dPQ`; therefore `h` cannot contain a linear monomial. The `k` linear parity terms cannot cancel, so the final function has semantic support exactly `k`. No acceptance/rejection filtering on observed benchmark outcomes is used.
+
+For S2, `depth` is the recursive depth of the mixed core `h`; the parity support guard is outside that core. `affine_fraction` and `shared_subgraph_fraction` parameterize the core generator. Whole-expression realized structure is recorded separately.

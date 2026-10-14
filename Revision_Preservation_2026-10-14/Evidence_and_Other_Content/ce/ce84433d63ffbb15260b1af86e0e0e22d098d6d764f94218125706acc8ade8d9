@@ -1,0 +1,85 @@
+# N2/P7 Results — Two C-Backed 64-bit Annotation Words
+
+## Executive result
+
+P7 preserves P4-P6's propagated-signature mathematics exactly, and the lowering-only speed signal remains a clear PASS on Gate-P. However, the hypothesized construction-time improvement from replacing P6's in-node Python integers with two `array('Q')` buffers **did not occur**. P7 construction is slower than simultaneous P6 and P5, so the preregistered end-to-end signal remains FAIL.
+
+## Gate-P primary endpoints
+
+| comparison | ratio | bootstrap 95% CI |
+|---|---:|---:|
+| P7 / direct lowering | **0.6671x** | **0.4998-0.8799** |
+| P7 / P6 lowering | 0.9714x | 0.9601-0.9823 |
+| P7 / P5 lowering | 1.0067x | 0.9913-1.0231 |
+| **P7 full pipeline / direct** | **1.3052x** | **1.0940-1.5320** |
+| P7 full pipeline / P6 | 1.0390x | 1.0149-1.0614 |
+| P7 full pipeline / P5 | 1.0322x | 0.9981-1.0622 |
+| **P7 DAG build / direct** | **2.6245x** | **2.4080-2.8309** |
+| P7 DAG build / P6 | **1.0723x** | **1.0481-1.0942** |
+| P7 DAG build / P5 | **1.0762x** | **1.0461-1.1045** |
+
+Lowering-only PASS: **True**. End-to-end PASS: **False**.
+
+P7 beats direct lowering on 23/36 Gate-P cases and beats direct end-to-end on 6/36.
+
+The workload-weighted complete-pipeline ratio is **1.0039x direct**. This is essentially parity, but remains a secondary endpoint and cannot replace the failed case-balanced preregistered criterion.
+
+## Symbolic work and decision equivalence
+
+P7, P6, and P5 agree exactly on all preregistered symbolic/selector fields. Gate-P totals are:
+
+- demanded selector nodes: **322**;
+- demanded propagated candidates: **181**;
+- accepted folds: **29**;
+- accepted shared folds: **22**;
+- consumed folds: **29**;
+- propagated-signature nodes: **520**.
+
+Relative to direct, P7 performs:
+
+- multiplications: **0.3360x**;
+- pair terms: **0.0984x**;
+- evaluated ANF nodes: **0.5415x**;
+- peak monomials: **0.8973x**.
+
+Thus the underlying folding mechanism still removes about **90.2%** of pair-product work on this fold-rich workload.
+
+## Depth behavior
+
+| Gate-P depth | P7/direct lowering | P7/direct full pipeline |
+|---:|---:|---:|
+| 6 | 0.8424x | 1.3499x |
+| 8 | 0.6215x | 1.3003x |
+| 10 | 0.5670x | 1.2667x |
+
+The algebraic advantage again strengthens with depth. The construction tax still prevents a case-balanced full-pipeline crossover.
+
+## Memory
+
+Predeclared full-pipeline traced peak on Gate-P:
+
+- P7 / direct: **0.7517x**;
+- P7 / P6: **0.9220x**;
+- P7 / P5: **0.9598x**.
+
+The post-hoc build-only diagnostic gives P7/direct **1.1054x**, P7/P6 **0.8542x**, and P7/P5 **0.9370x** peak allocation. The two arrays help memory relative to P6/P5 build metadata, even though they do not improve construction wall time.
+
+## Natural EPFL replay
+
+The frozen natural set again has **1 demanded propagated candidate and 0 accepted folds**. These are therefore abstention-overhead measurements only.
+
+| comparison | ratio | bootstrap 95% CI |
+|---|---:|---:|
+| P7 / direct lowering | 1.0367x | 1.0230-1.0554 |
+| P7 full pipeline / direct | 1.1265x | 1.0583-1.2284 |
+| P7 build / direct | 2.9968x | 2.6098-3.5517 |
+
+No natural-circuit CM-folding speed claim is warranted.
+
+## Verification
+
+- Fresh fuzz: **1000/1000 passed**.
+- Recorded benchmark rows: **7774**, all successful.
+- P7/P6/P5 symbolic decisions/work: exact match.
+- EPFL source blobs: independently reverified.
+- Independent verifier: see `N2_P7_INDEPENDENT_VERIFY.json`.

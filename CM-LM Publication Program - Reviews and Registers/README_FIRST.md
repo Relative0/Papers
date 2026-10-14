@@ -19,6 +19,6 @@ Read [CLAIMS_AND_UNIQUENESS.md](CLAIMS_AND_UNIQUENESS.md) for boundaries, correc
 - [Reproducibility and duplicate policy](REPRODUCIBILITY/README.md)
 - [Version history](HISTORY/README.md)
 - [Current source manifest](SOURCE_MANIFEST_SHA256.csv)
-- [Program project register](../CM-LM%20Publication%20Program%20-%20Reviews%20and%20Registers/PROJECT_REGISTER.md)
+- [Program project register](PROJECT_REGISTER.md)
 
 This navigation was added on 2026-09-25. Historical manuscript, review, code, data and archive bytes were preserved.

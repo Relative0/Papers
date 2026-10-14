@@ -1,0 +1,1041 @@
+=== PDF PAGE 1 ===
+Semantic Probabilistic Layers
+for Neuro-Symbolic Learning
+Kareem Ahmed
+CS Department
+UCLA
+ahmedk@cs.ucla.edu
+Stefano Teso
+DISI
+University of Trento
+stefano.teso@unitn.it
+Kai-Wei Chang
+CS Department
+UCLA
+kwchang@cs.ucla.edu
+Guy Van den Broeck
+CS Department
+UCLA
+guyvdb@cs.ucla.edu
+Antonio Vergari
+School of Informatics
+University of Edinburgh
+avergari@ed.ac.uk
+Abstract
+We design a predictive layer for structured-output prediction (SOP) that can be
+plugged into any neural network guaranteeing its predictions are consistent with a
+set of predeﬁned symbolic constraints. Our Semantic Probabilistic Layer (SPL )
+can model intricate correlations, and hard constraints, over a structured output
+space all while being amenable to end-to-end learning via maximum likelihood.
+SPL s combine exact probabilistic inference with logical reasoning in a clean
+and modular way, learning complex distributions and restricting their support to
+solutions of the constraint. As such, they can faithfully, and efﬁciently, model
+complex SOP tasks beyond the reach of alternative neuro-symbolic approaches.
+We empirically demonstrate that SPL s outperform these competitors in terms of
+accuracy on challenging SOP tasks including hierarchical multi-label classiﬁcation,
+pathﬁnding and preference learning, while retaining perfect constraint satisfaction.
+1 Introduction
+Modularity is among the major factors that propelled the Cambrian explosion of deep learning [ 34].
+By stacking multiple differentiable layers together, practitioners are able to train deep classiﬁers in
+an end-to-end fashion with little effort. However, despite its ﬂexibility, this modular approach to
+learning does not guarantee that the predictions of these models conform to our expectations as
+to what makes sense. On the contrary, unconstrained deep classiﬁers are notorious for leading to
+predictions that are inconsistent with the logical constraints governing an underlying domain.
+This is even more evident in, and crucial for, structured output prediction (SOP) tasks, where
+classiﬁers have to predict hundreds of mutually constrained labels [70, 7]. Consider for example a
+classical SOP task such as multi-label classiﬁcation (MLC) [71]. Learning a multi-label classiﬁer that
+disregards the correlations among labels, e.g., by considering them fully independent given the inputs,
+yields sub-optimal results [5]. In more challenging tasks such as hierarchical MLC (HMLC) [67] or
+pathﬁnding [56], leveraging the domain’s logical constraints (encoding, e.g., the label hierarchy or
+acyclicity and connectedness of a path) at training time can improve prediction accuracy [41], but it
+cannot guarantee that the predictions are always consistent with the constraints at inference time [31].
+Fig. 1 illustrates this problem in the context of pathﬁnding: constraint-unaware neural networks
+systematically fail to predict label conﬁgurations that form a valid path. In many safety-critical
+scenarios such as protein function [59] and interaction prediction [61], and drug discovery [19, 23],
+predicting inconsistent solutions can not only be harmful but also highly expensive [4, 33].
+Preprint. Under review.
+arXiv:2206.00426v1  [cs.LG]  1 Jun 2022
+
+=== PDF PAGE 2 ===
+GROUND TRUTH RESNET-18 S EMANTIC LOSS SPL (ours)
+Figure 1: Neural nets struggle with satisfying validity constraints in complex semantic SOP
+tasks such as predicting the lowest-cost path from the top-left to the bottom-right corners of a Warcraft
+map. Even state-of-the-art neuro-symbolic approaches like the Semantic Loss [ 77] fail to ensure
+consistency with hard rules (c). SPL s in contrast guarantees validity while retaining modularity,
+expressiveness and efﬁciency. See Sec. 5 for complete experimental details and additional results.
+Unsurprisingly, due to their discrete nature, injecting logical constraints into deep neural networks
+while retaining modularity and differentiability is extremely challenging, as demonstrated in the
+neuro-symbolic learning literature [62]. One such attempt has been to learn neural networks that
+satisfy the logical constraints by explicitly minimizing a differentiable loss term, the probability that
+the networks violates the constraint for any given prediction. And while successful, such approaches
+do not guarantee consistency of the predictions at test time. More recently, researchers have proposed
+predictive layers that do guarantee consistency, but these are restricted to speciﬁc kinds of symbolic
+knowledge [31, 66] or become intractable for even moderately complex logical constraints [36].
+Motivated by these observations, we introduce a novel Semantic Probabilistic Layer (SPL ) for
+modeling intricate correlations, and logical constraints on the labels of the output space in a modular
+and probabilistically sound manner. It does so by leveraging recent advancements in the literature on
+probabilistic circuits [73, 12]. The key features of SPL are that, on the one hand, it can be used as a
+drop-in replacement for common predictive layers of deep nets like sigmoid layers, and on the other,
+it guarantees the output’s consistency with any prespeciﬁed logical constraints. Importantly,SPL
+also supports efﬁcient inference and – perhaps surprisingly – does not complicate training.
+Contributions. Summarizing, we: ( i) Identify six desiderata that neuro-symbolic predictors for
+constrained SOP tasks ought to satisfy, and show that state-of-the-art approaches fall short of one
+or more of them (Table 1); (ii) Introduce SPL , a novel semantic probabilistic layer that leverages
+probabilistic circuits to satisfy all six desiderata, i.e., that can be plugged into neural networks to
+ensure predictions to comply to given logical constraints, while retaining efﬁciency, expressivity,
+differentiability, and fully probabilistic semantics; (iii) We provide empirical evidence of the effec-
+tiveness of SPL in several challenging neuro-symbolic SOP tasks, such as HMLC and pathﬁnding,
+where it outperforms state-of-the-art neuro-symbolic approaches, often by a noticeable margin.
+2 Designing a probabilistic layer for neuro-symbolic SOP
+Notation. In the following, we denote scalar constants x in lower case, random variables X in
+upper case, vectors of constants x in bold and vectors of random variables X in capital boldface.
+1 {ϕ} denotes the indicator function that evaluates to 1 if the statementϕ holds and to 0 otherwise.
+We denote byx|= K that the value assignmentx to variables X satisﬁes a logical formula K.
+Neuro-symbolic SOP. We tackle SOP tasks in which a neural net classiﬁer must learn to associate
+instancesx∈ RD toL interdependent labels, identiﬁed by the vectory∈{ 0, 1}L. We assume that
+we can abstract any neural classiﬁer into two components: a feature extractor f that maps inputs
+X to a M-dimensional embedding Z = f (X) and a predictive ﬁnal layer that outputs the label
+distributionp(Y| Z). For example, the simplest, and yet widely adopted [ 48, 77, 31], predictive
+layer in neural classiﬁers for SOP considers labelsYi to be conditionally independent from each other
+given Z, i.e.,p(Y| Z) = ∏L
+i=1p(Yi| Z). We refer to this as fully independent layer (FIL). In a FIL,
+p(Yi =yi|z) is computed asσ(w⊤
+i z) where wi∈ RM is a vector of parameters andσ(x) is the
+sigmoid function 1/(1 +ex).
+We are interested in dependencies between labels that can occur both as correlations, as is the case
+in MLC [21], and as logical constraints encoded by logical formulas. For example, in a HMLC
+task [31] one logical constraint can encode the fact that observing a label for the class cat and dog,
+2
+
+=== PDF PAGE 3 ===
+Table 1: SPL is the only approach to satisfy all the desiderata for neuro-symbolic SOP. An
+in-depth discussion of all competitors can be found in Sec. 4.
+LOSSES LAYERS
+DESIDERATUM DL2 [28] SL [77] N ESYENT [2] FIL EBM [40] M ULTIPLEX NET [36] CCN [32] SPL (Ours)
+(D1) Probabilistic        
+(D2) Expressive        
+(D3) Consistent        
+(D4) General        
+(D5) Modular        
+(D6) Efﬁcient        
+implies observing the label for their superclass animal
+(Ycat =⇒ Yanimal)∧ (Ydog =⇒ Yanimal). (1)
+Speciﬁcally, we assume symbolic knowledge to be supplied in the form of constraints encoded as a
+logical formula K over the labels Y and optionally over a subset of the discrete input variables in X,
+if any (e.g., in our experiments, the predicted simple path is constrained to lie within the subset of
+edges appearing in the input graph, see Sec. 5). On the other hand, we expect a model to learn the
+label dependencies from data. We call such tasks neuro-symbolic SOP tasks.
+Desiderata for neuro-symbolic SOP. To tackle this setting, we seek an algorithmic strategy for
+replacing the predictive layer in any neural network classiﬁer with little effort, with the aim of injecting
+complex symbolic knowledge and allowing for ﬂexible probabilistic reasoning. We formalize these
+observations into the following six desiderata for our predictive layer:
+D1. Probabilistic: The layer should enjoy sound probabilistic semantics, and deliver normalized
+probabilistic predictions to facilitate maximum-likelihood learning and sound decision
+making by virtue of calibrated probabilistic predictions
+D2. Expressive: It should be able to compactly encode intricate correlations between labels.
+D3. Consistent: It should always output predictions that are consistent with the prespeciﬁed
+symbolic knowledge, i.e., for allx andy, if (x,y)⁄|= K thenp(y|x) = 0 .
+D4. General: It should support rich logical constraints over the labels expressed in some formal
+language, e.g., propositional logic.
+D5. Modular: It should be applicable to any off-the-shelf (and possibly pretrained) neural
+network in a modular fashion, enabling end-to-end learning and rapid prototyping.
+D6. Efﬁcient: The time required by the predictor to compute a prediction should be linear in the
+size of the predictor and of the hard constraint representation.
+For example, FILs are clearly probabilistic (D1), modular (D5), and efﬁcient (D6), but at the cost
+of being incapable of modeling intricate correlations and logical constraints and thus generating
+inconsistent predictions (D2–D4) (see also Fig. 1). Table 1 summarizes how the other popular and
+effective approaches to neuro-symbolic SOP nowadays fall short of one of more desiderata as well.
+We discuss this in detail in Sec. 4. To the best of our knowledge, our proposed semantic probabilistic
+layers (SPLs) are the ﬁrst algorithmic solution to satisfy all above desiderata.
+SPL. At a high level, SPL realizes the above desiderata in a single layer that combines exact proba-
+bilistic inference with logical reasoning in a clean and modular way, learning complex distributions
+and restricting their support to solutions of the constraint.
+Deﬁnition 2.1 (Semantic probabilistic layer (SPL)). Given an input conﬁgurationx, a SPL decom-
+poses the computation of the probability of a label conﬁguration as:
+p(y|f (x)) = qΘ(y|f (x))·cK(x,y)/Z(x) where Z(x) =
+∑
+y
+qΘ(y|x)·cK(x,y). (2)
+Here, qΘ(y | f (x)) is a module to perform probabilistic reasoning by encoding an expressive
+distribution over the labels parameterized by Θ;cK(x,y) is a module to ensure consistency of the
+predictions by encoding logical constraints K and being non-zero only when K is satisﬁed, i.e.,
+cK(x,y) = 1 {(x,y)|= K}; andZ(x) is a renormalization term, also called the partition function.
+3
+
+=== PDF PAGE 4 ===
+F
+I
+L
+S
+P
+L
+SPL
+Figure 2: A high level view of SPLs. The predictive layer of a neural network for neuro-symbolic
+SOP, e.g., a FIL (left), can be readily replaced by a SPL (middle). SPL s are implemented (right)
+by multiplying together a probabilistic circuitqΘ(Y|f (X)) parameterized by (a functiong of) the
+network’s embeddingsf (X), and a constraint circuitcK(X, Y) embodying the symbolic knowledge.
+The result is normalized by efﬁciently marginalizing over the product circuitrΘ,K, so as to guarantee
+fully probabilistic semantics and end-to-end differentiable learning by maximum likelihood.
+Fig. 2 illustrates the computational graph of ourSPL at training time. In order to satisfy all D1-D6, we
+will realize bothqΘ andcK as circuits [73, 12], constrained computational graphs that enable tractable
+computations. Differently from FILs,qΘ in SPLs can encode an expressive joint distributions over
+the labels and therefore attain full expressiveness by scaling the number of parameters Θ (D2).
+Consistency is guaranteed by the componentcK: by multiplying it to the joint probability of a label
+conﬁguration the resulting product distributionrΘ,K(y,x) = qΘ(y|f (x))·cK(x,y) will have its
+support effectively cut by K, and thus cannot allocate any probability mass to inconsistent predictions
+(D3). Additionally,cK will allow to encode general propositional logical constraints in a compact
+computational graph (D4). Lastly, the productrΘ,K(x,y) is fully differentiable and allows SPL to be
+an off-the-shelf replacement for other predictive layers (see Fig. 2) and enables end-to-end learning
+(D5). By renormalizingrΘ,K(x,y) and outputting normalized probabilities, SPL enables the exact
+computation of gradients for Θ, which can therefore be trained by maximum likelihood.
+Thanks to recent advancements in the literature on circuits, we can compute the partition function
+Z(x) efﬁciently in time linear in the size of rΘ,K, thus preserving efﬁciency (D6) and not com-
+promising on the other desiderata. This will also yield correct (and consistent) predictions at test
+time, when an SPL computes the MAP statey∗ = argmax yrΘ,K(y,x)/ ∑
+yrΘ,K(y,x). The next
+section clariﬁes how to implement the modules of SPL as circuits while satisfying these desiderata.
+3 Realizing SPLs with tractable circuit representations
+The components of SPL s are circuits, a large class of computational graphs that can represent both
+functions and distributions [12, 17]. Circuits subsume many tractable generative and discriminative
+probabilistic models—from Chow-Liu and latent tree models [ 13, 10], to hidden Markov models
+(HMMs) [58], sum-product networks (SPNs) [57], decision trees [38, 14], and deep regressors [37]—
+as well as many compact representations of logical formulas, such as (ordered) binary decision
+diagrams [3], sentential decision diagrams (SDDs) [16] and others [17].
+The key idea behind SPL s is to leverage this single formalism to represent both an expressive joint
+distribution forqΘ(y|f (x)) and a compact encoding of the logical constraints forcK(x,y), while
+ensuring the exact and efﬁcient evaluation of Eq. (2). This can be achieved by ensuring that these
+computational graphs abide certain structural properties: smoothness, decomposability, determinism
+and compatibility [17, 72]. Next, we introduce probabilistic circuits for modelingqΘ (Sec. 3.1) and
+constraint circuits forcK (Sec. 3.2), while in Sec. 3.4 we propose a more efﬁcient implementation of
+SPL utilizing a single circuit.
+3.1 Representing expressive distributions with probabilistic circuits
+We start by introducing circuits for joint probability distributions, and then extend the discussion to
+conditional distributions, which we use to implementqΘ(Y|f (X)) in SPLs.
+Deﬁnition 3.1 (Circuits). A circuit h over variables Y is a computational graph encoding a pa-
+rameterized function hΘ(Y) by combining three kinds of computational units: input functional
+units, sum units, and product units. An input functional n represents a base parametric function
+hn(sc(n);λ) over some variables sc(n)⊆ Y, called its scope, and it is parameterized byλ. Sum and
+product unitsn elaborate the output of other units, denoted in(n). Sum units are parameterized byω
+4
+
+=== PDF PAGE 5 ===
+Y1
+Y2
+Y1
+Y2
+×
+×
+Y3
+Y3
+×
+×
+q
+g
+1 {Y1 = 0}
+1 {Y1 = 1}
+1 {Y2 = 0}
+1 {Y2 = 1}
+×
+×
+× ×
+1 {Y3 = 1}
+1 {Y3 = 0}
+× c
+Figure 3: Examples of circuits in SPL . Left: probabilistic circuitqΘ. Red lines indicate how the
+parameters Θ ﬂow from the gating functiong to the various input functional and sum units ofq. Right:
+constraint circuit encoding the logical constraint of Eq. (1) where labels areYi∈{Ycat,Y dog,Y animal}.
+Note thatq andc are smooth, decomposable (Def. 3.3) and compatible (Def. 3.7) andc is deterministic
+(Def. 3.6). By parameterizingc viag we can obtain a single-circuit SPL (Sec. 3.4).
+and compute the weighted sum of their inputs ∑
+c∈in(n)ωchc(sc(n)), while product units compute∏
+c∈in(n)hc(sc(n)). The parameters Θ of a circuit encompass the parameters of all input functionals
+(λ) and sum units (ω).
+For any inputy, the value ofhΘ(y) can be evaluated by propagating the output of the input units
+through the computational graph and reading out the value of the last unit. The support ofh is the set
+of all statesy for which the output is non-zero, i.e., supp(h) ={y∈ val(Y)|h(y)⁄= 0}.
+Deﬁnition 3.2 (Probabilistic circuits (PCs)). A circuitq is a PC if it encodes a (possibly unnormalized)
+probability distribution, i.e.,qΘ(y) is non-negative for all conﬁgurationsy of Y.
+From here on, we will assume PCs to have positive sum parametersω and whose input units model
+valid distributions, e.g., Bernoullis, as these conditions are sufﬁcient for satisfying Def. 3.2. Moreover,
+w.l.o.g. we will assume the sum and product units to be organized into alternating layers, and that
+every product unitn receives only two inputsc1,c 2, i.e.,qn(X) = qc1 (Y)·qc2 (Y). These conditions
+can easily be enforced in polynomial time [ 74, 75]. We are speciﬁcally interested in smooth and
+decomposable PCs, as they will be enabling efﬁcient inference in SPL (Sec. 3.3).
+Deﬁnition 3.3 (Smoothness & Decomposability). A circuit issmooth if for every sum unitn, its inputs
+depend on the same variables:∀c1,c 2∈ in(n), sc(c1) = sc(c2). It is decomposable if the inputs of
+every product unitn depend on disjoint sets of variables: in(n) ={c1,c 2}, sc(c1)∩ sc(c2) =∅.
+Smooth and decomposable PCs are both expressive and efﬁcient: they can encode distributions with
+hundred millions of parameters and be effectively learned by gradient ascent [54]. The structure of
+their computational graph can be either speciﬁed manually [ 57, 54, 52] or acquired automatically
+from data [74, 60, 15], e.g., by ﬁrst learning a latent tree model and then compiling the latter into a
+circuit [43]. These circuits are competitive with intractable models such as variational autoencoders
+and normalizing ﬂows scores on several benchmarks [42].
+As proposed by Shao et al. [64], any (smooth and decomposable) PC qΘ(Y) encoding a joint
+distribution over the labels Y can be turned into a (smooth and decomposable) conditional circuit,
+conditioned by input variables X, by letting its parameters be a function of X.
+Deﬁnition 3.4 (Neural conditional circuits [ 63]). A conditional circuit q(Y; Θ = g(X)) models
+the conditional distributionp(Y| X) via a differentiable gating function g that maps every input
+conﬁgurationx to the set of parameters of Θ ofp.
+An example of a smooth and decomposable conditional circuit is shown in Fig. 3. This design
+immediately allows us to implementqΘ(Y|f (X)) in SPL as a conditional PC whose gating function
+maps the feature embedding space RK to the parameter space R|Θ|
++ , realizingq(Y; Θ =g(f (X))).
+As such, the gating function g creates a clean interface between any pre-trained feature extractor
+f and the PC q (Fig. 3). While one can devise g in several ways, we strive for simplicity in our
+experiments and adopt vanilla multi-layer perceptrons (MLPs) whose ﬁnal activations are either
+sigmoids, if they have to predict the parametersλ of the Bernoulli input distributions ofq, or softmax,
+if they output the sum unit parametersω (Def. 3.1).
+5
+
+=== PDF PAGE 6 ===
+3.2 Encoding logical formulas with constraint circuits
+The next step is to translate a logical constraint K into a smooth and decomposable circuitcK(x,y).
+To this end, we employ a special type of PCs, deﬁned as follows.
+Deﬁnition 3.5 (Constraint circuits). A PCc over variables X∪ Y is a constraint circuit encoding
+prior knowledge K if it computes 1 {(x,y)|= K} for every conﬁguration (x,y).
+As a practical way to realize such a circuit, we will consider constraint circuits that have all sum
+unit parameters equal to 1 and input functionals that are indicator functions over their scope, e.g.,
+cn(z) = 1 {z|=ϕ(n)} where Z is the scope of the input andϕ(n) a constraint over it. Furthermore,
+we require each sum unit in it to be deterministic.
+Deﬁnition 3.6 (Determinism). A sum unitn is deterministic if its inputs have disjoint supports, i.e.,
+∀c1,c 2∈ in(n),c 1⁄=c2 =⇒ supp(c1)∩ supp(c2) =∅.
+Fig. 3 shows an example of a deterministic constraint circuit. Thanks to determinism, we can readily
+translate classical compact representations for logical formulas such as (ordered) binary decision
+diagrams [3, 8] and sentential decision diagrams (SDDs) [16] into constraint circuits as deﬁned above.
+This becomes evident when they are written in the language of negation normal form [17] and their
+and gates (resp. or gates) are replaced with product units (resp. sum units) [12]. A logic constraint
+can therefore be represented as a constraint circuit for SPL s, by utilizing any of the many tools
+available for OBDDs [ 69] or SDDs [9, 50]. Sec. B illustrates in detail how to compile the example
+constraint of Eq. (1) into the constraint circuit of Fig. 3 in this way.
+3.3 Efﬁcient inference in SPLs
+As discussed above, PCs can be expressive (D1) and are modular (D5), while constraint circuits
+ensure consistency (D3) for general constraints (D4). What remains to be shown to complete SPLs is
+that the product supports efﬁcient normalization (D2) and inference (D6), speciﬁcally that it allows
+for the efﬁcient evaluation of the normalization constant ofrΘ,K, and its MAP state. To this end, we
+need to introduce the notion of compatibility between the two circuits [72].
+Deﬁnition 3.7 (Compatible circuits in SPLs). A smooth and decomposable conditional PCq(Y; Θ)
+is compatible over variables Y with a smooth and decomposable constraint circuit cK(Y, X) if
+any pair of product units n∈ p and m∈ m with the same scope over Y can be rearranged
+to be mutually compatible and decompose in the same way: (sc(n) = sc(m)) =⇒ (sc(ni) =
+sc(mi), ni andmi are compatible) for some rearrangement of the inputs ofn (resp.m) inton1,n 2
+(resp.m1,m 2). Fig. 3 shows two circuitsq andc that are compatible.
+Theorem 3.1 (Efﬁcient inference in SPLs). Ifq(Y; Θ) andcK(Y, X) are two smooth, decomposable
+and compatible circuits, then computing Eq. (2) can be done inO(|q||c|) time. Furthermore, if they
+are also deterministic, then computing the MAP state can be done inO(|q||c|) time.
+The proof can be found in Sec. A. How do we come up with compatible circuits? One option is to
+have a PCq that is compatible with every possible smooth and decomposable circuit c. To do so,
+we can representq as a mixtures ofM fully-independent models; i.e., ∑M
+i=1ωi
+∏
+jq(Yj; Θi). This
+additional sum unit can be enough to be more expressive than a FIL and already delivers more accurate
+predictions than any competitor, as our experiments in pathﬁnding show (Sec. 5). An example of such
+a circuit is shown in Fig. 3. Another sufﬁcient condition for compatibility is that bothq andc share the
+exact same hierarchical scope partitioning [72], sometimes called a vtree or variable ordering [12, 55].
+This can be done easily if one ﬁrst compiles logical constraints into OBDDs or SDDs and then uses a
+mechanized algorithm to buildq as in [54] to create a compatible structure. Additionally, to ensureq
+is a deterministic PC, we could exploit the mechanized construction proposed in Shih and Ermon[65].
+Computing the exact MAP state, however, is of less concern as approximate inference algorithms,
+e.g., beam search decoding [76] or iterative pruning [11], are nowadays a commodity in deep learning
+frameworks. For non-deterministic PCs, we compute the MAP state with a faster approximation by
+replacing non-deterministic sum units with max units [51]. This runs in time linear in the size ofr,
+and yet delivers state-of-the-art accuracies in our experiments Sec. 5.
+6
+
+=== PDF PAGE 7 ===
+Table 2: SPLs outperform all loss-based competitors in the neuro-symbolic benchmarks of [77].
+SIMPLE PATH PREFERENCE LEARNING
+ARCHITECTURE EXACT HAMMING CONSISTENT EXACT HAMMING CONSISTENT
+MLP+FIL 5.6 85.9 7.0 1.0 75.8 2.7
+MLP+LSL 28.5 83.1 75.2 15.0 72.4 69.8
+MLP+N ESYENT 30.1 83.0 91.6 18.2 71.5 96.0
+MLP+SPL 37.6 88.5 100.0 20.8 72.4 100.0
+3.4 A single-circuit SPL
+The two-circuit design we proposed for SPL s provides a clear and theoretically-backed interface
+between neural networks and probabilistic and symbolic reasoning. This setup, however, can
+sometimes be wasteful, as it requires to compute the product of two circuits and renormalize. We
+circumvent this issue by designing a single-circuit implementation of SPL.
+Deﬁnition 3.8 (Single-circuit SPL). Given an input conﬁgurationx, a single-circuit SPL computes
+p(y| x) = cK(Y, X; Ω = g(f (X))) wherecK is a neural conditional constraint circuit whose
+sum-unit parameters Ω are non-unitary values parameterized via a gating functiong.
+In a nutshell, we can directly realize SPL by compiling a complex logical constraints (D4) into a
+deterministic constraint circuitcK, as before, and then parameterizing it with a gating function of
+the network embeddingsf (X), i.e., allowing its sum units to be non-unitary and input dependent.
+Since the support ofcK is already restricted to exactly match the constraint K (D3), parameterizing Ω
+induces an expressive probability distribution over the label conﬁgurations that are consistent with
+K (D2). We can further guarantee that the circuit’s output are normalized probabilities (D1,D6) by
+enforcing the parametersω of each sum unit to form a convex combination [53]. This can be easily
+done by utilizing a softmax activation function forg.
+One of the advantages of the two-circuit implementation of SPL s is that the size of the circuit
+qΘ can be easily increased to improve the capacity of the model (Sec. 3.1). The single-circuit
+implementation is not as ﬂexible, as normally the number of parameters is determined by the
+complexity of the constraint circuit, which depends entirely on the compilation step. In this case,
+one option is to overparameterize the neural conditional circuit by introducing additional sum units,
+hence allowing it to capture more modes in the distribution. We detail this process is Sec. C. A side
+effect of overparameterization is that it relaxes determinism, meaning that MAP inference needs to
+be approximated, as described in Sec. 3.3. Additionally, training a gating function to map relatively
+small embeddings to large parameter vectors in overparameterized circuits, can slow down training.
+In such cases, a two-circuit implementation of SPL is to be preferred.
+4 Related works
+In this section, we position SPL s against state-of-the-art approaches for enforcing constraints on
+neural network predictions. In-depth surveys on this topic can be found in [18] and [33].
+Energy-based models. Deep energy-based models (EBMs) replace FILs with an unnormalized
+factor graph [39] that captures higher-order label dependencies [40] (D2) but at the cost of foregoing
+probabilistic semantics (D1) and efﬁciency (D6). EBMs are typically unconcerned with hard con-
+straints (D3). Neural approaches for segmentation [44] and parsing [27, 79, 80] remedy to this by
+replacing the factor graph with a full-ﬂedged intractable (discriminative) graphical model [39]. To
+gain efﬁciency, one can restrict EBMs to simpler graphical models (e.g., chains, trees), compromising
+expressiveness (D2) and the ability to model non-trivial logical constraints (D3, D4).
+Loss-based methods. A prominent strategy consists of penalizing the network for producing incon-
+sistent predictions using an auxiliary loss [ 18, 33]. While popular, loss-based methods, however
+cannot guarantee that the predictions will be consistent at test time. Common losses include translat-
+ing logical constraints into a differentiable fuzzy logic [24, 25], as exempliﬁed by DL2 [28]. Although
+efﬁcient (D6), this solution is not probabilistically sound (D1) and crucially is not syntax-invariant:
+different encodings of the same formula (e.g., conjunctive vs. disjunctive normal form) yield different
+losses [30, 23]. Closer to our SPL , the Semantic Loss (SL) [77] avoids this issue by penalizing the
+7
+
+=== PDF PAGE 8 ===
+Table 3: SPLs outperform competitors in pathﬁnding in Warcraft. Predicted paths that do not exactly
+match the ground truth are still valid paths and yield very close costs to the ground truth. Competitors’
+predictions can have higher Hamming scores but be invalid. More examples in Sec. D.3.
+ARCHITECTURE EXACT HAMMING CONSISTENT
+RESNET-18+FIL 55.0 97.7 56.9
+RESNET-18+LSL 59.4 97.7 61.2
+RESNET-18+SPL 78.2 96.3 100.0
+GROUND TRUTH FIL LSL SPL
+the probabilityθi associated to thei-th label by the neural network via the loss term
+LSL∝−
+∑
+y|=K
+∏
+y|=Yi
+θi
+∏
+y⁄|=Yi
+(1−θi) =−
+∑
+y|=K
+∏
+i
+p(Yi|x) =−
+∑
+y
+∏
+i
+q(Yi;θi)·cK(x,y).
+When K is compiled into a constraint circuitcK one retrieves−Z(x) for a two-circuit version of SPL
+that is as expressive as FIL as it assumes independent labels via a conditional PC ∏
+iq(Yi;θi). The
+neuro-symbolic entropy (NESYENT) [2] extendsLSLby an entropy term that improves (but still does
+not guarantee) consistency. It still makes the same independence assumptions over labels (D2).
+Consistency layers. Approaches ensuring consistency by embedding the constraints into the pre-
+dictive layer as in SPL s include MultiplexNet [ 36] and HMCCN [ 31]. MultiplexNet is able to
+encode only constraints in disjunctive normal form, which is problematic for generality (D4) and
+efﬁciency (D6) as neuro-symbolic SOP tasks involve an intractably large number of clauses – e.g. our
+pathﬁnding experiments involves trillions of clauses. HMCCN encodes label dependencies as fuzzy
+relaxation and is the current state-of-the-art model for HMLC [31]. Even its recent extension [32] is
+restricted to a certain family of constraints (D4) that can be represented with fuzzy logic.
+Other approaches. Other common approaches to neuro-symbolic SOP require to invoke a solver to
+either obtain the MAP state or to compute (often only approximately) the gradient of the loss [22, 56,
+49]. SPLs have no such requirement. Some neuro-symbolic approaches [62] constrain the outputs of
+neural networks within complex logical reasoning pipelines to solve tasks harder than neuro-symbolic
+SOP. For instance, DeepProblog [ 45] uses Prolog’s backward chaining algorithm for ﬁrst order
+logical rules whose probabilistic weights are predicted by the network. In modern implementations of
+Problog, grounding a ﬁrst order program and then compiling it into constraint circuits [26] produces
+a conditional circuit akin to those we use in SPL s, but in which ( i) only input distributions are
+parameterized and (ii) increasing the parameter count is not considered a straightforward operation.
+5 Experiments
+We evaluate SPL s on standard neuro-symbolic SOP benchmarks such as simple path prediction,
+preference learning [77], shortest path ﬁnding in Warcraft [56] and HMLC [31]. We compare SPLs
+against several state-of-the-art loss- and layer-based approaches (Sec. 4) by applying them to the
+same base neural network architecture as feature extractorf. As we are interested in measuring how
+close to the ground truth and how safe the predictions of all models are, we report the percentage
+of EXACT matches of the predicted labels, also called subset accuracy [71], and the percentage of
+CONSISTENT predictions, also called “Constraint” [77]. Note that, like other consistency layers,
+SPL s are guaranteed to always output 100% consistent predictions. Additionally, we report the
+HAMMING score [71], mainly to maintain compatibility with previous experimental settings [77, 2].
+This metric does not consider consistency of predictions and naturally favors competitors that assume
+label independence and thus can minimize the per-label cross-entropy [21] (Table 3). Sec. D collects
+all experimental details such as architectures and hyperparameters used for each experiment.
+Simple path prediction & preference learning. We start by comparing SPL s against loss-based
+approaches, reproducing the neuro-symbolic benchmarks of Xu et al. [77] for simple path prediction
+and preference learning. In the ﬁrst experiment, given a source and destination node in an unweighted
+gridG = (V,E ), the neural net needs to ﬁnd the shortest unweighted path connecting them. We
+consider a 4× 4 grid. The input (x,y) is a binary vector of length |V| +|E|, with the ﬁrst |V|
+variables indicating the source and destination nodes, and the subsequent|E| variables indicating a
+subgraphG′⊆G. Each label is a binary vector of length|E| encoding the unique shortest path in
+8
+
+=== PDF PAGE 9 ===
+Table 4: Comparison between
+SPL and HMCNN [31] on twelve
+HMLC datasets averaged over 10
+runs. Best results for each dataset
+are in bold. Results which are not
+signiﬁcantly worse than the compe-
+tition, as determined using an un-
+paired Wilcoxon test, are marked
+in boldface. Consistency is always
+100% for both approaches.
+DATASET EXACT MATCH HAMMING SCORE
+HMCNN MLP+SPL HMCNN MLP+SPL
+CELL CYCLE 3.05 ± 0.11 3.79 ± 0.18 98 .26 ± 0.00 97.84 ± 0.06
+DERISI 1.39 ± 0.47 2.28 ± 0.23 98 .32 ± 0.32 97.70 ± 0.07
+EISEN 5.40 ± 0.15 6.18 ± 0.33 98 .09 ± 0.01 97.30 ± 0.04
+EXPR 4.20 ± 0.21 5.54 ± 0.36 98 .29 ± 0.01 97.87 ± 0.02
+GASCH 1 3.48 ± 0.96 4.65 ± 0.30 98 .37 ± 0.31 97.59 ± 0.05
+GASCH 2 3.11 ± 0.08 3.95 ± 0.28 98 .27 ± 0.00 97.94 ± 0.07
+SEQ 5.24 ± 0.27 7.98 ± 0.28 98 .31 ± 0.01 97.66 ± 0.03
+SPO 1.97 ± 0.06 1 .92 ± 0.11 98 .23 ± 0.00 98.17 ± 0.03
+DIATOMS 48.21 ± 0.57 58.71 ± 0.68 99 .75 ± 0.00 99.64 ± 0.01
+ENRON 5.97 ± 0.56 8.18 ± 0.68 94 .10 ± 0.04 93.19 ± 0.13
+IMCLEF 07A 79.75 ± 0.38 86.08 ± 0.45 99 .40 ± 0.01 99.35 ± 0.03
+IMCLEF 07D 76.47 ± 0.35 81.06 ± 0.68 98 .06 ± 0.02 98 .07 ± 0.08
+G′. For each example, we obtainG′ by dropping one third of the edges in the graphG uniformly at
+random, ﬁlter out the connected components with fewer than 5 nodes, to reduce degenerate cases,
+and then sample a source and destination node uniformly at random fromG′. The dataset consists of
+1600 such examples, with a 60/20/20 train/validation/test split.
+In the preference learning task, given a user’s ranking over a subset of items, the network has to
+predict the user’s ranking over the remaining items. We encode an ordering overn items as a binary
+matrixYij, where for each i,j ∈ 1,...,n ,Yij indicates whether item i is the jth element in the
+ordering. The inputx consist of the user’s preference over6 sushi types, and the model has to predict
+the user’s preferences (a strict total order) over the remaining4. We use preference ranking data over
+10 types of sushi for 5, 000 individuals, taken from [46], and a 60/20/20 split.
+We employ a 5-layer and 3-layer MLP as a baseline for the simple path prediction, and prefer-
+ence learning, respectively, equipped with FIL layer and additionally with the Semantic Loss [77]
+(MLP+LSL) or its entropic extension [2] (MLP+NESYENT). We compile the logical constraints into
+an SDD [16] and then turn it into a the same constraint circuit cK that is used forLSL, NESYENT
+(Sec. 4) and our 1-circuit implementation of SPL s. Table 2 clearly shows that the increased expres-
+siveness of SPL , coming from overparameterizingcK, allows to outperform all competitors while
+guaranteeing consistent predictions, as expected.
+Warcraft Shortest Path. Next, we evaluate SPL on the more challenging task of predicting the
+minimum cost path in a weighted 12× 12 grid imposed over terrain maps of Warcraft II [56]. Each
+vertex is assigned a cost corresponding to the type of the underlying terrain (e.g., earth has lower cost
+than water). The minimum cost path between the top left and the bottom right vertices of the grid is
+encoded as an indicator matrix, and serves as a label. As in [56] we use a ResNet18 [35] with FIL
+optionally withLSL as a baseline. Given the largest size of the compiled constraint circuitcK in this
+case 1010, we use a two-circuit implementation of SPL. Results in Fig. 1 and Table 3 are striking: not
+only SPL outperforms competitors by a large margin – approx. +23% over FIL and +19% over the
+SL – but also consistently delivers meaningful paths that are very close to the ground truth in terms
+of cost, even when they encode very different routes. See Sec. D.3 for a gallery of these examples.
+Hierarchical Multi-Label Classiﬁcation. Lastly, we follow the experimental setup of Giunchiglia
+and Lukasiewicz [31] and evaluate SPL on 12 real-world HMLC tasks spanning four different do-
+mains: 8 functional genomics, 2 medical images, 1 microalgea classiﬁcation, and 1 text categorization.
+Fig. 3 shows an example of a hierarchy of classes. These tasks are especially challenging due to the
+limited number of training samples, the large number of output classes, ranging from 56 to 4130, as
+well as the sparsity of the output space. For numeric features we replaced missing values by their
+mean, and for categorical features by a vector of zeros, and standardized all features. We used the
+validation splits to determine the number of layers in the gating function as well as the overparam-
+eterization, keeping all other hyperparameters ﬁxed. The ﬁnal models were obtained by training
+using a batch size of 128 and early stopping on the validation set. We compare our single-circuit SPL
+against HMCNN which was shown to outperform several other state-of-the-art HMLC approaches
+in Giunchiglia and Lukasiewicz [31]. We show the effect of increasing the expressivenss of SPL
+via overparameterization in an ablation test in Table 5. The results in Table 5 highlight that SPL
+signiﬁcantly outperforms HMCNN in terms of exact match on 11 data sets and performs comparably
+on 1, all while achieving nearly identical Hamming score.
+9
+
+=== PDF PAGE 10 ===
+6 Conclusion
+Our SPLs offer the ﬁrst clear interface for integrating complex probabilitistic reasoning and logical
+constraints on top of any neural network classiﬁer while retaining efﬁcient inference and training.
+They improve by a noticeable margin the current state-of-the-art on challenging neuro-symbolic
+SOP benchmarks such as pathﬁnding and HMLC. This opens up a number of interesting research
+directions. First, SPL s can be extended to incorporate logical constraints over multiple networks
+and representable by ﬁrst-order formulas [45], which we plan to explore in future works, making the
+circuit construction pipeline totally transparent to users [ 1] while possibly automatically learning
+constraints from data [20, 47]. Second, we are interested in leveraging SPLs to inject scalable logical
+constraints into large language models [6] thus equipping them with robust probabilistic reasoning
+capabilities [29, 78]. Third, we plan to leverage the beneﬁts of SPL s for improving efﬁciency and
+reliability of human-in-the-loop machine learning tasks [68].
+“La guerra piu totale” R. Benson
+Acknowledgments and Disclosure of Funding
+The authors would like to thank Arthur Choi for helpful discussions on compiling the constraints
+for the Warcraft Shortest Path task, and Andreas Grivas for proofreading a draft manuscript. The
+research of ST was partially supported by TAILOR, a project funded by EU Horizon 2020 research
+and innovation programme under GA No 952215. This work is partially supported by a DARPA
+PTG grant, NSF grants #IIS-1943641, #IIS-1956441, #CCF-1837129, Samsung, CISCO, and a Sloan
+Fellowship.
+References
+[1] Ahmed, K., Li, T., Ton, T., Guo, Q., Chang, K.-W., Kordjamshidi, P., Srikumar, V ., Van den
+Broeck, G., and Singh, S. (2022a). Pylon: A pytorch framework for learning with constraints. In
+Proceedings of the 36th AAAI Conference on Artiﬁcial Intelligence (Demo Track).
+[2] Ahmed, K., Wang, E., Chang, K.-W., and Broeck, G. V . d. (2022b). Neuro-symbolic entropy
+regularization. arXiv preprint arXiv:2201.11250.
+[3] Akers, S. B. (1978). Binary decision diagrams. IEEE Transactions on computers, 27(06):509–
+516.
+[4] Amodei, D., Olah, C., Steinhardt, J., Christiano, P., Schulman, J., and Mané, D. (2016). Concrete
+problems in AI safety. arXiv preprint arXiv:1606.06565.
+[5] Bielza, C., Li, G., and Larranaga, P. (2011). Multi-dimensional classiﬁcation with bayesian
+networks. International Journal of Approximate Reasoning, 52(6):705–727.
+[6] Bommasani, R., Hudson, D. A., Adeli, E., Altman, R., Arora, S., von Arx, S., Bernstein, M. S.,
+Bohg, J., Bosselut, A., Brunskill, E., et al. (2021). On the opportunities and risks of foundation
+models. arXiv preprint arXiv:2108.07258.
+[7] Borchani, H., Varando, G., Bielza, C., and Larranaga, P. (2015). A survey on multi-output
+regression. Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery, 5(5):216–
+233.
+[8] Bryant, R. E. and Meinel, C. (2002). Ordered binary decision diagrams. In Logic synthesis and
+veriﬁcation, pages 285–307. Springer.
+[9] Choi, A. and Darwiche, A. (2013). Dynamic minimization of sentential decision diagrams. In
+desJardins, M. and Littman, M. L., editors, Proceedings of the Twenty-Seventh AAAI Conference
+on Artiﬁcial Intelligence, July 14-18, 2013, Bellevue, Washington, USA. AAAI Press.
+[10] Choi, M. J., Tan, V . Y ., Anandkumar, A., and Willsky, A. S. (2011). Learning latent tree
+graphical models. Journal of Machine Learning Research, 12:1771–1812.
+[11] Choi, Y ., Friedman, T., and Van den Broeck, G. (2022). Solving marginal map exactly by
+probabilistic circuit transformations. In International Conference on Artiﬁcial Intelligence and
+Statistics, pages 10196–10208. PMLR.
+10
+
+=== PDF PAGE 11 ===
+[12] Choi, Y ., Vergari, A., and Van den Broeck, G. (2020). Probabilistic circuits: A unifying
+framework for tractable probabilistic modeling.
+[13] Chow, C. and Liu, C. (1968). Approximating discrete probability distributions with dependence
+trees. IEEE transactions on Information Theory, 14(3):462–467.
+[14] Correia, A. H. C., Peharz, R., and de Campos, C. P. (2020). Joints in random forests. In
+NeurIPS.
+[15] Dang, M., Vergari, A., and Van den Broeck, G. (2022). Strudel: A fast and accurate learner of
+structured-decomposable probabilistic circuits. International Journal of Approximate Reasoning,
+140:92–115.
+[16] Darwiche, A. (2011). SDD: A new canonical representation of propositional knowledge bases.
+In Twenty-Second International Joint Conference on Artiﬁcial Intelligence.
+[17] Darwiche, A. and Marquis, P. (2002). A knowledge compilation map. Journal of Artiﬁcial
+Intelligence Research, 17:229–264.
+[18] Dash, T., Chitlangia, S., Ahuja, A., and Srinivasan, A. (2022). A review of some techniques for
+inclusion of domain-knowledge into deep neural networks. Scientiﬁc Reports, 12(1):1–15.
+[19] De Cao, N. and Kipf, T. (2018). MolGAN: An implicit generative model for small molecular
+graphs. ICML 2018 workshop on Theoretical Foundations and Applications of Deep Generative
+Models.
+[20] De Raedt, L., Passerini, A., and Teso, S. (2018). Learning constraints from examples. In
+Proceedings of the AAAI Conference on Artiﬁcial Intelligence, volume 32.
+[21] Dembczy´nski, K., Waegeman, W., Cheng, W., and Hüllermeier, E. (2012). On label dependence
+and loss minimization in multi-label classiﬁcation. Machine Learning, 88(1-2):5–45.
+[22] Deshwal, A., Doppa, J. R., and Roth, D. (2019). Learning and inference for structured prediction:
+A unifying perspective. In Proceedings of the Twenty-Eighth International Joint Conference on
+Artiﬁcial Intelligence (IJCAI-19).
+[23] Di Liello, L., Ardino, P., Gobbi, J., Morettin, P., Teso, S., and Passerini, A. (2020). Efﬁcient
+generation of structured objects with constrained adversarial networks. Advances in neural
+information processing systems, 33:14663–14674.
+[24] Diligenti, M., Gori, M., Maggini, M., and Rigutini, L. (2012). Bridging logic and kernel
+machines. Machine learning, 86(1):57–88.
+[25] Diligenti, M., Gori, M., and Sacca, C. (2017). Semantic-based regularization for learning and
+inference. Artiﬁcial Intelligence, 244:143–165.
+[26] Dries, A., Kimmig, A., Meert, W., Renkens, J., Broeck, G. V . d., Vlasselaer, J., and Raedt, L. D.
+(2015). Problog2: Probabilistic logic programming. In Joint european conference on machine
+learning and knowledge discovery in databases, pages 312–315. Springer.
+[27] Durrett, G. and Klein, D. (2015). Neural CRF parsing. In Proceedings of the 53rd Annual Meet-
+ing of the Association for Computational Linguistics and the 7th International Joint Conference
+on Natural Language Processing of the Asian Federation of Natural Language Processing, pages
+302–312. The Association for Computer Linguistics.
+[28] Fischer, M., Balunovic, M., Drachsler-Cohen, D., Gehr, T., Zhang, C., and Vechev, M. (2019).
+Dl2: Training and querying neural networks with logic. In International Conference on Machine
+Learning, pages 1931–1941. PMLR.
+[29] Geva, M., Gupta, A., and Berant, J. (2020). Injecting numerical reasoning skills into language
+models. arXiv preprint arXiv:2004.04487.
+[30] Giannini, F., Diligenti, M., Gori, M., and Maggini, M. (2018). On a convex logic fragment for
+learning and reasoning. IEEE Transactions on Fuzzy Systems, 27(7):1407–1416.
+11
+
+=== PDF PAGE 12 ===
+[31] Giunchiglia, E. and Lukasiewicz, T. (2020). Coherent hierarchical multi-label classiﬁcation
+networks. Advances in Neural Information Processing Systems, 33:9662–9673.
+[32] Giunchiglia, E. and Lukasiewicz, T. (2021). Multi-label classiﬁcation neural networks with
+hard logical constraints. Journal of Artiﬁcial Intelligence Research, 72:759–818.
+[33] Giunchiglia, E., Stoian, M. C., and Lukasiewicz, T. (2022). Deep learning with logical con-
+straints. arXiv preprint arXiv:2205.00523.
+[34] Goodfellow, I., Bengio, Y ., and Courville, A. (2016). Deep learning. MIT press.
+[35] He, K., Zhang, X., Ren, S., and Sun, J. (2016). Deep residual learning for image recognition. In
+Proceedings of the IEEE conference on computer vision and pattern recognition, pages 770–778.
+[36] Hoernle, N., Karampatsis, R.-M., Belle, V ., and Gal, Y . (2022). Multiplexnet: Towards fully
+satisﬁed logical constraints in neural networks. In AAAI.
+[37] Khosravi, P., Choi, Y ., Liang, Y ., Vergari, A., and Van den Broeck, G. (2019). On tractable
+computation of expected predictions. In Advances in Neural Information Processing Systems ,
+pages 11169–11180.
+[38] Khosravi, P., Vergari, A., Choi, Y ., Liang, Y ., and den Broeck, G. V . (2020). Handling missing
+data in decision trees: A probabilistic approach. In Proceedings of The Art of Learning with
+Missing Values, Workshop at ICML.
+[39] Koller, D. and Friedman, N. (2009). Probabilistic graphical models: principles and techniques.
+MIT press.
+[40] LeCun, Y ., Chopra, S., Hadsell, R., Ranzato, M., and Huang, F. (2006). A tutorial on energy-
+based learning. Predicting structured data, 1(0).
+[41] Levati´c, J., Kocev, D., and Džeroski, S. (2015). The importance of the label hierarchy in
+hierarchical multi-label classiﬁcation. Journal of Intelligent Information Systems, 45(2):247–271.
+[42] Liu, A., Mandt, S., and Van den Broeck, G. (2022). Lossless compression with probabilistic
+circuits. International Conference of Learning Representations.
+[43] Liu, A. and Van den Broeck, G. (2021). Tractable regularization of probabilistic circuits.
+Advances in Neural Information Processing Systems, 34.
+[44] Liu, F., Lin, G., and Shen, C. (2015). Crf learning with cnn features for image segmentation.
+Pattern Recognition, 48(10):2983–2992.
+[45] Manhaeve, R., Dumancic, S., Kimmig, A., Demeester, T., and De Raedt, L. (2018). Deepproblog:
+Neural probabilistic logic programming. Advances in Neural Information Processing Systems, 31.
+[46] Mattei, N. and Walsh, T. (2013). PrefLib: A library for preferences. In International conference
+on algorithmic decision theory, pages 259–270. Springer.
+[47] Morettin, P., Kolb, S., Teso, S., and Passerini, A. (2020). Learning weighted model integration
+distributions. In Proceedings of the AAAI Conference on Artiﬁcial Intelligence, volume 34, pages
+5224–5231.
+[48] Mullenbach, J., Wiegreffe, S., Duke, J., Sun, J., and Eisenstein, J. (2018). Explainable prediction
+of medical codes from clinical text. arXiv preprint arXiv:1802.05695.
+[49] Niepert, M., Minervini, P., and Franceschi, L. (2021). Implicit MLE: Backpropagating through
+discrete exponential family distributions. Advances in Neural Information Processing Systems, 34.
+[50] Oztok, U. and Darwiche, A. (2015). A top-down compiler for sentential decision diagrams. In
+Yang, Q. and Wooldridge, M. J., editors, Proceedings of the Twenty-Fourth International Joint
+Conference on Artiﬁcial Intelligence, IJCAI 2015, Buenos Aires, Argentina, July 25-31, 2015 ,
+pages 3141–3148. AAAI Press.
+12
+
+=== PDF PAGE 13 ===
+[51] Peharz, R., Gens, R., Pernkopf, F., and Domingos, P. (2016). On the latent variable interpretation
+in sum-product networks. IEEE transactions on pattern analysis and machine intelligence ,
+39(10):2030–2044.
+[52] Peharz, R., Lang, S., Vergari, A., Stelzner, K., Molina, A., Trapp, M., Broeck, G. V . d., Kersting,
+K., and Ghahramani, Z. (2020a). Einsum networks: Fast and scalable learning of tractable
+probabilistic circuits. In International Conference of Machine Learning.
+[53] Peharz, R., Tschiatschek, S., Pernkopf, F., and Domingos, P. (2015). On theoretical properties
+of sum-product networks. In Artiﬁcial Intelligence and Statistics, pages 744–752. PMLR.
+[54] Peharz, R., Vergari, A., Stelzner, K., Molina, A., Shao, X., Trapp, M., Kersting, K., and
+Ghahramani, Z. (2020b). Random sum-product networks: A simple and effective approach to
+probabilistic deep learning. In Uncertainty in Artiﬁcial Intelligence, pages 334–344. PMLR.
+[55] Pipatsrisawat, K. and Darwiche, A. (2008). New compilation languages based on structured
+decomposability. In AAAI, volume 8, pages 517–522.
+[56] Poganˇci´c, M. V ., Paulus, A., Musil, V ., Martius, G., and Rolinek, M. (2019). Differentiation of
+blackbox combinatorial solvers. In International Conference on Learning Representations.
+[57] Poon, H. and Domingos, P. (2011). Sum-product networks: A new deep architecture. In
+2011 IEEE International Conference on Computer Vision Workshops (ICCV Workshops), pages
+689–690. IEEE.
+[58] Rabiner, L. and Juang, B. (1986). An introduction to hidden markov models.ieee assp magazine,
+3(1):4–16.
+[59] Radivojac, P., Clark, W. T., Oron, T. R., Schnoes, A. M., Wittkop, T., Sokolov, A., Graim, K.,
+Funk, C., Verspoor, K., Ben-Hur, A., et al. (2013). A large-scale evaluation of computational
+protein function prediction. Nature methods, 10(3):221–227.
+[60] Rahman, T., Kothalkar, P., and Gogate, V . (2014). Cutset networks: A simple, tractable, and
+scalable approach for improving the accuracy of chow-liu trees. In Joint European conference on
+machine learning and knowledge discovery in databases, pages 630–645. Springer.
+[61] Sacca, C., Teso, S., Diligenti, M., and Passerini, A. (2014). Improved multi-level protein–protein
+interaction prediction with semantic-based regularization. BMC bioinformatics, 15(1):1–18.
+[62] Sarker, M. K., Zhou, L., Eberhart, A., and Hitzler, P. (2021). Neuro-symbolic artiﬁcial intelli-
+gence: Current trends. arXiv preprint arXiv:2105.05330.
+[63] Shao, X., Molina, A., Vergari, A., Stelzner, K., Peharz, R., Liebig, T., and Kersting, K. (2020).
+Conditional sum-product networks: Imposing structure on deep probabilistic architectures. In
+International Conference on Probabilistic Graphical Models, pages 401–412. PMLR.
+[64] Shao, X., Molina, A., Vergari, A., Stelzner, K., Peharz, R., Liebig, T., and Kersting, K. (2022).
+Conditional sum-product networks: Modular probabilistic circuits via gate functions.International
+Journal of Approximate Reasoning, 140:298–313.
+[65] Shih, A. and Ermon, S. (2020). Probabilistic circuits for variational inference in discrete
+graphical models. Advances in Neural Information Processing Systems, 33:4635–4646.
+[66] Sivaraman, A., Farnadi, G., Millstein, T., and Van den Broeck, G. (2020). Counterexample-
+guided learning of monotonic neural networks. Advances in Neural Information Processing
+Systems, 33:11936–11948.
+[67] Sorower, M. S. (2010). A literature survey on algorithms for multi-label learning. Oregon State
+University, Corvallis, 18:1–25.
+[68] Teso, S. and Vergari, A. (2022). Efﬁcient and reliable probabilistic interactive learning with
+structured outputs. arXiv preprint arXiv:2202.08566.
+[69] Toda, T. and Soh, T. (2016). Implementing efﬁcient all solutions SAT solvers. ACM J. Exp.
+Algorithmics, 21(1):1.12:1–1.12:44.
+13
+
+=== PDF PAGE 14 ===
+[70] Tsochantaridis, I., Hofmann, T., Joachims, T., and Altun, Y . (2004). Support vector machine
+learning for interdependent and structured output spaces. In Proceedings of the twenty-ﬁrst
+international conference on Machine learning, page 104.
+[71] Tsoumakas, G. and Katakis, I. (2007). Multi-label classiﬁcation: An overview. International
+Journal of Data Warehousing and Mining (IJDWM), 3(3):1–13.
+[72] Vergari, A., Choi, Y ., Liu, A., Teso, S., and Van den Broeck, G. (2021). A compositional atlas of
+tractable circuit operations for probabilistic inference. Advances in Neural Information Processing
+Systems, 34.
+[73] Vergari, A., Choi, Y ., Peharz, R., and Van den Broeck, G. (2020). Probabilistic circuits:
+Representations, inference, learning and applications. In Tutorial at the The 34th AAAI Conference
+on Artiﬁcial Intelligence.
+[74] Vergari, A., Di Mauro, N., and Esposito, F. (2015). Simplifying, regularizing and strengthening
+sum-product network structure learning. In Joint European Conference on Machine Learning and
+Knowledge Discovery in Databases, pages 343–358. Springer.
+[75] Vergari, A., Di Mauro, N., and Esposito, F. (2019). Visualizing and understanding sum-product
+networks. Machine Learning, 108(4):551–573.
+[76] Vijayakumar, A. K., Cogswell, M., Selvaraju, R. R., Sun, Q., Lee, S., Crandall, D., and Batra,
+D. (2016). Diverse beam search: Decoding diverse solutions from neural sequence models. arXiv
+preprint arXiv:1610.02424.
+[77] Xu, J., Zhang, Z., Friedman, T., Liang, Y ., and Van den Broeck, G. (2018). A semantic loss
+function for deep learning with symbolic knowledge. In International conference on machine
+learning, pages 5502–5511. PMLR.
+[78] Zhang, X., Bosselut, A., Yasunaga, M., Ren, H., Liang, P., Manning, C. D., and Leskovec, J.
+(2021). Greaselm: Graph reasoning enhanced language models. In International Conference on
+Learning Representations.
+[79] Zhang, Y ., Li, Z., and Zhang, M. (2020a). Efﬁcient Second-Order TreeCRF for Neural Depen-
+dency Parsing. In Jurafsky, D., Chai, J., Schluter, N., and Tetreault, J. R., editors, Proceedings
+of the 58th Annual Meeting of the Association for Computational Linguistics, ACL 2020, Online,
+July 5-10, 2020, pages 3295–3305. Association for Computational Linguistics.
+[80] Zhang, Y ., Zhou, H., and Li, Z. (2020b). Fast and accurate neural CRF constituency parsing. In
+Bessiere, C., editor, Proceedings of the Twenty-Ninth International Joint Conference on Artiﬁcial
+Intelligence, IJCAI 2020, pages 4046–4053.
+14
+
+=== PDF PAGE 15 ===
+A Proofs
+Theorem 3.1 (Efﬁcient inference in SPLs). Ifq(Y; Θ) andcK(Y, X) are two smooth, decomposable
+and compatible circuits, then computing Eq. (2) can be done inO(|q||c|) time, where|·| denotes the
+circuit size. Furthermore, if they are also deterministic, then computing the MAP state can be done in
+O(|q||c|) time. .
+We prove the ﬁrst statement by ﬁrst showing that the partition functionZ(x) in Eq. (2) can solved
+exactly in timeO(|q||c|). It will then follow from it that computing Eq. (2) can be done inO(|q||c| +
+|q| +|c|)≈O (|q||c|) where the last two additive factors derive from evaluatingq andc for an input
+conﬁguration (x,y).
+To do so, we will exploit two ingredients: i) the product ofq andc can be represented as a smooth and
+decomposable circuit in timeO(|q||c|) [72] and ii) any smooth and decomposable circuit guarantees
+tractable marginalization in time linear in its size [12]. The next two propositions formalize these
+statements.
+Proposition A.1 (Tractable product of circuits) . Let q(Y; Θ) and cK(Y, X) be two smooth,
+decomposable circuits that are compatible over Y then computing their product as a circuit
+rΘ,K(X, Y) = q(Y; Θ)·cK(Y, X) that is decomposable over Y can be done in O(|q||c|). If
+bothq andc are also deterministic, thenr is as well.
+Proof. The proof directly follows from Theorem 3.2 from Vergari et al. [72].
+Note thatO(|q||c|) is a loose upperbound and the size ofr is in practice smaller [72].
+Proposition A.2 (Tractable marginalization of circuits). Letr(X, Y) be a circuit that is smooth and
+decomposable over Y with input functions over Y that can be tractably marginalized out. Then
+for any variables Y′⊆ Y and their assignmenty′, the marginalization ∑
+y′r(y′,y′′,x) can be
+computed exactly in time linear in the size ofr, where Y′′ = Y\ Y′.
+Proof. The proof follows by considering that i) the input functionals in SPLs are simple distributions
+such as Bernoullis and indicators and can be easily marginalized in O(1) and ii) that for every
+conﬁgurationx of variables X,r(Y,x) is a circuit only over Y and therefore Proposition 2.1 from
+Vergari et al. [72] can be directly applied.
+Analogously, the second statement of Theorem 3.1 follows from Proposition A.1 and by recalling
+that the MAP state of a deterministic circuit can be computed in time linear in its size.
+Proposition A.3 (Tractable MAP state of circuits (Choi et al. [12])). Letr(X, Y) be a circuit that
+is smooth and decomposable and deterministic over Y then for a conﬁguration x its MAP state
+argmaxyr(x,y) can be computed in timeO(|r|).
+B Compiling logical formulas into circuits
+For our experiments we use standard compilation tools to obtain a constraint circuit starting from
+a propositional logical formula in conjunctive normal form. Speciﬁcally, we use Graphillion 1 to
+compile the constraints in the Warcraft pathﬁnding experiment into an SDD. For all other experiments,
+we use PySDD2 a python SDD compiler [16, 9].
+We now illustrate step-by-step one example of such a compilation for a simple logical formula.
+Consider the constraint circuitc in Fig. 3 encoding the constraint
+(Ycat =⇒ Yanimal)∧ (Ydog =⇒ Yanimal). (3)
+Intuitively, our aim is to compile the above logical formula into a compact form representing
+all possible assignments to Ycat,Y dog,Y animal satisfying the above constraint. We compile such a
+constraint by proceeding in a bottom up fashion, where bottom-up compilation can be seen as
+composing Boolean sub-functions whose domain is determined by a variable ordering, also called
+1https://github.com/takemaru/graphillion
+2https://github.com/wannesm/PySDD
+15
+
+=== PDF PAGE 16 ===
+vtree (see Sec. 3.3). In this example, we assume the function f (Yanimal,Y cat,Y dog) decomposes as
+f1(Yanimal)·f2(Ydog)·f3(Ycat). We therefore start by compiling a constraint circuit that is a function
+of Ycat and Ydog, and compose it with a constraint circuit that is a function of Yanimal. We ﬁrst
+introduce input functionals representing indicators associated withYcat,Y dog,Y animal. We will denote
+byYi the indicator 1 {Yi = 1} and by¬Yi the indicator 1 {Yi = 0}.
+1 {Y1 = 0}
+1 {Y1 = 1}
+1 {Y2 = 0}
+1 {Y2 = 1}
+1 {Y3 = 0}
+1 {Y3 = 1}
+We start by disjoining the indicators Ycat with¬Ycat, and Ydog with¬Ydog. This corresponds to
+introducing deterministic and smooth sum units in our circuits.
+1 {Y1 = 0}
+1 {Y1 = 1}
+1 {Y2 = 0}
+1 {Y2 = 1}
+These units represent disjoint solutions to the logical formula, meaning there exists distinct assign-
+ments, characterized by the children, that satisfy the logical constraint e.g. Ycat,Y dog,Y animal and
+Ycat,¬Ydog,Y animal are two distinct assignments that satisfy the logical constraint.
+The compilation process proceeds by conjoining the constraint circuits forYdog∨¬Ydog withYcat,
+Ydog withYcat∨¬Ycat, and¬Ydog with¬Ycat.
+1 {Y1 = 0}
+1 {Y1 = 1}
+1 {Y2 = 0}
+1 {Y2 = 1}
+×
+×
+×
+A decomposable product units composes functions over disjoint sets of variables. The above three
+product nodes represent the Boolean functions (Ydog∨¬Ydog)∧Ycat,Ydog∧ (Ycat∨¬Ycat), and
+¬Ydog∧¬Ycat.
+We again disjoin (Ydog∨¬Ydog)∧Ycat withYdog∧ (Ycat∨¬Ycat), and¬Ydog∧¬Ycat with true,
+the logical multiplicative identity, guaranteeing alternating sum and product nodes, as mentioned in
+Sec. 3.1.
+So far, we have compiled constraint circuits for the logical formula
+((Ydog∨¬Ydog)∧Ycat)∨ (Ydog∧ (Ycat∨¬Ycat)) (4)
+and the logical formula
+¬Ydog∧¬Ycat (5)
+1 {Y1 = 0}
+1 {Y1 = 1}
+1 {Y2 = 0}
+1 {Y2 = 1}
+×
+×
+×
+What remains is to conjoin Eq. (4) withYanimal, and Eq. (5) with¬Yanimal, and disjoin the resulting
+constraint circuits. What we get is a a mixture distribution over the possible solutions of the constraint:
+If we predict there is a dog or a cat, or both, in e.g., an image, we better predict that there’s an animal.
+16
+
+=== PDF PAGE 17 ===
+On the other hand, the absence of a dog and a cat from an image implies nothing as to the presence of
+an animal in the image.
+1 {Y1 = 0}
+1 {Y1 = 1}
+1 {Y2 = 0}
+1 {Y2 = 1}
+×
+×
+× ×
+1 {Y3 = 1}
+1 {Y3 = 0}
+×
+Compilation techniques like the one we illustrated do not, however, escape the hardness of the
+problem: the compiled circuit can be exponential in the size of the constraint, in the worst case. In
+practice, nevertheless, we can obtain compact circuits because real-life logical constraints exhibit
+enough structure (e.g., they encode repeated sub-problems) that can be easily exploited by a compiler.
+We refer to the literature of compilation for details on this [17].
+C Overparameterize the single-circuit SPL
+As mentioned in Def. 3.8, SPLs can be realized as a single circuit by ﬁrst compiling a complex logical
+constraint into a deterministic constraint circuit, and then parameterizing it using a gating function of
+the network embeddings. Intuitively, this parameterization induces a probability distribution over
+the possible solutions of a logical formula encoded in the constraint circuit. The expressiveness of
+this distribution depends on the number of parameters of the constraint circuit, i.e., the number of
+weighted edges associated to sum units. As we would like to endow our single-circuit SPL with the
+ability to induce complex distributions, we devise two strategies to introduce more parameters than
+what the constraint circuit alone can offer: replication and mixture multiplication.
+Replication works by maintainingm copies of the circuit, and taking their weighted average, i.e.,
+introducing a sum unit that mixes them [54]. Mixture multiplication, instead, substitutes a single local
+marginal distribution encoded by a sub-circuit rooted into a sum unit withk mixture models over the
+same scope. In practice, we createk− 1 copies of each sum units and rewire them by computing a
+cross product of their inputs as in Peharz et al. [54]. Algorithm 1 formalizes this process.
+As mentioned in Def. 3.8, both strategies relax determinism. However, note that they do not alter the
+support of the underlying distribution. This guarantees that all the predictions will be consistent with
+the encoded constraint (D3) (Sec. 2).
+D Additional experimental details
+D.1 Simple path prediction and preference learning
+In the simple path prediction task, given a source and destination node in an unweighted grid
+G = (V,E ), the neural net needs to ﬁnd the shortest unweighted path connecting them. We consider
+a 4× 4 grid. The input (x,y) is a binary vector of length |V| +|E|, with the ﬁrst |V| variables
+indicating the source and destination nodes, and the subsequent|E| variables indicating a subgraph
+G′⊆ G. Each label is a binary vector of length |E| encoding the unique shortest path in G′. For
+each example, we obtainG′ by dropping one third of the edges in the graphG uniformly at random,
+ﬁltering out the connected components with fewer than 5 nodes, to reduce degenerate cases, and then
+sample a source and destination node uniformly at random from G′. The dataset consists of 1600
+such examples, with a 60/20/20 train/validation/test split.
+In the preference learning task, given a user’s ranking over a subset of items, the network has to
+predict the user’s ranking over the remaining items. We encode an ordering overn items as a binary
+matrixYij, where for each i,j ∈ 1,...,n ,Yij indicates whether item i is the jth element in the
+ordering. The inputx consist of the user’s preference over6 sushi types, and the model has to predict
+the user’s preferences (a strict total order) over the remaining4. We use preference ranking data over
+10 types of sushi for 5, 000 individuals, taken from [46], and a 60/20/20 split.
+17
+
+=== PDF PAGE 18 ===
+Algorithm 1 OVERPARAMETERIZE (c,k, cache, ﬁrst_call)
+1: Input: a smooth, deterministic, and structured-decomposable circuit c over variables X, an
+overparameterization factork, and a cache for memoization, and a ﬂag to denote the ﬁrst call
+2: Output: an overparameterized, smooth, and structured-decomposable circuitc over X
+3: ifq∈ cache then
+4: return cache [q]
+5: ifc is an input unit then
+6: nodes← [c]
+7: else ifc is a sum unit then
+8: elements← [ ]
+9: //For every product unit that is an input ofc
+10: //recursively overparameterize its inputs,
+11: //which are sum units, and take their cross (cartesian) product
+12: for (cL,c R)∈ in(c) do
+13: left← OVERPARAMETERIZE (cL,k )
+14: right← OVERPARAMETERIZE (cR,k )
+15: elements.APPEND ([CROSS PRODUCT (left, right)]
+16: in(c)← elements
+17: nodes = [c] + [COPY (c) fori = 1 tok]
+18: if ﬁrst_call then
+19: //Create a sum unit whose inputs are nodes
+20: //and whose parameters are 1s.
+21: nodes← SUM(nodes,{1}|nodes|
+i=1 )
+22: cache(c)← nodes
+23: return nodes
+We follow Xu et al. [77] in employing a 5-layer with 50 hidden units each and sigmoid activation
+functions, and 3-layer MLP with 50 hidden units each as a baseline for the simple path prediction,
+and preference learning, respectively. We equip this baselines with a FIL and additionally with the
+Semantic Loss [77] (MLP+LSL) or its entropic extension [2] (MLP+NESYENT).
+We compile the logical constraints into an SDD [ 16] and then turn it into a constraint circuit cK
+that is used for LSL, NESYENT (Sec. 4) and our 1-circuit implementation of SPL s. To obtain
+the results for SPL in Table 2, we perform a grid search over the using the validation set for a
+maximum of 2000 iterations, similar to Xu et al. [77]. We search over the learning rates in the range
+{1× 10−3, 5× 10−3, 1× 10−4, 5× 10−4}, the overparameterization factork in the range{2, 4, 8},
+as well as the number of circuit mixturesm in the range{2, 4, 8}, evaluating the model with the best
+performance on the validation set.
+D.2 Hierarchical Multi-Label Classiﬁcation
+We follow the experimental setup of Giunchiglia and Lukasiewicz [31] and evaluate SPL on 12
+real-world HMLC tasks spanning four different domains: 8 functional genomics, 2 medical images,
+1 microalgea classiﬁcation, and 1 text categorization. These tasks are especially challenging due
+to the limited number of training samples, the large number of output classes, ranging from 56 to
+4130, as well as the sparsity of the output space. We used the same train-validation-test splits and
+experimental setup as [31]. For numeric features we replaced missing values by their mean, and for
+categorical features by a vector of zeros, and standardized all features. We used the validation splits to
+determine the number of layers in the gating function in the range{2, 4, 8}, the overparameterization
+factor in the range{2, 4, 8}, and the number of mixtures in the range {2, 4, 8}, keeping all other
+hyperparameters ﬁxed. The ﬁnal models were obtained by training using a batch size of 128 and
+early stopping with a patience of 20 on the validation set.
+D.3 Warcraft pathﬁnding
+We evaluate SPL on the more challenging task of predicting the minimum cost path in a weighted
+12× 12 grid imposed over terrain maps of Warcraft II [56]. Our setting differs from the one proposed
+by Poganˇci´c et al. [56] in two ways: i) a node only neighbors four nodes as instead of eight, excluding
+18
+
+=== PDF PAGE 19 ===
+Table 5: A comparison of the performance of single-circuit SPL with different parameters:m, the
+number of circuit copies in our replication strategy; gates, the number of layers in the gating function;
+and k the overparameterization factor in the mixture multiplication strategy (Algorithm 1). We
+report the percentage of exact matches of the predicted labels on the validation set of the HMLC
+datasets, highlighting the best numbers in boldface. As can be seen, all datasets beneﬁt from
+overparameterization.
+DATASET m: 2 m: 4 m: 8
+GATES: 2 GATES: 4 GATES: 2 GATES: 4 GATES: 2 GATES: 4
+k: 2 k: 4 k: 2 k: 4 k: 2 k: 4 k: 2 k: 4 k: 2 k: 4 k: 2 k: 4
+CELLCYCLE 4.25 4 .48 4 .48 4 .01 4 .60 4.83 4.25 4 .48 4 .36 4 .13 4 .36 4 .13
+DERISI 2.26 2 .02 2 .14 2 .26 2.49 2.26 2 .38 2 .38 2.49 2.38 2 .26 2.49
+EISEN 6.05 6 .05 6 .05 6 .05 5 .86 6 .43 6.81 6.24 6 .43 6 .43 6 .05 6 .43
+EXPR 5.42 4 .83 5 .18 5 .30 4 .83 5.54 5 .54 5.18 5.54 5.42 5 .18 5 .42
+GASCH 1 5.56 5 .79 5 .67 5 .91 5 .44 5 .67 6 .03 6.26 5.79 5 .79 6.26 6.03
+GASCH 2 4.00 4 .24 4 .83 4.95 4.12 4 .00 4 .12 4 .36 4 .24 3 .53 4 .24 4 .59
+SEQ 7.74 7 .74 7 .51 7 .85 8 .19 7 .28 7 .96 7 .17 7 .96 7 .39 7 .51 8.42
+SPO 2.27 2 .15 2 .15 2 .51 2 .39 2 .27 2 .51 2 .51 2.87 2.27 2 .39 2 .63
+DIATOMS 53.71 54.68 50.16 51 .29 53 .23 52 .10 49 .35 48 .23 52 .90 52 .58 46 .61 47 .26
+ENRON 19.53 18 .52 17 .85 19 .87 19 .87 20 .20 20.54 20.20 19 .53 20 .20 19 .53 19 .87
+IMCLEF 07A 86.97 87 .03 86 .27 86 .60 87 .00 87.33 86.50 86 .70 87 .07 86 .90 87 .00 86 .83
+IMCLEF 07D 85.93 85 .80 85 .87 85 .73 85 .60 86.50 85.87 85 .90 85 .87 85 .83 86 .10 85 .50
+the diagonals; ii) the neural network predicts the edges in the path, as opposed to the vertices,
+resolving ambiguities in the previous task (note that a set of vertices can might ambiguously encode
+more than one path). Each vertex is assigned a cost corresponding to the type of the underlying
+terrain (e.g., earth has lower cost than water). The minimum cost path between the top left and the
+bottom right vertices of the grid is encoded as an indicator matrix, and serves as a label.
+We use Graphillion3 to compile the path constraint, limiting our constraint to the set of paths whose
+length is less than 29, as determined on the training set.
+As in [56] we use a ResNet18 [35] with FIL optionally withLSL as a baseline. Given the largest size
+of the compiled constraint circuitcK in this case 1010, we use a two-circuit implementation of SPL .
+We use the identity function as our gating function and do a grid search over only the number of
+mixtures in the range{2, 4, 8} in our model, keeping all other hyperparameters as proposed in [56].
+D.4 A study on the effect of overparameterization in SPL
+We now illustrate the effect that overparameterization has on the performance of the single-circuit
+SPL . To that end, we performed an ablation study, comparing single-circuit SPL s comprising a
+different number of circuit copiesm for our replication strategy, a different number of layers in the
+gating function, denoted by Gates, and the overparameterization factork as used in Algorithm 1 in
+our mixture multiplication strategy.
+We report the exact match percentage of the predicted labels on the validation set of the 12 HMLC
+datasets in Table 5. As a general trend, we can see that our overparameterization strategies pay off
+and in general more mixture nodes help (k = 4) as well as using more replicas (m≥ 4). The effect of
+employing a deeper gating function is less striking instead, with a two-layer gating function achieving
+highest performances on 9 datasets. Our recommendation
+3https://github.com/takemaru/graphillion
+19
+
+=== PDF PAGE 20 ===
+GROUND TRUTH RESNET-18 S EMANTIC LOSS SPL (ours)
+cost: 55.22 cost:∞ cost:∞ cost: 55.22
+cost: 57.31 cost:∞ cost:∞ cost: 58.09
+cost: 97.38 cost:∞ cost:∞ cost: 98.38
+cost: 30.50 cost:∞ cost:∞ cost: 30.80
+cost: 39.31 cost:∞ cost:∞ cost: 45.09
+Figure 4: More examples of shortest path predictions in SPLs and competitors. SPL s always
+deliver valid paths and even when these do not exact match the ground truth, they are very close in
+terms of their global cost. Paths from the baselines might yield a higher Hamming score (as they have
+more overlapping edges with the ground truth) but are invalid.
+20

@@ -1,0 +1,75 @@
+PDF PAGE 21
+Adequate Losses via Quantitative Linear Logic 21
+Theorem 4.3(Decidability).For any 𝑝QLL sequent Γ⊢Δ , the supremum defining provability is in
+fact a maximum, i.e. there is a proof𝜋that realizes its provability.
+Proof. The subformula property means there are only a finite number of distinct proofs; see
+Appendix B.6 for full proof.□
+The main take-away message of this section is that, despite the addition of the quantitative
+proof validity, the calculus still retains the constructive nature of the sequent calculus. As further
+evidence of this fact, Bailitis et al. [12] have recently formalised QLL in Rocq, following closely
+the formalisation by Laurent [40], and adding the validity calculation via an ad-hoc recursive
+function, rather than as a part of the inductive relation that defines the calculus rules. As a result,
+the cut-elimination proof by Bailitis follows a structurally identical argument to that of Laurent,
+modulo an additional argument concerning the increase of validity in the cut-free proofs.
+4.2 Hard and qualitative𝑝QLL
+𝑝QLL is related to MALL in two different ways. The first is in astructuralway: ‘qualitatively’,
+𝑝QLL is equivalent to (the isomix15 variant of) the hypersequent calculus for MALL. The second
+way is ‘in the limit’: as mentioned in Section 2, at𝑝=∞ the additive operations in [0,∞] ⊕𝑝,⊗
+collapse to their ‘hard’ variants, i.e. max and min. The corresponding logic,∞QLL (“hard QLL”),
+is thus even closer to MALL, due to the fact that now the rules for additives are interadmissible
+with the classical ones.
+To unburden proofs of inessential bureaucracy, we adopt the same language for formulae of
+both calculi. We thus liberally confuse the sequents of both calculi 16.
+4.2.1 Qualitative 𝑝QLL.By ‘qualitative 𝑝QLL’ we mean the calculus𝑝QLL >0 obtained by replacing
+every ⊗, ⊕−𝑝 appearing in its rules with ∧ and every ⊕𝑝 with ∨.
+In Appendix C, the reader can find a detailed argument leading to the following theorem—the
+crucial observations have already been made in Section 3.1.1.
+Theorem 4.4.LetΓ⊢Δbe a sequent in qualitative𝑝QLL, then
+Γ⊢Δprovable in HMALL⇔ |Γ⊢Δ |𝑝QLL >0.
+15i.e. MALL + MIX + EMP (which in particular makes the units for tensor and par coincide), terminology from [21].
+16The reader may find it helpful to consult Figures 6 to 8 in Appendix C, laying out a sequent calculus and a hypersequent
+calculus for MALL (HMALL), as well as the qualitative version of𝑝QLL.
+
+PDF PAGE 22
+Adequate Losses via Quantitative Linear Logic 22
+4.2.2 Hard QLL.We now turn to ∞QLL: this calculus is still quantitative, unlike 𝑝QLL >0, but
+validity of proofs will always be either0,1, or∞, unless axioms of a different validity are introduced.
+Indeed, the additives at 𝑝=∞ are ‘hard’ and thus expected to behave as usual.
+Lemma 4.5.The rules below are admissible in ∞QLL and,vice versa, adding these to ∞QLL∨∞
+R
+make∨ ∞
+R admissible again.
+Γ⊢𝐴,Δ ∨∞
+R 1Γ⊢𝐴∨𝐵,Δ
+Γ⊢𝐵,Δ ∨∞
+R 2Γ⊢𝐴∨𝐵,Δ
+Proof. Note that one can derive these two rules from ∨𝑝
+R even for finite 𝑝, by using EW
+to introduce the neglected branch. Conversely, suppose given ∨∞
+R 1 and ∨∞
+R 2, now a derivation
+involving
+.... 𝜋𝐴
+Γ⊢𝐴,Δ⊕ ∞
+.... 𝜋𝐵
+Γ⊢𝐵,Δ ∨∞
+RΓ⊢𝐴∨𝐵,Δ
+(25)
+will have validity at least |𝜋𝐴| ∨ |𝜋𝐵 |, which is the same lower bound we get from the unary rules.
+Note this reasoning only works for𝑝=∞.□
+The above obviously dualize to the case of additive conjunction.
+We can also show that:
+Lemma 4.6( EFQ-elimination).Let ∞QLLEFQ be the calculus obtained by removing EFQ from ∞QLL.
+Then
+|Γ⊢Δ |∞QLL = |Γ⊢Δ |∞QLLEFQ,(26)
+in other words,∞QLL EFQ admits EFQ.
+Proof. Let ∞QLL′ be the calculus obtained by replacing ∨∞
+R and ∧∞
+L with their unary versions.
+As proven in Lemma 4.5, |Γ⊢Δ |∞QLL = |Γ⊢Δ |∞QLL′, As discussed previously, removing EFQ is
+only problematic in the presence of rules involving additive disjunctive structures as their premise.
+However,∞QLL ′ has no such rules.□
+Thus ∞QLL is even more similar to MALL than the soft calculi, and in fact we have a stronger
+conservativity theorem:
+Theorem 4.7.LetΓ⊢Δbe a sequent in MALL or∞QLL, then
+Γ⊢Δprovable in MALL⇔ |Γ⊢Δ |∞QLL ≥1.(27)

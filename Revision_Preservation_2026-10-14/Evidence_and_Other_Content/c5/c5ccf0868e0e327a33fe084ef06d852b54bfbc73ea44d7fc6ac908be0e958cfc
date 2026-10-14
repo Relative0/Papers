@@ -1,0 +1,70 @@
+# HANDOFF TO MASTER — Q_k THEORY MILESTONE 1
+
+## 1. Strongest new result
+
+For a fixed nontrivial variable bipartition of sizes `p,q`, let `R_r^{p,q}` be Boolean functions whose truth matrix has GF(2)-rank at most `r`. Then
+
+- `kappa(R_1^{p,q}) = max(p,q)`;
+- `kappa(R_r^{p,q}) = p+q` for every `r>=2`.
+
+Thus the worst-case bounded-conditioned-count reconstruction threshold jumps sharply between rank 1 and rank 2. Static low GF(2) rank does not imply persistence under low-order conditioned-count queries.
+
+## 2. Exact theorem statement
+
+Let `Q_k` contain every indexed conditioned count obtained by fixing at most `k` coordinates. For `p,q>=1`, `n=p+q`, and the fixed `p|q` flattening:
+
+`Q_max(p,q)` is injective on rank-<=1 truth matrices, and no smaller `Q_k` is injective. By contrast, rank-<=2 already contains the global even/odd parity pair, which is indistinguishable under `Q_(n-1)`, so rank-<=r has threshold `n` for every `r>=2`.
+
+## 3. Proof status
+
+PROVED. Rank-1 upper bound reconstructs the outer-product supports from all row and column sums; lower bound uses parity/complement on the larger block. Rank-2 lower bound writes global parity matrices as sums of two GF(2) rank-one matrices.
+
+## 4. Counterexample-search status
+
+The core `Q_k` theory was independently checked computationally. Exact operator ranks were verified for all `n<=5`; Fourier/query fibers exhaustively for all Boolean functions through `n=3`; parity adjacent-level witnesses through `n=6`; minimum Boolean collision distance through `n=3`.
+
+## 5. Computational evidence
+
+Files:
+- `verify_qk.py`
+- `qk_verification_results.json`
+
+All checks PASS.
+
+## 6. Novelty/prior-art status
+
+Important scope correction: the base `Q_k` Fourier equivalence and rank formula are known in equivalent form in marginal/contingency-table literature. Barak et al. (PODS 2007) explicitly state Fourier sufficiency/necessity for marginals and the `sum_{j<=k} C(n,j)` coefficient count. Current work by Lebeda-Nikolov-Tang (2025/26) uses the same marginal/Fourier framework.
+
+Boolean low-frequency uniqueness is also active: Vershynin (2024) and Chen (2026) study/resolve generic thresholds near `n/2`.
+
+The exact GF(2)-rank threshold theorem above was not located in a targeted current search, but its components are elementary. Status: **potentially new combination/corollary; priority unresolved**. Do not claim novelty yet.
+
+A second useful bridge is that Boolean `Q_k` collisions are simple `[k]`-trades; known trade theory gives minimum collision Hamming distance `2^(k+1)`.
+
+## 7. Overlap status with other CM papers
+
+No substantive duplication is intended. The separate CM/LM paper owns foundational truth-matrix calculus and rank/separability representation results. This branch uses ordinary Boolean-function/marginal language and asks a different question: how much future conditioned-query information a structural class retains.
+
+## 8. Implications for the manuscript
+
+Do **not** make the elementary `Q_k <-> low-degree Fourier` theorem or the binomial rank formula the novelty center. Present them as classical infrastructure with direct citations.
+
+The stronger manuscript direction is class-specific persistent information: sharp thresholds, compressed sufficient states, lower bounds, and separations between representation size and future-query support.
+
+## 9. Unresolved issues
+
+1. theorem-level priority search for the rank-1/rank-2 threshold result;
+2. exact persistent summary for rank-r factors under bounded coordinate restrictions;
+3. extension of the parity obstruction to the cofactor/prototype and Kronecker artifact families under their exact definitions;
+4. nonlinear/bit-complexity lower bounds on Boolean `Q_k` summaries.
+
+## 10. Exact files the Master thread should receive
+
+- `QK_THEORY_MILESTONE_1.md`
+- `THEOREM_LEDGER.md`
+- `COUNTEREXAMPLE_LEDGER.md`
+- `PRIOR_ART_LEDGER.md`
+- `OPEN_PROBLEMS.md`
+- `HANDOFF_TO_MASTER.md`
+- `verify_qk.py`
+- `qk_verification_results.json`

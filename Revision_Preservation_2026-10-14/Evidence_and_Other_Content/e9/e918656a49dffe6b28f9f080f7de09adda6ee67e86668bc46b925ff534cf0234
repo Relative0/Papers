@@ -1,0 +1,47 @@
+# N2/P6 Interpretation
+
+## What changed
+
+P6 kept the exact P5 mathematics and moved all persistent metadata into two integer fields on each node: one packed fanout/monomial-estimate word and one packed two-support-signature word. Candidate profitability arithmetic remained demand-time only.
+
+This was the clean test suggested by P5: remove six independent side-container writes/lookups and see whether the successful propagated signature becomes cheap enough to survive complete compilation.
+
+## What survived
+
+The important algorithmic result survived perfectly. P6 and P5 made the same decisions and performed the same algebra on every benchmark case. Gate-P still reduced pair terms to about **0.098x**, multiplications to **0.336x**, and evaluated ANF nodes to **0.542x** direct. P6 lowering was **0.664x direct**, with the 95% interval entirely below 1.
+
+So P6 does not weaken the conclusion that propagated two-support folding can reduce real pre-expansion work and lower wall time once the metadata already exists.
+
+## What failed
+
+The representation hypothesis failed. The simultaneous P6/P5 construction ratio is **1.025x**, with a 95% interval of **1.005-1.045**. That is a small but measurable regression rather than the hoped-for improvement.
+
+The reason is plausible from the post-hoc diagnostics. P5's many logical fields live inside compact C-backed `array` and `bytearray` buffers. P6 reduces the number of logical containers and function calls, but each node now carries two Python-object references to Python integers, and signature packing/unpacking becomes Python integer arithmetic. Build-only `tracemalloc` likewise puts P6 at **1.083x P5** peak allocation.
+
+The cProfile trace should not be used as a timing endpoint, but it confirms that P6 removed P5's array-append-heavy shape while introducing `InNode.__init__`, `pack_sig`, and integer bit-manipulation work. The preregistered randomized timings are the authoritative result.
+
+## Why total pipeline is still close in expensive cases
+
+P6's case-balanced complete-pipeline ratio is **1.244x direct**, so the strong endpoint fails. But the workload-weighted ratio is **0.964x**, below 1, because the largest fold-rich cases save enough ANF work to amortize the annotation cost.
+
+This reproduces the P5 crossover rather than improving it. Seven of 36 Gate-P cases beat direct end-to-end, and the depth-stratified pipeline ratio improves from **1.282x** at depth 6 to **1.205x** at depth 10.
+
+## Natural circuits remain the control
+
+The natural set again accepts zero folds. P6 lower is **1.012x direct** and complete pipeline is **1.125x**. This is useful because it exposes the annotation tax with essentially no algebraic compensation. No natural folding claim is warranted.
+
+## Most informative next experiment
+
+P6 suggests that the next representation should move in the opposite direction from Python in-node objects: keep the **two-word logical design**, but store it in **two C-backed 64-bit arrays (or one compact C/Rust/Cython struct array) indexed by node id**. That would combine P6's two-word compression with the storage property that made P5 surprisingly competitive.
+
+A clean P7A would therefore use exactly:
+
+- `array('Q') meta_word`;
+- `array('Q') sig_word`;
+- the same P6 packing layout and demand-time profitability arithmetic;
+- exact P6/P5 decision equivalence;
+- no other selector or threshold change.
+
+That experiment directly tests whether the problem is the *six P5 containers* or the *Python-object placement chosen by P6*.
+
+Separately, P7B could address the other persistent fact: natural formulas almost never activate the fold rule. A very cheap formula-level dispatch gate could bypass annotated construction entirely when amortization is implausible, but its threshold should be calibrated on a circuit-disjoint training set and frozen before held-out evaluation. Keeping P7A and P7B separate would preserve causal interpretability.

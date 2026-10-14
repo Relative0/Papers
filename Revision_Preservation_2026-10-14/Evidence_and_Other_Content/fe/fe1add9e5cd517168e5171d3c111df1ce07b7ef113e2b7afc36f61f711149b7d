@@ -1,0 +1,93 @@
+# Proposed edits -- not applied to the manuscript
+
+These are targeted candidate edits to the source audited on 27 September 2026. They are not a revised manuscript, a substitute for the author choosing final metadata, or a declaration of cleared priority.
+
+## 1. Authorship and PDF metadata (main.tex lines 5,17-18)
+
+Remove the inherited-author footnote. Use the intended actual publication name and confirmed affiliation/contact information. For an anonymous venue, use that venue's anonymous format instead. Populate `pdfauthor` consistently. Do not invent an affiliation or ORCID. Keep a truthful version date.
+
+## 2. Complete-instrument antecedent (after lines 35-40)
+
+Candidate addition:
+
+> Equivalently, completeness means that the branch maps have trivial common kernel. This is the common-kernel condition for unconditional modal dynamics in Schumacher and Westmoreland, *Almost quantum theory*, equation (47). Recording the outcomes gives the direct-sum formulation used below. The record is bookkeeping for all possible histories, not an assumption that classical outcomes are coherently recombined.
+
+## 3. Query count versus circuit size (end of contract)
+
+Candidate addition:
+
+> We count oracle calls only. For a fixed promise problem, the secret-independent finite-dimensional maps and complete readout may have arbitrary finite description size. The lower bounds therefore hold without a restriction to an efficient gate set; the displayed upper bounds do not assert a uniform gate-complexity characterization for arbitrary promise families.
+
+## 4. Small BV example (following Lemma 4.1)
+
+Candidate addition:
+
+> For two secret bits and one query, every recorded terminal vector has the form
+> \(\Psi_s=c_\varnothing+s_1c_1+s_2c_2\).
+> Therefore \(\Psi_{00}+\Psi_{10}+\Psi_{01}+\Psi_{11}=0\).
+> Exact identification would place these four nonzero records in four distinct output-label groups, where they would be independent. The contradiction illustrates why extra ancillas and histories do not add new secret monomials.
+
+## 5. Optional alternative BV proof
+
+Candidate addition or replacement for the dimension-count conclusion:
+
+> Fix a secret \(s^0\). Some coordinate in a terminal branch labelled \(s^0\) is nonzero at \(s^0\), because the full record is nonzero. That coordinate is a polynomial \(p(s)\) of degree at most \(q\), and exactness makes it zero at every other secret. Boolean multilinear interpolation gives
+> \[
+> p(s)=a\prod_{j:s^0_j=1}s_j\prod_{j:s^0_j=0}(1+s_j),\qquad a\ne0.
+> \]
+> Its top coefficient is nonzero, so its degree is \(n\), giving \(q\ge n\).
+
+Keep the recorded-degree lemma and exactness assumptions. This is an alternative argument, not evidence of priority. A discussion of nondeterministic-polynomial methods should distinguish ordinary complex positive-acceptance algorithms from all-branches-correct modal identification.
+
+## 6. Primitive eigenvector correction (line 194)
+
+Replace the first sentence and its explanation with:
+
+> There is no primitive vector \(\eta\in A^2\) satisfying \(X\eta=R\eta\), where primitive means that at least one coordinate is a unit. Indeed, \(X^2=I\) implies \(u^2\eta=0\), impossible for a unit coordinate. Nonprimitive eigenvectors can exist: \(\eta=(u^2,u^2+u^3)^T\) is nonzero and satisfies \(X\eta=R\eta\).
+
+Retain the four-cycle example. Describe the two-QXOR compute/control/uncompute procedure as the cost of that construction, not as an optimality theorem for all implementations.
+
+In the phase table, use "free A-module rank" for the carrier rank and "binary dimension" and "binary matrix rank" for the regular representation.
+
+## 7. Reproducibility wording (lines 208-223 and phase-table caption)
+
+There are two defensible routes.
+
+**Historical-supplement route:** include the actual runner, inputs, outputs, environment, commands, table generator and provenance files behind the historical claims. Test all relative paths from a clean extraction and make the supplement accessible to readers. Only then retain the claim that the canonical suite is independently rerun and documented in that supplement.
+
+**Fresh minimal route:** attach the new audit verifier and its output, clearly mark it as a fresh independent implementation, and change the finite-results table to those exact scopes. Remove the unverified historical 552-matrix count and unspecified JSON-dependent BV counts unless their original evidence is recovered. Change the table-generation caption so that it truthfully identifies the new source. Do not describe fresh matching values as authentication of an absent historical run.
+
+Candidate introductory sentence for a genuinely supplied fresh supplement:
+
+> The accompanying self-contained verification program independently checks the finite cases listed below. It is separate from earlier portfolio computations. These checks corroborate implementations and examples; the analytical proofs establish the general statements.
+
+A third route is a proof-centered note without a finite-experiment section. The main theorems do not depend on those experiments.
+
+## 8. Published reference and closest antecedents
+
+Replace the arXiv-only *Modal quantum theory* entry with the verified published record, while retaining the preprint link as useful:
+
+```bibtex
+@article{Schumacher2010,
+  author = {Benjamin Schumacher and Michael D. Westmoreland},
+  title = {Modal Quantum Theory},
+  journal = {Foundations of Physics},
+  volume = {42},
+  pages = {918--925},
+  year = {2012},
+  doi = {10.1007/s10701-012-9650-z},
+  note = {Preprint: arXiv:1010.2929}
+}
+```
+
+The old key may be retained to avoid unnecessary source changes even though the publication year is 2012. Do not confuse this work with *Almost quantum theory*.
+
+Compare the core theorem explicitly with James--Ortiz--Sabry's qualitative Deutsch conclusion, Diamond--Schumacher's Section 4 discrimination criterion, Beals et al.'s Lemma 4.1, Schumacher--Westmoreland's equation (47), and de Wolf's Theorem 2.3 in *Nondeterministic Quantum Query and Communication Complexities*. State the changed field, oracle variables, exactness requirement, and history scope. These comparisons do not yet certify that the quantified BV or DJ theorem is new.
+
+## 9. Structure and ending
+
+Center the introduction on exact BV recovery. Keep Deutsch/DJ as related results. Preserve a short, credited UNIQUE-SAT positive control. Consider moving the ring worked example to an appendix and Simon's bounded scan to the supplement. Replace "Scope and publication status" by "Discussion and limitations" and move internal review/venue status into the README. Remove an unnecessary forced page break and repetitive boxed summaries.
+
+## 10. Optional mathematical extension
+
+`RESEARCH_EXTENSION.md` contains a constructive exact-identification rank characterization derived during this audit, not in the current paper. It is coherent with the main theorem and includes an operational sufficiency proof. Its priority is unresolved, and it needs a separate review before insertion. It is not required to repair the current manuscript.

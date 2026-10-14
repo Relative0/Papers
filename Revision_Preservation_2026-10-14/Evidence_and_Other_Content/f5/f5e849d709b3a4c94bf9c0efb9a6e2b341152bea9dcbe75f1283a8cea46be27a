@@ -1,0 +1,54 @@
+{
+  "schema": "p14-py0-freeze/v1a",
+  "frozen_utc": "2026-09-18T19:17:01.050292+07:00",
+  "status": "FROZEN WITH PRE-TIMING CORRECTNESS-HARNESS AMENDMENT",
+  "protocol": "C:\\Users\\brian\\Documents\\CM_Computation\\audit_p1_p13_20260918\\P14_PREREGISTRATION_DRAFT.md",
+  "source_hashes": {
+    "p14_common.py": "db26062feba4efec2119f42ef9722df9518fc8933690725a73b2cd8e91cc61b3",
+    "freeze_p14.py": "d37e77f8922d52908db1fe93a3ff899bd7f1bb6e620c1d0702d2cc1ae8d0b471",
+    "run_correctness.py": "13dccbcf41418800adbc826d38bdab7381c16c8b3e589245a4a01dfb232aaa86",
+    "run_timing.py": "71518707db5e4afeeb1c358f9d04efc1f78db7360b91fe11cb90568c8edf973f",
+    "run_memory.py": "87fd2dc117805ee9f20847e1178d57051392183a7de18bfba67b415c82ee49dc",
+    "analyze_p14.py": "a18b4f8b86aed3db6a782ff452f90faf1152e5227d3fe6b550f9889728123b3b"
+  },
+  "manifests": {
+    "synthetic_holdout.json": "6a9748be59bc7333fc53ba29d04d17534dbc5487002c444331ec21ab89772b5a",
+    "natural_holdout.json": "649ef9af238d25133a44dd25fab57866ecea70fa2a6811fc867ad9ffe2b91086"
+  },
+  "host": {
+    "platform": "Windows-10-10.0.19045-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "logical_cpu_count": 12,
+    "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+    "power_scheme": "Windows Balanced (read-only powercfg query)",
+    "affinity": "uncontrolled; fresh sequential workers",
+    "paid_compute": false
+  },
+  "compute_budget": {
+    "local_wall_seconds": 5400,
+    "storage_bytes": 4294967296,
+    "process_memory_bytes": 1073741824,
+    "per_compile_seconds": 60,
+    "monomials": 1000000,
+    "worker_design": "3 sessions x 1 fresh sequential worker; recipe and compiler-IR endpoints; 3 measured blocks after 1 warmup; per-case common batches target >=10ms for the fastest arm and cap the slowest predicted arm at 40ms; separate tracemalloc pass",
+    "departure_from_draft": "30 workers x >=100ms x 512 cases requires at least 20.7h. The 90-minute local cap reduces workers, blocks, and minimum batch duration and adds a 40ms slow-arm cap; intervals are descriptive and close effects are inconclusive."
+  },
+  "analysis": {
+    "bootstrap_draws": 10000,
+    "seed": 2026091902,
+    "primary": [
+      "E/F",
+      "E/D"
+    ],
+    "familywise_alpha": 0.05,
+    "simultaneous_method": "Bonferroni 98.75% two-sided bootstrap intervals over four confirmatory comparisons"
+  },
+  "natural_scope_note": "The pinned snapshot has 14 uninspected size-optimized design families after excluding six historical families; reduced from target 16 before results.",
+  "amendment": {
+    "amended_at": "2026-09-18T19:23:29.586001+07:00",
+    "original_freeze_file": "P14_FREEZE_V1_ORIGINAL.json",
+    "original_freeze_sha256": "e4c9c91e63add90b99f29d331060f2926b37f6e055faf285f781b72309773d56",
+    "scope": "run_correctness.py only",
+    "reason": "Correct a harness mismatch: the declared 60-second per-compile cap was incorrectly applied to the aggregate of seven compiles plus oracle work. It is now enforced separately for each arm. Holdout manifests, implementations, timing plan, and analysis are unchanged. No timing results or opportunity counts were inspected."
+  }
+}

@@ -1,0 +1,131 @@
+# Handoff to Master — Theory Phase 2 T1–T3
+
+**Project:** CM Structural Computation and Exact Conditioned Queries  
+**Date:** 28 September 2026  
+**Gate status:** RETURN RESULTS TO MASTER; Draft 3 remains the publication baseline pending Computation C1–C4 and another convergence decision.
+
+## 1. Strongest new result
+
+Under an explicit supplied-factor, fixed-cut, source-discarded, **cumulative-budget destructive-update** contract, there is a coordinate-aware persistent state that supports exact residual model counts after every legal restriction prefix without rescanning the source factors.
+
+For row profiles \(a\), store low-degree profile count moments
+\[
+A_a(T)=\sum_{x:u_x=a} \prod_{i\in T}x_i
+\]
+and matching column profile-character moments
+\[
+B_a(T)=\sum_y(-1)^{a\cdot w_y}\prod_{j\in T}y_j,
+\]
+through the current remaining horizon. A restriction \(z=b\) updates moments by the exact two-term rule
+\[
+F'(T)=F(T\cup\{z\})\quad(b=1),\qquad
+F'(T)=F(T)-F(T\cup\{z\})\quad(b=0).
+\]
+The exact residual count is recovered in \(O(s)\le O(2^r)\) integer multiply-adds from the zero-degree moments.
+
+## 2. Exact theorem / resource statement
+
+Let \(s\) be the number of occurring nonzero profiles on the chosen anchor side and
+\[
+D(d,h)=\sum_{j=0}^{\min(d,h)}\binom dj.
+\]
+For the row-anchored fixed-width state, initial sparse storage is
+\[
+S_0\le s\bigl[r+(p+1)D(p,k)+(q+2)D(q,k)\bigr]+O(n+k+r)\text{ bits},
+\]
+with dense worst case obtained by \(s=2^r-1\) and no stored profile labels. An update on an affected side with \(d\) free coordinates and remaining horizon \(h\) uses
+\[
+U=sD(d-1,h-1)
+\]
+exact copy/subtract operations. A count query uses \(T=O(s)\) exact integer multiply-adds. One direct construction has cost
+\[
+O\!\left(r(2^p+2^q)+2^pD(p,k)+2^qD(q,k)+r2^rD(q,k)\right).
+\]
+The column-anchored theorem is symmetric.
+
+## 3. Proof status
+
+**PROVED.** `T3_PROFILE_MOMENT_PERSISTENCE.md` gives the full invariant, update recurrence, query proof, bit widths, construction/storage/update/query costs, and source-access scope.
+
+## 4. Counterexample / negative status
+
+**PROVED RESTRICTED NEGATIVE.** Unordered profile-multiset states cannot support named coordinate restrictions: \(xy\) and \((1-x)y\) have the same unordered row-profile histogram, the same column factor, and the same unconditional count, but restriction \(x=0\) gives counts 0 and 1. This is explicitly limited to the coordinate-blind/permutation-invariant representation class and is **not** claimed for arbitrary encodings.
+
+**RESET-HORIZON REPAIR.** Complementary parity on \(k+1\) variables proves that original \(Q_k\) data are not closed under one destructive update followed by a fresh \(k\)-coordinate horizon. The valid Q16 statement is cumulative distinct-coordinate budget only.
+
+## 5. Interpretation repair
+
+\[
+\kappa(\mathcal C)
+\]
+is now explicitly a worst-case **identifiability depth**, not a storage/state/runtime lower bound. The two-element complementary-parity class has \(\kappa=n\) while one identifying bit selects the source under the known promise.
+
+Q15 is retained only in its correct form: a real-linear sketch supporting \(Q_k\) for **all real-valued inputs** has linear dimension at least \(\sum_{j\le k}\binom nj\). No bit bound is inferred from this without an encoding/precision model.
+
+## 6. Gauge status
+
+For every \(G\in GL(r,2)\),
+\[
+U\mapsto UG,\qquad W\mapsto G^{-1}W
+\]
+induces the common profile relabeling \(a\mapsto aG\). The moment state is permuted accordingly:
+\[
+A'_{aG}(T)=A_a(T),\qquad B'_{aG}(T)=B_a(T).
+\]
+Thus \(s\), storage, update counts, and query counts are basis-invariant. No canonical factor basis is claimed.
+
+## 7. Independent verification
+
+`verify_profile_moment_state.py` passed **3,749,102** checks, including **74,384** small enumerated/sampled factor cases and **8,847** gauge-moment checks, plus reset-horizon parity and unordered-histogram regressions. Results are in `t3_verification_results.json`.
+
+## 8. Priority / literature status
+
+T1/T2 priority repair is complete enough for the current gate:
+
+- Fourier/marginal equivalence and the low-order dimension count: **standard/background** (Barak et al., PODS 2007, Theorem 5 and Eq. (11)).
+- minimum Boolean disagreement: **known equivalent form** via \([t]\)-trades / unitrades (Ghorbani et al., 2018, Lemma 3 and surrounding definitions).
+- generalized Chow uniqueness: **background** (Diakonikolas–Kane 2018; earlier harmonic antecedent Bruck 1990).
+- fixed-cut rank thresholds Q13/Q14: **CORRECT BUT MINOR; EXACT PRIORITY UNRESOLVED**.
+
+A bounded search did not locate the exact Q13/Q14 conditioned-query formulation. The same elementary threshold proof works for real, nonnegative, binary-factor, GF(2), and Boolean-OR rank on 0/1 matrices, but this breadth does not promote the result beyond a minor corollary. Do not claim firstness.
+
+The new T3 persistence theorem has neighboring prior art in data-cube partial materialization and moment/Fourier methods. The bounded search did not locate the exact profile-indexed cumulative-update construction. Status: **apparently differentiated combination; exact firstness unresolved**. A specialist priority review is still appropriate before publication claims are strengthened.
+
+The companion CM-LM manuscript remains the owner of fixed-cut GF(2) rank/separability and standard rank-factorization ingredients.
+
+## 9. Pre-registered Computation C2 prediction
+
+Before new benchmark results, Theory predicts for fixed \(r,k\) and balanced \(p\approx q\approx m\):
+\[
+S=\Theta(2^r m^{k+1})\text{ bits},\qquad F_{\rm raw}=\Theta(r2^m)\text{ bits},
+\]
+and online count query work \(O(2^r)\) after preprocessing. The exact dense serialized-state condition predicted to beat raw factor bits is
+\[
+(2^r-1)[(p+1)D(p,k)+(q+2)D(q,k)]<r(2^p+2^q).
+\]
+No exact wall-clock crossover is claimed. `COMPUTATION_REQUEST_C2_T3.md` freezes the benchmark hypothesis and required accounting.
+
+## 10. Implication for manuscript status
+
+**Do not replace Draft 3 yet.** The Theory gate now has a differentiated candidate persistence theorem rather than only the old profile-count identity, but the stronger-paper gate should wait for:
+
+1. Computation C1 integration of audit regressions;
+2. C2 implementation/benchmark of this exact state and prediction;
+3. C3 natural-incidence/fair-comparator evidence;
+4. C4 lifecycle/provenance accounting;
+5. one focused specialist priority attack on T3.
+
+If C2 shows no practical favorable regime, the theorem can still survive as a scoped mathematical result; manuscript positioning should then remain correspondingly modest.
+
+## 11. Files Master should receive
+
+- `T1_FORMAL_CONTRACT.md`
+- `REVISED_ABSTRACT_CONTRIBUTION_SENTENCES.md`
+- `T3_PROFILE_MOMENT_PERSISTENCE.md`
+- `THEOREM_LEDGER.md`
+- `PRIOR_ART_LEDGER.md`
+- `COUNTEREXAMPLE_LEDGER.md`
+- `COMPUTATION_REQUEST_C2_T3.md`
+- `verify_profile_moment_state.py`
+- `t3_verification_results.json`
+- this `HANDOFF_TO_MASTER.md`

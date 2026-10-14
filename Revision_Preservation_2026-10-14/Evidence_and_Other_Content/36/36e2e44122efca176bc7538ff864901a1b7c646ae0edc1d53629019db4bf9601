@@ -1,0 +1,41 @@
+# REPRODUCTION COMMANDS
+
+Run these commands from the root of this handoff bundle.
+
+## 1. Exact correctness replay (recommended first)
+
+```sh
+python reproducibility/run_correctness.py --output replay_receipt_new.json
+```
+
+Requirements: Python 3.10+; recorded run used Python 3.13.5. Standard library only; no network. This copies code, tests, data, and recovered legacy source into a fresh temporary directory, removes inherited `PYTHONPATH`, and executes eight independent child processes. It does not overwrite the bundled raw results.
+
+Expected high-level result: `status = PASS`, with the core, extension, field-rank, legacy-adapter, persistence, scope-limit, and historical-contract checks passing.
+
+## 2. Corrected v3 lifecycle timing replay
+
+```sh
+python reproducibility/run_benchmark_copy.py --output benchmark_replay_new
+```
+
+The output directory must not already exist. This copies code/data and the frozen `PROTOCOL_V3_REPLAY.json`, then runs the 38 cases in two sequential index chunks. Timing values will vary by hardware/runtime noise.
+
+The endpoint includes build/discovery, relevant checks, serialization, actual construction of a fresh loaded instance, rechecking, and 128 executed queries. It is same-process/in-memory persistence, not cold-disk or fresh-process timing.
+
+## 3. Inspect recorded results
+
+Useful files:
+
+```text
+reproducibility/raw_results/clean_replay_v3.json
+reproducibility/raw_results/benchmark_v3_replay.json
+reproducibility/processed_results/benchmark_summary.json
+reproducibility/raw_results/persistence_v3.json
+reproducibility/raw_results/extensions_v2.json
+```
+
+## 4. New Q_k work
+
+No command in this frozen baseline verifies the new Theory Phase 1 Q_k theorem directly. The new Computation thread should add its own script/results and then create a new thread-native computation handoff.
+
+For fuller details and interpretation limits, see `reproducibility/README.md`.

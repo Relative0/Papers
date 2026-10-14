@@ -1,0 +1,55 @@
+\section{Operational contracts}
+\label{sec:contracts}
+\paragraph{F: field modal model.}
+States are nonzero vectors of $\F_2^d$, composite spaces use $\otimes_{\F_2}$,
+and the allowed reversible group is stated explicitly. An unrestricted complete
+readout is a dual basis; an outcome is possible exactly when its coefficient is
+nonzero. No real probabilities or positive inner product are supplied.
+
+\paragraph{S: shared-ring model.}
+Local carriers are $K^d$, composites use $\otimes_K$, and complete local
+measurements are primitive projective bases. Static resource tensors are
+nonzero. This is not yet a closed all-nonzero preparation theory: nonzero tensor
+factors can annihilate. A primitive-only preparation restriction repairs that
+problem but is not closed under the specified conditioning rule.
+
+\paragraph{L: literal registers.}
+A logical-plus-phase carrier is $\F_2^2\otimes_{\F_2}\F_2^4=\F_2^8$.
+Its $n$ independent copies have dimension $8^n$, whereas the binary dimension of
+$(\A^2)^{\otimes_\A n}$ is $4\cdot2^n$. Literal restricted coarse readouts and
+unrestricted $\GL_8(\F_2)$ readouts are different contracts. The regular
+representation is a faithful matrix-algebra map, not a monoidal equivalence of
+these state spaces.
+
+\paragraph{DC: exact fixed-orbit codebooks.}
+For $M\in\Mat_d(K)\setminus\{0\}$, $d\geq2$, Alice encodes by
+$U\in\GL_d(K)$, giving $UM$. Bob has one arbitrary complete invertible
+$K$-linear basis readout on the $d^2$ joint coefficients. Every possible outcome
+must identify the message. Discarding the fixed resource and preparing a fresh
+carrier is outside this orbit count.
+
+\paragraph{TP: exact universal rank-one teleportation.}
+For every nonzero input, including an arbitrary untouched reference system,
+all possible branches of a complete joint rank-one analyzer must be corrected
+exactly. In a fixed vectorization convention the transfer is $T_m=M^T E_m^T$.
+A complete basis of flattened $E_m$ and invertibility of every reshape $E_m$
+are separate requirements. Allowed corrections must contain the necessary
+inverses. No unrecorded failures or input-dependent environment may be ignored.
+
+\paragraph{QXOR and its lower-bound extension.}
+The standard oracle is
+$U_f\lvert x,y\rangle=\lvert x,y+f(x)\rangle$ over a characteristic-two field.
+Arbitrary finite ancillas and oracle-independent linear processing are allowed.
+Complete adaptive instruments can be recorded in a direct sum; the collected
+readout is injective and every possible outcome must be correct. Classical
+inspection of a state description or its complete support is not free readout.
+The lower bounds extend to
+$O_f=\sum_x\lvert x\rangle\langle x\rvert\otimes G_{f(x)}$ for fixed invertible
+$G_0,G_1$. Matching upper bounds are asserted for QXOR, not arbitrary
+$G_0,G_1$: the choice $G_0=G_1$ makes all functions indistinguishable.
+
+\paragraph{PROB: additional real completion problem.}
+A real probability completion is nonnegative, normalized and no-signalling.
+It is faithful only if every supported event has positive probability. A weak
+completion can delete possible events by assigning them zero. Neither type is
+inferred automatically from modal support.

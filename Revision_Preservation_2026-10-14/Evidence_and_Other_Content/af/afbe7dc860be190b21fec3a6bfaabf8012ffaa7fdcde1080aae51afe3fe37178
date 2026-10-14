@@ -1,0 +1,560 @@
+Yes — and your last point is important: **the reduction does not need to be uniquely CM-specific to be useful or fast.** “CM-specific” was a stricter scientific question about *what should be credited specifically to CM*, not a requirement for practical value.
+
+A good way to think about what we just did is that we separated three questions that can easily get mixed together:
+
+1. **Can CM-style folding remove a lot of symbolic Boolean work?**
+   S1 says **yes, very clearly**.
+2. **Can a CM implementation do that faster or more efficiently than competing implementations?**
+   **Still open.** We have not yet done the strong isolated timing campaign needed to answer this.
+3. **Does CM discover simplifications that a sufficiently powerful generic Boolean optimizer fundamentally cannot discover?**
+   On S1/S2, **we found no evidence of that**.
+
+Question 3 is scientifically interesting, but Question 2 may be much more important in practice.
+
+## First: what does “folding” mean?
+
+Suppose we have:
+
+```math
+(X \lor Y)\oplus(X\land Y).
+```
+
+A conventional symbolic ANF calculation might first expand each side:
+
+```math
+X\lor Y = X\oplus Y\oplus XY
+```
+
+and
+
+```math
+X\land Y = XY.
+```
+
+Then combine them:
+
+```math
+(X\oplus Y\oplus XY)\oplus XY
+```
+
+and finally cancel the two `XY` terms:
+
+```math
+X\oplus Y.
+```
+
+That is perfectly correct.
+
+But notice what happened: we **created the nonlinear term** **`XY`** only to cancel it later.
+
+CM folding asks:
+
+> “Both inner expressions operate on exactly the same operands `X,Y`. Why expand either one yet?”
+
+Each binary operator is only a four-bit object — its values on:
+
+```math
+(1,1),(1,0),(0,1),(0,0).
+```
+
+So we can combine the two operators themselves first.
+
+For OR:
+
+```math
+[\lor]= \begin{pmatrix} 1&1\\ 1&0 \end{pmatrix}
+```
+
+and AND:
+
+```math
+[\land]= \begin{pmatrix} 1&0\\ 0&0 \end{pmatrix}.
+```
+
+Apply XOR entrywise:
+
+```math
+[\lor]\oplus[\land] = \begin{pmatrix} 0&1\\ 1&0 \end{pmatrix} = [\oplus].
+```
+
+So the whole expression becomes immediately:
+
+```math
+X\oplus Y.
+```
+
+**That is folding.**
+
+We collapsed an expression tree involving several operators into **one four-bit operator** before turning it into a polynomial.
+
+The CM paper proves exactly why this is sound when the operand frames agree: after aligning variable order/polarity, compatible operators can be fused entrywise and replaced by a single operator.
+
+---
+
+## Why “pre-expansion” matters
+
+This is where things get potentially powerful.
+
+Sparse ANF represents functions as collections of monomials such as
+
+```math
+1,\quad X,\quad Y,\quad XY,\quad XYZ,\ldots
+```
+
+XOR is relatively cheap: you essentially toggle monomials.
+
+But nonlinear Boolean operations can require **polynomial multiplication**.
+
+If
+
+```math
+P = a_1\oplus a_2\oplus\cdots
+```
+
+and
+
+```math
+Q=b_1\oplus b_2\oplus\cdots,
+```
+
+then computing `PQ` may require considering many pairs
+
+```math
+a_i b_j.
+```
+
+Some subsequently cancel, but you've already paid the cost of creating and processing them.
+
+This is analogous to the familiar algebra mistake of expanding
+
+```math
+(a+b)(a-b)
+```
+
+into four products before noticing it is simply
+
+```math
+a^2-b^2.
+```
+
+If you recognize the structure **before expansion**, you avoid generating intermediate material at all.
+
+That is what the S1 results demonstrated dramatically.
+
+At depth 10, for example, some strata required roughly **700–900 polynomial multiplications** under direct recursive ANF propagation, while CM folding often reduced the median to **zero**.
+
+One representative stratum was:
+
+```math
+\text{direct median}=487,\qquad \text{CM median}=0.5.
+```
+
+So “strong pre-expansion optimization” means:
+
+> **Don't make a huge symbolic polynomial and then simplify it. Simplify the small operators that will generate the polynomial first.**
+
+That's a genuinely useful compiler principle.
+
+---
+
+# What makes CM particularly natural for this?
+
+A binary Boolean operator has only **16 possible truth functions**.
+
+A CM stores one of those functions as four bits.
+
+Consequently, if you discover that a large-looking subtree actually continues to act on the same operand pair `X,Y`, the subtree can potentially stay inside this tiny 16-element universe.
+
+Instead of repeatedly doing polynomial algebra, you can do something resembling:
+
+```math
+4\text{-bit token} \quad\to\quad 4\text{-bit token} \quad\to\quad 4\text{-bit token}.
+```
+
+Only when you leave that local structure do you convert the surviving operator into ANF.
+
+The CM framework also carries an **operand frame**. For example:
+
+```math
+X\Theta Y, \quad Y\Theta X, \quad \neg X\Theta Y, \quad X\Theta\neg Y
+```
+
+can sometimes be normalized by transposing or permuting the four CM entries. The paper explicitly defines these transformations and only permits fusion after the frames have been proven compatible.
+
+That typed structure is potentially valuable even if another compiler *could in principle* derive the same truth function.
+
+---
+
+# So what did S1 actually test?
+
+S1 was deliberately almost a “wind tunnel test” for folding.
+
+We constructed expressions rich in:
+
+- repeated same operand pairs;
+- affine versus nonlinear operators;
+- reversed operand orientations;
+- increasingly deep operator trees.
+
+The question was:
+
+> If CM's proposed mechanism really exists, can it stop ANF multiplication before expansion?
+
+The answer was emphatically **yes**.
+
+Every preregistered favorable stratum at depth `6+` passed the folding criterion.
+
+For example:
+
+| DepthDirect ANF multiplicationsCM after folding |           |       |
+| ----------------------------------------------- | --------- | ----- |
+| 6                                               | \~21–75   | \~0–1 |
+| 8                                               | \~64–258  | \~0–1 |
+| 10                                              | \~204–910 | \~0–1 |
+
+Those aren't timing numbers. They're counts of expensive symbolic operations that never needed to happen.
+
+That's arguably more informative initially than a Python stopwatch measurement.
+
+---
+
+# And what was S2?
+
+S2 was intentionally less friendly.
+
+Instead of repeatedly operating on the same two things, it introduced:
+
+- multiple variables;
+- changing operand supports;
+- DAG sharing;
+- mixtures of affine and nonlinear nodes.
+
+The idea was to see when folding stops helping.
+
+And the results were sensible.
+
+With essentially no sharing:
+
+```math
+35\rightarrow35
+```
+
+median ANF multiplications.
+
+No gain.
+
+With moderate structural sharing:
+
+```math
+17\rightarrow12.
+```
+
+Some gain.
+
+With high sharing:
+
+```math
+9\rightarrow0.
+```
+
+Large gain.
+
+So a preliminary structural story is emerging:
+
+> Folding helps when a computation repeatedly revisits compact, reusable local Boolean relationships before those relationships become large symbolic expressions.
+
+That is more interesting than merely saying “CM is fast.”
+
+---
+
+# Then what is this “generic 2-support” thing?
+
+This was me deliberately making the comparison difficult.
+
+Suppose we don't call anything a CM.
+
+A generic optimizer can say:
+
+> “I see this entire subtree ultimately depends on only two Boolean variables. There are only four possible inputs. I'll evaluate those four cases, obtain its four-bit truth table, and replace the subtree with that small function.”
+
+That is essentially a little **2-input LUT/cut optimizer**.
+
+So imagine:
+
+```text
+                 giant-looking subtree
+                        |
+                 depends only on X,Y
+                        |
+               evaluate four cases
+                        |
+                  4-bit function
+```
+
+Then convert that directly into its minimal two-variable ANF.
+
+That optimizer does not need CM terminology.
+
+And we deliberately gave it that ability because otherwise the experiment would have been unfair.
+
+---
+
+# Why did it match CM?
+
+Because in the synthetic families we tested, the useful information CM was exploiting was essentially:
+
+> “This portion of the graph is still a Boolean function of these same two variables.”
+
+The generic optimizer can discover the same fact.
+
+So after optimization both ended up with the same final polynomial.
+
+Across **10,389 admitted cases**, we found zero differences between CM and generic 2-support in:
+
+- polynomial multiplications;
+- attempted monomial pair-products;
+- peak monomial count;
+- final monomial count;
+- final ANF degree;
+- serialized representation size;
+- final structural node count;
+- function digest.
+
+That's unusually clean experimental evidence.
+
+It tells us the mechanism is real — but in these families the **mathematical simplification was not exclusive to CM**.
+
+---
+
+# But why should we care whether it is “CM-specific”?
+
+Only for certain claims.
+
+Imagine I invent a compiler representation called Foo.
+
+Foo computes something in 1 second instead of 100 seconds.
+
+That's extremely useful.
+
+Now suppose someone notices that an appropriately optimized standard compiler can also do it in 1 second.
+
+That doesn't make Foo useless.
+
+It changes the claim from:
+
+> “Foo discovered a fundamentally new computational shortcut.”
+
+to something like:
+
+> “Foo is an efficient and perhaps particularly clean way to expose and implement this shortcut.”
+
+Those can both be valuable contributions.
+
+In our case, there are really **three levels of potential CM result**:
+
+| LevelPossible result      |                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| Mathematical mechanism    | Folding before ANF expansion removes enormous intermediate work                     |
+| Engineering advantage     | CM recognizes/executes that folding faster, cheaper, more locally, or more reliably |
+| Unique optimization power | CM finds important reductions a strong generic optimizer misses                     |
+
+S1 gives strong evidence for the **first**.
+
+We haven't properly tested the **second**.
+
+S1/S2 currently give negative evidence for the **third**, at least for those workload families.
+
+And I agree with you that **level 2 is potentially extremely interesting even if level 3 never materializes.**
+
+---
+
+# In fact, CM might still be faster even if the result is identical
+
+This is a subtle but important point.
+
+The generic optimizer we constructed was deliberately powerful. In **6,010 of the 10,389 cases**, it actually performed *more* folding operations than the CM frontend.
+
+Yet both eventually reached the exact same ANF.
+
+That leaves open a potentially very useful question:
+
+> **How much work does each optimizer have to do to discover the same reduction?**
+
+CM has information that a generic optimizer may have to rediscover.
+
+For a CM node we may already know:
+
+- left operand;
+- right operand;
+- their orientation;
+- polarity;
+- operator identity;
+- whether the function is affine/nonlinear;
+- that its truth behavior fits in four bits.
+
+A generic cut optimizer might instead have to:
+
+- compute support;
+- inspect the graph;
+- determine that support size ≤2;
+- evaluate the cut four times;
+- hash/cache the truth function;
+- possibly canonicalize it;
+- decide whether replacement pays.
+
+Therefore it is entirely possible to get:
+
+```math
+\text{same optimized result}
+```
+
+but
+
+```math
+\text{different optimization cost}.
+```
+
+That's exactly why I do **not** consider the current result bad news for a practical CM compiler.
+
+---
+
+# A concrete analogy
+
+Suppose two programs ultimately simplify
+
+```math
+123456789 \times 0
+```
+
+to zero.
+
+One does all the multiplication and discovers the answer is zero.
+
+Another sees the zero operand immediately and returns zero.
+
+Same output.
+
+Huge difference in computational route.
+
+Now suppose a third optimizer also knows the zero rule.
+
+Then both return zero immediately.
+
+It would be wrong to say:
+
+> “The zero shortcut doesn't work because another optimizer knows it.”
+
+The useful questions become:
+
+- Who recognizes it sooner?
+- What does recognition cost?
+- How often does the pattern occur?
+- Can it be cached?
+- Does the representation naturally expose it?
+- Does it reduce memory pressure?
+- Does it enable downstream optimizations?
+
+That is where CM can still distinguish itself.
+
+---
+
+# There is another possible advantage: CM as metadata
+
+I think this deserves more attention than we've given it.
+
+A CM isn't merely the four truth bits in our compiler design. It carries a **typed relationship**:
+
+```math
+(\text{row operand},\text{column operand},\text{orientation},\text{operator}).
+```
+
+So it may function almost like compiler metadata saying:
+
+> “This enormous subtree has already been certified to mean operator 9 on variables A and B.”
+
+Now a later pass doesn't need to rediscover it.
+
+That could be valuable for:
+
+- repeated evaluation;
+- incremental edits;
+- restrictions/partial assignments;
+- memoization;
+- persistent compiled artifacts;
+- provenance/certification;
+- query systems;
+- Boolean network synthesis.
+
+The paper itself emphasizes this distinction between a compact operator token, its operand-frame surrogate, the general CM IR, and an explicit dense CM. It also warns that constant-time token fusion should not automatically be equated with end-to-end speed because materialization and interface costs still matter.
+
+---
+
+# And the timing number we saw is actually intriguing
+
+There's one result I intentionally didn't make much of earlier.
+
+Among **1,789 S2 cases in which CM performed zero folds**, the preliminary single-pass result was:
+
+```math
+\frac{T_{CM}}{T_{generic}}\approx0.911.
+```
+
+In other words, CM was about **9% faster** in that diagnostic measurement even when it wasn't gaining from successful folds.
+
+But I explicitly did **not** declare that a result yet.
+
+Single-pass timing in a shared container can be noisy. CPU frequency, caches, process scheduling and Python allocator behavior can easily move numbers by that amount.
+
+But it is enough to justify investigating.
+
+And on the cases where CM *does* fold, the interesting possibility is larger:
+
+```math
+\text{cheap CM recognition} + \text{hundreds of avoided polynomial operations}
+```
+
+could translate into a meaningful wall-clock advantage.
+
+We simply haven't performed the controlled timing experiment yet.
+
+---
+
+# Where I think we are now
+
+I would characterize the result as:
+
+> **We have experimentally demonstrated that operator-level folding before ANF expansion can eliminate very large amounts of symbolic work on suitable structure. CM provides a natural typed mechanism for doing this. In our synthetic S1/S2 tests, an intentionally strong generic two-support optimizer was able to reproduce the same final reductions, so we cannot yet claim that the reduction itself is uniquely enabled by CM. That says nothing negative about whether CM may implement the optimization faster, with lower overhead, better caching, or better provenance.**
+
+That last issue is now one of the most interesting things to test.
+
+And it also aligns closely with the operator-level paper's original framing: the real empirical question is whether normalization and fusion **remove enough work to repay their preparation and representation costs**, rather than whether nobody else can represent the same four truth values.
+
+## What I would test next
+
+I'd actually adjust our priorities slightly.
+
+**N1 remains important**, because it tells us whether the mechanism appears in natural formulas.
+
+But alongside N1 I think we should now perform a proper **Gate-P / speed experiment**:
+
+1. CM folding versus generic 2-support folding on identical expressions.
+2. Measure **recognition/optimization time separately** from ANF propagation.
+3. Measure total:
+   ```math
+   T_\text{parse}+T_\text{optimize}+T_\text{ANF}.
+   ```
+4. Test cold compilation and repeated reuse.
+5. Measure memory and intermediate-object counts.
+6. Specifically isolate formulas where both produce **identical final ANF**.
+
+That last group is especially interesting.
+
+If both methods produce the exact same symbolic result but CM reaches it, say, **2× faster**, that's still a genuine CM implementation advantage. It simply wouldn't mean that CM has access to a Boolean identity unavailable to other representations.
+
+And if we see something like:
+
+```math
+487\text{ ANF multiplications} \rightarrow 0
+```
+
+*and* CM recognizes the opportunity much more cheaply than the generic cut machinery, **that would be a very worthwhile computational result even without any claim of unique mathematical power.**

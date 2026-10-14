@@ -1,0 +1,1803 @@
+
+===== PDF PAGE 1 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR
+SWITCHING NETWORKS
+BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW,
+AND KAFUNG MOK
+Abstract. We describe the theoretical and computational framework for the Dynamic
+Signatures for Genetic Regulatory Network (DSGRN) database. The motivation stems
+from urgent need to understand the global dynamics of biologically relevant signal trans-
+duction/gene regulatory networks that have at least 5 to 10 nodes, involve multiple in-
+teractions, and decades of parameters.
+The input to the database computations is a regulatory network, i.e. a directed graph
+with edges indicating up or down regulation. A computational model based on switching
+networks is generated from the regulatory network. The phase space dimension of this
+model equals the number of modes and the associated parameter space consists of one
+parameter for each node (a decay rate), and three parameters for each edge (low level
+of expression, high level of expression, and threshold at which expression levels change).
+Since the nonlinearities of switching systems are piece-wise constant, there is a natu-
+ral decomposition of phase space into cells from which the dynamics can be described
+combinatorially in terms of a state transition graph. This in turn leads to compact repre-
+sentation of the global dynamics called an annotated Morse graph that identiﬁes recurrent
+and nonrecurrent. The focus of this paper is on the construction of a natural computable
+ﬁnite decomposition of parameter space into domains where the annotated Morse graph
+description of dynamics is constant.
+We use this decomposition to construct an SQL database that can be eﬀectively
+searched for dynamic signatures such as bistability, stable or unstable oscillations, and
+stable equilibria. We include two simple 3-node networks to provide small explicit ex-
+amples of the type information stored in the DSGRN database. To demonstrate the
+computational capabilities of this system we consider a simple network associated with
+p53 that involves 5-nodes and a 29-dimensional parameter space.
+1. Introduction
+Though the method presented in this paper is general, our primary motivation arises
+from the need to understand the global dynamics of signal transduction/gene regulatory
+networks, e.g. [32]. Our mathematical abstraction of a regulatory network RN is a di-
+rected graph where the nodes (vertices) V ={1,...,N } indicate the species and the edges
+E indicate the activation or repression of production of one species by another (this is
+made precise in Deﬁnition 2.1). There are at least three fundamental challenges in deter-
+mining if a given regulatory network provides a biologically relevant model; determining
+completeness, authentication, and nonlinear interaction. As discussed in [33] completeness
+Date: December 13, 2015.
+1
+arXiv:1512.04131v1  [math.DS]  13 Dec 2015
+
+===== PDF PAGE 2 =====
+2 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+and authentication are concerned with whether the relevant species are included in the reg-
+ulatory network and whether the proposed interactions are correct. Genomic sequencing
+data informs completeness, while biochemical knowledge is required for authenticity. While
+the quantity of genomic data is rapidly increasing, detailed biochemical information is still
+sparse. Since the interaction between species is typically governed by multiscale processes
+determining appropriate explicit nonlinearities let alone realistic physical parameters is
+extremely diﬃcult.
+We propose to address these challenges by employing a crude, compact, robust, math-
+ematically rigorous, ﬁnitely presented description of dynamics that allows for a combina-
+torial representation of parameter space. As a consequence, given a regulatory network
+RN, we are able to build the associated Database of Dynamic Signatures which codiﬁes
+the global dynamics over all of parameter space. The underlying theoretical ideas have
+already been exploited to study to study a variety of mathematical and biological models
+[4, 7, 8, 6]. However, to eﬀectively use these ideas in the context of moderately sized gene
+regulatory networks where completeness and authentication are in question, we require
+order of magnitudes greater eﬃciency for approximating the dynamics and the ability to
+work with much higher dimensional parameter spaces. This paper describes and justiﬁes a
+revised approach that achieves the desired eﬃciency and provides a natural decomposition
+of parameter space.
+Our starting point has much in common with an approach often referred to as logical
+networks [2]. The diﬃculties, alluded to above, in determining and then parameterizing
+appropriate interactions and nonlinearities has lead to the widespread use of relatively
+simple models that aim to capture qualitative features of the dynamics. The simplest
+ones are the Boolean models, where each node is represented as either on or oﬀ; the
+dynamics of the i-th node consist of evaluation of a logical function deﬁned by this binary
+representation of the state of the system. The evolution of the network proceeds in discrete
+steps in time which can either synchronously evaluate all functions Λ i [3, 12], or do so
+asynchronously [9, 42, 35].
+Our approach is most closely associated with asynchronous logical networks. Given a
+regulatory network RN withN nodes, the associated switching system [24, 25, 26, 27, 15,
+18, 19, 14] is an N-dimensional system of ordinary diﬀerential equations of the form
+(1) ˙ x =−Γx + Λ(x)
+where Γ is a diagonal matrix with positive entries, and Λ is a piecewise constant function
+(see Deﬁnition 2.4). There are a variety of parameters associated with switching networks.
+To each variablexi there is a decay rateγi> 0 (the diagonal terms in Γ). To each edge in
+RN, corresponding to the impact of species i onj, we associate two expression levels, low
+lj,i and highuj,i, and a thresholdθj,i forxi at which the expression levels switch. Thus given
+a regulatory network the set of parameters lies in [0,∞)D whereD =N + 3· #(E), where
+N is the number of nodes, and #( E) is the number of edges. Our goal is to characterize
+the global dynamics for every point in parameter space.
+We hasten to add (this is made clear in the sections that follow) that we do not view
+(1) as a mathematical model for the biological process; rather (1) is only used to motivate
+
+===== PDF PAGE 3 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 3
+the combinatorial computations that are the focus of this paper. To emphasize this point
+we recall that the main result of [22] is that applying the methods described in this paper
+to 2-dimensional switching systems results in a representation of the global dynamics that
+is valid for a much wider family of nonlinearities, i.e. for a system of the form
+(2) ˙ x =−Γx +f(x)
+wheref is a Lipschitz continuous function. Algebraic topological tools such as the Conley
+index [36] can be applied to this representation to extract information concerning the
+structure of invariant sets for dynamics of (2). We also note that for a typical parameter
+value one can obtain explicit a priori estimates for how much the nonlinearity f can diﬀer
+from the switching nonlinearity Λ. It is in this sense that we view (1) as a computational
+tool, rather than the mathematical model of biological reality. An important implication is
+that we can obtain rigorous results about the dynamics without explicit/detailed knowledge
+of the appropriate nonlinearity for the biological problem of interest. It is worth contrasting
+our approach to more classical methods for relating the dynamics of smoothed systems (2)
+with the discontinuous switching systems (1) [17, 30, 43].
+To approximate the dynamics of the switching system at a ﬁxed parameter value we use
+the thresholds θ to decompose phase space. These decompositions are then used to deter-
+mine state transition diagrams (see Section 3). In this format the dynamics is represented
+by a sparse directed graphF with roughly∏N
+n=1[O(n)+1] vertices where O(n) is the num-
+ber of out edges at noden. Given the size of the regulatory networks that we are interested
+in analyzing, storing all the state transition graphs that arise as one sweeps through param-
+eter space is impractical. With this in mind we focus on the essential dynamical structures:
+the recurrent dynamics, i.e. the nontrivial strongly connected components of F; and the
+gradient-like dynamics, i.e. the reachability, deﬁned by paths in F, between the recurrent
+components. There are eﬃcient (both in time and memory) graph algorithms that allow
+one to identify strongly connected components (see [4, 7] and references therein, and [5]
+for an application of these techniques in the context of regulatory networks). Therefore,
+for the networks we are currently considering this step is not a computational bottleneck.
+We encode this information in the form of an annotated Morse graph MG(F). The Morse
+graph is the minimal directed acyclic graph such that each nontrivial strongly connected
+component is represented by a distinct node and the edges indicate the reachability infor-
+mation inherited from F between the nodes (see Section 3.3). The annotations consist of
+optional information, typically problem speciﬁc, that allow for easier identiﬁcation between
+the dynamics captured by our approach and the dynamics of biological interest.
+The computational steps described above are valid for individual parameter values. A
+fundamental contribution of this paper is the identiﬁcation of a natural decomposition
+of parameter space into regions, called parameter cells, over which the transition graphs
+and hence Morse graphs are constant. The cells are given in terms of explicit polynomial
+inequalities in the parameter values and hence take the form of semi-algebraic sets. Since
+the global dynamics of switching networks is parameter dependent and we are working
+with high dimensional parameter spaces it should come as no surprise that understanding
+the geometry and organizing the structure of all parameter cells is nontrivial. With this in
+
+===== PDF PAGE 4 =====
+4 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+mind we introduce the parameter graph (see Section 4), an undirected graph where each
+node is identiﬁed with a parameter cell and the edges provide information about how the
+parameter cells are related. In fact, we make use of two parameter graphs. The ﬁrst, called
+the geometric parameter graph (GPG) is based on the topology of parameter space as a
+subset of [0,∞)D. This provides a description of the decomposition of parameter space in
+a language familiar to researchers in the ﬁeld of dynamical systems. The second, called
+the combinatorial parameter graph (CPG) is what is actually computed. We prove that
+there is a graph homomorphism h: GPG→ CPG and conjecture that the geometric and
+combinatorial parameter graphs are equivalent, but only have a proof, see Theorem 4.17,
+for regulatory networks whose nodes have at most 3 in edges and out edges.
+Our construction of theCPG for RN is based on two facts. First, that the graph structure
+is actually a canonical graph product over factor graphs CPGn which depend only on the
+local structure of RN around each network noden. Second, that each CPGn is a connected
+subgraph of a larger graph of combinatorial parameters, and may be constructed via a
+graph traversal search for realizable combinatorial parameters, i.e. those that are realized
+by some geometric parameter of RN. In particular, for each node n in RN we compute
+the set of possible combinatorial parameters, which is determined by the number of out
+edges atn, the number of in edges at n, and the logic that determines how the information
+from the in edges is processed. To identify whether a particular combinatorial parameter
+is realizable we make use of cylindrical algebraic decompositions (CAD) [13] to determine
+if there exists a solution to an associated the set of inequalities. Recall that a cylindrical
+algebraic decomposition of a semi-algebraic set is a recursive set of inequalities that deﬁnes
+the elements of the set. As is discussed in Remark 4.16, CAD computations are expensive.
+However, once done they can be re-used at a constant cost. Thus our strategy is to
+perform the CAD computations and store them. A list of the node structures for which
+CAD computations have been performed is given in Table 1.
+Our inability to prove that h: GPG → CPG is always an isomorphism, stems from
+our lack of general understanding of the geometry of individual and pairs of regions on
+which transition graphs are constant. However, the CAD computations, once performed,
+provide suﬃcient information to check the conjecture. This is the essence of the proof of
+Theorem 4.17.
+The concepts and techniques introduced in this paper have allowed us to develop the
+DSGRN (Dynamic Signatures of Genetic Regulatory Networks ) software [29] that has the
+following features and capabilities:
+• It can compute the size of parameter graphs (number of parameter nodes) for any
+regulatory network constructed using components found in Table 1. In particu-
+lar we supply a web-based program to design such networks which automatically
+tabulates the size of the parameter graph.
+• It can access a database of cylindrical algebraic decompositions (CAD) of parameter
+cells corresponding to parameter nodes for regulatory networks constructed using
+components found in Table 1.
+
+===== PDF PAGE 5 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 5
+• It can compute annotated Morse graphs given a parameter (cell) and a regulatory
+network.
+• It can compute databases of annotated Morse graphs over an entire (combinatorial)
+parameter graph given a regulatory network. These databases are designed using
+SQL and support a range of queries over Morse graph attributes and annotations.
+• We supply a web-interface to interact with databases that can ﬁlter parameter
+graphs to show only nodes which satisfy certain queries.
+• We supply a command line interface which allows access to phase space informa-
+tion for the associated switching system of a regulatory network given a particular
+parameter of interest.
+• We have supplied documentation of the program along with tutorial materials.
+To provide the reader with intuition concerning the output in Section 5 we consider three
+regulatory networks. The ﬁrst two, the repressilator and the bistable repressilator, consist
+of 3 nodes and 3 and 4 edges respectively. For these examples the parameter graphs are
+suﬃciently small that they can be easily visualized. In general, the output of DSGRN grows
+rapidly as a function of the size of the regulatory network and thus can only be accessed
+eﬃciently through queries. To give a sense of the computational capabilities of DSGRN for
+problems of biological interest we consider a subnetwork associated with p53 and report
+the computational times and costs. The parameter graph information can be accessed at
+[29].
+Before concluding this introduction we return to the challenge of determining complete-
+ness and authentication where we believe DSGRN can be a useful tool. These challenges
+imply that in early stages of modeling one cannot necessarily assume that a proposed regu-
+latory network is ‘correct.’ By allowing one to compare the output of the model dynamics
+against experimental data, Boolean models provide a computationally tractable means to
+attempt to identify the existence of missing species and interaction and/or to exclude non
+existent interactions and unnecessary species (see for example [11, 10, 28, 37]). Because
+the computations that we perform to identify the dynamics is purely combinatorial, the
+cost of our computations are similar to that of pure Boolean models. However, because
+we model using real numbers and ordinary diﬀerential equations, DSGRN can capture ﬁner
+dynamical structures that presumably can be more readily identiﬁed with experimental
+values. More signiﬁcantly, the fact that DSGRN provides a complete description of the
+dynamics over all of parameter space opens up new opportunities for deciding upon the
+plausibility of or comparison of diﬀerent models, e.g. how stable is the desired dynamic
+phenotype to changes in parameters, and for control of the dynamics, e.g. which changes in
+parameters result in a desired dynamic phenotype. We leave the implementation of these
+ideas to future works.
+2. Switching Networks
+We review the essential concepts of switching networks. In Section 2.1 we deﬁne reg-
+ulatory networks and their associated switching systems. In Section 2.2 we discuss the
+
+===== PDF PAGE 6 =====
+6 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+interpretation of the nonlinearities in the switching system as performing logical opera-
+tions on the inputs. In Section 2.3 we use the discontinuities of the nonlinearity of (1) to
+impose a natural decomposition of phase space.
+2.1. Regulatory Networks.
+Deﬁnition 2.1. A regulatory network RN = (V,E ) is an annotated ﬁnite directed graph
+with vertices V ={1,...,N } called network nodes and annotated directed edges E ⊂
+V×V×{→,⊢} called interactions. An → annotated edge is referred to as an activation
+and an ⊢ annotated edge is called a repression. We indicate that either i→ j or i⊢ j
+without specifying which by writing ( i,j )∈ E. An → annotated edge is referred to as
+an activation and an⊢ annotated edge is called a repression. We allow for self edges, but
+admit at most one edge between any two nodes, e.g. we cannot have both i→j and i⊢j
+simultaneously. The set of sources and targets of a node n are denoted by
+S(n) :={i| (i,n )∈E} and T(n) :={j| (n,j )∈E}.
+The cardinality of S(n) and T(n) are denoted by #( S(n)) and #( T(n)). Each node is
+equipped with a nonlinear function Mi : RS(i)→ R, called the logic of node i.
+For convenience we abuse notation and occasionally write a network node as xi instead
+ofi. For instance, we may write (i,j,→)∈E and (i,j,⊢)∈E respectively as xi→xj and
+xi⊢xj.
+Remark 2.2. Throughout this paper we assume that the regulatory network RN does not
+have any direct negative self-regulation i⊢ i for any i. This is done for technical reasons
+related to the code (see Remark 3.9). This is not a serious restriction. In biological systems
+negative self-regulation is often mediated by an intermediary, e.g. xi→ Xi⊢ xi [16, 21].
+Furthermore, future planned developments of the code will allow the user to remove this
+restriction.
+Deﬁnition 2.3. Given a regulatory network RN = (V,E ), for each edge ( i,j )∈ E (i.e.
+i→ j or i⊢ j) we associate three parameters: lj,i, uj,i, and θj,i. (Note the matrix-style
+subscript order convention.) Additionally, to each node i∈ V we associate a decay rate
+γi. Each of these parameters are real numbers, so we may regard the collection of all these
+parameters as a tuple (l,u,θ,γ )∈ RD. We call this collection of numbers a parameter for
+RN.
+Deﬁnition 2.4. Given a regulatory network RN the associated switching system at pa-
+rameter (l,u,θ,γ )∈ RD, where D =N + 3· #(E), is given by
+(3) ˙ xj =−γjxj + Λj(x), j = 1,...,N
+where
+(4) Λ j :=Mj◦σj.
+
+===== PDF PAGE 7 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 7
+Here σj : RN→ RS(j) is a multi-dimensional step function deﬁned componentwise (i.e. by
+its coordinate projections πi(σj)) for each i∈ S(j) as
+(5) σj,i =πi(σj(x)) :=
+
+
+
+lj,i if xi→xj and xi<θ j,i or if xi⊢xj and xi>θ j,i
+uj,i if xi→xj and xi>θ j,i or if xi⊢xj and xi<θ j,i
+undeﬁned otherwise.
+Remark 2.5. Switching systems written in the form (3) are equivalent to (1) where Γ is
+the diagonal matrix with diagonal entries Γ ii :=γi and the i-th coordinate of Λ is Λ i.
+The dependence on x of the right-hand-side of (3) involves the expression σj(x). Since
+σj is a multidimensional step function which compares variables to thresholds, a grid-like
+structure is imposed upon phase space.
+Deﬁnition 2.6. Let z = (u,l,θ,γ ) be a parameter for the regulatory network RN. For
+each i∈ V , observe the convention that θ−∞,i = 0 and θ∞,i =∞. For all i∈ V , j1,
+j2∈V∪{−∞,∞}, we sayθj1,i andθj2,i are consecutive thresholds ifθj1,i<θ j2,i and there
+does not exist θj,i such that θj1,i <θ j,i <θ j2,i. For each i = 1, 2,··· ,N , suppose θai,i and
+θbi,i are consecutive thresholds. Then we say that the product of open intervals
+κ :=
+N∏
+i=1
+(θai,i,θbi,i)
+is a fundamental cell of the regulatory network. We denote the collection of fundamental
+cells asK(z). If aj∈V then we say that the bounded hyperplane
+κ−
+j :=
+j−1∏
+i=1
+(θai,i,θbi,i)×{θaj,j}×
+N∏
+i=j+1
+(θai,i,θbi,i)
+is a left face ofκ with projection index j and switching index aj. Similarly, if bj∈V then
+we say the bounded hyperplane
+κ+
+j :=
+j−1∏
+i=1
+(θai,i,θbi,i)×{θbj,j}×
+N∏
+i=j+1
+(θai,i,θbi,i)
+is a right face ofκ with projection index j and switching indexbj. A face of a fundamental
+cell κ is either a left or right face of κ.
+We restrict our focus to non-negative parameters ¯Z ⊂ [0,∞)D ⊂ RD for which we
+interpret thel andu values as the lower and upper values that may be taken, respectively.
+This imposes the additional requirement that lj,i≤uj,i.
+Deﬁnition 2.7. Given a switching networkRN the associated parameter space ¯Z is deﬁned
+to be the collection of all parameters ( l,u,θ,γ ) ∈ [0,∞)D for which lj,i ≤ uj,i for all
+(i,j )∈E. A parameter z = (l,u,θ,γ )∈ ¯Z is regular if
+(1) the inequalities are satisﬁed strictly, i.e. 0 <l j,i<u j,i, 0 <γ i, and 0 <θ j,i,
+(2) for each ﬁxed i the threshold values θj,i are distinct, and
+
+===== PDF PAGE 8 =====
+8 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+(3) for each κ∈K (z) the value Λi(κ)⁄=γiθj,i for each threshold θj,i that deﬁnes κ.
+We denote the collection of regular parameters by Z. Notice that ¯Z is (as the notation
+suggests) the topological closure of Z in RD and the set Z is generic in ¯Z. For a regular
+parameter z∈ Z the thresholds {θj,i : j∈ T(i)} occur in some deﬁnite (total) order for
+eachi∈V . We denote this ordering by O(z) and the collection of all orderings over all of
+parameter space as
+O(Z) :=
+⋃
+z∈Z
+O(z).
+2.2. Network Node Logics. Deﬁnition 2.4 does not specify the nonlinear functions Mj.
+As indicated in the introduction our approach is associated with the interpretation of
+regulatory networks as logical networks. To be more precise, a logical expression involving
+truth variablesvi, logical conjunctives∧ (i.e. ANDs), and logical disjunctives ∨ (i.e. ORs)
+leads to an analogous arithmetic expression by replacing ∧ with· and∨ with +. For
+example, (a∨b)∧c becomes (a +b)c. Observe that given truth variables vi, a logical
+expression 𝓁(v1,v 2,··· ,vn) (without negations) leads unambiguously to the multilinear
+arithmetic expression M(x1,x 2,··· ,xn) given by
+M(x1,x 2,··· ,xn) :=
+∑
+𝓁(v1,···,vn)=T
+∏
+vi=F
+(1−xi)
+∏
+vi=T
+xi,
+where xi∈ R.
+Note that for every logical expression where each variable occurs at most once the recipe
+of replacing∧ with· and∨ with + produces an arithmetic expression which is equivalent
+to this multilinear expression.
+For the purposes of this paper our focus is on regulatory networks where one considers
+a logic for each network node j consisting of a logical expression involving each of the
+variables xi ∈ S(j) precisely once. The multilinear functions Mj appearing in (4) are
+obtained from these logical expressions.
+Remark 2.8. These assumptions on the structure of the terms in Mj imply that Λ j can
+always be expressed in the form of a sum of monomials involving the step functions σj,i(x)
+where the degree of σj,i(x) is either zero or one.
+2.3. Fundamental Cells and Vector Fields. If we restrict to a fundamental cell then
+(3) reduces to a much simpler linear form. In particular, observe that given a fundamental
+cell κ, if x,x′∈ κ then Λ(x) = Λ(x′), and therefore Λ( κ) is well-deﬁned. In accordance
+with this observation we make the following deﬁnitions:
+Deﬁnition 2.9. A regulatory network RN and a choice of parameter values z∈Z leads
+to a uniquely deﬁned switching system (1) and set of fundamental cells K(z). The κ-cell
+vector ﬁeld for a fundamental cell κ∈K (z) is given by
+(6) fκ(x) :=−Γx + Λ(κ).
+We denote the ﬂow generated by (6) by ψκ. Observe that
+Φ(κ) := Γ−1Λ(κ)
+
+===== PDF PAGE 9 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 9
+is a global attracting ﬁxed point for (6). Accordingly we say that a fundamental cell κ is
+an attracting cell if
+Γ−1Λ(κ)∈κ.
+3. State Transition Diagrams
+As indicated in the introduction we capture the dynamics of (3) via state transition
+diagrams, directed graphs where the vertices correspond to regions of phase space, and
+the edges indicate how regions are related by the dynamics. We begin in Section 3.1 by
+deﬁning wall-labelings that encapsulate combinatorial information derived from the κ-cell
+vector ﬁelds (6). In Section 3.2 we give three diﬀerent constructions of state transition
+diagrams. In Section 3.3 we show that these three constructions are equivalent in the sense
+that they lead to equivalent dynamical information.
+3.1. Wall labelings. Faces of fundamental cells play a key role in our combinatorial rep-
+resentation of the dynamical system (3). However each such face has two adjacent funda-
+mental cells and the κ-cell vector ﬁelds on either side may diﬀer. Accordingly we reﬁne
+our concept of face to make reference to one of the adjacent fundamental cells.
+Deﬁnition 3.1. A wall is a pair (τ,κ ) where κ is a fundamental cell and τ is a face of κ.
+Each wall inherits the projection and switching indexes from the corresponding face τ of
+κ. We say the sign of the wall (τ,κ ) is 1 (and write sgn(τ,κ ) = 1) if τ is a left face of κ
+and we say the sign of the wall is −1 if τ is a right face of κ (and write sgn(τ,κ ) =−1).
+For a ﬁxed parameter value z we denote the collection of walls by W(z).
+Observe that given a wall ( τ,κ ) there are three possibilities with respect to the κ-cell
+vector ﬁeld fκ: it is everywhere tangential to τ; it points out of κ everywhere on τ; or it
+points into κ everywhere on τ. If the projection index of τ is i, then these three cases are
+determined by the sign of the expression fκ
+i (τ) and whether the wall corresponds to a left
+or right face (i.e. the sign of the wall) which in turn can be determined as a function of
+parameters. We summarize this in the following deﬁnition.
+Deﬁnition 3.2. Consider a switching network at a parameter value z∈ Z. The wall-
+labeling ofW(z) is the function𝓁 :W(z)→{− 1, 0, 1} deﬁned as follows. Let (τ,κ )∈W (z)
+have projection index i and switching index j. Then deﬁne
+(7) 𝓁((τ,κ )) := sgn(τ,κ )· sgn(fκ
+i (τ)) = sgn(τ,κ )· sgn (−γiθj,i + Λi(κ)).
+Note the last equality follows since if x∈τ then xi =θj,i.
+Remark 3.3. As (7) makes clear the wall-labeling function depends explicitly on the choice
+of parameters for the switching network. However, given any two parameter values for
+which the ordering of the thresholds is the same there is an obvious identiﬁcation of the
+fundamental cells and walls. Using this identiﬁcation, the wall labelling is completely
+determined by the values of sgn( fκ
+i (τ)) over the collection of fundamental cells. As such
+we can deﬁne equivalence classes of parameter values over which wall-labelings are constant.
+
+===== PDF PAGE 10 =====
+10 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+Deﬁnition 3.4. A wall (τ,κ ) is an absorbing wall if 𝓁(τ,κ ) = −1, an entrance wall if
+𝓁(τ,κ ) = 1, and a tangential wall if 𝓁(τ,κ ) = 0.
+For parameters in the set Z (i.e. regular parameters) we will have only absorbing and
+entrance walls.
+Proposition 3.5. Given a switching system with parameter z∈Z, there are no tangential
+walls. That is, the wall-labeling function 𝓁 satisﬁes
+𝓁(τ,κ )⁄= 0
+for all (τ,κ )∈W (z).
+The classiﬁcation of walls according to the value of the wall-labeling function arises from
+geometric considerations of the ﬂows on the fundamental cells. We leave the proof of the
+following to the reader:
+Proposition 3.6. A fundamental cell κ is attracting if and only if every wall (τ,κ )∈W
+is an entrance wall.
+A stronger relation between the labeling of walls and the dynamics of the κ-equation is
+as follows. Again the proof is left to the reader.
+Proposition 3.7. Letx∈κ∈K (z) wherez∈Z is a regular parameter value. Recall that
+ψκ is the ﬂow generated by (6). If κ is an attracting cell, then there exists a unique time
+t−
+x < 0 such that ψκ((t−
+x,∞),x )⊂ κ and ψκ(t−
+x,x )∈ ¯τ where (τ,κ ) is an entrance wall
+and ¯τ denotes closure of τ. If κ is not an attracting cell, then there exist unique times
+t−
+x < 0< t+
+x such that ψκ((t−
+x,t +
+x ),x )⊂κ, ψκ(t−
+x,x )∈ ¯τ where (τ,κ ) is an entrance wall,
+and ψκ(t+
+x,x )∈ ¯τ′ where (τ′,κ ) is an absorbing wall.
+3.2. State Transition Diagram Constructions. Recall that a state transition diagram
+is a directed graph. To emphasize that we employ this as a means of representing informa-
+tion about dynamics we adopt an equivalent perspective: a state transition diagram is a
+combinatorial multivalued mapF :V ⇒V (whereV is the collection of vertices) such that
+ν′∈F (ν) if and only if there is a directed edge ν→ ν′ in the state transition diagram.
+Using the multivalued map notation the existence of a path from ν to ν′ is expressed by
+ν′∈F k(ν) for some positive integer k.
+Let 𝓁 be the wall-labeling for a switching network at a ﬁxed parameter. We give three
+constructions for state transition diagrams. In each case, note that the state transition dia-
+grams depends only on𝓁, and hence it is through the wall-labelling that the state transition
+diagrams inherit their dependence on parameters. In fact, as indicated by Remark 3.3, this
+inheritance remains constant on equivalence classes of parameter values.
+Deﬁnition 3.8. The wall graph F :V ⇒V induced by the wall-labeling 𝓁 is deﬁned as
+follows. There is a bijection that identiﬁes the set of vertices V with the collection of
+attracting fundamental cells and the faces of all fundamental cells. For each pair of faces
+τ, τ′ admitting a fundamental cell κ such that (τ,κ ) is an entrance wall and ( τ′,κ ) is an
+absorbing wall, there is an edge τ → τ′, or equivalently τ′∈F (τ). For each attracting
+domain κ, κ∈F (κ) and κ∈F (τ) for each wall (τ,κ ).
+
+===== PDF PAGE 11 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 11
+Remark 3.9. A consequence of the assumption that the regulatory network does not have
+any direct negative self-regulation (see Remark 2.2) is that every node in the wall graph
+has an an out edge.
+Deﬁnition 3.10. The domain graph F :V ⇒V induced by the wall-labeling 𝓁 is deﬁned
+as follows. There is a bijection that identiﬁes the set of vertices V with the collection of
+fundamental domainsK(κ). If some fundamental domain κ is an attracting domain, then
+κ∈F (κ). Furthermore, κ′∈F (κ) whenever there exists a faceτ such that (τ,κ ) and (τ,κ′)
+are walls such that 𝓁((τ,κ )) =−1 (indicating an absorbing wall of κ) and 𝓁((τ,κ′)) = 1
+(indicating an entrance wall of κ′).
+Deﬁnition 3.11. The wall-domain graph F :V ⇒ V induced by the wall-labeling 𝓁 is
+deﬁned as follows. There is a bijection that identiﬁes the set of verticesV with the collection
+of attracting fundamental cells and the faces of all fundamental cells. There are three types
+of edges. If ( τ,κ ) is absorbing wall, then τ ∈F (κ). If ( τ,κ ) is an entrance wall, then
+κ∈F (τ). Finally, if κ is an attracting fundamental domain, then κ∈F (κ).
+3.3. Dynamical Signatures. As indicated in the introduction, to store the dynamics we
+make use of a more compact representation.
+Deﬁnition 3.12. A recurrent component (also referred to as a strongly connected path
+component) of a directed graph F is a maximal collection C of vertices such that for any
+u,v ∈C there exists a non-empty path from u to v inC. In the context of dynamical
+systems we refer to a recurrent component of F as a Morse set ofF and denote it by
+M⊂V . The collection of all recurrent components of F is denoted by
+MD(F) :={M(p)⊂V| p∈ P}
+and is called a Morse decomposition ofF. Here P is an index set. Recurrent components
+inherit a well-deﬁned partial order by the reachability relation in the directed graph F.
+Speciﬁcally, we may write the partial order on the indexing set P of MD(F) by deﬁning
+q≤p if there exists a path in F from an element ofM(p) to an element of M(q).
+Primarily for clarity we note the following facts regarding recurrent components:
+Proposition 3.13. Two elements ν,ν′∈V belong to the same recurrent component of
+F if and only if there exist positive integers k,k′ such that ν′∈F k(ν) and ν∈F k′
+(ν′).
+Distinct recurrent components are disjoint. Not every vertex need belong to some recurrent
+component. Recurrent components are strongly connected components. The only strongly
+connected components that are not recurrent components are singleton sets that do not have
+a self-edge.
+Deﬁnition 3.14. The Morse graph ofF, denoted MG(F), is the Hasse diagram of the
+poset (P,≤). We refer to the elements of P as the Morse nodes of the graph.
+We note that the computation of Morse graphs is feasible and can be accomplished via
+well-known algorithms for strongly connected components [40] and transitive reduction [1].
+
+===== PDF PAGE 12 =====
+12 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+(a) (b) (c)
+Figure 1. (a) Coarse wall graph where all entrance faces map to all exit
+faces. (b) Finer wall graph with a disallowed entrance-exit trajectory from
+bottom to top (c) Finer wall graph with disallowed trajectory from left to
+right
+Proposition 3.15. The Morse graphs induced by the wall graph, the wall-domain graph,
+and the domain graph are isomorphic.
+Proof. In the wall graph, every entrance face maps to every absorbing face. Meanwhile in
+the wall-domain graph every entrance face maps to the fundamental cell which then maps
+to each of its exit faces. It follows that the reachability between faces in the wall graph and
+the wall-domain graph is the same. What is more, every recurrent component in the wall
+graph either contains a face or else is an attracting domain. From this one may establish
+the isomorphism between the Morse graph of a wall graph and the Morse graph of the
+wall-domain graph. Establishing the isomorphism of Morse graphs induced by the wall-
+domain graph and the domain graph is similar: we observe that the reachability between
+fundamental domains is the same in either and that each recurrent component must contain
+at least one domain. Combining these two isomorphisms gives the isomorphism from wall
+graph to domain graph. □
+In light of the previous result and the simplicity of the domain graph one might wonder
+why we should bother with the wall graph or wall-domain graph at all. The answer is
+two-fold. First, it is possible to reﬁne our analysis so that in the wall graph not every
+entrance face (τ,κ ) is mapped to every absorbing face (τ′,κ ) for a fundamental cell κ. For
+example, consider Figure 1. In (a), we see the wall graph obtained in the present work in
+the situation of a 2D fundamental cell with two entrance and two exit faces arranged as
+indicated. However, for a particular parameter the actual trajectories would correspond to
+the diagrams sketched in (b) and (c). To achieve combinatorial descriptions capturing the
+additional information in (b) or (c) the domain graph is inadequate and it will be necessary
+to use notions such as the wall graph. We leave this to future work.
+Second, via more sophisticated constructions of the directed graph we can obtain infor-
+mation about unstable dynamics from the Morse graph. These constructions involve using
+lower-dimensional cells such as faces as vertices and will be be detailed in a future work.
+3.4. Annotation of Morse Nodes. In addition to recording the Morse graph for a pa-
+rameter z∈ Z it is possible to produce extra information in the form of annotations we
+
+===== PDF PAGE 13 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 13
+associate with the Morse nodes of the Morse graph. We refer to this information, Morse
+graphs plus annotations, as a dynamical signature. Presently, we compute annotations for
+each Morse node based on the vertices present in the associated Morse set. We brieﬂy
+describe these annotations. First, we say that a Morse set makes an xd transition if it con-
+tains vertices corresponding to cells with diﬀering xd coordinates. We make annotations
+according to the set of transitions. In the simplest case, there are no transitions (we have
+only a single attracting cell) and we annotate the Morse set as a ﬁxed point but respecting
+three subcases: (a) if the fundamental cell is located to the left of each threshold in all
+dimensions the Morse node is marked FP OFF (ﬁxed point oﬀ ); (b) if the fundamental cell
+is located to the right of at least one threshold in each dimension it is marked FP ON (ﬁxed
+point on ); (c) otherwise it is marked just FP. In the other extreme case every transition
+is made (i.e. x1,x 2,··· ,xN). In this case we annotate the Morse node FC (for full cycle ).
+Otherwise we annotate the Morse node according to the subset of variables for which there
+is a transition.
+4. Parameter Graph
+The content of Sections 2 and 3 implies that given a regulatory network RN and a
+parameterz∈Z for the associated switching system (3) it is possible to create an annotated
+Morse graph.
+Since two parameters z,z′∈ Z give rise to the same annotated Morse graph provided
+they give rise to the same wall-labeling (up to the equivalence indicated in Remark 3.3) it
+is natural to discretize parameter space according to regions that are guaranteed to give
+the same wall-labeling. How to accomplish this is the topic of this section. As indicated
+in the introduction, the ﬁnal results are parameter graphs that are deﬁned below.
+The nodes of a parameter graph, which we denote by Z, are meant to correspond to
+regions in parameter space and the edges are meant to indicate geometric relations between
+the regions. The resulting database of dynamic signatures can be viewed as a map
+DB :Z→ AnnMG,
+where AnnMG denotes the collection of annotated Morse graphs. As indicated in Section 5,
+in applications queries to the database are often concerned with ﬁnding the set of nodes
+which correspond to a particular annotated Morse graph.
+We remark that the parameter space Z ⊂ [0,∞)D, as deﬁned in Deﬁnition 2.7, is a
+semi-algebraic set, i.e. it is expressed in terms of polynomial inequalities. To see this note
+that by Deﬁnition 2.3, ¯Z is a semi-algebraic set and Z is the complement in ¯Z of the set
+of parameters that satisfy any one the equalities
+0 =lj,i−uj,i,
+0 =γi, 0 =θj,i, 0 =lj,i, 0 =uj,i,
+0 =θj,i−θj′,i for distinct j,j′∈ T(i), or (8)
+0 =γiθj,i− Λi(κ) where θj,i deﬁnes a face of κ;
+
+===== PDF PAGE 14 =====
+14 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+whereκ∈K (z) and by Remark 2.8 Λi(κ) can be expressed as a sum of monomials involving
+parameters.
+We propose two conceptually diﬀerent means of identifyingZ withZ. In Section 4.1 we
+describe an approach based on topological considerations; the basic elements are connected
+components ofZ and their adjacency structure is deﬁned in terms of closures of these sets.
+This gives rise to the Geometric Parameter Graph (GPG).
+In Section 4.2 we describe an approach that is explicitly computable; we consider subsets
+of Z described by systems of strict inequalities. We deﬁne an adjacency structure by
+considering reversing the direction of these inequalities one at a time. This gives rise to
+the Combinatorial Parameter Graph (CPG).
+In Section 4.3 we present a decomposition of the geometric and combinatorial parameter
+graphs as a product of smaller graphs in a way which corresponds to the structure of the
+regulatory network. In Section 4.5 we compare the GPG and CPG graphs. There is a
+canonical graph homomorphism h : GPG→ CPG induced from inclusion, but it is an open
+question whether or not this homomorphism is in fact always an isomorphism (i.e. we have
+not proven in general that these two approaches are equivalent). We are, however, able to
+give a class of networks for which GPG and CPG are known to be the same. Finally, in
+Section 4.4 we will discuss the computation of combinatorial parameter graphs.
+4.1. Geometric Parameter Graph. The state transition diagramF(·,z ):V(z) ⇒V(z)
+is deﬁned for each z ∈ Z and is completely determined by the wall-labeling (7). The
+orderingO and the wall-labeling is constant on connected components ofZ. This motivates
+a combinatorialization of parameter space via the connected components, which we label
+byZ. With this in mind we deﬁne the parameter nodes of Geometric Parameter Graph
+(GPG) to be Z. To complete the deﬁnition of the GPG we require a notion of adjacency
+for parameter nodes.
+Deﬁnition 4.1. We say that a parameter value z∈ ¯Z is k-deﬁcient if exactly k of the
+equalities of (8) are satisﬁed. Given a switching network (1) the associated geometric
+parameter graph GPG has verticesZ and edges (ζ,ζ′) if there exists z∈ cl(ζ)∩ cl(ζ′) such
+that z is 1-deﬁcient. Here the closures cl( ζ) and cl(ζ′) are taken in ¯Z.
+Remark 4.2. We believe that the concept of k-deﬁcient parameter values can be used
+generate a regular CW-decomposition of ¯Z where the elements of Z represent the cells
+of dimension D. In this context our notion of adjacency in the GPG corresponds to cells
+that share aD−1 dimensional face. Extending this construction would provide a means of
+understanding the topology of regions of parameter space that are associated with speciﬁed
+dynamic phenotypes.
+The following example illustrates the concept of the geometric parameter graph.
+Example 4.3. Consider the simplest regulatory network RN = (X,E ) where X ={1},
+1→ 1, and M1(x) =x. The regulatory network is shown in Figure 2(a). Since the 1 → 1
+
+===== PDF PAGE 15 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 15
+edge is activating, the associated switching network takes the form
+(9) ˙ x =−γx +
+{
+l if x<θ ,
+u if x>θ .
+The associated phase space and subdivision is shown in Figure 2(b). In particular, there
+are two fundamental cells κ1 := (0,θ ) and κ2 := (θ,∞). The dimension of the associated
+parameter space is D = 1 + 3 = 4 and
+Z ={(l,u,θ,γ )|l<u,γθ /∈{l,u}}⊂ [0,∞)4.
+Because of the simplicity of the problem, it is easy to enumerate all the state transition
+diagrams and compute the associated Morse graphs. Figure 2(c) indicates the annotated
+Morse graphs. Without the annotations Morse graphs MG(1) and MG(3) are equivalent and
+consist of a single node. However, in the process of the computation we can identify that
+the ﬁxed point is in κ1 is less than the threshold, thus the node x is in an ‘oﬀ’ state. We
+denote this information by FP OFF. The annotated Morse graph includes this information
+at the node. Similarly, the annotated Morse graph MG(3) indicates that the ﬁxed point is
+in κ2. We denote this information by FP ON. The Morse graph MG(2) has two minimal
+nodes generated by two attracting cells in one of which the ﬁxed point is less than the
+threshold and in the other the ﬁxed point is greater than the threshold. Again these ﬁxed
+points are annotated FP OFF and FP ON, respectively.
+The associated regions of parameter space, i.e. their deﬁning inequalities, are indicated
+in Figure 2(d). Observe that there is a straight line in PN (i) from any point in PN (i)
+to the origin. Thus one can show that each region PN (i) is connected. Thus, the GPG
+contains 3 nodes. Observe that ifz∈ ¯Z satisﬁesγθ−u = 0, thenz∈ cl(PN (1))∩cl(PN (2))
+and similarly, if z∈ ¯Z satisﬁes γθ−l = 0, then z∈ cl(PN (2))∩ cl(PN (3)). Thus, we
+have an edge between the nodes corresponding to PN (1) and PN (2) and an edge between
+the nodes corresponding to PN (2) and PN (3). Therefore, Figure 2(d) is the GPG for this
+example.
+How to extend these arguments in Example 4.3 to more complicated regulatory networks
+is not obvious. However, consider Z′ :=
+{
+(l,u,θ )∈ [0,∞)3| (l,u,θ, 1)∈Z
+}
+⊂ [0,∞)3
+and observe that characterizing Z′ is equivalent to characterizing the complement of the
+degenerate ﬁnite hyperplane arrangement [38]
+{{
+v∈ [0,∞)3|a·v = 0
+}
+|a∈A
+}
+where
+A ={(1, 0, 0), (0, 1, 0), (0, 0, 1), (1,−1, 0), (1, 0,−1), (0, 1,−1)}.
+In this setting it is fairly easy to determine that Z′ consists of three unbounded connected
+components for which the origin is contained in their closures. However, we are interested
+in characterizing all of Z, which implies that we need to consider complements of the
+nonlinear equations−γθ +l = 0 and−γθ +u = 0. For a general regulatory network the
+dimension D grows linearly in the number of vertices and edges and the terms of Λ, while
+multilinear, may consist of higher dimensional products of the parameters. This implies
+
+===== PDF PAGE 16 =====
+16 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+x1
+(a)
+x
+0 θκ1 κ2
+(b)
+FP OFF
+MG(1)
+FP OFF FP ON
+MG(2)
+FP ON
+MG(3)
+(c)
+0<l<u<γθ
+PN (1)
+0<l<γθ<u
+PN (2)
+0<γθ<l<u
+PN (3)
+(d)
+Figure 2. (a) A self activating one node network. (b) Phase plane for
+switching network. (c) Annotated Morse graphs: MG(1) has a single node
+generated by an attracting cell for which the ﬁxed point is less than the
+threshold and annotated by FP OFF; MG(3) has a single node generated by
+an attracting cell for which the ﬁxed point is greater than the threshold
+and annotated by FP ON; and MG(2) has two minimal nodes generated by
+attracting cells in one of which the ﬁxed point is less than the threshold and
+in the other the ﬁxed point is greater than the threshold. (d) Parameter
+graph.
+that the problem of understanding Z is at least as challenging as that of determining the
+cells in a degenerate ﬁnite hyperplane arrangement. To deal with these complications, in
+the next subsections we turn to techniques from computational algebraic geometry. For
+now we content ourselves with the following result.
+Proposition 4.4. The GPG is a connected graph.
+Proof. Our proof is based on ﬁnding a straight line path between points in any two param-
+eter nodes from which we can prove the existence of a corresponding path in the GPG. The
+burden is to show we can avoid pathologies where (a) the straight line path passes through
+an accumulation of parameter nodes, or (b) passes from one parameter node to another
+through a point which is not 1-deﬁcient. Since the parameter nodes are all in the strictly
+positive orthant, we only need to consider deﬁciencies arising from one of the following
+equalities being satisﬁed (the other equalities of (8) do not intersect the strictly positive
+
+===== PDF PAGE 17 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 17
+orthant and need not be considered):
+0 =lj,i−uj,i,
+0 =θj,i−θj′,i for distinct j,j′∈ T(i), or (10)
+0 =γiθj,i− Λi(κ) where θj,i deﬁnes a face of κ;
+Each of the equalities in (10) has a solution set in (0,∞)D (forD :=N +3·#(E)) which
+we show is a codimension-1 submanifold. To see this, let f1,f 2,··· ,fk : (0,∞)D→ R be
+the functions such that the equalities of (10) may be written fi = 0 for i = 1, 2,··· ,k ,
+where k is the number of equalities in (10). We leave it to the reader to inspect (10) and
+see that the gradient of eachfi (for eachi = 1, 2,··· ,k ) is non-vanishing, i.e. 0 is a regular
+value of fi. By the Regular Value Theorem, the varieties f−1
+i (0) are thus codimension-1
+submanifolds Mi of (0,∞)D for i = 1, 2,··· ,k .
+We consider a collection of line segments L =La∪Lb whereLa denotes the collection
+of line segments which intersect ⋃k
+i=1Mi inﬁnitely often, and Lb denotes the collection of
+line segments which intersect ⋃
+i⁄=jMi∩Mj (i.e. any two of the submanifolds at the same
+point). Describing line segments by their endpoints we regard L as a subset of (0 ,∞)2D.
+We make the following technical claim:L is a set of zero measure. We show this by proving
+bothLa andLb have zero measure. Note this corresponds to showing the pathologies (a)
+and (b) are rare.
+To see thatLa has zero measure, observe ﬁrst that the union of ﬁnitely many codimension-
+1 submanifolds ⋃k
+i=1Mi has measure zero. It follows that the collection of line segments
+with either endpoint in ⋃k
+i=1Mi has measure zero. For any line segment with endpoints p
+andq which are both not in⋃k
+i=1Mi, we consider its parameterization ψ : [0, 1]→ (0,∞)D
+deﬁned by ψ(t) := (1 −t)p +tq. The compositions fi(ψ(t)) are polynomials in t which
+are not identically zero. By the Fundamental Theorem of Algebra they each have a ﬁnite
+number of zeroes. Since the zeros correspond to the intersections of the segment with the
+submanifolds, the segments are not in La. It follows that La has measure zero.
+To see thatLb has zero measure, deﬁne fij : (0,∞)D→ R2 via fij(x) := (fi(x),fj(x))
+for i⁄= j. We leave to the reader to inspect (10) and verify that since for i⁄= j the
+set of variables appearing in the expressions for fi(x) and fj(x) are not the same, the
+gradients∇fi|p and∇fj|p are linearly independent for any p∈ (0,∞)D, i.e. the Jacobian
+Dfij|p has full rank. Thus 0 is a regular value of fij. By the Regular Value Theorem,
+Mi∩Mj = f−1
+ij (0) is a codimension-2 submanifold of (0 ,∞)D. It follows that the set of
+line segments intersecting Mi∩Mj for some i⁄=j is measure zero. Hence Lb has measure
+zero.
+Consequently, we may always perturb a line segment by making arbitrarily small ad-
+justments to the location of its endpoints so that it intersects the submanifolds deﬁned by
+(8) ﬁnitely often, and never intersects two submanifolds at the same point. Now choose
+ζ,ζ′∈ GPG and let p : [0, 1]→ ¯Z be a straight-line path such that p(0)∈ζ and p(1)∈ζ′.
+Since ζ and ζ′ are open, there exist neighborhoods in which we may perturb p(0)∈ ζ
+and p(1)∈ ζ′; we use this freedom so we can assume without loss that the line segment
+
+===== PDF PAGE 18 =====
+18 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+p([0, 1]) satisﬁes this technical property. By the ﬁrst technical conditionp(t)∈Z for all but
+ﬁnitely many t∈ [0, 1] so there exists a ﬁnite sequence (ζ0 =ζ,ζ 1,ζ 2,··· ,ζn =ζ′) through
+GPG corresponding to a ﬁnite sequence of intervals [ t0 = 0,t 1), (t1,t 2),··· , (tn,tn+1 = 1]
+in [0, 1] for which p((ti,ti+1)) =ζn. By the second technical condition, p(t) only intersects
+one submanifold at a time, hence for each i = 1,··· ,n the point p(ti) is a 1-deﬁcient
+point in the intersection of the closures of ζi−1 and ζi. These facts together yield a path
+ζ =ζ0→ζ1→ζ2→···→ ζn =ζ′. Hence GPG is connected. □
+4.2. Combinatorial Parameter Graph. In this section we show how to assign to each
+parameter z∈ Z a combinatorial description φ which is suﬃcient to construct the wall-
+labeling (and hence state transition diagrams) induced by z. We call this combinatorial
+description a combinatorial parameter and we denote the collection of combinatorial pa-
+rameters by Φ. Importantly, we show that for every parameter node ζ ∈ Z, for any
+z,z′∈ζ, both z and z′ have the same associated combinatorial parameter φ∈ Φ.
+Our deﬁnition of combinatorial parameters is unfortunately somewhat technical. Overall
+it amounts to a bookkeeping system to keep track of the directions of the inequalities
+involving parameters which determine the threshold order and wall-labeling function. The
+threshold orderings give rise to inequalities comparing θ parameters. To determine the
+wall-labeling function requires comparing the various Λ i to γiθj,i (which gives the signs in
+(7)). For a given regulatory network there are a ﬁxed number of such comparisons required;
+our deﬁnition of a combinatorial parameter provides an organizational framework to speak
+of this collection of inequalities in a rigorous way.
+Deﬁnition 4.5. Deﬁne the input combinations of the node xi to be the cartesian product
+Inj :=
+∏
+i∈S(j)
+{oﬀ, on}.
+Deﬁne the indicator function χj : (0,∞)N→ Inj such that
+χj,i(x) =
+
+
+
+oﬀ if i→j and xi<θ j,i or if i⊢j and xi>θ j,i
+on if i→j and xi>θ j,i or if i⊢j and xi<θ j,i
+undeﬁned otherwise.
+Deﬁne the valuation function vj : Inj→ RSj via
+vj,i(A) =
+
+
+
+lj,i wheneverAi = oﬀ
+uj,i wheneverAi = on
+undeﬁned otherwise.
+Note that σj =vj◦χj.
+Deﬁne the output combinations of the node xi to be the set
+Outi := T(i).
+
+===== PDF PAGE 19 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 19
+Deﬁnition 4.6. A logic parameter is a function
+L :
+N⨆
+i=1
+(Ini× Outi)→{− 1, 1}.
+We denote the restriction ofL onto Ini×Outi asLi. An order parameterO is a collection of
+total orderings Oi of T(i) for each i∈X. A combinatorial parameter is a pair φ = (L,O )
+where L is a logic parameter and O is an order parameter. We denote the collection of
+combinatorial parameters as Φ.
+The combinatorial assignment function ω :Z→ Φ is given by ω(z) := (L,O ) where
+(11) Li(A,B ) = sgn (Mi◦vi(A)−γiθB,i) for all 1 ≤i≤N
+and O =O(z). For all z∈Z, we say that ω(z) is the combinatorial parameter associated
+to the parameter z.
+The parameter region associated with the combinatorial parameterφ is given byω−1(φ)⊂
+Z and denoted by|φ|. A combinatorial parameter φ∈ Φ is realizable if there exists z∈Z
+such that φ =ω(z).
+Deﬁnition 4.7. Let φ = (L,O )∈ Φ be a combinatorial parameter. Suppose z∈ Z such
+thatO =O(z). We may induce a wall-labeling onW(z) as follows. Let (τ,κ ) be a wall with
+projection index i and switching index j. We say (τ,κ ) is an absorbing wall with respect
+to φ if Li(χi(κ),j ) =− sgn((τ,κ )) and an entrance wall if Li(χi(κ),j ) = sgn((τ,κ )).
+The next result shows we have successfully given a combinatorial description φ =ω(z)
+for each z∈Z.
+Proposition 4.8. Let z∈ Z. Deﬁne φ∈ Φ such that φ = ω(z). Then the wall-labeling
+induced by z and the wall-labeling induced by φ are the same.
+Proof. It suﬃces to showφ andz induce the same wall-labeling, which then in turn will in-
+duce the same wall graph. To this end it suﬃces to show for each wall (τ,κ ) with projection
+indexi and switching indexj that (1)Li(χi(κ),j ) = +1 is equivalent toMi(σi(κ))>γ iθj,i,
+and (2) Li(σi(κ),j ) =−1 is equivalent to Mi(σi(κ))<γ iθj,i. This follows from the deﬁni-
+tions and (11). □
+We supplement combinatorial parameters with a notion of adjacency. To understand this
+notion of adjacency it helps to remember that a combinatorial parameter is nothing more
+than a bookkeeping system giving the direction of the inequality for a set of inequalities
+describing a region of parameter space. Our notion of adjacency corresponds to reversing
+a single one of these inequalities.
+Deﬁnition 4.9. Let φ = (L,O ), φ′ = (L′,O′)∈ Φ be distinct combinatorial parameters.
+Denote the domains of L and L′ byD :=⨆N
+i=1 (Ini× Outi). We say φ and φ′ are adjacent
+if either (1) O =O′ and there exists x∈D such thatφ andφ′ are equal on all ofD except
+x, or (2) L =L′, Oi =O′
+i for i∈X\i∗, and the total orders Oi∗ and O′
+i∗ diﬀer only by a
+single swap of the ordering of consecutive thresholds.
+
+===== PDF PAGE 20 =====
+20 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+The previous deﬁnition renders Φ into a large graph of combinatorial parameters. Since
+not every combinatorial parameter is realizable (i.e. in the image of ω) we are interested
+only in a subgraph.
+Deﬁnition 4.10. The combinatorial parameter graph CPG is the undirected graph on the
+realizable combinatorial parameters with an edge between two parameter nodes φ and φ′
+if and only if they are adjacent in the sense of Deﬁnition 4.9.
+Example 4.11. To illustrate the idea of the combinatorial parameter graph, we return
+to one node regulatory network, indicated in Figure 2(a), of Example 4.3. Recall that
+the switching network is (9); the phase space is indicated in Figure 2(b); and Figure 2(c)
+indicates the annotated Morse graphs. For the purposes of this example it is instructive to
+construct the collection of combinatorial parameters Φ and see which ones are realizable.
+There is only a single node, so
+In ={oﬀ, on} and Out ={1}
+and the order parameter is similarly trivial O ={θ}. The set of logic parameters are
+(oﬀ, 1)↦→− 1 and (on , 1)↦→− 1 (12)
+(oﬀ, 1)↦→ 1 and (on , 1)↦→− 1 (13)
+(oﬀ, 1)↦→− 1 and (on , 1)↦→ 1 (14)
+(oﬀ, 1)↦→ 1 and (on , 1)↦→ 1 (15)
+and therefore Φ contains four elements.
+To determine the realizable combinatorial parameters we note that the indicator function
+χ: (0,∞)→ In is
+χ(x) =
+
+
+
+oﬀ if x<θ
+on if θ<x
+undeﬁned otherwise
+and the valuation function v : In→ R is
+v(A) =
+{
+l if A = oﬀ
+u if A = on.
+Note that M is the identity and thus to understand the image of the combinatorial assign-
+ment function ω :Z→ Φ we only need to consider
+L(A,B ) = sgn (v(A)−γθ).
+Observe that if A = oﬀ, then
+L(oﬀ, 1) = sgn (l−γθ) =
+{
+−1 if l<γθ
+1 if γθ<l
+
+===== PDF PAGE 21 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 21
+and if A = on, then
+L(on, 1) = sgn (u−γθ) =
+{
+−1 if u<γθ
+1 if γθ<u
+Observe that if l < u < γθ, l < γθ < u, and γθ < l < u, then we obtain the combina-
+torial parameters with logic parameters (12), (14), and (15), respectively. Notice that the
+combinatorial parameter with logic parameter (13) is not realizable since it would require
+γθ < land u < γθ, which contradicts l < u. Thus CPG has three nodes. The edges are
+as indicated in Figure 2(d), since these correspond to the switching of a single inequality.
+Thus, as promised (see Theorem 4.17) the CPG agrees with the GPG of Example 4.3.
+4.3. Product Structure of Parameter Graph. Both GPG and CPG have a product
+structure. To describe this structure we need to deﬁne what is meant by a product of
+graphs:
+Deﬁnition 4.12. Given a collection of graphs{Gα}α∈J the graph product∏
+α∈JGα is the
+graph with nodes which are J-tuples x such that xα∈ Gα for α∈ J and two J-tuples x
+andy are adjacent if and only if xα =yα for all but possibly one exceptional value α∗∈J,
+and for that exceptional α∗, xα∗ and yα∗ are adjacent in Gα∗.
+Deﬁnition 4.13. For each i ∈ X, deﬁne the geometric factor graph GPGi to be the
+connected components of the complement of the solutions of the equalities
+0 =lj,i−uj,i,
+0 =γi, 0 =θj,i, 0 =lj,i, 0 =uj,i,
+0 =θj,i−θj′,i for distinct j,j′∈ T(i), or
+0 =γiθj,i− Λi(κ) where θj,i deﬁnes a face of κ;
+in
+Zi :={(l,u,θ,γ )∈ [0,∞)1+3#T(i)}.
+Two connected components are considered to be adjacent if they admit a 1-deﬁcient point
+in the intersection of their closures.
+Deﬁnition 4.14. Let i∈ X. Deﬁne Φ i to be the collection of pairs ( Li,Oi) where Oi is
+an ordering of T(i) and Li is a function
+Li : Ini× Outi→{− 1, 1}.
+Deﬁne a function ωi :Zi→ Φi via ω(z) :=φi = (Li,Oi) whenever
+(16) Li(A,B ) = sgn (Mi◦vi(A)−γiθB,i).
+We say two elementsφi,φ′
+i∈ Φi are adjacent if they diﬀer in only one value. We say φi is
+realizable ifω−1
+i (φi) is non-empty. We denote the subgraph of realizable elements in Φ i as
+CPGi and call it the combinatorial factor graph.
+
+===== PDF PAGE 22 =====
+22 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+Theorem 4.15. For either PG = GPG or PG = CPG, we have the following factor decom-
+position:
+PG =
+N∏
+i=1
+PGi.
+Proof. We show it ﬁrst for the geometric parameter graph. First we demonstrate a one-
+to-one correspondence between the vertices of ∏ GPGi and GPG. Observe that Z =∏Zi.
+By straightforward topological arguments a connected component in Z is a product of
+connected components of Zi and vice-versa. This establishes a one-to-one correspondence
+of vertices between∏ GPGi and GPG. Now we show that vertices ζ,ζ′ are adjacent in GPG
+if and only if they are adjacent in ∏ GPGi. Assume ﬁrst that ζ and ζ′ are adjacent in
+GPG. Then there exists a 1-deﬁcient point in the intersection of their closure. At all such
+1-deﬁcient points there is a single equality of (8) which is satisﬁed; it involves parameters
+corresponding to a deﬁnite factor GPGi for some i. For all but a single exceptional i =i∗
+we haveπi(ζ) =πi(ζ′) and in the exceptional caseπi∗(ζ) andπi∗(ζ′) are adjacent in GPGi∗.
+By Deﬁnition 4.12 this means ζ andζ′ are adjacent in∏ GPGi. The converse more or less
+runs this argument in reverse. Hence GPG =∏ GPGi.
+Next we show CPG =∏ CPGi. In this case it follows very immediately from the def-
+initions; Φ = ∏ Φi and the deﬁnition of adjacency in Deﬁnition 4.9 is compatible with
+Deﬁnition 4.12. What remains is to see that a combinatorial parameter φ is realizable only
+if φi is realizable for all i∈ X; to this end we leave it to the reader to verify from the
+deﬁnitions that ω−1(φ) =∏ω−1
+i (φi) from which the result follows. □
+The utility of this decomposition theorem is that it allows us a way of understanding
+parameter space piecewise; given a network we can consider a single node i that has
+n = #S(i) inputs, m = #T(i) outputs, and an associated logic function Mi. Given these
+three things we may construct the factor graph. Thus, we can store a library of such
+factor graphs once and for all, and given a network we can immediately understand the
+combinatorial decomposition of parameter space by assembling this product structure.
+4.4. Computation of Parameter Graph. Theorem 4.15 allows us to construct param-
+eter graphs as products of factor graphs, so the problem of computing a parameter graph
+reduces to the problem of constructing the factor graphs. In light of Proposition 4.4 the
+factor graph is connected so we may explore it, and hence construct it, via any graph
+traversal technique, e.g. breadth-ﬁrst-search, depth-ﬁrst-search. To use this approach we
+require two ingredients: we must have a starting point, and we must be able construct the
+list of adjacent parameters.
+For a starting point we may choose the combinatorial parameter φ = (L,O ) where
+L≡− 1 and O may be chosen freely. This is guaranteed to be realizable: we obtain a
+realization if we choose u, l, and γ values freely and then choose θ values in the desired
+ordering and suﬃciently large so that Λ i<γ iθj,i for all (i,j )∈E.
+To compute adjacency lists we ﬁrst obtain from Deﬁnition 4.9 a list of candidate adja-
+cent combinatorial parameters in Φ. Not every candidate adjacency is in CPG since not
+every combinatorial parameter is realizable. To obtain the adjacencies we ﬁlter the list of
+
+===== PDF PAGE 23 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 23
+candidates in search of the realizable combinatorial parameters. In particular, we employ
+the computational algebra technique known as cylindrical algebraic decomposition (CAD)
+[13] which provides a ﬁnite, recursive description of the geometric regionζ′ associated with
+each candidate adjacent combinatorial parameterφ′ (i.e. ζ′ =ω−1(φ′)). Since ζ′ is given in
+terms of strict inequalities, we use the algorithm of [39] as implemented in Mathematica.
+These algorithms can be quite expensive (worst case bounds are doubly-exponential in
+the number of variables) but are tractable for networks built out of components given in
+Table 1. From a CAD description of ζ′ we can determine if it is empty and hence if φ′ is
+realizable. If it is then ζ′ is added into list of adjacent vertices of CPG.
+In this manner we can traverse the graph and construct the factor graphs, and hence
+the graph. Note that given a network component there is an # T(i)!-fold symmetry due
+to the number of possible rearrangements of the θ variable orderings; this can be used
+to reduce the number of CAD calculations; in particular we can compute the parameter
+graph only for a single ordering of thresholds and from this we can extrapolate the rest of
+the factor graph via symmetry in a straightforward manner. In particular, we can make a
+disjoint union of # T(i)! independent copies of the graph and then connect them together
+via adjacencies corresponding to swapping threshold orderings whenever none of the Λ
+values are between them.
+Remark 4.16. As noted above CAD computations can be quite expensive. Currently we
+know of no general way of constructing a CPG graph without using CAD unless we are
+content with performing computations for combinatorial parameters which are not realiz-
+able, i.e. do not correspond to some actual parameter z∈Z. This may seem like a defect
+of this approach but we should emphasize that these CAD computations do not need to
+be repeated for each network we analyze. Rather, we construct a library of CAD results
+corresponding to each single node in a network with a given number of inputs, number of
+outputs, and logic. From this library of CAD computations we may analyze any network
+which may be built up from these components without doing any further computational
+algebraic geometry. Because this library has been constructed for all nodes of the form in
+Table 1, we may analyze any network built out of components with these node types with-
+out performing any additional CAD computations. The Mathematica scripts we executed
+to produce our library of CAD results may be found in the DSGRN software package [29].
+4.5. Relationship between Geometric and Combinatorial Parameter Graphs.
+For allz,z′∈ζ∈ GPG, ω(z) =ω(z′), there is a well-deﬁned map
+h : GPG→ CPG
+such that ζ↦→ ω(ζ). Moreover, the existence of a 1-deﬁcient point in the intersection of
+the closures of the connected components ζ,ζ′∈Z immediately implies h(ζ) and h(ζ′)
+are described by sets of inequalities which diﬀer by only a single inequality reversal and
+hence are adjacent in CPG. This renders h into a graph homomorphism as it maps vertices
+to vertices and edges to edges. Note that h behaves nicely with the product structure
+indicated in the previous section.
+
+===== PDF PAGE 24 =====
+24 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+As stated earlier, it is an open question whether or not h is in general an isomorphism.
+The question ultimately comes down to two issues: (1) Are the geometric regions associ-
+ated with the realizable combinatorial parameters connected? (2) Do the geometric regions
+associated with adjacent vertices of CPG always admit a 1-deﬁcient point in the intersec-
+tion of their closures? While we cannot at this time answer these questions in complete
+generality, we do have the following result and a method for checking speciﬁc cases.
+Theorem 4.17. The homomorphism h is an isomorphism for regulatory networks for
+which each node in the regulatory network is described by an entry of Table 1.
+Proof. By Theorem 4.15 it suﬃces to consider only the factor graphs; all that we must
+show is that
+GPGi≃ CPGi.
+This in turn becomes a ﬁnite computation for each entry of Table 1. In particular we
+use CAD to show the following:
+(1) For each φi∈ CPGi, the associated geometric region is connected.
+(2) For each pair of adjacent φi,φ′
+i∈ CPGi, the associated geometric regions admit a
+1-deﬁcient point in the intersection of their closures.
+For (1), observe each node φi in CPGi is associated with a parameter region |φi| in
+Z deﬁned by a collection of polynomial inequalities. These inequalities are obtained by
+writing threshold inequalities θj1,i < θj2,i according to the threshold ordering Oi and by
+writing either Mi◦vi(A) < γiθB,i or Mi◦vi(A) > γiθB,i for each (A,B )∈ Ini× Outi
+according to the sign of Li(A,B ).
+For (2), we consider the inequalities associated with adjacent parameters φi and with
+φ′
+i in CPGi. These two sets of inequalities are identical apart from a single inequality
+with its sign ﬂipped. Dropping this inconsistent inequality yields a set of inequalities I
+describing a region in ¯Zi which contains the union of|φi| and|φ′
+i|. Since all the inequalities
+are strict, the solutions of I comprise an open set. If this open set is connected, then as
+an open subset of Euclidean space it is also path-connected; in particular take any path
+from a point in |φi| to a point in |φ′
+i| in|I|. By the intermediate value theorem it must
+pass through a point where equality is obtained on the inequality φi and φ′
+i disagree on
+(but on none of the other inequalities). Thus we have identiﬁed a 1-deﬁcient point on the
+intersection of the closures of |φi| and|φ′
+i|.
+Using Mathematica, we have performed these connectedness computations and veriﬁed
+(1) for each vertex and (2) for each adjacency of the factor graphs corresponding to net-
+work components indicated in the rows of Table 1. The scripts which accomplish these
+computations may be found in the DSGRN software package [29]. □
+5. Applications
+We demonstrate the use of the DSGRN database with two elementary three-node net-
+works, the repressilator and bistable repressilator models, and an example associated with
+the p53 network. These databases, along with a growing number of other examples, can
+be found at the DSGRN database [29].
+
+===== PDF PAGE 25 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 25
+Table 1. Network Node Components
+#S(i) #T(i) Mi #PGi/#T(i)!
+1 1 x 3
+1 2 x 6
+1 3 x 10
+2 1 x +y 6
+2 1 xy 6
+2 2 x +y 20
+2 2 xy 20
+2 3 x +y 50
+2 3 xy 50
+3 1 x +y +z 20
+3 1 xyz 20
+3 1 x(y +z) 20
+3 2 x +y +z 150
+3 2 xyz 150
+3 2 x(y +z) 155
+3 3 x +y +z 707
+3 3 xyz 707
+3 3 x(y +z) 756
+5.1. The Repressilator. We begin with the repressilator as shown in Figure 3(a) for two
+reasons: ﬁrst, it is of biological interest in that it has been constructed in E. coli by [20];
+and second, it is extremely simple as it consists of three genes that repress each other in a
+cycle and thus we can draw the entire parameter graph (see Figure 4).
+x1 x2
+x3
+x1 x2
+x3
+Figure 3. Left: Repressilator. Right: Bistable repressilator.
+Applying Deﬁnition 2.4 the switching equations for the repressilator take the form
+˙x1 = −γ1x1 +σ−
+1,3(x3)
+˙x2 = −γ2x2 +σ−
+2,1(x1) (17)
+˙x3 = −γ3x3 +σ−
+3,2(x2),
+where the notation for the nonlinearities σ follows the notation of (5). We write σ− as a
+reminder that the interaction represents repression; the second choice in (5).
+
+===== PDF PAGE 26 =====
+26 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+The repressilator model has a single regulatory threshold for each variable, dividing the
+phase space (which is the positive orthant of R3) into 8 cells and 12 walls. The domain
+and wall graphs from Section 3.2 vary with parameter choice and therefore we start with
+discussion of the space of parameters and the parameter graph.
+For eachi the function σ−
+i+1,i representing the edge i→i + 1 is parameterized by three
+parameters ui+1,i,li+1,i and θi+1,i (i is taken mod 3). In addition there are three decay
+constants γ1,γ 2,γ 3. Therefore the parameter space Z ⊂ ¯Z ⊂ R12. To determine the
+parameter graph we ﬁrst construct the combinatorial parameter graph CPG using Factor
+Decomposition Theorem 4.15. For each factor of the CPG we use the Table 1. Since the
+repressilator model has a single threshold for each variable, the threshold orders Oi as in
+Deﬁnition 4.14 are trivial. The choice of logic Mi, see (4), is also trivial. Therefore for
+each i = 1, 2, 3 we consider the network node component in the ﬁrst row in Table 1. The
+last column of the Table shows that #PGi = 3 for each variable xi. To make this explicit,
+for variable x2 these choices correspond to
+l2,1<u 2,1<γ 1θ2,1, l 2,1<γ 1θ2,1<u 2,1, and γ1θ2,1<l 2,1<u 2,1.
+By the Factor Decomposition Theorem 4.15, the combinatorial parameter graph CPG has
+33 = 27 nodes and edges as shown in Figure 4(left). Finally, by Theorem 4.17 the combi-
+natorial and geometrical parameter graphs are the same and therefore Figure 4(left) also
+indicates the geometric parameter graph GPG.
+As indicated in Section 3.2 the domain and wall graphs and hence the the Morse graph
+(Deﬁnition 3.14) are potentially diﬀerent at each of the 27 parameter nodes. However, for
+the repressilator there is a single Morse graph each consisting of a single node. This em-
+phasizes the value of annotating the nodes of the Morse graph. As described in Section 3.4
+this annotation indicates whether or not the variable transition in the associated Morse set
+and if not whether their value is high or low. As shown in Figure 5 in the repressilator the
+Morse graph can assume four diﬀerent annotations: a ﬁxed point, FP; a ﬁxed point where
+all variables are above the threshold, FP ON; a ﬁxed point where all variables are below
+the threshold, FP OFF; and a full cycle FC where all variables pass through their threshold.
+In Figure 5, the number of parameters associated to each Morse graph is listed, with 24 of
+the 27 exhibiting the Morse graph FP.
+Returning to Figure 4 (left), which shows the entire parameter graph for the repressilator,
+each node is color-coded according to the associated Morse graph. We note that a single
+parameter node gives rise to this Morse graph FC indicating a periodic orbit. To further
+investigate the parameter set RFC⊂ Z which is represented by this parameter node, the
+DSGRN database provides us with the set of inequalities that deﬁne RFC:
+l1,3<γ 1θ2,1<u 1,3
+l2,1<γ 2θ3,2<u 2,1(18)
+l3,2<γ 3θ1,3<u 3,2.
+While this is unique combination of parameters is represented by a single parameter
+graph node, RFC is clearly a substantial and unbounded component in the parameter space
+Z ⊂ R12. To see if RFC predicts well oscillations for a smooth repressilator model, we
+
+===== PDF PAGE 27 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 27
+0
+1 3 9
+13
+14 16 22
+26
+2 4 106 12 18
+5 117 19
+8 20
+15 21
+17 23
+24
+25
+MG: FP  FP OFF  FC  FP ON 
+0 5 10 15 20 25 30
+0.7
+0.8
+0.9
+1.0
+1.1
+1.2 x1 x2 x3
+Figure 4. Left: Repressilator parameter graph with same-colored parame-
+ter nodes corresponding to the same Morse graph. Right: Hill function sim-
+ulation for the repressilator satisfying the inequalities of parameter node 13
+withli,j = 0.5,θi,j = 1.0,ui,j = 1.5 (see Equation (21)). The Hill exponent
+is n = 9.
+FP FP ON FP OFF FC
+24 parameters 1 parameter 1 parameter 1 parameter
+Figure 5. DSGRN Morse graphs for the repressilator.
+replace the switching model by a model that uses Hill function nonlinearities, which are
+closely related to the switching nonlinearities. Observe that for each z∈| ζ|, where ζ is
+a node in the parameter graph, there is a natural one parameter family of Hill functions.
+For an activating step function σ+(x) this takes the form
+(19) h+
+n (x) =l + (u−l) xn
+θn +xn,
+and the repressing step function σ−(x) by a Hill function h−
+n (x)
+(20) h−
+n (x) =l + (u−l) θn
+θn +xn
+where the undetermined parameter is the Hill exponent n. Note that if n→∞ , then
+limn→∞h±
+n (x)→σ±(x) pointwise for all x⁄=θ.
+
+===== PDF PAGE 28 =====
+28 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+We sample a point from RFC that satisﬁes the inequalities (18), select a Hill exponent,
+and simulate a Hill function model with these parameters.
+˙x1 =−x1 + 0.5 + 1
+1 +xn
+3
+=−x1 +g3(x3)
+˙x2 =−x2 + 0.5 + 1
+1 +xn
+1
+=−x2 +g1(x1) (21)
+˙x3 =−x3 + 0.5 + 1
+1 +xn
+2
+=−x3 +g2(x2)
+The choice of n will aﬀect the dynamics, and so it is important to choose an n large
+enough so that the Hill function model (21) is reasonably representative of the switching
+model (3). For the repressilator, there is analysis available that allows us to suggest the
+minimum allowablen, which we calculate below. Tyson and Othmer [31] proved a necessary
+secant condition for stability of a global ﬁxed point E in an I-dimensional cyclic feedback
+system (see also Thron [41]), given by
+|g′
+1(E)··· g′
+I(E)|
+γ1··· γI
+< sec
+(π
+I
+)I
+,
+where the Jacobian of the system is
+
+
+−γ1 0 0 ... 0 g′
+I(E)
+g′
+1(E) −γ2 0 ... 0 0
+0 g′
+2(E) −γ3 ... 0 0
+...
+0 0 0 ... g ′
+I−1(E) −γI
+
+
+.
+This condition is sharp when all of the decay rates are equal which is the case here.
+Applying this condition to (21), we see that for the equilibrium isE = (1, 1, 1) the secant
+formula becomes
+(22) |g′
+1(1)g′
+2(1)g′
+3(1)|< sec
+(π
+3
+)3
+.
+It is readily veriﬁed that g′
+i(1) =−n/4 so that (22) takes the form
+n3< 4323
+and therefore E = (1, 1, 1) is stable when n< 8. Since the condition is sharp, it is easy to
+show that at n = 8 there is a Hopf bifurcation at which the equilibrium destabilizes and
+a stable periodic orbit is born. So for n >8 in (21), there is a stable periodic orbit. In
+Figure 4 (right) we show a periodic orbit for n = 9.
+5.2. The Bistable Repressilator. The bistable repressilator is slightly more complicated
+than the repressilator in that it has an additional negative feedback. Figure 3 represents
+these regulatory networks in graphical form. Because of the double feedback loop we expect
+
+===== PDF PAGE 29 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 29
+that for appropriate parameter values this system may exhibit bistability, hence the name.
+The associated switching system is given by
+˙x1 = −γ1x1 +σ−
+1,2(x2)σ−
+1,3(x3)
+˙x2 = −γ2x2 +σ−
+2,1(x1) (23)
+˙x3 = −γ3x3 +σ−
+3,2(x2).
+The logic Mi for each node is trivial except for the ﬁrst equation, where we have chosen
+AND logic, i.e. the negative inﬂuences of x2 and x3 are multiplicative.
+In the bistable repressilator the variable x2 represses both x3 and x1, and so there are
+two choices forO2,θ3,2<θ 1,2 orθ1,2<θ 3,2. Because of the extra threshold in the bistable
+repressilator, there are 12 cells and 20 walls dividing the phase space.
+The parameter spaceZ⊂ R15 and we seek to understand the geometric parameter graph
+GPG that represents arrangement of components of Z. To construct the combinatorial
+parameter graph CPG we again consult the Table 1. The variablex1 has 2 inputs, 1 output
+and the logic is multiplication; this corresponds to row 6 in the Table and hence #PG 1 = 6.
+The variablex2 has 1 input and 2 outputs and so it correspond to row two. However, since
+the last column in Table 1 lists # PGi divided by all possible permutations of output
+variable thresholds, #PG 2 = 12. Finally, the variable x3 has one input and one output,
+which corresponds to the ﬁrst row and thus # PG 1 = 3. By the Factor Decomposition
+Theorem 4.15, the CPG has 6∗ 12∗ 3 = 216 parameter nodes and by Theorem 4.17 the
+CPG and geometrical parameter graphs GPG are the same. Since the parameter graph is
+sizable we only show in Figure 6 a half of the parameter graph that corresponds to one of
+the two orders of the thresholds in O2 (θ3,2<θ 1,2).
+Using the same annotation as for the repressilator, there seven distinct classes indicated
+in Figure 7. For simplicity in Figure 6 we group the parameter nodes based on the following
+four annotations: type A nodes have Morse graph with a single ﬁxed point FP; nodes in
+class B have a Morse graph with two ﬁxed points FP, and hence signal the presence of
+bistability; nodes of type C have Morse graph FC; and nodes of type D have the Morse
+graph with the lower Morse set FP and the upper Morse set FC.
+The collection of Morse graphs immediately signal the presence of richer dynamics across
+parameter space than for the repressilator system. In addition to the four Morse graphs seen
+in the repressilator example, there are two new dynamic signatures present: bistability (the
+existence of two stable ﬁxed points, Type B) and an unstable full cycle with an attracting
+ﬁxed point (type D). The comparison of Figures 5 and 7 that the addition of a single edge
+to a regulatory network RN can radically change the dynamical signature of RN across
+parameter space.
+From Figure 7, we see that there are six parameter vertices with the Morse graph FC,
+which suggest a presence of a stable periodic oscillation. DGSRN database provides us
+with the inequalities that deﬁne these regions in the parameter Z. For illustration, we
+
+===== PDF PAGE 30 =====
+30 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+Parameter Graph Class B Class DClass CClass A
+0
+16 36
+2 37 37
+48 389 39
+510 40
+11 41
+13 19 43
+2014 4415 21 45
+2216 46
+2317 47
+26 56
+28 58
+29 59
+12 4218
+4824 54 78
+4960 8425
+50 5127
+52
+53
+6232
+6434
+6535
+61 85
+8663 87
+88
+89
+68 98
+70 100
+71 101
+30
+3166
+3367
+69
+5590
+96
+102
+103
+105
+57
+97
+99
+104
+106
+107
+72
+73
+74 7579
+7680
+77
+81
+82
+8394
+95
+9392
+91
+ Class: ABCD
+FP FP FP FC 
+FP 
+FC 
+Parameter Graph Class B Class DClass CClass A
+0
+16 36
+2 37 37
+48 389 39
+510 40
+11 41
+13 19 43
+2014 4415 21 45
+2216 46
+2317 47
+26 56
+28 58
+29 59
+12 4218
+4824 54 78
+4960 8425
+50 5127
+52
+53
+6232
+6434
+6535
+61 85
+8663 87
+88
+89
+68 98
+70 100
+71 101
+30
+3166
+3367
+69
+5590
+96
+102
+103
+105
+57
+97
+99
+104
+106
+107
+72
+73
+74 7579
+7680
+77
+81
+82
+8394
+95
+9392
+91
+ Class: ABCD
+FP FP FP FC 
+FP 
+FC 
+Figure 6. Bistable repressilator parameter graph with colors correspond-
+ing to partitioned Morse graph continuation classes. Class A: single stable
+ﬁxed points; Class B: bistability; Class C: stable cycle; Class D: unstable
+cycle with a stable ﬁxed point.
+select one of them (parameter 151), which represents a region in Z⊂ R15 given by
+l1,2l1,3<
+{
+u1,2l1,3
+l1,2u1,3
+}
+<γ 1θ2,1<u 1,2u1,3
+l2,1<γ 2θ3,2<u 2,1<γ 2θ1,2(24)
+l3,2<γ 3θ1,3<u 3,2,.
+
+===== PDF PAGE 31 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 31
+FP FP ON FP OFF FC
+174 parameters 10 parameters 2 parameters 6 parameters
+FP FP FP FP ON
+FC
+FP
+20 parameters 2 parameters 2 parameters
+Figure 7. DSGRN Morse graphs for the bistable repressilator.
+The curly braces denote an undetermined (arbitrary) order: the relative order of u1,2l1,3
+and l1,2u1,3 does not change the wall graph and hence the Morse graph as long as both
+remain below γ1θ2,1.
+We sample this parameter region at the values γ1 = γ2 = γ3 = 1, li,j = 1, θ1,3 = 2,
+θ3,2 = 3, θ2,1 = 4, θ1,2 = 6, u1,2 = 2, u1,3 = 3, u3,2 = 4, and u2,1 = 5. Substituting these
+values into (20), we have the following system of smooth equations:
+˙x1 =−x1 +
+(
+1 + 6n
+6n +xn
+2
+)(
+1 + 2n+1
+2n +xn
+3
+)
+˙x2 =−x2 + 1 + 4n+1
+4n +xn
+1
+(25)
+˙x3 =−x3 + 1 + 3n+1
+3n +xn
+2
+.
+Results of the simulations are shown in Figure 8 forn = 10. There is no condition analogous
+to the secant condition that would provide an estimate for n that would produce a stable
+periodic orbit. Numerically, we found that at these parameter values n = 7 is suﬃcient for
+periodicity and n = 6 is not.
+We want to ﬁnish this section with an important observation about a relationship be-
+tween the parameter graph for the repressilator and the parameter graph for the bistable
+repressilator. Since the repressilator network is a subnetwork of the bistable repressilator,
+a natural question is whether there is a similar correspondence between their parameter
+graphs. To begin to answer this question we investigate the parameter node given by (24)
+in bistable repressilator. We ﬁrst note that because l2,1<u 2,1<γ 2θ1,2 the second compo-
+nent of any target point in the system
+σ−
+2,1(·)
+γ2
+<θ 1,2. Therefore, perhaps after a transient,
+x2(t)<θ 1,2 for all t≥T and some T >0. Consequently, the value of the function σ−
+1,2(x2)
+will be u1,2 for all t≥ T and x2 will eﬀectively cease regulation of x1. Therefore the
+network that is eﬀectively represented by this parameter node is not bistable repressilator,
+
+===== PDF PAGE 32 =====
+32 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+0 5 10 15 20 25 301.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+4.5
+5.0 x1 x2 x3
+Figure 8. Hill function simulation for the bistable repressilator at param-
+eter node 151. See the text for parameter choices. The Hill exponent is
+n = 10.
+but a repressilator where the edge from x2 tox1 is erased. This brings up a set of interest-
+ing questions about how to recognize subnetworks that are eﬀectively represented by each
+node in the parameter graph, and whether it is possible to build parameter graphs of larger
+networks from parameter graphs of their subnetworks. The answers to these questions are
+beyond the scope of this paper but will be addressed in the near future.
+5.3. p53 network. While the ﬁrst two examples of this section were aimed at illustrating
+the main concepts of the paper on small networks, DSGRN is being used on larger and more
+complicated networks with greater biological urgency. We brieﬂy comment on simulations
+of a subnetwork of the p53 signaling network from [34]. The point of including this model
+in this paper is to indicate the ease with which DSGRN handles a network of this size and
+then allows the dynamics to be interrogated.
+As indicated in Figure 9 this network has 5 nodes and 8 edges and thus the parameter
+spaceZ⊂ ¯Z⊂ R29. As in the previous cases we construct the geometric parameter graph
+GPG by ﬁrst computing the CPG using the factors listed in Table 1. This results in a
+GPG with 803520 nodes. Next we construct a DSGRN database over this parameter graph.
+This problem is quite tractable and the database construction took only 37 seconds on a
+Mid-2014 Macbook Pro laptop (Intel Core i7-4870HQ CPU @ 2.50GHz). We note that for
+larger parameter graphs, our software can scale to HPC cluster environments, but in this
+case this is clearly not necessary.
+We remark that there is interest in the question of stable oscillations in this system
+[23]. Given the size of the GPG, visualization is impractical. However, as indicated in
+the introduction DSGRN produces an SQL database. The query for a Morse graph with a
+
+===== PDF PAGE 33 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 33
+Wip1 p53 Mdm2
+Chk2
+ATM
+Figure 9. Subnetwork of key species of the p53 signaling network.
+minimal node annotated byFC identiﬁes parameter nodes associated with stable recurrent
+dynamics where all the species pass thresholds. There are 6904 nodes in the GPG which
+satisfy this query, of which 3204 are associated with a Morse graph consisting of a single
+node. Each of these parameter nodes has a CAD description of the inequalities which
+deﬁnes the associated connected region in parameter space. Table 2 provides an explicit
+CAD description for one of these nodes (labeled 40535 in the database [29]). from which
+it easy to chose parameter values associated with the parameter node.
+As in the previous examples we perform a numerical simulation of this system using
+Hill functions. Using the CAD description of Table 2 we choose decay rates γi = 1 and
+the remaining parameters of the switching system as presented in Table 3. It remains to
+choose the Hill exponent n for each nonlinearity i.e. one exponent for each edge in the
+network. Setting all Hill exponents to be 8 the solution exhibits the oscillations depicted
+in Figure 10. The uniform choice of n = 6 does not produce oscillations, but many other
+choices, e.g. setting n = 2 for the connections Mdm2→ p53 and p53→ Mdm2 and n = 10
+for all other nonlinearities also produces oscillations. It is worth noting that the peaks of
+p53 in Figure 10 come slightly ahead of the peaks of Mdm2 which agrees with one of the
+key experimental observations in [34].
+This last example is meant to indicate the usefulness of the CAD description of the
+nodes in parameter space. It leads to trivial algorithms for choosing speciﬁc parameter
+points. Therefore, this opens the possibility for eﬃciently studying numerical simulations
+to understand ﬁner structure of the dynamics that satisﬁes the local and global properties
+of the annotated Morse graph.
+Acknowledgements: We thank Chang Chan for bringing the p53 network to our atten-
+tion. T.G. was partially supported by NSF grants DMS-1226213, DMS-1361240, DARPA
+D12AP200025 and NIH R01 grant 1R01AG040020-01. B.C. was partially supported by
+DARPA grant D12AP200025. K.M. and S.H. were partially supported by NSF-DMS-
+0835621, 0915019, 1125174, 1248071, and contracts from AFOSR and DARPA.
+
+===== PDF PAGE 34 =====
+34 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+Table 2. CAD description of a parameter node for the p53 Network.
+Component 1 Component 2 Component 3
+0< T7 0< T7 0< T7
+0< L1 0< L1 0< L1
+0< L2 0< L2 0< L2
+0< L3< T7
+L1+L2
+0< L3< T7
+L1+L2
+0< L3< T7
+L1+L2
+L1< U1≤ L3(L1−L2)+T7
+2L3
+L3(L1−L2)+T7
+2L3
+< U1< T7−L2L3
+L3
+L3(L1−L2)+T7
+2L3
+< U1< T7−L2L3
+L3
+T7−L3U1
+L3
+< U2< T7−L1L3
+L3
+T7−L3U1
+L3
+< U2< L2− L1 + U1 L2 + U1− L1≤ U2< T7−L1L3
+L3
+L3< U3< T7
+L1+U2
+L3< U3< T7
+L2+U1
+L3< U3< T7
+L1+U2
+T7< T8< L3(U1 + U2) T7< T8< L3(U1 + U2) T7< T8< L3(U1 + U2)
+0< T2 0< T2 0< T2
+0< L5 0< L5 0< L5
+0< L6< T2
+L5
+0< L6< T2
+L5
+0< L6< T2
+L5
+L5< U5< T2
+L6
+L5< U5< T2
+L6
+L5< U5< T2
+L6
+T2
+U5
+< U6< T2
+L5
+T2
+U5
+< U6< T2
+L5
+T2
+U5
+< U6< T2
+L5
+0< T6 0< T6 0< T6
+0< U7< T6 0< U7< T6 0< U7< T6
+0< L7< U7 0< L7< U7 0< L7< U7
+L7< T4< U7 L7< T4< U7 L7< T4< U7
+0< L4 0< L4 0< L4
+L4< U4 L4< U4 L4< U4
+L4< T1< U4 L4< T1< U4 L4< T1< U4
+0< T3 0< T3 0< T3
+T1< T5< U4 T1< T5< U4 T1< T5< U4
+0< L8< T3 0< L8< T3 0< L8< T3
+T3< U8 T3< U8 T3< U8
+We use the following numeric scheme to identify the edges:
+1 = (ATM → p53), 2 = (Chk2 → p53), 3 = (Mdm2 → p53), 4 = (Wip1 → ATM), 5 =
+(ATM→ Chk2), 6 = (Wip1 → Chk2), 7 = (p53 → Wip1), 8 = (p53 → Mdm2).
+The upper values, lower values, and the thresholds for each edge correspond to U i, Li, and
+Ti respectively.
+Example: The upper value associated with the edge (ATM → Chk2) corresponds to U 5.
+References
+[1] Alfred V. Aho, Michael R Garey, and Jeﬀrey D. Ullman. The transitive reduction of a directed graph.
+SIAM Journal on Computing , 1(2):131–137, 1972.
+[2] Reka Albert, James J. Collins, and Leon Glass. Introduction to Focus Issue: Quantitative approaches
+to genetic networks. Chaos, 23(2):025001, JUN 2013.
+
+===== PDF PAGE 35 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 35
+Table 3. P53 Network parameters
+Edge u -value l-value threshold
+ATM→ Chk2 1 1/2 1/2
+ATM→ p53 7/8 7/32 1/4
+Chk2→ p53 7/8 7/32 3/4
+MdM2→ p53 7/8 21/32 1
+Wip1→ ATM 1 1/2 1/2
+Wip1→ Chk2 2 1/2 2
+p53→ Mdm2 2 1/2 1127/1024
+p53→ Wilp1 1 1/4 539/512
+0 10 20 30 40 50
+0.4
+0.6
+0.8
+1.0
+1.2 p53
+ATM
+Chk2
+Wip1
+Mdm2
+Figure 10. Hill function simulation for the p53 model at parameter node
+40535. See the text for parameter choices. The Hill exponent for every
+nonlinearity is n = 8.
+[3] Reka Albert and Hans G Othmer. The topology and signature of the regulatory interactions predict
+the expression pattern of the segment polarity genes in drosophila melanogaster. Journal of Theoretical
+Biology, 223(1):1–18, 2003.
+[4] Zin Arai, William Kalies, Hiroshi Kokubu, Konstantin Mischaikow, Hiroe Oka, and Pawel Pilarczyk.
+A database schema for the analysis of global dynamics of multiparameter systems. SIAM Journal on
+Applied Dynamical Systems, 8(3):757–789, 2009.
+[5] D. Berenguier, C. Chaouiya, P. T. Monteiro, A. Naldi, E. Remy, D. Thieﬀry, and L. Tichit. Dynamical
+modeling and analysis of large cellular regulatory networks. Chaos, 23(2):025114, JUN 2013.
+[6] Justin Bush, Wes Cowan, Shaun Harker, and Konstantin Mischaikow. Conley-morse databases for the
+angular dynamics of newtons method on the plane. preprint, 2015.
+[7] Justin Bush, Marcio Gameiro, Shaun Harker, Hiroshi Kokubu, Konstantin Mischaikow, Ippei Obayashi,
+and Pawe l Pilarczyk. Combinatorial-topological framework for the analysis of global dynamics.Chaos:
+An Interdisciplinary Journal of Nonlinear Science , 22(4):047508, 2012.
+[8] Justin Bush and Konstantin Mischaikow. Coarse Dynamics for Coarse Modeling: An Example From
+Population Biology. Entropy, 16(6):3379–3400, JUN 2014.
+
+===== PDF PAGE 36 =====
+36 BREE CUMMINS, TOMAS GEDEON, SHAUN HARKER, KONSTANTIN MISCHAIKOW, AND KAFUNG MOK
+[9] L. Calzone, L. Tournier, S. Fourquet, D. Thieﬀry, B. Zhivotovsky, E. Barillot, and A. Zinovyev.
+Mathematical modelling of cell-fate decision in response to death receptor engagement. PLoS Comput.
+Biol., 6(3):e1000702, 2010.
+[10] M. Chaves and R. Albert. Studying the eﬀect of cell division on expression patterns of the segment
+polarity genes. J. Royal Society Interface , 5(S1):S71–S84, 2008.
+[11] M. Chaves, R. Albert, and E.D. Sontag. Robustness and fragility of boolean models for genetic regu-
+latory networks. J. Theoretical Biology, 235(3):431–449, 2005.
+[12] M Chaves, E D Sontag, and R Albert. Methods of robustness analysis for Boolean models of gene
+control networks. IEE Proceedings-Systems Biology, 153(4):154–167, 2006.
+[13] George E Collins and Hoon Hong. Partial cylindrical algebraic decomposition for quantiﬁer elimination.
+Springer, 1998.
+[14] Hidde de Jong. Modeling and simulation of genetic regulatory systems: a literature review. Journal of
+Computational Biology, 9(1):67–103, January 2002.
+[15] R Edwards. Analysis of continuous-time switching networks. Physica D: Nonlinear Phenomena ,
+146(March):165–199, 2000.
+[16] R. Edwards, A. Machina, G. McGregor, and P. van den Driessche. A modelling framework for gene
+regulatory networks involving transcription and translation. Bull. Math. Biol. , 77:953–983, 2015.
+[17] R Edwards, HT Siegelmann, K Aziza, and L Glass. Symbolic dynamics and computation in model
+gene networks. Chaos: An Interdisciplinary Journal of Nonlinear Science , 11(1):160–169, 2001.
+[18] Roderick Edwards, Etienne Farcot, and Eric Foxall. Explicit construction of chaotic attractors in Glass
+networks. Chaos, Solitons & Fractals , 45(5):666–680, May 2012.
+[19] Roderick Edwards and Liliana Ironi. Periodic solutions of gene networks with steep sigmoidal regulatory
+functions. Physica D: Nonlinear Phenomena , 282:1–15, July 2014.
+[20] M Ellowitz and S Leibler. A synthetic oscillatory network of transcription regulators. Nature, 403:335–
+338, 2000.
+[21] G. Fan, B. Cummins, and T. Gedeon. Convergence properties of post-translationally modifed protein-
+protein switching networks with fast decay rates. Bull. Math. Biol. , under review.
+[22] T. Gedeon, S. Harker, H. Kokubu, K. Mischaikow, and H. Oka. Global Dynamics for Steep Sigmoidal
+Nonlinearities in Two Dimensions. ArXiv e-prints, August 2015.
+[23] N. Geva-Zatorsky, N. Rosenfeld, S. Itzkovitz, R. Milo, A. Sigal, E. Dekel, T. Yarnitzky, Y. Liron,
+P. Polak, G. Lahav, and U. Alon. Oscillations and variability in the p53 system. Molecular Systems
+Biology, 2(2006.0033), 2006.
+[24] L Glass and S a Kauﬀman. Co-operative components, spatial localization and oscillatory cellular
+dynamics. Journal of theoretical biology, 34(2):219–37, February 1972.
+[25] L Glass and S a Kauﬀman. The logical analysis of continuous, non-linear biochemical control networks.
+Journal of theoretical biology, 39(1):103–29, April 1973.
+[26] Leon Glass and JS Pasternack. Stable oscillations in mathematical models of biological control systems.
+Journal of Mathematical Biology , 6:207–223, 1978.
+[27] Jean-Luc Gouz´ e and Tewﬁk Sari. A class of piecewise linear diﬀerential equations arising in biological
+models. Dynamical Systems, 17(4):299–316, December 2002.
+[28] L. Grieco, L. Calzone, I. Bernard-Pierrot, F. Radvanyi, and B. et al. Kahn-Perls. Computational model-
+ing of the main signaling pathways involved in mast cell activation.PLoS Comput. Biol, 9(10):e1003286,
+2013.
+[29] S. Harker, A. Goullet, and B. Cummins. DSGRN: Dynamic Signatures for Gene Regulatory Networks.
+http://chomp.rutgers.edu/Projects/DSGRN/DB, 2012–2015.
+[30] Liliana Ironi, Luigi Panzeri, Erik Plahte, and Valeria Simoncini. Dynamics of actively regulated gene
+networks. Physica D: Nonlinear Phenomena , 240(8):779–794, 2011.
+[31] Tyson J. J. and Othmer H. G. The dynamics of feedback control circuits in biochemical pathways.
+In Rosen R. and Snell F.M., editors, Progress in theoretical biology, volume 5, pages 1–62. New York:
+Academic Press, 1978.
+
+===== PDF PAGE 37 =====
+COMBINATORIAL REPRESENTATION OF PARAMETER SPACE FOR SWITCHING NETWORKS 37
+[32] Pamela K. Kreeger and Douglas A. Lauﬀenburger. Cancer systems biology: a network modeling per-
+spective. CARCINOGENESIS, 31(1):2–8, JAN 2010.
+[33] M Levine and EH Davidson. Gene regulatory networks for development. PNAS, 102(14):4936–4942,
+APR 5 2005.
+[34] A. Loewer, E. Batchelor, G. Gaglia, and G. Lahav. Basal dynamics of p53 reveal transcriptionally
+attenuated pulses in cycling cells. Cell, 142:89–100, 2010.
+[35] C. Luo and X. Wang. Dynamics of random boolean networks under fully asynchronous stochastic
+update based on linear representation. PLoS One, 8(6):e66491, 2013.
+[36] Konstantin Mischaikow and Marian Mrozek. Conley index. In Handbook of dynamical systems, Vol. 2 ,
+pages 393–460. North-Holland, Amsterdam, 2002.
+[37] A. Niarakis, Y. Bounab, L. Grieco, R. Roncagalli, A-M. Hesse, J. Garin, B. Malissen, M. Daron, and
+D. Thieﬀry. Computational modelling of the main signaling pathways involved in mast cell activation.
+Current Topics in Microbiology and Immunology , 382:69–93, 2014.
+[38] Richard P. Stanley. An introduction to hyperplane arrangements. In Geometric combinatorics, vol-
+ume 13 of IAS/Park City Math. Ser. , pages 389–496. Amer. Math. Soc., Providence, RI, 2007.
+[39] Adam Strzebo´ nski. Solving systems of strict polynomial inequalities.Journal of Symbolic Computation,
+29(3):471–480, 2000.
+[40] Robert Tarjan. Depth-ﬁrst search and linear graph algorithms. SIAM journal on computing , 1(2):146–
+160, 1972.
+[41] C. D. Thron. The secant condition for instability in biochemical feedback control: Parts i and ii.
+Bulletin of Mathematical Biology , 53:383–424, 1991.
+[42] L. Tournier and M. Chaves. Uncovering operational interactions in genetic networks using asynchronous
+boolean dynamics. J. Theor. Biol , 260(2):196–209, 2009.
+[43] Siren R Veﬂingstad and Erik Plahte. Analysis of gene regulatory network models with graded and
+binary transcriptional responses. Biosystems, 90(2):323–339, 2007.
+Department of Mathematical Sciences, Montana State University, Bozeman, MT 59715
+Department of Mathematical Sciences, Montana State University, Bozeman, MT 59715
+Department of Mathematics, Hill Center-Busch Campus, Rutgers, The State University
+of New Jersey, Piscataway, NJ 08854-8019, USA
+Department of Mathematics, Hill Center-Busch Campus, Rutgers, The State University
+of New Jersey, Piscataway, NJ 08854-8019, USA
+Department of Mathematics, Hill Center-Busch Campus, Rutgers, The State University
+of New Jersey, Piscataway, NJ 08854-8019, USA

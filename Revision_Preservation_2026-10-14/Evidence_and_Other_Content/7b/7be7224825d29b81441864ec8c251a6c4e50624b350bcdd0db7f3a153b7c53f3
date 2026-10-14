@@ -1,0 +1,178 @@
+# N2/P8 Preregistration — Zero-Pass Dispatch from Source-Builder Telemetry
+
+Frozen before P8 training labels, model fitting, validation cutoff selection, fuzz, Gate-P evaluation, or frozen-natural evaluation are inspected.
+
+## Goal
+
+Test whether the P4-P7 propagated-signature optimizer can become end-to-end useful when the decision to annotate is made from tiny statistics accumulated during source-DAG construction, with no separate pre-optimization DAG traversal.
+
+P8 is a dispatch-policy experiment. The P1 profitability thresholds, P4 propagated-signature semantics, P6 annotated backend, sparse-ANF lowerers, frozen Gate-P evaluation family, and frozen ten-case EPFL evaluation corpus are unchanged.
+
+## Backends
+
+- `direct_build_sparse`: frozen direct/no-rewrite compiler DAG construction plus sparse-ANF lowering.
+- `cm_innode_sig_build_sparse`: frozen P6 in-node two-word propagated-signature compiler backend.
+- `p8_dispatch`: source DAG is built with a telemetry-compatible Factory, the frozen decision tree is evaluated in O(tree depth), then exactly one of the two compiler backends above runs.
+
+No P6 fold threshold or lowering rule may change.
+
+## Zero-pass telemetry
+
+Telemetry is updated only inside source `Factory._make` while source nodes are already being constructed. P8 performs no source-DAG traversal for dispatch.
+
+Frozen primitive counters:
+
+1. `node_count`: source nodes actually created by the Factory.
+2. `edge_count`: sum of argument counts of created nodes.
+3. `max_depth`: maximum construction depth, with variables/constants at depth 0.
+4. `binary_nodes`: created `and/or/xor/tf` nodes of arity 2.
+5. `nonlinear_binary_nodes`: binary nodes whose immediate truth token has a nonlinear `ab` ANF coefficient.
+6. `cse_hits`: `_make` cache hits.
+7. `reuse_edge_events`: cumulative incoming-edge events beyond the first use of a child, maintained incrementally.
+8. `max_use`: maximum incrementally observed incoming use count of any source node.
+9. `pair_repeat_excess`: for canonical unordered immediate child-ID pairs, cumulative shells beyond the first shell in each pair group.
+10. `multi_token_pair_groups`: number of immediate-pair groups that have acquired at least two distinct immediate truth tokens.
+11. `max_pair_shells`: maximum number of binary shells seen for one canonical immediate operand pair.
+12. `max_pair_token_diversity`: maximum immediate-token diversity for one canonical pair.
+
+Frozen derived features, computed O(1) from the counters after construction:
+
+13. `binary_density = binary_nodes / max(1,node_count)`.
+14. `nonlinear_density = nonlinear_binary_nodes / max(1,binary_nodes)`.
+15. `reuse_density = reuse_edge_events / max(1,edge_count)`.
+16. `pair_repeat_density = pair_repeat_excess / max(1,binary_nodes)`.
+
+No monomial estimate, propagated truth-function signature, ANF work, selector simulation, timing, or second-pass reachability statistic is permitted in dispatch features.
+
+The telemetry Factory must be semantics-identical to the ordinary source Factory. Source-DAG construction overhead is measured and charged in the source-inclusive endpoint.
+
+## Training corpus — disjoint evaluation seeds/cases
+
+No frozen Gate-P evaluation case and no frozen EPFL evaluation root may be used as a training label.
+
+Synthetic training seed family: `20260918 ^ 0x8008A`.
+
+Synthetic training cases: 180 total:
+- 72 fresh Gate-P-like: depths 4,6,8,10,12,14; 12/depth;
+- 54 pair-noise controls: depths 6,8,10,12,14,16; 9/depth;
+- 54 ordinary random DAG formulas, 8 variables, depths 6-12.
+
+EPFL training cases are structurally selected *before timing* from existing pinned evaluation-source BLIF files but must exclude every frozen ten-case evaluation root. Training circuits: `adder`, `cavlc`, `bar`. Admission: support 6-12, source cone nodes <=128. Sort by `(source_nodes, depth, root)` and choose the first, middle, and last admissible non-evaluation roots per circuit when available. These cases are root-disjoint but not claimed to be circuit-disjoint; they are included only to stabilize abstention behavior, not to support a natural-folding claim.
+
+For every training case, measure compiler-pipeline medians for direct and P6 with 9 randomized paired repetitions. The regression target is:
+
+`y = log(median_P6_compiler_pipeline / median_direct_compiler_pipeline)`.
+
+Source build occurs outside the label because it is common input production; its incremental telemetry overhead is charged separately in validation/evaluation source-inclusive timing.
+
+## Frozen model family
+
+Use `sklearn.tree.DecisionTreeRegressor` with exactly:
+
+- `max_depth=3`
+- `min_samples_leaf=12`
+- `min_samples_split=24`
+- `random_state=20260918 ^ 0x8D33`
+- no feature scaling
+- no sample weights
+
+Fit on the 16 frozen features above, in that order. Persist the learned tree numerically in `P8_FROZEN_GATE.json`; evaluation does not call scikit-learn.
+
+## Validation cutoff — disjoint, no refit
+
+Synthetic validation seed family: `20260918 ^ 0x8008B`.
+
+Synthetic validation cases: 90 total:
+- 36 Gate-P-like: 6/depth at depths 4,6,8,10,12,14;
+- 27 pair-noise: 4/4/4/5/5/5 across depths 6,8,10,12,14,16 respectively;
+- 27 ordinary random DAG formulas, 8 variables, depths 6-12.
+
+EPFL validation cases are structurally selected before timing from `int2float`, `priority`, and `router`, excluding all frozen evaluation roots and all training roots, with the same support/source-node admission and first/middle/last structural quantiles.
+
+The fitted tree is not refit on validation. It predicts `predicted_ratio = exp(tree_prediction)`.
+
+Candidate dispatch cutoffs are the fixed grid `0.80,0.81,...,1.00`. Annotate iff `predicted_ratio <= C`.
+
+For each cutoff, validation objective is the case-balanced geometric mean of the **source-inclusive** predicted dispatch/direct ratio:
+
+`(median_telemetry_source_build + chosen compiler median) / (median_plain_source_build + median_direct compiler)`.
+
+Choose the cutoff with minimum objective. Cutoffs within 0.25 percentage points absolute of the minimum choose the lower cutoff (more conservative annotation). Validation cannot refit the tree or add features.
+
+After cutoff selection, write and hash `P8_FROZEN_GATE.json` before any evaluation benchmark runs.
+
+## Evaluation corpora
+
+### Gate-P
+
+Replay the exact frozen 36-case family: depths 6/8/10, 12 cases/depth, original frozen RNG order. The telemetry-generated source must be structurally/digest identical to the frozen source formula.
+
+### Natural EPFL
+
+Replay exactly the frozen ten P1-P7 selected cones at EPFL commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`. No frozen evaluation root is used as a fitting label.
+
+## Evaluation endpoints
+
+Primary endpoint: **source-inclusive** time from source-DAG construction through compiler DAG construction and sparse-ANF lowering.
+
+Arms:
+- `direct_source_pipeline`: ordinary source Factory + direct compiler backend.
+- `p6_source_pipeline`: ordinary source Factory + frozen P6 backend.
+- `p8_source_dispatch`: telemetry source Factory + O(depth-3) frozen-tree decision + selected direct/P6 compiler backend.
+
+Secondary endpoint: compiler-only direct/P6/P8 on an already-built telemetry-compatible source root, to separate dispatch quality from telemetry-construction tax.
+
+Source parsing of the BLIF text and oracle construction are outside timing, as in prior experiments. For Gate-P, the deterministic random recipe execution that builds the source expression is inside source-inclusive timing for all arms.
+
+Repetitions:
+- training: 9 paired compiler repetitions/case; source-build timing 9 paired repetitions/case;
+- validation: 9 paired source-inclusive repetitions/case/arm;
+- Gate-P evaluation: 20 randomized paired repetitions/case/arm;
+- natural evaluation: 15 randomized paired repetitions/case/arm;
+- memory: separate untimed pass.
+
+Case medians first. Pooled ratios are geometric means of paired case-median ratios with case-bootstrap 95% intervals. Also report workload-weighted sums.
+
+## Correctness
+
+Before timing interpretation:
+- 1000 fresh fuzz formulas built with telemetry and ordinary factories;
+- telemetry source semantics must match ordinary source semantics;
+- P8 result must equal direct and P6 oracle/digest;
+- P8 bypass work must equal direct work;
+- P8 annotated work must equal P6 work;
+- P6 accepted folds must equal consumed folds.
+
+Any correctness mismatch aborts interpretation.
+
+## Predeclared signals
+
+### Gate-P source-inclusive PASS
+
+Requires:
+1. zero correctness failures;
+2. at least one evaluation case dispatched to P6 and consuming a fold;
+3. pooled P8/direct **source-inclusive** ratio <=0.95;
+4. bootstrap 95% upper bound <1.00;
+5. no >5% pooled increase in pair terms or peak monomials relative to direct.
+
+### Dispatch usefulness
+
+Also report:
+- confusion against whether always-P6 actually beats direct per evaluation case;
+- annotation count and fold-consuming annotation count;
+- tree leaves/feature usage;
+- telemetry source-build overhead versus ordinary source build;
+- compiler-only P8/direct and source-inclusive P8/direct.
+
+### Natural control
+
+Prior P1-P7 accepted zero folds on the frozen ten natural cases. Natural P8 remains a negative control unless a fold is actually consumed. Report false-positive annotations and telemetry overhead; do not describe a natural speed result as a folding result without an accepted/consumed fold.
+
+## Guardrails
+
+- No feature, tree hyperparameter, threshold grid, or backend may be changed after training/validation results are seen.
+- Evaluation cases cannot influence the tree or cutoff.
+- Root-disjoint EPFL training/validation cases do not establish circuit-disjoint generalization.
+- Gate-P remains synthetic fold-rich evidence.
+- A P8 win would show that near-free source-time dispatch can amortize the known optimizer tax; it would not show that the underlying local identity is uniquely CM-specific.

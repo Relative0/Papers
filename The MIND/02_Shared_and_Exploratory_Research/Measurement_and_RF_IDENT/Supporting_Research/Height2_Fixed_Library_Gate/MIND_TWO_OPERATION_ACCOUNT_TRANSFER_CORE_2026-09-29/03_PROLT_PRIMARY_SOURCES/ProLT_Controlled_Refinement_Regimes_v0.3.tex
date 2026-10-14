@@ -1,0 +1,825 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,tabularx,array,longtable}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{newtxtext,newtxmath}
+
+\definecolor{navy}{RGB}{35,55,85}
+\definecolor{softblue}{RGB}{235,242,250}
+\definecolor{softgreen}{RGB}{237,247,240}
+\definecolor{softgold}{RGB}{251,246,232}
+\definecolor{softgray}{RGB}{246,246,246}
+\hypersetup{colorlinks=true,linkcolor=navy,citecolor=navy,urlcolor=navy}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{navy}}{\thesubsection}{0.7em}{}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\fancyhf{}
+\lhead{Controlled ProLT Refinement Regimes}
+\rhead{Research continuation v0.3}
+\cfoot{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\F}{\mathbb F_2}
+\newcommand{\Om}{\Omega_P}
+\newcommand{\truth}{\varsigma}
+\newcommand{\OX}{\mathcal O}
+\newcommand{\Cone}{\operatorname{Cone}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\up}{\uparrow}
+\newcommand{\down}{\downarrow}
+\newcommand{\statusS}{\textbf{[S]}}
+\newcommand{\statusA}{\textbf{[A]}}
+\newcommand{\statusC}{\textbf{[C]}}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries\color{navy} Controlled Refinement Regimes for Propositional Logical Topologies}\par
+\vspace{0.35em}
+{\large Positive observation fragments, post-$T_0$ rigidity, bounded-height defects, exact chain classification, and refinement/update bifiltrations}\par
+\vspace{0.7em}
+{\normalsize Research continuation v0.3 --- 23 September 2026}\par
+\vspace{0.3em}
+{\small Continuation of \emph{Homological Foundations for Propositional Logical Topologies} v0.1 and \emph{Observation Refinement Classification} v0.2.}
+\end{center}
+
+\vspace{0.8em}
+\noindent\colorbox{softgold}{\parbox{0.96\textwidth}{
+\textbf{Status convention.} \statusS\ denotes standard mathematics used essentially unchanged. \statusA\ denotes a direct ProLT specialization or elementary derived result. \statusC\ denotes a research contribution candidate whose novelty is not claimed without a dedicated literature audit. The strongest candidate contribution in this note is not any single standard topological lemma, but the exact ProLT-specific classification obtained by combining observation semantics with the induced order-deletion geometry.
+}}
+
+\section{Purpose and main conclusions}
+
+The preceding refinement note reduced every observation refinement
+\[
+\Psi=(\Phi,\Theta)
+\]
+to a surjective monotone map of realized-signature posets
+\[
+r_{\Psi\Phi}:P_\Psi\longrightarrow P_\Phi.
+\]
+It also showed that once the coarse ProLT is $T_0$, no further splitting of coarse states is possible: later refinements keep the same vertices and only delete specialization comparisons and therefore simplices of the canonical order complex.
+
+The unrestricted classification problem is too expressive to admit a universal effective homotopy test. The correct next question is therefore:
+
+\begin{quote}
+\emph{Which logically natural refinement regimes force a controlled topology, and where does genuinely nontrivial homotopy first appear?}
+\end{quote}
+
+This note proves five main results.
+
+\begin{enumerate}[label=\textbf{R\arabic*.},leftmargin=2.9em]
+\item \textbf{Positive-fragment normal form.} A proposed observation is topologically redundant exactly when, on realized old signatures, it is an isotone Boolean function. Equivalently, on the valuation carrier it is representable by a positive formula built only from the old observations using $\wedge,\vee$ and constants. A canonical positive DNF is obtained from the minimal true signatures.
+
+\item \textbf{Post-$T_0$ rigidity.} After $T_0$ has been reached, an order-adjoint certificate can no longer certify a genuinely nonredundant refinement: a left or right adjoint exists if and only if the refinement is already redundant. Purely antitone added information is even more rigid: unless it is constant on each connected component, it necessarily changes $H_0$.
+
+\item \textbf{Bounded-height threshold.} If the coarse signature poset has height at most $1$, homology neutrality is equivalent to redundancy. Height $2$ is the first nontrivial case. There, homology neutrality is exactly invertibility of a relative boundary matrix from deleted $2$-simplices to deleted edges.
+
+\item \textbf{Exact one-bit classification over a chain.} Let the coarse signature poset be a chain and add one observation with bit sequence $b_1\cdots b_n$. Then the refinement is defective exactly for a strict antitone threshold
+\[
+11\cdots100\cdots0.
+\]
+Every other sequence gives a contractible refined order complex. Thus there are exactly $n+1$ redundant sequences, $n-1$ defective sequences, and $2^n-2n$ nonredundant but homotopy-neutral sequences.
+
+\item \textbf{Two-parameter evolution.} After $T_0$, successive observation refinement and successive premise accumulation commute as simplicial inclusions. They therefore generate a canonical two-parameter decreasing family, or equivalently a bifiltration after reversing both indices. Homology produces a multiparameter persistence module.
+\end{enumerate}
+
+\section{Setup: post-$T_0$ refinement as order deletion}
+
+Let
+\[
+\Phi=(\phi_i)_{i\in I}
+\]
+be a finite observation family on the finite valuation carrier $\Om$, and let
+\[
+P_\Phi=o_\Phi(\Om)\subseteq 2^I
+\]
+be the realized-signature poset ordered by inclusion. Its canonical order complex is
+\[
+\OX_\Phi=\Delta(P_\Phi).
+\]
+
+Suppose
+\[
+\Psi=(\Phi,\Theta),\qquad \Theta=(\theta_a)_{a\in A},
+\]
+is a refinement. The v0.2 fiber-profile theorem writes
+\[
+P_\Psi\cong\{(p,a):p\in P_\Phi,\ a\in\mathcal B_p\}
+\]
+with product order, where $\mathcal B_p$ is the set of new-coordinate signatures realized inside the coarse state represented by $p$.
+
+If $X_\Phi$ is $T_0$, the old signature map is injective. Hence every coarse state contains one valuation and each $\mathcal B_p$ is a singleton. Write
+\[
+\mathcal B_p=\{\alpha(p)\},\qquad \alpha:P_\Phi\to 2^A.
+\]
+After identifying old and new vertices,
+\begin{equation}\label{eq:fineorder}
+p\le_\Psi q
+\iff
+p\le_\Phi q\quad\text{and}\quad \alpha(p)\subseteq\alpha(q).
+\end{equation}
+Thus
+\[
+\OX_\Psi\subseteq\OX_\Phi
+\]
+as a spanning simplicial subcomplex.
+
+For one added observation $\psi$, write $b:P_\Phi\to\{0,1\}$. Then
+\begin{equation}\label{eq:bitorder}
+p\le_\Psi q
+\iff
+p\le_\Phi q\quad\text{and}\quad b(p)\le b(q).
+\end{equation}
+Every deleted coarse chain contains a $1\to0$ descent.
+
+\section{Positive observation formulas are exactly the redundant fragment}
+
+The v0.8 ProLT topology has a particularly strong interaction with positive Boolean formulas because its opens are precisely inverse images of upward-closed sets of realized signatures.
+
+\begin{definition}[Relative positive formula]
+A formula is \emph{positive in the observation family $\Phi$} if it is built from the formulas $\phi_i$ using only $\wedge$, $\vee$, and the constants $\top,\bot$. Negations of the observation formulas are not allowed in this relative syntax.
+\end{definition}
+
+\begin{theorem}[Positive-fragment characterization of redundancy]\label{thm:positive}
+\statusS/\statusA/\statusC\;
+For an arbitrary formula $\psi$, the following are equivalent.
+\begin{enumerate}[label=(\roman*)]
+\item $\truth(\psi)\in\tau_\Phi$.
+\item There exists an upward-closed set $U\subseteq P_\Phi$ such that
+\[
+\truth(\psi)=o_\Phi^{-1}(U).
+\]
+\item $\psi$ is constant on every coarse signature class $C_p=o_\Phi^{-1}(p)$ and the induced bit
+\[
+b_\psi:P_\Phi\to\{0,1\}
+\]
+is isotone.
+\item There is a monotone Boolean function
+\[
+F:\{0,1\}^I\to\{0,1\}
+\]
+such that
+\[
+V_v(\psi)=F(o_\Phi(v))\qquad(v\in\Om).
+\]
+\item On the finite valuation carrier, $\psi$ is logically equivalent to a positive formula in $\Phi$.
+\end{enumerate}
+More precisely, if $M$ is the antichain of minimal elements of
+\[
+U=\{p\in P_\Phi:b_\psi(p)=1\},
+\]
+then
+\begin{equation}\label{eq:positiveDNF}
+\psi\equiv_{\Om}
+\bigvee_{p\in M}\ \bigwedge_{i\in p}\phi_i,
+\end{equation}
+with the empty conjunction interpreted as $\top$.
+\end{theorem}
+
+\begin{proof}
+The equivalence of (i) and (ii) is the signature representation theorem from the v0.8 ProLT manuscript. If (ii) holds, membership depends only on the old signature and the characteristic function of $U$ is isotone, giving (iii). Conversely, (iii) makes the true-signature set upward closed, so (ii) follows.
+
+From (iii), extend the partially specified monotone function on the realized signature set to the whole Boolean cube by
+\[
+F(s)=1\iff \exists p\in U\text{ with }p\subseteq s.
+\]
+This $F$ is monotone and agrees with $b_\psi$ on $P_\Phi$. This gives (iv). Every finite monotone Boolean function has a positive DNF; restricting to the minimal realized true signatures gives exactly \eqref{eq:positiveDNF}, which is sufficient on the valuation carrier. Thus (iv) implies (v), and any positive formula defines an isotone Boolean function of the signature coordinates, giving (iii).
+\end{proof}
+
+\begin{corollary}[Syntactic closure]
+Any observation obtained from the old observations solely by finite conjunctions and disjunctions is topologically redundant. It may still change a chosen weighted signature distance if it is added as a new weighted coordinate.
+\end{corollary}
+
+\begin{remark}[What ``monotone'' means here]
+The monotonicity in Theorem~\ref{thm:positive} is with respect to the \emph{old observation signature order}, not necessarily with respect to the underlying propositional variables. When $\Phi$ itself consists of the base variables, the two notions coincide in the obvious way.
+\end{remark}
+
+\subsection{The dual anti-positive fragment}
+
+There is a useful dual statement even though down-sets are not the opens of the positive-observation topology.
+
+\begin{proposition}[Anti-positive normal form]\label{prop:antipositive}
+Suppose $\psi$ is constant on old signature classes. Its induced bit $b_\psi$ is antitone,
+\[
+p\le q\Longrightarrow b_\psi(p)\ge b_\psi(q),
+\]
+if and only if, on the valuation carrier, $\psi$ has a representation
+\begin{equation}\label{eq:antiDNF}
+\psi\equiv_{\Om}
+\bigvee_{p\in N}\ \bigwedge_{i\notin p}\neg\phi_i,
+\end{equation}
+where $N$ can be chosen as the maximal true signatures.
+\end{proposition}
+
+\begin{proof}
+An antitone bit has a downward-closed true set $D\subseteq P_\Phi$. Every realized $s\in D$ lies below some maximal $p\in D$. The conjunction in \eqref{eq:antiDNF} is true at $s$ exactly when $s\subseteq p$. The converse is immediate because each displayed conjunction and therefore their disjunction is antitone in the old signature coordinates.
+\end{proof}
+
+\section{Post-$T_0$ rigidity}
+
+Before $T_0$, the refinement projection can have nontrivial point fibers, and order adjoints provide useful homotopy-equivalence certificates. After $T_0$, that phenomenon disappears.
+
+\begin{theorem}[Adjoint rigidity after $T_0$]\label{thm:adjrigid}
+\statusA/\statusC\;
+Assume $X_\Phi$ is $T_0$ and let
+\[
+r:P_\Psi\to P_\Phi
+\]
+be any later refinement projection. Then the following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $r$ has a right order adjoint;
+\item $r$ has a left order adjoint;
+\item $r$ is an order isomorphism;
+\item the refinement is topologically redundant.
+\end{enumerate}
+Thus every genuinely nonredundant post-$T_0$ homotopy-neutral refinement lies beyond the elementary adjoint criterion.
+\end{theorem}
+
+\begin{proof}
+After $T_0$, identify the fine and coarse point sets. Then $r$ is the identity as a set map and the fine order is contained in the coarse order. Suppose $s:P_\Phi\to P_\Psi$ is a right adjoint to $r$. For any $p$, adjunction applied with $q=p$ gives $p\le_\Psi s(p)$, while applied with $q=s(p)$ gives $s(p)\le_\Phi p$. Since fine comparison implies coarse comparison, also $p\le_\Phi s(p)$, hence antisymmetry yields $s(p)=p$. The adjunction law therefore says
+\[
+q\le_\Phi p\iff q\le_\Psi p,
+\]
+so the two orders coincide. The left-adjoint case is dual. Order equality is exactly redundancy by the v0.2 redundancy theorem.
+\end{proof}
+
+\subsection{Antitone blocks split connected components}
+
+\begin{theorem}[Antitone profile decomposition]\label{thm:antitoneblock}
+\statusA/\statusC\;
+Assume $X_\Phi$ is $T_0$. Let a block of new observations have profile
+\[
+\alpha:P_\Phi\to2^A
+\]
+which is antitone:
+\[
+p\le q\Longrightarrow\alpha(p)\supseteq\alpha(q).
+\]
+Then
+\[
+p\le_\Psi q
+\iff
+p\le_\Phi q\text{ and }\alpha(p)=\alpha(q).
+\]
+Hence
+\[
+P_\Psi=\coprod_{a\in\im\alpha} P_a,
+\qquad
+P_a:=\{p\in P_\Phi:\alpha(p)=a\},
+\]
+as a disjoint union of induced subposets.
+
+Consequently, the refinement is a homology equivalence if and only if $\alpha$ is constant on each connected component of $P_\Phi$; in that case no comparison is deleted and the refinement is redundant.
+\end{theorem}
+
+\begin{proof}
+Equation~\eqref{eq:fineorder} requires both $\alpha(p)\subseteq\alpha(q)$ and, by antitonicity, $\alpha(p)\supseteq\alpha(q)$, hence equality. Thus no fine comparability crosses two profile levels. If one coarse connected component contains two distinct profiles, it splits into at least two fine connected components, so $H_0$ changes. Conversely, if the profile is constant on each coarse connected component, every coarse comparability joins equal profiles and survives.
+\end{proof}
+
+\begin{corollary}[Negation refinement]
+After $T_0$, adding negations of selected old observation coordinates partitions the signature poset by the truth pattern on those selected coordinates. Adding negations of \emph{all} old coordinates deletes every strict inclusion and produces an antichain, recovering the discrete two-sided observation topology from v0.8.
+\end{corollary}
+
+\section{Bounded-height signature posets}
+
+\begin{definition}[Height]
+For a finite poset $P$, define
+\[
+\operatorname{ht}(P)=\max\{k:p_0<p_1<\cdots<p_k\}.
+\]
+Thus
+\[
+\dim\Delta(P)=\operatorname{ht}(P).
+\]
+\end{definition}
+
+\subsection{Height zero and height one}
+
+Height zero is trivial: the coarse poset is already an antichain, hence its topology is discrete and no later refinement can delete a comparability.
+
+\begin{theorem}[Height-one homology rigidity]\label{thm:height1}
+\statusA/\statusC\;
+Assume $X_\Phi$ is $T_0$ and
+\[
+\operatorname{ht}(P_\Phi)\le1.
+\]
+For every later refinement $\Psi$,
+\[
+r_{\Psi\Phi}:P_\Psi\to P_\Phi
+\]
+is a homology equivalence over any field if and only if the refinement is redundant.
+\end{theorem}
+
+\begin{proof}
+The order complex $\OX_\Phi$ is a graph. After $T_0$, $\OX_\Psi$ is a spanning subgraph obtained only by deleting edges. If at least one edge is deleted, the vertex count stays fixed and the edge count decreases, so the Euler characteristic $\chi=V-E$ changes. Therefore the homology cannot remain isomorphic. Conversely, a redundant refinement changes no edge.
+\end{proof}
+
+\begin{corollary}[First possible nontrivial neutrality]
+A nonredundant post-$T_0$ refinement which is nevertheless homology-neutral requires coarse height at least $2$.
+\end{corollary}
+
+\subsection{Height two: an exact relative boundary test}
+
+Let $K=\OX_\Phi$ and $L=\OX_\Psi\subseteq K$. Because the vertices are identical,
+\[
+C_0(K,L;k)=0
+\]
+for any coefficient field $k$.
+
+\begin{theorem}[Height-two matrix classification]\label{thm:height2}
+\statusS/\statusA/\statusC\;
+Assume $X_\Phi$ is $T_0$ and
+\[
+\operatorname{ht}(P_\Phi)\le2.
+\]
+Let $E_{\rm del}$ be the deleted $1$-simplices and $T_{\rm del}$ the deleted $2$-simplices. Then the relative chain complex is
+\[
+0\longrightarrow k[T_{\rm del}]
+\overset{\partial_2^{\rm rel}}{\longrightarrow}
+k[E_{\rm del}]
+\longrightarrow0.
+\]
+The refinement is a homology equivalence over $k$ if and only if
+\[
+\partial_2^{\rm rel}
+\]
+is an isomorphism. Equivalently,
+\[
+|T_{\rm del}|=|E_{\rm del}|=\rank(\partial_2^{\rm rel}).
+\]
+Over $\F$, this is an exact finite binary-matrix test.
+\end{theorem}
+
+\begin{proof}
+No relative chains occur above degree $2$, and there are no relative $0$-chains because the spanning vertex set is unchanged. Hence
+\[
+H_2(K,L;k)=\ker\partial_2^{\rm rel},\qquad
+H_1(K,L;k)=\operatorname{coker}\partial_2^{\rm rel},
+\]
+while $H_0(K,L;k)=0$. The long exact sequence of the pair shows that $L\hookrightarrow K$ is a homology equivalence exactly when all relative groups vanish, which is equivalent to bijectivity of the displayed linear map.
+\end{proof}
+
+\begin{corollary}[Fast obstruction]
+At height two, if the number of deleted edges differs from the number of deleted triangles, the refinement cannot be homology-neutral.
+\end{corollary}
+
+\begin{proposition}[A simple-collapse certificate]\label{prop:collapsepair}
+Under the hypotheses of Theorem~\ref{thm:height2}, suppose:
+\begin{enumerate}[label=(\roman*)]
+\item every deleted edge is contained in exactly one deleted triangle; and
+\item every deleted triangle contains exactly one deleted edge.
+\end{enumerate}
+Then $K$ simplicially collapses onto $L$. In particular the refinement is a simple homotopy equivalence.
+\end{proposition}
+
+\begin{proof}
+A deleted edge cannot lie in a retained triangle because $L$ is a subcomplex. Under (i), its unique triangle coface in the height-two complex is therefore the corresponding deleted triangle. It is a free face. Conditions (i)--(ii) pair all deleted triangles and deleted edges without conflict, so removing these elementary collapse pairs leaves exactly $L$.
+\end{proof}
+
+\subsection{The minimal three-chain examples}
+
+Let
+\[
+x<y<z
+\]
+be a three-element coarse chain. The complete one-bit classification is:
+
+\begin{center}
+\begin{tabular}{ccl}
+\toprule
+bit pattern & status & refined order complex \\
+\midrule
+000 & redundant & filled triangle \\
+001 & redundant & filled triangle \\
+010 & nonredundant, neutral & two-edge tree \\
+011 & redundant & filled triangle \\
+100 & defective & edge $\sqcup$ isolated vertex \\
+101 & nonredundant, neutral & two-edge tree \\
+110 & defective & edge $\sqcup$ isolated vertex \\
+111 & redundant & filled triangle \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The patterns $010$ and $101$ are therefore the smallest possible examples of a proper post-$T_0$ refinement which preserves homotopy type. In each case one deleted triangle is paired with exactly one deleted edge, so Proposition~\ref{prop:collapsepair} applies.
+
+\section{Exact one-bit refinement theory over a coarse chain}
+
+The height-two examples extend to a complete theorem for arbitrary chain length.
+
+Let
+\[
+C_n=\{1<2<\cdots<n\}
+\]
+be the coarse signature poset and let
+\[
+b=(b_1,\dots,b_n)\in\{0,1\}^n
+\]
+be the new observation. Define the refined order $Q_b$ on the same vertices by
+\begin{equation}\label{eq:chainfine}
+i\le_{Q_b}j
+\iff
+i\le j\text{ and }b_i\le b_j.
+\end{equation}
+
+\begin{lemma}[Beat reduction for a mixed chain profile]\label{lem:beatchain}
+If $b_1=1$, $b_n=0$, and some $0$ occurs before a later $1$, then $Q_b$ is beat-point reducible to a poset with a minimum and hence is contractible.
+\end{lemma}
+
+\begin{proof}
+Because some later $1$ exists, the strict upper set of vertex $1$ consists of later vertices carrying bit $1$ and has a least element, namely the first later $1$. Thus vertex $1$ is an up-beat point and may be removed without changing homotopy type. Repeat for every initial $1$ before the first $0$. The remaining poset starts with a $0$, and that first vertex is below every later vertex in $Q_b$ by \eqref{eq:chainfine}. Hence it is a global minimum, so the remaining poset is contractible.
+\end{proof}
+
+\begin{theorem}[Exact chain trichotomy]\label{thm:chaintrichotomy}
+\statusS/\statusA/\statusC\;
+For one added observation over the coarse chain $C_n$, exactly one of the following occurs.
+
+\begin{enumerate}[label=\textbf{(\alph*)}]
+\item \textbf{Redundant regime.} The bit sequence is nondecreasing,
+\[
+0\cdots01\cdots1.
+\]
+Then $Q_b=C_n$ and the refinement is redundant.
+
+\item \textbf{Defective antitone-threshold regime.} The bit sequence is nonconstant and nonincreasing,
+\[
+1^a0^{n-a},\qquad 1\le a\le n-1.
+\]
+Then
+\[
+Q_b\cong C_a\amalg C_{n-a}.
+\]
+Its order complex is the disjoint union of two simplices, so
+\[
+\widetilde H_0(\OX_{Q_b};\F)\cong\F,
+\]
+and the refinement defect has
+\[
+D_1\cong\F,
+\qquad D_k=0\ (k\ne1).
+\]
+
+\item \textbf{Nonredundant neutral regime.} Every remaining bit sequence gives a beat-contractible $Q_b$. Hence
+\[
+\OX_{Q_b}\simeq\OX_{C_n}\simeq *
+\]
+and the refinement projection is a homotopy equivalence despite deleting comparisons.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Case (a) is immediate from \eqref{eq:chainfine}. In case (b), every cross-block comparison has the forbidden form $1\to0$, while comparisons within each constant block survive, giving two disjoint chains.
+
+For every other sequence, if $b_1=0$ then vertex $1$ is a global minimum; if $b_n=1$ then vertex $n$ is a global maximum. The only remaining possibility has $b_1=1$, $b_n=0$, but is not nonincreasing. Hence a $0$ occurs before a later $1$, and Lemma~\ref{lem:beatchain} applies.
+\end{proof}
+
+\begin{corollary}[Exact enumeration]\label{cor:chaincounts}
+Among the $2^n$ one-bit refinements of $C_n$:
+\[
+\begin{array}{rcl}
+\text{redundant} &=& n+1,\\
+\text{defective} &=& n-1,\\
+\text{nonredundant but homotopy-neutral} &=& 2^n-2n.
+\end{array}
+\]
+Thus the proportion of defective one-bit observations tends to zero exponentially with $n$ inside this controlled chain model.
+\end{corollary}
+
+\begin{proof}
+There are $n+1$ nondecreasing binary strings, indexed by the switch point from $0$ to $1$. There are $n-1$ nonconstant nonincreasing strings. All others fall under Theorem~\ref{thm:chaintrichotomy}(c).
+\end{proof}
+
+\subsection{Exactly when the Quillen tests see the chain equivalence}
+
+For the chain, the principal lower fiber over vertex $k$ is just the refined prefix
+\[
+(b_1,\dots,b_k),
+\]
+and the principal upper fiber is the corresponding refined suffix.
+
+\begin{theorem}[Exact Quillen visibility on a chain]\label{thm:chainquillen}
+For the chain refinement $Q_b\to C_n$:
+\begin{enumerate}[label=(\roman*)]
+\item every lower principal fiber is contractible if and only if
+\[
+b_1=0\quad\text{or}\quad b=(1,\dots,1);
+\]
+\item every upper principal fiber is contractible if and only if
+\[
+b_n=1\quad\text{or}\quad b=(0,\dots,0).
+\]
+\end{enumerate}
+Consequently, a homotopy-neutral refinement can evade \emph{both} orientations of the Quillen fiber test exactly when
+\[
+b_1=1,\qquad b_n=0,
+\]
+and the sequence contains a $0$ before a later $1$.
+\end{theorem}
+
+\begin{proof}
+Apply Theorem~\ref{thm:chaintrichotomy} to every prefix. If $b_1=1$ and any $0$ ever appears, the prefix ending at the first $0$ is a strict antitone threshold and is disconnected. Hence all lower fibers are contractible precisely in the stated cases. The upper statement is dual. The final assertion combines these two failures with the actual homotopy-neutrality criterion from Theorem~\ref{thm:chaintrichotomy}.
+\end{proof}
+
+\begin{corollary}[Size of the ``beyond both Quillen tests'' class]
+For $n\ge2$, the number of homotopy-neutral one-bit chain refinements for which both lower- and upper-fiber Quillen tests fail is
+\[
+2^{n-2}-(n-1).
+\]
+For $n=4$, the unique such pattern is
+\[
+1010,
+\]
+which is exactly the alternating example identified in v0.2.
+\end{corollary}
+
+\section{Why the chain theorem does not extend to arbitrary blocks}
+
+The exact trichotomy above is genuinely a \emph{one-observation} theorem. A sufficiently large block of new observations can recover arbitrary finite-poset complexity even when the coarse state space is a $T_0$ chain.
+
+\begin{theorem}[Block universality over a coarse chain]\label{thm:chainuniversal}
+\statusA/\statusC\;
+Let $S=\{v_1,\dots,v_n\}$ be a finite current state carrier on which the coarse realized-signature poset is the chain
+\[
+v_1<_\Phi\cdots<_\Phi v_n.
+\]
+Let $R$ be any finite poset on the same set for which this ordering is a linear extension. Then there exists a finite block of new propositional observations $\Theta$ such that the refined order on $S$ is exactly $R$.
+\end{theorem}
+
+\begin{proof}
+Index one new observation $\theta_x$ by each $x\in R$ and define its truth region on $S$ by
+\[
+\truth(\theta_x)\cap S=\{y\in S:x\le_R y\}.
+\]
+Every subset of a finite valuation carrier is propositionally definable by a disjunction of complete minterms, so such formulas exist. The new profile of $y$ is
+\[
+\alpha(y)=\{x:x\le_R y\}=\down_R y.
+\]
+For $v_i<_\Phi v_j$,
+\[
+\alpha(v_i)\subseteq\alpha(v_j)
+\iff
+v_i\le_R v_j.
+\]
+Because the chosen enumeration is a linear extension, every relation of $R$ points forward in the coarse chain. Equation~\eqref{eq:fineorder} therefore gives exactly $R$.
+\end{proof}
+
+\begin{remark}
+This theorem explains why sequential one-bit analysis is structurally valuable. One bit has a rigid threshold/beat-point geometry on a chain; an unrestricted block can immediately restore arbitrary finite-poset behavior.
+\end{remark}
+
+\section{Refinement and premise update form a bifiltration after $T_0$}
+
+The v0.8 manuscript distinguishes two forms of information acquisition:
+\begin{enumerate}[label=(\roman*)]
+\item adding observations refines the topology; and
+\item adding premises restricts the set of currently possible valuations.
+\end{enumerate}
+After $T_0$, both operations become simplicial deletions, but of different kinds.
+
+Let
+\[
+\Phi_0\subseteq\Phi_1\subseteq\cdots\subseteq\Phi_A
+\]
+be observation refinements with $X_{\Phi_0}$ already $T_0$. Let
+\[
+\Gamma_0\subseteq\Gamma_1\subseteq\cdots\subseteq\Gamma_B
+\]
+be accumulated premise sets and
+\[
+S_b=\bigcap_{\gamma\in\Gamma_b}\truth(\gamma),
+\qquad
+S_0\supseteq S_1\supseteq\cdots\supseteq S_B.
+\]
+Define
+\[
+K_{a,b}:=\Delta(P_{\Phi_a,S_b}).
+\]
+
+\begin{theorem}[Refinement/update bifiltration]\label{thm:bifiltration}
+\statusA/\statusC\;
+For all valid indices,
+\[
+K_{a+1,b}\subseteq K_{a,b},
+\qquad
+K_{a,b+1}\subseteq K_{a,b},
+\]
+and the inclusion squares commute:
+\[
+\begin{array}{ccc}
+K_{a+1,b+1}&\subseteq&K_{a,b+1}\\
+\cap&&\cap\\
+K_{a+1,b}&\subseteq&K_{a,b}.
+\end{array}
+\]
+Hence, after reversing both indices, $K_{a,b}$ is a two-parameter simplicial filtration. Applying homology in each degree yields a two-parameter persistence module.
+\end{theorem}
+
+\begin{proof}
+Observation refinement after $T_0$ keeps the vertices and can only delete order relations, hence simplices. Premise accumulation keeps the current order but removes valuations; its order complex is the induced full subcomplex on the surviving vertices. Performing both operations yields the same intersection of restrictions regardless of order, so the squares commute.
+\end{proof}
+
+\begin{remark}[Why this is attractive for an evolving logical space]
+The two axes now have distinct meanings:
+\[
+\text{observational resolution}\quad\text{and}\quad\text{admissible-state restriction}.
+\]
+This separation is mathematically cleaner than collapsing both into a single notion of ``more information.'' Multiparameter persistence is the standard algebraic language for such grid-indexed filtrations, although unlike one-parameter persistence it does not admit a single complete barcode invariant in general~\cite{CarlssonZomorodian2009,BotnanLesnick2022}.
+\end{remark}
+
+\section{Computational verification}
+
+An independent verifier accompanies this note. It does not assume the proofs above. It constructs finite posets, one-bit post-$T_0$ refinements, order complexes, relative boundary matrices, and Betti numbers directly over $\F$.
+
+\subsection{Exhaustive bounded-height check through five vertices}
+
+The script enumerates every transitively closed relation compatible with the natural labelling on $n\le5$ vertices and every one-bit labelling of its vertices. These are naturally labelled representatives, not isomorphism classes. The relevant totals are:
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+coarse height & redundant? & homology-neutral? & count \\
+\midrule
+0 & yes & yes & 62 \\
+1 & no & no & 2649 \\
+1 & yes & yes & 2819 \\
+2 & no & no & 2320 \\
+2 & no & yes & 1284 \\
+2 & yes & yes & 2116 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Thus the exhaustive computation confirms Theorem~\ref{thm:height1} with no exceptions and finds many proper homology-neutral refinements as soon as height $2$ is reached. The first such cases occur on three vertices and are exactly the chain patterns $010$ and $101$.
+
+For every height-$2$ case, the verifier also checks the exact criterion
+\[
+H_*(K,L;\F)=0
+\iff
+|T_{\rm del}|=|E_{\rm del}|=\rank(\partial_2^{\rm rel}),
+\]
+with no failures.
+
+\subsection{Chain verification}
+
+Every binary profile was exhaustively checked through chain length $9$ for the homotopy trichotomy and Quillen-prefix/suffix classification. The closed-form counts are:
+
+\begin{center}
+\begin{tabular}{r|r|r|r}
+\toprule
+$n$ & redundant & defective & neutral nonredundant \\
+\midrule
+2&3&1&0\\
+3&4&2&2\\
+4&5&3&8\\
+5&6&4&22\\
+6&7&5&52\\
+7&8&6&114\\
+8&9&7&240\\
+9&10&8&494\\
+10&11&9&1004\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These agree exactly with Corollary~\ref{cor:chaincounts}.
+
+\section{Prior-art positioning and novelty discipline}
+
+The following ingredients are standard and should not be claimed as new:
+\begin{itemize}
+\item order complexes and finite-space homotopy theory~\cite{McCord1966,Stong1966};
+\item beat-point and finite-space collapse methods~\cite{BarmakMinian2008};
+\item Quillen/McCord fiber criteria and Barmak's simple-homotopy strengthening~\cite{Barmak2010};
+\item monotone Boolean functions and their positive normal forms;
+\item relative homology and simplicial collapse;
+\item multiparameter persistence~\cite{CarlssonZomorodian2009,BotnanLesnick2022}.
+\end{itemize}
+
+The present contribution candidates are narrower:
+\begin{enumerate}[label=(\alph*)]
+\item the exact equivalence between ProLT topological redundancy and positive representability in the existing observation coordinates;
+\item the post-$T_0$ adjoint-rigidity and antitone-rigidity theorems;
+\item the height-one rigidity and height-two deleted-triangle/deleted-edge classification specialized to observation refinement;
+\item the exact one-bit chain trichotomy and exact description of when Quillen lower/upper tests do or do not detect the equivalence;
+\item the ProLT refinement/premise bifiltration as a disciplined route toward evolving logical state spaces.
+\end{enumerate}
+
+A preliminary literature search did not locate this specific package of ProLT signature-projection results. However, neighboring literature is substantial. Gaucher used the phrase ``refinement of observation'' in directed homotopy theory for flows, which is conceptually different but terminologically adjacent. Recent work has also continued to develop homotopy and persistent Quillen--McCord theory for finite posets~\cite{GuzeevTanaka2026}. These areas should be included in any adversarial novelty audit.
+
+\section{Research directions opened by the new classification}
+
+The results narrow the next research agenda considerably.
+
+\begin{enumerate}[label=\textbf{P\arabic*.},leftmargin=2.8em]
+\item \textbf{Height-two matching theory.} Replace the sufficient free-pair criterion by a broader acyclic matching criterion on the bipartite incidence graph between deleted triangles and deleted edges. Determine logical conditions on a new observation that guarantee such a matching.
+
+\item \textbf{Tree-like coarse posets.} The chain theorem suggests that coarse Hasse diagrams with controlled treewidth may admit exact or fixed-parameter refinement classifications. Trees and series-parallel posets are natural next targets.
+
+\item \textbf{Formula-complexity versus topology.} The positive DNF in Theorem~\ref{thm:positive} is generated by minimal true signatures. Study the size of this antichain as a cost of expressing a topologically redundant observation, and compare it with minimal observation-set design from v0.8.
+
+\item \textbf{Bifiltration experiments.} Construct explicit two-parameter refinement/update modules for Modus Ponens, Hypothetical Syllogism, and other finite reasoning examples already present in the ProLT manuscript. Measure whether premise accumulation kills classes differently from observation refinement.
+
+\item \textbf{Continuous-to-discrete state evolution.} Only after the bifiltration is stable should a continuous or parameterized external state be mapped into these finite logical state spaces. Decision states can then be represented as designated terminal subcomplexes or absorbing regions without changing the underlying homological definitions.
+
+\item \textbf{Adversarial novelty audit.} Search finite-space topology, information systems, formal concept analysis, knowledge spaces, monotone Boolean function theory, directed homotopy, and multiparameter persistence specifically for analogues of the exact chain and bounded-height ProLT refinement results.
+\end{enumerate}
+
+\section{Conclusion}
+
+The controlled subclasses reveal a sharp hierarchy that was hidden in the unrestricted refinement problem.
+
+First, the positive fragment is completely understood: positive combinations of existing observations add no new topology, and every redundant observation is representable in that fragment on the realized state space.
+
+Second, once $T_0$ is reached, refinement becomes much more rigid. There is no longer any state splitting, and even the order-adjoint homotopy criterion collapses to ordinary redundancy. Antitone information is maximally destructive to connectedness unless it is constant componentwise.
+
+Third, bounded height identifies the first genuinely interesting topological threshold. Height one is rigid; height two admits nonredundant neutral refinements and reduces exactly to a relative triangle-to-edge boundary matrix.
+
+Finally, coarse chains admit a complete one-bit theorem. The only defective profiles are strict $1\to0$ thresholds. Every more complicated mixed profile is homotopy-neutral, often by beat-point reductions that are invisible to one or both Quillen fiber orientations. This gives a concrete, exact model of how a new logical observation can remove many specialization relations without changing global homotopy type.
+
+Together with the refinement/update bifiltration, these results provide a substantially more controlled platform for the eventual ``mental space'' program: one can now distinguish redundant observations, topology-changing observations, premise restrictions, and time-indexed combinations of the two before adding any cognitive interpretation.
+
+\appendix
+\section{Verification artifacts}
+
+The accompanying package contains:
+\begin{itemize}
+\item \texttt{verify\_refinement\_subclasses.py}, implementing the independent finite-poset checks;
+\item \texttt{refinement\_subclass\_height\_summary.csv}, containing the exhaustive height statistics through five vertices;
+\item \texttt{refinement\_chain\_onebit\_summary.csv}, containing the exact chain counts through twelve vertices;
+\item the previous v0.1 and v0.2 research notes for continuity of definitions and notation.
+\end{itemize}
+
+\begin{thebibliography}{99}
+
+\bibitem{McCord1966}
+M. C. McCord,
+``Singular homology groups and homotopy groups of finite topological spaces,''
+\emph{Duke Mathematical Journal} 33 (1966), 465--474.
+
+\bibitem{Stong1966}
+R. E. Stong,
+``Finite topological spaces,''
+\emph{Transactions of the American Mathematical Society} 123 (1966), 325--340.
+
+\bibitem{BarmakMinian2008}
+J. A. Barmak and E. G. Minian,
+``One-point reductions of finite spaces, h-regular CW-complexes and collapsibility,''
+\emph{Algebraic \& Geometric Topology} 8 (2008), 1763--1780.
+
+\bibitem{Barmak2010}
+J. A. Barmak,
+``On Quillen's Theorem A for posets,''
+\emph{Journal of Combinatorial Theory, Series A} 118 (2011), 2445--2453.
+
+\bibitem{CarlssonZomorodian2009}
+G. Carlsson and A. Zomorodian,
+``The theory of multidimensional persistence,''
+\emph{Discrete \& Computational Geometry} 42 (2009), 71--93.
+
+\bibitem{BotnanLesnick2022}
+M. B. Botnan and M. Lesnick,
+``An introduction to multiparameter persistence,''
+arXiv:2203.14289, 2022.
+
+\bibitem{GuzeevTanaka2026}
+V. Guzeev and K. Tanaka,
+``Quillen--McCord theorem for persistence finite posets,''
+arXiv:2605.11615, 2026.
+
+\bibitem{Theory2026}
+B. Theory,
+\emph{Propositional Logical Topology: Observation, Distinguishability, and Inference},
+core manuscript v0.8, September 2026, unpublished.
+
+\bibitem{Foundation2026}
+B. Theory,
+\emph{Homological Foundations for Propositional Logical Topologies},
+working research note v0.1, September 2026.
+
+\bibitem{Refinement2026}
+B. Theory,
+\emph{Observation Refinement Classification for Propositional Logical Topologies},
+working research note v0.2, September 2026.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,41 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PaperSidebar from '../components/PaperSidebar.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={`${project.data.title} – B-Theory`} description={project.data.description}>
+  <div class="content-grid">
+    <article class="content-panel article-panel">
+      <a class="back-link" href="/research-map/">← Research map</a>
+      <div class="project-meta"><span class="status-label">{project.data.status}</span><span>{project.data.phase}</span></div>
+      <h1>{project.data.title}</h1>
+      <p class="project-question">{project.data.question}</p>
+      {project.data.image && <img class="article-hero" src={project.data.image} alt="" />}
+      <div class="article-copy"><Content /></div>
+      {project.data.paperTitle && (
+        <div class="paper-note">
+          <p class="eyebrow">Related manuscript</p>
+          <strong>{project.data.paperTitle}</strong>
+          <p>{project.data.paperStatus}</p>
+          {project.data.paperPdf && <p>Site reading copy 1 from {project.data.paperSourceVersion}</p>}
+          {project.data.paperPdf && <a href={project.data.paperPdf}>Read the PDF <span aria-hidden="true">→</span></a>}
+          <a href={`/papers/#${project.id}`}>See this manuscript's index entry <span aria-hidden="true">→</span></a>
+        </div>
+      )}
+    </article>
+    <PaperSidebar />
+  </div>
+</BaseLayout>

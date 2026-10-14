@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Successful bounded lifecycle record",
+  "type": "object",
+  "required": ["status", "config", "environment", "n", "p", "q", "actual_rank", "stored_width", "cut_order", "k", "total_restriction_budget", "state_type", "query_count", "restriction_semantics", "reuse_mode", "truth_sha256", "query_sha256", "phases_ns", "serialized_bytes", "peak_rss_bytes", "method_phase_total_ns"],
+  "properties": {
+    "status": {"const": "PASS"},
+    "n": {"type": "integer", "minimum": 0, "maximum": 16},
+    "p": {"type": "integer", "minimum": 0},
+    "q": {"type": "integer", "minimum": 0},
+    "actual_rank": {"type": "integer", "minimum": 0},
+    "stored_width": {"type": ["integer", "null"]},
+    "k": {"type": "integer", "minimum": 0},
+    "total_restriction_budget": {"type": "integer", "minimum": 0},
+    "query_count": {"type": "integer", "minimum": 1},
+    "restriction_semantics": {"enum": ["independent", "sequential_cumulative"]},
+    "state_type": {"type": "string"},
+    "cut_order": {"type": "array", "items": {"type": "integer"}},
+    "phases_ns": {"type": "object", "required": ["source", "discover_compile", "verify_before", "serialize", "load", "verify_after", "index", "update", "query", "warmup"]},
+    "cold_cache_claim": {"const": false}
+  },
+  "$comment": "Failure and timeout records retain command/error/log information and are not forced into a successful-result schema. Main T3 predictions remain null in the separate pending protocol."
+}

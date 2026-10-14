@@ -1,0 +1,35 @@
+# N2/P2 Interpretation — Direct/no-rewrite as the profitability baseline
+
+## Bottom line
+
+P2 answers the proposed question more directly than P1: **when the alternative is simply lowering the original DAG to sparse ANF, the frozen selector does not yet pay for itself end to end.**
+
+On the natural EPFL set, P2 accepted **0 of 28** candidates, so this corpus still contains no natural case in which the frozen P1 profitability rule elects to take a fold. P2 therefore measures abstention overhead there, not a natural fold speedup. Its preregistered P2/direct compile ratio is **1.1124x** with 95% CI **1.0387–1.2255**: about **11.2% slower** by the case-balanced primary endpoint.
+
+The natural propagation-only ratio is **1.0023x**, essentially parity, exactly as expected when zero folds execute. The symbolic work is also identical to direct (1.0000x multiplications, pair terms, peak monomials, and ANF nodes). The added cost is the planner itself plus its temporary bookkeeping; traced peak Python allocation is **1.1724x** direct.
+
+## The more informative Gate-P result
+
+Gate-P does contain the folds we wanted to test. The P2 selector made **exactly the same decisions as the frozen P1 selector** on every measured case: **110 accepted of 264 candidates**, including **97 shared** candidates. This is independently checked in `N2_P2_INDEPENDENT_VERIFY.json`.
+
+There the planned lowering itself works: P2/direct propagation time is **0.7773x**, about **22.3% faster**. Symbolically, P2 uses only **41 actually executed planned folds** after ancestor folds make many planned descendants unreachable. Across Gate-P, the P2 lowering has substantially less work than direct: the measured pair-term geomean is about **0.4364x**, multiplications about **0.6375x**, and evaluated ANF nodes about **0.7788x** direct.
+
+But the planner is too expensive in this Python prototype. The preregistered compile ratio is **2.2304x** (95% CI **1.9973–2.4695**), i.e. more than twice direct. The geometric-mean planner time across Gate-P cases is roughly 0.064 ms while direct's entire compile path is only about 0.045 ms. So the planner can cost more than the complete unoptimized computation before any fold savings are realized.
+
+This falls exactly into the preregistered diagnostic category: **propagation faster, compile slower**. In 23 of the 36 Gate-P cases propagation was faster while total compile was slower; no Gate-P case had a faster P2 compile median than direct.
+
+## Why P2 can still beat P1/generic while losing to direct
+
+P2 is materially leaner than the previous optimizer front ends. Natural compile time is **0.9089x P1** and **0.7899x generic**. On Gate-P it is **0.8544x P1** and **0.8135x generic**. So removing the rewritten/CSE-normalized executable DAG was a real improvement.
+
+However, **direct sparse ANF is an even stronger baseline than either optimizer**, especially for the tiny Gate-P programs. This is the key correction P2 was designed to expose.
+
+A secondary workload-weighted calculation (sum of case medians, not the preregistered equal-case geomean) puts natural P2/direct at **1.0115x**, only about **1.2% slower**, because the large CAVLC cases dominate total work while the fixed planning overhead hurts small router/priority cones most. This does not change the preregistered conclusion, but it shows where the overhead lives.
+
+## The new optimization target
+
+The strongest next target is no longer a new benefit threshold. It is **eliminating speculative planning work**.
+
+P2 created 110 Gate-P plan entries but only 41 were actually consumed by the ANF lowerer — **37.3% utilization**. Nested descendant plans become irrelevant when an ancestor fold replaces the whole region. That suggests a P3 architecture based on **demand-driven/top-down fold planning** or a fused lazy lowerer: test the fold at the node that is actually demanded, and if the ancestor fold is taken, never inspect or plan the descendants it makes dead. The direct path should remain the fall-through case.
+
+That would attack the measured bottleneck directly while retaining the demonstrated Gate-P lowering reduction. It would also be a cleaner test than relaxing the profitability threshold, because the present selector is already correctly abstaining on the natural set.

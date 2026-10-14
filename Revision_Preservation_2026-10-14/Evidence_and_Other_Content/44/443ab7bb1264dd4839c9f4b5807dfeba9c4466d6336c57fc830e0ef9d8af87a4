@@ -1,0 +1,80 @@
+# N2/P12 Results - Lazy Reuse Exactification and Derived Pair Statistics
+
+## Status
+
+P12 is complete. The frozen P8/P11 dispatch rule, `0.80` cutoff, P6 folding backend, Gate-P cases, natural EPFL cases, and timing protocol were unchanged. P12 changed only how the two remaining telemetry statistics are obtained.
+
+Mandatory P11/P12 decision invariance passed on **332/332** frozen policy cases. Across those cases P12 performed only **34** reuse scans, with **11** terminating as soon as the frozen reuse threshold was provably exceeded. Fresh fuzz passed **1000/1000**.
+
+P12 derives exact pair-repeat excess as `binary_nodes - distinct_pair_keys`, saturates per-pair counts at five, and computes reuse only if both the five-shell and pair-repeat predicates still leave annotation possible.
+
+## Gate-P primary endpoint
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P12 / direct, source-inclusive | **1.019888x** | **0.950964-1.066939** | **0.982339x** | 3/36 |
+| P12 / P11, source-inclusive | **0.978766x** | **0.969244-0.988333** | **0.979585x** | 28/36 |
+| P12 / direct, source build | **1.281483x** | **1.255519-1.306823** | **1.292730x** | 0/36 |
+| P12 / P11, source build | **0.934496x** | **0.921073-0.948385** | **0.933513x** | 34/36 |
+| P12 / direct, selected compiler | **0.966997x** | **0.860367-1.045804** | **0.823343x** | 8/36 |
+
+The preregistered **direct-crossover criterion failed**. P12's case-balanced point estimate is still **1.99% above direct**, and its confidence interval crosses 1. However, the workload-weighted full-pipeline result is **0.982339x direct**, i.e. about **1.77% below direct**. This is a secondary crossover, not the preregistered primary PASS.
+
+P12 is nevertheless a clear improvement over P11: source-inclusive time is **0.978766x P11**, with the entire 95% interval below 1, and source construction is **0.934496x P11**. The predeclared lazy-statistics engineering criterion did **not** pass only because its deliberately stronger source-build target was `<=0.90`; the observed value was 0.934496x.
+
+Median-of-case-median Gate-P source construction was approximately **48.0 us direct**, **67.1 us P11**, and **60.7 us P12**. Whole-pipeline medians were approximately **234.8 us**, **259.1 us**, and **254.5 us**.
+
+## Lazy-statistics behavior
+
+Only **6/36** Gate-P cases required any reuse scan. Five of those ultimately annotated; one terminated early after reuse exceeded the frozen threshold. Across all Gate-P cases, P12 scanned only **21.9%** as many reuse-classification edges as an eager all-case scan would have required.
+
+No natural evaluation case required a reuse scan.
+
+## Depth strata
+
+| Depth | P12/direct source-inclusive | P12/P11 source-inclusive | P12/direct source-build | P12/P11 source-build |
+|---:|---:|---:|---:|---:|
+| 6 | 1.045928x | 0.967732x | 1.245281x | 0.929411x |
+| 8 | 0.983426x | 0.976554x | 1.307083x | 0.930066x |
+| 10 | 1.031368x | 0.992167x | 1.292909x | 0.944086x |
+
+At depth 8 the case-balanced full pipeline itself is below direct (0.983426x), while depths 6 and 10 remain above direct. This is a stratum result, not a corpus-wide PASS.
+
+## Dispatch and Boolean work
+
+P12 preserves the frozen policy exactly: **5/36** Gate-P cases annotated, all **5** consuming a fold, for **5** total consumed folds.
+
+Because dispatch is invariant, Boolean work is unchanged from P8-P11:
+
+- multiplications: **0.812451x direct**;
+- pair terms: **0.570459x direct**;
+- peak monomials: **0.978577x direct**;
+- ANF nodes evaluated: **0.873553x direct**.
+
+## Memory
+
+Gate-P whole-pipeline traced peak allocation was **1.011858x direct** and **1.019932x P11**. The temporary lazy reuse bitmap is allocated only on scan-eligible cases, but these whole-pipeline numbers also include downstream compiler allocations and should not be interpreted as isolated telemetry-object size.
+
+## Natural EPFL control
+
+P12 annotated **0/10** frozen natural cases, consumed **0 folds**, and performed **0 reuse scans**. The natural results therefore remain strictly an abstention/overhead control.
+
+| Comparison | Case-balanced geomean | 95% bootstrap CI | Workload-weighted | Wins |
+|---|---:|---:|---:|---:|
+| P12 / direct, source-inclusive | **1.015126x** | **1.000020-1.031480** | **0.994350x** | 4/10 |
+| P12 / P11, source-inclusive | **0.998798x** | **0.983682-1.012155** | **1.004452x** | 3/10 |
+| P12 / direct, source build | **1.270256x** | **1.133330-1.477863** | **1.198333x** | 1/10 |
+| P12 / P11, source build | **0.911345x** | **0.865014-0.954234** | **0.931009x** | 9/10 |
+
+With zero folds, the workload-weighted natural point estimate below 1 is not evidence of natural CM-folding acceleration.
+
+## Post-hoc diagnostic
+
+Keeping P12's exact frozen dispatch decisions and measured compiler medians, but hypothetically replacing P12 source-build time with ordinary direct source-build time, gives **0.963002x direct case-balanced** and **0.878897x workload-weighted**. This is diagnostic only, not a measured implementation endpoint.
+
+## Predeclared outcomes
+
+- Gate-P direct-crossover PASS: **False**.
+- Lazy-statistics engineering success: **False**.
+
+P12 therefore validates the lazy-statistics mechanism as a real implementation improvement over P11, while leaving the stronger case-balanced end-to-end crossover just unresolved.

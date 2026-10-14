@@ -1,0 +1,210 @@
+{
+  "results": {
+    "adversarial": {
+      "collecting_sets": [
+        {
+          "exact_strict_output": false,
+          "sign_set": []
+        },
+        {
+          "exact_strict_output": true,
+          "sign_set": [
+            -1
+          ]
+        },
+        {
+          "exact_strict_output": false,
+          "sign_set": [
+            0
+          ]
+        },
+        {
+          "exact_strict_output": false,
+          "sign_set": [
+            -1,
+            0
+          ]
+        },
+        {
+          "exact_strict_output": true,
+          "sign_set": [
+            1
+          ]
+        },
+        {
+          "exact_strict_output": false,
+          "sign_set": [
+            -1,
+            1
+          ]
+        },
+        {
+          "exact_strict_output": false,
+          "sign_set": [
+            0,
+            1
+          ]
+        },
+        {
+          "exact_strict_output": false,
+          "sign_set": [
+            -1,
+            0,
+            1
+          ]
+        }
+      ],
+      "invalid_inputs_rejected": [
+        [
+          "0",
+          "1"
+        ],
+        [
+          "-1",
+          "2"
+        ],
+        [
+          "1",
+          "0"
+        ],
+        [
+          "1.0",
+          "1"
+        ],
+        [
+          "True",
+          "1"
+        ],
+        [
+          "not-a-rational",
+          "1"
+        ]
+      ],
+      "regressions": [
+        "zero-as-false boundary collision",
+        "omitted 00 coordinate",
+        "unsigned LM substitution"
+      ],
+      "scope": "Explicit counterexamples and input validation; not a formal verification system."
+    },
+    "lm": {
+      "actual_minterm_recovery_cases": 2120,
+      "all_valuation_entry_cases": 16656,
+      "binary_superposition_entry_cases": 65536,
+      "scope": "Actual formula evaluation, replacing the historical truth[i] == truth[i] self-comparison."
+    },
+    "rational": {
+      "boundary_parameter_samples": {
+        "C1": 181,
+        "C2": 181,
+        "C3": 181
+      },
+      "classification_counts": {
+        "AND": 9185,
+        "BOUNDARY": 181,
+        "X": 5176,
+        "XNOR": 13043,
+        "Y": 5176
+      },
+      "distinct_positive_rationals": 181,
+      "grid_points": 32761,
+      "historical_400_point_grid": {
+        "AND": 99,
+        "BOUNDARY": 9,
+        "X": 43,
+        "XNOR": 206,
+        "Y": 43
+      },
+      "interior_witnesses": {
+        "AND": [
+          "1/2",
+          "1/2"
+        ],
+        "X": [
+          "2",
+          "1/2"
+        ],
+        "XNOR": [
+          "3",
+          "3"
+        ],
+        "Y": [
+          "1/2",
+          "2"
+        ]
+      },
+      "maximum_observed_sign_queries": {
+        "coordinate": 3,
+        "quartic": 2
+      },
+      "scope": "Exact finite tests; the chamber connectedness is established analytically."
+    },
+    "symbolic": {
+      "bijective_two_bit_encodings_checked": 24,
+      "negative_pair_sum_identities": 3,
+      "primitive_irreducible_quadratics": [
+        {
+          "A": "-a - 1",
+          "B": "a",
+          "root_b": "a/(a + 1)",
+          "score": "-a*b + a - b"
+        },
+        {
+          "A": "1 - a",
+          "B": "-a",
+          "root_b": "-a/(a - 1)",
+          "score": "-a*b - a + b"
+        },
+        {
+          "A": "a - 1",
+          "B": "-a",
+          "root_b": "a/(a - 1)",
+          "score": "a*b - a - b"
+        }
+      ],
+      "quartics": [
+        "a**2*b**2 - 2*a**2*b + a**2 - b**2",
+        "a**2*b**2 - a**2 - 2*a*b**2 + b**2"
+      ],
+      "reciprocal_identities": 4,
+      "scope": "Exact identities and algebraic prerequisites; see proof for the universal guard lower bound."
+    },
+    "test_sets": {
+      "family_subset_comparisons": 1048560,
+      "minimum_size_histogram": {
+        "0": 16,
+        "1": 120,
+        "2": 1532,
+        "3": 14326,
+        "4": 49541
+      },
+      "nonempty_operator_families": 65535,
+      "scope": "All families of binary two-input truth tables; no general solver performance claim.",
+      "star_adaptive_minimum": 3,
+      "star_unique_minimum_coordinates": [
+        "10",
+        "01",
+        "00"
+      ],
+      "weighted_example_optimum": [
+        3,
+        6
+      ]
+    },
+    "walsh": {
+      "nonconstant_labelings_by_arity": {
+        "1": 2,
+        "2": 14,
+        "3": 254,
+        "4": 65534
+      },
+      "regular_facet_witness_edges": {
+        "2": 24,
+        "3": 1008
+      },
+      "scope": "Bounded exact constructive checks through n=4; not a novelty claim.",
+      "total_constructive_labelings": 65804
+    }
+  },
+  "status": "PASS"
+}

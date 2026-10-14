@@ -1,0 +1,78 @@
+# COMPUTATION_LEDGER - frozen structural-computation baseline
+
+This ledger indexes computation already completed in the Master thread before the new Q_k Theory/Computation split. See `EXPERIMENT_MANIFEST.csv` for machine-readable paths and replay status.
+
+## C01 - Historical source-contract audit
+- **Result:** six historical contract observations reproduced.
+- **Raw:** `reproducibility/raw_results/historical_contract_audit.json`
+- **Code:** `reproducibility/code/audit_historical.py`
+- **Status:** reproduced in clean replay.
+
+## C02 - Exhaustive core semantics
+- **Coverage:** all 278 Boolean functions for 0 <= n <= 3; 3,988 artifacts; 105,292 conditioning/count checks; 3,988 serialization checks; 3,988 corruption rejections.
+- **Raw:** `reproducibility/raw_results/core_exhaustive_v1.json`
+- **Test:** `reproducibility/tests/test_core.py`
+- **Status:** PASS; reproduced in clean replay.
+
+## C03 - Rank/prototype/profile and binary extension suite
+- **Coverage:** all 65,536 binary 4x4 matrices; 151 binary round trips; 151 trailing-data rejections; 3,020 sequential/fused checks; 2,000 recompressions.
+- **Raw:** `reproducibility/raw_results/extensions_v2.json`
+- **Test:** `reproducibility/tests/test_extensions_v2.py`
+- **Status:** PASS; reproduced in clean replay.
+
+## C04 - Exact field-rank checks
+- **Coverage:** inner-product family r=1..5 using `fractions.Fraction`; recorded real 0/1 rank, sign rank, expected GF(2) rank, and prototype counts.
+- **Raw:** `reproducibility/raw_results/field_ranks_v2.json`
+- **Test:** `reproducibility/tests/test_field_ranks.py`
+- **Status:** PASS; reproduced in clean replay.
+
+## C05 - Legacy adapter compatibility
+- **Coverage:** 240 GF(2)-rank + 269 cofactor + 162 Kronecker + 4 XOR historical artifacts; 6,750 query comparisons. Candidate-partition search was bounded; this is not exhaustive testing of the legacy analyzer.
+- **Raw:** `reproducibility/raw_results/legacy_adapter_v2.json`
+- **Test:** `reproducibility/tests/test_legacy_adapter.py`
+- **Status:** PASS; reproduced in clean replay.
+
+## C06 - Persistence and persistent-summary limits
+- **Coverage:** 278 fresh three-backend round trips, 7,070 fresh-instance query triples, 510 single-spike rank checks, construction/codec rejection cases, plus two explicit counterexamples.
+- **Raw:** `reproducibility/raw_results/persistence_v3.json`
+- **Test:** `reproducibility/tests/test_persistence_v3.py`
+- **Status:** PASS; reproduced in clean replay.
+
+## C07 - Scope/serialization policy limits
+- **Coverage:** dense n=14 and n=16 cases; SC binary round-trip passes, JSON paths reproduce Python's 4,300-digit conversion-guard limitation.
+- **Raw:** `reproducibility/raw_results/scope_limits_v3.json`
+- **Test:** `reproducibility/tests/test_scope_limits.py`
+- **Status:** PASS as a reproduced policy limitation; clean replayed.
+
+## C08 - Historical timing arm v1
+- **Cases:** 38. Selection: 32 flat, 4 XOR, 2 product; all 26 external outputs selected flat. Q=1000 estimates produced 0 wins versus packed.
+- **Raw:** `reproducibility/raw_results/benchmark_v1.json`
+- **Caution:** historical setup/warm-query model; Q=1000 values extrapolated from 128-query batches; not the final fresh-instance endpoint.
+
+## C09 - Fused JSON timing arm v2
+- **Cases:** 38. Same selection distribution as v1; 0 Q=1000 estimated wins versus packed.
+- **Raw:** `reproducibility/raw_results/benchmark_v2_fused.json`
+- **Caution:** historical; parsed serialized baseline data but did not yet provide the corrected complete fresh-instance baseline semantics.
+
+## C10 - Binary timing/storage arm v2
+- **Cases:** 38. Selection: 15 flat, 17 product, 2 rank, 2 cofactor, 2 XOR. External outputs: 10 flat, 14 product, 2 rank. Seven recorded binary payloads smaller than packed raw truth bytes.
+- **Raw:** `reproducibility/raw_results/benchmark_v2_binary.json`
+- **Caution:** one tool timeout after 37 cases; only the remaining case was resumed, with prior samples retained. Still historical timing semantics.
+
+## C11 - Corrected full fresh-instance timing replay v3
+- **Cases:** 38; methods: artifact, packed, fixed-order reference ROBDD; 5 repetitions; 128 queries each; 570 complete trials.
+- **Result:** 0 per-case median complete-lifecycle wins for artifact vs packed.
+- **Endpoint:** build/discover + needed checks + serialize + construct a fresh loaded instance + recheck + query batch; same process/in-memory persistence, not cold-disk or process restart.
+- **Raw:** `reproducibility/raw_results/benchmark_v3_replay.json`
+- **Protocol:** `research/experiment_design/PROTOCOL_V3_REPLAY.json`
+- **Replay:** `python reproducibility/run_benchmark_copy.py --output benchmark_replay_new`
+
+## C12 - Clean-directory correctness replay
+- **Method:** copies current code/tests/data and required legacy source into a new temporary directory, strips inherited PYTHONPATH, then runs eight child processes.
+- **Result:** all commands PASS.
+- **Raw receipt:** `reproducibility/raw_results/clean_replay_v3.json`
+- **Replay:** `python reproducibility/run_correctness.py --output replay_receipt_new.json`
+
+## Current research gap
+
+This ledger predates the Q_k project. It contains no direct computation of the new bounded conditioned-count query matrix, no direct verification of the Theory Phase 1 headline rank-threshold result, and no new Runpod enumeration. The new Computation thread should extend this ledger rather than silently treating these older checks as Q_k evidence.

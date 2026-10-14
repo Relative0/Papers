@@ -1,0 +1,81 @@
+\section{Rank profiles, exact counting, and factor-only repair}
+\label{sec:profiles}
+The contrast between parity arithmetic and integer counting can be stated explicitly. In this section write $M=UW$ over $\F$, with inner dimension $r$. Let $u_x\in\F^r$ be a coefficient row of $U$ and $w_y\in\F^r$ a column profile of $W$. For a current restriction, define integer histograms
+\begin{equation}
+ \alpha_a=|\{x\in I:u_x=a\}|,\qquad
+ \beta_b=|\{y\in J:w_y=b\}|,\qquad a,b\in\F^r.
+ \label{eq:profiles}
+\end{equation}
+The assignment-to-profile association is retained in the artifact; these histograms are computed for a specified query.
+
+\begin{theorem}[Profile count identity]
+\label{thm:profile}
+With $R'=|I|$ and $C'=|J|$,
+\begin{equation}
+ N(f,\rho)=\frac{R'C'-\sum_{a,b\in\F^r}\alpha_a\beta_b(-1)^{a\cdot b}}{2}.
+ \label{eq:profilecount}
+\end{equation}
+A dense Walsh--Hadamard transform of $\beta$ evaluates the sign sum using $O(r2^r)$ integer additions/subtractions and $O(2^r)$ final arithmetic operations, after histogram construction. The transform has $O(2^r)$ integer workspace. A row-streaming alternative is polynomial in the explicit factor-table size and needs no global matrix.
+\end{theorem}
+\begin{proof}
+For an entry $M_{xy}=u_x\cdot w_y$ in $\F$, its zero/one indicator is
+\[
+ \frac{1-(-1)^{u_x\cdot w_y}}2.
+\]
+Sum over the Cartesian product $I\times J$ and group pairs with the same profiles. This gives \eqref{eq:profilecount}. If $H_{ab}=(-1)^{a\cdot b}$, the sign sum is $\alpha^T H\beta$. The standard butterfly recursion evaluates $H\beta$ in $r2^r$ additions/subtractions. Every transform entry has magnitude at most $C'$; the final accumulated count is bounded by $R'C'$.
+
+Alternatively form each represented row by XORing at most $r$ listed basis rows, popcount it, and discard it. Processing every row costs at most $O(rR'C')$ elementary bit operations plus indexing, and uses one additional $C'$-bit row. Equal coefficient rows may be grouped and processed once. Both $R'$ and $C'$ are explicit factor dimensions, so this is polynomial in the listed input size. The dense transform's exponential dependence on $r$ is not a hardness result for the representation language.
+\end{proof}
+
+The transform is standard\cite{alman2023}; the contribution here is the explicit separation of the two arithmetic roles and its tested use in this artifact contract. Reading a dense pair of factors takes $O(r(R'+C'))$ Boolean entries. Integer arithmetic is not literally unit-cost for unbounded dimensions: counts require up to $\lceil\log_2(R'C'+1)\rceil$ bits. Nor is the transform always a space improvement; its $2^r$ workspace can exceed the matrix size. The reference transform is therefore capped and is a verification/alternative algorithm, not the default measured query path.
+
+\begin{example}[Cancellation rather than integer multiplication]
+Take $U=[1\ \ 1]$ and $W=[1\ \ 1]^T$. The represented one-entry matrix is zero over $\F$, although the ordinary integer product is two. Thus the model count is zero. Rank recompression should return inner dimension zero, not the stored width two.
+\end{example}
+
+\begin{proposition}[Minimal rank from factors alone]
+\label{prop:recompress}
+Given explicit $U\in\F^{R'\times r}$ and $W\in\F^{r\times C'}$, a minimal factorization of $UW$ can be obtained without forming its $R'\times C'$ entries, using $O((R'+C')r^2)$ field operations with ordinary elimination. A supplied factorization of inner dimension $t$ is minimal exactly when its first factor has full column rank $t$ and its second has full row rank $t$.
+\end{proposition}
+\begin{proof}
+Factor $U=AB$ with $A$ full column rank $p\le r$ and $B$ having $p$ rows. Form $D=BW$, which has at most $r$ rows, and factor it minimally as $D=EF$ with inner dimension $t$. Then $UW=(AE)F$. Since multiplication by $A$ is injective, $AE$ has column rank $t$, and $F$ has row rank $t$. Consequently the product has rank $t$, so the factorization is minimal. The intermediate tables have factor-sized dimensions, and elimination and multiplication have the stated conservative operation bound. Conversely, a rank deficiency in either factor forces product rank below the common inner dimension; full column and row rank give equality.
+\end{proof}
+
+The proof is standard linear algebra, not a new matrix-rank principle. Operationally it repairs a real ambiguity: conditioning preserves a valid factorization but can leave a nonminimal stored width. The independent scalar checker and the separate factor-rank check establish different properties; neither substitutes for the other.
+
+\section{Fixed-cut relations between rank and prototype artifacts}
+\label{sec:quotient}
+Let $M$ have at least one row and column. Write $\mathcal W\subseteq\F^C$ for its row span, $r=\dim\mathcal W$, and
+\[
+ \delta=\begin{cases}1,&\boldsymbol1_C\in\mathcal W,\\0,&\boldsymbol1_C\notin\mathcal W.\end{cases}
+\]
+Let $k$ be the number of equivalence classes among the \emph{occurring rows} of $M$, where $v$ and $v+\boldsymbol1_C$ are identified. This is the minimum dictionary size when whole row prototypes may be complemented but not otherwise recombined.
+
+\begin{theorem}[Complement-quotient bounds]
+\label{thm:quotient}
+For the fixed cut and explicit-prototype model,
+\begin{equation}
+ r\le k+\delta,\qquad
+ 1\le k\le\min\{R,2^{r-\delta}\}.
+ \label{eq:quotient}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Choose one occurring row from each class. If $\delta=0$, two distinct rows of $\mathcal W$ cannot differ by $\boldsymbol1_C$, so every occurring row is one of the $k$ chosen rows. They span $\mathcal W$, giving $r\le k$. If $\delta=1$, every occurring row is a chosen row or that row plus $\boldsymbol1_C$. Hence the chosen rows together with $\boldsymbol1_C$ span $\mathcal W$, giving $r\le k+1$.
+
+For the upper bound, the kernel of the map $\mathcal W\to\F^C/\langle\boldsymbol1_C\rangle$ has dimension $\delta$. Its image has $2^{r-\delta}$ elements. The $k$ occurring classes are a subset of this image and there are at most $R$ occurring rows. At least one row occurs, so $k\ge1$.
+\end{proof}
+
+This refinement is an elementary quotient-space argument. It is proved here and computationally checked, but priority is not asserted. The table model matters: an ACD encoding can compute its selector functions structurally, while this bound counts stored whole prototypes.
+
+\begin{proposition}[A fixed-cut exponential dictionary gap]
+\label{prop:gap}
+For $x,y\in\F^r$, let $M_r(x,y)=x\cdot y$. Then $\rank_{\F}M_r=r$ and $k=2^r$. A rank payload needs $r(2^r+2^r)$ listed bits, whereas a whole-row prototype dictionary alone needs $2^{2r}$ bits. At the same cut, the ordinary real rank of the $0/1$ matrix is $2^r-1$, and the sign matrix $((-1)^{x\cdot y})_{x,y}$ has real rank $2^r$.
+\end{proposition}
+\begin{proof}
+The $r$ coordinate rows are independent, and every row is their linear combination, so the GF(2) rank is $r$. All $2^r$ rows are distinct. Their $y=0$ coordinate is zero, so no two are complements; hence $k=2^r$ and the payload counts follow.
+
+The sign rows are pairwise orthogonal over the reals: the character sum of any nonzero linear functional on $\F^r$ is zero. Thus the sign matrix has full real rank. For the $0/1$ matrix, remove the zero row and column. For $r\ge2$, the Gram matrix of the remaining rows is $2^{r-2}(I+J)$: a nonzero linear form is one on $2^{r-1}$ inputs, and two distinct nonzero forms are simultaneously one on $2^{r-2}$ inputs. This Gram matrix is positive definite. Thus the remaining $(2^r-1)$ rows are independent. The $r=1$ case is immediate.
+\end{proof}
+
+Two qualifications are essential. First, the statement fixes the $x\mid y$ cut and an explicit dictionary model; it does not separate optimally partitioned portfolios. In fact $x\cdot y$ is a disjoint XOR of the $r$ pairwise products $x_i y_i$. Second, the field gap does not refute tensor-train results\cite{onaka2025}; it explains why an ordinary-arithmetic tensor bond rank and a GF(2) matrix rank cannot be substituted for each other. A different variable order also changes the relevant tensor cut.

@@ -1,0 +1,89 @@
+# CM/LM foundations publication-readiness audit
+
+Date: 26 September 2026
+Target: Correspondence and Logical Matrices: A Boolean Operator Calculus,
+LM-centered post-audit revised foundations draft, 22 September 2026.
+
+## Read first
+
+`CM_LM_Publication_Readiness_Audit.pdf` is the complete 29-page report.
+The Markdown version is editable. It contains all 18 requested report sections,
+43 numbered-statement audits, 30 further claim groups, 29 feedback dispositions,
+a 21-entry bibliography audit and explicit answers to all 25 final questions.
+
+Verdict: no central false theorem found; preprint ready after the identified
+minor corrections; journal submission requires major revision. The strongest
+present genre is synthesis/exposition with a methodological core. Weighted
+current-readiness assessment: 71.45/100, not an acceptance probability.
+
+## Important provenance distinction
+
+The original 20,873-check output survives in the supplied archive, but its
+generating checker was not recovered. The new independent suite passes
+2,022,648 explicitly counted checks. This is NOT reproduction of the old run.
+The original manuscript is included unchanged. The report proposes repairs;
+it does not claim to have applied them to the paper.
+
+The executable archive source agrees in inspected content with the user's
+inline paste. There is no separately mounted byte file for hashing that paste.
+Two archive copies are byte-identical. The user's Windows path was not accessed.
+
+## Run the new checks
+
+Use Python 3.10 or later; there are no third-party dependencies:
+
+```text
+python verification/independent_verify.py --output verification/new_run
+```
+
+The new-run folder contains JSON results, a compact CM atlas and boundary
+witnesses. Check the status, assertion_count and per-family counts against the
+preserved `verification/verification_results.json`. Runtime and environment
+metadata may differ. Whole-formula, whole-matrix and scalar checks are labelled
+separately in the family names. Finite tests are not substitutes for general proofs.
+
+## Check bundle integrity
+
+```text
+python verify_bundle.py
+```
+
+This checks every entry in `SHA256SUMS.txt` without executing any research code.
+
+## Rebuild the unchanged paper
+
+With a normal TeX Live or MiKTeX installation, create a build directory and run:
+
+```text
+pdflatex -interaction=nonstopmode -halt-on-error -no-shell-escape -output-directory=build source/audited_foundations.tex
+```
+
+Run the same command twice. The preserved build is 31 pages and matches the
+supplied manuscript PDF's extracted text page by page. The paper itself contains
+all its bibliography and TikZ figure definitions.
+
+## Rebuild the report
+
+The standalone LaTeX is `report_source/audit_report.tex`. Compile it with
+pdfLaTeX three times into a separate build directory. To regenerate the LaTeX
+from the Markdown, use Pandoc 3.1.11.1 or a compatible version with
+`report_source/report_tables.lua` and `report_source/report_header.tex`.
+The last report compilation had no overfull, underfull or unresolved-reference
+warnings. The rendered final report was visually reviewed.
+
+## Evidence folders
+
+- `audit_records`: score, theorem and additional-claim audits, novelty matrix,
+  reviewer dispositions, bibliography, blockers, answers and inspection limits.
+- `verification`: new independent standard-library checker and exact outputs.
+- `source`: unchanged paper, fresh PDF and the supplied audit brief.
+- `inventory`: recursive archive manifests and targeted historical-checker search.
+  The recovery script retains the original audit input path; adjust it when
+  using a different location for the original ZIP. It is not needed to run the
+  new mathematical checks.
+- `build_records`: original-paper and report compilation logs.
+
+The inventory is not a claim that every archived proof or program was reviewed.
+Read the inspection record for full versus selected versus inventory-only scope.
+The bundle does not include the complete original portfolio, external copyrighted
+papers or font files. The source register in the report provides public citations.

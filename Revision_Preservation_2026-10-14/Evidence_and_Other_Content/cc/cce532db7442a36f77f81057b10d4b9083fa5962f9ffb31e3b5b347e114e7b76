@@ -1,0 +1,23 @@
+# N2/P9 Reproducibility README
+
+P9 reuses the exact frozen P8 decision tree/cutoff and P6 backend while replacing P8's full telemetry with seven primitive counters.
+
+## Frozen hashes
+
+- P9 preregistration: `76ab67e4918d625552313acdd8611d8ff0a86523b9114b1d6ed721b3052645d3`
+- P9 harness: `09248f110f992c2cc64e40834499fa9b94dcccbccafc59c1a47e0d74e22c693b`
+- P8 frozen gate: `ebc2de96f8219043da66db02bd3bcd38b8455594d5684a1756c7ed13fb4cd64f`
+
+## Recommended reproduction order
+
+From the workspace root:
+
+1. `python cm_n2_p9_run/n2_p9_harness.py --mode invariant --out cm_n2_p9_run/invariance.json`
+2. `python cm_n2_p9_run/n2_p9_harness.py --mode fuzz --out cm_n2_p9_run/fuzz.json`
+3. `python cm_n2_p9_run/n2_p9_harness.py --mode gatep --out cm_n2_p9_run/gatep.json`
+4. Run each natural case with `--mode natural-case`. For `cavlc:35`, use `run_p9_nat_chunk.py` in deterministic schedule chunks if the execution environment has a short command limit.
+5. Merge the `cavlc:35` chunks, run `make_p9_artifacts.py`, then `independent_verify.py`.
+
+The P8/P9 invariance check is mandatory before interpreting timing. The P9 harness imports the frozen P8/P6/P1 dependency harnesses included in this bundle.
+
+P9 did not refit or retune the P8 gate.

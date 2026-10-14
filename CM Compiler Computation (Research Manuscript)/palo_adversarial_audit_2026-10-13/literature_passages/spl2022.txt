@@ -1,0 +1,229 @@
+PDF PAGE 4
+F
+I
+L
+S
+P
+L
+SPL
+Figure 2: A high level view of SPLs. The predictive layer of a neural network for neuro-symbolic
+SOP, e.g., a FIL (left), can be readily replaced by a SPL (middle). SPL s are implemented (right)
+by multiplying together a probabilistic circuitqΘ(Y |f (X)) parameterized by (a functiong of) the
+network’s embeddingsf (X), and a constraint circuitcK(X, Y) embodying the symbolic knowledge.
+The result is normalized by efﬁciently marginalizing over the product circuitrΘ,K, so as to guarantee
+fully probabilistic semantics and end-to-end differentiable learning by maximum likelihood.
+Fig. 2 illustrates the computational graph of ourSPL at training time. In order to satisfy all D1-D6, we
+will realize bothqΘ andcK as circuits [73, 12], constrained computational graphs that enable tractable
+computations. Differently from FILs,qΘ in SPLs can encode an expressive joint distributions over
+the labels and therefore attain full expressiveness by scaling the number of parameters Θ (D2).
+Consistency is guaranteed by the componentcK: by multiplying it to the joint probability of a label
+conﬁguration the resulting product distributionrΘ,K(y,x) = qΘ(y |f (x)) ·cK(x,y) will have its
+support effectively cut by K, and thus cannot allocate any probability mass to inconsistent predictions
+(D3). Additionally,cK will allow to encode general propositional logical constraints in a compact
+computational graph (D4). Lastly, the productrΘ,K(x,y) is fully differentiable and allows SPL to be
+an off-the-shelf replacement for other predictive layers (see Fig. 2) and enables end-to-end learning
+(D5). By renormalizingrΘ,K(x,y) and outputting normalized probabilities, SPL enables the exact
+computation of gradients for Θ, which can therefore be trained by maximum likelihood.
+Thanks to recent advancements in the literature on circuits, we can compute the partition function
+Z(x) efﬁciently in time linear in the size of rΘ,K, thus preserving efﬁciency (D6) and not com-
+promising on the other desiderata. This will also yield correct (and consistent) predictions at test
+time, when an SPL computes the MAP statey∗ = argmax yrΘ,K(y,x)/ ∑
+yrΘ,K(y,x). The next
+section clariﬁeshow to implement the modules of SPL as circuits while satisfying these desiderata.
+3 Realizing SPLs with tractable circuit representations
+The components of SPL s are circuits, a large class of computational graphs that can represent both
+functions and distributions [12, 17]. Circuits subsume many tractable generative and discriminative
+probabilistic models—from Chow-Liu and latent tree models [ 13, 10], to hidden Markov models
+(HMMs) [58], sum-product networks (SPNs) [57], decision trees [38, 14], and deep regressors [37]—
+as well as many compact representations of logical formulas, such as (ordered) binary decision
+diagrams [3], sentential decision diagrams (SDDs) [16] and others [17].
+The key idea behind SPL s is to leverage this single formalism to represent both an expressive joint
+distribution forqΘ(y |f (x)) and a compact encoding of the logical constraints forcK(x,y), while
+ensuring the exact and efﬁcient evaluation of Eq. (2). This can be achieved by ensuring that these
+computational graphs abide certain structural properties: smoothness, decomposability, determinism
+and compatibility [17, 72]. Next, we introduce probabilistic circuits for modelingqΘ (Sec. 3.1) and
+constraint circuits forcK (Sec. 3.2), while in Sec. 3.4 we propose a more efﬁcient implementation of
+SPL utilizing a single circuit.
+3.1 Representing expressive distributions with probabilistic circuits
+We start by introducing circuits for joint probability distributions, and then extend the discussion to
+conditional distributions, which we use to implementqΘ(Y |f (X)) in SPLs.
+Deﬁnition 3.1 (Circuits). A circuit h over variables Y is a computational graph encoding a pa-
+rameterized function hΘ(Y) by combining three kinds of computational units: input functional
+units, sum units, and product units. An input functional n represents a base parametric function
+hn(sc(n);λ) over some variables sc(n) ⊆ Y, called its scope, and it is parameterized byλ. Sum and
+product unitsn elaborate the output of other units, denoted in(n). Sum units are parameterized byω
+4
+
+PDF PAGE 5
+Y1
+Y2
+Y1
+Y2
+×
+×
+Y3
+Y3
+×
+×
+q
+g
+1 {Y1 = 0}
+1 {Y1 = 1}
+1 {Y2 = 0}
+1 {Y2 = 1}
+×
+×
+× ×
+1 {Y3 = 1}
+1 {Y3 = 0}
+× c
+Figure 3: Examples of circuits in SPL . Left: probabilistic circuitqΘ. Red lines indicate how the
+parameters Θ ﬂow from the gating functiong to the various input functional and sum units ofq. Right:
+constraint circuit encoding the logical constraint of Eq. (1) where labels areYi ∈ {Ycat,Y dog,Y animal}.
+Note thatq andc are smooth, decomposable (Def. 3.3) and compatible (Def. 3.7) andc is deterministic
+(Def. 3.6). By parameterizingc viag we can obtain a single-circuit SPL (Sec. 3.4).
+and compute the weighted sum of their inputs ∑
+c∈in(n)ωchc(sc(n)), while product units compute∏
+c∈in(n)hc(sc(n)). The parameters Θ of a circuit encompass the parameters of all input functionals
+(λ) and sum units (ω).
+For any inputy, the value ofhΘ(y) can be evaluated by propagating the output of the input units
+through the computational graph and reading out the value of the last unit. The support ofh is the set
+of all statesy for which the output is non-zero, i.e., supp(h) = {y ∈ val(Y) |h(y) ̸= 0}.
+Deﬁnition 3.2 (Probabilistic circuits (PCs)). A circuitq is a PC if it encodes a (possibly unnormalized)
+probability distribution, i.e.,qΘ(y) is non-negative for all conﬁgurationsy of Y.
+From here on, we will assume PCs to have positive sum parametersω and whose input units model
+valid distributions, e.g., Bernoullis, as these conditions are sufﬁcient for satisfying Def. 3.2. Moreover,
+w.l.o.g. we will assume the sum and product units to be organized into alternating layers, and that
+every product unitn receives only two inputsc1,c 2, i.e.,qn(X) = qc1 (Y) ·qc2 (Y). These conditions
+can easily be enforced in polynomial time [ 74, 75]. We are speciﬁcally interested in smooth and
+decomposable PCs, as they will be enabling efﬁcient inference in SPL (Sec. 3.3).
+Deﬁnition 3.3 (Smoothness & Decomposability). A circuit issmooth if for every sum unitn, its inputs
+depend on the same variables: ∀c1,c 2 ∈ in(n), sc(c1) = sc(c2). It is decomposable if the inputs of
+every product unitn depend on disjoint sets of variables: in(n) = {c1,c 2}, sc(c1) ∩ sc(c2) = ∅.
+Smooth and decomposable PCs are both expressive and efﬁcient: they can encode distributions with
+hundred millions of parameters and be effectively learned by gradient ascent [54]. The structure of
+their computational graph can be either speciﬁed manually [57, 54, 52] or acquired automatically
+from data [74, 60, 15], e.g., by ﬁrst learning a latent tree model and then compiling the latter into a
+circuit [43]. These circuits are competitive with intractable models such as variational autoencoders
+and normalizing ﬂows scores on several benchmarks [42].
+As proposed by Shao et al. [64], any (smooth and decomposable) PC qΘ(Y) encoding a joint
+distribution over the labels Y can be turned into a (smooth and decomposable) conditional circuit,
+conditioned by input variables X, by letting its parameters be a function of X.
+Deﬁnition 3.4 (Neural conditional circuits [ 63]). A conditional circuit q(Y; Θ = g(X)) models
+the conditional distributionp(Y | X) via a differentiable gating function g that maps every input
+conﬁgurationx to the set of parameters of Θ ofp.
+An example of a smooth and decomposable conditional circuit is shown in Fig. 3. This design
+immediately allows us to implementqΘ(Y |f (X)) in SPL as a conditional PC whose gating function
+maps the feature embedding space RK to the parameter space R|Θ|
++ , realizingq(Y; Θ =g(f (X))).
+As such, the gating function g creates a clean interface between any pre-trained feature extractor
+f and the PC q (Fig. 3). While one can devise g in several ways, we strive for simplicity in our
+experiments and adopt vanilla multi-layer perceptrons (MLPs) whose ﬁnal activations are either
+sigmoids, if they have to predict the parametersλ of the Bernoulli input distributions ofq, or softmax,
+if they output the sum unit parametersω (Def. 3.1).
+5
+
+PDF PAGE 6
+3.2 Encoding logical formulas with constraint circuits
+The next step is to translate a logical constraint K into a smooth and decomposable circuitcK(x,y).
+To this end, we employ a special type of PCs, deﬁned as follows.
+Deﬁnition 3.5 (Constraint circuits). A PCc over variables X ∪ Y is a constraint circuit encoding
+prior knowledge K if it computes 1 {(x,y) |= K} for every conﬁguration(x,y).
+As a practical way to realize such a circuit, we will consider constraint circuits that have all sum
+unit parameters equal to 1 and input functionals that are indicator functions over their scope, e.g.,
+cn(z) = 1 {z |=ϕ(n)} where Z is the scope of the input andϕ(n) a constraint over it. Furthermore,
+we require each sum unit in it to be deterministic.
+Deﬁnition 3.6 (Determinism). A sum unitn is deterministic if its inputs have disjoint supports, i.e.,
+∀c1,c 2 ∈ in(n),c 1 ̸=c2 =⇒ supp(c1) ∩ supp(c2) = ∅.
+Fig. 3 shows an example of a deterministic constraint circuit. Thanks to determinism, we can readily
+translate classical compact representations for logical formulas such as (ordered) binary decision
+diagrams [3, 8] and sentential decision diagrams (SDDs) [16] into constraint circuits as deﬁned above.
+This becomes evident when they are written in the language of negation normal form [17] and their
+and gates (resp. or gates) are replaced with product units (resp. sum units) [12]. A logic constraint
+can therefore be represented as a constraint circuit for SPL s, by utilizing any of the many tools
+available for OBDDs [ 69] or SDDs [9, 50]. Sec. B illustrates in detail how to compile the example
+constraint of Eq. (1) into the constraint circuit of Fig. 3 in this way.
+3.3 Efﬁcient inference in SPLs
+As discussed above, PCs can be expressive (D1) and are modular (D5), while constraint circuits
+ensure consistency (D3) for general constraints (D4). What remains to be shown to complete SPLs is
+that the product supports efﬁcient normalization (D2) and inference (D6), speciﬁcally that it allows
+for the efﬁcient evaluation of the normalization constant ofrΘ,K, and its MAP state. To this end, we
+need to introduce the notion of compatibility between the two circuits [72].
+Deﬁnition 3.7 (Compatible circuits in SPLs). A smooth and decomposable conditional PCq(Y; Θ)
+is compatible over variables Y with a smooth and decomposable constraint circuit cK(Y, X) if
+any pair of product units n ∈ p and m ∈ m with the same scope over Y can be rearranged
+to be mutually compatible and decompose in the same way: (sc(n) = sc(m)) = ⇒ (sc(ni) =
+sc(mi), ni andmi are compatible) for some rearrangement of the inputs ofn (resp.m) inton1,n 2
+(resp.m1,m 2). Fig. 3 shows two circuitsq andc that are compatible.
+Theorem 3.1 (Efﬁcient inference inSPLs). Ifq(Y; Θ) andcK(Y, X) are two smooth, decomposable
+and compatible circuits, then computing Eq. (2) can be done in O(|q||c|) time. Furthermore, if they
+are also deterministic, then computing the MAP state can be done in O(|q||c|) time.
+The proof can be found in Sec. A. How do we come up with compatible circuits? One option is to
+have a PCq that is compatible with every possible smooth and decomposable circuit c. To do so,
+we can representq as a mixtures ofM fully-independent models; i.e., ∑M
+i=1ωi
+∏
+jq(Yj; Θi). This
+additional sum unit can be enough to be more expressive than a FIL and already delivers more accurate
+predictions than any competitor, as our experiments in pathﬁnding show (Sec. 5). An example of such
+a circuit is shown in Fig. 3. Another sufﬁcient condition for compatibility is that bothq andc share the
+exact same hierarchical scope partitioning [72], sometimes called a vtree or variable ordering [12, 55].
+This can be done easily if one ﬁrst compiles logical constraints into OBDDs or SDDs and then uses a
+mechanized algorithm to buildq as in [54] to create a compatible structure. Additionally, to ensureq
+is a deterministic PC, we could exploit the mechanized construction proposed in Shih and Ermon[65].
+Computing the exact MAP state, however, is of less concern as approximate inference algorithms,
+e.g., beam search decoding [76] or iterative pruning [11], are nowadays a commodity in deep learning
+frameworks. For non-deterministic PCs, we compute the MAP state with a faster approximation by
+replacing non-deterministic sum units with max units [51]. This runs in time linear in the size ofr,
+and yet delivers state-of-the-art accuracies in our experiments Sec. 5.
+6
+
+PDF PAGE 15
+A Proofs
+Theorem 3.1 (Efﬁcient inference inSPLs). Ifq(Y; Θ) andcK(Y, X) are two smooth, decomposable
+and compatible circuits, then computing Eq. (2) can be done in O(|q||c|) time, where | · | denotes the
+circuit size. Furthermore, if they are also deterministic, then computing the MAP state can be done in
+O(|q||c|) time. .
+We prove the ﬁrst statement by ﬁrst showing that the partition functionZ(x) in Eq. (2) can solved
+exactly in time O(|q||c|). It will then follow from it that computing Eq. (2) can be done in O(|q||c| +
+|q| + |c|) ≈ O (|q||c|) where the last two additive factors derive from evaluatingq andc for an input
+conﬁguration(x,y).
+To do so, we will exploit two ingredients: i) the product ofq andc can be represented as a smooth and
+decomposable circuit in time O(|q||c|) [72] and ii) any smooth and decomposable circuit guarantees
+tractable marginalization in time linear in its size [12]. The next two propositions formalize these
+statements.
+Proposition A.1 (Tractable product of circuits) . Let q(Y; Θ) and cK(Y, X) be two smooth,
+decomposable circuits that are compatible over Y then computing their product as a circuit
+rΘ,K(X, Y) = q(Y; Θ) ·cK(Y, X) that is decomposable over Y can be done in O(|q||c|). If
+bothq andc are also deterministic, thenr is as well.
+Proof. The proof directly follows from Theorem 3.2 from Vergari et al. [72].
+Note that O(|q||c|) is a loose upperbound and the size ofr is in practice smaller [72].
+Proposition A.2 (Tractable marginalization of circuits). Letr(X, Y) be a circuit that is smooth and
+decomposable over Y with input functions over Y that can be tractably marginalized out. Then
+for any variables Y′ ⊆ Y and their assignmenty′, the marginalization ∑
+y′r(y′,y′′,x) can be
+computed exactly in time linear in the size ofr, where Y′′ = Y \ Y′.
+Proof. The proof follows by considering that i) the input functionals in SPLs are simple distributions
+such as Bernoullis and indicators and can be easily marginalized in O(1) and ii) that for every
+conﬁgurationx of variables X,r(Y,x) is a circuit only over Y and therefore Proposition 2.1 from
+Vergari et al. [72] can be directly applied.
+Analogously, the second statement of Theorem 3.1 follows from Proposition A.1 and by recalling
+that the MAP state of a deterministic circuit can be computed in time linear in its size.
+Proposition A.3 (Tractable MAP state of circuits (Choi et al. [12])). Letr(X, Y) be a circuit that
+is smooth and decomposable and deterministic over Y then for a conﬁguration x its MAP state
+argmaxyr(x,y) can be computed in time O(|r|).
+B Compiling logical formulas into circuits
+For our experiments we use standard compilation tools to obtain a constraint circuit starting from
+a propositional logical formula in conjunctive normal form. Speciﬁcally, we use Graphillion 1 to
+compile the constraints in the Warcraft pathﬁnding experiment into an SDD. For all other experiments,
+we use PySDD2 a python SDD compiler [16, 9].
+We now illustrate step-by-step one example of such a compilation for a simple logical formula.
+Consider the constraint circuitc in Fig. 3 encoding the constraint
+(Ycat =⇒ Yanimal) ∧ (Ydog =⇒ Yanimal). (3)
+Intuitively, our aim is to compile the above logical formula into a compact form representing
+all possible assignments to Ycat,Y dog,Y animal satisfying the above constraint. We compile such a
+constraint by proceeding in a bottom up fashion, where bottom-up compilation can be seen as
+composing Boolean sub-functions whose domain is determined by a variable ordering, also called
+1https://github.com/takemaru/graphillion
+2https://github.com/wannesm/PySDD
+15

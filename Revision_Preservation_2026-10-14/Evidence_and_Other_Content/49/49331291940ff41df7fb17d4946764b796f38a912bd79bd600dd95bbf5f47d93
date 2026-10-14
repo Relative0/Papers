@@ -1,0 +1,930 @@
+# Astra Pro Deep Audit Prompt — CM Folding Optimization P1–P13
+
+You are acting as a **senior compiler/runtime engineer, Boolean-algebra researcher, performance-methodology reviewer, and adversarial scientific auditor**.
+
+You have been given the supplementary archive:
+
+`ASTRA_CM_P1_P13_DEEP_AUDIT_2026-09-18.zip`
+
+Extract it first. Read:
+
+1. `00_START_HERE/README.md`
+2. `00_START_HERE/EXPERIMENT_INDEX.csv`
+3. `07_OPTIONAL_ADD/MISSING_OR_RECOMMENDED_ADDITIONS.md`
+
+Then inspect the primary code, preregistrations, raw outputs, profiles, benchmark inputs, and verification scripts. **Do not rely only on the summary documents.**
+
+The archive contains the N1 predecessor and experimental sequence P1 through P13 concerning optimization of Boolean formula/DAG evaluation into sparse Algebraic Normal Form (ANF), using propagated two-support / Correspondence-Matrix-like semantic signatures to identify profitable Boolean contractions.
+
+Your job is **not to accept the current interpretation at face value**.
+
+Your job is to deeply audit:
+
+1. the mathematics and optimization mechanism;
+2. the Python implementations;
+3. benchmark design;
+4. timing methodology;
+5. baseline fairness;
+6. statistical analysis;
+7. experimental progression P1→P13;
+8. possible implementation cleanups we may have missed;
+9. alternative explanations for the observed speedups/slowdowns;
+10. the best experiments to run **before moving to a compiled C/Cython implementation**.
+
+---
+
+## 0. Read the artifacts first
+
+Read the supplied archive and primary files in detail.
+
+Do **not** rely only on `*_RESULTS.md` or `*_INTERPRETATION.md`.
+
+Inspect, where available:
+
+- preregistrations;
+- Python harnesses;
+- benchmark generators;
+- source-DAG factories;
+- sparse ANF lowering code;
+- CM/two-support signature machinery;
+- profitability calculations;
+- dispatch logic;
+- timing code;
+- randomization/scheduling code;
+- bootstrap/statistical code;
+- raw CSV/JSON results;
+- fuzz tests;
+- independent verification scripts;
+- profiling output;
+- natural EPFL benchmark extraction/selection logic;
+- Gate-P generator;
+- prior reference implementations from N1 and P1–P13.
+
+The P-series import chain eventually reaches:
+
+`03_N1_BASELINE/n1_gatep_harness.py`
+
+The experiment folders are:
+
+`04_EXPERIMENTS/P01` through `04_EXPERIMENTS/P13`, plus `P07B`.
+
+Frozen natural benchmark sources and policy files are under:
+
+`05_BENCHMARK_SOURCES/`
+
+Background mathematical material is under:
+
+`02_BACKGROUND/`
+
+If some primary artifact required for a conclusion is absent, explicitly say so and consult:
+
+`07_OPTIONAL_ADD/MISSING_OR_RECOMMENDED_ADDITIONS.md`
+
+Do not infer implementation details from summaries if the source code can be inspected.
+
+---
+
+# 1. Background / current interpretation
+
+The experiment series currently appears to tell the following story.
+
+Treat this as a **hypothesis to audit**, not as established truth.
+
+### P1–P3
+
+Early folding strategies could reduce symbolic work, but selection/rewrite/planning overhead usually erased runtime benefits.
+
+P3 became demand-driven but shallow recognition lost some powerful higher-level folds.
+
+### P4
+
+A propagated two-support semantic signature was attached while building the Boolean DAG.
+
+This allowed ancestor folds to be recognized even when intermediate folds were not locally profitable.
+
+On the synthetic Gate-P workload, P4 became substantially faster than direct sparse ANF **once the annotated DAG already existed**.
+
+However, annotation construction was expensive.
+
+### P5–P7
+
+Several representations were tried:
+
+- packed primitive arrays;
+- metadata words stored on Python nodes;
+- two `array('Q')` buffers.
+
+These preserved the same algebraic savings but showed that changing Python storage representation alone did not eliminate source-construction overhead.
+
+### P7B
+
+A separate pre-dispatch DAG scan was tried.
+
+It reduced unnecessary annotation on natural cases but was itself too expensive and was not sufficiently predictive of end-to-end profitability.
+
+Important: P7B contains a documented timing-accounting correction. Inspect `04_EXPERIMENTS/P07B/P7B_TIMING_CORRECTION.md` and use the corrected rerun as authoritative.
+
+### P8
+
+A zero-pass dispatch model was introduced.
+
+Telemetry features were accumulated while the ordinary DAG was being built.
+
+A small frozen decision tree determined whether to use direct lowering or the P6-style propagated-fold backend.
+
+Compiler-only results became promising, but telemetry collection itself was expensive.
+
+### P9–P11
+
+Telemetry was progressively simplified:
+
+- P9 kept only primitive features actually used by the tree;
+- P10 fused telemetry into the ordinary `_make` path;
+- P11 reduced the frozen tree to the predicates actually necessary to reach its sole annotation leaf.
+
+By P11 the natural-case abstention cost was near parity and Gate-P full pipeline was close to direct.
+
+### P12
+
+Reuse bookkeeping was made lazy.
+
+Reuse is only exactified when the earlier predicates leave annotation possible.
+
+Pair repeat excess can be derived as:
+
+`binary_nodes - distinct_pairs`.
+
+P12 reached approximately:
+
+- case-balanced Gate-P full pipeline: ~1.02× direct;
+- workload-weighted full pipeline: ~0.98× direct.
+
+This is a secondary measured end-to-end crossover, but not the preregistered case-balanced primary crossover.
+
+### P13
+
+Pair counting was moved out of the per-node Python dictionary path.
+
+Packed pair keys were appended during construction, then exact pair statistics were computed in C-backed operations at dispatch.
+
+P13 ended up nearly tied with P12.
+
+Current interpretation:
+
+> The algebraic folding mechanism appears strong enough to beat direct sparse ANF. The remaining implementation gap may largely be the cost of observing pair/reuse structure in CPython.
+
+The proposed next experiment is tentatively:
+
+> P14A: move pair observation / telemetry into compiled code such as Cython/C while freezing the exact P13 dispatch behavior and requiring exact decision equivalence.
+
+Your job is to determine whether that conclusion and next step are justified.
+
+---
+
+# 2. First: reconstruct the actual experiment independently
+
+Before criticizing it, reconstruct what was actually measured.
+
+Produce a concise technical map of:
+
+- expression/DAG representation;
+- source construction;
+- structural interning/CSE;
+- source fanout semantics;
+- sparse ANF representation;
+- direct lowering algorithm;
+- propagated two-support signature;
+- token representation;
+- profitability estimator;
+- fold acceptance rule;
+- how accepted folds bypass descendant ANF computation;
+- how dispatch works;
+- timing endpoints;
+- memory endpoints;
+- correctness checks.
+
+Distinguish clearly among:
+
+- Boolean source construction;
+- telemetry collection;
+- dispatch;
+- CM/signature construction;
+- selector work;
+- ANF lowering;
+- result conversion / correctness verification;
+- profiling-only work.
+
+Check that the reported timing boundaries actually correspond to these conceptual boundaries.
+
+---
+
+# 3. Audit baseline fairness extremely carefully
+
+This is a priority.
+
+Determine whether the **direct/no-rewrite baseline** and optimized arms perform genuinely comparable work.
+
+Look for subtle asymmetries involving:
+
+- node interning;
+- DAG construction;
+- hashing;
+- operand normalization;
+- source fanout calculation;
+- cached properties;
+- monomial estimates;
+- digest construction;
+- output conversion;
+- correctness checking;
+- Python allocation patterns;
+- memoization;
+- repeated source traversal;
+- garbage collection;
+- Python object reuse;
+- warm caches;
+- reused factories;
+- expression generation.
+
+Ask specifically:
+
+### A.
+
+Does the optimized path receive metadata that the direct path does not, while the timing accounting nevertheless excludes some cost of creating that metadata?
+
+### B.
+
+Does direct construction perform avoidable work simply because both paths inherited an old generic factory?
+
+### C.
+
+Could a better direct implementation narrow or erase the apparent downstream folding win?
+
+### D.
+
+Conversely, are we charging the optimized arm for work that a realistic compiler/parser would already naturally possess?
+
+For example:
+
+- node IDs;
+- edge counts;
+- fanout;
+- operand identities;
+- node type;
+- support size;
+- structural hashes.
+
+Identify which telemetry quantities should be viewed as genuinely incremental cost versus data ordinarily maintained by a compiler.
+
+This distinction is extremely important.
+
+---
+
+# 4. Audit the propagated-signature mechanism itself
+
+Determine exactly why P4+ reduces so much ANF work.
+
+Check whether the effect is best understood as:
+
+- CM-specific contraction;
+- ordinary Boolean common-subexpression recognition;
+- two-input truth-function composition;
+- partial evaluation;
+- superoptimization;
+- local truth-table fusion;
+- algebraic strength reduction;
+- DAG contraction;
+- some combination.
+
+Do not force a CM-specific interpretation.
+
+Ask:
+
+> If a generic Boolean optimizer were given exactly the same two-support semantic information, could it perform the same contractions?
+
+If yes, say so.
+
+That does **not** invalidate the speedup. The goal is to characterize it correctly.
+
+Also determine whether there are transformations stronger than the present CM folding rule that are available essentially for free once the two-support signature exists.
+
+---
+
+# 5. Deep Python implementation audit
+
+This is one of the most important parts.
+
+Look for implementation inefficiencies that P1–P13 may not yet have tested.
+
+Do not merely suggest generic ideas. Inspect the actual hot paths.
+
+Look especially for:
+
+### Object / attribute overhead
+
+- dataclasses;
+- tuples;
+- Python integers;
+- repeated attribute lookups;
+- dynamic dispatch;
+- recursive Python calls;
+- method calls in tight loops;
+- bound method creation;
+- exception paths;
+- temporary objects.
+
+### Dictionaries / sets
+
+- pair key construction;
+- dictionary hashing;
+- tuple keys vs packed integer keys;
+- repeated `dict.get`;
+- membership tests;
+- set construction;
+- duplicate hashing;
+- dictionary resizing;
+- opportunities for dense arrays indexed by node ID.
+
+### DAG construction
+
+- repeated canonicalization;
+- repeated operand ordering;
+- duplicate structural hashes;
+- double lookup;
+- cache hit paths;
+- unnecessary creation of temporary keys;
+- whether interning and telemetry can share one lookup.
+
+### ANF lowering
+
+- frozenset/set operations;
+- monomial representation;
+- symmetric difference implementation;
+- multiplication loops;
+- temporary allocations;
+- memo table layout;
+- recursion overhead.
+
+### Dispatch telemetry
+
+Specifically examine whether the P11–P13 predicates can be determined with cheaper exact logic.
+
+The frozen annotate condition appears equivalent to something like:
+
+- a canonical operand pair appears at least five times;
+- reuse density below a fixed threshold;
+- pair-repeat density below a fixed threshold.
+
+Search for ways to establish these **without maintaining exact global statistics**.
+
+---
+
+# 6. Try hard to beat P13 without compiled code
+
+Before recommending C/Cython, attempt to find a substantially cheaper exact Python design.
+
+Consider, but do not limit yourself to:
+
+### A. Threshold-only pair detection
+
+We do not need exact pair multiplicities unless a count approaches 5.
+
+Can the fifth occurrence of a pair be detected using:
+
+- tiny local caches;
+- open-addressed arrays;
+- node-ID-local structures;
+- recent-pair caches;
+- staged dictionaries;
+- delayed allocation;
+- only counting repeats rather than all pairs?
+
+### B. Decision bounds
+
+Can annotation be ruled out monotonically before exact statistics are known?
+
+For example derive lower/upper bounds on:
+
+- repeat density;
+- reuse density;
+- possible maximum shell multiplicity.
+
+Terminate telemetry permanently once annotation becomes mathematically impossible.
+
+### C. Delayed telemetry activation
+
+Could the ordinary factory run entirely uninstrumented until some extremely cheap trigger occurs?
+
+Examples:
+
+- first repeated operand pair;
+- a minimum binary-node count;
+- repeated structural hash;
+- repeated child-ID pair.
+
+Only then instantiate the more expensive pair/reuse machinery.
+
+### D. Piggyback on structural interning
+
+The source factory already hashes structural node keys.
+
+Can pair-repeat evidence be extracted from the **existing structural-cache lookup** without another packed pair key or dictionary?
+
+### E. Alternate exact pair encoding
+
+Examine:
+
+- `a << k | b`;
+- Cantor-like pairing;
+- 64-bit packed node IDs;
+- direct tuple reuse;
+- interned pair objects;
+- dense triangular indexing;
+- arrays indexed by node IDs when feasible.
+
+Benchmark mentally and, if possible, experimentally.
+
+### F. Specialized small-data path
+
+Gate-P and many natural cones may have relatively small numbers of binary nodes.
+
+Would a linear scan over a tiny Python list outperform dictionary/set machinery until some size threshold?
+
+A hybrid strategy such as:
+
+- list for first N unique pairs;
+- dictionary only after N;
+
+may be faster.
+
+### G. Eliminate telemetry from construction entirely
+
+Could pair/reuse conditions be established during ANF lowering itself, before much expensive ANF work has occurred?
+
+For example:
+
+- begin direct lowering;
+- observe repeated pair structure opportunistically;
+- switch/fuse when evidence accumulates.
+
+Assess whether this would preserve correctness and whether sunk direct work makes it unattractive.
+
+---
+
+# 7. Audit timing methodology
+
+Examine the timing harness in detail.
+
+Check:
+
+- timer choice;
+- timer resolution;
+- warmup;
+- randomized arm order;
+- number of repetitions;
+- CPU frequency scaling;
+- GC behavior;
+- process reuse;
+- import/cache warm state;
+- memory allocator reuse;
+- background noise;
+- pairing of observations;
+- bootstrap implementation.
+
+Determine whether the reported differences around 1–5% are trustworthy in this environment.
+
+In particular, P11–P13 are now operating near parity.
+
+Assess whether experiments should switch to:
+
+- separate fresh processes;
+- CPU affinity;
+- fixed governor/performance mode;
+- `pyperf`;
+- more repetitions;
+- longer batched inner loops;
+- hierarchical/bootstrap analysis;
+- paired per-case log ratios;
+- permutation tests.
+
+Identify any statistical claims that are stronger than the methodology supports.
+
+---
+
+# 8. Audit the use of geometric means and workload weighting
+
+The project reports both:
+
+- case-balanced geometric means;
+- workload-weighted aggregate ratios.
+
+Evaluate whether each answers a legitimate but different question.
+
+Explain what population each estimator corresponds to.
+
+Check whether workload-weighted results are dominated by one or two large cases.
+
+Provide:
+
+- per-depth Gate-P interpretation;
+- per-case distribution;
+- median;
+- geometric mean;
+- aggregate summed time;
+- ideally break-even curves versus direct workload size.
+
+Do not dismiss either estimator, but do not mix their interpretations.
+
+---
+
+# 9. Audit benchmark leakage / overfitting
+
+The Gate-P family has been used repeatedly from P1 to P13.
+
+Even though thresholds and experiments were preregistered, repeated human iteration may have implicitly optimized architecture toward this workload.
+
+Evaluate this carefully.
+
+Ask:
+
+- Is Gate-P too structurally aligned with propagated two-support signatures?
+- Is the frozen natural corpus too small?
+- Have architectural choices become indirectly tuned to those 36 Gate-P cases?
+- Does the P8 decision tree generalize?
+- Is the absence of folds in the ten EPFL cones informative or merely a sampling artifact?
+
+Recommend an **untouched holdout benchmark suite** before any publication claim.
+
+---
+
+# 10. Find natural workloads that actually exercise the mechanism
+
+This is important.
+
+The existing ten EPFL evaluation cones repeatedly produce zero accepted folds.
+
+That makes them excellent overhead controls, but weak evidence about real-world applicability.
+
+Identify principled ways to search for natural Boolean circuits with actual repeated two-support structure without contaminating evaluation.
+
+Possibilities:
+
+- larger EPFL circuit corpus;
+- all outputs / random cones;
+- arithmetic circuits;
+- multiplexers;
+- decoders;
+- control logic;
+- cryptographic Boolean circuits;
+- synthesis benchmarks;
+- BDD/AIG benchmarks;
+- SAT preprocessing circuits;
+- logic-network supergate structures.
+
+Design a **discovery set / frozen test set split**.
+
+We need to know:
+
+> In realistic circuits where the mechanism actually fires, does the P4–P13 algebraic advantage persist?
+
+---
+
+# 11. Suggest additional synthetic tests
+
+Gate-P is useful but potentially narrow.
+
+Design synthetic families that independently vary:
+
+- depth;
+- width;
+- fanout;
+- pair repetition;
+- pair multiplicity;
+- support size;
+- degree growth;
+- ANF density;
+- shared descendants;
+- affine vs nonlinear tokens;
+- profitable vs intentionally unprofitable folds.
+
+Especially propose adversarial cases where:
+
+- many pair repeats exist but folding is harmful;
+- few pair repeats produce huge payoff;
+- reuse is extremely high;
+- reuse is zero;
+- pair signatures propagate deeply but ANF remains sparse;
+- pair signatures propagate deeply and ANF explodes.
+
+The goal is to map the actual **break-even surface**, not merely get another overall ratio.
+
+---
+
+# 12. Reconsider the dispatch policy
+
+Do not retune it using the P1–P13 evaluation outcomes as if they were untouched training data.
+
+But conceptually evaluate whether the current decision tree is targeting the right quantity.
+
+It appears to miss some P6 wins and annotate some P6 losses.
+
+Suggest better future policy targets such as predicting:
+
+- expected pair-term reduction;
+- expected multiplication reduction;
+- expected compile-time difference;
+- amortization threshold;
+- probability of profitable fold;
+- estimated saved ANF work / telemetry cost.
+
+Consider whether an analytic cost model might generalize better than a learned tree.
+
+---
+
+# 13. Decide whether P14 should really be C/Cython
+
+This is a major requested conclusion.
+
+Evaluate at least these options:
+
+### Option 1 — stay in CPython
+
+There may still be a superior exact lazy implementation.
+
+### Option 2 — Cython/C only for telemetry
+
+Keep Python source DAG and ANF lowering unchanged, move only pair/reuse observation to compiled code.
+
+### Option 3 — compiled metadata-aware factory
+
+Move source node creation + interning + telemetry together.
+
+### Option 4 — compiled sparse ANF core
+
+The true long-term speedup may be much larger if both direct and folded sparse ANF kernels move to compiled code.
+
+But this must use a **fair compiled direct baseline**, not compiled optimized versus Python direct.
+
+### Option 5 — alternate Python runtimes
+
+Evaluate whether PyPy, mypyc, Numba, Cython, Rust extension, or another backend is appropriate.
+
+Rank these options based on scientific informativeness first, engineering effort second.
+
+Do not assume Cython/C is automatically correct.
+
+---
+
+# 14. Consider a compiled fairness trap
+
+This is critical.
+
+If P14 moves only CM telemetry into C while the direct baseline remains pure Python, then an apparent speedup may reflect language-boundary asymmetry rather than algorithmic advantage.
+
+Design the fairest P14 experiment.
+
+Possibilities:
+
+- both direct and CM use the same compiled source factory;
+- direct ignores the extra metadata;
+- both share identical node allocation and interning;
+- compile only the incremental telemetry logic;
+- separately report lower-only and end-to-end timings.
+
+State exactly what should be compiled and what should remain shared.
+
+---
+
+# 15. Check for stronger baselines
+
+Compare against more than our current direct sparse ANF.
+
+Ask whether appropriate competing strategies include:
+
+- generic two-support truth-table contraction;
+- common-subexpression elimination;
+- Boolean supergate fusion;
+- truth-table LUT collapsing;
+- BDD-based simplification;
+- AIG rewriting;
+- Espresso/local minimization;
+- direct sparse ANF with memoized partial products;
+- generic fold-by-local-truth-table optimization.
+
+The question is not whether CM is unique.
+
+The question is:
+
+> Does propagated two-support folding provide a useful computational strategy relative to reasonable generic competitors?
+
+If the broader repo is needed for this comparison and is not embedded, see `06_REPO_CONTEXT/REPO_PIN_AND_RELEVANT_PATHS.md` and state which exact files you need.
+
+---
+
+# 16. Publication-level interpretation
+
+Separate claims into:
+
+### Strongly supported now
+
+Claims directly demonstrated by P1–P13.
+
+### Suggestive but not yet established
+
+For example:
+
+- real-world speedup;
+- generalization beyond Gate-P;
+- universal advantage;
+- CM-specificity.
+
+### Unsupported / should not be claimed
+
+Be conservative.
+
+Also identify which results are scientifically interesting even if the eventual end-to-end speedup is modest.
+
+Examples may include:
+
+- ancestor two-support signatures preserving optimization opportunity;
+- local unprofitability not implying ancestor unprofitability;
+- information propagation versus eager rewrite;
+- demand-driven algebraic contraction;
+- large reduction in pair-product work.
+
+---
+
+# 17. Required deliverables
+
+Produce the following.
+
+## A. Executive verdict
+
+No more than ~2 pages.
+
+State:
+
+- what P1–P13 genuinely establish;
+- what they do not;
+- whether P14 is justified;
+- your recommended immediate next experiment.
+
+## B. Technical audit
+
+Detailed section-by-section critique of architecture, code, methodology, baselines, and statistics.
+
+## C. Code-level cleanup list
+
+For every meaningful optimization you find, provide:
+
+- exact file/function;
+- current behavior;
+- proposed change;
+- expected effect;
+- whether it changes semantics;
+- whether it requires a new preregistration.
+
+Rank by expected value.
+
+## D. Experimental gaps
+
+List experiments we should run before publication.
+
+Separate:
+
+- mandatory;
+- high-value;
+- optional.
+
+## E. P14 design recommendation
+
+Write a concrete preregistration-quality specification for the recommended P14.
+
+Include:
+
+- hypothesis;
+- frozen implementation difference;
+- arms;
+- timing endpoints;
+- correctness gates;
+- equivalence checks;
+- benchmark sets;
+- success/failure criteria;
+- statistical analysis;
+- artifacts to preserve.
+
+## F. Alternative P14s
+
+Give at least 2–3 strong alternatives if compiled pair telemetry is not the best next experiment.
+
+## G. Red-team section
+
+Try as hard as possible to explain the P4–P13 findings **without** invoking a genuinely useful folding algorithm.
+
+Then state which alternative explanations survive contact with the evidence.
+
+## H. Positive-case section
+
+Make the strongest technically defensible case for why the results may represent a genuinely useful compiler optimization.
+
+The final judgment should reconcile the red-team and positive-case analyses.
+
+---
+
+# 18. Important research discipline
+
+Do **not** optimize toward making the project look successful.
+
+Negative findings are valuable.
+
+If the proper conclusion is:
+
+- “the optimization is real but too specialized,”
+- “the speedup is a Python artifact,”
+- “the direct baseline needs improvement,”
+- “P14 should not happen yet,”
+
+say so clearly.
+
+Conversely, if the evidence supports a strong mechanism, explain exactly why.
+
+Do not treat:
+
+- Gate-P success as natural-workload evidence;
+- natural abstention as natural folding success;
+- workload-weighted crossover as identical to case-balanced crossover;
+- compiler-only speedup as end-to-end speedup.
+
+Preserve those distinctions throughout.
+
+---
+
+# 19. If compute is available
+
+You are encouraged to run additional **diagnostic** experiments, but:
+
+- do not silently alter existing benchmarks;
+- do not present post-hoc experiments as preregistered;
+- label exploratory results clearly;
+- preserve raw outputs;
+- report random seeds;
+- report code hashes;
+- avoid tuning against the frozen evaluation cases.
+
+Useful exploratory diagnostics include:
+
+- microbenchmarking the hottest P13 operations;
+- replacing pair data structures one at a time;
+- `pyperf`;
+- fresh-process timing;
+- alternative direct implementations;
+- break-even scaling;
+- per-node telemetry cost;
+- operation counts;
+- memory allocations.
+
+If you modify code, provide patches/diffs rather than overwriting the originals.
+
+---
+
+# 20. Specific artifact checks requested
+
+Before your final recommendation, explicitly report whether you successfully inspected these files:
+
+- `03_N1_BASELINE/n1_gatep_harness.py`
+- `03_N1_BASELINE/SHARING_GUARD_DIAGNOSTIC.md`
+- `04_EXPERIMENTS/P01/n2_p1_harness.py`
+- `04_EXPERIMENTS/P02/n2_p2_harness.py`
+- `04_EXPERIMENTS/P03/n2_p3_harness.py`
+- `04_EXPERIMENTS/P04/n2_p4_harness.py`
+- `04_EXPERIMENTS/P05/n2_p5_harness.py`
+- `04_EXPERIMENTS/P06/n2_p6_harness.py`
+- `04_EXPERIMENTS/P07/n2_p7_harness.py`
+- `04_EXPERIMENTS/P07B/n2_p7b_harness.py`
+- `04_EXPERIMENTS/P07B/P7B_TIMING_CORRECTION.md`
+- `04_EXPERIMENTS/P08/n2_p8_harness.py`
+- `04_EXPERIMENTS/P08/P8_FROZEN_GATE.json`
+- `04_EXPERIMENTS/P09/n2_p9_harness.py`
+- `04_EXPERIMENTS/P10/n2_p10_harness.py`
+- `04_EXPERIMENTS/P11/n2_p11_harness.py`
+- `04_EXPERIMENTS/P12/n2_p12_harness.py`
+- `04_EXPERIMENTS/P13/n2_p13_harness.py`
+- the raw result JSON for P12 and P13;
+- P11/P12/P13 post-hoc build profiles;
+- the six BLIF inputs under `05_BENCHMARK_SOURCES/EPFL_size_blif_pinned/`;
+- `05_BENCHMARK_SOURCES/P1_NATURAL_SELECTION_FROZEN.json`;
+- `05_BENCHMARK_SOURCES/P8_EPFL_TRAINVAL_SELECTION.json`;
+- `02_BACKGROUND/operator-level-boolean-computation-with-correspondence-matrices.txt`.
+
+If any are unreadable, stop making claims that depend on them and identify the missing/unreadable artifact.
+
+---
+
+# 21. Final question
+
+After completing the audit, answer explicitly:
+
+> **If this were your research project, what exact experiment would you run next, and why is it more informative than immediately proceeding with the currently proposed P14A?**
+
+If you do recommend P14A, specify exactly what must be held identical between direct and CM arms to make the experiment scientifically fair.
+
+Also state whether you think **one more pure-Python experiment is warranted before P14**, and if so give a preregistration-ready sketch of it.

@@ -1,0 +1,29 @@
+# N2/P7 Reproducibility README
+
+P7 tests exactly two C-backed 64-bit annotation arrays with P6's frozen packing and P4-P6's frozen folding semantics.
+
+## Frozen hashes
+
+- preregistration: `eb581a115b6d5a8214787d642d9ea496e8b6f9cb2439e9973017c083bf11ff9a`
+- final frozen harness after the pre-timing reporting-field fix: `07e8b2983a19dd5acbacfa2ab58bbb19180bd2b98f15487c1bbfe155f7a03659`
+
+The initial harness stopped before timing because the direct-control row omitted `output_unique_nodes`; only that reporting field was added before any P7 timing result was produced. The preregistration did not change.
+
+## Main commands
+
+```bash
+python n2_p7_harness.py --mode fuzz --out fuzz.json
+python n2_p7_harness.py --mode selection --out selection.json
+python n2_p7_harness.py --mode gatep --out gatep.json
+```
+
+For the ten natural cases, `--mode natural-case` is sufficient for ordinary cases. `run_p7_nat_chunk.py` deterministically reproduces the same frozen schedules in slices for slow cases such as `cavlc:35`; `merge_heavy_cases.py` reconstructs the case payloads.
+
+Then run:
+
+```bash
+python combine_p7_results.py
+python independent_verify.py
+```
+
+`P7_POSTHOC_PROFILE.txt` and `P7_POSTHOC_BUILD_MEMORY.json` are explicitly post-hoc diagnostics and are not preregistered pass/fail endpoints.

@@ -1,0 +1,164 @@
+PDF PAGE 1
+arXiv:1002.0921v1  [math.AG]  4 Feb 2010
+Minimal polynomial descriptions of polyhedra and special
+semialgebraic sets
+Gennadiy Averkov∗ and Ludwig Br¨ ocker†
+November 1, 2018
+Abstract
+We show that a d-dimensional polyhedron S in Rd can be represented by d-polynomial inequalities,
+that is, S =
+{
+x ∈ Rd : p0(x) ≥ 0, . . . , pd−1(x) ≥ 0
+}
+, where p0, . . . , pd−1 are appropriate polynomials.
+Furthermore, if an elementary closed semialgebraic set S is given by polynomials q1, . . . , qk and for
+each x ∈ S at most s of these polynomials vanish in x, then S can be represented by s + 1 polynomials
+(and by s polynomials under the extra assumption that the number of po ints x ∈ S in which s q i’s
+vanish is ﬁnite).
+2000 Mathematics Subject Classiﬁcation. Primary: 14P05, 52B11, 14Q99; Secondary: 52A20
+Key words and phrases. H¨ ormander-/suppress Lojasiewicz’s Inequality; polyhedron; polynomial; polytope; semial-
+gebraic set; stability index; Theorem of Br¨ ocker and Scheiderer
+1 Introduction
+Let S ⊆ Rd be a basic closed semialgebraic set, say
+S =
+{
+x ∈ Rd : p1(x) ≥ 0, . . . , pk(x) ≥ 0
+}
+=: {p1 ≥ 0, . . . , pk ≥ 0},
+where pi ∈ R[X], X := X1, . . . , Xd.
+It is known since the eighties that one can choose, for the descript ion of S, polynomials p1, . . . , pk such
+that k ≤ d(d+1)
+2 (compare [Br¨ o91]). Scheiderer [Sch89] gave examples showing tha t this bound is sharp.
+However, in these examples S admits points x where the local dimension of S at x is m for all 1 ≤ m ≤ d.
+So one might ask, if the bound for k equals d for sets S of constant local dimension. In her diploma thesis
+A. Pauluhn [Pau90] showed that for d ∈ { 2, 3} equal dimensional basic closed sets can be characterized
+by at most 2 and 4 polynomials, respectively. All this holds true, if R is replaced by an arbitrary real
+closed ﬁeld R. It seems that more is not known. Several authors (see [Ber98], [G H03], [BGH05], [Bos05])
+looked at the case where S is a polytope, which might be interesting for applications (see also [He n07] for
+a survey on this topic). Also, they tried to ﬁnd eﬀective computatio ns for suitable polynomials pi with
+i = 1 , . . . , s, satisfying S = {p1 ≥ 0, . . . , ps ≥ 0} starting from the description S = {l1 ≥ 0, . . . , lk ≥ 0},
+where li are linear forms (i.e., polynomials of degree at most one) and k might be very large. Let s = s(S)
+be the minimal possible value as above. One achieved the bound s ≤ 2d − 1 in [BGH05]. In [GH03] one
+noticed that s ≥ d for polytopes and in [BGH05] one conjectured that s = d for d-dimensional polytopes.
+The equality s = d was shown in [Ber98] for polygons, in [AH09a] for simple polytopes a nd in [AH09b]
+for three-dimensional polyhedra. The following two theorems are t he main results of the manuscript.
+Theorem 1.1 below presents a short proof of a generalization of the result for simple polytopes from
+[AH09a]. Theorem 1.2 computes s for all d-dimensional polyhedra.
+Theorem 1.1. Let S ⊆ Rd be bounded and basic closed, say S = {q1 ≥ 0, . . . , qk ≥ 0}, where q1, . . . , qk ∈
+R[X]. Let s ∈ N be such that for each x ∈ S there are at most s polynomials qi among q1, . . . , qk where
+qi(x) = 0 . Then the following statements hold.
+∗Fakult¨ at f¨ ur Mathematik, Universit¨ at Magdeburg, Universit¨ atsplatz 2, D-39106 Magdeburg, email: averkov@ovgu.de
+†Mathematisches Institut, Universit¨ at M¨ unster, Einsteinstr. 62, D-48149, M¨ unster, email: broe@math.uni-muenst er.de
+1
+
+PDF PAGE 2
+a) S = {p1, . . . , ps+1 ≥ 0} for suitable p1, . . . , ps+1 ∈ R[X].
+b) If there are only ﬁnitely many points x1, . . . , xm ∈ S where exactly s polynomials qi vanish, then
+S = {p1 ≥ 0, . . . , ps ≥ 0} for suitable p1, . . . , ps ∈ R[X].
+In view of Theorem 1.1, every simple d-dimensional polytope can be represented by d polynomial
+inequalities. The above statement is also covered by the following
+Theorem 1.2. Let S be a d-dimensional polyhedron in Rd. Let k be the maximal dimension of an
+aﬃne space contained in S. Then there exist d − k polynomials p0, . . . , pd− k− 1 such that S = {p0 ≥
+0, . . . , pd− k− 1 ≥ 0}. Furthermore, S cannot be represented by less than d − k polynomials.
+In Section 2 we present several separation theorems for semialge braic sets. In Section 3 we prove
+Theorem 1.1. Finally, in Section 4 we prove Theorem 1.2.
+As in the above mentioned papers dealing with polynomial representa tions of polytopes, our work is
+semi-eﬀective. That means, one has to check sequences of ﬁrst o rder statements. As a consequence, in
+our theorems we can only compute the polynomials pi but one cannot bound their degrees in terms of
+the complexity of the “input polynomials”. Equivalently, what we do be low does not work over any real
+closed ﬁeld.
+We shall use the following notations. The Euclidean norm of Rd is denoted by ∥ · ∥. For the Euclidean
+topology of Rd we denote by cl, int, bd the closure, interior and boundary, respec tively. We write cl Z
+for the Zariski closure . Furthermore, the notations dim , aﬀ , and relint stand for dimension, aﬃne hull,
+and relative interior, respectively. For x ∈ Rd and ρ > 0 let B(x, ρ) :=
+{
+y ∈ Rd : ∥x − y∥ ≤ ρ
+}
+and
+U(x, ρ) :=
+{
+y ∈ Rd : ∥x − y∥ < ρ
+}
+.
+We write as before {p1 ≥ 0, . . . , pk ≥ 0} instead of
+{
+x ∈ Rd : p1(x) ≥ 0, . . . , pk(x) ≥ 0
+}
+for polyno-
+mials p1, . . . , pk ∈ R[X]. Similarly we write {p1 > 0, . . . , pk > 0} and {p1 = 0 , . . . , pk = 0 }. Note that
+V := {p1 = 0 , . . . , pr = 0 } = {q = 0 } for q = p2
+1 + · · ·+ p2
+r. q is also called positive polynomial for the
+algebraic set V .
+2 Separation
+We shall use standard inequalities on continuous semialgebraic funct ions, see [BCR98, Section 2.6].
+Theorem 2.1. Let S ⊆ Rd be a closed semialgebraic set and let f, g, h be continuous semialgebraic
+functions on S with {g = 0 } ∩ S ⊆ { f = 0 } ∩ S. Then there exists a positive polynomial p and N ∈ N
+such that |f N h| ≤ |pg| on S.
+The version for h(X) = 1 follows from the results in [BCR98, Section 2.6]. The version for h(X) = 1
+obviously implies the version for a general h. For the special case that S is bounded and h(X) = 1 we
+may obviously choose p to be a constant, which yields the well-known H¨ ormander-/suppress Lojasiewicz Inequality.
+The polynomial p can be chosen to have a speciﬁc form p(X) = (1 + ∥X∥2)M with M ∈ N. Some
+consequences of Theorem 2.1 (and, more speciﬁcally, H¨ ormander -/suppress Lojasiewicz’s Inequality) will be useful
+in our subsequent derivations.
+Proposition 2.2. Let A be an unbounded, closed semialgebraic set and f, g be continuous semialgebraic
+functions on A such that f > 0, g ≥ 0 and f (x) → ∞ as x ∈ A and x → ∞ . Then there exists γ > 0
+and N ∈ N such that γf N ≥ g on A.
+Proof. Let A = A0 ∪ A1, where A0, A1 are semialgebraic, closed, A0 is bounded, o ̸∈ A1 and f ≥ 2 on
+A1.
+By Theorem 2.1, g ≤ α(1 + ∥X∥2)M on A for appropriate α > 0 and M ∈ N. The inequality
+f N ≥ α(1 + ∥X∥2)M (2.1)
+is fulﬁlled on A1 if
+f
+( X
+∥X∥2
+) − N
+≤ ∥X∥2M
+α(∥X∥2 + 1)M
+2
+
+PDF PAGE 5
+iii) p < 0 on T2.
+Proof. By assumption c) there exists α > 0 such that h ≥ α on T2. Choose δ with 0 < 2δ < α and δ < ρ.
+We introduce the polynomial µ = µδ,ρ as in Lemma 2.4b). Let T0 := T1 ∩ { h ≥ δ}. Then S ∩ T0 = ∅.
+Taking into account assumption a) and applying Proposition 2.5, we ca n ﬁnd a polynomial q ∈ R[X] with
+q > 0 on S and q < 0 on T0 ∪ T2. Now, set p := f + q ·hl ·[µ ◦ (h − δ)]l+m, where l, m ∈ N are suﬃciently
+large.
+3 Small polynomial description of special semialgebraic se ts
+If a1, . . . , ak ∈ R, let σi(a1, . . . , ak) denote the ith elementary symmetric function of a1, . . . , ak, that is,
+σi(a1, . . . , ak) :=
+∑
+1≤ j1<...<ji≤ k
+aj1 · · ·aji .
+The basic observation is the following.
+Lemma 3.1. Let ρ > 0 and s, k ∈ N with s ≤ k. Then there exists ε > 0 such that for all a1, . . . , ak ∈ R
+with |a1| ≤ ε, . . . ,|as| ≤ ε and as+1 ≥ ρ, . . . , ak ≥ ρ one has a1, . . . , as ≥ 0 if and only if
+σk− s+1(a1, . . . , ak) ≥ 0, . . . , σk(a1, . . . , ak) ≥ 0.
+Proof. The necessity is trivial. Let us prove the suﬃciency. Consider the po lynomial
+k∏
+i=1
+(t + ai) =
+k∑
+i=1
+σi(a1, . . . , ak)tk− i + tk
+For i ≤ k − s there is a summand in the deﬁnition of σi(a1, . . . , ak) without factors belonging to
+{a1, . . . , as}. The summands containing a factor of {a1, . . . , as} tend to zero for ε → 0. Hence for
+all suﬃciently small ε > 0 depending on k, s, ρ and for i ≤ k − s one has σi(a1, . . . , ak) > 0. One has
+σi(a1, . . . , ak) ≥ 0 for i > k − s, by the assumption. Consequently, the polynomial ∏k
+i=1(t + ai) has no
+positive roots, which implies that a1 ≥ 0, . . . , ak ≥ 0.
+Proof of Theorem 1.1. a) Let pi := σk− s+i(q1, . . . , qk) for i ∈ { 1, . . . , s}. Then S ⊆ { p1 ≥ 0, . . . , ps ≥ 0}.
+Moreover, by Lemma 3.1, for each x ∈ bd S there is a neighborhood B(x, ε) such that S ∩ B(x, ε) =
+{p1 ≥ 0, . . . , ps ≥ 0} ∩ B(x, ε). That means
+{p1 ≥ 0, . . . , ps ≥ 0} = S ∪ T, (3.1)
+where T ⊆ Rd is semialgebraic, closed and
+T ∩ S = ∅. (3.2)
+Now, according to Proposition 2.5, we can choose ps+1 ∈ R[X] which separates S from T.
+b) We take p1, . . . , ps as before. Let {x1, . . . , xm} be the set of all points in S where exactly s
+polynomials qi vanish. We see that R := ( {p1 ≥ 0, . . . , ps− 1 ≥ 0} \ S) ∪ { x1, . . . , xm} is closed. Clearly,
+R ∩ S = {x1, . . . , xm}. Moreover, for each xi there is a ball B(x, ε) such that ps separates B(xi, ε) ∩ S
+and B(xi, ε) ∩ R. Now, according to Proposition 2.9, we can modify ps to a polynomial separates S from
+R.
+Remark 3.2. Analogous semi-eﬀective results can also be obtained for basic open sets by using similar
+methods.
+5

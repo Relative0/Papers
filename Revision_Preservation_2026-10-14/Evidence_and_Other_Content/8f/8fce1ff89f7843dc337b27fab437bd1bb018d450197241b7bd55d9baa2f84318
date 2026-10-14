@@ -1,0 +1,115 @@
+# N2/P2 Preregistration — Direct-Baseline Inline Profitability Plan
+
+Frozen before any N2/P2 benchmark execution.
+
+## Goal
+Test the sharper question left by N2/P1: can an **actually accepted CM fold** beat simply performing direct sparse-ANF lowering when direct/no-rewrite is the profitability baseline and the fold machinery does not construct a rewritten/CSE-normalized executable DAG?
+
+P2 is therefore an execution-path experiment, not a threshold-tuning experiment.
+
+## Frozen selector rule
+P2 reuses the N2/P1 static profitability rule **unchanged**:
+
+- legal candidates are only CM same-ordered-operand-pair compositions under the N1/P1 semantics;
+- no generic truth-table retabulation is allowed in the P2 arm;
+- saturating structural monomial estimator cap: `4096`;
+- `keep_pair_cost` is the direct-path nonlinear pair estimate at the parent plus a child-local nonlinear cost only when that source child has fanout 1 and becomes dead if the parent fold is taken;
+- `fold_pair_cost` is the composed token's nonlinear cost over the common base pair;
+- `benefit = keep_pair_cost - fold_pair_cost`;
+- reject `benefit <= 0`;
+- reject `benefit < 16` estimated pair terms;
+- if either source child is shared, require relative benefit `>= 0.20`;
+- otherwise require relative benefit `>= 0.10`;
+- NOT-over-TF remains conservatively rejected under this cost model, exactly as in P1.
+
+No threshold may be changed after P2 results are observed.
+
+## P2 execution architecture
+The default behavior is **direct/no-rewrite lowering**.
+
+P2 has two phases that are both charged to the P2 compile time:
+
+1. **Planning pass.** Traverse the original source DAG and compute the same virtual local CM views needed to apply the frozen P1 selector. Record only accepted folds in a plan: `source_parent -> (composed_token, source_base_a, source_base_b)`. This pass may use a temporary virtual representation for matching, but that representation is discarded and is never the executable ANF input. There is no CSE/flattening normalization pass.
+2. **Planned direct ANF lowering.** Lower the original source DAG. If a source node has an accepted plan entry, lower only its recorded source base operands and apply the composed two-input token directly; otherwise execute the exact direct sparse-ANF rule for that source node. Standard source-node memoization remains enabled.
+
+Thus the executable representation remains the original source DAG. P2 pays its own planning/matching overhead, and a fold is useful only if the skipped ANF work amortizes that overhead.
+
+## Arms
+Primary arms:
+
+- `direct_sparse_anf` — source DAG -> sparse ANF, no rewrite/selector.
+- `cm_inline_profit_sparse` — P2 planning pass + planned direct sparse ANF.
+
+Reference arms, using their already frozen N2/P1 implementations:
+
+- `cm_profit_sparse` — P1 rewritten-front-end profitability selector.
+- `generic_2support_sparse` — strong generic two-support comparator.
+
+No reference-arm result determines P2 acceptance.
+
+## Corpora
+### Natural set
+Replay the exact frozen N2/P1 EPFL source snapshot and structural selection contract:
+
+- repository commit `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`;
+- circuits: adder, bar, CAVLC, int2float, priority, router;
+- support 9–12;
+- source-node count <=128;
+- first/last structural quantile by `(source_nodes, depth, root_name)`;
+- no fold incidence, ANF size, or timing may influence selection.
+
+The source files must match the frozen Git blob hashes. Selection is recomputed structurally and its selected case IDs must match the N2/P1 selection reference. `bar` is allowed to contribute zero cases if the frozen structural rules again admit none.
+
+### Gate-P
+Replay the same Gate-P generator and seeds used in N1/P1:
+
+- depths 6, 8, 10;
+- 12 cases per depth;
+- same seed family.
+
+Gate-P is a fold-rich mechanism stress test, not the natural-workload claim.
+
+## Correctness
+For every measured case:
+
+- all arms must match the independent Boolean oracle;
+- all arms must produce the same final ANF digest;
+- P2 receives a fresh 1000-case randomized correctness fuzz before benchmark timing; a fuzz failure aborts the benchmark without changing the selector.
+
+## Timing protocol
+- Natural: 25 randomized paired repetitions per case per arm.
+- Gate-P: 25 randomized paired repetitions per case per arm.
+- Memory: separate untimed `tracemalloc` pass per case/arm.
+
+Recorded timings:
+
+- `plan_ns` / `optimize_ns` — P2 planning overhead (or the reference arm optimizer time);
+- `propagate_ns` — sparse-ANF lowering only;
+- `compile_ns = plan/optimize + propagate` — **primary timing endpoint**;
+- outer harness elapsed time is retained only as a secondary instrumentation metric.
+
+Case medians are formed first; pooled comparisons use the geometric mean of paired case-median ratios with a case bootstrap 95% interval.
+
+## Predeclared interpretation
+The primary natural comparison is `cm_inline_profit_sparse / direct_sparse_anf` on `compile_ns`.
+
+A **natural actual-fold speed signal** requires all of:
+
+1. at least one P2 fold is accepted in the natural set;
+2. zero correctness/digest failures;
+3. pooled P2/direct compile-time geometric-mean ratio `<= 0.95`;
+4. bootstrap 95% upper bound `< 1.00`;
+5. no >5% pooled increase in ANF `pair_terms` or `peak_monomials` versus direct.
+
+If zero natural folds are accepted, P2 may demonstrate low-cost abstention but **cannot** be called a natural folding speed win.
+
+A **Gate-P mechanism speed signal** uses the same timing requirements (`<=0.95`, bootstrap upper bound `<1.00`) and requires at least one accepted fold, but remains synthetic evidence.
+
+Diagnostic interpretation is frozen as follows:
+
+- `propagate P2/direct < 1` but `compile P2/direct >= 1`: folding lowers ANF work, but planning overhead does not amortize.
+- both ratios `< 1`: the accepted-fold plan saves enough work to overcome planning overhead.
+- both ratios `>= 1`: the frozen fold plan does not improve this implementation path.
+- P2 accepts no folds: report abstention overhead separately; do not attribute any speed difference to folding.
+
+Reference comparisons versus P1 and generic are secondary and do not alter the primary conclusion.

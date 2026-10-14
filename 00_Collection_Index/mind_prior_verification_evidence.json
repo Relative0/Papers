@@ -1,0 +1,70 @@
+[
+  {
+    "command": "\"C:\\\\Users\\\\brian\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\native\\\\powershell\\\\pwsh.exe\" -Command \"@'\nfrom pathlib import Path\nimport hashlib,json,zipfile\nR=Path.cwd();P=R/'Paper_U_Fresh_Referee_2026-09-29';U=R/'The MIND/01_Papers/02_Hierarchical_Concepts_Paper_U'\nfor name in ['Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.tex','Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.pdf','paper_u_refs_v0.3.bib']:\n a=P/'revised_manuscript'/name;b=U/'Current_Manuscript/v0.3_Rebuilt_Referee_Clarifications'/name\n print(name, a.stat().st_size, hashlib.sha256(a.read_bytes()).hexdigest(),b.stat().st_size,hashlib.sha256(b.read_bytes()).hexdigest(),'SAME' if a.read_bytes()==b.read_bytes() else 'DIFFERENT')\nz=P/'PAPER_U_FRESH_INDEPENDENT_REFEREE_COMPLETE_2026-09-29.zip';print('ZIP',hashlib.sha256(z.read_bytes()).hexdigest())\nwith zipfile.ZipFile(z) as f:\n print('members',len(f.infolist()),'bad',f.testzip(),'first',[x.filename for x in f.infolist()[:8]])\nmanifest=json.loads((P/'MANIFEST_SHA256.json').read_text())\nmissing=[];mismatch=[]\nfor name,h in manifest.items():\n q=P/name\n if not q.exists():missing.append(name)\n elif hashlib.sha256(q.read_bytes()).hexdigest()\"'!=h:mismatch.append(name)\nprint('\"'manifest',len(manifest),'missing',missing,'mismatch',mismatch)\n'@ | python -\"",
+    "output": {
+      "text": "Paper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.tex 27222 7c50938b401468d412f3df3d7d5b0765bf3aec8af4bc17c8d32983bc55e69c30 27222 7c50938b401468d412f3df3d7d5b0765bf3aec8af4bc17c8d32983bc55e69c30 SAME\r\nPaper_U_Resolution_Limited_Ultrametric_Concepts_v0.3.pdf 373955 6200b67d070b51b18664221a06cc9b0972013e19af92c34d1b35fc66e8234bca 373955 6f2fa2901342aaa0ca953f294f6bb3b0e16249228e66e18963dff2a4d2ae2b7c DIFFERENT\r\npaper_u_refs_v0.3.bib 8244 401a939eb529b727e3918cbd1e3563899ac32b2dc31dbf16aaa19cc471c22646 8244 401a939eb529b727e3918cbd1e3563899ac32b2dc31dbf16aaa19cc471c22646 SAME\r\nZIP 1b7224c93fe189c4d4d4ba5929a67502b1be610600bc23002f73d83b641ed8be\r\nmembers 39 bad None first ['PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/00_FINAL_REFEREE_REPORT.md', 'PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/01_PROVISIONAL_FIRST_READING.md', 'PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/02_HOSTILE_RECONSTRUCTION.md', 'PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/03_SEARCH_QUERIES.json', 'PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/03_SOURCE_AND_PRIORITY_AUDIT.md', 'PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/04_FOLLOWUP_WEB_REQUESTS.json', 'PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/04_PRIOR_COMPARISON_AND_REPRODUCTION.md', 'PAPER_U_FRESH_INDEPENDENT_REFEREE_2026-09-29/05_FOCUSED_DIFF.patch']\r\nmanifest 38 missing [] mismatch []\r\n",
+      "truncated": false
+    },
+    "keys": [
+      "type",
+      "id",
+      "command",
+      "cwd",
+      "status",
+      "exitCode",
+      "durationMs",
+      "output"
+    ]
+  },
+  {
+    "command": "\"C:\\\\Users\\\\brian\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\native\\\\powershell\\\\pwsh.exe\" -Command \"python 'The MIND/00_Index_and_Manifests/post_recovery_update.py'\"",
+    "output": {
+      "text": "  File \"C:\\Users\\brian\\Documents\\Math Latex etc\\Papers for Publication\\The MIND\\00_Index_and_Manifests\\post_recovery_update.py\", line 99\r\n    return h\r\n    ^^^^^^^^\r\nSyntaxError: 'return' outside function\r\n",
+      "truncated": false
+    },
+    "keys": [
+      "type",
+      "id",
+      "command",
+      "cwd",
+      "status",
+      "exitCode",
+      "durationMs",
+      "output"
+    ]
+  },
+  {
+    "command": "\"C:\\\\Users\\\\brian\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\native\\\\powershell\\\\pwsh.exe\" -Command \"Get-Content -LiteralPath 'The MIND\\\\00_Index_and_Manifests\\\\post_recovery_update.py' | Select-Object -Skip 57 -First 49\"",
+    "output": {
+      "text": "folders.append({'source':str(F),'organized_location':str(F),'disposition':'original fresh-referee workspace retained'})\r\nfolders.extend({'source':str(p),'organized_location':str(p),'disposition':'original fresh-referee workspace retained'} for p in F.rglob('*') if p.is_dir())\r\nsave(A/'folder_manifest.json',folders)\r\n# Archive inventory: previous canonical member map is immutable evidence; add new\r\n# verified ZIPs and recursively inspect any nested packages not yet represented.\r\nmembers=load(A/'archive_members_final.json');canonical=collections.defaultdict(list)\r\nfor r in members:canonical[r['archive_sha256']].append(r)\r\nnewcanon=[];source_zips=[r for r in new if r['source'].lower().endswith('.zip')]\r\ndef visit(data,origin,depth=0):\r\n h=hashlib.sha256(data).hexdigest()\r\n if h in canonical:return h\r\n if depth>8:raise ValueError('Nested ZIP depth exceeded')\r\ndest=EX/h[:16]\r\nif dest.exists():raise ValueError('Unexpected existing extraction directory')\r\ndest.mkdir()\r\ntry:\r\n with zipfile.ZipFile(io.BytesIO(data)) as z:\r\n  infos=z.infolist()\r\n  if sum(i.file_size for i in infos)>1024**3:raise ValueError('Archive size exceeds bound')\r\n  names=set()\r\n  for i in infos:\r\n   name=i.filename.replace('\\\\','/');parts=name.split('/')\r\n   if name.startswith('/') or any(x=='..' or ':' in x for x in parts) or stat.S_ISLNK(i.external_attr>>16):raise ValueError('Unsafe archive path')\r\n   key=name.rstrip('/').casefold()\r\n   if key in names:raise ValueError('Archive path collision')\r\n   names.add(key)\r\n  for i in infos:\r\n   out=dest/i.filename.replace('\\\\','/')\r\n   if not out.resolve().is_relative_to(dest.resolve()):raise ValueError('Archive path escape')\r\n   if i.is_dir():\r\n    out.mkdir(parents=True,exist_ok=True)\r\n    row={'archive':origin,'archive_sha256':h,'member':i.filename,'kind':'directory','staging':None,'organized_location':str(out),'extracted_location':str(out),'disposition':'preserved archive directory in safe extraction'}\r\n   else:\r\n    b=z.read(i);out.parent.mkdir(parents=True,exist_ok=True)\r\n    with out.open('xb') as f:f.write(b)\r\n    bh=hashlib.sha256(b).hexdigest();matches=[r['organized_location'] for r in sources if r['sha256']==bh]\r\n    row={'archive':origin,'archive_sha256':h,'member':i.filename,'kind':'file','size':len(b),'sha256':bh,'staging':None,'organized_location':matches[0] if matches else str(out),'extracted_location':str(out),'disposition':'exact duplicate mapped to organized copy' if matches else 'archive-only content safely extracted and retained'}\r\n    if i.filename.lower().endswith('.zip'):visit(b,origin+'!/'+i.filename,depth+1)\r\n   canonical[h].append(row);newcanon.append(row)\r\nfinally:\r\n pass\r\nreturn h\r\nfor r in source_zips:visit(Path(r['source']).read_bytes(),r['source'])\r\nmembers.extend(newcanon);save(A/'archive_members_final.json',members)\r\nocc=load(A/'archive_occurrence_manifest.json')\r\ndef expand(h,origin,depth=0):\r\n if depth>12:raise ValueError('Archive occurrence depth exceeded')\r\n for m in canonical[h]:\r\n  row={'source':origin+'!/'+m['member'],'archive':origin,'archive_sha256':h,'member':m['member'],'kind':m['kind'],'size':m.get('size'),'sha256':m.get('sha256'),'organized_location':m['organized_location'],'extracted_location':m['extracted_location'],'disposition':m['disposition']};occ.append(row)\r\n",
+      "truncated": false
+    },
+    "keys": [
+      "type",
+      "id",
+      "command",
+      "cwd",
+      "status",
+      "exitCode",
+      "durationMs",
+      "output"
+    ]
+  },
+  {
+    "command": "\"C:\\\\Users\\\\brian\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\native\\\\powershell\\\\pwsh.exe\" -Command \"python 'The MIND/00_Index_and_Manifests/post_recovery_update.py'\"",
+    "output": {
+      "text": "{\r\n  \"fresh_sources\": 230,\r\n  \"fresh_manifest_checked\": 38,\r\n  \"fresh_zips\": 11,\r\n  \"new_canonical_members\": 39,\r\n  \"archive_occurrences\": 7722,\r\n  \"all_source_paths\": 5042,\r\n  \"original_pdf_matches_rebuilt\": false,\r\n  \"remaining_unresolved\": [\r\n    {\r\n      \"source\": \"Earlier GPT account project chats referenced by transfer packages\",\r\n      \"organized_location\": null,\r\n      \"reason\": \"Not directly accessible through current account tools; transferred handoffs and documented histories retained.\"\r\n    }\r\n  ]\r\n}\r\n",
+      "truncated": false
+    },
+    "keys": [
+      "type",
+      "id",
+      "command",
+      "cwd",
+      "status",
+      "exitCode",
+      "durationMs",
+      "output"
+    ]
+  }
+]

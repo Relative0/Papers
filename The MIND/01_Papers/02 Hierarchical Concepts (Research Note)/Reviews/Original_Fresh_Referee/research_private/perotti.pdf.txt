@@ -1,0 +1,1259 @@
+PAGE 1
+Towards a generalization of information theory for hierarchical partitions
+Juan Ignacio Perotti, 1, 2 Nahuel Almeira, 1, 2 and Fabio Saracco 3
+1Facultad de Matem´ atica, Astronom´ ıa, F´ ısica y Computaci´ on,
+Universidad Nacional de C´ ordoba, Ciudad Universitaria, C´ ordoba, Argentina.
+2Instituto de F´ ısica Enrique Gaviola (IFEG-CONICET), Ciudad Universitaria, C´ ordoba, Argentina.∗
+3IMT School for Advanced Studies Lucca, Piazza San Francesco 19, I-55100, Lucca, Italy
+(Dated: July 2, 2020)
+Complex systems often exhibit multiple levels of organization covering a wide range of physical
+scales, so the study of the hierarchical decomposition of their structure and function is frequently
+convenient. To better understand this phenomenon, we introduce a generalization of information
+theory that works with hierarchical partitions. We begin revisiting the recently introduced Hierar-
+chical Mutual Information (HMI), and show that it can be written as a level by level summation
+of classical conditional mutual information terms. Then, we prove that the HMI is bounded from
+above by the corresponding hierarchical joint entropy. In this way, in analogy to the classical case,
+we derive hierarchical generalizations of many other classical information-theoretic quantities. In
+particular, we prove that, as opposed to its classical counterpart, the hierarchical generalization
+of the Variation of Information is not a metric distance, but it admits a transformation into one.
+Moreover, focusing on potential applications of the existing developments of the theory, we show
+how to adjust by chance the HMI. We also corroborate and analyze all the presented theoretical
+results with exhaustive numerical computations, and include an illustrative application example
+of the introduced formalism. Finally, we mention some open problems that should be eventually
+addressed for the proposed generalization of information theory to reach maturity.
+I. INTRODUCTION
+Information theory plays an important role in physics
+at the fundamental, theoretical, and application levels [1–
+4]. In particular, Jaynes [5] showed how to derive the
+ensembles of statistical physics from information theory,
+simply considering the energy of the system as the avail-
+able information. The approach of Jaynes found many
+applications. For example, Park and Newman [6] ex-
+tended it to complex networks, providing an unbiased
+framework for their analysis, which was later reﬁned to
+study online social networks, the international trade net-
+work, and ﬁnancial networks [7].
+The Renormalization Group theory of statistical me-
+chanics reveals how information aggregates through a
+wide range of physical scales giving rise to emergent phe-
+nomena [8]. Analogously, in the context of complex sys-
+tems, multiple levels of organization often emerge, and
+their study through the hierarchical decomposition of
+their structure and function is generally convenient. The
+study of complex phenomena through hierarchical rep-
+resentations has found several applications [9–21]. Cer-
+tainly, the generalization of information theory to hierar-
+chical representations is an inquiring research topic and
+our paper contributes to its development.
+Most results in classical information theory could be
+summarized in a few deﬁnitions [22]. For instance, many
+information-theoretic quantities can be derived from the
+deﬁnition of mutual information. This is useful for the
+generalization of classical information theory. A paradig-
+matic case is found in quantum mechanics [3], where en-
+∗ E-mail: juan.perotti@unc.edu.ar
+tropies can be redeﬁned as operators over a Hilbert space
+instead of functionals over probability distributions. The
+quantum mechanical generalization of information the-
+ory has inﬂuential consequences. For example, despite
+the fact that conditional probabilities operate diﬀerently
+in quantum mechanics and classical physics, many re-
+sults in classical information-theory remain true in the
+quantum case. In a sense, probabilities only provide a
+particular form of encoding information about partitions,
+and information theory goes beyond probability theory.
+Since hierarchical partitions constitute a generalization
+of partitions, the recently introduced Hierarchical Mu-
+tual Information (HMI) [23] conveys a natural starting
+point for a corresponding generalization of information
+theory. This is the approach we decided to follow.
+Finding appropriate hierarchical decomposition of the
+structure and function of a system is a challenging is-
+sue [24–31]. Here, to detect statistically signiﬁcant hier-
+archical decomposition, the adequate comparison of hier-
+archical structures is of crucial importance. Several com-
+parison methods already exist, including tree-edit dis-
+tance methods [32–34], ad-hoc methods [19, 35, 36], and
+information-theoretic methods [23, 37]. In this regard,
+the HMI is a generalization of the traditional Mutual In-
+formation (MI) [38] to the hierarchical case, and it has
+already found successful applications in the comparison
+of hierarchical community structures [39, 40]. Notice,
+however, that without an appropriate theoretical back-
+ground, the HMI can be easily criticized as a similar-
+ity measure [19]. For example, a well-known problem of
+the non-hierarchical mutual information is the necessity
+of a null-model adjustment [4, 41–43]. As we show in
+this work, the problem persists in the hierarchical case,
+but, thanks to the theoretical development we provide,
+arXiv:2003.02911v2  [cs.IT]  30 Jun 2020
+PAGE 2
+2
+we ﬁx this inconvenience by rendering an adjusted ver-
+sion of the HMI. Moreover, we also derive a hierarchi-
+cal information-theoretic metric distance [41], enabling a
+potential geometrization of the space of hierarchical par-
+titions. We also study the numerical properties of the
+introduced similarity and distance quantities, including
+a simple example application in hierarchical clustering.
+Let us summarize the content of the forthcoming sec-
+tions. In Sec. II, we introduce some preliminary deﬁ-
+nitions and revisit the HMI. In Sec. III, we present the
+main results. In Sec. IIIA, we prove some fundamen-
+tal properties of the HMI. In Sec. IIIB, we use the HMI
+to introduce other information-theoretic quantities for
+hierarchical-partitions. In particular, we study the met-
+ric properties of the Hierarchical Variation of Information
+(HVI) and introduce a metric distance. We also deﬁne
+and study the statistical properties of an Adjusted HMI
+(AHMI). In Sec. IIIC, we show a simple application of
+the introduced framework. In Sec. IV we discuss some
+important consequences deriving from the presented re-
+sults and discuss corresponding opportunities for future
+works. Finally, in Sec. V we provide a summary of the
+contributions.
+II. THEORY
+A. Preliminary deﬁnitions
+LetT denote a directed rooted tree. We say thatt∈T
+when t is a node of T . Let Tt be the set of children of
+node t∈ T . If Tt =∅ then t is a leaf of T . Otherwise,
+it is an internal node of T . Let ℓt denote the depth or
+topological distance between t and the root of T . In
+particular, ℓt = 0 if t is the root. Let Tℓ be the set of all
+nodes of T at depth ℓ. Clearly Tℓ+1 =∪t∈TℓTt. Let Tt
+be the sub-tree obtained from t and its descendants inT .
+A hierarchical-partitionT :={Ut : t∈ T} of the uni-
+verse U :={1,...,n}, the set of the ﬁrst n natural num-
+bers, is deﬁned in terms of a rooted tree T and corre-
+sponding subsets Ut⊂U satisfying
+i)∪t′∈TtUt′ =Ut for all non-leaf t, and
+ii) Ut′∩Ut′′ =∅ for every pair of diﬀerent t′,t′′∈Tt.
+For every non-leaf t, the set Tt :={Ut′ : t′∈ Tt} rep-
+resents a partition of Ut, and Tℓ := {Ut : t ∈ Tℓ} is
+the ordinary partition of U determined byT at depth ℓ.
+Furthermore,Tt :={Ut′ : t′∈ Tt} is the hierarchical-
+partition of the universe Ut determined by the tree Tt
+of root t. See Fig. 1 for a schematic representation of a
+hierarchical-partition of the universe U ={1, 2,..., 8}.
+1 2 3 4 5 6 7 8
+1 4 5 8
+1 5 8
+2 3 6 7
+5
+4 2 6 3 7
+1 8 2 6
+FIG. 1. Schematic representation of a hierarchical-partition
+T of the universeU = {1, 2,..., 8} with roota, 5 internal nodes
+including a,b and c, and 6 leaves including d,e , and f. Some
+leaves may contain more than one element, e.g. Ue = {1, 8}.
+Diﬀerent leaves may exist at diﬀerent depths ℓ. For instance,
+leaf d is at depth ℓ = 2 while leaf f is at depth ℓ = 3. The
+sub-tree T b contains the nodes b,c,d,e , and f. The set Tb
+contains the children c and d of b.
+B. The Hierarchical Mutual Information
+The HMI [23] between two hierarchical-partitions T
+andS of the same universe U reads
+I(T ;S) :=I(Tt0;Ss0) (1)
+where t0 and s0 are the roots of trees T and S, respec-
+tively. Here,
+I(Tt;Ss) :=I(Tt;Ss|ts) +
+∑
+t′∈Tt
+s′∈Ss
+P (t′s′|ts)I(Tt′
+;Ss′
+) (2)
+is a recursively deﬁned expression for every pair of nodes
+t∈T ands∈S with the same depth ℓt =ℓs. The prob-
+abilities in P (t′s′|ts) = P (t′s′ts)/P (ts) are ultimately
+deﬁned fromP (t′s′ts) :=|Ut′∩Us′∩Ut∩Us|/|U| and the
+convention 0/0 = 0. The quantity
+I(Tt;Ss|ts) :=H(Tt|ts) +H(Ss|ts)−H(Tt,Ss|ts),(3)
+represents a mutual information between the standard
+partitionsUt andUs restricted to the subsetUt∩Us of the
+universeU, and is deﬁned in terms of the three entropies
+H(Tt|ts) :=
+∑
+t′∈Tt
+−P (t′|ts) lnP (t′|ts), (4)
+H(Ts|ts) :=
+∑
+s′∈Ss
+−P (s′|ts) lnP (s′|ts) (5)
+and
+H(Tt,Ss|ts) :=
+∑
+t′∈Tt
+s′∈Ss
+−P (t′s′|ts) lnP (t′s′|ts) (6)
+PAGE 3
+3
+where the convention 0 ln 0 = 0 is adopted. For details
+on how to compute these quantities, please check our
+code [44].
+III. RESULTS
+For simplicity, we consider hierarchical-partitions T
+andS with all leaves at depths ℓ = L >0. The results
+can be easily generalized to trees with leaves at diﬀerent
+depths at the expense of using more complicated nota-
+tion.
+A. Properties of the HMI
+It is convenient to begin rewriting the hierarchical mu-
+tual information in the following alternative form, which
+is more convenient for our purposes (see Appendix A for
+a detailed derivation)
+I(T ;S) =I(Tt0;Ss0) (7)
+=
+L−1∑
+ℓ=0
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)I(Tt;Ss|ts)
+=
+L−1∑
+ℓ=0
+I(Tℓ+1;Sℓ+1|Tℓ,Sℓ),
+where P (ts) := P (ts|t0s0) and, as the reader can see,
+we rewrote the HMI as a level by level summatory of
+classical (i.e. non-hierarchical) conditional MIs. This is
+useful because it allows us to study the diﬀerence be-
+tween two hierarchical partitions under a level by level
+basis [23]. Other methods such as edit distances or ad-
+hoc methods [19] do not oﬀer the possibility of studying
+the contribution of each vertex or level of the hierarchy
+in an independent way. In particular, non-informative
+vertices or levels composed of trivial partitions produce
+null contributions within the HMI, which is convenient
+for the comparison of hierarchical partitions. Later, in
+Sec. III C, we show the advantages of the properties of
+the HMI in the analysis of an illustrative application.
+Starting from Eq. 7, we prove the following property
+of the HMI (see Appendix B for a detailed derivation)
+0≤I(T ;S)≤I(T ;T ). (8)
+In other words, this result states that the HMI between
+two arbitrary hierarchical-partitionsT andS of the same
+universeU is smaller or equal to the mutual information
+betweenT and itself (or analogously between S and it-
+self) mimicking in this way an analogous property that
+holds for the classical mutual information [22].
+Now we exploit the result of Eq. 8 to show that the
+HMI can be properly normalized. Namely, if M(x,y )
+is any generalized mean [45] (like the arithmetic-mean
+M(x,y ) = (x+y)/2, the geometric-meanM(x,y ) =√xy,
+the max-mean M(x,y ) = max( x,y ) or the min-mean
+M(x,y ) = min(x,y )) then the Normalized HMI (NHMI)
+i(T ;S) := I(T ;S)
+M(H(T ),H (S)) (9)
+satisﬁes 0≤ i(T ;S)≤ 1. Both inequalities follow from
+Eq. 8.
+B. Deriving other information-theoretic quantities
+Given the HMI, hierarchical versions of other
+information-theoretic quantities can be obtained by fol-
+lowing the rules of the standard classical case. For ex-
+ample, the Hierarchical Entropy (HE) of a hierarchical-
+partitionT can be deﬁned as
+H(T ) :=I(T ;T ) (10)
+=
+L−1∑
+ℓ=0
+H(Tℓ+1|Tℓ)
+=
+L−1∑
+ℓ=0
+(
+H(Tℓ+1,Tℓ)−H(Tℓ)
+)
+=
+L−1∑
+ℓ=0
+(
+H(Tℓ+1)−H(Tℓ)
+)
+= H(TL)
+where we used thatH(Tℓ+1,Tℓ) =H(Tℓ+1) (see Eq. D6).
+Similarly, we can write down the Hierarchical Joint En-
+tropy (HJE) as
+H(T,S) :=H(T ) +H(S)−I(T ;S) (11)
+and the Hierarchical Conditional Entropy (HCE) as
+H(T|S ) :=H(T,S)−H(S) (12)
+= H(T )−I(T ;S).
+Furthermore, we can deﬁne the Hierarchical Variation of
+Information (HVI) as
+V (T ;S) :=H(T|S ) +H(S|T ) (13)
+= H(T ) +H(S)− 2I(T ;S)
+= H(T,S)−I(T ;S).
+Because of Eq. 8, the properties H(T,S) ≥ H(T ) ≥
+H(T|S )≥ 0 and V (T ;S)≥ 0 follow, generalizing cor-
+responding properties of the classical case. Unfortu-
+nately, we found counter-examples violating the triangle
+inequality for the HVI, failing to generalize its classical
+counterpart in this particular sense [41]. For instance,
+for the hierarchical-partitions T = [[[1 , 2], [3]], [4]],
+S = [[2], [[3], [1, 4]]] and R = [[1], [2], [[3], [4]]], we ﬁnd
+V (T ;S) +V (S;R)−V (T ;R)≈− 0.17, which is a neg-
+ative quantity. It is important to remark, however, that
+the violation of the triangular inequality is relatively
+weak. For instance, for n = 4 the maximum diﬀer-
+ence is found to be ≈ 5.55 for T = [[[1], [2]], [[3], [4]]],
+PAGE 4
+4
+S = [[[1], [3]], [[2], [4]]] and R = [[[1], [2]], [[3], [4]]], which
+is signiﬁcantly larger than 0 .17. In fact, as shown in
+Fig. 2 where the complementary cumulative distribution
+of diﬀerences
+∆V (T,S,R) :=V (T ;S) +V (S;R)−V (T ;R) (14)
+is plotted for allT ,S andR without repeating the sym-
+metric cases ∆V (T,S,R) and ∆V (R,S,T ), and for dif-
+ferent sizes n, the overall contribution of the negative
+values is small, not only in magnitude but also in prob-
+ability. Results for larger values of n are not included
+since the number of triples (T,S,R) grows quickly with
+n, turning impractical their exhaustive computation. See
+Appendix C for how to generate all possible hierarchical-
+partitions for a given n.
+Although the HVI fails to satisfy the triangular in-
+equality, the transformation
+dn(T,R) = 1−e−n ln 2
+2 V (T,R) (15)
+of V does it (see Appendix D for a detailed proof). In
+other words, dn is a distance metric, so the geometriza-
+tion of the set of hierarchical-partitions is possible. We
+conﬁrm this in Fig. 3 by running computations analogous
+to those of Fig. 2 but for ∆ dn instead of ∆ V . Notice
+however that the distance metricdn is non-universal, be-
+cause it depends on n. In fact, for n → ∞it holds
+dn(T ;S) → 1− δT,S which is a trivial distance met-
+ric (known as the discrete metric) that can only distin-
+guish between equality and non-equality. These proper-
+ties follow because, for ﬁxed-size n, the non-zero V ’s are
+bounded from below by a ﬁnite positive quantity that
+tends to zero when n→∞ . We also remark that other
+concave growing functions besides that of Eq. 15 (or more
+speciﬁcally Eq. D1) can be used to obtain essentially the
+same result, i.e. a distance metric.
+Although the classical VI is a distance metric—which
+is a desirable property for the quantitative comparison
+of entities—it also presents some limitations [46]. Hence,
+besides the HVI, the HMI, and the NHMI, it is conve-
+nient to consider other information-theoretic alternatives
+for the comparison of hierarchies. This is the case of the
+Adjusted Mutual Information (AMI) [42], which is de-
+vised to compensate for the biases that random coinci-
+dences produce on the NMI, and which we generalize into
+the hierarchical case by following the original deﬁnition
+recipe
+A(T ;S) := I(T ;S)−⟨I(T ;S)⟩
+M(H(T ),H (S))−⟨I(T ;S)⟩. (16)
+We called the generalization, the Adjusted HMI (AHMI).
+The deﬁnition of the AHMI requires the deﬁnition of a
+hierarchical version (EHMI)
+⟨I(T ;S)⟩ :=
+∑
+R,Q
+P (R,Q|T,S)I(R;Q) (17)
+of the Expected Mutual Information (EMI) [42]. Here,
+the distribution P (R,Q|T,S) represents a reference null
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+−2 −1 0 1 2 3 4 5 6 7
+P (≥ ∆ V )
+∆ V
+n
+5
+4
+3
+FIG. 2. (Color online) Complementary cumulative distri-
+bution of inequalities ∆ V for the Hierarchical Variation of
+InformationV for diﬀerent hierarchy sizesn. Negative values
+exist, breaking triangular inequality, although most of them
+are positive and over a wider range.
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+0 0 .2 0 .4 0 .6 0 .8 1 1 .2 1 .4 1 .6 1 .8 2
+P (≥ ∆ dn)
+∆ dn
+n
+5
+4
+3
+FIG. 3. (Color online) Complementary cumulative distri-
+bution of inequalities ∆dn for the distance metric dn derived
+from the Hierarchical Variation of InformationV for diﬀerent
+hierarchy sizes n. All values are non-negative in agreement
+with the theory.
+model for the randomization of a pair of hierarchical-
+partitions. Like in the original classical case [42], we
+deﬁne the distribution in terms of the well-known per-
+mutation model. It is important to remark, however,
+that other alternatives for the classical case have been
+recently proposed [4].
+To describe the permutation model, let us ﬁrst intro-
+duce some deﬁnitions. A permutation τ is a bijection
+e↔ τ(e) over U. We can deﬁne τT :={τUt : t∈ T}
+PAGE 5
+5
+as the hierarchical-partition of the permuted elements
+where τUt :={τ(e) : e∈ Ut} for all t∈ T . In this way,
+τTℓ :={τUr :r∈Tℓ} becomes the partition emerging at
+depth ℓ obtained from the permuted elements.
+Now we are ready to deﬁne the permutation model for
+hierarchical-partitions. Consider a pair of permutations
+τ and σ over U acting on corresponding hierarchical-
+partitionsT andS. The permutation model is deﬁned
+as
+P (R,Q|T,S) := 1
+(n!)2
+∑
+τ,σ
+δR,τTδQ,σS (18)
+In this way, Eq. 17 can be written as
+⟨I(T ;S)⟩ = 1
+(n!)2
+∑
+τ,σ
+I(τT ;σS) (19)
+= 1
+n!
+∑
+ρ
+I(ρT ;S)
+where the simpliﬁcation ρ = τσ−1 can be used because
+the labeling of the elements in U is arbitrary.
+The exact computation of Eq. 19 is expensive, even if
+the expressions are written in terms of contingency tables
+and corresponding generalized multivariate two-way hy-
+pergeometric distributions. This is because, at variance
+with the classical case, independence among random vari-
+ables is compromised. Hence, we approximate the EHMI
+by sampling permutationsρ until the relative error of the
+mean falls below 0.01.
+In Fig. 4 we show results concerning how similarities
+occurring by chance result in non-negligible values of the
+EHMI for randomly generated hierarchical-partitions.
+The cyan curve of crosses depicts the average of the
+HMI between pairs of randomly generated hierarchical-
+partitions of n elements. In Appendix E we describe
+the algorithm we use to randomly sample hierarchical-
+partitions of n elements. The previous curve overlaps
+with the black one of open circles corresponding to the
+average of the EHMI between the same pairs of randomly
+generated hierarchical-partitions. This result indicates
+that the permutation model is a good null model for
+the comparison of pairs of hierarchical-partitions with-
+out correlations. Moreover, these curves exhibit signif-
+icant positive values, indicating that the HMI detects
+similarities occurring just by chance between the ran-
+domly generated hierarchical-partitions. To determine
+how signiﬁcant these values are, the curve of the magenta
+solid circles corresponds to the average of the hierarchi-
+cal entropies of the generated hierarchical-partitions. As
+can be seen, the averaged hierarchical entropy lies signif-
+icantly above the curve of the EHMI. On the other hand,
+their ratio, which is a quantity in [0, 1], is≈ 0.3 over the
+whole range of studied sizes, as indicated by the green
+curve of solid squares. In other words, the similarities by
+chance aﬀect non-negligibly the HMI. The curve of open
+blue squares depicts the averaged EHMI but for S =T .
+The curve lies above but follows closely that of the EHMI
+between diﬀerent hierarchical-partitions. This indicates
+0
+0.5
+1
+1.5
+2
+2.5
+3
+3.5
+4
+5 10 15 20 25 30 35
+Similarity by chance
+n
+I(T ; S)
+H(T )
+⟨I(T ; S)⟩
+I/H
+⟨I(T ; T )⟩
+FIG. 4. (Color online) How similarity by chance aﬀects
+the Hierarchical Mutual Information I. In cyan crosses, val-
+ues of I averaged by sampling pairs of randomly generated
+hierarchical-partitions T and S of the universe with n el-
+ements. In solid magenta circles, the average hierarchical
+entropy over the sampled T s. In open black circles, the
+Expected Hierarchical Mutual Information (EHMI) averaged
+over the same pairs of partitions. In solid green squares, the
+ratio between the ﬁrst and the second curves. In open blue
+squares, the EHMI for T = S averaged over T . Each point
+is averaged by sampling 1000 pairs of randomly generated
+hierarchical-partitions. The EHMI is computed by sampling
+permutations ρ until the relative standard error of the mean
+falls below 0.01.
+that the eﬀect of a randomized structure has a marginal
+impact besides that of the randomization of labels.
+In Fig. 5 we show how the HMI between two
+hierarchical-partitionsT andS decays withk, whenS is
+obtained from shuﬄing the identity of k of the elements
+in U. Here, the HMI is averaged by sampling randomly
+generated hierarchical-partitionsT at each n and k. As
+expected, the average HMI decays as the imposed decor-
+relation increases. In fact, for k =n the obtained values
+match those of the EHMI (blue curve of open squares in
+Fig. 4). In the ﬁgure, we also show the AHMI as a func-
+tion of k for the diﬀerent n. Notice how, at diﬀerence
+with the HMI, the AHMI goes from A = 1 at k = 0 to
+A = 0 at k =n.
+The previous results highlight the importance of the
+AHMI, in the sense that it conveys as a less biased mea-
+sure of similarity as compared to the HMI.
+C. Example application
+Let us show a simple example application of the pre-
+sented framework. The small animals dataset (see [47],
+Pag. 295) considers 6 boolean features for 20 rather ar-
+bitrarily selected animal species. Within the 300 entries
+PAGE 6
+6
+−0.5
+0
+0.5
+1
+1.5
+2
+2.5
+3
+0 5 10 15 20 25 30 35
+I(T ;S),A(T ;S)
+k
+n
+8
+16
+32
+FIG. 5. (Color online) Average Hierarchical Mutual In-
+formation I (solid) and Adjusted Hierarchical Mutual Infor-
+mationA (dotted) between randomly generated hierarchical-
+partitions T and corresponding hierarchical-partitions S ob-
+tained from T by randomly shuﬄing the identity of k of
+the elements in U. Diﬀerent symbols represent hierarchical-
+partitions of diﬀerent sizes n. Each point is averaged over
+10 000 samples of T . The EHMI within the AHMI is com-
+puted as in Fig. 4.
+of the species-features boolean matrix, there are 5 miss-
+ing or unspeciﬁed values. In our example, we exploit
+the HMI and the HVI to infer the unspeciﬁed values and
+to analyze how the variation of these values aﬀects the
+hierarchical classiﬁcation of the species.
+We generate 2 5 = 32 variants of the species-features
+matrix by setting candidate values to the unspeciﬁed fea-
+tures. From the matrices, we compute 32 corresponding
+hierarchical clusterings using the average-linkage clus-
+terization algorithm equipped with the Manhattan dis-
+tance [47]. Then, by removing the splitting distances,
+we convert the hierarchical clusterings into hierarchical
+partitions. Here, non-binary partitions result from de-
+generate splitting distances. The obtained ensemble of
+32 hierarchical partitions embodies the uncertainty gen-
+erated by the missing features.
+The eccentricity of theα-th hierarchical partitionTα is
+deﬁned byCα := (1/32) ∑
+βV (Tα;Tβ), i.e. it is the aver-
+age HVI betweenTα and the other hierarchical partitions
+in the ensemble. The central hierarchical partition ˆT is
+the one minimizing the eccentricity, and it represents a
+parsimonious inference of the unspeciﬁed features. The
+inference predicts that lobsters live in groups while frogs
+and salamanders do not, and that lions belong to an en-
+dangered species while spiders do not. These are reason-
+able predictions.
+To see how informative is each vertex of the most
+parsimonious hierarchical partition, we study the cor-
+responding distribution of terms I( ˆTt;Ts
+α ) (see Eq. 2)
+generated by the ensemble. Here, we consider the dif-
+ferent pairs of same level vertices t and s found in the
+hierarchical partitions ˆT and Tα, respectively, for the
+diﬀerent α = 1,..., 32. From the distribution of values
+of I( ˆTt;Ts
+α ), we compute three statistical estimators at
+each vertex t of ˆT . The magnitudes of these values are
+depicted by the color intensities of Fig. 6. The mean is
+in Fig. 6a, the standard deviation in Fig. 6b, and the
+standard deviation relative to the mean in Fig. 6c. The
+largest values of the mean and the standard deviation are
+found on the upper vertices since they correspond to the
+splitting of large groups of species, which produce large
+information gains. On the other hand, the higher rela-
+tive uncertainty is found in the vertices at the bottom
+(excepting leaves), since these vertices participate in the
+splitting of signiﬁcantly diﬀerent small groups of species
+as α varies.
+IV. DISCUSSION
+Our work shows that many similarities exist between
+classical information theory and the proposed generaliza-
+tion. In this way, it signiﬁcantly advances the general-
+ization of information theory to hierarchical partitions.
+We remark, however, that as with the quantum mechan-
+ical generalizations, signiﬁcant diﬀerences also exist. For
+instance, according to Eq. 10, multiple hierarchical parti-
+tions maximize the hierarchical entropy, as only the par-
+tition deﬁned at the leaves contributes to the maximiza-
+tion, while the contribution of the internal levels produces
+no eﬀect. This result has relevant consequences. For ex-
+ample, a straightforward generalization of the MaxEnt
+principle [22] becomes ill-deﬁned. On the other hand,
+a slightly diﬀerent reformulation of the principle solves
+the issue. Namely, MaxEnt must be replaced by the
+maximization of the HMI with a reference hierarchical
+partition. Since the classical MaxEnt is broadly applied
+in physics, our work can stimulate analogous contribu-
+tions for the hierarchical case. Another signiﬁcant diﬀer-
+ence concerns the HVI. Unlike its classical counterpart,
+we found that the HVI violates the triangular inequality.
+On the other hand, we also found a transformation dn
+of the HVI satisfying the metric properties, consequently
+enabling the geometrization of the space of hierarchical
+partitions, although not in a universal way because the
+transformation is size-dependent.
+Despite the signiﬁcant contribution of our work, many
+important questions remain open for future investigation.
+For instance, the cross-entropy plays an important role in
+the classical case. It enables the deﬁnition of the informa-
+tion divergences, from where crucial results within classi-
+cal information theory can be proven, such as the strong-
+additivity theorem [3]. Our work provides no hierarchical
+generalization of the cross-entropy, nor the divergences
+and the properties deriving from them. It may be possi-
+ble, however, a potentially equivalent proof of the mono-
+tonicity of the HMI. Another open research question is
+the generalization of the HMI to the multivariate case.
+PAGE 7
+7
+cpl spi
+fly bee
+ant lob
+her
+liz sal
+fro
+duc eag
+ele wha chi lio man cow rab
+cat
+a)
+0.00
+0.25
+0.50
+0.75
+1.00
+1.25
+1.50
+1.75
+2.00
+mean HMI
+cpl spi
+fly bee
+ant lob
+her
+liz sal
+fro
+duc eag
+ele wha chi lio man cow rab
+cat
+b)
+0.0
+0.2
+0.4
+0.6
+0.8
+HMI std
+cpl spi
+fly bee
+ant lob
+her
+liz sal
+fro
+duc eag
+ele wha chi lio man cow rab
+cat
+c)
+0
+1
+2
+3
+4
+HMI std/mean
+FIG. 6. (Color online) All panels show the most parsimo-
+nious hierarchical partition ˆT of 20 animal species classiﬁed
+by 6 boolean features. The most parsimonious hierarchical
+partition is selected among the 2 5 = 32 candidates generated
+by varying the truth table of the 5 unspeciﬁed feature values
+found in the dataset. All hierarchical partitions in the ensem-
+ble are obtained from corresponding hierarchical clusterings
+computed with the average-linkage algorithm with Manhattan
+distance. The selection minimizes the average HVI between
+the candidate hierarchical partition and the remaining ones.
+The color intensities indicate statistical values of the HMI
+between the vertices of ˆT and the vertices of all the hierar-
+chical partitions in the ensemble. The mean in panel a), the
+standard deviation in b), and the standard deviation relative
+to the mean in c). As can be seen, uncertainty accumulates
+on top of the hierarchy since the vertices split large groups
+of species. Relative uncertainty accumulates on the bottom
+splits.
+Finally, how the generalization of information theory is
+related to encoding is also a topic for future research.
+Progress on all these open issues must be achieved for
+the theory to mature.
+V. CONCLUSIONS
+In several contexts of complex systems, information
+theory and statistical physics appear as an interwoven
+point of view, starting from the work of Jaynes [5]. Nev-
+ertheless, the study of an extension to hierarchical sys-
+tems, while being crucial, for instance, for the comparison
+of various hierarchical structures, has been limited [23].
+In this work, we proposed the generalization of informa-
+tion theory for hierarchical-partitions. We analytically
+show that the Hierarchical Mutual Information (HMI)
+generalizes an important inequality of the classical non-
+hierarchical case. We derive other information-theoretic
+quantities from the HMI: the Hierarchical Entropy, the
+Hierarchical Conditional Entropy, the Hierarchical Vari-
+ation of Information (HVI), and the Adjusted Hierarchi-
+cal Mutual Information (AHMI). We studied the metric
+properties of the HVI, ﬁnding counter-examples violating
+the triangular inequality, and thus showing that the HVI
+fails to have the metric property of its non-hierarchical
+analogous. On the other hand, we found a transforma-
+tion dn of the HVI satisfying the metric properties, and
+thus enabling a geometrization of the space of hierarchi-
+cal partitions. Additionally, we supported the analytical
+ﬁndings with corresponding numerical experiments and
+an illustrative application with the hierarchical cluster-
+ing of animal species. We oﬀer open-source access to
+our code [44], including the code for the generation of
+hierarchical-partitions.
+Our work opens new possibilities in the study of
+hierarchically organized physical systems, from the
+information-theoretic side, the statistical side, as well as
+from the applications point of view. From the theoret-
+ical point of view, we outlined several topics for future
+research that could further contribute to the develop-
+ment of the generalization of information theory for hi-
+erarchical partitions. For instance, future studies may
+consider to incorporate a multivariate extension, the hi-
+erarchical cross-entropy, and the generalization of related
+divergences. From the statistical point of view, future
+research may consider the generalization of the MaxEnt
+principle to the hierarchical case. Finally, from the ap-
+plication point of view, it would be interesting to per-
+form a comparative analysis including the information-
+theoretic metrics or, among similar possibilities, to use
+them to compute consensus taxonomic and phylogenetic
+trees [20, 48].
+PAGE 8
+8
+VI. ACKNOWLEDGMENTS
+JIP and NA acknowledge ﬁnancial support from grants
+CONICET (PIP 112 20150 10028), FonCyT (PICT-2017-
+0973), SeCyTUNC (Argentina) and MinCyT C´ ordoba
+(PID PGC 2018). FS acknowledges support from the
+European Project SoBigData++ GA. 871042 and the
+PAI (Progetto di Attivit` a Integrata) project funded by
+the IMT School Of Advanced Studies Lucca. The au-
+thors thank CCAD – Universidad Nacional de C´ ordoba,
+http://ccad.unc.edu.ar/, which is part of SNCAD –
+MinCyT, Argentina, for the provided computational re-
+sources.
+[1] S. W. Hawking, Commun. Math. Phys. 43, 199 (1975).
+[2] M. M´ ezard,Information, physics, and computation (Ox-
+ford University Press, Oxford England New York, 2009).
+[3] E. Witten, Riv. del Nuovo Cim. 43, 187 (2020).
+[4] M. E. J. Newman, G. T. Cantwell, and J.-G. Young,
+Phys. Rev. E 101, 042304 (2020).
+[5] E. Jaynes, Phys. Rev. 106, 181 (1957).
+[6] J. Park and M. E. J. Newman, Phys. Rev. E 70, 066117
+(2004).
+[7] G. Cimini, T. Squartini, F. Saracco, D. Garlaschelli,
+A. Gabrielli, and G. Caldarelli, Nat. Rev. Phys. 1, 58
+(2019).
+[8] J. Zinn-Justin, Phase Transitions and Renormalisa-
+tion Group (Oxford Graduate Texts) (Oxford University
+Press, 2007).
+[9] E. Ravasz and A.-L. Barab´ asi, Phys. Rev. E67, 026112
+(2003).
+[10] R. Guimer` a, L. Danon, A. D´ ıaz-Guilera, F. Giralt, and
+A. Arenas, Phys. Rev. E 68, 065103(R) (2003).
+[11] C. Song, S. Havlin, and H. A. Makse, Nature 433, 392
+(2005).
+[12] C. Zhou, L. Zemanov´ a, G. Zamora, C. C. Hilgetag, and
+J. Kurths, Phys. Rev. Lett. 97, 238103 (2006).
+[13] L. Muchnik, R. Itzhack, S. Solomon, and Y. Louzoun,
+Phys. Rev. E 76, 016106 (2007).
+[14] D. Helbing, D. Brockmann, T. Chadefaux, K. Donnay,
+U. Blanke, O. Woolley-Meza, M. Moussaid, A. Johans-
+son, J. Krause, S. Schutte, and M. Perc, J. Stat. Phys.
+158, 735 (2015).
+[15] M. Jalili and M. Perc, J. Complex Netw. 5, 665 (2017).
+[16] L. M. Shekhtman and S. Havlin, Phys. Rev. E98, 052305
+(2018).
+[17] G. Garc´ ıa-P´ erez, M. Bogu˜ n´ a, and M.´A. Serrano, Nat.
+Phys. 14, 583 (2018).
+[18] B.-H. Lee, W.-S. Jung, and H.-H. Jo, Phys. Rev. E 98,
+022316 (2018).
+[19] A. J. Gates, I. B. Wood, W. P. Hetrick, and Y.-Y. Ahn,
+Sci. Rep. 9 (2019), 10.1038/s41598-019-44892-y.
+[20] L. Salichos, A. Stamatakis, and A. Rokas, Mol. Biol.
+Evol. 31, 1261 (2014).
+[21] A. Bassolas, H. Barbosa-Filho, B. Dickinson, X. Doti-
+walla, P. Eastham, R. Gallotti, G. Ghoshal, B. Gip-
+son, S. A. Hazarie, H. Kautz, O. Kucuktunc, A. Lieber,
+A. Sadilek, and J. J. Ramasco, Nat. Comm. 10, 4817
+(2019).
+[22] T. M. Cover and J. A. Thomas, Elements of Information
+Theory (Wiley Series in Telecommunications and Signal
+Processing) (Wiley-Interscience, 2006).
+[23] J. I. Perotti, C. J. Tessone, and G. Caldarelli, Phys. Rev.
+E 92, 062825 (2015).
+[24] M. Sales-Pardo, R. Guimer` a, A. A. Moreira, and L. A. N.
+Amaral, Proc. Natl. Acad. Sci. U.S.A. 104, 15224 (2007).
+[25] J. P. Crutchﬁeld, Physica D 75, 11 (1994).
+[26] M. Rosvall and C. T. Bergstrom, PLOS ONE 6, 1 (2011).
+[27] F. Queyroi, M. Delest, J.-M. F´ edou, and G. Melan¸ con,
+Data Min. Knowl. Disc. 28, 1107 (2013).
+[28] T. P. Peixoto, Phys. Rev. X 4, 011047 (2014).
+[29] M. Rosvall, A. V. Esquivel, A. Lancichinetti, J. D. West,
+and R. Lambiotte, Nat. Commun. 5, 4630 (2014).
+[30] G. Tibly, D. Sousa-Rodrigues, P. Pollner, and G. Palla,
+PLOS ONE 11, 1 (2016).
+[31] S. Grauwin, M. Szell, S. Sobolevsky, P. H¨ ovel, F. Simini,
+M. Vanhoof, Z. Smoreda, A.-L. Barab´ asi, and C. Ratti,
+Sci. Rep. 7 (2017).
+[32] P. Bille, Theor. Comput. Sci. 337, 217 (2005).
+[33] Q. Zhang, E. Y. Liu, A. Sarkar, and W. Wang, in Sci-
+entiﬁc and Statistical Database Management , edited by
+M. Winslett (Springer Berlin Heidelberg, Berlin, Heidel-
+berg, 2009) pp. 517–534.
+[34] F. Queyroi and S. Kirgizov, Inform. Process. Lett. 115,
+689 (2015).
+[35] R. R. Sokal and F. J. Rohlf, Taxon 11, 33 (1962).
+[36] E. B. Fowlkes and C. L. Mallows, J. Am. Stat. Assoc. 78,
+553 (1983).
+[37] G. Tib` ely, P. Pollner, T. Vicsek, and G. Palla, PLOS
+ONE 8, 1 (2014).
+[38] L. Danon, A. D´ ıaz-Guilera, J. Duch, and A. Arenas, J.
+Stat. Mech.: Theory Exp. 2005, P09008 (2005).
+[39] M. Kheirkhahzadeh, A. Lancichinetti, and M. Rosvall,
+Phys. Rev. E 93, 032309 (2016).
+[40] Z. Yang, J. I. Perotti, and C. J. Tessone, Phys. Rev. E
+96, 052311 (2017).
+[41] M. Meil, J. Multivar. Anal. 98, 873 (2007).
+[42] N. X. Vinh, J. Epps, and J. Bailey, in Proceedings of
+the 26th Annual International Conference on Machine
+Learning (ACM, 2009) pp. 1073–1080.
+[43] P. Zhang, J. Stat. Mech.: Theory Exp. 2015, P11006
+(2015).
+[44] Jan, 24, (2020), https://github.com/jipphysics/hit.
+[45] P. S. Bullen, Handbook of Means and Their Inequalities
+(Springer Netherlands, 2003).
+[46] S. Fortunato and D. Hric, Phys. Rep. 659, 1 (2016),
+community detection in networks: A user guide.
+[47] L. Kaufman and P. J. Rousseeuw, eds., Finding Groups
+in Data (John Wiley & Sons, Inc., 1990).
+[48] A. Miralles and M. Vences, PLOS ONE 8, 1 (2013).
+[49] D. E. Knuth, The Art of Computer Programming, Vol-
+ume 4A: Combinatorial Algorithms, Part 1 , 4th ed.
+(Addison-Wesley Professional, 2011).
+PAGE 9
+9
+Appendix A: Rewriting the HMI
+It is convenient to begin rewriting the hierarchical mutual information in the following alternative form, which is
+more convenient for our purposes
+I(T ;S) =I(Tt0;Ss0) (A1)
+=I(Tt0;Ss0|t0s0)
++
+∑
+t1∈Tt0,s1∈Ss0
+P (t1s1|t0s0)
+{
+I(Tt1;Ss1|t1s1) +
+∑
+t2∈Tt1,s2∈Ss1
+P (t2s2|t1s1)I(Tt2;Ss2)
+}
+=I(Tt0;Ss0|t0s0)
++
+∑
+t1∈T1,s1∈S1
+P (t1s1|t0s0)I(Tt1;Ss1|t1s1) +
+∑
+t2∈T2,s2∈S2
+P (t2s2|t0s0)I(Tt2;Ss2)
+...
+=
+L−1∑
+ℓ=0
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)I(Tt;Ss|ts).
+Here, we used the deﬁnition P (ts) :=P (ts|t0s0) =|Ut∩Us|/|U| =nts/n. Similarly
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)H(Tt,Ss|ts) =
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)
+∑
+t′∈Tt,s′∈Ss
+−P (t′s′|ts) lnP (t′s′|ts) (A2)
+=
+∑
+t∈Tℓ,s∈Sℓ
+∑
+t′∈Tt,s′∈Ss
+−P (t′s′ts)
+[
+lnP (t′s′ts)− lnP (ts)
+]
+=
+∑
+t∈Tℓ,s∈Sℓ
+∑
+t′∈Tℓ+1,s′∈Sℓ+1
+−P (t′s′ts) lnP (t′s′ts)
+−
+∑
+t∈Tℓ,s∈Sℓ
+∑
+t′∈Tℓ+1,s′∈Sℓ+1
+−P (t′s′ts) lnP (ts)
+=
+∑
+t∈Tℓ,s∈Sℓ
+∑
+t′∈Tℓ+1,s′∈Sℓ+1
+−P (t′s′ts) lnP (t′s′ts)
+−
+∑
+t∈Tℓ,s∈Sℓ
+−P (ts) lnP (ts)
+=H(Tℓ+1,Sℓ+1,Tℓ,Sℓ)−H(Tℓ,Sℓ)
+=H(Tℓ+1,Sℓ+1|Tℓ,Sℓ).
+where we used that ∑
+t∈Tℓ
+∑
+t′∈Tℓ+1
+≡ ∑
+t∈Tℓ
+(∑
+t′∈Tt + ∑
+t′∈Tℓ+1/Tt) ≡ ∑
+t∈Tℓ
+(∑
+t′∈Tt +0) because P (t′s′ts) = 0
+whenevert′ is not a child oft. The entropies in the last two lines are written in terms of the standard non-hierarchical
+or classical deﬁnition, for which
+H(X′,Y′|X,Y ) =
+∑
+x∈X,y∈Y
+P (xy)
+∑
+x′∈X ′,y′∈Y ′
+−P (x′y′|xy) lnP (x′y′|xy) (A3)
+Finally, combining Eqs. A1 and A2 we arrive at
+I(T ;S) =
+L−1∑
+ℓ=0
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)I(Tt;Ss|ts) (A4)
+=
+L−1∑
+ℓ=0
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)
+[
+H(Tt|ts) +H(Ss|ts)−H(Tt,Ss|ts)
+]
+=
+L−1∑
+ℓ=0
+[
+H(Tℓ+1|Tℓ,Sℓ) +H(Sℓ+1|Tℓ,Sℓ)−H(Tℓ+1,Sℓ+1|Tℓ,Sℓ)
+]
+=
+L−1∑
+ℓ=0
+I(Tℓ+1;Sℓ+1|Tℓ,Sℓ).
+PAGE 10
+10
+Appendix B: HMI inequality
+The ﬁrst inequality in Eq. 8 follows because I(Tℓ+1;Sℓ+1|Tℓ,Sℓ)≥ 0 for any ℓ. For the second inequality, we start
+from Eq. A1. We can write
+I(T ;S) =
+L−1∑
+ℓ=0
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)I(Tt;Ss|ts) (B1)
+≤
+L−1∑
+ℓ=0
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)H(Tt|ts)
+=
+L−1∑
+ℓ=0
+∑
+t∈Tℓ,s∈Sℓ
+P (ts)
+∑
+t′∈Tt
+−P (t′|ts) lnP (t′|ts)
+=
+L−1∑
+ℓ=0
+∑
+s∈Sℓ
+∑
+t∈Tℓ
+∑
+t′∈Tt
+−P (t′s) lnP (t′|ts)
+≤
+L−1∑
+ℓ=0
+∑
+t∈Tℓ
+∑
+t′∈Tt
+−
+( ∑
+s∈Sℓ
+P (t′s)
+)
+ln
+( ∑
+s∈Sℓ
+P (t′s)∑
+s∈Sℓ
+P (ts)
+)
+=
+L−1∑
+ℓ=0
+∑
+t∈Tℓ
+P (t)
+∑
+t′∈Tt
+−P (t′|t) lnP (t′|t)
+=
+L−1∑
+ℓ=0
+∑
+t∈Tℓ
+P (t)H(Tt|t)
+=
+L−1∑
+ℓ=0
+H(Tℓ+1|Tℓ)
+=
+L−1∑
+ℓ=0
+[
+H(Tℓ+1|Tℓ,Tℓ) +H(Tℓ+1|Tℓ,Tℓ)−H(Tℓ+1,Tℓ+1|Tℓ,Tℓ)
+]
+=
+L−1∑
+ℓ=0
+I(Tℓ+1;Tℓ+1|Tℓ,Tℓ)
+=I(T ;T ).
+Here, in the ﬁrst inequality, we used a well-known property of the entropy, while in the second inequality, we used the
+log-sum inequality [22].
+Appendix C: Generating hierarchical-partitions
+Before showing how to generate all hierarchical-partitions of a set, let us ﬁrst review a way to generate all standard
+partitions (see Section 7.2.1.7 of [49]). Consider we have a way to generate all partitions of the set Un :={1, 2,...,n}.
+Then, we can easily generate all the partitions of the set Un+1 ={1, 2,...,n,n + 1} as follows. For each partition of
+the set Un, generate all the partitions that can be obtained by adding the element n + 1 to each part P together
+with extending the partition with the part {n + 1}. For example, given the partition {{1, 2},{3}} of{1, 2, 3}, then
+we generate the partitions {{1, 2, 4},{3}},{{1, 2},{3, 4}} and{{1, 2},{3},{4}} of{1, 2, 3, 4}. In other words, this
+algorithm recursively implements induction.
+To generate hierarchical-partitions, we follow a similar procedure to the one discussed for standard partitions.
+Consider we have an algorithm to generate all hierarchical-partitions of Un. Then, for each hierarchical-partition T
+of Un, we generate the hierarchical-partitions T′ of Un+1 that can be obtained by applying the following operations
+to each of the nodes t∈T :
+1. If t is a leaf, add n + 1 to Ut.
+2. If t is not a leaf, add the child t′ to t with Ut′ ={n + 1}.
+PAGE 11
+11
+3. Replace t by a new node t′′ with t and t′ as children.
+For example, the hierarchical-partitions of U2 ={1, 2} are{1, 2} and{{1},{2}}. Then, the following applies.
+Operation 1 applied to the ﬁrst hierarchical-partition results in {1, 2, 3}. Operation 1 applied to the second results
+in{{1, 3},{2}} and{{1},{2, 3}}. Operation 2 on the second, results in the hierarchical-partitions{{1},{2},{3}}. Op-
+eration 3 on the ﬁrst, results in{{1, 2},{3}}. Operation 3 on the second, results in{{{1},{2}},{3}},{{{1},{3}},{2}}
+and{{1},{{2},{3}}}. For more details, please check our code for an implementation of the algorithm [44].
+Appendix D: Forcing triangular inequality for the Hierarchical Variation of Information
+Let
+dV0(T ;S) := 1−e−V (T ;S)/V0 (D1)
+be deﬁned for some arbitrary V0 > 0. Then, for an appropriate choice of V0,dV0 becomes a distance metric satisfying
+the triangular inequality. The proof is as follows. First, dV0 is clearly a distance since: i)dV0 is a growing function of
+V , ii) dV0(T,S) = 0⇔T =S when V0 > 0 and iii) dV0 is symmetric in its arguments. It remains to be shown that
+dV0 satisﬁes the triangular inequality for an appropriate choice of V0. The triangular inequality for dV0 reads
+∆dV0(T ;S;R) :=dV0(T ;S) +dV0(S;R)−dV0(T ;R) (D2)
+≥ 1−e−V (T ;S)/V0−e−V (S;R)/V0
+≥ 1− 2e− min{V (T ;S),V (S;R)}/V0.
+We can show that, for an appropriate choice of V0, last line is always non-negative, given that non-zero values of V
+cannot be arbitrarily small. Thus, let us ﬁnd a lower bound for the non-zero values of the Variation of Information
+between hierarchical-partitions. To do so, ﬁrst, we notice that the Variation of Information between hierarchical-
+partitions can be decomposed into a summation of non-negative quantities over the diﬀerent levels. Namely, following
+Eqs. 7, 10 and 13, we can write
+V (T ;S) =
+L−1∑
+ℓ=0
+[
+H(Tℓ+1|Tℓ) +H(Sℓ+1|Sℓ)− 2I(Tℓ+1;Sℓ+1|Tℓ,Sℓ)
+]
+(D3)
+=:
+L−1∑
+ℓ=0
+V (Tℓ+1;Sℓ+1|Tℓ,Sℓ)
+with V (Tℓ+1;Sℓ+1|Tℓ,Sℓ)≥ 0 for every ℓ due to Eq. 8. Now, if the hierarchical-partitions T andS are equal up to
+levelℓ′ included (i.e., as stochastic variables, Tℓ =Sℓ for all ℓ≤ℓ′) then
+I(T ;S) =
+ℓ′
+∑
+ℓ=0
+I(Tℓ+1;Sℓ+1|Tℓ,Sℓ) +
+L−1∑
+ℓ=ℓ′+1
+I(Tℓ+1;Sℓ+1|Tℓ,Sℓ) (D4)
+=I(Tℓ′+1;Sℓ′+1|T0,S 0) +
+L−1∑
+ℓ=ℓ′+1
+I(Tℓ+1;Sℓ+1|Tℓ,Sℓ)
+PAGE 12
+12
+because
+ℓ′
+∑
+ℓ=0
+I(Tℓ+1;Sℓ+1|Tℓ,Sℓ) =I(Tℓ′+1;Sℓ′+1|Tℓ′,Sℓ′) +
+ℓ′−1∑
+ℓ=0
+I(Tℓ+1;Sℓ+1|Tℓ,Sℓ) (D5)
+=I(Tℓ′+1;Sℓ′+1|Tℓ′,Sℓ′) +
+ℓ′−1∑
+ℓ=0
+H(Tℓ+1|Tℓ)
+=H(Tℓ′+1|Tℓ′) +H(Sℓ′+1|Sℓ′)−H(Tℓ′+1,Sℓ′+1|Sℓ′) +
+ℓ′−1∑
+ℓ=0
+[
+H(Tℓ+1,Tℓ)−H(Tℓ)
+]
+=H(Tℓ′+1,Tℓ′)−H(Tℓ′) +H(Sℓ′+1,Sℓ′)−H(Sℓ′)−H(Tℓ′+1,Sℓ′+1,Tℓ′,Sℓ′) +H(Tℓ′,Sℓ′)
++
+ℓ′−1∑
+ℓ=0
+[
+H(Tℓ+1,Tℓ)−H(Tℓ)
+]
+=H(Tℓ′+1)−H(Tℓ′) +H(Sℓ′+1)−H(Sℓ′)−H(Tℓ′+1,Sℓ′+1) +H(Sℓ′) +H(Tℓ′)−H(T0)
+=H(Tℓ′+1) +H(Sℓ′+1)−H(Tℓ′+1,Sℓ′+1)− 0
+=I(Tℓ′+1;Sℓ′+1|T0,S 0).
+Here, we used identities such as
+H(Tℓ+1,Tℓ) =
+∑
+t∈Tℓ
+∑
+t′∈Tℓ+1
+−P (t′t) lnP (t′t) (D6)
+=−
+∑
+t∈Tℓ
+( ∑
+t′∈Tt
+P (t′t) lnP (t′t) +
+∑
+t′∈Tℓ+1/Tt
+P (t′t) lnP (t′t)
+)
+=−
+∑
+t∈Tℓ
+( ∑
+t′∈Tt
+P (t′t) lnP (t′t) + 0
+)
+, because if t′ /∈Tt then P (t′t) = 0,
+=−
+∑
+t∈Tℓ
+∑
+t′∈Tt
+P (t′t) lnP (t′t)
+=−
+∑
+t∈Tℓ
+∑
+t′∈Tt
+P (t′t) lnP (t′), because P (t′t) =P (t′) since Ut′⊆Ut whenevert′∈Tt,
+=−
+∑
+t∈Tℓ
+∑
+t′∈Tℓ+1
+P (t′t) lnP (t′), because of the same trick as in the second and third lines,
+=−
+∑
+t′∈Tℓ+1
+lnP (t′)
+∑
+t∈Tℓ
+P (t′t)
+=−
+∑
+t′∈Tℓ+1
+P (t′) lnP (t′)
+=H(Tℓ+1)
+and H(Tℓ′,Sℓ′) =H(Sℓ′). Combining Eqs. D3 and D5 we can write
+V (T ;S) =V (Tℓ′+1;Sℓ′+1|T0,S 0) +
+L−1∑
+ℓ=ℓ′+1
+V (Tℓ+1;Sℓ+1|Tℓ,Sℓ). (D7)
+Now, as shown in Ref. [41], the Variation of Information between two diﬀerent classical partitions cannot be smaller
+than 2/n when the size of the universe is n = |U|. In consequence, since T0 = S0 = U, then V (T ;S) ≥
+V (Tℓ′+1;Sℓ′+1|T0,S 0)≥ 2/n. Finally, from this lower bound and Eq. D2 we have ∆ dV0(T ;S;R)≥ 1− 2e−2/(nV0)
+from where, by setting the right-hand side (r.h.s.) to zero, we obtain V0 = 2/(n ln 2). In other words, we showed that
+dn(T ;S) := 1−e−n ln 2
+2 V (T ;S) (D8)
+satisﬁes the triangular inequality and thus is a distance metric with image in [0 ,d max] with dmax <∼ 1.
+PAGE 13
+13
+Appendix E: Generating random hierarchical-partitions
+To generate or sample random hierarchical-partitions in a non-necessarily uniform manner we propose a recursive
+application of an algorithm to generate random partitions from a set of elements U.
+To generate random partitions of a setU ofn elements, we ﬁrst draw a numberz of “splitters” uniformly at random
+from the set {0, 1, 2,...,n}. Then, we generate a sequence concatenating the z splitters| with the n elements of U.
+Then, we randomly shuﬄe the sequence. Then, we split the sequence by removing the splitters and use the obtained
+non-empty parts to construct a partition. For example, if U ={1, 2, 3, 4, 5} andz = 3, then we generate the sequence
+|||12345 which after shuﬄing may result in 12|3||45 from where the partition {{1, 2},{3},{4, 5}} is obtained.
+To generate random hierarchical-partitions, we recursively apply the previous algorithm, ﬁrst to U, then to the
+obtained parts of U, then to the parts of the parts, and so on until non-divisible sets are obtained. For details please
+check our code [44].

@@ -1,0 +1,37 @@
+# COMPUTATION REQUEST — C2 pre-registered test of T3 persistence
+
+**Question:** Does the coordinate-aware profile-moment state realize the predicted state-size and repeated-update/query regime when compared fairly with raw factor persistence and the existing Draft-3 rank-profile path?
+
+**Domain:** Supplied fixed-cut GF(2) factor artifacts \(U\in\mathbb F_2^{2^p\times r}\), \(W\in\mathbb F_2^{r\times2^q}\), with exact cumulative destructive restrictions.
+
+**Frozen theorem prediction:** For \(D(d,k)=\sum_{j\le k}\binom dj\), dense fixed-width serialized state obeys
+\[
+S=(2^r-1)[(p+1)D(p,k)+(q+2)D(q,k)]+O(n+r+k),
+\]
+updates cost \(O(2^rD(d-1,h-1))\) exact counter operations on the affected side, and each count query costs \(O(2^r)\) exact integer multiply-adds after preprocessing. For fixed \(r,k\), balanced \(p\approx q=m\) gives \(S=\Theta(2^r m^{k+1})\) versus raw-factor bits \(\Theta(r2^m)\).
+
+**Pre-registered serialized-size favorable condition:**
+\[
+(2^r-1)[(p+1)D(p,k)+(q+2)D(q,k)]<r(2^p+2^q).
+\]
+
+**Test strata:** Use \(k\in\{0,1,2,4\}\) capped by \(n\), plus full-depth controls. Include rank-one rectangles, rank-two complementary parity, increasing-rank synthetic controls, and natural inputs. Record actual rank, supplied width, cut/order, residual dimensions, total budget, current horizon, state type, batch reuse count, and number/order of restrictions.
+
+**Comparators:**
+1. raw supplied factor tables with direct exact residual counting;
+2. Draft-3 rank-profile/histogram path, charging coordinate-sensitive histogram/index construction and any transform;
+3. packed binary persistence matched to the same endpoint where available.
+
+**Required output:**
+- exact answer equality against a direct oracle for every trial;
+- separate build, serialize, load, update, query, and end-to-end times;
+- serialized bytes and peak resident memory separately;
+- raw per-operation trials, not extrapolated batch counts;
+- fresh-object, fresh-process/cold-load, and warm reused-state modes separated;
+- source/input hashes, seeds, environment, compiler/runtime versions, failures/timeouts retained.
+
+**Minimal-counterexample priority:** If the theorem implementation disagrees with direct counts, minimize by \((p,q,r,k)\), restriction path length, then lexicographic factor tables. If the asymptotic size formula disagrees with serialization, separate metadata/alignment from mathematical counters.
+
+**Expected result if theorem implementation is correct:** Correctness should hold identically. Wall-clock advantage is predicted to grow with cut dimension and repeated online reuse for fixed small \(r,k\), but **no exact timing crossover is pre-claimed**. The benchmark is allowed to falsify practical favorability without changing the theorem.
+
+**Why it matters:** This is the convergence test that separates a mathematically valid persistence construction from a practically useful persistent artifact. It directly addresses Astra C2 without retrofitting a performance claim after seeing results.

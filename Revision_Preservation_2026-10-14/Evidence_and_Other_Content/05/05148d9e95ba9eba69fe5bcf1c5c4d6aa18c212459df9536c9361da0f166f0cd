@@ -1,0 +1,21 @@
+# N2/P4 Reproducibility
+
+This directory contains the frozen N2/P4 experiment and all raw result material.
+
+- Preregistration: `N2_P4_PREREGISTRATION.md` (`052a4f097bdc9677c7d0899f5510458d788aa21ad8fb2b5e72a8f09da2d37971`)
+- Frozen experiment harness: `n2_p4_harness.py` (`b01e27b95f76678f72742ce5c51fa9163d05b73c55cf6b96385fec0fb03db3d7`)
+- Raw merged results: `n2_p4_results.json`
+- Independent verification: `N2_P4_INDEPENDENT_VERIFY.json`
+- Per-case summaries: `N2_P4_NATURAL_CASE_SUMMARY.csv`, `N2_P4_GATEP_CASE_SUMMARY.csv`
+- Exact EPFL inputs: `epfl/`
+- Raw deterministic execution files: `chunks/`
+- P3 frozen result reference: `N2_P3_RESULTS_REFERENCE.json`
+- Post-hoc construction profile: `P4_POSTHOC_PROFILE.txt` (exploratory; not part of preregistered endpoints)
+
+The long `cavlc:35` schedule was executed in deterministic schedule-index chunks. The schedule, repetition count, arms, seeds, and case were unchanged; chunking is orchestration only.
+
+Primary preregistered conclusions:
+
+- Gate-P lowering-only P4-propagated/direct: `0.575222775454` — PASS.
+- Gate-P construction+lower P4/direct: `2.225906100127` — NO PASS.
+- Natural accepted P4 folds: `0` — abstention only.

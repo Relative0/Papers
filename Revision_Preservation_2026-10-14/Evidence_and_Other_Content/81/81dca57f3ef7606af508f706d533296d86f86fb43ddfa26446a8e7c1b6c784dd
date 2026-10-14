@@ -1,0 +1,97 @@
+# N2/P6 — Two-Word In-Node Semantic Annotation
+
+Preregistration SHA-256: `898781343d0e9379bdf37d7c053eece3deb9c674b7bc514d2722504d97b0f60b`  
+Frozen harness SHA-256: `6afec487a6a1a91b29fd8c4adc8ac4dcef4c787f9987b24111b00dd82f408030`
+
+## Result in one sentence
+
+**P6 preserved P5's propagated-fold semantics and its strong lowering-stage savings, but moving the two packed words into Python node objects did not reduce construction cost: on Gate-P P6 lowering was 0.6641x direct, while the complete pipeline remained 1.2444x direct, and simultaneous P6 construction was actually 1.0246x P5.**
+
+## Gate-P primary results
+
+| comparison | cases | geometric-mean ratio | bootstrap 95% CI | cases below reference |
+|---|---:|---:|---:|---:|
+| P6 / direct lowering | 36 | **0.6641x** | 0.4983-0.8742 | 23/36 |
+| P6 / P5 lowering | 36 | 0.9900x | 0.9748-1.0037 | 20/36 |
+| P6 pipeline / direct | 36 | **1.2444x** | 1.0517-1.4482 | 7/36 |
+| P6 pipeline / P5 | 36 | 0.9941x | 0.9665-1.0195 | 15/36 |
+| P6 DAG build / direct | 36 | **2.4992x** | 2.3204-2.6590 | 0/36 |
+| P6 DAG build / P5 | 36 | **1.0246x** | 1.0053-1.0445 | 11/36 |
+
+Predeclared Gate-P lowering signal: **PASS**.  
+Predeclared Gate-P construction-inclusive signal: **NO PASS**.
+
+The workload-weighted secondary ratios were **0.4417x** for lowering and **0.9639x** for the complete pipeline. Thus expensive Gate-P cases still cross the end-to-end break-even point collectively, but the preregistered case-balanced endpoint remains above 1.
+
+## Exact P6/P5 mathematical equivalence
+
+P6 matched P5 case-by-case on final ANF digest, multiplications, pair terms, peak monomials, evaluated ANF nodes, candidate counts, accept/reject decisions, estimated costs, shared-fold decisions, and consumed folds.
+
+Gate-P totals for both P5 and P6:
+
+- demanded binary nodes checked: **322**;
+- demanded propagated candidates: **181**;
+- accepted / consumed folds: **29 / 29**;
+- accepted shared folds: **22**;
+- propagated signature nodes present: **520**.
+
+Symbolic work versus direct was therefore unchanged from P5/P4:
+
+- multiplications: **0.3360x**;
+- pair terms: **0.0984x**;
+- evaluated ANF nodes: **0.5415x**;
+- peak monomials: **0.8973x**.
+
+## The P6 hypothesis did not hold in Python
+
+The intended representation change was successful mechanically: persistent metadata is exactly two integer fields on each node and there are no P5-style per-field side arrays. But simultaneous timing shows **P6 construction was 1.0246x P5**, not faster. The complete P6/P5 pipeline was statistically indistinguishable from parity at **0.9941x**.
+
+This is stronger evidence than comparing P6 to the older P5 run alone, because P5 was replayed simultaneously under the same randomized schedules. Any apparent difference between the historical P5/direct build ratio and this run should therefore be treated as run-to-run variation.
+
+## Memory
+
+Predeclared full-pipeline traced peak on Gate-P:
+
+- P6 / direct: **0.8129x**;
+- P6 / P5: **1.0413x**.
+
+A post-hoc build-only `tracemalloc` diagnostic found:
+
+- P6 / direct construction peak: **1.2719x**;
+- P6 / P5 construction peak: **1.0833x**.
+
+So two Python integer slots are not a memory win over P5's C-backed `array`/`bytearray` side storage. Downstream ANF savings still make the full fold-rich pipeline peak lower than direct.
+
+## Depth behavior
+
+| Gate-P depth | P6/direct lowering | P6/direct full pipeline |
+|---:|---:|---:|
+| 6 | 0.8253x | 1.2824x |
+| 8 | 0.6270x | 1.2470x |
+| 10 | 0.5659x | 1.2051x |
+
+The algebraic benefit strengthens with depth, while the complete pipeline still remains above direct case-balanced at every tested depth.
+
+## Natural EPFL replay
+
+The frozen ten natural cases again produced **1 demanded propagated candidate and 0 accepted folds**. Therefore these measurements remain abstention/annotation overhead, not evidence of natural CM-folding acceleration.
+
+| comparison | ratio | bootstrap 95% CI |
+|---|---:|---:|
+| P6 / direct lowering | 1.0120x | 0.9961-1.0348 |
+| P6 pipeline / direct | 1.1247x | 1.0683-1.1925 |
+| P6 pipeline / P5 | 1.0583x | 1.0191-1.1134 |
+| P6 build / direct | 2.5473x | 2.2073-2.8713 |
+
+## Verification
+
+- Fresh randomized fuzz: **1000/1000 passed**.
+- Recorded benchmark rows: **5842**, all successful.
+- Independent verifier: **PASS**.
+- All P6/P5 symbolic decision/work fields matched exactly.
+- All six pinned EPFL Git blobs reverified.
+- Natural selection reverified at the same ten cases; `bar` again supplied zero timed cases.
+
+## Bottom line
+
+P6 rules out a tempting implementation hypothesis: **in CPython, putting the two packed words directly on every node is not cheaper than P5's compact C-backed side arrays.** The propagated-signature mechanism still gives a clear lowering-stage win on fold-rich Gate-P, but the construction path remains about 2.5x the minimal ordinary builder and prevents a case-balanced end-to-end win.

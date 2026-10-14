@@ -1,0 +1,26 @@
+{
+  "schema": "p14-py0-budget-extension/v1",
+  "authorized_at": "2026-09-18T21:01:44.460927+07:00",
+  "authorization": "User explicitly requested extending the time to preserve the analysis and data.",
+  "original_total_wall_seconds": 5400,
+  "extended_total_wall_seconds": 21600,
+  "scope": "Local wall time only; no paid compute. Complete all three frozen timing workers, the frozen memory pass, and analysis.",
+  "unchanged": [
+    "holdout manifests",
+    "implementation source",
+    "worker repetitions",
+    "timing endpoints",
+    "statistical analysis",
+    "storage cap",
+    "process memory cap"
+  ],
+  "timing_data_inspection_before_extension": "No timing values or arm comparisons inspected; only worker completion, row count, wall time, process health, and file presence.",
+  "second_extension": {
+    "authorized_at": "2026-09-18T22:08:42.375834+07:00",
+    "authorization": "User explicitly requested extending caps as needed to avoid losing work.",
+    "extended_total_wall_seconds": 43200,
+    "extended_remaining_worker_wall_seconds": 10800,
+    "implementation": "Do not modify frozen source. Start any new/restarted worker by importing the frozen module and overriding only its stopping constant before invoking worker(session, worker).",
+    "active_worker_note": "Session 1 worker 0 had already loaded the original 5400-second cap; allow it to finish, and rerun only if it stops without writing its result."
+  }
+}

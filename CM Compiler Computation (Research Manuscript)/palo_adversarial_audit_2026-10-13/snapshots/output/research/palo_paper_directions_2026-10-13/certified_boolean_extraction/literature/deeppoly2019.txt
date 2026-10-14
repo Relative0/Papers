@@ -1,0 +1,2014 @@
+
+===== PDF PAGE 1 =====
+41
+An Abstract Domain for Certifying Neural Networks
+GAGANDEEP SINGH, ETH Zurich, Switzerland
+TIMON GEHR, ETH Zurich, Switzerland
+MARKUS PÜSCHEL, ETH Zurich, Switzerland
+MARTIN VECHEV, ETH Zurich, Switzerland
+We present a novel method for scalable and precise certification of deep neural networks. The key technical
+insight behind our approach is a new abstract domain which combines floating point polyhedra with intervals
+and is equipped with abstract transformers specifically tailored to the setting of neural networks. Concretely,
+we introduce new transformers for affine transforms, the rectified linear unit (ReLU), sigmoid, tanh, and
+maxpool functions.
+We implemented our method in a system called DeepPoly and evaluated it extensively on a range of datasets,
+neural architectures (including defended networks), and specifications. Our experimental results indicate that
+DeepPoly is more precise than prior work while scaling to large networks.
+We also show how to combine DeepPoly with a form of abstraction refinement based on trace partitioning.
+This enables us to prove, for the first time, the robustness of the network when the input image is subjected to
+complex perturbations such as rotations that employ linear interpolation.
+CCS Concepts: •Theory of computation → Program verification; Abstraction; •Computing method-
+ologies → Neural networks;
+Additional Key Words and Phrases: Abstract Interpretation, Deep Learning, Adversarial attacks
+ACM Reference Format:
+Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev. 2019. An Abstract Domain for Certifying
+Neural Networks. Proc. ACM Program. Lang. 3, POPL, Article 41 (January 2019), 30 pages. https://doi.org/10.
+1145/3290354
+1 INTRODUCTION
+Over the last few years, deep neural networks have become increasingly popular and have now
+started penetrating safety critical domains such as autonomous driving [ Bojarski et al. 2016] and
+medical diagnosis [ Amato et al . 2013] where they are often relied upon for making important
+decisions. As a result of this widespread adoption, it has become even more important to ensure
+that neural networks behave reliably and as expected. Unfortunately, reasoning about these systems
+is challenging due to their łblack boxž nature: it is difficult to understand what the network does
+since it is typically parameterized with thousands or millions of real-valued weights that are hard
+to interpret. Further, it has been discovered that neural nets can sometimes be surprisingly brittle
+and exhibit non-robust behaviors, for instance, by classifying two very similar inputs (e.g., images
+that differ only in brightness or in one pixel) to different labels [ Goodfellow et al. 2015 ].
+Authors’ addresses: Gagandeep Singh, Department of Computer Science, ETH Zurich, Zürich, Switzerland, gsingh@
+inf.ethz.ch; Timon Gehr, Department of Computer Science, ETH Zurich, Zürich, Switzerland, timon.gehr@inf.ethz.ch;
+Markus Püschel, Department of Computer Science, ETH Zurich, Zürich, Switzerland, pueschel@inf.ethz.ch; Martin Vechev,
+Department of Computer Science, ETH Zurich, Zürich, Switzerland, martin.vechev@inf.ethz.ch.
+Permission to make digital or hard copies of part or all of this work for personal or classroom use is granted without fee
+provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and
+the full citation on the first page. Copyrights for third-party components of this work must be honored. For all other uses,
+contact the owner/author(s).
+© 2019 Copyright held by the owner/author(s).
+2475-1421/2019/1-ART41
+https://doi.org/10.1145/3290354
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+
+
+===== PDF PAGE 2 =====
+41:2 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Attack Original Lower Upper
+L∞
+Rotation
+Fig. 1. Two different attacks applied to MNIST images.
+To address the challenge of reasoning about neural networks, recent research has started explor-
+ing new methods and systems which can automatically prove that a given network satisfies a specific
+property of interest (e.g., robustness to certain perturbations, pre/post conditions). State-of-the-art
+works include methods based on SMT solving [ Katz et al. 2017], linear approximations [ Weng et al.
+2018], and abstract interpretation [ Gehr et al. 2018 ; Mirman et al. 2018 ; Singh et al. 2018a ].
+Despite the progress made by these works, more research is needed to reach the point where we
+are able to solve the overall neural network reasoning challenge successfully. In particular, we still
+lack an analyzer that can scale to large networks, is able to handle popular neural architectures (e.g.,
+feedforward, convolutional), and yet is sufficiently precise to prove relevant properties required by
+applications. For example, the work by Katz et al. [2017] is precise yet can only handle very small
+networks. At the same time, Gehr et al . [2018] can analyze larger networks than Katz et al. [2017],
+but relies on existing generic abstract domains which either do not scale to larger neural networks
+(such as Convex Polyhedra [ Cousot and Halbwachs 1978 ]) or are too imprecise (e.g., Zonotope
+[Ghorbal et al. 2009]). Recent work by Weng et al. [2018] scales better than Gehr et al. [2018] but
+only handles feedforward networks and cannot handle the widely used convolutional networks.
+Both Katz et al . [2017] and Weng et al. [2018] are in fact unsound for floating point arithmetic,
+which is heavily used in neural nets, and thus they can suffer from false negatives. Recent work
+by Singh et al . [2018a] handles feedforward and convolutional networks and is sound for floating
+point arithmetic, however, as we demonstrate experimentally, it can lose significant precision when
+dealing with larger perturbations.
+This work. In this work, we propose a new method and system, called DeepPoly, that makes a step
+forward in addressing the challenge of verifying neural networks with respect to both scalability and
+precision. The key technical idea behind DeepPoly is a novel abstract interpreter specifically tailored
+to the setting of neural networks. Concretely, our abstract domain is a combination of floating-point
+polyhedra with intervals, coupled with abstract transformers for common neural network functions
+such as affine transforms, the rectified linear unit (ReLU), sigmoid and tanh activations, and the
+maxpool operator. These abstract transformers are carefully designed to exploit key properties
+of these functions and balance analysis scalability and precision. As a result, DeepPoly is more
+precise than Weng et al. [2018], Gehr et al . [2018] and Singh et al . [2018a], yet can handle large
+convolutional networks and is sound for floating point arithmetic.
+Proving robustness: illustrative examples. To provide an intuition for the kind of problems that
+DeepPoly can solve, consider the images shown in Fig. 1. Here, we will illustrate two kinds of
+robustness properties:L∞-norm based perturbations (first row) and image rotations (second row).
+In the first row, we are given an image of the digit 7 (under łOriginalž). Then, we consider an
+attack where we allow a small perturbation to every pixel in the original image (visually this may
+correspond to darkening or lightening the image). That is, instead of a number, each pixel now
+contains an interval. If each of these intervals has the same size, we say that we have formed an
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 3 =====
+An Abstract Domain for Certifying Neural Networks 41:3
+L∞ ball around the image (typically with a given epsilon ϵ). This ball is captured visually by the
+Lower image (in which each pixel contains the smallest value allowed by its interval) and the
+Upper image (in which each pixel contains the largest value allowed by its interval). We call the
+modification of the original image to a perturbed version inside this ball an attack, reflecting an
+adversary who aims to trick the network. There have been various works which aim to find such
+an attack, otherwise called an adversarial example (e.g., Carlini and Wagner [2017]), typically using
+gradient-based methods. For our setting however, the question is: are all possible images łsitting
+betweenž the Lower and the Upper image classified to the same label as the original? Or, in other
+words, is the neural net robust to this kind of attack?
+The set of possible images induced by the attack is also called an adversarial region . Note
+that enumerating all possible images in this region and simply running the network on each to
+check if it is classified correctly, is practically infeasible. For example, an image from the standard
+MNIST [Lecun et al . 1998] dataset contains 784 pixels and a perturbation that allows for even two
+values for every pixel will lead to 2 784 images that one would need to consider. In contrast, our
+system DeepPoly can automatically prove that all images in the adversarial region classify correctly
+(that is, no attack is possible) by soundly propagating the entire input adversarial region through
+the abstract transformers of the network.
+We also consider a more complex type of perturbation in the second row. Here, we rotate the
+image by an angle and our goal is to show that any rotation up to this angle classifies to the same
+label. In fact, we consider an even more challenging problem where we not only rotate an image but
+first form an adversarial region around the image and then reason about all possible rotations of any
+image in that region. This is challenging, as again, enumeration of images is infeasible when using
+geometric transformations that perform linear interpolation (which is needed to improve output
+image quality). Further, because rotation is a transform, the entire set of possible images represented
+by a rotation up to a given angle needs to somehow be captured. Directly approximating this set is
+too imprecise and the analysis fails to prove the wanted property. Thus, we introduce a method
+where we refine the initial approximation into smaller regions that correspond to smaller angles (a
+form of trace partitioning [ Rival and Mauborgne 2007 ]), use DeepPoly to prove the property on
+each smaller region, and then deduce the property holds for the initial, larger approximation. To
+our best knowledge this is the first work which shows how to prove robustness of a neural network
+under complex input perturbations such as rotations.
+Main contributions. Our main contributions are:
+• A new abstract domain for the certification of neural nets. The domain combines float-
+ing point polyhedra and intervals with custom abstract transformers for affine transforms,
+ReLU, sigmoid, tanh, and maxpool functions. These abstract transformers carefully balance
+scalability and precision of the analysis (Section 4).
+• An approach for proving more complex perturbation specifications than considered so far,
+including rotations using linear interpolation, based on refinement of the abstract input. To
+our best knowledge, this is the first time such perturbations have been verified (Section 5).
+• A complete, parallelized implementation of our approach in a system called DeepPoly, which
+can handle both feedforward and convolutional neural networks (Section 6). Our entire
+system is fully available at http://safeai.ethz.ch.
+• An extensive evaluation on a range of datasets and networks including defended ones,
+showing DeepPoly is more precise than prior work yet scales to large networks (Section 6).
+We believe DeepPoly is a promising step towards addressing the challenge of reasoning about
+neural networks and a useful building block for proving complex specifications (e.g., rotations) and
+other applications of analysis. As an example, a promising direction for a future application is using
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 4 =====
+41:4 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+1
+-1
+1
+1
+1
+-1
+1
+1
+i1∈[− 1,1]
+i2∈[− 1,1]
+1
+1
+0
+1
+Input Layer Hidden Layers Output Layer
+0
+0
+0
+0
+1
+0
+Fig. 2. Example feedforward neural network with ReLU activations.
+our analysis during training. Specifically, because our abstract transformers for the output of a
+neuron are łpoint-wisež (i.e., can be computed in parallel), we can directly plug in these transformers
+into the latest systems which train neural networks using abstract interpretation on GPUs [ Mirman
+et al. 2018]. As our transformers are substantially more precise than those of Mirman et al . [2018],
+we expect they can help improve the overall robustness of the trained network.
+2 OVERVIEW
+In this section, we provide an overview of our abstract domain on a small illustrative example. Full
+formal details are provided in later sections.
+Running example on a feedforward network with ReLU activation. We consider the simple fully
+connected feedforward neural network with ReLU activations shown in Fig. 2. This network has
+already been trained and we have the learned weights shown in the figure. The network consists
+of four layers: an input layer, two hidden layers, and an output layer with two neurons each.
+The weights on the edges represent the learned coefficients of the weight matrix used by the
+affine transformations done at each layer. Note that these values are usually detailed floating point
+numbers (e.g., 0 .031), however, here we use whole numbers to simplify the presentation. The
+learned bias for each neuron is shown above or below it. All of the biases in one layer constitute
+the translation vector of the affine transformation.
+To compute its output, each neuron in the hidden layer applies an affine transformation based on
+the weight matrix and bias to its inputs (these inputs are the outputs of the neurons in the previous
+layer), producing a value v. Then, the neuron applies an activation function to v, in our example
+ReLU, which outputsv, ifv > 0, and 0 otherwise. Thus, the input to every neuron goes through
+two stages: first, an affine transformation, followed by an activation function application. In the
+last layer, a final affine transform is applied to yield the output of the entire network, typically a
+class label that describes how the input is classified.
+Specification. Suppose we work with a hypothetical image that contains only two pixels and the
+perturbation is such that it places both pixels in the range [−1,1] (pixels are usually in the range
+[0,1] , however, we use[−1,1] to better illustrate our analysis). Our goal will be to prove that the
+output of the network at one of the output neurons is always greater than the output at the other
+one, for any possible input of two pixels in the range [−1,1] . If the proof is successful, it implies
+that the network produces the same classification label for all of these images.
+Abstract domain. To perform the analysis, we introduce an abstract domain with the appropriate
+abstract transformers that propagate the (abstract) input of the network through the layers, comput-
+ing an over-approximation of the possible values at each neuron. Concretely, for our example, we
+need to propagate both intervals[−1,1] (one for each pixel) simultaneously. We now briefly discuss
+our abstract domain, which aims to balance analysis scalability and precision. Then we illustrate
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 5 =====
+An Abstract Domain for Certifying Neural Networks 41:5
+x1
+x2
+x3
+x4
+x5
+x6
+x7
+x8
+x9
+x10
+x11
+x12
+1
+-1
+1
+1
+max( 0,x3)
+max( 0,x4)
+1
+-1
+1
+1
+max( 0,x7)
+max( 0,x8)
+[-1,1]
+[-1,1]
+1
+1
+0
+1
+⟨x1≥− 1,
+x1≤ 1,
+l1 =−1,
+u1 = 1⟩
+⟨x2≥− 1,
+x2≤ 1,
+l2 =−1,
+u2 = 1⟩
+⟨x3≥ x1 + x2,
+x3≤ x1 + x2,
+l3 =−2,
+u3 = 2⟩
+0
+⟨x4≥ x1− x2,
+x4≤ x1− x2,
+l4 =−2,
+u4 = 2⟩
+0
+⟨x5≥ 0,
+x5≤ 0.5· x3 + 1,
+l5 = 0,
+u5 = 2⟩
+⟨x6≥ 0,
+x6≤ 0.5· x4 + 1,
+l6 = 0,
+u6 = 2⟩
+⟨x7≥ x5 + x6,
+x7≤ x5 + x6,
+l7 = 0,
+u7 = 3⟩
+0
+⟨x8≥ x5− x6,
+x8≤ x5− x6,
+l8 =−2,
+u8 = 2⟩
+0
+⟨x9≥ x7,
+x9≤ x7,
+l9 = 0,
+u9 = 3⟩
+⟨x10≥ 0,
+x10≤ 0.5· x8 + 1,
+l10 = 0,
+u10 = 2⟩
+⟨x11≥ x9 + x10 + 1,
+x11≤ x9 + x10 + 1,
+l11 = 1,
+u11 = 5.5⟩
+1
+⟨x12≥ x10,
+x11≤ x10,
+l12 = 0,
+u12 = 2⟩
+0
+Fig. 3. The neural network from Fig. 2 transformed for analysis with the abstract domain.
+its effect on our example network and discuss why we made certain choices in the approximation
+over others.
+To perform the analysis, we first rewrite the network by expanding each neuron into two nodes:
+one for the associated affine transform and one for the ReLU activation. Transforming the network
+of Fig. 2 in this manner produces the network shown in Fig. 3. Because we assign a variable to each
+node, the network of Fig. 3 consists ofn = 12 variables. Our abstract domain, formally described in
+Section 4, associates two constraints with each variable xi : an upper polyhedral constraint and a
+lower polyhedral constraint. Additionally, the domain tracks auxiliary (concrete) bounds, one upper
+bound and one lower bound for each variable, describing a bounding box of the concretization
+of the abstract element. Our domain is less expressive than the Polyhedra domain [ Cousot and
+Halbwachs 1978] because it bounds the number of conjuncts that can appear in the overall formula
+to 2n wheren is the number of variables of the network. Such careful restrictions are necessary
+because supporting the full expressive power of convex polyhedra leads to an exponential number
+of constraints that make the analysis for thousands of neurons practically infeasible. We now
+discuss the two types of constraints and the two types of bounds, and show how they are computed
+on our example.
+First, the lower (a≤
+i ) and upper (a≥
+i ) relational polyhedral constraints associated with xi have
+the formv + /summationtext.1
+jwj·xj wherev∈ R∪{−∞ ,+∞},w∈ Rn,∀j≥ i.wj = 0. That is, a polyhedral
+constraint forxi can consider and refer to variables łbeforež xi in the network, but cannot refer to
+variables łafteržxi (because their coefficient is set to 0). Second, for the concrete lower and upper
+bounds of xi , we use li ,ui∈ R∪{−∞ ,+∞}, respectively. All abstract elements a in our domain
+satisfy the additional invariant that the interval [li ,ui] overapproximates the set of values that the
+variablexi can take (we formalize this requirement in Section 4).
+Abstract interpretation of the network. We now illustrate the operation of our abstract interpreter
+(using the abstract domain above) on our example network, abstract input ( [−1,1] for both pixels),
+and specification (which is to prove that any image in the concretization of[−1,1]×[− 1,1] classifies
+to the same label).
+The analysis starts at the input layer, i.e., in our example from x1 andx2, and simply propagates
+the inputs, resulting in a≤
+1 =a≤
+2 =−1,a≥
+1 =a≥
+2 = 1,l1 =l2 =−1, andu1 =u2 = 1. Next, the affine
+transform at the first layer updates the constraints for x3 andx4. The abstract transformer first
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 6 =====
+41:6 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+xi
+xj
+uili
+x j =λ·xi +µ
+(b)
+xi
+xj
+uili
+x j =λ·xi +µ
+xj =xi
+(c)
+xi
+xj
+uili
+x j =λ·xi +µ
+xj =xi
+(a)
+Fig. 4. Convex approximations for the ReLU function: (a) shows the convex approximation with the minimum
+area in the input-output plane, (b) and (c) show the two convex approximations proposed in this paper. In the
+figure,λ =ui/( ui−li) andµ =−liui/( ui−li) .
+adds the constraints
+x1 +x2≤x3≤x1 +x2
+x1−x2≤x4≤x1−x2
+(1)
+The transformer uses these constraints and the constraints for x1,x2 to computel3 =l4 =−2 and
+u3 =u4 = 2.
+Next, the transformer for the ReLU activation is applied. In general, the output xj of the ReLU
+activation on variablexi is equivalent to the assignmentxj := max( 0,xi) . Ifui≤ 0, then our abstract
+transformer sets the state of the variable xj to 0≤ xj≤ 0,lj =uj = 0. In this case, our abstract
+transformer is exact. If li ≥ 0, then our abstract transformer adds xi ≤ xj ≤ xi ,lj = li ,uj = ui .
+Again, our abstract transformer is exact in this case.
+However, whenli < 0 andui > 0, the result cannot be captured exactly by our abstraction and
+we need to decide how to lose information. Fig. 4 shows several candidate convex approximations
+of the ReLU assignment in this case. The approximation of Fig. 4 (a) minimizes the area in the xi ,xj
+plane, and would add the following relational constraints and concrete bounds for xj :
+xi≤xj ,0≤xj ,
+xj≤ui( xi−li)/( ui−li) .
+lj = 0,uj =ui .
+(2)
+However, the approximation in ( 2) contains two lower polyhedra constraints for xj , which we
+disallow in our abstract domain. The reason for this is the potential blowup in the number of
+constraints as the analysis proceeds. We will explain this effect in more detail later in this section.
+To avoid this explosion we further approximate ( 2) by allowing only one lower bound. There are
+two ways of accomplish this, shown in Fig. 4 (b) and (c), both of which can be expressed in our
+domain. During analysis we always consider both and choose the one with the least area.
+The approximation from Fig. 4 (b) adds the following constraints and bounds for xj :
+0≤xj≤ui( xi−li)/( ui−li) ,
+lj = 0,uj =ui . (3)
+The approximation from Fig. 4 (c) adds the following constraints and bounds:
+xi≤xj≤ui( xi−li)/( ui−li) ,
+lj =li ,uj =ui . (4)
+Note that it would be incorrect to set lj = 0 in (4) above (instead oflj =li ). The reason is that this
+would break a key domain invariant which we aim to maintain, namely that the concretization of
+the two symbolic bounds for xj is contained inside the concretization of the concrete bounds lj and
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 7 =====
+An Abstract Domain for Certifying Neural Networks 41:7
+uj (we discuss this domain invariant later in Section 4). In particular, if we only consider the two
+symbolic bounds for xj , thenxj would be allowed to take on negative values and these negative
+values would not be included in the region [0,ui] . This domain invariant is important to ensure
+efficiency of our transformers and as we prove later, all of our abstract transformers maintain it.
+Returning to our example, the area of the approximation in Fig. 4 (b) is 0 .5·ui·( ui−li) whereas
+the area in Fig. 4 (c) is 0 .5·−li·( ui−li) . We choose the tighter approximation, i.e., when ui≤−li ,
+we add the constraints and the bounds from ( 3), otherwise we add the constraints and the bounds
+from (4). We note that the approximations in Fig. 4 (b) and (c) cannot be captured by the Zonotope
+abstraction as used in [ Gehr et al. 2018 ; Singh et al. 2018a ].
+In our example, for both x3 andx4, we have l3 =l4 =−2 andu3 =u4 = 2. The areas are equal in
+this case; thus we choose ( 3) and get the following constraints and bounds for x5 andx6:
+0≤x5≤ 0.5·x3 + 1, l5 = 0,u5 = 2,
+0≤x6≤ 0.5·x4 + 1, l6 = 0,u6 = 2. (5)
+Next, we apply the abstract affine transformer, which first adds the following constraints for x7
+andx8:
+x5 +x6≤x7≤x5 +x6,
+x5−x6≤x8≤x5−x6. (6)
+It is possible to compute bounds for x7 andx8 from the above equations by substituting the concrete
+bounds forx5 andx6. However, the resulting bounds are in general too imprecise. Instead, we can
+obtain better bounds by recursively substituting the polyhedral constraints until the bounds only
+depend on the input variables for which we then use their concrete bounds. In our example we
+substitute the relational constraints for x5,x6 from equation (5) to obtain:
+0≤x7≤ 0.5·x3 + 0.5·x4 + 2,
+−0.5·x4− 1≤x8≤ 0.5·x3 + 1. (7)
+Replacingx3 andx4 with the constraints in ( 1), we get:
+0≤x7≤x1 + 2,
+−0.5·x1 + 0.5·x2− 1≤x8≤ 0.5·x1 + 0.5·x2 + 1. (8)
+Now we use the concrete bounds of±1 forx1,x2 to obtainl7 = 0,u7 = 3 andl8 =−2,u8 = 2. Indeed,
+this is more precise than if we had directly substituted the concrete bounds for x5 andx6 in (6)
+because that would have produced concrete bounds l7 = 0,u7 = 4 (which are not as tight as the
+ones above).
+A voiding exponential blowup of the analysis. As seen above, to avoid the state space explosion,
+our analysis introduces exactly one polyhedral constraint for the lower bound of a variable. It
+is instructive to understand the effect of introducing more than one constraint via the ReLU
+approximation of Fig. 4 (a). This ReLU approximation introduces two lower relational constraints
+for bothx5 andx6. Substituting them in ( 6) would have created four lower relational constraints
+forx7. More generally, if the affine expression for a variable xi containsp variables with positive
+coefficients andn variables with negative coefficients, then the number of possible lower and upper
+relational constraints is 2p and 2n, respectively, leading to an exponential blowup. This is the reason
+why we keep only one lower relational constraint for each variable in the network, and use either
+the ReLU transformer illustrated in Fig. 4 (b) or the one in Fig. 4 (c).
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 8 =====
+41:8 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Asymptotic runtime. The computation of concrete bounds by the abstract affine transformer in
+the hidden layers is the most expensive step of our analysis. If there are L network layers and the
+maximum number of variables in a layer is nmax, then this step for one variable is in O( n2
+max·L) .
+Storing the concrete bounds ensures that the subsequent ReLU transformer has constant cost.
+All our transformers work point-wise, i.e., they are independent for different variables since they
+only read constraints and bounds from the previous layers. This makes it possible to parallelize our
+analysis on both CPUs and GPUs. The work of [ Mirman et al. 2018] defines pointwise Zonotope
+transformers for training neural networks on GPUs to be more robust against adversarial attacks.
+Our pointwise transformers are more precise than those used in [ Mirman et al. 2018] and can be
+used to train more robust neural networks.
+Precision vs. performance trade-off. We also note that our approach allows one to easily vary
+the precision-performance knob of the affine transformer in the hidden layers: (i) we can select a
+subset of variables for which to perform complete substitution all the way back to the first layer
+(the example above showed this for all variables), and (ii) we can decide at which layer we would
+like to stop the substitution and select the concrete bounds at that layer.
+Returning to our example, next, the ReLU transformers are applied again. Since l7 = 0, the ReLU
+transformer is exact for the assignment to x9 and adds the relational constraints x7≤x9≤x7 and
+the boundsl9 = 0,u9 = 3 forx9. However, the transformer is not exact for the assignment to x10
+and the following constraints and bounds for x10 are added:
+0≤x10≤ 0.5·x8 + 1,
+l10 = 0,u10 = 2. (9)
+Finally, the analysis reaches the output layer and the abstract affine transformer adds the following
+constraints forx11 andx12:
+x9 +x10 + 1≤x11≤x9 +x10 + 1
+x10≤x12≤x10
+(10)
+Again, backsubstitution up to the input layer yields l11 = 1,u11 = 5.5 and l12 = 0,u12 = 2. This
+completes our analysis of the neural network.
+Checking the specification. Next, we check our specification, namely whether all concrete output
+values of one neuron are always greater than all concrete output values of the other neuron, i.e., if
+∀i1,i2∈[− 1,1]×[− 1,1] ,x11 >x12 or
+∀i1,i2∈[− 1,1]×[− 1,1] ,x12 >x11,
+wherex11,x12 =Nf f( i1,i2) are the concrete values for variables x11 andx12 produced by our small
+feedforward (ff) neural network Nf f for inputsi1,i2.
+In our simple example, this amounts to proving whetherx11−x12 > 0 orx12−x11 > 0 holds given
+the abstract results computed by our analysis. Note that using the concrete bounds for x11 andx12,
+that is,l11,l12,u11, andu12 leads to the bound[−1,5.5] forx11−x12 and[−5.5,1] forx12−x11 and
+hence we cannot prove that either constraint holds. To address this imprecision, we first create a
+new temporary variable x13 and apply our abstract transformer for the assignment x13 :=x11−x12.
+Our transformer adds the following constraint:
+x11−x12≤x13≤x11−x12 (11)
+The transformer then computes bounds for x13 by backsubstitution (to the first layer), as described
+so far, which producesl13 = 1 andu13 = 4. As the (concrete) lower bound ofx13 is greater than 0, our
+analysis concludes that x11−x12 > 0 holds. Hence, we have proved our (robustness) specification.
+Of course, if we had failed to prove the property, we would have tried the same analysis using the
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 9 =====
+An Abstract Domain for Certifying Neural Networks 41:9
+second constraint (i.e., x12 >x11). And if that would fail, then we would declare that we are unable
+to prove the property. For our example, this was not needed since we were able to prove the first
+constraint.
+3 BACKGROUND: NEURAL NETWORKS AND ADVERSARIAL REGIONS
+In this section, we provide the minimal necessary background on neural networks and adversarial
+regions. Further, we show how we represent neural networks for our analysis.
+Neural networks. Neural networks are functions N : Rm→ Rn that can be implemented using
+straight-line programs (i.e., without loops) of a certain form. In this work, we focus on neural
+networks that follow a layered architecture, but all our methods can be used unchanged for more
+general neural network shapes. A layered neural network is given by a composition of l layers
+f1 : Rm→ Rn1, . . . ,fl : Rnl−1→ Rn. Each layerfi is one of the following: (i) an affine transformation
+fi( x) = Ax +b for some A∈ Rni×ni−1 andb∈ Rni (in particular, convolution with one or more
+filters is an affine transformation), (ii) the ReLU activation function f( x) = max( 0,x) , where the
+maximum is applied componentwise, (iii) the sigmoid ( σ( x) = e x
+e x +1 ) or the tanh ( tanh( x) = e x−e−x
+e x +e−x )
+activation function (again applied componentwise), or (iv) a max pool activation function, which
+subdivides the input x into multiple parts, and returns the maximal value in each part.
+Neurons and activations. Each component of one of the vectors passed along through the layers
+is called a neuron, and its value is called an activation. There are three types of neurons: m input
+neurons whose activations form the input to the network, n output neurons whose activations form
+the output of the network, and all other neurons, called hidden, as they are not directly observed.
+Classification. For a neural network that classifies its inputs to multiple possible labels, n is the
+number of distinct classes, and the neural network classifies a given input x to a given class k if
+N( x) k > N( x) j for all j with 1≤ j≤n andj /nequalk.
+Adversarial region. In our evaluation, we consider the following (standard, e.g., see Carlini and
+Wagner [2017]) threat model: an input is drawn from the input distribution, perturbed by an
+adversary and then classified by the neural network. The perturbations that the adversary can
+perform are restricted and the set X ⊆ Rn of possible perturbations for a given input is called
+an adversarial region. The maximal possible error (i.e., the fraction of misclassified inputs) that
+the adversary can obtain by picking a worst-case input from each adversarial region is called the
+adversarial error. A neural network is robust for a given adversarial region if it classifies all inputs
+in that region the same way. This means that it is impossible for an adversary to influence the
+classification by picking an input from the adversarial region.
+In our evaluation, we focus on verifying robustness for adversarial regions that can be represented
+using a set of interval constraints, i.e., X = /producttext1.1m
+i=1[li ,ui] forli ,ui∈ R∪{−∞ ,+∞}. We also show
+how to use our analyzer to verify robustness against rotations which employ linear interpolation.
+Network representation. For our analysis, we represent neural networks as a sequence of as-
+signments, one per hidden and per output neuron. We need four kinds of assignments: ReLU
+assignmentsxi← max( 0,xj) , sigmoid/tanh assignments xi←д( xj) forд = σ orд = tanh, max
+pool assignmentsxi← maxj∈J xj and affine assignmentsxi←v + /summationtext.1
+jwj·xj . Convolutional layers
+can be described with affine assignments [ Gehr et al. 2018 ]).
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 10 =====
+41:10 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+For example, we represent the neural network from Fig. 2 as the following program:
+x3←x1 +x2,x4←x1−x2,x5← max( 0,x3) ,x6← max( 0,x4) ,
+x7←x5 +x6,x8←x5−x6,x9← max( 0,x7) ,x10← max( 0,x8) ,
+x11←x9 +x10 + 1,x12←x10.
+In Fig. 2, the adversarial region is given by X =[−1,1]×[− 1,1] . The variables x1 andx2 are the
+input to the neural network, and the variables x11 andx12 are the outputs of the network. Therefore,
+the final class of an input ( x1,x2) is 1 if x11 >x12, and 2 if x11 <x12. To prove robustness we either
+need to prove that ∀( x1,x2)∈ X .x11 >x12 or that ∀( x1,x2)∈ X .x12 >x11.
+We note that even though our experimental evaluation focuses on different kinds of robustness,
+our method and abstract domain are general and can be used to prove other properties as well.
+4 ABSTRACT DOMAIN AND TRANSFORMERS
+In this section, we introduce our abstract domain as well as the abstract transformers needed to
+analyze the four kinds of assignment statements mentioned previously.
+Elements in our abstract domainAn consist of a set of polyhedral constraints of a specific form,
+overn variables. Each constraint relates one variable to a linear combination of the variables of a
+smaller index. Each variable has two associated polyhedral constraints: one lower bound and one
+upper bound. In addition, the abstract element records derived interval bounds for each variable.
+Formally, an abstract element a∈A n overn variables can be written as a tuple a =⟨a≤,a≥,l,u⟩
+where
+a≤
+i ,a≥
+i ∈{ x↦→v + /summationtext.1
+j∈[i−1] wj·xj|v∈ R∪{−∞ ,+∞},w∈ Ri−1} fori∈[n]
+andl,u∈( R∪{−∞ ,+∞}) n. Here, we use the notation [n] :={1,2, . . . ,n}. The concretization
+functionγn :An→P( Rn) is then given by
+γn( a) ={x∈ Rn| ∀i∈[n] .a≤
+i( x)≤ xi∧a≥
+i( x)≥ xi}.
+Domain Invariant. All abstract elements in our domain additionally satisfy the following invariant:
+γn( a)⊆ /producttext1.1
+i∈[n][li ,ui] . In other words, every abstract element in our domain maintains concrete
+lower and upper bounds which over-approximate the two symbolic bounds. This property is
+essential for creating efficient abstract transformers.
+To simplify our exposition of abstract transformers, we will only consider the case where all
+variables are bounded, which is always the case when our analysis is applied to neural networks.
+Further, we require that variables are assigned exactly once, in increasing order of their indices.
+Our abstract transformers T #
+f for a deterministic function f :Am→A n satisfy the following
+soundness property:Tf(γm( a))⊆ γn(T #
+f( a)) for alla∈A m, whereTf is the corresponding concrete
+transformer of f , given byTf( X) ={f( x)| x∈X}.
+4.1 ReLU Abstract Transformer
+Let f : Ri−1→ Ri be a function that executes the assignment xi← max( 0,xj) for some j <i.
+The corresponding abstract ReLU transformer is T #
+f(⟨ a≤,a≥,l,u⟩) = ⟨a′≤ ,a′≥ ,l′,u′⟩ where
+a′≤
+k =a≤
+k ,a′≥
+k =a≥
+k ,l′
+k =lk andu′
+k =uk fork <i. For the new component i, there are three cases.
+Ifuj≤ 0, thena′≤
+i ( x) =a′≥
+i ( x) = 0 andl′
+i =u′
+i = 0. If 0≤lj , thena′≤
+i ( x) =a′≥
+i ( x) =xj ,l′
+i =lj and
+u′
+i =uj .
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 11 =====
+An Abstract Domain for Certifying Neural Networks 41:11
+Otherwise, the abstract ReLU transformer approximates the assignment by a set of linear con-
+straints forming its convex hull when it is restricted to the interval [lj ,uj] :
+0≤xi ,xj≤xi ,
+xi≤uj( xj−lj)/( uj−lj) .
+As there is only one upper bound for xi , we obtain the following rule:
+a′≥
+i ( x) =uj( xj−lj)/( uj−lj) .
+On the other hand, we have two lower bounds for xi :xj and 0. Any convex combination of those
+two constraints is still a valid lower bound. Therefore, we can set
+a′≤
+i ( x) =λ·xj ,
+for any λ∈[ 0,1] . We select the λ∈{0,1} that minimizes the area of the resulting shape in the
+( xi ,xj) -plane. Finally, we setl′
+i =λ·lj andu′
+i =uj .
+4.2 Sigmoid and Tanh Abstract Transformers
+Letд : R→ R be a continuous, twice-differentiable function with д′( x) > 0 and 0≤д′′( x)⇔ x≤ 0
+for all x ∈ R whereд′ andд′′ are the first and second derivatives of д. The sigmoid function
+σ( x) = ex
+ex +1 and the tanh function tanh( x) = ex−e−x
+ex +e−x both satisfy these conditions. For such a
+functionд, let f : Ri−1→ Ri be the function that executes the assignment xi←д( xj) forj <i.
+The corresponding abstract transformer is T #
+f(⟨ a≤,a≥,l,u⟩) =⟨a′≤ ,a′≥ ,l′,u′⟩ wherea′≤
+k =a≤
+k ,
+a′≥
+k =a≥
+k ,l′
+k =lk andu′
+k =uk fork <i. For the new component i, we setl′
+i =д(lj) andu′
+i =д(uj) .
+Iflj =uj , then a′≤
+i ( x) =a′≥
+i ( x) =д(lj) . Otherwise, we consider a′≤
+i ( x) anda′≥
+i ( x) separately. Let
+λ =(д(uj)− д(lj))/( uj−lj) andλ′ = min(д′(lj) ,д′(uj)) . If 0 <lj , thena′≤
+i ( x) =д(lj) +λ·( xj−lj) ,
+otherwisea′≤
+i ( x) =д(lj) +λ′·( xj−lj) . Similarly, ifuj≤ 0, thena′≥
+i ( x) =д(uj) +λ·( xj−uj) and
+a′≥
+i ( x) =д(uj) +λ′·( xj−uj) otherwise.
+4.3 Max Pool Abstract Transformer
+Let f : Ri−1→ Ri be a function that executesxi← maxj∈J xj for someJ⊆[i− 1] . The correspond-
+ing abstract max pool transformer is T #
+f(⟨ a≤,a≥,l,u⟩) =⟨a′≤ ,a′≥ ,l′,u′⟩ wherea′≤
+k =a≤
+k ,a′≥
+k =a≥
+k ,
+l′
+k =lk andu′
+k =uk fork <i. For the new component i, there are two cases. If there is some k∈ J
+withuj < lk for all j∈ J\{ k}, then a′≤
+i ( x) = a′≥
+i ( x) = xk ,l′
+i = lk andu′
+i = uk . Otherwise, we
+choosek∈ J such thatlk is maximized and set a′≤
+i ( x) =xk ,l′
+i =lk anda′≥
+i ( x) =u′
+i = maxj∈Juj .
+4.4 Affine Abstract Transformer
+Let f : Ri−1→ Ri be a function that executes xi←v + /summationtext.1
+j∈[i−1] wj·xj for some w∈ Ri−1. The
+corresponding abstract affine transformer is T #
+f(⟨ a≤,a≥,l,u⟩) =⟨a′≤ ,a′≥ ,l′,u′⟩ wherea′≤
+k =a≤
+k ,
+a′≥
+k =a≥
+k ,l′
+k =lk andu′
+k =uk fork <i. Further,a′≤
+i ( x) =a′≥
+i ( x) =v + /summationtext.1
+j∈[i−1] wj·xj .
+To computeli andui , we repeatedly substitute bounds for xj into the constraint, until no further
+substitution is possible. Formally, if we want to obtain l′
+i , we start with b1( x) =a′≤
+i ( x) . If we have
+bs( x) =v′ + /summationtext.1
+j∈[k] w′
+j·xj for somek∈[i− 1] ,v′∈ R,w′∈ Rk , then
+bs+1( x) =v′ +
+/summationdisplay.1
+j∈[k]
+(
+max( 0,w′
+j)· a′≤
+j ( x) + min(w′
+j ,0)· a′≥
+j ( x)
+)
+.
+We iterate until we reach bs′ withbs′( x) =v′′ (i.e.,s′ is the smallest number with this property).
+We then setl′
+i =v′′.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 12 =====
+41:12 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+We computeu′
+i in an analogous fashion: to obtain u′
+i , we start with c1( x) =a′≥
+i ( x) . If we have
+ct( x) =v′ + /summationtext.1
+j∈[k] w′
+j·xj for somek∈[i− 1] ,v′∈ R,w′∈ Rk , then
+ct +1( x) =v′ +
+/summationdisplay.1
+j∈[k]
+(
+max( 0,w′
+j)· a′≥
+j ( x) + min(w′
+j ,0)· a′≤
+j ( x)
+)
+.
+We iterate until we reach ct′ withct′( x) =v′′. We then setu′
+i =v′′.
+4.5 Neural Network Robustness Analysis
+We now show how to use our analysis to prove robustness of a neural network with p inputs,q
+hidden activations and r output classes, resulting in a total of p +q +r activations. More explicitly,
+our goal is to prove that the neural network classifies all inputs satisfying the given interval
+constraints (the adversarial region) to a particular class k.
+We first create an abstract element a =⟨a≤,a≥,l,r⟩ overp variables, where a≤
+i( x) = li and
+a≥
+i( x) = ui for all i. The bounds li andui are initialized such that they describe the adversarial
+region. For example, for the adversarial region in Fig. 2, we get
+a =⟨( x↦→l1,x↦→l2) ,( x↦→u1,x↦→u2) ,(− 1,−1) ,( 1,1)⟩ .
+Then, the analysis proceeds by processing assignments for all q hidden activations and the r output
+activations of the neural network, layer by layer, processing nodes in ascending order of variable
+indices, using their respective abstract transformers. Finally, the analysis executes the following
+r− 1 (affine) assignments in the abstract:
+xp+q+r +1←xp+q+k−xp+q+1, . . . ,xp+q+r +( k−1) ←xp+q+k−xp+q+( k−1) ,
+xp+q+r +k←xp+q+k−xp+q+( k +1) , . . . ,xp+q+r +( r−1) ←xp+q+k−xp+q+r .
+As output class k has the highest activation if and only if those differences are all positive, the
+neural network is proved robust if for all i∈{ p +q +r + 1, . . . ,p +q +r +( r− 1)} we have 0 <li .
+Otherwise, our robustness analysis fails to verify.
+For the neural network in Fig. 2, if we want to prove that class 1 is most likely, this means we
+execute one additional assignment x13← x11−x12. Abstract interpretation derives the bounds
+l13 = 1,u13 = 4. The neural network is proved robust, because l13 is positive.
+The above discussion showed how to use our abstract transformers to prove robustness. However,
+a similar procedure could be used to prove standard pre/post conditions (by performing the analysis
+starting with the pre-condition).
+4.6 Correctness of Abstract Transformers
+In this section, we prove that our abstract transformers are sound, and that they preserve the
+invariant. Formally, forT #
+f( a) =a′ we haveTf(γi−1( a))⊆ γi( a′) andγi( a′)⊆ /producttext1.1
+k∈[i][l′
+k ,u′
+k] .
+Soundness. We first prove a lemma that is needed to prove soundness of our ReLU transformer.
+Lemma 4.1. Forl < 0, 0 <u,l≤x≤u, andλ∈[ 0,1] we haveλ·x≤ max( 0,x)≤ u· x−l
+u−l .
+Proof. Ifx < 0, then λ·x < 0 = max( 0,x) . If x ≥ 0, then λ·x ≤ x = max( 0,x) . If x < 0,
+then max( 0,x) = 0≤u· x−l
+u−l . Ifx≥ 0 then max( 0,x) =x≤u· x−l
+u−l becausex·(− l)≤ u·(− l)⇔
+x·u−x·l≤x·u−u·l⇔x·( u−l)≤ u·( x−l) . □
+Theorem 4.2. The ReLU abstract transformer is sound.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 13 =====
+An Abstract Domain for Certifying Neural Networks 41:13
+Proof. Let f : Ri−1 → Ri execute the assignment xi ← max( 0,xj) for some j < i, and let
+a∈A i−1 be arbitrary. We haveγi−1( a)⊆ /producttext1.1
+k∈[i−1][lk ,uk] and
+Tf(γi−1( a)) ={f( x)| x∈γi−1( a)}
+={( x1, . . . ,xi−1,max( 0,xj))|( x1, . . . ,xi−1)∈ γi−1( a)}
+={x∈ Ri|( x1, . . . ,xi−1)∈ γi−1( a)∧ xi = max( 0,xj)}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = max( 0,xj)} .
+Ifuj≤ 0, we have that( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk) impliesxj≤ 0, and
+Tf(γi−1( a)) ={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = max( 0,xj)∧ xj≤ 0}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = 0}
+={x∈ Ri| ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk}
+=γi(T #
+f( a)) .
+Otherwise, if 0≤lj , we have that( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk) implies 0≤xj , and
+Tf(γi−1( a)) ={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = max( 0,xj)∧ 0≤xj}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =xj}
+={x∈ Ri| ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk}
+=γi(T #
+f( a)) .
+Otherwise, we have lj < 0 and 0 < uj and that( ∀k∈[ i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk) implies
+lj≤xj≤uj and therefore
+Tf(γi−1( a)) ={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = max( 0,xj)}
+⊆{ x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi≤uj· xj−lj
+uj−lj
+∧xi≥ λ·xj}
+={x∈ Ri| ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk}
+=γi(T #
+f( a)) .
+Therefore, in all cases,Tf(γi−1( a))⊆ γi(T #
+f( a)) . Note that we lose precision only in the last case. □
+Theorem 4.3. The sigmoid and tanh abstract transformers are sound.
+Proof. A functionд : R→ R withд′( x) > 0 and 0≤д′′( x)⇔ 0≤x is monotonically increasing,
+and furthermore,д|(−∞ ,0] (the restriction to(−∞ ,0] ) is convex and д|( 0,∞) is concave.
+Let f : Ri−1→ Ri execute the assignment xi ← д( xj) for some j < i, and let a∈A i−1 be
+arbitrary. We have
+Tf(γi−1( a)) ={f( x)| x∈γi−1( a)}
+={( x1, . . . ,xi−1,д( xj))|( x1, . . . ,xi−1)∈ γi−1( a)}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =д( xj)} .
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 14 =====
+41:14 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Iflj =uj , then( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk) impliesxj =lj and therefore
+Tf(γi−1( a)) ={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =д( xj)} .
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =д(lj)}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ д(lj)≤ xi∧xj≤д(lj)}
+={x∈ Ri| ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk}
+=γi(T #
+f( a)) .
+Therefore, the transformer is exact in this case.
+Otherwise, we need to show that ( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =д( xj) implies
+a′≤
+i ( x)≤ xi anda′≥
+i ( x)≥ xi . We letx∈ Ri be arbitrary with( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥
+xk)∧ xi =д( xj) and considera′≤
+i ( x) anda′≥
+i ( x) separately. Recall thatλ =(д(uj)− д(lj))/( uj−lj)
+andλ′ = min(д′(lj) ,д′(uj)) . If 0≤lj , then, because д is concave on positive inputs,
+a′≤
+i ( x) =д(lj) +λ·( xj−lj) =
+(
+1− xj−lj
+uj−lj
+)
+·д(lj) + xj−lj
+uj−lj
+·д(uj)
+≤д
+( (
+1− xj−lj
+uj−lj
+)
+·lj + xj−lj
+uj−lj
+·uj
+)
+=д( xj) =xi .
+Otherwise, becauseд′ is non-decreasing on(−∞ ,0] and decreasing on( 0,∞) , we have that λ′ =
+min(д′(lj) ,д′(uj))≤ д′( ξ) for allξ∈[lj ,uj] . Therefore,
+a′≤
+i ( x) =д(lj) +λ′·( xj−lj) =д(lj) +
+∫ x j
+lj
+λ′dξ≤д(lj) +
+∫ x j
+lj
+д′( ξ) dξ =д( xj) .
+The proof of a′≥
+i ( x)≥ xi is analogous.
+We conclude
+Tf(γi−1( a)) ={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =д( xj)} .
+⊆{ x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ a′≤
+k( x)≤ xi∧a′≥
+i ( x)≥ xi}
+={x∈ Ri|( ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk)}
+=γi(T #
+f( a)) ,
+where the inclusion is strict because we have dropped the constraint xi = д( xj) . Therefore, the
+abstract transformer is sound. □
+Theorem 4.4. The max pool abstract transformer is sound.
+Proof. Let f : Ri−1→ Ri execute the assignment xi← maxj∈J( 0,xj) for some J⊆[i− 1] , and
+leta∈A i−1 be arbitrary. We have
+Tf(γi−1( a)) ={f( x)| x∈γi−1( a)}
+={( x1, . . . ,xi−1,max
+j∈J
+xj)|( x1, . . . ,xi−1)∈ γi−1( a)}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = max
+j∈J
+xj}.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 15 =====
+An Abstract Domain for Certifying Neural Networks 41:15
+There are two cases. If there is somek∈ J withuj <lk for allj∈ J\{ k}, then( ∀k∈[i− 1] .a≤
+k( x)≤
+xk∧a≥
+k( x)≥ xk) implies that maxj∈J xj =xk and therefore
+Tf(γi−1( a)) ={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = max
+j∈J
+xj}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =xk}
+={x∈ Ri| ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk}
+=γi(T #
+f( a)) .
+Otherwise, the transformer chooses a k with maximallk . We also know that( ∀k∈[i− 1] .a≤
+k( x)≤
+xk∧a≥
+k( x)≥ xk) impliesxj≤uj for all j∈ J , and therefore
+Tf(γi−1( a)) ={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi = max
+j∈J
+xj)}
+⊆{ x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xk≤xi∧ max
+j∈J
+uj≥xi)}
+={x∈ Ri| ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk}
+=γi(T #
+f( a)) .
+In summary, in both cases, Tf(γi−1( a))⊆ γi(T #
+f( a)) . □
+Theorem 4.5. The affine abstract transformer is sound and exact.
+Proof. Letf : Ri−1→ Ri execute the assignmentxi←v+/summationtext.1
+j∈[i−1] wj·xj for somev∈ R,w∈ Ri−1,
+and leta∈A i−1 be arbitrary. We have
+Tf(γi−1( a)) ={f( x)| x∈γi−1( a)}
+={( x1, . . . ,xi−1,v + /summationtext.1
+j∈[i−1] wj·xj)|( x1, . . . ,xi−1)∈ γi−1( a)}
+={x∈ Ri|( x1, . . . ,xi−1)∈ γi−1( a)∧ xi =v + /summationtext.1
+j∈[i−1] wj·xj)}
+={x∈ Ri|( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk)∧ xi =v + /summationtext.1
+j∈[i−1] wj·xj)}
+={x∈ Ri| ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk}
+=γi(T #
+f( a)) .
+Thus,Tf(γi−1( a)) =γi(T #
+f( a)) . □
+Invariant. We now prove that our abstract transformers preserve the invariant. For each of
+our abstract transformersT #
+f , we have to show that for T #
+f( a) =a′, we haveγi( a′)⊆ /producttext1.1
+j∈[i][l′
+j ,u′
+j] .
+Note that the constraints( ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk) include all constraints of a. We first
+assume that the invariant holds for a, thus( ∀k∈[i− 1] .a≤
+k( x)≤ xk∧a≥
+k( x)≥ xk) implies the
+bounds( ∀k∈[i− 1] .lk≤xk≤uk) , which are equivalent to( ∀k∈[i− 1] .l′
+k≤xk≤u′
+k) , because
+our abstract transformers preserve the bounds of existing variables. It therefore suffices to show
+that( ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk) impliesl′
+i≤xi≤u′
+i .
+Theorem 4.6. The ReLU abstract transformer preserves the invariant.
+Proof. Ifuj≤ 0, we havea′≤
+i ( x) =a′≥
+i ( x) = 0 and therefore( ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk)
+implies 0 = l′
+i = a′≤
+i ( x) ≤ xi ≤ a′≥
+i ( x) = u′
+i = 0. If 0 ≤ lj , we have a′≤
+i ( x) = a′≥
+i ( x) = xj
+and therefore( ∀k ∈ [i] .a′≤
+k( x) ≤ xk∧a′≥
+k( x) ≥ xk) implies l′
+i = lj ≤ xj = xi ≤ uj = u′
+i .
+Otherwise, we have lj < 0 and 0 < uj , as well as a′≤( x) i = λ·xj ,a′≥( x) i = uj· x j−lj
+uj−lj
+, and so
+( ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk) impliesl′
+i =λ·lj≤xi≤uj =u′
+j . □
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 16 =====
+41:16 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Theorem 4.7. The sigmoid and tanh abstract transformers preserve the invariant.
+Proof. The constraints( ∀k ∈ [i] .a′≤
+k( x) ≤ xk∧a′≥
+k( x) ≥ xk) imply lj ≤ xj ≤ uj and by
+monotonicity ofд, we obtain l′
+i =д(lj)≤ xi≤д(uj) =u′
+j usingxi =д( xj) . □
+Theorem 4.8. The max pool abstract transformer preserves the invariant.
+Proof. The max pool transformer either sets a′≤
+i ( x) =a′≥
+i ( x) =xk andl′
+i =lk andu′
+i =uk , in
+which case( ∀k∈[ i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk) impliesl′
+i =lk≤ xk = xi≤ uk =u′
+k , or it sets
+a′≤
+i ( x) =xk ,l′
+i =lk andu′
+i =a′≥
+i ( x) , such that( ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk) , which implies
+l′
+i≤xk≤u′
+i □
+Theorem 4.9. The affine abstract transformer preserves the invariant.
+Proof. Note that s′ andt′ are finite, because in each step, the maximal index of a variable
+whose coefficient in, respectively, bs andct is nonzero decreases by at least one. Assume ∀k∈
+[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk . We have to show that bs′( x)≤ xi andct′( x)≥ xi . It suffices to show
+that ∀s∈[s′] .bs( x)≤ xi and ∀t∈[t′] .ct( x)≥ xi .
+To show ∀s∈[ s′] .bs( x)≤ xi , we use induction on s. We haveb1( x) =a′≤
+i ( x)≤ xi . Assuming
+bs( x)≤ xi andbs( x) =v′ + /summationtext.1
+j∈[k] w′
+j·xj for somek∈[i− 1] ,v′∈ R,w′∈ Rk , we have
+xi≥bs( x) =v′ +
+/summationdisplay.1
+j∈[k]
+w′
+j·xj
+=v′ +
+/summationdisplay.1
+j∈[k]
+( max( 0,w′
+j)
+/bracehtipupleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipdownright/bracehtipdownleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipupright
+≥0
+·xj + min(w′
+j ,0)
+/bracehtipupleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipdownright/bracehtipdownleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipupright
+≤0
+·xj)
+≥v′ +
+/summationdisplay.1
+j∈[k]
+( max( 0,w′
+j)· a′≤
+j ( x) + min(w′
+j ,0)· a′≥
+j ( x))
+=bs+1( x) .
+To show ∀t∈[ t′] .ct( x)≥ xi , we use induction on t. We havec1( x) = a′≥
+i ( x)≥ xi . Assuming
+ct( x)≥ xi andct( x) =v′ + /summationtext.1
+j∈[k] w′
+j·xj for somek∈[i− 1] ,v′∈ R,w′∈ Rk , we have
+xi≤ct( x) =v′ +
+/summationdisplay.1
+j∈[k]
+w′
+j·xj
+=v′ +
+/summationdisplay.1
+j∈[k]
+( max( 0,w′
+j)
+/bracehtipupleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipdownright/bracehtipdownleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipupright
+≥0
+·xj + min(w′
+j ,0)
+/bracehtipupleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipdownright/bracehtipdownleft/bracehext/bracehext/bracehext/bracehext/bracehext/bracehext/bracehtipupright
+≤0
+·xj)
+≤v′ +
+/summationdisplay.1
+j∈[k]
+( max( 0,w′
+j)· a′≥
+j ( x) + min(w′
+j ,0)· a′≤
+j ( x))
+=ct +1( x) .
+Therefore,( ∀k∈[i] .a′≤
+k( x)≤ xk∧a′≥
+k( x)≥ xk) impliesl′
+i≤xi≤u′
+i . □
+4.7 Soundness under Floating Point Arithmetic
+The abstract domain and its transformers above are sound under real arithmetic but unsound under
+floating point arithmetic if one does not take care of the rounding errors. To obtain soundness,
+let F be the set of floating point values and ⊕f ,⊖f ,⊗f ,⊘f be the floating point interval addition,
+subtraction, multiplication, and division, respectively, as defined in [ Miné 2004] with lower bounds
+rounded towards−∞ and upper bounds rounded towards+∞. For a real constantc, we usec−,c+∈ F
+to denote the floating point representation of c with rounding towards−∞ and +∞ respectively.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 17 =====
+An Abstract Domain for Certifying Neural Networks 41:17
+We use the standard interval linear form, where the coefficients in the constraints are intervals
+instead of scalars, to define an abstract element a∈A n overn variables in our domain as a tuple
+a =⟨a≤,a≥,l,u⟩ where fori∈[n] :
+a≤
+i ,a≥
+i ∈{ x↦→[v−,v+]⊕ f
+/summationtext.1
+j∈[i−1][w−
+j ,w +
+j]⊗ f xj|v−,v+∈ F∪{−∞ ,+∞},w−,w +∈ Fi−1}
+andl,u∈( F∪{−∞ ,+∞}) n. For a floating point interval [l,u] , let inf and sup be functions that
+return its lower and upper bound. The concretization function γn :An→P( Fn) is given by
+γn( a) ={x∈ Fn| ∀i∈[n] .inf( a≤( x))≤ xi∧xi≤ sup( a≥( x))} .
+We next modify our abstract transformers for soundness under floating point arithmetic. It is
+straightforward to modify the maxpool transformer so we only show our modifications for the
+ReLU, sigmoid, tanh, and affine abstract transformers assigning to the variable xi .
+ReLU abstract transformer. It is straightforward to handle the cases lj ≥ 0 oruj ≤ 0. For the
+remaining case, we add the following constraints:
+[λ,λ]⊗ f xj≤[ 1,1]⊗ f xi ,
+[1,1]⊗ f xi≤[ψ−,ψ +]⊗ f xj⊕f[µ−,µ+] ,
+where λ ∈ {0,1} and[ψ−,ψ +] = [u−
+j ,u+
+j]⊘ f ([u−
+j ,u+
+j]⊖ f [l−
+j ,l +
+j]) ,[µ−,µ+] = ([−l +
+j ,−l−
+j]⊗ f
+[u−
+j ,u+
+j])⊘ f([u−
+j ,u+
+j]⊖ f[l−
+j ,l +
+j]) . Finally, we setli =λ·lj andui =uj .
+Sigmoid and tanh abstract transformers. We consider the case when lj < 0. We soundly compute
+an interval for the possible values of λ under any rounding mode as[λ−,λ+] =([д(uj)−,д(uj) +]⊖ f
+[д(lj)−,д(lj) +])⊘ f([u−
+j ,u+
+j]⊖ f[l−
+j ,l +
+j]) . Similarly, bothд′(lj) andд′(uj) are soundly abstracted by
+the intervals[д′(lj)−,д′(lj) +] and[д′(uj)−,д′(uj) +] , respectively. Because of the limitations of the
+floating point format, it can happen that the upper polyhedral constraint with slope λ passing
+throughlj intersects the curve at a point <uj . This happens frequently for smaller perturbations.
+To ensure soundness, we detect such cases and return the box [д(lj)−,д(uj) +] . Other computations
+for the transformers can be handled similarly.
+Affine abstract transformer. The affine abstract transformerxi←v + /summationtext.1
+j∈[i−1] wj·xj for somew∈
+Fi−1 first adds the interval linear constraints a′≤
+i ( x) =a′≥
+i ( x) =[v−,v+]⊕ f
+/summationtext.1
+j∈[i−1][w−
+j ,w +
+j]⊗ f xj .
+We modify the backsubstitution for the computation of li andui . Formally, if we want to obtain
+l′
+i , we start with b1( x) = a′≤
+i ( x) . If we have bs( x) =[v′−,v′+]⊕ f
+/summationtext.1
+j∈[k][w′−
+j ,w′+
+j ]⊗ f xj for some
+k∈[i− 1] ,v′−,v′+,w′−
+j ,w′+
+j ∈ F, then
+bs+1( x) =[v′−,v′+]⊕ f
+/summationdisplay.1
+j∈[k]
+ 
+
+[w′−
+j ,w′+
+j ]⊗ f a′≤
+j ( x) , ifw′−
+j ≥ 0,
+[w′−
+j ,w′+
+j ]⊗ f a′≥
+j ( x) , ifw′+
+j ≤ 0,
+[θ−
+l ,θ +
+l] , otherwise.
+Here,[θ−
+l ,θ +
+l]∈ F are the floating point values of the lower bound of the interval[w′−
+j ,w′+
+j ]⊗ f[lj ,uj]
+rounded towards−∞ and +∞ respectively. We iterate until we reachbs′ withbs′( x) =[v′′−,v′′+] ,
+i.e.,s′ is the smallest number with this property. We then set l′
+i =v′′−. We computeu′
+i analogously.
+5 REFINEMENT OF ANALYSIS RESULTS
+In this section, we show how to apply a form of abstraction refinement based on trace partitioning
+[Rival and Mauborgne 2007 ] in order to verify robustness for more complex adversarial regions,
+which cannot be accurately represented using a set of interval constraints. In particular, we will
+show how to handle adversarial regions that, in addition to permitting small perturbations to each
+pixel, allow the adversary to rotate the input image by an angle θ∈[α,β] within an interval.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 18 =====
+41:18 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Algorithm 1 Rotate imageI byθ degrees.
+procedure Rotate(I ,θ )
+Input:I∈[ 0,1] m×n,θ∈[−π ,π] , Output:R∈[ 0,1] m×n
+fori∈{ 1, . . . ,m},j∈{ 1, . . . ,n} do
+( x,y)←( j−( n + 1)/ 2,(m + 1)/ 2−i)
+( x′,y′)←( cos(− θ)· x− sin(− θ)· y,sin(− θ)· x + cos(− θ)· y)
+( i′
+low,i′
+high)←( max( 1,⌊( m + 1)/ 2−y′⌋) ,min(m,⌈(m + 1)/ 2−y′⌉))
+( j′
+low,j′
+high)←( max( 1,⌊x′ +( n + 1)/ 2⌋) ,min( n,⌈x′ +( n + 1)/ 2⌉))
+t← /summationtext.1 i′
+high
+i′=i′
+low
+/summationtext.1 j′
+high
+j′=j′
+low
+max( 0,1−
+√
+( j′−x′) 2 +( i′−y′) 2)
+ift /nequal0 then
+Ri,j←( 1/ t)· /summationtext.1 i′
+high
+i′=i′
+low
+/summationtext.1 j′
+high
+j′=j′
+low
+max( 0,1−
+√
+( j′−x′) 2 +( i′−y′) 2)· Ii′,j′
+else
+Ri,j← 0
+end if
+end for
+returnR
+end procedure
+Verifying robustness against image rotations. Consider Algorithm 1, which rotates an m×n-pixel
+(grayscale) image by an angle θ . To compute the intensity Ri,j of a given output pixel, it first
+computes the (real-valued) position( x′,y′) that would be mapped to the position of the center of
+the pixel. Then, it performs linear interpolation: it forms a convex combination of pixels in the
+neighborhood of( x′,y′) , such that the contribution of each pixel is proportional to the distance to
+( x′,y′) , cutting off contributions at distance 1.
+Our goal is to verify that a neural network N : Rm×n→ Rr classifies all images obtained by
+rotating an input image using Algorithm 1 with an angle θ∈[ α,β]⊆[− π ,π] in the same way.
+More generally, if we have an adversarial region X⊆ Rm×n (represented using componentwise
+interval constraints), we would like to verify that for any image I∈X and any angle θ∈[α,β] , the
+neural network N classifies Rotate( I ,θ) to a given class k. This induces a new adversarial region
+X′ ={Rotate( I,θ)| I ∈ X ,θ ∈[ α,β]} . Note that because we deal with regions (and not only
+concrete images) as well as rotations that employ linear interpolation, we cannot simply enumerate
+all possible rotations as done for simpler rotation algorithms and concrete images [ Pei et al . 2017b].
+Interval specification of X′. We verify robustness against rotations by deriving lower and upper
+bounds on the intensities of all pixels of the rotated image. We then verify that the neural network
+classifies all images satisfying those bounds to class k. To obtain bounds, we apply abstract inter-
+pretation to Algorithm 1, using the interval domain (more powerful numerical domains could be
+applied). We use standard interval domain transformers, except to derive bounds on t andRi,j ,
+which we compute (at the same time), by enumerating all possible integer values of i′
+low,i′
+high,j′
+low
+andj′
+high (respecting the constraints i′
+low + 1≥i′
+high andj′
+low + 1≥ j′
+high, and refining the intervals
+forx′ andy′ based on the known values i′
+low and j′
+low) and joining the intervals resulting from
+each case. For each case, we compute intervals for Ri,j in two ways: once using interval arithmetic,
+restricting partial sums to the interval[0,1] , and once by observing that a convex combination of
+pixel values will be contained in the union of intervals for the individual values. We intersect the
+intervals resulting from both approaches.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 19 =====
+An Abstract Domain for Certifying Neural Networks 41:19
+Refinement of abstract inputs by trace partitioning. For large enough intervals[α,β] , the derived
+bounds often become too imprecise. Thus, when our analyzer is invoked with these bounds, it
+may fail to verify the property, even though it actually holds. We can make the following simple
+observation: if we have n setsX′
+1, . . . ,X′
+n that cover the adversarial region X′, i.e.X′⊆ /uniontext.1 n
+i=1X′
+i ,
+then it suffices to verify that the neural network N classifies all input images to class k for each
+individual input region X′
+i fori∈{ 1, . . . ,n}. We obtain X′
+1, . . . ,X′
+n by subdividing the interval
+[α,β] inton equal parts:{Rotate( I ,θ)| I∈X ,θ∈[( i− 1)/ n·( β−α) +α,i/ n·( β−α) +α]}⊆ X′
+i .
+Note that each X′
+i is obtained by running the interval analysis on the rotation code with the given
+angle interval and the adversarial region X . After obtaining all X′
+i ’s, we run our neural network
+analyzer separately with each X′
+i as input.
+Batching. As interval analysis tends to be imprecise for large input intervals, we usually need to
+subdivide the interval[α,β] into many parts to obtain precise enough output intervals from the
+interval analysis (a form of trace partitioning [ Rival and Mauborgne 2007 ]). Running our neural
+network analysis for each of these can be too expensive. Instead, we use a separate refinement
+step to obtain more precise interval bounds for larger input intervals. We further subdivide each
+of the n intervals into m parts each, for a total of n·m intervals in n batches. For each of the n
+batches, we then run interval analysis m times, once for each part, and combine the results using
+a join, i.e., we compute the smallest common bounding box of all output regions in a batch. The
+additional refinement within each batch preserves dependencies between variables that a plain
+interval analysis would ignore, and thus yields more precise boxes X′
+1, . . . ,X′
+n, on which we run
+the neural network analysis.
+Using the approach outlined above, we were able to verify, for the first time, that the neural
+network is robust to non-trivial rotations of all images inside an adversarial region.
+6 EXPERIMENTAL EV ALUATION
+In this section we evaluate the effectiveness of our approach for verifying the robustness properties
+of large, challenging, and diverse set of neural networks. We implemented our method in an analyzer
+called DeepPoly. The analyzer is written in Python and the abstract transformers of our domain are
+implemented on top of the ELINA library [ Singh et al . 2017, 2018b] for numerical abstractions. We
+have implemented both a sequential and a parallel version of our transformers. All code, networks,
+datasets, and results used in our evaluation are available at http://safeai.ethz.ch. We compared the
+precision and performance of DeepPoly against the three state-of-the-art systems that can scale to
+larger networks:
+• AI 2 by Gehr et al. [2018] uses the Zonotope abstract domain [Ghorbal et al. 2009] implemented
+in ELINA for performing abstract interpretation of feedforward and convolutional ReLU
+networks. Their transformers are generic and do not exploit the structure of ReLU. As a
+result,AI 2 is often slow and imprecise.
+• Fast-Lin by Weng et al. [2018] performs layerwise linear approximations tailored to exploit
+the structure of ReLU feedforward networks. We note that Fast-Lin is not sound under floating
+point arithmetic and does not support convolutional networks. Nonetheless, we still compare
+to it despite the fact it may contain false negatives (adapting their method to be sound in
+floating point arithmetic is non-trivial).
+• DeepZ by Singh et al . [2018a] provides specialized Zonotope transformers for handling ReLU,
+sigmoid, and tanh activations, and supports both feedforward and convolutional networks. It
+is worth mentioning that although Fast-Lin and DeepZ employ very different techniques for
+robustness analysis, both can be shown to have the same precision on feedforward neural
+networks with ReLU activations. On our benchmarks, DeepZ was often faster than Fast-Lin.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 20 =====
+41:20 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Table 1. Neural network architectures used in our experiments.
+Dataset Model Type #Hidden units #Hidden layers
+MNIST FFNNSmall fully connected 610 6
+FFNNMed fully connected 1 810 9
+FFNNBig fully connected 4 106 4
+FFNNSigmoid fully connected 3 010 6
+FFNNTanh fully connected 3 010 6
+ConvSmall convolutional 3 604 3
+ConvBig convolutional 34 688 6
+ConvSuper convolutional 88 500 6
+CIFAR10 FFNNSmall fully connected 6 10 6
+FFNNMed fully connected 1 810 9
+FFNNBig fully connected 7 178 7
+ConvSmall convolutional 4 852 3
+ConvBig convolutional 62 464 6
+Our experimental results indicate that DeepPoly is always more precise than all three competing
+tools on our benchmarks while maintaining scalability. This demonstrates the suitability ofDeepPoly
+for the task of robustness verification of larger neural networks.
+6.1 Experimental Setup
+All of our experiments for the feedforward networks were run on a 3.3 GHz 10 core Intel i9-7900X
+Skylake CPU with a main memory of 64 GB; our experiments for the convolutional networks were
+run on a 2.6 GHz 14 core Intel Xeon CPU E5-2690 with 512 GB of main memory. We next describe
+our experimental setup including the datasets, neural networks, and robustness properties.
+Evaluation datasets. We used the popular MNIST [ Lecun et al . 1998] and CIFAR10 [Krizhevsky
+2009] image datasets for our experiments. MNIST contains grayscale images of size 28× 28 pixels
+and CIFAR10 consists of RGB images of size 32× 32 pixels. For our evaluation, we chose the first
+100 images from the test set of each dataset. For the task of robustness certification, out of these
+100 images, we considered only those that were correctly classified by the neural network.
+Neural networks. Table 1 shows the MNIST and the CIFAR10 neural network architectures used
+in our experiments. The architectures considered in our evaluation contain up to 88K hidden units.
+We use networks trained with adversarial training, i.e., defended against adversarial attacks, as
+well as undefended networks. We used DiffAI by Mirman et al . [2018] and projected gradient
+descent (PGD) from Dong et al. [2018] for adversarial training. In our evaluation, when we consider
+the certified robustness of the defended and undefended networks with the same architecture
+together, we append the suffix Point to the name of a neural network trained without adversarial
+training and the name of the training procedure (either DiffAI or PGD) to the name of a defended
+network. In the table, the FFNNSigmoid and FFNNTanh networks use sigmoid and tanh activations,
+respectively. All other networks use ReLU activations. The FFNNSmall and FFNNMed network
+architectures for both MNIST and CIFAR10 datasets were taken from Gehr et al. [2018] whereas
+the FFNNBig architectures were taken from Weng et al . [2018]. The ConvSmall, ConvBig, and
+ConvSuper architectures were taken from Mirman et al. [2018].
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 21 =====
+An Abstract Domain for Certifying Neural Networks 41:21
+Robustness properties. We consider the following robustness properties:
+(1) L∞-norm [ Carlini and Wagner 2017 ]: This attack is parameterized by a constant ϵ. The
+adversarial region contains all perturbed images x′ where each pixel x′
+i has a distance of at
+mostϵ from the corresponding pixel x i in the original input x. We use different values of ϵ
+in our experiments. In general, we use smaller ϵ values for the CIFAR10 dataset compared to
+the MNIST dataset since the CIFAR10 networks are known to be less robust against L∞-norm
+attacks for larger ϵ values [Weng et al. 2018].
+(2) Rotation: The input image is first perturbed using a perturbation bounded by ϵ in theL∞-
+norm. The resulting image is then rotated by Algorithm 1 using an arbitrary θ∈[α,β] . The
+regionRx,ϵ,[α,β] contains all images that can be obtained in this way.
+0.005 0.010 0.015 0.020 0.025 0.030
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+AI 2
+Fast-Lin
+DeepZ
+DeepPoly
+(a) MNIST FFNNSmall
+0.005 0.010 0.015 0.020 0.025 0.030
+0
+20
+40
+60
+80
+Time (s)
+AI 2
+Fast-Lin
+DeepZ
+DeepPoly
+(b) MNIST FFNNSmall
+Fig. 5. Verified robustness and runtime for L∞-norm perturbations by DeepPoly againstAI2, Fast-Lin, and
+DeepZ on the MNIST FFNNSmall. DeepZ and Fast-Lin are equivalent in robustness.
+6.2 L∞ -Norm Perturbation
+We first compare the precision and performance of DeepPoly vs AI 2, Fast-Lin, and DeepZ for
+robustness certification against L∞-norm based adversarial attacks on the MNIST FFNNSmall
+network. We note that it is straightforward to parallelize Fast-Lin, DeepZ, and DeepPoly. However,
+the abstract transformers inAI 2 cannot be efficiently parallelized. To ensure fairness, we ran all four
+analyzers in single threaded mode. Fig. 5 compares the percent of robustness properties proved and
+the average runtime per ϵ-value of all four analyzers. We used six different values for ϵ shown on
+the x-axis. For all analyzers, the number of proved properties decreases with increasing values of ϵ.
+As can be seen, DeepPoly is the fastest and the most precise analyzer on the FFNNSmall network.
+DeepZ has the exact same precision as Fast-Lin but is up to 2.5x faster.AI 2 has significantly worse
+precision and higher runtime than all other analyzers.
+For all of our remaining experiments, we compare the precision and performance of the paral-
+lelized versions of DeepPoly and DeepZ.
+MNIST fully connected feedforward networks. Fig. 6 compares the percentage of verified robustness
+properties and the average runtime of DeepPoly against DeepZ on the MNIST FFNNMed and
+FFNNBig neural networks. Both networks were trained without adversarial training. DeepPoly
+proves more properties than DeepZ on both networks. As an example, considering the verified
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 22 =====
+41:22 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+0.005 0.010 0.015 0.020 0.025 0.030
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+DeepZ
+DeepPoly
+(a) MNIST FFNNMed
+0.005 0.010 0.015 0.020 0.025 0.030
+0
+2
+4
+6
+8
+Time (s)
+DeepZ
+DeepPoly
+(b) MNIST FFNNMed
+0.005 0.010 0.015 0.020 0.025 0.030
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+DeepZ
+DeepPoly
+(c) MNIST FFNNBig
+0.005 0.010 0.015 0.020 0.025 0.030
+0
+10
+20
+30
+40
+50
+Time (s)
+DeepZ
+DeepPoly
+(d) MNIST FFNNBig
+Fig. 6. Verified robustness and runtime for L∞-norm perturbations by DeepPoly vs. DeepZ on the MNIST
+FFNNMed and FFNNBig networks.
+robustness forϵ = 0.01, we notice that DeepPoly proves 69% of properties on the FFNNMed network
+whereas DeepZ proves 46%. The corresponding numbers on the FFNNBig network are 79% and 58%
+respectively. DeepPoly is also significantly faster than DeepZ on both networks achieving a speedup
+of up to 4x and 2.5x on the FFNNMed and FFNNBig networks.
+We compare the average percentage of the number of hidden units that can take both positive
+and negative values per ϵ-value for the MNIST FFNNSmall and FFNNMed neural networks in Fig. 7.
+Since the ReLU transformer in both DeepPoly and DeepZ is inexact for such hidden units, it is
+important to reduce their percentage. For both networks, DeepPoly produces strictly less hidden
+units for which the ReLU transformer is inexact than DeepZ.
+In Fig. 8, we compare the precision of DeepPoly and DeepZ on the MNIST FFNNSigmoid and
+FFNNTanh networks. Both networks were trained using PGD-based adversarial training. On both
+networks, DeepPoly is strictly more precise than DeepZ. For the FFNNSigmoid network, there is a
+sharp decline in the number of proved properties by DeepZ starting atϵ = 0.02. DeepZ proves only
+23% of the properties when ϵ = 0.03; in contrast, DeepPoly proves 80%. Similarly, for the FFNNTanh
+network, DeepZ only proves 1% of properties when ϵ = 0.015, whereas DeepPoly proves 94%. We
+also note that DeepPoly is more than 2x faster than DeepZ on both these networks (we omit the
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 23 =====
+An Abstract Domain for Certifying Neural Networks 41:23
+0.005 0.010 0.015 0.020 0.025 0.030
+0
+20
+40
+60
+80
+100
+% hidden units
+DeepZ
+DeepPoly
+(a) MNIST FFNNSmall
+0.005 0.010 0.015 0.020 0.025 0.030
+0
+20
+40
+60
+80
+100
+% hidden units
+DeepZ
+DeepPoly
+(b) MNIST FFNNMed
+Fig. 7. Average percentage of hidden units that can take both positive and negative values for DeepPoly
+vs. DeepZ on the MNIST FFNNSmall and FFNNMed networks.
+0.005 0.010 0.015 0.020 0.025 0.030
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+DeepZ
+DeepPoly
+(a) MNIST FFNNSigmoid
+0.005 0.010 0.015 0.020 0.025 0.030
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+DeepZ
+DeepPoly
+(b) MNIST FFNNTanh
+Fig. 8. Verified robustness and runtime for L∞-norm perturbations by DeepPoly vs. DeepZ on the MNIST
+FFNNSigmoid and FFNNTanh networks.
+relevant plots here as timings do not change with increasing values of ϵ): DeepZ has an average
+runtime of≤ 35 seconds on both networks whereas DeepPoly has an average runtime of ≤ 15
+seconds on both.
+MNIST convolutional networks. Fig. 9 compares the precision and the average runtime of DeepPoly
+vs DeepZ on the MNIST ConvSmall networks. We consider three types of ConvSmall networks
+based on their training method: (a) undefended (Point), (b) defended with PGD (PGD), and (c)
+defended with DiffAI (DiffAI). Note that our convolutional networks are more robust than the
+feedforward networks and thus the values of ϵ considered in our experiments are higher than those
+for feedforward networks.
+As expected, both DeepPoly and DeepZ prove more properties on the defended networks than on
+the undefended one. We notice that the ConvSmall network trained with DiffAI is provably more
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 24 =====
+41:24 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+0.020 0.040 0.060 0.080 0.100 0.120
+0%
+50%
+100%
+Verified robustness
+DiffAI_DeepZ
+ DiffAI_DeepPoly
+PGD_DeepZ
+ PGD_DeepPoly
+Point_DeepZ
+ Point_DeepPoly
+(a) MNIST ConvSmall
+0.020 0.040 0.060 0.080 0.100 0.120
+0
+2
+4
+6
+8
+Time (s)
+DiffAI_DeepZ
+ DiffAI_DeepPoly
+PGD_DeepZ
+ PGD_DeepPoly
+Point_DeepZ
+ Point_DeepPoly
+(b) MNIST ConvSmall
+Fig. 9. Verified robustness and runtime for L∞-norm perturbations by DeepPoly vs. DeepZ on the MNIST
+ConvSmall networks.
+Table 2. Verified robustness by DeepZ and DeepPoly on the large convolutional networks trained with DiffAI.
+Dataset Model ϵ % Verified robustness Average runtime
+DeepZ DeepPoly DeepZ DeepPoly
+MNIST ConvBig 0.1 97 97 5 50
+ConvBig 0.2 79 78 7 61
+ConvBig 0.3 37 43 17 88
+ConvSuper 0.1 97 97 133 400
+CIFAR10 ConvBig 0.006 50 52 39 322
+ConvBig 0.008 33 40 46 331
+robust. Overall, DeepPoly proves more properties than DeepZ on all neural networks. The difference
+between the number of properties proved by DeepPoly and DeepZ is higher for larger values of ϵ. It
+is interesting to note that on the DiffAI defended network, DeepZ proves slightly more properties
+than DeepPoly forϵ≤ 0.10. However, forϵ = 0.12, the percentage of properties proved by DeepZ
+drops to 53% whereas DeepPoly proves 70% of the robustness properties. We notice that DeepPoly is
+slower than DeepZ on all ConvSmall networks. This is due to the fact that the assigned expressions
+during affine transforms in the convolutional layers are sparse. The Zonotope representation in
+DeepZ allows the corresponding transformers to utilize this sparsity better than our domain. We
+also note that DeepPoly is up to 2x faster on the DiffAI network as compared to the other two
+networks.
+Table 2 shows our experimental results on the larger MNIST convolutional networks trained
+using DiffAI. For the ConvBig network, DeepPoly proves significantly more than DeepZ forϵ = 0.3.
+For the ConvSuper network, DeepPoly has the same precision as DeepZ forϵ = 0.1 and proves 97%
+of robustness properties. On both these networks, DeepPoly is slower than DeepZ.
+CIFAR10 feedforward networks. Fig. 10 compares DeepPoly against DeepZ on the CIFAR10 feed-
+forward networks. As with the MNIST feedforward networks, DeepPoly verifies more properties
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 25 =====
+An Abstract Domain for Certifying Neural Networks 41:25
+0.0002 0.0004 0.0006 0.0008 0.0010 0.0012
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+DeepZ
+DeepPoly
+(a) CIFAR10 FFNNSmall
+0.0002 0.0004 0.0006 0.0008 0.0010 0.0012
+0
+2
+4
+6
+Time (s)
+DeepZ
+DeepPoly
+(b) CIFAR10 FFNNSmall
+0.0002 0.0004 0.0006 0.0008 0.0010 0.0012
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+DeepZ
+DeepPoly
+(c) CIFAR10 FFNNMed
+0.0002 0.0004 0.0006 0.0008 0.0010 0.0012
+0
+5
+10
+15
+20
+Time (s)
+DeepZ
+DeepPoly
+(d) CIFAR10 FFNNMed
+0.0002 0.0004 0.0006 0.0008 0.0010 0.0012
+0%
+20%
+40%
+60%
+80%
+100%
+Verified robustness
+DeepZ
+DeepPoly
+(e) CIFAR10 FFNNBig
+0.0002 0.0004 0.0006 0.0008 0.0010 0.0012
+0
+100
+200
+300
+Time (s)
+DeepZ
+DeepPoly
+(f) CIFAR10 FFNNBig
+Fig. 10. Verified robustness and runtime for L∞-norm perturbations by DeepPoly vs. DeepZ on the CIFAR10
+fully connected feedforward networks.
+than DeepZ and is faster on all the considered networks. Considering ϵ = 0.001, DeepPoly proves
+65%, 53%, and 84% of properties on the FFNNSmall, FFNNMed, and FFNNBig networks respectively
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 26 =====
+41:26 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+whereas DeepZ proves 42%, 33%, and 64% of properties. Notice that the average runtime of both
+DeepPoly and DeepZ on the CIFAR10 FFNNMed is higher than on the MNIST FFNNMed network
+even though the number of hidden units is the same. The slowdown on the CIFAR10 networks is
+due to the higher number of input pixels. DeepPoly is up to 7x, 5x, and 4.5x faster than DeepZ on
+the FFNNSmall, FFNNMed, and FFNNBig networks, respectively.
+CIFAR10 convolutional networks. Fig. 11 evaluates DeepPoly and DeepZ on the CIFAR10 ConvSmall
+networks. We again consider undefended (Point) networks and networks defended with PGD and
+DiffAI. We again notice that the ConvSmall network trained with DiffAI is the most provably
+robust network. DeepPoly overall proves more properties than DeepZ on all networks. As with the
+MNIST ConvSmall network defended with DiffAI, DeepZ is slightly more precise than DeepPoly for
+ϵ = 0.008; however, DeepPoly proves more properties for ϵ = 0.012. DeepPoly is slower than DeepZ
+on all the considered ConvSmall networks.
+The last two rows in Table 2 compare the precision and performance of DeepPoly and DeepZ
+on the CIFAR10 ConvBig convolutional network trained with DiffAI. It can be seen that DeepPoly
+proves more properties than DeepZ for bothϵ = 0.006 andϵ = 0.008.
+0.002 0.004 0.006 0.008 0.010 0.012
+0%
+50%
+100%
+Verified robustness
+DiffAI_DeepZ
+ DiffAI_DeepPoly
+PGD_DeepZ
+ PGD_DeepPoly
+Point_DeepZ
+ Point_DeepPoly
+(a) CIFAR10 ConvSmall
+0.002 0.004 0.006 0.008 0.010 0.012
+0
+10
+20
+30
+40
+Time (s)
+DiffAI_DeepZ
+ DiffAI_DeepPoly
+PGD_DeepZ
+ PGD_DeepPoly
+Point_DeepZ
+ Point_DeepPoly
+(b) CIFAR10 ConvSmall
+Fig. 11. Verified robustness and runtime for L∞-norm perturbations by DeepPoly vs. DeepZ on the CIFAR10
+ConvSmall networks.
+6.3 Rotation Perturbation
+As described in earlier sections, we can apply refinement to the input so to prove a neural network
+robust against rotations of a certain input image. Specifically, our analysis can prove that the
+MNIST FFNNSmall network classifies a given image of the digit 3 correctly, even if each pixel
+is first L∞-perturbed with ϵ≤ 0.001 and then rotated using an arbitrary angle θ between−45
+and 65 degrees. Fig. 12 shows example regions and analysis times for a number of choices of
+parameters to the refinement approach. For example, #Batches = 220, Batch Size = 300 means that
+we split the interval[α,β] inton = 220 batches. To analyze a batch, we split the corresponding
+interval intom = 300 input intervals for interval analysis, resulting in 300 regions for each batch.
+We then run DeepPoly on the smallest common bounding boxes of all regions in each batch, 220
+times in total. Fig. 12 shows a few such bounding boxes in the Regions column. Note that it is
+not sufficient to compute a single region that captures all rotated images. Fig. 12 shows two such
+attempts: one where we did not use batching (therefore, our interval analysis approach was applied
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 27 =====
+An Abstract Domain for Certifying Neural Networks 41:27
+#Batches Batch Size Region(s) (l , 1
+2( l + u) , u) Analysis time Verified?
+1 1 0.5s + 1.9s No
+1 10000 22.2s + 1.8s No
+220 1 1.2s + 5m51s No
+220 300 2m29s + 5m30s Yes
+Fig. 12. Results for robustness against rotations with the MNIST FFNNSmall network. Each row shows a
+different attempt to prove that the given image of the digit 3 can be perturbed within an L∞ ball of radius
+ϵ = 0.001 and rotated by an arbitrary angle θ between−45 to 65 degrees without changing its classification.
+For the second two attempts, we show 4 representative combined regions (out of 220, one per batch). The
+running time is split into two components: (i) the time used for interval analysis on the rotation algorithm
+and (ii), the time used to prove the neural network robust with all of the computed bounding boxes (using
+DeepPoly).
+to the rotation algorithm using an abstract θ covering the entire range), and one where we used a
+batch size of 10,000 to compute the bounding box of the perturbations rather precisely. However,
+those perturbations cannot be captured well using interval constraints, therefore the bounding box
+contains many spurious inputs and the verification fails.
+We then considered two verification attempts with 220 batches, with each batch covering a range
+ofθ of length 0.5 degrees. It was not sufficient to use a batch size of1, as some input intervals become
+large. Using a batch size of 300, the neural network can be proved robust for this perturbation.
+7 RELATED WORK
+We already extensively discussed the works that are most closely related throughout the paper,
+here we additionally elaborate on several others.
+Generating adversarial examples. There is considerable interest in constructing examples that
+make the neural network misclassify an input. Nguyen et al . [2015] find adversarial examples
+without starting from a test point, Tabacof and Valle[2016] use random perturbations for generating
+adversarial examples, Sabour et al . [2015] demonstrate non-robustness of intermediate layers, and
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 28 =====
+41:28 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Grosse et al . [2016] generate adversarial examples for malware classification. Pei et al . [2017a]
+systematically generate adversarial examples covering all neurons in the network. Bastani et al.
+[2016] under-approximate the behavior of the network under L∞-norm based perturbation and
+formally define metrics of adversarial frequency and adversarial severity to evaluate the robustness
+of a neural network against adversarial attack.
+Formal verification of neural network robustness. Existing formal verifiers of neural network
+robustness can be broadly classified as either complete or incomplete. Complete verifiers do not have
+false positives but have limited scalability and cannot handle neural networks containing more
+than a few hundred hidden units whereas incomplete verifiers approximate for better scalability.
+Complete verifiers are based on SMT solving [ Ehlers 2017; Katz et al. 2017], mixed integer linear
+programming [Tjeng and Tedrake 2017] or input refinement [ Wang et al. 2018] whereas existing
+incomplete verifiers are based on duality [ Dvijotham et al . 2018; Raghunathan et al . 2018], abstract
+interpretation [Gehr et al. 2018; Singh et al. 2018a], and linear approximations [ Weng et al. 2018;
+Wong and Kolter 2018]. We note that although our verifier is designed to be incomplete for better
+scalability, it can be made complete by refining the input iteratively.
+Adversarial training. There is growing interest in adversarial training where neural networks are
+trained against a model of adversarial attacks. Gu and Rigazio [2014] add Gaussian noise to the
+training set and remove it statistically for defending against adversarial examples. The approach of
+Goodfellow et al . [2015] first generates adversarial examples misclassified by neural networks and
+then designs a defense against this attack by explicitly training against perturbations generated by
+the attack. Madry et al. [2018] shows that training against an optimal attack also guards against non-
+optimal attacks. While this was effective in experiments, Carlini et al. [2017] demonstrated an attack
+for the safety-critical problem of ground-truthing, where this defense occasionally exacerbated
+the problem. Mirman et al . [2018] train neural networks against adversarial attacks using abstract
+transformers for the Zonotope domain. As mentioned earlier, our abstract transformers can be
+plugged into such a framework to potentially improve the training results.
+8 CONCLUSION
+We introduced a new method for certifying deep neural networks which balances analysis precision
+and scalability. The core idea is an abstract domain based on floating point polyhedra and intervals
+equipped with abstract transformers specifically designed for common neural network functions
+such as affine transforms, ReLU, sigmoid, tanh, and maxpool. These abstract transformers enable
+us to soundly handle both, feed-forward and convolutional networks.
+We implemented our method in an analyzer, called DeepPoly, and evaluated it extensively on
+a wide range of networks of different sizes including defended and undefended networks. Our
+experimental results demonstrate that DeepPoly is more precise than prior work yet can handle
+large networks.
+We also showed how to use DeepPoly to prove, for the first time, the robustness of a neural
+network when the input image is perturbed by complex transformations such as rotations employing
+linear interpolation.
+We believe this work is a promising step towards more effective reasoning about deep neural net-
+works and a useful building block for proving interesting specifications as well as other applications
+of analysis (for example, training more robust networks).
+ACKNOWLEDGMENTS
+We would like to thank the anonymous reviewers for their constructive feedback. This research
+was supported by the Swiss National Science Foundation (SNF) grant number 163117.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 29 =====
+An Abstract Domain for Certifying Neural Networks 41:29
+REFERENCES
+Filippo Amato, Alberto López, Eladia María Peña-Méndez, Petr Vaňhara, Aleš Hampl, and Josef Havel. 2013. Artificial
+neural networks in medical diagnosis. Journal of Applied Biomedicine 11, 2 (2013), 47 ś 58.
+Osbert Bastani, Yani Ioannou, Leonidas Lampropoulos, Dimitrios Vytiniotis, Aditya V. Nori, and Antonio Criminisi. 2016.
+Measuring Neural Net Robustness with Constraints. In Proc. Neural Information Processing Systems (NIPS) . 2621ś2629.
+Mariusz Bojarski, Davide Del Testa, Daniel Dworakowski, Bernhard Firner, Beat Flepp, Prasoon Goyal, Lawrence D. Jackel,
+Mathew Monfort, Urs Muller, Jiakai Zhang, Xin Zhang, Jake Zhao, and Karol Zieba. 2016. End to End Learning for
+Self-Driving Cars. CoRR abs/1604.07316 (2016).
+Nicholas Carlini, Guy Katz, Clark Barrett, and David L. Dill. 2017. Ground-Truth Adversarial Examples. CoRR abs/1709.10207
+(2017).
+Nicholas Carlini and David A. Wagner. 2017. Towards Evaluating the Robustness of Neural Networks. In Proc. IEEE
+Symposium on Security and Privacy (SP) . 39ś57.
+Patrick Cousot and Nicolas Halbwachs. 1978. Automatic Discovery of Linear Restraints Among Variables of a Program. In
+Proc. Principles of Programming Languages (POPL) . 84ś96.
+Yinpeng Dong, Fangzhou Liao, Tianyu Pang, Hang Su, Jun Zhu, Xiaolin Hu, and Jianguo Li. 2018. Boosting adversarial
+attacks with momentum. In Proc. Computer Vision and Pattern Recognition (CVPR) .
+Krishnamurthy Dvijotham, Robert Stanforth, Sven Gowal, Timothy Mann, and Pushmeet Kohli. 2018. A Dual Approach to
+Scalable Verification of Deep Networks. In Proc. Uncertainty in Artificial Intelligence (UAI) . 162ś171.
+Rüdiger Ehlers. 2017. Formal Verification of Piece-Wise Linear Feed-Forward Neural Networks. InProc. Automated Technology
+for Verification and Analysis (ATV A). 269ś286.
+Timon Gehr, Matthew Mirman, Dana Drachsler-Cohen, Petar Tsankov, Swarat Chaudhuri, and Martin Vechev. 2018. AI2:
+Safety and Robustness Certification of Neural Networks with Abstract Interpretation. In Proc. IEEE Symposium on Security
+and Privacy (SP), Vol. 00. 948ś963.
+Khalil Ghorbal, Eric Goubault, and Sylvie Putot. 2009. The Zonotope Abstract Domain Taylor1+. In Proc. Computer Aided
+Verification (CA V). 627ś633.
+Ian Goodfellow, Jonathon Shlens, and Christian Szegedy. 2015. Explaining and Harnessing Adversarial Examples. In Proc.
+International Conference on Learning Representations (ICLR) .
+Kathrin Grosse, Nicolas Papernot, Praveen Manoharan, Michael Backes, and Patrick D. McDaniel. 2016. Adversarial
+Perturbations Against Deep Neural Networks for Malware Classification. CoRR abs/1606.04435 (2016). http://arxiv.org/
+abs/1606.04435
+Shixiang Gu and Luca Rigazio. 2014. Towards deep neural network architectures robust to adversarial examples. arXiv
+preprint arXiv:1412.5068 (2014).
+Guy Katz, Clark W. Barrett, David L. Dill, Kyle Julian, and Mykel J. Kochenderfer. 2017. Reluplex: An Efficient SMT Solver
+for Verifying Deep Neural Networks. In Proc. International Conference on Computer Aided Verification (CA V). 97ś117.
+Alex Krizhevsky. 2009. Learning multiple layers of features from tiny images . Technical Report.
+Yann Lecun, Léon Bottou, Yoshua Bengio, and Patrick Haffner. 1998. Gradient-based learning applied to document recognition.
+In Proc. of the IEEE . 2278ś2324.
+Aleksander Madry, Aleksandar Makelov, Ludwig Schmidt, Dimitris Tsipras, and Adrian Vladu. 2018. Towards deep learning
+models resistant to adversarial attacks. In Proc. International Conference on Learning Representations (ICLR) .
+Antoine Miné. 2004. Relational Abstract Domains for the Detection of Floating-Point Run-Time Errors. In Proc. European
+Symposium on Programming (ESOP) . 3ś17.
+Matthew Mirman, Timon Gehr, and Martin Vechev. 2018. Differentiable Abstract Interpretation for Provably Robust Neural
+Networks. In Proc. International Conference on Machine Learning (ICML) . 3575ś3583.
+Anh Mai Nguyen, Jason Yosinski, and Jeff Clune. 2015. Deep neural networks are easily fooled: High confidence predictions
+for unrecognizable images. In Proc. IEEE Computer Vision and Pattern Recognition (CVPR) . 427ś436.
+Kexin Pei, Yinzhi Cao, Junfeng Yang, and Suman Jana. 2017a. DeepXplore: Automated Whitebox Testing of Deep Learning
+Systems. In Proc. Symposium on Operating Systems Principles (SOSP) . 1ś18.
+Kexin Pei, Yinzhi Cao, Junfeng Yang, and Suman Jana. 2017b. Towards Practical Verification of Machine Learning: The Case
+of Computer Vision Systems. CoRR abs/1712.01785 (2017).
+Aditi Raghunathan, Jacob Steinhardt, and Percy Liang. 2018. Certified Defenses against Adversarial Examples. In Proc.
+International Conference on Machine Learning (ICML) .
+Xavier Rival and Laurent Mauborgne. 2007. The Trace Partitioning Abstract Domain. ACM Trans. Program. Lang. Syst. 29, 5
+(2007).
+Sara Sabour, Yanshuai Cao, Fartash Faghri, and David J. Fleet. 2015. Adversarial Manipulation of Deep Representations.
+CoRR abs/1511.05122 (2015).
+Gagandeep Singh, Timon Gehr, Matthew Mirman, Markus Püschel, and Martin Vechev. 2018a. Fast and Effective Robustness
+Certification. In Proc. Neural Information Processing Systems (NIPS) .
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.
+
+
+===== PDF PAGE 30 =====
+41:30 Gagandeep Singh, Timon Gehr, Markus Püschel, and Martin Vechev
+Gagandeep Singh, Markus Püschel, and Martin Vechev. 2017. Fast Polyhedra Abstract Domain. In Proc. Principles of
+Programming Languages (POPL). 46ś59.
+Gagandeep Singh, Markus Püschel, and Martin Vechev. 2018b. A Practical Construction for Decomposing Numerical
+Abstract Domains. Proc. ACM Program. Lang. 2, POPL (2018), 55:1ś55:28.
+Pedro Tabacof and Eduardo Valle. 2016. Exploring the space of adversarial images. In Proc. International Joint Conference on
+Neural Networks (IJCNN). 426ś433.
+Vincent Tjeng and Russ Tedrake. 2017. Verifying Neural Networks with Mixed Integer Programming. CoRR abs/1711.07356
+(2017).
+Shiqi Wang, Kexin Pei, Justin Whitehouse, Junfeng Yang, and Suman Jana. 2018. Formal Security Analysis of Neural
+Networks using Symbolic Intervals. In Proc. USENIX Security Symposium (USENIX Security 18) . 1599ś1614.
+Tsui-Wei Weng, Huan Zhang, Hongge Chen, Zhao Song, Cho-Jui Hsieh, Luca Daniel, Duane Boning, and Inderjit Dhillon.
+2018. Towards Fast Computation of Certified Robustness for ReLU Networks. In Proc. International Conference on Machine
+Learning (ICML). 5273ś5282.
+Eric Wong and Zico Kolter. 2018. Provable Defenses against Adversarial Examples via the Convex Outer Adversarial
+Polytope. In Proc. International Conference on Machine Learning (ICML) . 5283ś5292.
+Proc. ACM Program. Lang., Vol. 3, No. POPL, Article 41. Publication date: January 2019.

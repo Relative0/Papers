@@ -1,0 +1,19 @@
+# N2/P10 Reproducibility README
+
+P10 keeps the P8/P9 frozen dispatch policy and P6 folding backend unchanged, replacing only P9's wrapper telemetry `_make` with a fused one-pass `_make` implementation.
+
+## Frozen hashes
+
+- P10 preregistration: `874326c0427e14d4b64781087752c6da85f6c89733c9f27c1017cb20e6c9cd42`
+- P10 harness: `ae589924e976225d45b2db229537dd4063c0e7f655847ebfcbf515a79209efba`
+- P8 frozen gate: `ebc2de96f8219043da66db02bd3bcd38b8455594d5684a1756c7ed13fb4cd64f`
+
+## Reproduction order
+
+1. `python cm_n2_p10_run/n2_p10_harness.py --mode invariant --out cm_n2_p10_run/invariance.json`
+2. `python cm_n2_p10_run/n2_p10_harness.py --mode fuzz --out cm_n2_p10_run/fuzz.json`
+3. `python cm_n2_p10_run/n2_p10_harness.py --mode gatep --out cm_n2_p10_run/gatep.json`
+4. Run the ten natural cases with `--mode natural-case`; execute `cavlc:35` through `run_p10_nat_chunk.py` if a command wall limit requires chunking.
+5. Merge the deterministic `cavlc:35` chunks, calculate `N2_P10_SUMMARY.json`, run `independent_verify.py`, then `make_p10_artifacts.py`.
+
+The 332-case P9/P10 invariance check is mandatory before timing interpretation. P10 performs no model fitting or retuning.

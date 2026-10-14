@@ -1,0 +1,36 @@
+# Optional / recommended additions if available
+
+The package is sufficient for a serious P1-P13 code/methodology audit. The following additions would make it even more self-contained or broaden the review.
+
+## Highest priority additions
+
+1. **Original PDF:** `operator-level-boolean-computation-with-correspondence-matrices.pdf`
+   - A 49 KB text extraction is included under `02_BACKGROUND/`.
+   - The original PDF exists in the user's ChatGPT Library but raw-byte materialization was unavailable in the packaging environment.
+   - Add the PDF if convenient so Astra can inspect exact typesetting, figures and equation layout.
+
+2. **Pinned full repository snapshot:** `Relative0/Correspondence_Matrices` at commit `1145537c9e2274ae7622dad5b68a7d612b27bb7e`
+   - The P-series harnesses are present and authoritative for P1-P13.
+   - A full repo snapshot would help Astra compare the experiment to older production/research optimizers and generic baselines.
+
+## Medium priority additions
+
+3. **Original PDF:** `CM_Phase_Calculus_Verified.pdf`
+   - Text extraction is included.
+   - It is not necessary for the performance audit, but may help with mathematical context.
+
+4. **Original archive:** `CM_N1_GateP_2026-09-17.zip`
+   - The important N1 harness, N1 results and sharing-guard diagnostic are already included.
+   - The original archive is therefore mainly useful for provenance/completeness.
+
+5. **Any pre-P1 S1/S2 / matched four-arm Gate-A benchmark artifacts**
+   - These were discussed in the preceding research thread and may offer useful context about generic cut/truth-function comparators.
+   - They were not present in the active filesystem when this package was built.
+
+## Lower priority / only if Astra requests them
+
+6. Other CM/LM/modal papers unrelated to the P1-P13 optimization path.
+7. A complete local Python environment lockfile if exact runtime reproduction on another machine is required.
+8. OS/CPU/governor metadata beyond what is recorded in the experiment JSON and harnesses.
+
+If you add files, place them under `07_OPTIONAL_ADD/USER_ADDED/` or at the bundle root and tell Astra what was added.

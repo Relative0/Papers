@@ -1,0 +1,264 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem,booktabs}
+\usepackage[backend=biber,style=numeric,sorting=nyt,maxbibnames=6,giveninits=true,url=false,isbn=false]{biblatex}
+\addbibresource{paper_u_refs_v0.3.bib}
+\AtBeginBibliography{\small\setlength{\bibitemsep}{3pt}}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdfauthor={Brian Theory}}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\Sym}{\operatorname{Sym}}
+\newcommand{\diam}{\operatorname{diam}}
+\newcommand{\PP}{\mathcal P}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\eps}{\varepsilon}
+\setlist{itemsep=2pt,topsep=4pt}
+\emergencystretch=1em
+\title{Hierarchical Concepts Under Finite Resolution:\\
+Observation Quotients and Adaptive Symmetry}
+\author{Brian Theory}
+\date{29 September 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+An ultrametric hierarchy does not itself make distinct states indistinguishable: its metric topology is Hausdorff. Indistinguishability instead requires an observation map. This note gives a self-contained synthesis of the distinction for finite ball partitions. A single quotient simultaneously describes the partition topology, its Kolmogorov quotient, and the metric identification of a distance-preserving ultrapseudometric collapse. Resolution towers recover a compact space, and recover the completion when only total boundedness is assumed. For the full regular rooted tree, we give an exact adaptive refinement index and characterize when the corresponding stabilizer inclusion is normal. This separates a finite index, which always exists, from a quotient group, which need not. A short information calculation also separates symmetry index from entropy gain. The underlying topology, tree theory, and quotient constructions are standard; the purpose is a precise correction and synthesis, not a claim of a new general theory. The connection with ultrametric models of cognition is restricted to class-relative observability and does not formalize Matte-Blanco's full bi-logic or establish an empirical model of consciousness.
+\end{abstract}
+
+\section{The distinction and the main statements}
+A node of a rooted tree can represent a category by the set of branches passing through it. This interpretation is established in the $p$-adic and $m$-adic mental-space literature. In particular, Khrennikov's \cite[Section 4]{Khrennikov2007} associations are already fixed-prefix equivalence classes. Earlier subconscious and memory models also use non-Archimedean state spaces \cite{Khrennikov1998,Albeverio1999}. The present note does not introduce either hierarchy or equivalence classes into that literature.
+
+The point requiring care is the passage from \emph{similarity} to \emph{inability to distinguish}. An ultrametric is a metric, so different points have disjoint sufficiently small neighborhoods. Equal distances from an external point do not make those points identical or topologically indistinguishable. Lauro-Grotto \cite[pp.~537--539]{LauroGrotto2008} links clusters with symmetrization and invokes the perception of distant objects. Here that observational restriction is made explicit by a map; it does not follow from ultrametricity alone. An inference of indiscreteness from ultrametricity in the author's thesis \cite{Droncheff2015} is not valid.
+
+Nor is the broad two-layer architecture new. Khrennikov and Yurova \cite[Sections 4 and 9]{KhrennikovYurova2017} combine an observational quotient with a $p$-adic or ultrametric latent space in a protein model. Kleiner \cite[Sections 3.3--3.4]{Kleiner2020} uses automorphism-orbit quotients to describe accessible references to experience. These are different models, but they preclude treating ``latent state, restricted observations, equivalence classes'' as a distinctive invention here.
+
+We isolate two useful precise statements. First, if $\PP$ is a finite partition of an ultrametric space into nonempty clopen balls, then
+\begin{equation}\label{eq:collapse}
+ d_{\PP}(x,y)=
+ \begin{cases}0,&x,y\text{ belong to the same cell},\\d(x,y),&\text{otherwise}\end{cases}
+\end{equation}
+is an ultrapseudometric. Its zero classes and topological indistinguishability classes coincide with the classes defined by agreement under all cell-constant observables. The quotient is universal in the senses made precise in \cref{thm:quotient}. This is a synthesis of standard quotient constructions, not a new separation theorem.
+
+Second, consider the full rooted $m$-ary tree $T_m$, with vertices the finite words over $\Sigma_m=\{0,\ldots,m-1\}$. A \emph{finite complete frontier} $F$ is a finite prefix-free set of words whose cylinders partition the infinite branches. Let $I(F)$ be its proper prefixes, and let $G_F$ fix every vertex of $F$ individually. Write $F\preceq F'$ when $F'$ refines $F$.
+
+\begin{theorem}[Adaptive index and normality]\label{thm:adaptive}
+For $m\geq2$ and finite complete frontiers $F\preceq F'$, put
+$N=|I(F')\setminus I(F)|$. Then
+\begin{equation}\label{eq:index}
+ G_F\cong\prod_{s\in F}\Aut(T_m),\qquad
+ [G_F:G_{F'}]=(m!)^N.
+\end{equation}
+Moreover $G_{F'}$ is normal in $G_F$ if and only if, for every $s\in F$, there is an integer $h_s\geq0$ such that
+\begin{equation}\label{eq:normalcriterion}
+ \{t\in F':s\text{ is a prefix of }t\}=s\Sigma_m^{h_s}.
+\end{equation}
+In this case, with $T_{m,h}$ the full tree of height $h$,
+\begin{equation}\label{eq:normalquotient}
+ G_F/G_{F'}\cong\prod_{s\in F}\Aut(T_{m,h_s}).
+\end{equation}
+The orbits of $G_F$ on the boundary are exactly the cylinders indexed by $F$.
+\end{theorem}
+
+The theorem is proved in \cref{sec:symmetry} using standard sections and stabilizers of full tree automorphism groups \cite[Sections 1.2.2--1.2.3]{BranchGroups}. Its role is to make the hypotheses of an adaptive ``symmetry loss'' statement explicit. Neither the uniform level-stabilizer formula nor the general group-theoretic mechanism is asserted to be original.
+
+\section{A coordinate-free observation quotient}\label{sec:quotient}
+An \emph{ultrapseudometric} on $X$ is a map $e:X\times X\to[0,\infty)$ with $e(x,x)=0$, symmetry, and the ultrametric inequality; it may assign zero distance to different points. Throughout, $X$ is nonempty. For a partition $\PP$ let $q:X\to\PP$ send a point to its cell, and set
+\[
+ \tau_{\PP}=\{q^{-1}(A):A\subseteq\PP\}.
+\]
+This is the \emph{partition topology}, equivalently the initial topology induced by $q$ into the discrete set $\PP$ \cite[Definition 1]{Iyer2012}. Its definition requires neither a metric nor a hierarchy. Every cell, with its subspace topology, is indiscrete.
+
+\begin{lemma}[Separation of disjoint balls]\label{lem:balls}
+If $B,C$ are disjoint nonempty balls in an ultrametric space, $d(x,y)$ is constant on $B\times C$.
+\end{lemma}
+\begin{proof}
+For $x,x'\in B$ and $y\notin B$, the ball inequality gives $d(x,x')<d(x,y)$, for either an open or a closed ball. The strong triangle inequality in both directions implies $d(x',y)=d(x,y)$. Repeat inside $C$. The singleton case is immediate.
+\end{proof}
+
+\begin{theorem}[Finite ball quotient]\label{thm:quotient}
+Let $\PP$ be a finite partition of an ultrametric space $(X,d)$ into nonempty clopen balls. Define $\delta_{\PP}(B,B)=0$ and, for $B\ne C$, define $\delta_{\PP}(B,C)=d(x,y)$ for any $x\in B,y\in C$. Then:
+\begin{enumerate}[label=(\roman*)]
+\item $\delta_{\PP}$ is an ultrametric and $d_{\PP}=\delta_{\PP}\circ(q\times q)$ is the ultrapseudometric in \eqref{eq:collapse}. Its topology is $\tau_{\PP}$.
+\item $q$ realizes both the Kolmogorov quotient of $(X,\tau_{\PP})$ and the metric identification of $(X,d_{\PP})$. For any $T_0$ space $Y$, every continuous $f:(X,\tau_{\PP})\to Y$ factors uniquely through $q$.
+\item For an arbitrary set $Y$, the maps $X\to Y$ constant on cells are exactly the maps $\bar f\circ q$. If $Y$ is metric and $f:(X,d)\to Y$ is also nonexpansive, its unique factor $\bar f:(\PP,\delta_{\PP})\to Y$ is nonexpansive.
+\item $d_{\PP}$ is the greatest pseudometric $e\leq d$ that vanishes on each cell.
+\end{enumerate}
+In particular, two points share a cell if and only if they have zero $d_{\PP}$-distance, are topologically indistinguishable in $\tau_{\PP}$, or agree under every cell-constant observable.
+\end{theorem}
+\begin{proof}
+The preceding lemma proves representative independence. Choose representatives from three cells and apply the ultrametric inequality in $X$; repeated cells cause no difficulty. Since the quotient is finite, its metric topology is discrete. Pullback therefore gives exactly $\tau_{\PP}$, with zero classes equal to the cells.
+
+Two points in the same cell belong to precisely the same open sets. Points in different cells are separated by those cells. A continuous map into a $T_0$ space must identify topologically indistinguishable points: otherwise a target open set distinguishing their images would pull back to an open set distinguishing them. The factor exists and is unique because $q$ is onto; it is continuous because $\PP$ is discrete. This also identifies the quotient topology.
+
+The set-theoretic factorization is immediate. For different cells $B,C$ and representatives $x,y$, nonexpansiveness gives
+$d_Y(\bar f(B),\bar f(C))\leq d(x,y)=\delta_{\PP}(B,C)$.
+Finally, any admissible $e$ is zero inside cells and is at most $d=d_{\PP}$ across cells. As $d_{\PP}$ itself is admissible, it is greatest. Cell indicators show that equality under all cell-constant observables implies membership in the same cell.
+\end{proof}
+
+The topological and pseudometric identifications are established theory; see \cite[Theorem 5.3]{Pirttimaki2019}. The collapse is a special case of Ishiki's pseudo-ultrametric amalgamation \cite[Proposition 2.31]{Ishiki2023}, taking every within-cell pseudo-ultrametric to be zero. The useful geometric feature here is retaining \emph{all} distances between resolved cells, not the existence of a quotient set.
+
+\begin{example}[Why the ball condition matters]\label{ex:arbitrary}
+On binary words of length two use $d(x,y)=2^{-\ell(x,y)}$, where $\ell$ is common-prefix length. Collapse the block $\{00,10\}$ while leaving $\{01\}$ and $\{11\}$ as singleton blocks. Formula \eqref{eq:collapse} gives
+\[
+ d_{\PP}(10,01)=1>0+\tfrac12
+ =d_{\PP}(10,00)+d_{\PP}(00,01).
+\]
+An arbitrary partition still defines a partition topology, but this distance-preserving collapse need not even be a pseudometric. The ball hypothesis is sufficient, not necessary: every partition of an equilateral finite metric space admits such a collapse.
+\end{example}
+
+Observable concepts at a fixed resolution form the finite Boolean algebra of all unions of cells. Individual balls are generally not closed under union or complement. In particular, introducing this observation algebra does not remove ordinary Boolean negation.
+
+\section{Resolution towers, distinguishing scales, and completion}\label{sec:tower}
+Let $(X,d)$ be a totally bounded ultrametric space, and choose $r_0\geq\diam X$ with
+$r_0>r_1>\cdots>0$ and $r_k\to0$. Define
+\[
+ x\sim_k y\ \Longleftrightarrow\ d(x,y)\leq r_k,
+ \qquad \PP_k=X/{\sim_k},\qquad q_k(x)=[x]_k.
+\]
+These are the closed-threshold quotients of M\'emoli, Smith and Wan \cite[Section 2.1, Equation (5) and Definition 10]{MemoliSmithWan2023}, with threshold $r_k$. The strong triangle inequality makes $\sim_k$ transitive. Its classes are closed $r_k$-balls, which are also open because $r_k>0$. A finite cover by balls of radius less than $r_k$ proves that $\PP_k$ is finite. No regular branching assumption is needed.
+
+\begin{proposition}[A calibrated tower]\label{prop:tower}
+Let $d_k$ and $\tau_k$ arise from $\PP_k$ as in \cref{thm:quotient}. Then
+\begin{equation}\label{eq:uniform}
+ 0\leq d-d_k\leq r_k,\qquad d_k\leq d_{k+1},
+ \qquad \tau_k\subseteq\tau_{k+1}.
+\end{equation}
+The topology generated by $\bigcup_k\tau_k$ is the $d$-topology. For $x\ne y$, if
+$\kappa(x,y)=\min\{k\geq1:q_k(x)\ne q_k(y)\}$, then
+\begin{equation}\label{eq:distbounds}
+ r_{\kappa(x,y)}<d(x,y)\leq r_{\kappa(x,y)-1}.
+\end{equation}
+The natural map $X\to\varprojlim_k\PP_k$ is injective and has dense image. The inverse limit is canonically the completion of $X$; when $X$ is compact, it is $X$ itself.
+\end{proposition}
+\begin{proof}
+The collapse formula gives \eqref{eq:uniform}; every fine cell lies in a coarse cell. Every $\tau_k$-open set is $d$-open. Conversely, for any open neighborhood $U$ of $x$, choose $r_k$ smaller than a radius witnessing $x\in U$. Then $[x]_k\subseteq U$. The definition of first distinction gives \eqref{eq:distbounds}.
+
+The quotient maps give bonding maps $\PP_{k+1}\to\PP_k$. A compatible sequence is a nested sequence of nonempty cells of diameter at most $r_k$. In the completion $\widehat X$, their closures remain nested and nonempty. Choosing one point in each cell gives a Cauchy sequence. Its limit belongs to all the closures, and uniqueness follows from $r_k\to0$.
+
+For completeness of the identification, at each fixed level there are finitely many cells and the distances between distinct cells are positive constants. Their closures therefore form a disjoint finite partition of $\widehat X$. These closures remain positively separated and hence are clopen, so the coordinate maps from $\widehat X$ to $\PP_k$ are continuous. Every point of $\widehat X$ determines exactly one compatible sequence. A basic inverse-limit neighborhood specifies finitely many coordinates and thus a nonempty cell at the deepest specified level; it meets $X$. This proves density and a continuous bijection from $\widehat X$ to the inverse limit. It is a homeomorphism since $\widehat X$ is compact and the inverse limit is Hausdorff. Equip the inverse limit with
+$D(a,b)=\lim_k\delta_{\PP_k}(a_k,b_k)$. For distinct sequences, these distances are positive and constant after their first differing coordinate. Passing to completion limits of representatives shows that $D$ equals the distance in $\widehat X$, proving the isometry.
+\end{proof}
+
+This is the finite clopen partition description of profinite spaces \cite[Lemma 5.22.2]{Stacks}, specialized to a calibrated ultrametric. Tree/end-space representations are much older and more general; Hughes \cite{Hughes2004} establishes a categorical equivalence with specified morphisms, while Dovgoshey \cite[Theorem 10.25 and Proposition 10.29]{Dovgoshey2025} relates representing trees to isometric completions of totally bounded spaces and realizes the completion by maximal chains. These results should not be confused with a claim that every hierarchy is a full regular tree.
+
+\begin{example}[Why completion cannot be omitted]
+The eventually zero binary sequences are totally bounded under the prefix ultrametric. Every finite binary word occurs as a prefix. Their inverse limit is therefore the entire binary boundary, including the all-ones sequence, which was not in the original space.
+\end{example}
+
+\subsection{The regular prefix and prime-base specializations}
+On $X=\Sigma_m^{\N}$, number coordinates from zero and let $\ell(x,y)$ be the number of initial coordinates that agree. For $0<\lambda<1$ set $d_\lambda(x,x)=0$ and $d_\lambda(x,y)=\lambda^{\ell(x,y)}$ for $x\ne y$. Common prefixes satisfy
+$\ell(x,z)\geq\min\{\ell(x,y),\ell(y,z)\}$, proving the ultrametric inequality.
+A length-$k$ cylinder is a closed ball of radius $\lambda^k$; for $k\geq1$ it is an open ball of radius $\lambda^{k-1}$. An open ball of radius $\lambda^k$ instead fixes $k+1$ digits. Positive-radius balls are clopen and intersecting balls are nested, not necessarily equal.
+
+Here $q_k$ records the first $k$ digits and
+\[
+ \kappa(x,y)=\ell(x,y)+1,\qquad
+ d_\lambda(x,y)=\lambda^{\kappa(x,y)-1}.
+\]
+The exact equality depends on this scale calibration; the general statement is \eqref{eq:distbounds}. The union of the finite observable Boolean algebras generates the Borel sigma-algebra; it is not itself generally a topology or a sigma-algebra.
+
+When $m=p$ is prime and $\lambda=p^{-1}$, the least-significant-digit-first map
+\[
+ (x_0,x_1,\ldots)\longmapsto\sum_{j\geq0}x_jp^j
+\]
+is an isometry onto $\Z_p$. The first differing digit is the valuation of the difference, and compatible residues uniquely recover the digits. Consequently
+\[
+ q_k:\Z_p\longrightarrow\Z/p^k\Z,
+ \qquad \Z_p\cong\varprojlim_k\Z/p^k\Z.
+\]
+This adds canonical ring quotients and arithmetic compatibility to the tree model. No arithmetic dynamics is used in this note, and $\Z_p$ is a ring, not the field $\mathbb Q_p$. The prime-base specialization is an example, not a prerequisite for the results.
+
+\section{Adaptive frontiers and symmetry}\label{sec:symmetry}
+Finite complete frontiers are the finite maximal prefix codes of the regular tree; their expansions are standard objects \cite{LawsonVdovina}. Their internal sets $I(F)$ are finite prefix-closed sets, and conversely every such set determines a frontier by stopping at the first vertex outside it. Counting edges in the resulting full finite tree gives
+\begin{equation}\label{eq:leafcount}
+ |F|=1+(m-1)|I(F)|.
+\end{equation}
+For a frontier $F$, write $C_s$ for the cylinder indexed by $s\in F$ and apply \cref{thm:quotient} to $\{C_s:s\in F\}$. This yields adaptive, rather than uniform-depth, observation quotients.
+
+\subsection{Proof of the adaptive theorem}
+\begin{proof}[Proof of \cref{thm:adaptive}]
+An automorphism fixing every frontier vertex fixes its ancestors and has arbitrary, independent actions on the descendant trees rooted at frontier vertices. Taking these sections gives the product in \eqref{eq:index}, with inverse given by extension by the identity on the finite upper tree.
+
+The full automorphism group of a regular rooted tree is transitive on its infinite branches: along two specified rays choose, at each vertex, a permutation sending the next digit of the first ray to that of the second; extend at all other vertices arbitrarily. This defines compatible finite-level automorphisms and hence an automorphism of the infinite tree. Applied inside each frontier cylinder, it proves the orbit assertion.
+
+A refinement can be obtained by replacing one current leaf at a time by its $m$ children. For one replacement at a leaf $s$, the homomorphism from the current stabilizer to $\Sym(m)$ records its action on those children. It is onto and its kernel is the refined stabilizer. Thus each replacement has index $m!$. There are exactly $N$ replacements, and multiplication of subgroup indices proves \eqref{eq:index}, without any assertion that the final subgroup is normal.
+
+Suppose $G_{F'}$ is normal in $G_F$. Its boundary orbit partition, already proved to be $\{C_t:t\in F'\}$, must be invariant under $G_F$: conjugation by an element of $G_F$ permutes these orbits. Fix $s\in F$ and take any descendant $t\in F'$ at relative depth $h$. The full section group at $s$ acts transitively on the words of length $h$. Invariance therefore places every vertex of $s\Sigma_m^h$ in $F'$. Prefix freeness and completeness exclude any other relative depth in that subtree. This is \eqref{eq:normalcriterion}. Here distinct vertices have distinct cylinders because $m\geq2$, so permuting frontier cylinders also permutes their indexing vertices.
+
+Conversely, under \eqref{eq:normalcriterion}, the subgroup in each factor $\Aut(T_m)$ is the kernel of restriction to the finite tree $T_{m,h_s}$. It is normal, the restriction is onto, and its quotient is $\Aut(T_{m,h_s})$. Taking the product proves normality and \eqref{eq:normalquotient}.
+\end{proof}
+
+\begin{corollary}[Uniform and one-step refinement]\label{cor:uniform}
+For $G_k=G_{\Sigma_m^k}$,
+\[
+ G_k\cong\Aut(T_m)^{m^k},\qquad
+ G_k/G_{k+1}\cong\Sym(m)^{m^k},\qquad G_{k+1}\subsetneq G_k.
+\]
+More generally, simultaneously splitting a subset $S\subseteq F$ of current leaves gives the normal quotient $\Sym(m)^{|S|}$.
+\end{corollary}
+
+\begin{example}[Index without a quotient group]\label{ex:nonnormal}
+For $m=2$, take $F=\{\eps\}$ and $F'=\{00,01,1\}$. There are two splits, so $[G_F:G_{F'}]=4$. But the root interchange sends the orbit partition to $\{C_0,C_{10},C_{11}\}$, a different partition. Thus $G_{F'}$ is not normal in $G_F$ and $G_F/G_{F'}$ is only a coset set, not a quotient group. The successive local steps each have a normal kernel; normality is not transitive along their composition.
+\end{example}
+
+\subsection{What is specific to the full regular tree?}
+The product and transitivity arguments use \emph{all} rooted automorphisms and identical descendant trees. They do not hold for an arbitrary chosen subgroup. For a nonregular rooted tree, section factors are the potentially different descendant-tree automorphism groups; child permutations must preserve rooted subtree isomorphism types. Some levels can have no nontrivial permutations.
+
+A three-point ultrametric already shows that geometry alone is insufficient for the orbit clause. Put $d(a,b)=1/2$ and $d(a,c)=d(b,c)=1$. At the coarsest observation all three points are equivalent, but the full isometry group has orbits $\{a,b\}$ and $\{c\}$. The point $c$ is geometrically distinguished. Observation equivalence is therefore primary; an orbit representation requires additional symmetry hypotheses.
+
+\section{Information gain is not a symmetry index}\label{sec:information}
+Let $\mu$ be a probability measure on the boundary. For a finite frontier put
+\[
+H_\mu(F)=-\sum_{s\in F}\mu(C_s)\log_2\mu(C_s),
+\]
+using $0\log_2 0=0$. For a vertex of positive mass define $p(a\mid v)=\mu(C_{va})/\mu(C_v)$, and give zero-mass vertices zero contribution. For $F\preceq F'$, successively applying the finite entropy chain rule gives
+\begin{equation}\label{eq:entropy}
+ H_\mu(F')-H_\mu(F)
+ =\sum_{v\in I(F')\setminus I(F)}\mu(C_v)H\bigl(p(\cdot\mid v)\bigr).
+\end{equation}
+Indeed one split replaces the term $-\mu(C_v)\log_2\mu(C_v)$ by the sum over its children; subtraction gives the displayed summand. This is standard hierarchical information accounting, not a new entropy definition; compare \cite[Equations (7) and (10)]{Perotti2020}.
+
+Under uniform independent digits, the summand is $m^{-|v|}\log_2m$, whereas
+\[
+ \log_2[G_F:G_{F'}]=N\log_2(m!)
+\]
+counts split vertices without probability or depth weights. For a binary uniform source, both $\{00,01,10,11\}$ and $\{000,001,01,1\}$ have three internal vertices, so their stabilizers have index eight in $G_{\{\eps\}}$. Their entropies are respectively $2$ and $7/4$ bits. There is no general identification of the index with information gain. Neither quantity is a count of conscious states.
+
+\section{Interpretation and limits}\label{sec:limits}
+The motivating psychological analogy must be narrower than the mathematics. Matte Blanco's generalization principle concerns nested class membership, while his symmetry principle concerns treatment of a relation and its converse \cite[pp.~38--39]{MatteBlanco1975}. The relation $q(x)=q(y)$ directly represents class-relative indistinguishability. It does not by itself symmetrize an independently given binary relation.
+
+It is also inaccurate to attribute to Matte Blanco merely a modern equivalence-versus-identity distinction. His discussion includes stronger treatment of class members and parts as identical \cite[p.~39]{MatteBlanco1975}. He also distinguishes this treatment from the external observer's description of parts and wholes \cite[pp.~148--149]{MatteBlanco1975}. Our quotient is a deliberate restriction: $x$ and $y$ remain different latent points, and $q(x)$ is a class label, not an assertion that a member equals its containing set. Likewise the primary discussions of negation, infinite sets, and conscious unfolding \cite[pp.~45--46, 146--149, 107--108]{MatteBlanco1975} are not consequences of this construction. The observable algebra is Boolean, no part--whole bijection is inferred, and a resolution index is not a psychological time variable.
+
+The wider interpretation of ultrametric structure in bi-logic has been developed by Lauro-Grotto and Murtagh \cite{LauroGrotto2008,Murtagh2012,Murtagh2014}. The note supplies a precise conditional mathematical model, not an endorsement of all claims made in that literature. A model of cognitive data would still need justified features, their hierarchical ordering, an observation mechanism, and tests against nonhierarchical alternatives. No such validation is supplied here.
+
+Several other boundaries matter. Deterministic cell equivalence does not model measurement error: equality of stochastic observation laws is a different relation, and distances between laws need not be ultrametric. A finite observation map is not automatically a factor of a dynamical system; a transition must respect its fibers. Refinement is not a quantum collapse, and it is not simplicial decomposition or gluing. Those operations, reserved for a separate project, are not used in any theorem above.
+
+The mathematical conclusion is consequently limited but definite. Ultrametricity supplies a coherent hierarchy and a distance-preserving ball collapse. Observation supplies indistinguishability. Full regular-tree symmetry supplies an optional exact orbit description, with a quantitative refinement index and a nontrivial normality condition. These roles should not be conflated.
+
+\appendix
+\section{Two elementary frontier facts}\label{sec:appendix}
+For clarity about observation design, finite frontiers have a distributive refinement lattice: under $F\mapsto I(F)$, meet and join correspond to intersection and union of finite prefix-closed sets. A bottom frontier exists, namely $\{\eps\}$, but no finite top frontier exists on the infinite full tree. For the uniform boundary measure, disjoint covering by cylinders gives the Kraft equality
+$\sum_{s\in F}m^{-|s|}=1$.
+Conversely a finite prefix-free set satisfying this equality is complete, since a nonempty complement would contain a cylinder of positive measure.
+
+For a finite set $A$ of distinct infinite branches, define
+\[
+ I_A=\{v:|A\cap C_v|\geq2\}.
+\]
+This is a finite prefix-closed set: every such vertex is a common prefix of a pair from the finite set $A$. Its frontier is the unique least refinement that separates all members of $A$. Necessity follows because a stopping cylinder containing two sample points must be split; sufficiency follows because every resulting leaf contains at most one. Thus the minimum number of leaves is $1+(m-1)|I_A|$. This is the familiar uncompressed trie principle, not a new optimal decision-tree theorem; arbitrary query choices and probabilistic stopping rules are different problems.
+
+\printbibliography
+\end{document}

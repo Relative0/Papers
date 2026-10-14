@@ -1,0 +1,636 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=25mm,headheight=14pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs,tabularx,longtable,array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\definecolor{navy}{HTML}{163A5F}
+\definecolor{teal}{HTML}{146C75}
+\hypersetup{colorlinks=true,linkcolor=navy,citecolor=teal,urlcolor=teal,
+ pdftitle={PALO and the Correspondence-Matrix Research Portfolio},
+ pdfauthor={Research synthesis prepared for Brian Theory}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small PALO and the CM research portfolio}
+\fancyhead[R]{\small 13 October 2026}
+\fancyfoot[C]{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlength{\emergencystretch}{2em}
+\setlist{itemsep=3pt,topsep=4pt,parsep=0pt}
+\renewcommand{\arraystretch}{1.16}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newtheorem{proposition}{Proposition}[section]
+\theoremstyle{remark}
+\newtheorem{example}[proposition]{Example}
+\newcommand{\B}{\{0,1\}}
+\newcommand{\F}{\mathbb F}
+\newcommand{\R}{\mathbb R}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prob}{\mathbb P}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\crisp}{\operatorname{crisp}}
+\newcommand{\llbracket}{[\![}
+\newcommand{\rrbracket}{]\!]}
+\newcommand{\cm}{\mathrm{CM}}
+\newcommand{\lm}{\mathrm{LM}}
+\newcommand{\sourceclaim}{\textbf{Source result.}\ }
+\newcommand{\derived}{\textbf{Derived connection.}\ }
+\newcommand{\proposal}{\textbf{Proposed extension.}\ }
+\newcommand{\boundary}{\textbf{Boundary.}\ }
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\vspace*{13mm}
+{\color{teal}\large RESEARCH SYNTHESIS\par}
+\vspace{8mm}
+{\color{navy}\Huge\bfseries PALO and the\par Correspondence-Matrix\par Research Portfolio\par}
+\vspace{9mm}
+{\Large Connections, reciprocal benefits,\par semantic boundaries, and testable extensions\par}
+\vspace{14mm}
+{\large Prepared for Brian Theory\par}
+{\large 13 October 2026\par}
+\vspace{12mm}
+\begin{abstract}
+Probabilistic Approximate Logic (PALO) combines symbolic domain theories with continuous, learnable models. The correspondence-matrix portfolio develops exact Boolean representations, a bounded compiler, certified extraction of Boolean operators from continuous scores, regularity restrictions on sign realizations, and separate finite-ring support and process theories. These projects share several interfaces, but they do not share one semantics.
+
+The closest practical connection is guarded extraction and validation of discrete behavior from a PALO-style learned model. The closest algebraic connection is that real-valued contraction of a binary correspondence matrix reproduces PALO's primitive soft connective formulas under a product-distribution interpretation. This report derives that connection, makes its dependence assumptions explicit, and shows why exact Boolean rewrites need not preserve a soft learning objective. Finite-jet rigidity supplies a conditional expressivity boundary for uniform sign specifications. The chain-ring papers provide more distant lessons about support, composition, and global consistency.
+
+The report develops benefits in both directions and a staged research agenda. It separates statements in the supplied manuscripts, elementary consequences established here, and proposed work. It reports no new learning benchmark, integrated implementation, historical-priority determination, or independent certification of the source manuscripts.
+\end{abstract}
+\vfill
+{\small Scope: seven primary documents, comprising PALO and six portfolio manuscripts. Prepared from the supplied local versions; this is a comparative research report, not a revision of those manuscripts.}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section{Executive assessment}
+The projects overlap most strongly at the boundary between continuous numerical behavior and exact logical meaning. PALO asks how uncertain domain knowledge can guide the construction of useful learned models. The CM/LM calculus asks how exact Boolean functions, symbolic formulas, and numerical operator representations can be related coherently. Guarded dispatch asks when a continuous model determines a particular Boolean operator, and what information certifies that determination. These are complementary questions.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}P{31mm}YY@{}}
+\toprule
+Portfolio component & Relationship to PALO & Most credible reciprocal benefit\\
+\midrule
+CM/LM calculus & Direct algebraic and representational interface & Explicit operator semantics for PALO; a learning-oriented application for CM/LM.\\
+CM compiler & Symbolic processing before numerical execution & Typed transformation contracts and exact Boolean fragments; realistic workloads and cost measurements.\\
+Guarded dispatch & Closest practical connection & Certified discrete interpretation of learned scores; application-driven guard and feature selection.\\
+Finite-jet rigidity & Conditional expressivity boundary & Tests of whether a uniform sign specification is compatible with a chosen smooth model class.\\
+Chain-ring contextuality & Distant structural connection & Distinguishing local support constraints from global realizability.\\
+Process-semantics companion & Methodological connection & Explicit contracts for composition, conditioning, and forgetting information.\\
+\bottomrule
+\end{tabularx}
+\caption{Strength and direction of the relationships. These are assessments, not demonstrated application results.}
+\end{table}
+
+Three conclusions organize the report.
+\begin{enumerate}
+\item \textbf{There is an exact, small algebraic bridge.} For a binary CM $C$, the real contraction $[p,1-p]C[q,1-q]^T$ gives the same primitive formulas used by PALO for conjunction, disjunction, implication, and equivalence. The truth table alone does not determine the recursive soft evaluation of every classically equivalent formula.
+\item \textbf{Certification is the most natural added capability.} Guarded dispatch can specify when thresholded observations identify an exact operator on a declared region. Extending this to PALO would require a suitable model family, a concrete abstraction, and sound certificates; the existing note is not a general neural verifier.
+\item \textbf{The benefits depend on preserving semantic distinctions.} A Boolean identity, a probability identity, a soft numerical identity, and a support identity are different claims. The portfolio's strongest contribution to a PALO-style architecture may be making these contracts explicit.
+\end{enumerate}
+
+PALO can reciprocally give the portfolio a motivated application: reasoning with imperfect observations, testing theories on held-out data, learning model parameters, and measuring when exact symbolic structure improves useful predictions. It does not by itself prove that CMs are faster, that guards are cheap, or that a particular regularity obstruction explains training failure.
+
+\section{Scope, sources, and evidence policy}
+\subsection{Versions used}
+The primary reference for PALO is the supplied 57-page author manuscript of Stehr, Kim, and Talcott~\cite{palo}. Its first page is dated December 2020 and carries a 2021 publication notice. The author's SRI publication list identifies the journal article as volume 124, article 100719, in 2022~\cite{sri}. Section and page references to PALO below refer to the supplied PDF, not to journal pagination. This report makes no assertion about the current state of the LIME software.
+
+The portfolio sources are the four PDFs initially supplied and the current manuscripts selected by the navigation in the two additional folders. The updated dispatch manuscript contains a degree--cardinality theorem stronger than the shorter description in the folder's older claims summary. Source assertions below follow the manuscript itself.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabularx}{\textwidth}{@{}P{16mm}YP{32mm}@{}}
+\toprule
+Key & Source and role & Supplied version\\
+\midrule
+PALO & Probabilistic Approximate Logic and LIME~\cite{palo} & 57-page author PDF\\
+LM & Typed Boolean operator calculus~\cite{lm} & September 2026 revision; 32 pages\\
+COMP & Operator-level Boolean computation~\cite{compiler} & 26 September 2026; 19 pages\\
+GU & Guarded Boolean operators and polynomial guard tradeoff~\cite{guard} & 28 September reviewed package; 14 pages\\
+FJ & Finite-jet sign rigidity and Denjoy--Carleman realization~\cite{jet} & 27 September 2026; 14 pages\\
+CTX & Contextuality and exact information resources over chain rings~\cite{context} & 26 September 2026; 12 pages\\
+PROC & Process-semantics technical companion~\cite{process} & 20 September 2026; 9 pages\\
+\bottomrule
+\end{tabularx}
+\caption{Primary document inventory. Full local paths and SHA-256 fingerprints accompany this report in \texttt{source\_inventory.json}.}
+\end{table}
+
+\subsection{What the labels mean}
+\textbf{Source result} identifies a claim stated in a cited manuscript. It does not imply that the present report independently re-proved all of that manuscript. \textbf{Derived connection} identifies an elementary calculation or argument supplied here. It carries no novelty claim. \textbf{Proposed extension} identifies research that has not been implemented or evaluated in this task.
+
+The word ``gap'' is used relative to a proposed combined system. A capability outside a paper's stated scope is not necessarily a defect in that paper. For example, PALO's sampled mean semantics is not intended to be a general certificate of a uniform sign over an infinite region; the guard note does not claim a learning algorithm. The report uses these differences to identify complementary work.
+
+\section{PALO's architecture and the relevant semantic distinctions}
+\subsection{What PALO is trying to achieve}
+PALO's starting point is that domain knowledge can partly substitute for data or improve learning from available data. Constants, functions, and predicates receive interpretations in parameterized continuous model classes. Predicates produce values in $[0,1]$; their interpretations can involve neural networks, prescribed functions, or semantic attachments. A theory supplies constraints and an objective for model construction~\cite[Sections 1, 3.1--3.4]{palo}.
+
+The formal framework describes a Bayesian model-space perspective, including learnable theory weights as well as model parameters. The reported prototype approximates posterior-mode behavior using repeated optimization and model synthesis. The manuscript explicitly says that the full posterior-distribution semantics had not been implemented in that prototype~\cite[p.~28, note 29]{palo}. Consequently, an ensemble of reported model-synthesis runs should not automatically be called exact posterior sampling.
+
+\subsection{Four interpretations that should remain distinct}
+PALO's semantics table distinguishes approximate probability evaluation, lower/upper probability evaluation, abstract classical reasoning, and a concrete classical interpretation based on crispification~\cite[Sections 3.5--3.8, pp.~23--27]{palo}. For the primitive binary connectives, with inputs $p,q\in[0,1]$, its approximate formulas include
+\begin{align}
+ \neg p &= 1-p, & p\wedge q &= pq,\label{eq:palo-basic}\\
+ p\vee q &= p+q-pq, & p\Rightarrow q &= 1-p+pq,\notag\\
+ p\Leftrightarrow q &= 1-p-q+2pq.\notag
+\end{align}
+The equivalence formula is specified directly; replacing it with any classically equivalent syntax need not preserve this soft value.
+
+For a finite nonempty batch of values $v_1,\ldots,v_N$, the displayed base quantifier semantics uses the maximum for existence, the geometric mean for universal quantification, and the arithmetic mean for the many/mean quantifier. Further sampling over batches forms the mean interpretation. These choices are essential to PALO, rather than incidental implementation details~\cite[Sections 3.2--3.3]{palo}.
+
+In particular, a high soft universal value is not a proof that all instances exceed a threshold. If one of 100 values is $0.1$ and the others are $1$, their geometric mean is $0.1^{1/100}\approx0.977$. The poorly satisfied instance remains. A Boolean certificate therefore cannot be inferred from a high aggregate score alone.
+
+\subsection{Symbolic computation is already part of PALO}
+LIME first uses Maude for symbolic processing and then compiles the result into numerical computations. Its reported symbolic operations include formula simplification and equational reduction; the multisets-and-sums example illustrates symbolic definitions feeding numerical evaluation~\cite[Section 4, pp.~27--30 and 41--43]{palo}. A CM contribution would need to augment or specialize this existing layer.
+
+The paper also explicitly discusses the fact that adding classically implied axioms can change approximate inference. Classically equivalent theories need not have the same soft objective, and additional derived knowledge can help until its cost or redundancy becomes counterproductive~\cite[Section 3.6 and p.~43]{palo}. This observation is central to evaluating compiler extensions and learned axiom weights.
+
+\section{CMs as a precise bridge to primitive soft connectives}
+\subsection{The native Boolean contract}
+\sourceclaim In the CM calculus a binary connective $\Theta$ is represented, in true-first order, by
+\[
+C_\Theta=\begin{pmatrix}
+\Theta(1,1)&\Theta(1,0)\\
+\Theta(0,1)&\Theta(0,0)
+\end{pmatrix}.
+\]
+One-hot Boolean state vectors select the corresponding coefficient. Formula-valued LMs add a polarity lift, logical pairing, valuation, and frame transformations. The coherence laws concern these typed Boolean constructions~\cite[Sections 2--6]{lm}. Their native scalar addition is XOR where the Boolean-ring interpretation is used.
+
+\subsection{A different evaluation over the real numbers}
+\derived Keep the same four coefficients but interpret contraction over $\R$. Define
+\begin{equation}
+ B_C(p,q)=[p,1-p]C[q,1-q]^T.
+ \label{eq:bilinear}
+\end{equation}
+This is a change in evaluation semantics, not an assertion that Boolean-ring arithmetic and real arithmetic coincide.
+
+\begin{proposition}[Product-distribution evaluation]
+If $X,Y$ are independent Bernoulli variables with probabilities $p,q$ of being one, and $C$ is the truth table of $\Theta$, then
+\[
+B_C(p,q)=\Prob(\Theta(X,Y)=1).
+\]
+It is the unique function affine separately in $p$ and $q$ with corner values specified by $C$.
+\end{proposition}
+\begin{proof}
+The four assignment probabilities are $pq$, $p(1-q)$, $(1-p)q$, and $(1-p)(1-q)$. Weighting them by the corresponding truth coefficients gives~\eqref{eq:bilinear}. A separately affine function is determined by its values at the four corners, as successive one-dimensional affine interpolation shows.
+\end{proof}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+Connective & Truth vector $(11,10,01,00)$ & $B_C(p,q)$\\
+\midrule
+AND & $(1,0,0,0)$ & $pq$\\
+OR & $(1,1,1,0)$ & $p+q-pq$\\
+Implication & $(1,0,1,1)$ & $1-p+pq$\\
+Equivalence & $(1,0,0,1)$ & $1-p-q+2pq$\\
+XOR & $(0,1,1,0)$ & $p+q-2pq$\\
+\bottomrule
+\end{tabular}
+\caption{The first four rows reproduce PALO's primitive binary definitions. The XOR row is the same construction for an additional Boolean connective, not a claim that XOR is primitive in the supplied PALO syntax.}
+\end{table}
+
+Thus the CM family gives a uniform way to express these primitive operations. The construction is ordinary multilinear interpolation and an expectation of a Boolean function; neither fact is new. The useful connection is its fit with the portfolio's existing operator and frame representation.
+
+For higher arity, a truth tensor $C_f$ gives
+\begin{equation}
+ B_f(p_1,\ldots,p_n)=\sum_{\alpha\in\B^n} f(\alpha)
+ \prod_{i=1}^n p_i^{\alpha_i}(1-p_i)^{1-\alpha_i}.
+ \label{eq:multilinear}
+\end{equation}
+This preserves the Boolean corner values exactly. A dense tensor still has $2^n$ entries, and this expression provides no general compression or speedup.
+
+\subsection{Which parts of the CM architecture survive}
+Reindexing is compatible with real expectation: swapping input roles transposes $C$, and complementing the first input corresponds to a row swap together with $p\mapsto1-p$. More generally, a permutation of assignment coordinates preserves the pairing if the distribution coordinates are permuted consistently. Frame metadata therefore remains useful.
+
+Other identities do not survive unchanged. The Boolean frame matrix
+\[
+S_X=\begin{pmatrix}X&\neg X\\\neg X&X\end{pmatrix}
+\]
+is involutory in the Boolean calculus. Substituting a probability $p$ and using real arithmetic gives determinant $2p-1$, so the resulting matrix is singular at $p=1/2$ and is not generally involutory. The LM normal-form theorem is consequently not a ready-made theorem about soft probability frames.
+
+The portfolio's numeric CMs, formula-valued LMs, and PALO neural-tensor parameter arrays also have different meanings. Similar shapes or notation do not identify them. An integration should declare the role of each tensor before combining it with another.
+
+\subsection{Benefits in both directions}
+\proposal For PALO, the CM representation could provide a uniform, inspectable library of small connective kernels with explicit input order and polarity. It could support exact corner tests, signed-frame normalization, and comparisons between alternative soft interpretations of the same Boolean connective.
+
+For CM/LM, PALO supplies a concrete reason to study evaluations beyond Boolean valuations: probabilities, uncertainty bounds, learned predicate values, and data-dependent objective functions. Such an extension should retain the existing Boolean calculus as a distinct layer and establish new compatibility laws only where they hold.
+
+\section{Dependence, composition, and the failure of unrestricted soft rewrites}
+\subsection{The missing information in marginal probabilities}
+PALO already identifies the central difficulty: the probability of a conjunction is not determined by the two marginal probabilities without dependence information~\cite[pp.~5--6, 17, 23--25]{palo}. CMs make this issue explicit without solving the problem of learning that information.
+
+Let $p=\Prob(X=1)$, $q=\Prob(Y=1)$, and $r=\Prob(X=1,Y=1)$. The joint probability table is
+\begin{equation}
+ J=\begin{pmatrix}r&p-r\\q-r&1-p-q+r\end{pmatrix},
+ \qquad \max(0,p+q-1)\le r\le\min(p,q).
+ \label{eq:joint}
+\end{equation}
+For $C=\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)$, exact probability evaluation is
+\begin{align}
+ E_C(J)&=\sum_{i,j} C_{ij}J_{ij}\notag\\
+ &=d+(b-d)p+(c-d)q+(a-b-c+d)r.\label{eq:joint-eval}
+\end{align}
+Product evaluation sets $r=pq$. Hence
+\begin{equation}
+ E_C(J)-B_C(p,q)=(a-b-c+d)(r-pq).
+ \label{eq:covariance}
+\end{equation}
+This is an elementary exact dependence correction. The factor $r-pq$ is $\Cov(X,Y)$, and the connective determines its coefficient. For AND that coefficient is $1$; for OR it is $-1$; for equivalence it is $2$; for either projection it is $0$.
+
+The interval in~\eqref{eq:joint} also gives tight bounds for a single binary connective with fixed exact marginals: evaluate the affine expression~\eqref{eq:joint-eval} at the two endpoints and take its minimum and maximum. This does not establish tight global bounds for a network of shared subformulas. Locally feasible pairwise tables may fail to fit into one global joint distribution.
+
+\subsection{A Boolean-equivalent expression may be a different soft function}
+\begin{example}[Repeated and complementary operands]
+For a proposition with soft value $p$, PALO's recursive rules give
+\[
+ \llbracket P\wedge P\rrbracket_a=p^2,
+ \qquad
+ \llbracket P\wedge\neg P\rrbracket_a=p(1-p).
+\]
+The corresponding Boolean functions are $P$ and false. Exact event probabilities would therefore be $p$ and $0$. At $p=1/2$, the recursive soft values are both $1/4$.
+\end{example}
+
+PALO explicitly uses examples of this kind to explain approximation. A CM encoding the \emph{whole Boolean function} forgets the syntactic repetition, whereas the recursive soft evaluator can retain its numerical effect. Thus two expressions with identical CMs can define different PALO objectives.
+
+Even equivalence shows this boundary: at $p=q=1/2$, PALO's primitive $P\Leftrightarrow Q$ has value $1/2$, while $(P\Rightarrow Q)\wedge(Q\Rightarrow P)$ has recursive value $(3/4)^2=9/16$. They agree on Boolean corners, not on the entire square.
+
+\subsection{Why operator fusion is delicate}
+The Boolean CM law applies an outer connective pointwise to aligned truth tables. For Boolean functions $f,g$ of the same assignment $Z$, exact expectation gives
+\[
+ \E[f(Z)g(Z)]
+ =\E[f(Z)]\E[g(Z)]+\Cov(f(Z),g(Z)).
+\]
+Applying a product soft AND to the separately evaluated outputs drops the covariance. With $g=f$, $f(Z)^2=f(Z)$, so the fused Boolean table has expectation $\E[f(Z)]$, while the unfused product is its square. This is the precise reason the Boolean superposition/coherence theorem is not automatically a soft-evaluation theorem.
+
+A sufficient condition for product composition is independence of the output events. A useful special case is that the operands depend on disjoint sets of independent underlying Boolean variables. Disjoint syntax alone is insufficient if the variables are dependent; conversely, some special functions can have independent outputs even with overlapping dependencies. An implementation should use the condition it can establish, rather than treating a heuristic as a proof.
+
+\subsection{A proposed dependence-aware extension}
+\proposal A small Boolean block could carry a truth tensor together with an explicitly declared joint distribution or a feasible set of distributions. Evaluation would use expectation or optimization over that set. This would add exact local dependence handling and could tighten uncertainty information relative to a purely product-based evaluation.
+
+The costs are substantive: joint states grow with arity, estimated correlations can be unreliable, and overlapping blocks need consistency constraints. Changing from PALO's recursive approximation to block expectation changes the semantics and training objective. It should be exposed as a new mode with separate evaluation, rather than installed as a supposedly invisible optimization.
+
+PALO benefits from a precise account of what dependence information a block consumes. The portfolio benefits from a meaningful probabilistic interpretation of operator coefficients and a way to identify which connective is sensitive to missing dependence. Neither direction supplies a general efficient probabilistic inference algorithm.
+
+\section{The CM compiler as a possible PALO component}
+\subsection{Where it could fit}
+\sourceclaim The compiler manuscript normalizes signed/swapped binary frames, folds compatible operators, distinguishes structural from tabulated and hybrid derivations, and falls back to ordinary processing when its selected strategy does not succeed~\cite[Sections 3--5]{compiler}. Its legality and provenance rules are potentially useful in a PALO compiler interface.
+
+There are three materially different insertion points:
+\begin{enumerate}
+\item \textbf{Exact classical preparation.} Normalize or simplify a Boolean fragment before selecting its soft realization. Classical meaning is preserved, while a changed soft objective must be recorded and evaluated as such.
+\item \textbf{Soft execution.} Rewrite an already chosen numerical graph only under identities valid in that soft semantics, including any dependence assumptions. A Boolean truth-table check alone is insufficient.
+\item \textbf{Concrete classical validation.} Once predicate interpretations have been crispified under a declared policy, use Boolean transformations to evaluate admitted propositional fragments exactly. Quantifier, sort, and grounding behavior remains separately specified.
+\end{enumerate}
+
+The third point is the cleanest initial use because its Boolean contract is explicit. The first is scientifically interesting because reformulations may improve learning, but it requires accuracy and optimization experiments. The second demands the strongest semantic discipline.
+
+\subsection{A proposed transformation contract}
+A transformed expression should retain its operand frame, free-variable bindings, connective interpretation, arithmetic domain, provenance, and zero/threshold policy where relevant. Any claimed benefit should state what is preserved: Boolean corner values, a full soft function, a joint-distribution expectation, or only a set of downstream certified labels.
+
+Common-subexpression reuse can preserve numerical semantics if it merely shares the evaluation of the same deterministic subexpression. It must not silently replace a repeated occurrence's role in the enclosing soft formula. For example, computing $p$ once and multiplying that value by itself preserves $p^2$; simplifying the two occurrences to one factor does not.
+
+\subsection{Performance evidence and suitable baselines}
+\sourceclaim The supplied compiler manuscript reports a generic-optimizer tie for some local reductions and negative results for frozen comparisons. In its synthetic pair-token study the median direct-packed/CM production-time ratio is $0.248$, so the direct producer is faster under that contract. The descriptive natural-circuit timing result is also negative for the CM producer~\cite[Section 8]{compiler}.
+
+These results do not rule out a useful role in another workload, but they rule out treating the representation itself as evidence of acceleration. A PALO integration should compare against ordinary truth tables, generic small-function rewriting, and the existing symbolic/numerical baseline. It should charge recognition, guards, data transfer, compilation, graph construction, training, and repeated evaluation separately. Fewer logical operations or sign probes need not mean lower wall time.
+
+\proposal PALO would supply application-driven tests of whether typed local folding reduces repeated work. In return, the compiler's explicit fallback and provenance boundaries could make PALO transformations easier to audit. A convincing outcome might be improved reliability or traceability even if the CM notation provides no speed advantage.
+
+\section{Guarded dispatch: the closest practical extension}
+\subsection{From a learned score to an exact operator}
+Fix a finite family of grounded propositions or representative inputs indexed by $\alpha\in\B^n$. Let $s_\alpha(\lambda)\in[0,1]$ be their learned scores, continuous in a declared parameter vector $\lambda$, and let $\tau$ be a fixed threshold. Define
+\[
+ g_\alpha(\lambda)=s_\alpha(\lambda)-\tau,
+ \qquad
+ \Delta=\bigcup_\alpha g_\alpha^{-1}(0).
+\]
+Away from $\Delta$, strict signs determine an operator $\Theta_\lambda$. This instantiates the score-family framework in the guard note~\cite[Section 2]{guard}. The parameter vector could describe model weights, selected input features, magnitudes, or a restricted combination of them; that choice changes the question and the certification problem.
+
+\derived If a nonempty guard $G$ has a uniform strictly positive or strictly negative certificate for every score, it identifies one Boolean operator throughout $G$. If certified guards cover a declared domain, they yield exact dispatch there. This is the note's existing certificate contract applied to an explicit learned-score interpretation, not a new theorem about neural networks.
+
+\subsection{Thresholding a formula differs from evaluating thresholded atoms}
+For $\tau=1/2$, let $s(P)=s(Q)=0.6$. Thresholding the soft conjunction gives $\crisp(0.36)=0$. Evaluating the Boolean conjunction of the crisp atoms gives $1\wedge1=1$. The two procedures do not commute.
+
+PALO's concrete classical semantics inserts crispification into its semantic interpretation; it should not be summarized as merely thresholding the final answer of an arbitrary soft computation~\cite[Section 3.7]{palo}. A dispatcher must therefore identify its intended target: the thresholded original soft score, the concrete classical interpretation, or another explicitly defined operator.
+
+At equality, PALO's displayed crispification uses the convention $\crisp_\tau(v)=1$ for $v\ge\tau$. The guard note's strict threshold is undefined at zero. A combined interface can retain a boundary flag and apply the PALO tie convention for ordinary evaluation, but a tie must not be described as evidence of a strict sign margin.
+
+\subsection{Representative inputs are not automatically full predicate cells}
+The note's collecting semantics is especially relevant to interpretability. Let $D$ be a concrete input domain and $P:D\to\B^n$ a predicate abstraction. For a score $g$, define
+\[
+ S_\alpha=\{\sgn_0 g(x):x\in D,\ P(x)=\alpha\}.
+\]
+The empty set is an unreachable cell; $\{-1\}$ and $\{+1\}$ are exact strict outputs; a set containing zero records a tie; a set containing both signs records actual variation. An incomplete solver's uncertainty is a separate epistemic status~\cite[Section 4.3]{guard}.
+
+Consequently, evaluating one representative from each apparent Boolean input cell does not establish an operator valid on the full domain. If only some cells are reachable, a reachability mask or partial operator is appropriate. A total CM/LM output requires an explicit completion policy or a proof of the full-cube conditions.
+
+\subsection{Margins provide a modest robustness certificate}
+\begin{proposition}[Local stability from score margins]
+Suppose the finite score family satisfies $|g_\alpha(\lambda_0)|\ge\gamma>0$. Suppose each score is $L$-Lipschitz on a neighborhood in a fixed norm. If $L>0$, then every point in that neighborhood with $\|\lambda-\lambda_0\|<\gamma/L$ has the same strict-sign operator as $\lambda_0$.
+\end{proposition}
+\begin{proof}
+The score change is strictly less than $\gamma$, so no score can reach or cross zero. Apply this to every coordinate. If $L=0$, the scores are constant on the region to which the bound applies.
+\end{proof}
+This elementary bound requires a valid uniform Lipschitz bound, not merely a gradient measured at one point. A certificate of stability in parameter space is also different from one in input space. More precise guards may be much larger than the conservative ball certified by this argument.
+
+\subsection{What the current nonlinear example actually establishes}
+For $F(x,y)=x+y+xy$ and signed positive magnitudes $a,b$, the note classifies exactly four zero-free operators: AND, the two projections, and XNOR. In the original magnitude coordinates, the minimum number $m_d$ of binary polynomial-sign tests of degree at most $d$ is
+\[
+ m_1=\infty,\qquad m_2=m_3=3,\qquad m_d=2\quad(d\ge4).
+\]
+Both tests in any two-test solution need degree at least four. Three truth-table coordinate probes remain necessary in the worst case, including adaptive identification. Reciprocal coordinates linearize the boundaries~\cite[Sections 2--3 and 5]{guard}.
+
+This result is useful for PALO-oriented thinking because feature choice and allowed observations affect the complexity of extracting logical behavior. It is not a lower bound on learning a PALO model or on evaluating a general neural network. Feature construction, arithmetic, and certification can outweigh any reduction in test count.
+
+\subsection{Benefits in both directions}
+\proposal PALO could gain an optional certified Boolean interface for selected finite abstractions, with explicit coverage, abstention, ties, and provenance. Such an interface could distinguish models that have similar mean scores but different discrete rules, and could detect transitions in those rules as parameters vary.
+
+The guard program could gain realistic model families and data-driven priorities. A learned proposal mechanism might suggest candidate guards or useful features; an exact or sound backend would then check them. This separation permits learning to guide the search without treating its confidence as a certificate. The existing manuscripts do not implement this general loop.
+
+\subsection{From model uncertainty to operator uncertainty}
+\derived Suppose a probability measure $\pi$ over the model parameters is available, and the finite abstraction and threshold are fixed. The operator fibers give an induced discrete distribution
+\[
+ w_\Theta=\pi(\Omega_\Theta),\qquad
+ w_{\mathrm{boundary}}=\pi(\Delta).
+\]
+Because the zero-free fibers and the boundary partition the parameter domain, these masses sum to one. Boundary mass cannot simply be discarded without an explicit conditioning or tie policy. This is the ordinary pushforward of a probability measure through a discrete interpretation map; it does not require a new probability calculus.
+
+\proposal This gives PALO a way to summarize diverse numerical models by their discrete logical behavior. It gives guarded dispatch a probabilistic question beyond identifying one parameter point: how much model uncertainty supports each operator? If exact guards certify only part of parameter space, one can report certified masses and unresolved mass separately, provided the mass computation itself is justified.
+
+Two qualifications matter. First, repeated optimization runs from the reported LIME prototype yield empirical frequencies under that procedure; without a sampling justification they are not posterior probabilities. Second, the average matrix $\sum_\Theta w_\Theta C_\Theta$ has real entries describing marginal behavior across models. It is generally not one Boolean CM, and it loses dependencies between truth-table entries. Retaining the operator distribution can therefore be more informative than retaining only its mean. Estimating or bounding these region masses remains additional work beyond the existing guard certificates.
+
+\section{Finite-jet rigidity: a conditional boundary on exact realization}
+\subsection{What the theorem requires}
+\sourceclaim The finite-jet manuscript studies functions nonzero throughout the open orthants of a neighborhood of the common corner. If such a smooth function has any nonzero derivative at the corner, its sign law is affine parity. Thus a smooth realization of a non-affine Boolean orthant law must be flat at the corner. An explicit finite-order version only needs the corresponding finite differentiability and a first nonzero Taylor term~\cite[Theorems 4.1 and 4.3]{jet}.
+
+For suitable normalized Denjoy--Carleman classes, quasianalyticity rules out nonzero flat germs and restricts the realizable laws to signed parity. On the non-quasianalytic side, selector constructions realize all chamber labelings. For an arrangement of $m$ distinct hyperplanes with $r$ chambers, the manuscript gives counts $2^{m+1}$ and $2^r$ in the respective regimes~\cite[Sections 5--6]{jet}. These source theorems are not re-certified here.
+
+\subsection{The precise connection to smooth learned predicates}
+Suppose a proposed learned score $F$ must return a strict Boolean label depending only on signs of its real input coordinates, uniformly across magnitudes arbitrarily near their common zero. The finite-jet theorem then constrains the score's regularity. A nonflat smooth score cannot realize whole-orthant AND under these assumptions; parity-type laws such as XNOR remain possible.
+
+PALO's illustrated predicate families include finite compositions of affine or polynomial operations with sigmoid and hyperbolic tangent. For finite real parameters, such compositions are real analytic; subtracting a fixed threshold retains analyticity. Therefore, if an individual score from such a family were required to satisfy the whole-orthant specification just described, the analytic special case of the rigidity result would apply. This is a conditional deduction about the chosen score and domain, not a theorem about all PALO expressions: existential maxima, other attachments, and nonsmooth components can change the regularity assumptions.
+
+\subsection{Why this is not a prohibition on learning AND}
+Three specifications must be distinguished:
+\begin{enumerate}
+\item matching a Boolean truth table at a finite collection of representative points;
+\item achieving approximate predictive or soft-logical performance on a distribution;
+\item having the exact prescribed sign everywhere in every local orthant around a common corner.
+\end{enumerate}
+The third is much stronger. The finite-jet theorem addresses it, whereas PALO's main learning objectives usually concern the second, and a representative truth-table extraction may establish only the first.
+
+The dispatch score $x+y+xy$ demonstrates the distinction. At $a=b=1/2$, its four signed-representative values are $5/4,-1/4,-1/4,-3/4$, which encode AND. At $a=2,b=1/2$, they encode projection onto the first input. The polynomial therefore does not implement one AND law across all magnitudes or throughout the four orthants, so it does not contradict rigidity.
+
+\subsection{How each project could extend the other}
+\proposal The theorem could serve as a specification audit before attempting a certified learning task. If an exact uniform rule is incompatible with the selected analytic score class, one could change the domain, weaken the requirement to a margin-separated subset, use guarded regions, or consider a suitable nonsmooth or flat construction. Each choice changes the assumptions and must be documented.
+
+PALO could provide experiments comparing these alternatives and measuring their learning behavior. Flat smooth realizations have vanishing derivatives at the corner, suggesting a possible optimization challenge near that point. The manuscript proves flatness, not a general vanishing-gradient training theorem, sample-complexity bound, or failure of every learning algorithm.
+
+The most informative study would compare exact realizability and empirical learnability separately. A model can fit finite data well while violating a whole-orthant requirement; another can have an exact realization but be difficult to train. Connecting those two facts requires new analysis or controlled experiments.
+
+\section{Chain-ring contextuality and process semantics}
+\subsection{A weaker connection that should remain separate}
+The chain-ring contextuality manuscript classifies support behavior of bipartite matrices using Smith data under a specified measurement contract. With $r$ nonzero Smith factors and leading multiplicity $h$, its classes are local for $r=1$, logically but not strongly contextual for $r\ge2,h=1$, and strongly contextual for $h\ge2$~\cite[Abstract and Section 3]{context}.
+
+These are possible/impossible outcome statements. PALO's soft truth values, learned weights, and approximate probabilities are different objects. The contextuality paper supplies no Born rule or probability model, and neither the CM/LM pairing nor the ring amplitudes should be treated as neural confidence scores.
+
+\subsection{Local information and global consistency}
+\derived A possible comparison concerns local constraints that cannot be assembled into one global assignment. In a strongly contextual support scenario, no deterministic global assignment is compatible with all contextual supports. An ordinary probability distribution over such compatible assignments therefore cannot exist: there are no assignments to support it. In merely logical contextuality, some supported local events cannot be so extended, a weaker obstruction.
+
+This should be distinguished from ordinary statistical dependence. Correlated variables may have a perfectly valid global joint distribution. Contextuality is not just large covariance or a failure of a product approximation.
+
+\proposal PALO could be used experimentally to fit separate context-indexed predicates to such finite support constraints and to compare soft satisfaction with exact global feasibility checks. Strong soft scores would not establish a global assignment. The existing support classification could provide small test cases for that distinction, but a detailed encoding, baseline solver, and success criterion would be needed. This is lower priority than guarded extraction because it is further from PALO's demonstrated applications.
+
+\subsection{Composition contracts and the nilpotent obstruction}
+\sourceclaim The process companion studies $A=\F_2[u]/(u^4)$. Declaring every nonzero scalar possible and composing independent scalar events by multiplication fails because $u^3$ and $u$ are nonzero but $u^3u=0$. Primitive preparations do not repair selective conditioning. A closed binary-modal completion and a coarse realization of the original support tables are developed instead~\cite[Sections 2--4]{process}.
+
+This obstruction is not PALO's product-independence approximation in disguise. The ring example is a failure of a proposed possibility predicate to preserve multiplication; PALO's issue is that probabilities of dependent events are not generally products of marginals. The common lesson is to specify what composition means and what an interpretation preserves.
+
+The companion also separates selective outcomes from forgetting outcomes: erasure uses spans of branches, not coherent XOR, so branches are not canceled by forgetting. A probabilistic system would generally aggregate alternatives using probabilities rather than this modal span construction. Neither aggregation can be imported into the other system merely because both describe ``uncertainty.''
+
+\subsection{Possible reciprocal benefits}
+PALO's discussion of modular theories and neural components~\cite[Section 5, pp.~47--48]{palo} gives the process perspective a possible architectural application: specify interfaces for composition, hidden state, conditioning, and discarded information. The process companion supplies a model of the discipline required to check such interfaces.
+
+Conversely, PALO could suggest a separate learned probabilistic layer over explicitly identified support objects. That would need normalized probabilities, compatibility rules, and an operational interpretation beyond the source manuscripts. It would not turn ring amplitudes into probabilities or establish a physical quantum model.
+
+\section{A combined architecture worth investigating}
+\subsection{An explicit flow of information}
+The proposed architecture below gives each project a limited role. The learning component can exist without CMs; the exact representation becomes useful only where its contract is satisfied.
+
+\begin{center}
+\begin{tabular}{c}
+\fbox{\parbox{0.86\textwidth}{\centering\textbf{Domain theory and data}\\PALO-style typed predicates, semantic attachments, and declared learning objective}}\\[5pt]
+$\downarrow$\\[5pt]
+\fbox{\parbox{0.86\textwidth}{\centering\textbf{Learned continuous model}\\Retain scores, model parameters, theory weights, and the chosen soft semantics}}\\[5pt]
+$\downarrow$\\[5pt]
+\fbox{\parbox{0.86\textwidth}{\centering\textbf{Finite abstraction and certification}\\Fix predicates, threshold policy, reachable cells, parameter region, and sign certificates}}\\[5pt]
+$\downarrow$\\[5pt]
+\fbox{\parbox{0.86\textwidth}{\centering\textbf{Guarded Boolean operator}\\Output an exact table or a partial result with explicit uncertainty and coverage}}\\[5pt]
+$\downarrow$\\[5pt]
+\fbox{\parbox{0.86\textwidth}{\centering\textbf{CM/LM representation and admitted exact processing}\\Normalize frames, compose under Boolean rules, query, and compare models}}\\
+\end{tabular}
+\end{center}
+
+Finite-jet analysis is a specification check before training or certification when its assumptions apply. The ring papers inform separate support/composition experiments; they are not necessary machinery for this pipeline. Feedback from exact checks may suggest theory revisions or training examples, but a revised theory starts a new learning objective and needs fresh validation.
+
+\subsection{What a certified output should contain}
+A useful output is more than four truth bits. It should include the ordered logical inputs, polarity convention, threshold and tie policy, declared domain, reachability information, guard, certificate or proof reference, and a model/version identifier. A partial output should distinguish an actual mixed-sign cell from a region that the analysis could not decide.
+
+A complete operator dictionary can reduce required probes only after the dictionary's coverage and the relevant zero-free promise are established. Sampling examples of four operators does not prove that a fifth cannot occur. Likewise, a high-confidence learned prediction of the operator is a proposal until its stated certificate obligation is discharged.
+
+\subsection{Three meanings of ``extending PALO''}
+\begin{enumerate}
+\item \textbf{Add a validation interface.} Keep the original learning semantics and attach exact analyses for selected abstractions. This is the least disruptive first project.
+\item \textbf{Add an alternative evaluation mode.} Evaluate small Boolean blocks under explicit joint distributions or dependence bounds. This changes the semantic options and needs its own tests.
+\item \textbf{Change learning or compilation.} Use extracted rules, exact blocks, or reformulated axioms to change training. This can be valuable, but improvement is empirical and cannot be inferred from logical equivalence.
+\end{enumerate}
+
+These levels should be evaluated separately. Combining all of them in one initial experiment would obscure whether a result came from the representation, additional information, a changed objective, or a new optimizer.
+
+\section{Reciprocal benefits and unresolved work}
+\small
+\begin{longtable}{@{}P{23mm}P{41mm}P{41mm}P{30mm}@{}}
+\toprule
+Component & Potential benefit to PALO & Potential benefit from PALO & What remains to establish\\
+\midrule
+\endfirsthead
+\toprule Component & Potential benefit to PALO & Potential benefit from PALO & What remains to establish\\\midrule
+\endhead
+CM/LM & Uniform small-connective representation; frame tracking; exact Boolean corner checks. & A concrete probabilistic and learning application for the symbolic/numeric calculus. & A declared real-valued extension; valid compatibility laws; practical value over ordinary tables.\\
+Compiler & Auditable admitted transformations and fallback; possible reuse in crisp validation. & Realistic formula distributions and repeated-evaluation workloads. & Full cost accounting and matched baselines; preservation of the intended semantics.\\
+Dispatch & Region-wise exact operator extraction with ties, reachability, and abstention. & Learned score families, candidate guards, and application-specific test costs. & A sound backend, certified coverage, and tractable scope.\\
+Finite jets & Early detection of incompatible uniform sign specifications. & Studies of realizability versus learnability and of alternative model classes. & Verification of theorem hypotheses for the actual score and input domain.\\
+Contextuality & Small exact tests of local support versus global assignment feasibility. & A framework for fitting context-indexed observations and studying approximate satisfaction. & A useful encoding and experimental question; separation from ordinary dependence.\\
+Process semantics & Explicit requirements for composition, conditioning, and forgetting. & A target architecture in which such contracts might guide module interfaces. & A new probabilistic/process semantics, if desired; no automatic transfer from ring support.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+The most credible immediate gap to fill is between a learned numerical score and a \emph{justified} Boolean interpretation on a specified domain. The portfolio has exact mathematical contracts for parts of that passage; PALO has learning machinery and a rich theory language. Neither supplied source completes the entire passage for general neural models.
+
+The next gap is dependence-aware numerical evaluation. The CM calculations identify what extra information a binary connective needs, but acquiring and consistently composing that information is a separate task. The compiler and finite-jet results then help constrain which transformations and specifications are legitimate.
+
+\section{A staged research agenda with explicit decision gates}
+The work below is a recommendation, not a report of completed experiments or an instruction to launch training. The order prioritizes semantic clarity and a small demonstrator before larger integration.
+
+\subsection{Stage 1: a semantic comparison harness}
+\textbf{Question.} Which operations agree among Boolean CM evaluation, PALO's primitive soft evaluation, and joint-distribution evaluation?
+
+\textbf{Design.} Exhaust all sixteen binary truth tables and a rational grid of marginals; test Boolean corners, signed-frame changes, repeated variables, complements, and shared subformulas. Compare recursive soft evaluation with whole-function multilinear evaluation. Maintain separate expected-agreement and expected-disagreement cases.
+
+\textbf{Decision gate.} All intended equalities and counterexamples must be explained by a declared contract. If a purported optimization alters soft values or gradients, relabel it as a change of semantics before proceeding. The bounded calculations accompanying this report cover the basic identities, not a production PALO integration.
+
+\subsection{Stage 2: a certified finite abstraction demonstrator}
+\textbf{Question.} Can a small learned score family yield useful exact operators on a meaningful part of its domain?
+
+\textbf{Design.} Start with a low-dimensional polynomial family or another model with a feasible sound sign-analysis method. Reproduce the guard note's four-operator example as calibration, then fit a separately specified small target problem. Use either a finite domain with exact evaluations or regional certificates with explicit coverage. Keep a direct truth-table implementation as the baseline.
+
+\textbf{Metrics.} Report certified coverage, actual boundary/tie cases, unresolved regions, certificate generation cost, operator identification cost, and downstream task accuracy. False certificates must be ruled out by the soundness mechanism, rather than estimated only by sampling. Record the reachability and threshold policy.
+
+\textbf{Decision gate.} Continue only if the certified output is useful enough to justify its cost. A result that is slow but reliably distinguishes exact from unsupported interpretations can still have value; it should not be sold as an acceleration.
+
+\subsection{Stage 3: a small dependence-aware block study}
+\textbf{Question.} Does explicit local joint information improve a PALO-style task enough to justify collecting and maintaining it?
+
+\textbf{Design.} Compare product evaluation, a joint-table oracle on synthetic data, estimated joint tables, and feasible-set bounds. Include independent, correlated, repeated, and complementary inputs. Use small blocks and a declared global data-generating distribution so that correctness is measurable.
+
+\textbf{Metrics.} Measure error against the known event probabilities, sensitivity to estimated correlations, inference/training cost, and consistency failures across overlapping blocks. An oracle using true joint information is an upper-reference condition, not a fair deployable competitor to a method given only marginals.
+
+\textbf{Decision gate.} Require benefits on held-out instances under matched information access. Do not claim a representational gain when the improved system simply receives more information.
+
+\subsection{Stage 4: regularity and domain-abstraction experiments}
+\textbf{Question.} When does a desired exact sign rule conflict with the architecture's regularity, and how much does restricting the domain help?
+
+\textbf{Design.} Contrast finite-point fit, margin-separated domain fit, and whole-orthant realization. Compare analytic scores, a suitable nonsmooth construction, and an explicit flat smooth realization where available. Use the finite-jet theorem to identify impossible specifications before interpreting optimization results.
+
+\textbf{Decision gate.} Report expressivity, optimization, and certification separately. Dense sampling can suggest a failure but cannot prove the universal realization property. A theorem about the corner does not establish performance on a distribution concentrated far from it.
+
+\subsection{Stage 5: compiler integration and more distant extensions}
+Only after the semantic and extraction studies establish a useful task should the CM compiler be integrated into a larger PALO-style workflow. Compare generic Boolean optimizers and table representations under the same information and output contracts. Include fallback rates and end-to-end amortization over repeated use.
+
+Contextual support and process-composition studies should follow only if an application requires them. They are intellectually related but would add substantial semantic machinery to an initial prototype. The lowest-cost useful path is a small guarded extraction study, not an attempt to unify all six manuscripts at once.
+
+\section{Claims that this comparison does not support}
+\begin{enumerate}
+\item The shared use of tensors does not establish that PALO neural tensors are CMs or formula-valued LMs.
+\item Agreement of primitive soft formulas does not make recursive PALO evaluation a Boolean-algebra homomorphism.
+\item Classical equivalence does not guarantee the same soft loss, gradient, learned model, or training trajectory.
+\item A learned probability or a high aggregate satisfaction score is not a uniform sign certificate.
+\item Fewer polynomial sign tests do not establish lower execution time, and a coordinate-dependent lower bound is not coordinate-free.
+\item Finite-jet rigidity does not prohibit ordinary neural learning of AND from data.
+\item Statistical dependence is not support contextuality; ring possibility is not probability.
+\item A proposed extension is not evidence that either existing paper is defective, that the extension is historically new, or that an integrated system will outperform alternatives.
+\end{enumerate}
+
+These boundaries are part of the value of the comparison. They identify where a mathematical identity can support an implementation, where a new semantic choice is necessary, and where only an experiment can establish benefit.
+
+\section{Recommended interpretation of the portfolio}
+The most coherent joint research story is a layered one: domain knowledge guides learning; learned scores receive an explicit interpretation; suitable regions or finite abstractions admit certified Boolean behavior; exact Boolean objects can then be represented and processed with the CM/LM calculus. The compiler supplies a bounded implementation route, and finite-jet analysis can reject certain overly strong specifications before costly experimentation.
+
+PALO provides the learning setting, soft semantics, model exploration, and validation questions. The portfolio provides exact representations and unusually explicit boundaries for extraction, transformation, and composition. Their productive intersection is therefore a set of well-specified interfaces. Its scientific value would be demonstrated by a small application that shows when those interfaces improve reliability, interpretability, accuracy, or total cost.
+
+The recommended next research step is Stage 1 followed by a tightly scoped Stage 2 demonstrator. No manuscript revision, implementation campaign, external publication, or training expenditure is required to use the present report. Historical priority, broad neural certification, and performance advantage remain separate questions.
+
+\appendix
+\section{Source-to-claim map}
+\small
+\begin{longtable}{@{}P{29mm}P{48mm}P{60mm}@{}}
+\toprule
+Topic & Primary locator & Use in this report\\
+\midrule
+\endfirsthead
+\toprule Topic & Primary locator & Use in this report\\\midrule
+\endhead
+PALO motivation & \cite{palo}, Sections 1--2, pp.~1--9 & Domain knowledge, uncertainty, and the symbolic/numerical interface.\\
+PALO primitives & \cite{palo}, Section 3.2, pp.~12--17 & Learnable interpretations and explicit soft connective formulas.\\
+PALO dependence & \cite{palo}, Sections 3.5--3.6, pp.~23--25 & Probability bounds and disagreement with classical equivalence.\\
+PALO crispification & \cite{palo}, Sections 3.7--3.8, pp.~26--27 & Concrete classical interpretation and threshold convention.\\
+PALO implementation & \cite{palo}, Section 4, pp.~27--31, 41--43 & Strata, sampling, model analysis, and symbolic preprocessing.\\
+PALO future interfaces & \cite{palo}, Section 5, pp.~47--48 & Modularity and bidirectional knowledge transfer.\\
+CM/LM exactness & \cite{lm}, Sections 2--6, pp.~3--16 & One-hot selection, symbolic lift, valuation, pairing, and superposition.\\
+Frames and bounds & \cite{lm}, Sections 9, 12--14 & Frame coherence and limits of computational and physical interpretation.\\
+Compiler legality & \cite{compiler}, Sections 3--5 & Typed folding, provenance, admission, and fallback.\\
+Compiler evidence & \cite{compiler}, Section 8 & Negative performance boundaries and required comparisons.\\
+Guard geometry & \cite{guard}, Theorem 2.2 and Theorem 3.2 & Four operators and exact degree--cardinality tradeoff.\\
+Guard certification & \cite{guard}, Section 4 and Proposition 5.2 & Nonempty guards, zero handling, partial cells, and representation invariance.\\
+Finite-jet rigidity & \cite{jet}, Theorems 4.1, 4.3, 4.5; Sections 5--6 & Conditional sign-realization obstruction and regularity dichotomy.\\
+Chain-ring support & \cite{context}, Sections 2--3 & Resource and measurement contract; support classification.\\
+Process closure & \cite{process}, Sections 2--4, 8--9 & Independent-success obstruction, binary-modal completion, and outcome disposal.\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+\section{Bounded mathematical verification supplied with the report}
+The accompanying \texttt{verify\_bridges.py} checks the elementary derived connections using exact rational arithmetic. Its 40,668 assertions pass. It exhausts all sixteen binary truth tables on the marginal grid $0,1/8,\ldots,1$; checks Boolean corners and signed-frame identities; compares joint-table evaluation with the covariance formula; checks the endpoint bounds at nine interpolation points between the feasible joint-distribution endpoints; and records the principal semantic counterexamples and the four-operator witnesses.
+
+These calculations corroborate the displayed algebra and concrete examples. They are not tests of LIME, a benchmark of the CM compiler, a proof assistant verification, or a new audit of all six source manuscripts. The universal statements established in this report rely on the short mathematical arguments supplied in the text. Source statements remain attributed to their respective documents.
+
+\section{Terminology for future collaboration}
+\textbf{Exact Boolean representation.} A representation of a Boolean function with a declared variable frame. This says nothing about uncertain observations by itself.
+
+\textbf{Product-distribution evaluation.} Expectation of a truth table under independent Bernoulli inputs. It is exact for that distribution and approximate for another distribution unless the result happens to agree.
+
+\textbf{Recursive soft evaluation.} Numerical interpretation of a particular formula's construction using chosen soft connectives. Classical equivalence can be lost.
+
+\textbf{Certified extraction.} A justified discrete interpretation on a declared domain under stated threshold, reachability, and zero-handling rules.
+
+\textbf{Whole-orthant realization.} A uniform strict sign requirement throughout each open orthant, including arbitrarily close to a common corner where the score is defined with the specified regularity.
+
+\textbf{Support semantics.} A description of possible and impossible outcomes. It does not supply their probabilities.
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{9}
+\bibitem{palo}
+M.-O. Stehr, M. Kim, and C. L. Talcott.
+\emph{A Probabilistic Approximate Logic for Neuro-Symbolic Learning and Reasoning}.
+Journal of Logical and Algebraic Methods in Programming 124, 100719 (2022).
+\href{https://doi.org/10.1016/j.jlamp.2021.100719}{doi:10.1016/j.jlamp.2021.100719}.
+Analysis uses the supplied 57-page author manuscript, dated December 2020 and carrying a 2021 publication notice.
+
+\bibitem{lm}
+B. Theory. \emph{Correspondence and Logical Matrices: A Typed Boolean Operator Calculus}.
+September 2026. Supplied revised manuscript, 32 pages.
+
+\bibitem{compiler}
+B. Theory. \emph{Operator-Level Boolean Computation with Correspondence Matrices}.
+Compiler contract and evidence revision, 26 September 2026. Supplied manuscript, 19 pages.
+
+\bibitem{guard}
+B. Theory. \emph{Guarded Boolean Operators: Exact Dispatch and a Polynomial Guard-Degree Tradeoff}.
+Reviewed package of 28 September 2026. Current manuscript, 14 pages.
+
+\bibitem{jet}
+B. Theory. \emph{Finite-Jet Sign Rigidity on Hyperplane Arrangements and Denjoy--Carleman Realization}.
+27 September 2026. Final submission candidate in the final reviewed package, 14 pages.
+
+\bibitem{context}
+B. Theory. \emph{Contextuality and Exact Information Resources over Finite Chain Rings}.
+26 September 2026. Supplied revised manuscript, 12 pages.
+
+\bibitem{process}
+\emph{Process Closure and Restricted Conversion in a Chain-Ring Modal Model}. Technical companion to the CM/LM publication project.
+20 September 2026. Supplied internal research companion, 9 pages; author metadata and publication status are not assigned in the source.
+
+\bibitem{sri}
+M. Kim. SRI International publication list, journal item J10.
+\url{https://www.csl.sri.com/users/mkim/pub.html}.
+Consulted 13 October 2026 for journal metadata only.
+\end{thebibliography}
+\end{document}

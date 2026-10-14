@@ -1,0 +1,79 @@
+# N2/P3 Reproducibility README
+
+## Experiment
+
+N2/P3 tests a demand-driven, shallow, top-down CM profitability selector fused directly into sparse-ANF lowering. Its purpose is to remove P2's speculative planning work while keeping **direct/no-rewrite sparse ANF** as the first-class baseline.
+
+The preregistration was frozen before P3 benchmark results were run.
+
+- Preregistration SHA-256: `d37fc5b385f8d36f1b4e863dcc6112ba035513bfa4d8a43b78b96e54d383a47b`
+- Frozen P3 harness SHA-256: `8b9a74cc952d53ed69b278091e9d36472a35d78d24806c0861cb7a2e8fc255c6`
+- EPFL benchmark commit: `0060e156826e733d69bf5b3322d1bdd0d03a1f9a`
+- Python used for this run: 3.13.5
+
+The P3 direct timing arm is deliberately stricter than the older P2 report's direct endpoint: P3 times the pure `lower_anf` direct path, without adding structural preparation to the direct arm. Therefore use the **simultaneous P3/P2 arm** in this bundle for direct P3-vs-P2 timing comparisons; do not compare P3/direct numerically against an older P2/direct ratio as though the direct timing endpoints were identical.
+
+## Directory layout
+
+The bundle preserves the import layout used by the run:
+
+- `cm_n1_gatep/n1_gatep_harness.py` — exact N1 generator/lowering foundation.
+- `cm_n2_p1_bundle/n2_p1_harness.py` — frozen P1 profitability logic.
+- `cm_n2_p2_run/n2_p2_harness.py` — frozen P2 inline-plan implementation.
+- `cm_n2_p3_run/n2_p3_harness.py` — frozen P3 implementation.
+- `cm_n2_p3_run/N2_P3_PREREGISTRATION.md` — preregistered protocol.
+- `cm_n2_p3_run/epfl/` — exact six EPFL BLIF inputs.
+- `cm_n2_p3_run/chunks/` — raw deterministic result chunks.
+- `cm_n2_p3_run/n2_p3_results.json` — merged raw result payload.
+- `cm_n2_p3_run/N2_P3_INDEPENDENT_VERIFY.json` — independent integrity/recalculation record.
+
+## Frozen workloads
+
+Natural replay uses the same structural selection frozen for P1/P2: 10 cones from adder, cavlc, int2float, priority, and router. `bar` was scanned but had zero cones satisfying the frozen 9-12-support / <=128-source-node admission rule and is therefore not a timed circuit.
+
+Gate-P is the exact 36-case N1/P1/P2 generator family (depths 6, 8, 10; 12 cases per depth). Before timing, all 36 P3-run direct digests and frozen structural-work fields are checked against the frozen P2 reference.
+
+## Basic reproduction
+
+Run from the bundle root so the sibling import directories are present.
+
+```bash
+python cm_n2_p3_run/n2_p3_harness.py --mode selection --out cm_n2_p3_run/repro_selection.json
+python cm_n2_p3_run/n2_p3_harness.py --mode fuzz --out cm_n2_p3_run/repro_fuzz.json
+python cm_n2_p3_run/n2_p3_harness.py --mode gatep --out cm_n2_p3_run/repro_gatep.json
+python cm_n2_p3_run/n2_p3_harness.py --mode natural-case --case-id 'adder:f[4]' --out cm_n2_p3_run/repro_adder_f4.json
+```
+
+Repeat the natural-case command for the 10 case IDs listed in `natural_selection_frozen.json`.
+
+The original environment imposed a short per-command wall timeout. The long `cavlc:35` timing schedule was therefore split into deterministic schedule-index ranges with `run_p3_nat_chunk.py`. This does **not** change the arm order, random seed, repetition IDs, frozen algorithm, or timing endpoint. Example:
+
+```bash
+python cm_n2_p3_run/run_p3_nat_chunk.py --case-id 'cavlc:35' --symbolic --start 0 --end 0 --out cm_n2_p3_run/repro_cavlc35_symbolic.json
+python cm_n2_p3_run/run_p3_nat_chunk.py --case-id 'cavlc:35' --start 0 --end 15 --out cm_n2_p3_run/repro_cavlc35_t0_15.json
+```
+
+Continue with ranges 15-30, 30-45, 45-60, and 60-75. There are 25 repetitions of each of the three primary arms, randomized into one frozen 75-entry schedule.
+
+## Independent verification
+
+After the bundled merged results are present:
+
+```bash
+python cm_n2_p3_run/independent_verify.py
+```
+
+The verifier does not import the experiment harness to recalculate its primary ratios. It checks preregistration/harness hashes, Git blob identities for all six EPFL files, exact natural case IDs, row counts and schedules, all correctness flags, 1,000-case fuzz status, P3 accepted-fold utilization, direct Gate-P identity against the frozen P2 reference, natural structural identity when P3 abstains, and recalculates the main paired-median geometric-mean ratios.
+
+Expected verification status: `PASS`.
+
+## Result-count contract
+
+- Natural symbolic rows: 50
+- Natural timed rows: 750
+- Gate-P symbolic rows: 180
+- Gate-P timed rows: 2,700
+- Total benchmark rows: 3,680
+- Fresh fuzz cases: 1,000
+
+Every timed case has 25 executions of each primary arm. The `rep` field is the position in the randomized 75-entry per-case schedule, so each arm owns 25 distinct schedule indices rather than the integers 0-24 independently.

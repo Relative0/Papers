@@ -1,0 +1,80 @@
+# Prior-Art Ledger — T1/T2/T3 Repair
+
+**Search date:** 2026-09-28  
+**Rule:** absence from this bounded search is not a firstness certificate.
+
+## Source key
+
+**S1.** B. Barak, K. Chaudhuri, C. Dwork, S. Kale, F. McSherry, K. Talwar, *Privacy, Accuracy, and Consistency Too: A Holistic Solution to Contingency Table Release*, PODS 2007.  
+PDF: https://cseweb.ucsd.edu/~kamalika/pubs/bcdkmt07.pdf  
+**Exact location:** PDF p. 5 (viewer page index 4), Theorem 5 and Eq. (11), followed immediately by the statement that the relevant Fourier coefficients are “necessary and sufficient data” for the marginal.
+
+**S2.** E. Ghorbani, S. Kamali, G. B. Khosrovshahi, D. S. Krotov, *On the volumes and affine types of trades*, arXiv:1810.02296 (2018).  
+https://arxiv.org/abs/1810.02296  
+**Exact location:** Introduction and §2.1; Lemma 3 states that a nonempty \([t]\)-unitrade has size at least \(2^{t+1}\), equivalently a \([t]\)-trade has volume at least \(2^t\). Definition Eq. (2) is the equal-low-order-incidence condition.
+
+**S3.** I. Diakonikolas, D. M. Kane, *Degree-d Chow Parameters Robustly Determine Degree-d PTFs (and Algorithmic Applications)*, arXiv:1811.03491 (2018).  
+https://arxiv.org/abs/1811.03491  
+**Exact location:** abstract/introduction: degree-\(d\) Chow parameters are Fourier coefficients of degree at most \(d\), and their exact uniqueness for degree-\(d\) PTFs is stated as known background; the paper proves robust identifiability.
+
+**S4.** J. Bruck, *Harmonic Analysis of Polynomial Threshold Functions*, SIAM J. Discrete Math. 3(2):168–177 (1990), DOI 10.1137/0403015.  
+https://epubs.siam.org/doi/10.1137/0403015  
+**Exact location:** abstract states a necessary-and-sufficient harmonic condition for an \(S\)-threshold function. This is an early antecedent in the polynomial-threshold / harmonic characterization line. The present audit did not inspect a full proof mapping every normalization used here to Bruck's notation.
+
+**S5.** D. DeSantis, E. Skau, D. P. Truong, B. Alexandrov, *Factorization of Binary Matrices: Rank Relations, Uniqueness and Model Selection of Boolean Decomposition*, ACM TKDD 16(6), Article 112 (2022), DOI 10.1145/3522594; arXiv:2012.10496.  
+https://arxiv.org/abs/2012.10496  
+**Exact role:** distinguishes standard-arithmetic real/nonnegative/binary ranks from logical Boolean and \(\mathbb Z_2\) ranks and studies their relations. It is used here to keep rank notions separate, not as a source for the Q13/Q14 threshold itself.
+
+**S6.** P. Lindner, S. B. John, C. Koch, D. Suciu, *The Moments Method for Approximate Data Cube Queries*, Proc. ACM Manag. Data 2(2) (2024), DOI 10.1145/3651147.  
+Conference page: https://2024.sigmod.org/toc-2-2.html  
+**Exact role:** partial materialization of data-cube aggregates via moment/Fourier-type expansions; approximate rather than the exact factor-profile destructive-update theorem proved in T3.
+
+**S7.** General data-cube partial-materialization / thin-shell literature. A representative reviewed description is H. A. et al., *Partial materialization for online analytical processing over multi-tagged document collections*, Knowledge and Information Systems (2015), DOI 10.1007/s10115-015-0871-2.  
+**Exact role:** establishes that materializing low-dimensional cuboids to trade storage for query time is standard background. This prevents claiming that “store low-order coordinate aggregates” is new in itself.
+
+**S8. Companion CM-LM paper.** *Correspondence and Logical Matrices: A Typed Boolean Operator Calculus* (current project manuscript).  
+**Exact location in current source:** theorem “Rank and conjunctive/XOR separability,” around source lines 1041–1067, proves that fixed-cut GF(2) rank equals the minimum number of conjunctive factors in an XOR decomposition and explicitly distinguishes GF(2) rank from OR-based Boolean rank. The new conditioned-query paper should cite this companion for that ingredient rather than reclaim it.
+
+## Theorem-level ledger
+
+| Item | Current status | Closest source / exact location | Equivalent formulation checked | Contribution type / wording |
+|---|---|---|---|---|
+| Q1/Q2: conditioned counts ↔ low-order Fourier/marginal information | **KNOWN / STANDARD** | S1, Theorem 5 + Eq. (11), PDF p. 5 | contingency-table marginal operator; Fourier support below marginal mask | Background lemma only. |
+| Q3: \(\operatorname{rank}Q_k=\sum_{j\le k}\binom nj\) | **KNOWN IN EQUIVALENT FORM / routine corollary** | S1 supplies exactly the nonredundant relevant Fourier set; dimension count follows | low-order marginal workload dimension | Do not claim novelty. |
+| Q5/Q6: \(k\)-collision / minimum Boolean disagreement \(2^{k+1}\) | **KNOWN EQUIVALENT FORM** | S2, Eq. (2), Lemma 3 | simple \([k]\)-trade / unitrade; each leg minimum volume \(2^k\) | Cite trade theory; our Fourier proof may be expository. |
+| Q11: degree-\(d\) PTF uniqueness from degree-\(d\) data | **KNOWN / STANDARD** | S3 abstract/introduction; S4 earlier harmonic antecedent | generalized Chow parameters | Background only. |
+| Q13: fixed-cut rank-1 class \(\kappa=\max(p,q)\) | **CORRECT BUT MINOR; EXACT PRIORITY UNRESOLVED** | No exact theorem located in bounded search. Constituent recovery is elementary: a nonzero rank-1 nonnegative/real matrix is recovered from row/column sums by \(A_{ij}=r_ic_j/N\); for 0/1 rank-1 matrices, positive row/column supports identify the rectangle. | rank-one binary rectangle recovery; independence-table margins; arbitrary subset of row indices × column indices | State as a concise corollary, not a centerpiece and not a firstness claim. |
+| Q14: for fixed cut and rank bound \(r\ge2\), \(\kappa=n\) | **CORRECT BUT MINOR; EXACT PRIORITY UNRESOLVED** | No exact conditioned-query threshold theorem located in bounded search. Lower bound is complementary block parity. | parity relation matrix is union/sum/XOR of two rectangles | Concise corollary; mechanism is elementary and not field-specific. |
+| Q13/Q14 across rank notions | **NEWLY CHECKED GENERALIZATION OF THE COROLLARY; STILL MINOR** | S5 for rank definitions/relations; proof here is direct | real rank, nonnegative rank, binary-factor rank, GF(2) rank, Boolean-OR rank | For all five notions on 0/1 matrices: rank-1 class is rectangles, and complementary parity has rank ≤2. Exact priority unresolved. |
+| Q15 real-linear sketch dimension | **STANDARD LINEAR ALGEBRA** | rank-nullity once S1/Q3 fixes rank | any decoder after a real-linear sketch on all real inputs | Keep theorem, explicitly deny bit/time inference. |
+| Q16 cumulative adaptive equivalence | **CORRECT WITH REPAIR** | elementary from labeled Q_t definition | all possible protocols/continuations with total distinct-coordinate budget t | State cumulative budget explicitly; one transcript is not Q_t. |
+| Q16 reset-horizon closure | **FALSE** | parity counterexample | fresh horizon after destructive restriction | Include counterexample; never state old closure. |
+| Q17 / T3 coordinate-aware persistence | **PROVED IN THIS PHASE; PRIORITY UNRESOLVED** | S6/S7 are broad neighboring materialization literature; Draft 3 already has profile-pairing/Walsh count lemma | profile-indexed low-degree coordinate moments + character moments; cumulative destructive-update recurrence | Potentially differentiated combination. No firstness claim until specialist priority review. |
+
+## Bounded Q13/Q14 search report
+
+Search terms included combinations of:
+
+- rank-one binary matrix recovery from row/column sums or margins;
+- rectangle indicator recovery from marginals;
+- low-rank Boolean/GF(2) matrices with conditioned marginals;
+- parity relation matrices and rectangle decompositions;
+- real rank, nonnegative rank, binary-factor rank, GF(2) rank, Boolean/OR rank.
+
+The search did locate standard rank-one row/column-margin recovery discussions and broad low-rank/binary-factorization literature, but **did not locate the exact fixed-cut identifiability-depth statement**
+\[
+\kappa(C_1)=\max(p,q),\qquad \kappa(C_r)=p+q\quad(r\ge2)
+\]
+under the project's labeled conditioned-count operator. This is reported only as a bounded-search result. **Exact firstness remains unresolved.**
+
+## Rank-notation boundary
+
+For Q13/Q14 the following five notions are kept distinct even though the same threshold proof happens to work at ranks 1 and 2:
+
+1. ordinary real rank;
+2. nonnegative rank;
+3. binary-factor rank under standard arithmetic;
+4. GF(2) rank;
+5. Boolean-OR rank.
+
+“Ordinary rank of a sign matrix” is **not** communication-complexity **sign-rank**. Likewise, every threshold statement here is for one declared fixed cut/order. It is not an all-variable-order separation for OBDDs, tensor networks, or communication protocols.

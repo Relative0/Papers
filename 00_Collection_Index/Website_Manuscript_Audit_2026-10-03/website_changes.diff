@@ -1,0 +1,160 @@
+--- src/content/projects/binary-order-thinning.md
++++ src/content/projects/binary-order-thinning.md
+@@ -9,8 +9,9 @@
+ paperStatus: Focused research manuscript; reviewed local v3, September 2026.
+ paperContribution: Gives a rooted-forest criterion for vanishing relative homology and collapse under one Boolean bit in height-at-most-two finite orders.
+ paperLocation: See “The exact forest/collapse theorem” and the two “Sharpness” sections in local v3.
+-paperPdf: /manuscripts/binary-order-thinning-r1-v3.pdf
+-paperSourceVersion: Reviewed local v3, dated September 27, 2026; v2 retained in the collection.
++paperPdf: /manuscripts/binary-order-thinning-r2-v3.pdf
++paperReadingCopy: 2
++paperSourceVersion: Reviewed local v3, September 27, 2026; PDF Author metadata completed October 3, 2026. Mathematical content unchanged.
+ paperByline: Brian Theory
+ ---
+ 
+--- src/content/projects/hierarchical-concepts.md
++++ src/content/projects/hierarchical-concepts.md
+@@ -9,9 +9,10 @@
+ paperStatus: Short synthesis and correction note; current v0.3 research copy.
+ paperContribution: Defines observation quotients and resolution towers for ultrametric hierarchies while distinguishing symmetry measures from information gain.
+ paperLocation: See “A coordinate-free observation quotient” and “Information gain is not a symmetry index” in v0.3.
+-paperPdf: /manuscripts/hierarchical-concepts-r1-v0.3.pdf
+-paperSourceVersion: Original fresh-referee v0.3 PDF, dated September 29, 2026; v0.1 and v0.2 retained in revision archives.
+-paperByline: Brian Droncheff
++paperPdf: /manuscripts/hierarchical-concepts-r2-v0.3.pdf
++paperReadingCopy: 2
++paperSourceVersion: Fresh-referee v0.3, September 29, 2026; author corrected October 3, 2026. Original PDF retained in the local history.
++paperByline: Brian Theory
+ ---
+ 
+ ## The central distinction
+--- src/content/projects/observation-refinement.md
++++ src/content/projects/observation-refinement.md
+@@ -9,9 +9,10 @@
+ paperStatus: Integrated MIND research draft v0.5, with referee repairs; priority and external review remain open.
+ paperContribution: Separates signature refinement, carrier splitting, and order thinning, then studies the topology and homology of finite refinement constructions.
+ paperLocation: See “Observation systems and three kinds of refinement” and “Carrier splitting under a new Boolean observation” in v0.5.
+-paperPdf: /manuscripts/observation-refinement-r1-v0.5.pdf
+-paperSourceVersion: Referee-repair draft v0.5, dated September 29, 2026; v0.1–v0.4 retained in revision archives.
+-paperByline: Brian Droncheff
++paperPdf: /manuscripts/observation-refinement-r2-v0.5.pdf
++paperReadingCopy: 2
++paperSourceVersion: Referee-repair draft v0.5, September 29, 2026; author corrected October 3, 2026. Earlier revisions retained in the collection.
++paperByline: Brian Theory
+ ---
+ 
+ ## The mathematical tool
+--- src/content.config.ts
++++ src/content.config.ts
+@@ -19,6 +19,7 @@
+     paperPdf: z.string().optional(),
+     paperSourceVersion: z.string().optional(),
+     paperByline: z.string().optional(),
++    paperReadingCopy: z.number().int().positive().default(1),
+   }),
+ });
+ 
+--- src/pages/[slug].astro
++++ src/pages/[slug].astro
+@@ -30,7 +30,7 @@
+           <p class="eyebrow">Related manuscript</p>
+           <strong>{project.data.paperTitle}</strong>
+           <p>{project.data.paperStatus}</p>
+-          {project.data.paperPdf && <p>Site reading copy 1 from {project.data.paperSourceVersion}</p>}
++          {project.data.paperPdf && <p>Site reading copy {project.data.paperReadingCopy} from {project.data.paperSourceVersion}</p>}
+           {project.data.paperPdf && <a href={project.data.paperPdf}>Read the PDF <span aria-hidden="true">→</span></a>}
+           <a href={`/papers/#${project.id}`}>See this manuscript's index entry <span aria-hidden="true">→</span></a>
+         </div>
+--- src/pages/papers.astro
++++ src/pages/papers.astro
+@@ -15,11 +15,11 @@
+   </header>
+   <section class="section-block" aria-labelledby="selected-papers-title">
+     <div class="section-heading"><p class="eyebrow">Selected research</p><h2 id="selected-papers-title">Current manuscript lines</h2></div>
+-    <div class="paper-access-note"><strong>About these versions:</strong> <span>“Site reading copy 1” means the first PDF made available here. Each entry also names the manuscript revision from which that copy came. For questions or an unavailable copy, email <a href="mailto:Brian@B-Theory.com?subject=B-Theory%20manuscript%20request">Brian@B-Theory.com</a>.</span></div>
++    <div class="paper-access-note"><strong>About these versions:</strong> <span>Reading-copy numbers identify the PDF version selected for this site. Copy 2 corrects author attribution or metadata without changing the mathematics. Each entry also names its source manuscript revision. For questions or an unavailable copy, email <a href="mailto:Brian@B-Theory.com?subject=B-Theory%20manuscript%20request">Brian@B-Theory.com</a>.</span></div>
+     <div class="paper-list">
+       {projects.map((project) => (
+         <article class="paper-list-item" id={project.id}>
+-          <div><span class="status-label">{project.data.status}</span><h3>{project.data.paperTitle}</h3><p><strong>Contribution:</strong> {project.data.paperContribution}</p><p><strong>Where to look:</strong> {project.data.paperLocation}</p><p><strong>Research status:</strong> {project.data.paperStatus}</p><p><strong>Source revision:</strong> {project.data.paperSourceVersion}</p>{project.data.paperPdf && <p><strong>Site release:</strong> Reading copy 1 · <strong>PDF byline:</strong> {project.data.paperByline}</p>}{!project.data.paperPdf && <p><strong>Reading copy:</strong> Pending integration of later results and a named author line.</p>}</div>
++          <div><span class="status-label">{project.data.status}</span><h3>{project.data.paperTitle}</h3><p><strong>Contribution:</strong> {project.data.paperContribution}</p><p><strong>Where to look:</strong> {project.data.paperLocation}</p><p><strong>Research status:</strong> {project.data.paperStatus}</p><p><strong>Source revision:</strong> {project.data.paperSourceVersion}</p>{project.data.paperPdf && <p><strong>Site release:</strong> Reading copy {project.data.paperReadingCopy} · <strong>PDF byline:</strong> {project.data.paperByline}</p>}{!project.data.paperPdf && <p><strong>Reading copy:</strong> Pending integration of later results and a named author line.</p>}</div>
+           <div class="paper-actions">
+             {project.data.paperPdf && <a class="button button-primary" href={project.data.paperPdf}>Read {project.data.title} PDF</a>}
+             <a class="text-link" href={`/${project.id}/`}>About {project.data.title} <span aria-hidden="true">→</span></a>
+@@ -28,5 +28,5 @@
+       ))}
+     </div>
+   </section>
+-  <section class="section-block split-section"><div><p class="eyebrow">Research provenance</p><h2>How these pages were prepared</h2></div><div class="article-copy"><p>The research programme and manuscripts are led by Brian Theory (Brian Droncheff). AI tools have assisted with drafting, organization, computation, and review in parts of the work. Each mathematical claim should be read at the scope stated in its manuscript; AI-assisted checks are distinct from external specialist review.</p><p>The reading copies preserve the author name printed in each source PDF. Brian Theory and Brian Droncheff refer to the same person. The version labels distinguish the first copy posted on this site from the earlier internal revisions of each manuscript; they do not imply journal acceptance.</p></div></section>
++  <section class="section-block split-section"><div><p class="eyebrow">Research provenance</p><h2>How these pages were prepared</h2></div><div class="article-copy"><p>The research programme and manuscripts are led by Brian Theory (Brian Droncheff). AI tools have assisted with drafting, organization, computation, and review in parts of the work. Each mathematical claim should be read at the scope stated in its manuscript; AI-assisted checks are distinct from external specialist review.</p><p>All current reading copies name Brian Theory as author. Historical references retain the names under which the cited works appeared. The version labels distinguish site reading copies from the internal revisions of each manuscript; they do not imply journal acceptance.</p></div></section>
+ </BaseLayout>
+--- README.md
++++ README.md
+@@ -13,6 +13,6 @@
+ 
+ Project copy and research status live in `src/content/projects/`; the research map, MIND guide, and paper guide are in `src/pages/`. Shared layout and styles live in `src/layouts/` and `src/styles/`. Original image assets and fonts are stored locally in `public/assets/`.
+ 
+-The existing project slugs remain in place. New routes are `/research-map/`, `/the-mind/`, `/papers/`, and the added project pages. Five byte-identical manuscript reading copies are bundled in `public/manuscripts/`; Structured Boolean Factorization remains index-only pending an integrated manuscript with a named author. The website uses “site reading copy 1” while preserving each paper's internal version. See [MANUSCRIPT_READING_COPIES.md](MANUSCRIPT_READING_COPIES.md) for the selected files and hashes. Shop, Help, and Legal still point to the current live site. See [RESEARCH_MAP_DRAFT.md](RESEARCH_MAP_DRAFT.md) for the editorial map and review points.
++The existing project slugs remain in place. New routes are `/research-map/`, `/the-mind/`, `/papers/`, and the added project pages. Five manuscript reading copies are bundled in `public/manuscripts/`, all credited to Brian Theory. Three use reading copy 2 for author or metadata corrections; the two unchanged PDFs remain copy 1. Superseded files are preserved in `manuscript-history/reading-copy-1/`. Structured Boolean Factorization remains index-only pending an integrated manuscript with a named author. Site release numbers remain separate from internal manuscript versions. See [MANUSCRIPT_READING_COPIES.md](MANUSCRIPT_READING_COPIES.md) for the selected files and hashes. Shop, Help, and Legal still point to the current live site. See [RESEARCH_MAP_DRAFT.md](RESEARCH_MAP_DRAFT.md) for the editorial map and review points.
+ 
+ The 3 October review pass is recorded in [REVIEW_PANEL_2026-10-03.md](REVIEW_PANEL_2026-10-03.md). The research-contact link uses `Brian@B-Theory.com`, which is listed in Brian's public B-Theory résumé and was confirmed by Brian for this draft.
+--- MANUSCRIPT_READING_COPIES.md
++++ MANUSCRIPT_READING_COPIES.md
+@@ -1,29 +1,39 @@
+-# Manuscript reading-copy selection
++# Manuscript reading-copy provenance and author correction
+ 
+-Local site preparation, 3 October 2026. No external publication or repository upload has been performed.
++Updated 3 October 2026. Local preparation only; no external publication or repository upload.
+ 
+ ## Version convention
+ 
+-**Site reading copy 1** is the first byte-for-byte PDF selected for this website. It is a website release label, not a claim that the manuscript itself is internally “v1.0,” journal accepted, or externally peer reviewed. The source revision printed in each PDF remains visible on the paper page. If a PDF changes later, give it a new site-release number and filename; preserve the earlier file for citations or explicitly retire it with a notice. This follows the general archival principle that a cited version should identify fixed file contents.
++Reading-copy numbers identify fixed PDF bytes selected for this website. They are separate from manuscript revision numbers and do not imply journal acceptance or human peer review. Copy 2 records only author/metadata corrections. Superseded copy-1 PDFs have been moved out of the active public manuscript directory to `manuscript-history/reading-copy-1/`; their old public filenames are retired. Original scientific sources and review packages remain preserved in the publication collection.
+ 
+-## Selected PDFs
++## Current PDFs
+ 
+-All five target files under `public/manuscripts/` have SHA-256 hashes identical to their selected source PDFs. The first pages were rendered and visually inspected; all pages were parsed and searched for obvious placeholder markers. That is a file and layout check, not an independent proof review.
++| Site file | Manuscript revision | Byline / PDF Author | Pages | SHA-256 |
++| --- | --- | --- | ---: | --- |
++| `binary-order-thinning-r2-v3.pdf` | Reviewed v3, 27 September 2026 | Brian Theory | 16 | `3cb7d1cfa12a9def99224172fc1c7ed3e353f1fc8d364f6b716e499ecf6f0903` |
++| `correspondence-matrices-r1-2026-09-27.pdf` | Final adversarial revision, 27 September 2026 | Brian Theory | 32 | `7ba32562595a2968c914ed0d4392e5ca97c2d10da9fabcd0cd81a5968b7412ea` |
++| `hierarchical-concepts-r2-v0.3.pdf` | Original fresh-referee v0.3, 29 September 2026, with author correction | Brian Theory | 9 | `706d5281fe8145bc6754415c8ab60596a897de7ee1993b98c8d51feb60c14ee6` |
++| `observation-refinement-r2-v0.5.pdf` | Referee-repair v0.5, 29 September 2026, with author correction | Brian Theory | 27 | `727f34e1a2512b515e0a952739ba0c1cf94ef2036faadcff537a43aa8981b731` |
++| `prolt-r1-v0.9.pdf` | v0.9 submission package | Brian Theory | 19 | `1f9b753dafa1d5920d8faeab363e51950758e9f32f1fa541d2a745d5e9dfaf7b` |
+ 
+-| Site file | Source head and known predecessors | PDF title-page byline | Pages | SHA-256 |
+-| --- | --- | --- | ---: | --- |
+-| `correspondence-matrices-r1-2026-09-27.pdf` | CM/LM final September 27 adversarial revision; the collection also records September 22 LM-centered and earlier September 27 foundations stages. | Brian Theory | 32 | `7ba32562595a2968c914ed0d4392e5ca97c2d10da9fabcd0cd81a5968b7412ea` |
+-| `prolt-r1-v0.9.pdf` | ProLT v0.9 submission package; v0.6, v0.8, and v0.8.1 appear in its history. | Brian Theory | 19 | `1f9b753dafa1d5920d8faeab363e51950758e9f32f1fa541d2a745d5e9dfaf7b` |
+-| `binary-order-thinning-r1-v3.pdf` | September 27 reviewed local v3; a September 24 post-audit v2 is retained. | Brian Theory | 16 | `4c37ba7357453459cddc6c81ac89236486fb66995469d0a70461e3c6f02eeea5` |
+-| `observation-refinement-r1-v0.5.pdf` | September 29 referee-repair v0.5; v0.1–v0.4 are preserved in revision archives. | Brian Droncheff | 27 | `519f0c983efdc512697b10414160c1d8813362c4518b4f770b3bab116e8605d1` |
+-| `hierarchical-concepts-r1-v0.3.pdf` | Original September 29 fresh-referee v0.3 PDF; v0.1, v0.2, and a distinct rebuilt v0.3 PDF are retained. | Brian Droncheff | 9 | `6200b67d070b51b18664221a06cc9b0972013e19af92c34d1b35fc66e8234bca` |
++## Exact source provenance
+ 
+-The current source paths are in the corresponding `COLLECTION_README.md` or `README.md` for each paper under `C:\Users\brian\Documents\Math Latex etc\Papers for Publication`. The selected PDFs are the recommended reading heads in those guides. “Reviewed” and “referee-repair” here name local manuscript workflow stages; they do not assert journal peer review.
++All five original copy-1 PDFs were SHA-256 identical to the selected source PDFs under `C:\Users\brian\Documents\Math Latex etc\Papers for Publication`. The full audit, exact source paths, review scores, before/after hashes, source-author patches and verification receipts are in `00_Collection_Index/Website_Manuscript_Audit_2026-10-03/MANUSCRIPT_AUDIT.md` under that collection.
++
++Binary Order Thinning had a correct printed byline but a blank PDF Author field; only that field was completed. Observation Refinement was rebuilt from a copy of the exact reviewed source with only its author line and PDF Author value changed. Hierarchical Concepts received a surgical title-page author/font replacement and PDF Author metadata; its other page content was preserved. A matching author-corrected TeX/bibliography copy is retained in the audit folder; a full local rebuild was blocked by the missing `logreq.sty` package. No package was installed.
++
++All three corrected PDFs retain their page counts. Full page-text comparison found only the intended title-page author changes. Rendering every before/after page at 72 dpi found changes confined to the two title-page byline rectangles; Binary Order Thinning rendered identically throughout. Updated title pages were also visually inspected at 125 dpi.
++
++Historical bibliography attributions remain unchanged, including the Droncheff thesis/reference entries. These are citations, not current manuscript bylines.
++
++## Superseded reading-copy-1 hashes
++
++| Retired site file | SHA-256 |
++| --- | --- |
++| `binary-order-thinning-r1-v3.pdf` | `4c37ba7357453459cddc6c81ac89236486fb66995469d0a70461e3c6f02eeea5` |
++| `hierarchical-concepts-r1-v0.3.pdf` | `6200b67d070b51b18664221a06cc9b0972013e19af92c34d1b35fc66e8234bca` |
++| `observation-refinement-r1-v0.5.pdf` | `519f0c983efdc512697b10414160c1d8813362c4518b4f770b3bab116e8605d1` |
+ 
+ ## Deferred copy
+ 
+-**Structured Boolean Factorization** remains an index entry without a PDF link. The latest integrated PDF is the three-page Phase 5 theorem note dated 29 September 2026. Its title page names the author only as “Research draft.” Later Phase 5B proofs and corrections exist in the collection but have not been integrated into a new manuscript. A site copy should wait for one integrated reading head and a named author line. The current candidate PDF's SHA-256 is `daef5c5327289057d84be0dab73655233aa2dcce078889abda1f2ef439b5a7bf`.
+-
+-## Byline check
+-
+-A byline is simply the author name on a paper's title page. This check compares that printed name with the website's credit and with the other selected copies. The site identifies Brian Theory as Brian Droncheff and reports each PDF's printed byline without rewriting any PDF. This resolves the website's explanation of the two names while preserving the original manuscript files. It does not decide journal authorship, affiliations, acknowledgments, or any future coauthor claims.
++Structured Boolean Factorization remains index-only. The Phase 5 theorem note has a “Research draft” byline and later unintegrated Phase 5B work. It was not one of the five PDFs audited or changed in this task.

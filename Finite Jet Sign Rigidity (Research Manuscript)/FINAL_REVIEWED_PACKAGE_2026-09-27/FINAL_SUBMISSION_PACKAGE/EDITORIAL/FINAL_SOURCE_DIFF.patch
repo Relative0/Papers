@@ -1,0 +1,159 @@
+--- /mnt/data/Finite_Jet_Revised_Note_PostReferee_2026-09-27/finite_jet_sign_laws_postreferee.tex	2026-09-27 11:06:27.532601168 +0000
++++ /mnt/data/Finite_Jet_Final_Submission_Candidate_2026-09-27/finite_jet_sign_laws_FINAL_SUBMISSION.tex	2026-09-27 11:12:42.459824270 +0000
+@@ -1,4 +1,4 @@
+-% Proposed editorial revision from the 27 September 2026 audit. Original unchanged.
++% Final submission candidate after publication-readiness and hostile-editor review.
+ \documentclass[11pt]{article}
+ 
+ \usepackage[T1]{fontenc}
+@@ -38,7 +38,7 @@
+ \newcommand{\eps}{\varepsilon}
+ \newcommand{\cA}{\mathcal{A}}
+ 
+-\title{\vspace{-1.2cm}\textbf{An Elementary Finite-Jet Approach to Sign Laws\\on Hyperplane Arrangements}}
++\title{\vspace{-1.2cm}\textbf{Finite-Jet Sign Rigidity on Hyperplane Arrangements\\and Denjoy--Carleman Realization}}
+ \author{Brian Theory}
+ \date{27 September 2026}
+ 
+@@ -46,11 +46,15 @@
+ \maketitle
+ 
+ \begin{abstract}
+-We give an elementary finite-jet treatment of sign laws prescribed on whole orthants and on chambers of finite real affine hyperplane arrangements. A first nonzero homogeneous Taylor term inherits the prescribed signs weakly; polynomial factor multiplicities then force a signed parity law. A local-overlap argument propagates the crossing parity along each hyperplane. The resulting $C^\infty$ obstruction is an instance of the established signature-flatness theory of Broglia and Tognoli, which also contains a leading-Taylor-term parity argument in a special crossing example. The contribution here is a systematic elementary arrangement-level proof, explicit finite-regularity forms (including a $C^N$ arrangement version), and a synthesis with ultradifferentiable realization.
++Let $\mathcal A$ be a finite real affine hyperplane arrangement. We study which $\{\pm1\}$-valued chamber labelings can occur as the sign of a function with prescribed regularity. A first nonzero homogeneous Taylor term inherits the chamber signs weakly, and factor multiplicities force a constant crossing parity. This gives a short arrangement-level proof of the known smooth signature-flatness obstruction and, in finite regularity, explicit $C^d$ orthant and $C^N$ arrangement rigidity statements.
+ 
+-In compactwise Roumieu Denjoy--Carleman classes, the classical quasianalyticity criterion and positive flat functions yield a dichotomy: precisely affine Boolean laws on whole orthants in the quasianalytic case, and all Boolean laws in the non-quasianalytic case. For $m$ distinct hyperplanes with $r$ chambers, the corresponding counts are $2^{m+1}$ and $2^r$. We place these statements in the older literature on distributions of signs and signatures, and in the Varchenko--Gelfand tradition of chamber functions. The emphasis is proof economy, normalization, and a transparent bridge among finite jets, sign rigidity, and ultradifferentiable realizability rather than historical firstness of the smooth obstruction.
++For normalized compactwise Roumieu Denjoy--Carleman classes $\mathcal E^{\{M\}}$, the Denjoy--Carleman criterion yields an exact realization dichotomy. In the quasianalytic case the realizable chamber laws are precisely the signed parity laws; in the non-quasianalytic case every chamber labeling is realized by explicit selector formulas. Thus an arrangement of $m$ distinct hyperplanes with $r$ chambers admits exactly $2^{m+1}$ and $2^r$ realizable sign laws in the two regimes. The smooth obstruction and positive-flat existence mechanisms are classical; the contribution is the finite-order formulation, self-contained affine-arrangement proof, and unified exact realization classification.
+ \end{abstract}
+ 
++\noindent\textbf{2020 Mathematics Subject Classification.} 26E10, 52C35.
++
++\noindent\textbf{Keywords.} finite jets; hyperplane arrangements; Denjoy--Carleman classes; quasianalyticity; sign distributions; chamber functions.
++
+ \section{Introduction}
+ 
+ A Boolean truth table is finite. Requiring the same truth value throughout an entire orthant of $\R^n$ is not. This distinction becomes sharp when the Boolean value is extracted from the sign of a smooth real-valued function.
+@@ -77,19 +81,11 @@
+ On the divergent side, quasianalyticity rules out the flatness required by a non-affine orthant law. On the convergent side, a classical compactly supported cutoff yields a one-sided selector, from which arbitrary Boolean laws are assembled without cancellation.
+ 
+ \paragraph{Prior work and contribution boundary.}
+-The smooth arrangement conclusion below is a consequence of the signature-flatness theorem of Broglia and Tognoli~\cite[Theorem~4.2]{BrogliaTognoli1989}. Indeed, given $F$ nonzero off the arrangement, put
+-\[
+- G=F\prod_{j=1}^m\ell_j^2.
+-\]
+-Then $G$ has exactly the arrangement as its zero set and the same chamber signs. Wherever $F$ has a first nonzero Taylor term, the first term of $G$ is its product with a nonzero polynomial, so nonflatness is preserved. For $n\ge2$, the homological hypothesis in their theorem is automatic on $\R^n$ because $H_{n-1}(\R^n;\mathbb Z_2)=0$; the hyperplane components have global affine equations and are arc-analytically connected. The one-dimensional case is elementary and is covered directly below. For hyperplanes, their admissible signatures~\cite[Definition~2.2]{BrogliaTognoli1989} are precisely the signed parity laws used here. Their normal-crossing refinement~\cite[Remark~4.6]{BrogliaTognoli1989} also gives the smooth orthant flatness obstruction. Moreover, their discussion already uses a first nonzero Taylor coefficient to force an even/odd multiplicity contradiction in a crossing example. Thus neither the $C^\infty$ obstruction nor the leading-term idea itself is claimed as new; the aim here is to package that mechanism systematically for affine arrangements and finite regularity.
+-
+-This result belongs to a broader real-algebraic and real-analytic literature on \emph{distributions of signs} and \emph{signatures}. Fortuna explicitly studies sign distributions on connected components of complements of codimension-one real algebraic sets~\cite{Fortuna1991}. Acquistapace and Broglia develop the relation between signatures and flatness~\cite{AcquistapaceBroglia1992,AcquistapaceBroglia1993Correction}; subsequent work treats local completion and approximation questions~\cite{AcquistapaceBrogliaFortuna1994,AcquistapaceBroglia1994}. These papers have broader algebraic and analytic aims than the elementary arrangement argument used here, but they are the natural historical home for the sign-rigidity phenomenon.
++The $C^\infty$ arrangement obstruction belongs to the signature-flatness theory of Broglia and Tognoli~\cite{BrogliaTognoli1989}; Remark~\ref{rem:BT} gives the precise reduction from the hypotheses used here, including the homological point in their theorem. Their factorization analysis also contains the parity-of-multiplicity mechanism underlying Lemma~\ref{thm:T1}, and their examples already use a first nonzero Taylor coefficient to detect incompatible crossing parities. Thus neither the smooth obstruction nor the leading-term idea is claimed as new.
+ 
+-On the arrangement side, locally constant functions on chambers and the Heaviside functions of the defining half-spaces are classical objects of Varchenko and Gelfand~\cite{VarchenkoGelfand1987}; the resulting filtration and its extensions to affine arrangements and oriented matroids are developed further, for example, by Moseley~\cite{Moseley2017}. The signed parity laws below form only a very small multiplicative family inside the full algebra of chamber functions. Our question is not which chamber functions exist abstractly, but which of their $\{\pm1\}$-valued sign patterns can arise from a single function subject to smoothness or ultradifferentiable constraints.
++The broader historical setting includes distributions of signs and signatures~\cite{Fortuna1991,AcquistapaceBroglia1992,AcquistapaceBroglia1993Correction,AcquistapaceBrogliaFortuna1994,AcquistapaceBroglia1994}, the Varchenko--Gelfand algebra of chamber functions and its later arrangement-theoretic extensions~\cite{VarchenkoGelfand1987,Moseley2017,BjornerEtAl1999}, and the classical Denjoy--Carleman theory of quasianalyticity, cutoffs, and positive-flat functions~\cite{Rainer2022,Langenbruch2003,Thilliez2008}. Stronger division and monomialization frameworks are also available~\cite{BierstoneMilman2004,BelottoBierstoneChow2018,BelottoBierstone2023}, but they are not needed for the elementary proofs below.
+ 
+-The Denjoy--Carleman criterion, cutoff existence, and stronger positive-flat constructions are classical~\cite{Rainer2022,Langenbruch2003,Thilliez2008}. The polynomial weak-sign argument is elementary and is not presented as new: Broglia--Tognoli's factorization analysis already records how parity of factor multiplicities controls a polynomial-induced signature~\cite[Proposition~2.4]{BrogliaTognoli1989}. A later MathOverflow discussion gives the same observation in coordinate-orthant language~\cite{MathOverflow2014}; finite-grid polynomial sign representation is a different established problem~\cite{BasuEtAl2008}. Stronger division, resolution and monomialization frameworks provide context~\cite{BelottoBierstoneChow2018,BierstoneMilman2004,BelottoBierstone2023}, but are not required by the direct proofs below.
+-
+-Accordingly, the paper is intended as a focused analysis note. Its contribution is not the first-nonzero-Taylor-term idea itself, but its systematic arrangement-level packaging, the explicit finite-order formulations, and the normalized synthesis with ultradifferentiable realization and exact orthant/chamber counts. No historical firstness is asserted for the underlying smooth obstruction, the existence of ultradifferentiable cutoffs or positive-flat functions, or the chamber-function formalism.
++The note contributes three things in one framework: explicit finite-order rigidity statements; a self-contained leading-jet proof for arbitrary finite affine arrangements; and exact quasianalytic/non-quasianalytic realization classifications with constructive formulas and chamber counts. The purpose is therefore not historical firstness, but a compact finite-jet formulation and an exact synthesis across regularity regimes.
+ 
+ \paragraph{Organization.}
+ Section~\ref{sec:setup} fixes the sign and Denjoy--Carleman conventions. Section~\ref{sec:polynomial} proves the weak-sign polynomial lemma. Section~\ref{sec:finitejet} establishes finite-jet rigidity and the smooth arrangement theorem. Section~\ref{sec:dc} constructs one-sided selectors and proves the whole-orthant dichotomy. Section~\ref{sec:arrangements} gives the arrangement classification and exact counts. Section~\ref{sec:scope} records counterexamples that delimit the statements and clarifies the relation with normal-crossing results.
+@@ -273,9 +269,9 @@
+ The proof uses only the first nonzero Taylor order. If the first nonzero jet has order $d$, then a $C^d$ Taylor expansion is enough. The theorem does not assert that nonflatness is necessary for an affine law: flat functions can also realize affine laws.
+ \end{remark}
+ 
+-\begin{corollary}[Finite-regularity form]\label{cor:finiteC}
++\begin{theorem}[Finite-order orthant rigidity]\label{thm:finiteC}
+ Let $d\ge 0$ and let $F$ be $C^d$ near the origin, nonzero whenever all coordinates are nonzero in some centered ball. If every derivative of order $<d$ vanishes at the origin and at least one derivative of order $d$ is nonzero, then the local orthant sign law is affine parity.
+-\end{corollary}
++\end{theorem}
+ 
+ \begin{proof}
+ The order-$d$ Taylor expansion supplies the same nonzero leading homogeneous polynomial used in Theorem~\ref{thm:T2}; Lemma~\ref{thm:T1} then applies verbatim.
+@@ -315,9 +311,17 @@
+ Now consider the global chamber adjacency graph. Across a generic facet contained in $H_j$, the sign of $F$ changes by $(-1)^{e_j}$. The same is true of the product $\prod_j\sign(\ell_j)^{e_j}$. Their quotient is therefore unchanged across every chamber adjacency. As in Lemma~\ref{thm:T1}, the chamber adjacency graph is connected, so the quotient is a global constant $c\in\{\pm1\}$. This proves \eqref{eq:arrparity}. Uniqueness follows by crossing a generic point of each $H_j$.
+ \end{proof}
+ 
+-\begin{corollary}[Finite-regularity arrangement form]\label{cor:finitearr}
++\begin{remark}[Earlier signature-flatness theorem]\label{rem:BT}
++Theorem~\ref{thm:T3} is an elementary affine-arrangement case of the signature-flatness theory of Broglia and Tognoli~\cite[Theorem~4.2]{BrogliaTognoli1989}. To compare hypotheses, set
++\[
++ G=F\prod_{j=1}^m\ell_j^2.
++\]
++Then $G$ has zero set exactly $\bigcup_jH_j$ and the same chamber signs as $F$. If $F$ has a first nonzero Taylor term at a point of the arrangement, the first nonzero term of $G$ is its product with a nonzero polynomial, so nonflatness is preserved. For $n\ge2$ their homological condition is automatic on $\R^n$ because $H_{n-1}(\R^n;\mathbb Z_2)=0$; the hyperplane components admit global affine equations and satisfy the required connectivity. The case $n=1$ is immediate from the one-dimensional crossing picture. Their admissible signatures reduce, for hyperplanes, to the signed parity laws in \eqref{eq:signed-parity}. This remark records the historical implication explicitly; the proof above is retained because it isolates the finite-jet mechanism needed for Theorem~\ref{thm:finitearr}.
++\end{remark}
++
++\begin{theorem}[Uniform finite-order arrangement rigidity]\label{thm:finitearr}
+ Let $N\ge0$, let $\cA=\{H_1,\dots,H_m\}$ be a finite family of distinct proper affine hyperplanes in $\R^n$, and let $F\in C^N(\R^n)$ be nonzero on $\R^n\setminus\bigcup_jH_j$. Assume that for every $p\in\bigcup_jH_j$ the $N$-jet of $F$ at $p$ is nonzero; equivalently, for each such $p$ there is a multi-index $\alpha$ with $|\alpha|\le N$ and $D^\alpha F(p)\ne0$. Then the chamber sign law of $F$ is a unique signed parity law of the form \eqref{eq:arrparity}.
+-\end{corollary}
++\end{theorem}
+ 
+ \begin{proof}
+ At each $p$ on the arrangement choose the least $d(p)\le N$ for which some derivative of order $d(p)$ is nonzero. The $C^{d(p)}$ Taylor expansion gives a nonzero leading homogeneous polynomial and therefore the same local crossing parities as in the proof of Theorem~\ref{thm:T3}. The propagation of those parities along a hyperplane, and then across the connected chamber adjacency graph, uses only continuity and nonvanishing off the arrangement. Thus the remainder of that proof applies unchanged.
+@@ -367,7 +371,7 @@
+ \end{proof}
+ 
+ \paragraph{Classical constructive antecedent.}
+-A stronger existence statement is classical. Rainer's Remark~3.13, citing work of Langenbruch, states that in the non-quasianalytic setting one can construct an ultradifferentiable function that is flat on a prescribed closed set and positive (indeed real analytic) on its complement~\cite[Remark~3.13]{Rainer2022}; see also~\cite{Langenbruch2003}. Taking the closed half-line $(-\infty,0]$ gives a one-sided selector. More generally, taking the closed set to be the union of an arrangement and multiplying the positive-flat function on each chamber by an arbitrarily prescribed sign, then extending by zero on the arrangement, directly realizes every chamber labeling: flatness makes the chamberwise pieces glue with zero jet on the walls, and the Roumieu derivative bounds are unchanged in absolute value. We nevertheless retain the squared-cutoff selector and the finite chamber sum because they give an explicit elementary formula adapted to the defining affine forms.
++A stronger existence statement is classical. Rainer's Remark~3.13, citing work of Langenbruch, records positive-flat ultradifferentiable functions for prescribed closed sets in the non-quasianalytic setting~\cite[Remark~3.13]{Rainer2022}; see also~\cite{Langenbruch2003}. Taking the closed set to be the arrangement and changing the sign of such a function independently on each chamber already gives arbitrary chamber labelings, since flatness makes the chamberwise pieces glue with zero jet on every wall. The selector construction above is retained because it gives an explicit formula in the defining affine forms and makes the later counting argument transparent.
+ 
+ \begin{definition}
+ For a normalized weight $M$, let $\mathcal{R}_M(n)$ be the set of Boolean functions $\Theta:\bits^n\to\bits$ realized by some globally defined $F\in\mathcal{E}^{\{M\}}(\R^n)$ that is nonzero whenever all coordinates are nonzero.
+@@ -531,27 +535,19 @@
+ 
+ The selector construction in \eqref{eq:booleanselector} gives $C^\infty$ realizations of every Boolean law in the non-quasianalytic case. For a non-affine law, Theorem~\ref{thm:T2} says that such a realization must be flat at the origin; the construction is consistent with exactly that requirement. The mathematical boundary is therefore not ``smooth versus nonsmooth,'' but rather the presence or absence of a nonzero finite jet at the relevant common boundary.
+ 
+-\subsection{Sign distributions, polynomial signs, and chamber functions}
+-
+-The factor-parity mechanism in Lemma~\ref{thm:T1} is classical antecedent material, not the paper's novelty. In Broglia--Tognoli's Proposition~2.4, maximal powers of irreducible defining polynomials determine whether a polynomial-induced signature changes sign along each component; for hyperplanes this is exactly the parity-bit mechanism used here~\cite[Proposition~2.4]{BrogliaTognoli1989}. A later 2014 MathOverflow discussion gives the same observation in coordinate-orthant language: a polynomial required to switch sign across one facet but not another facet of the same coordinate hyperplane would force the multiplicity of the corresponding coordinate factor to be both odd and even~\cite{MathOverflow2014}. There is also a separate literature on polynomial sign representations of Boolean functions on finite grids; for example, Basu, Bhatnagar, Gopalan, and Lipton study degree--sparsity tradeoffs for sign representations of parity~\cite{BasuEtAl2008}. Those finite-grid questions are different from requiring a sign throughout every point of each open orthant.
+-
+-The more direct historical language is that of sign distributions and signatures. Fortuna~\cite{Fortuna1991} considers sign assignments to components of complements of codimension-one algebraic sets. Broglia and Tognoli~\cite{BrogliaTognoli1989} connect nonadmissible signatures with flatness; Acquistapace and Broglia continue this line in \emph{Signatures and flatness}, together with its published correction~\cite{AcquistapaceBroglia1992,AcquistapaceBroglia1993Correction}. The local-completion problem on algebraic surfaces is studied by Acquistapace, Broglia, and Fortuna~\cite{AcquistapaceBrogliaFortuna1994}, while Acquistapace and Broglia relate signatures to approximation by regular or analytic functions~\cite{AcquistapaceBroglia1994}. The present arrangement statements should therefore be read as an elementary specialization and finite-jet repackaging of this tradition, not as the origin of the sign-rigidity phenomenon.
++\subsection{Signatures and chamber functions}
++The factor-parity mechanism in Lemma~\ref{thm:T1} is classical antecedent material. Broglia--Tognoli's Proposition~2.4 records how parity of maximal factor multiplicities controls the induced signature~\cite[Proposition~2.4]{BrogliaTognoli1989}, while the subsequent signature and sign-distribution literature studies broader realization and approximation questions~\cite{Fortuna1991,AcquistapaceBroglia1992,AcquistapaceBroglia1993Correction,AcquistapaceBrogliaFortuna1994,AcquistapaceBroglia1994}.
+ 
+-There is also a distinct combinatorial/algebraic tradition in which all locally constant chamber functions are studied. Varchenko and Gelfand introduced the algebra generated by Heaviside functions of an arrangement~\cite{VarchenkoGelfand1987}; Moseley gives a modern treatment of the associated filtration for affine arrangements and oriented matroids~\cite{Moseley2017}. For standard sign-vector, chamber, and tope language see also~\cite{BjornerEtAl1999}. Our chamber selectors on the non-quasianalytic side are compatible with this viewpoint, but the analytic question is narrower: smoothness and quasianalyticity select the $2^{m+1}$ signed parity laws from among the $2^r$ possible $\{\pm1\}$-valued chamber functions.
++A distinct combinatorial tradition studies all functions that are constant on arrangement chambers. Varchenko and Gelfand introduced the algebra generated by hyperplane Heaviside functions~\cite{VarchenkoGelfand1987}; see also~\cite{Moseley2017,BjornerEtAl1999}. The present analytic question is narrower: regularity constraints select a small family of $\{\pm1\}$-valued chamber functions in the quasianalytic regime, while the non-quasianalytic regime permits them all.
+ 
+ \subsection{Established machinery versus the sign classification}
+-
+-The background literature contains several stronger analytic frameworks. Coordinate division is part of standard axiomatic treatments of quasianalytic classes under suitable closure assumptions; see \cite{BelottoBierstoneChow2018}. Quasianalytic local rings and division phenomena have a substantial independent literature; see \cite{Thilliez2008}. Resolution and monomialization produce monomial forms after controlled modifications; see \cite{BierstoneMilman2004,BelottoBierstone2023}. None of those ingredients is claimed here as new.
+-
+-Conversely, the proofs of Theorems~\ref{thm:T2} and \ref{thm:T3} deliberately avoid coordinate division and resolution. Their input is the first nonzero Taylor polynomial at a point. The Denjoy--Carleman classification then uses only the classical quasianalyticity criterion and cutoff existence. This separation gives a self-contained proof of consequences of the earlier signature-flatness and ultradifferentiable existence results. The failure of a residual-unit factorization does not prevent the squared-multiplier reduction to~\cite{BrogliaTognoli1989}.
++Stronger division, quasianalytic local-ring, resolution, and monomialization frameworks are available~\cite{Thilliez2008,BierstoneMilman2004,BelottoBierstoneChow2018,BelottoBierstone2023}. The proofs here deliberately avoid that machinery: the rigidity input is only the first nonzero Taylor polynomial, and the realization input is only the classical Denjoy--Carleman criterion together with cutoffs or positive-flat functions. This is the sense in which the note is self-contained without claiming foundational priority.
+ 
+ \section{Conclusion}
+ 
+-The finite-jet proof gives a short route to an established smooth sign obstruction and its affine-arrangement form. A nonzero leading Taylor term forces affine parity on orthants; local crossing parities propagate along each hyperplane. Its elementary nature separates this mechanism from stronger division and resolution frameworks.
+-
+-Combined with the classical Denjoy--Carleman criterion and positive flat functions, the argument gives an explicit realization classification. For $m$ distinct affine hyperplanes with $r$ chambers, a full normalized Roumieu class realizes $2^{m+1}$ signed-parity laws in the quasianalytic regime and all $2^r$ chamber labelings in the non-quasianalytic regime.
++A first nonzero Taylor term provides a compact bridge from local regularity to global chamber signs. In finite order it yields explicit $C^d$ orthant and $C^N$ arrangement obstructions; in the smooth setting the same mechanism gives an elementary proof of the established signature-flatness consequence for affine arrangements. Combined with the Denjoy--Carleman criterion, the argument gives an exact realization classification: for $m$ distinct hyperplanes with $r$ chambers, the full normalized Roumieu class realizes exactly $2^{m+1}$ signed parity laws in the quasianalytic case and all $2^r$ chamber labelings in the non-quasianalytic case.
+ 
+-The contribution of the note is therefore not the first-nonzero-Taylor-term idea itself, but its systematic arrangement-level packaging, the finite-regularity orthant and arrangement forms, the explicit selector formulas, and the organized Denjoy--Carleman synthesis with exact realizability counts. The surrounding literature on distributions of signs, signatures, positive-flat functions, and chamber-function algebras makes clear that neither the underlying $C^\infty$ obstruction nor the existence mechanism for arbitrary non-quasianalytic chamber signs originates here. Real zero support need not imply original-coordinate unit factorization, but that distinction does not prevent the reduction to earlier signature-flatness results. The note is therefore positioned around transparency, finite-order formulation, and explicit synthesis rather than a claim of first discovery.
++The note's contribution is therefore the finite-order formulation, the direct affine-arrangement proof, and the explicit synthesis of rigidity, construction, and exact counting in one normalization. The underlying smooth obstruction and positive-flat existence theory are classical and are used here as historical and technical context rather than as claims of first discovery.
+ 
+ \begin{thebibliography}{99}
+ \small\raggedright
+@@ -620,12 +616,6 @@
+ \newblock DOI: \href{https://doi.org/10.1007/s00029-004-0327-0}{10.1007/s00029-004-0327-0}; arXiv:math/0108204.
+ 
+ 
+-\bibitem{BasuEtAl2008}
+-S. Basu, N. Bhatnagar, P. Gopalan, and R. J. Lipton,
+-\newblock Polynomials that sign represent parity and Descartes' rule of signs,
+-\newblock \emph{Computational Complexity} 17 (2008), no. 3, 377--406.
+-\newblock DOI: \href{https://doi.org/10.1007/s00037-008-0244-2}{10.1007/s00037-008-0244-2}; arXiv:math/0702773.
+-
+ \bibitem{BrogliaTognoli1989}
+ F. Broglia and A. Tognoli,
+ \newblock Approximation of $C^\infty$-functions without changing their zero-set,
+@@ -638,12 +628,6 @@
+ \newblock \emph{Rev. R. Acad. Cien. Serie A. Mat. (RACSAM)} 97 (2003), no. 2, 287--303.
+ \newblock \url{https://rac.es/ficheros/doc/00128.pdf}.
+ 
+-\bibitem{MathOverflow2014}
+-D. E. Speyer and E. Wofsey,
+-\newblock Answers to ``Characterizing orthants with polynomials,''
+-\newblock \emph{MathOverflow}, December 2014.
+-\newblock \url{https://mathoverflow.net/questions/188631/characterizing-orthants-with-polynomials}.
+-
+ \bibitem{Rainer2022}
+ A. Rainer,
+ \newblock Ultradifferentiable extension theorems: a survey,

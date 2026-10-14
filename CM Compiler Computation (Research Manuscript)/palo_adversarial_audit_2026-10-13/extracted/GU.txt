@@ -1,0 +1,615 @@
+===== PDF PAGE 1 =====
+Guarded Boolean Operators:
+Exact Dispatch and a Polynomial Guard-Degree
+Tradeoff
+Brian Theory
+Abstract
+A finite family of continuous scores determines a Boolean operator wherever all scores are
+nonzero. We study exact identification of that operator under an explicit guard language, using
+the real polynomialF(x,y ) = x +y +xy on signed positive-magnitude representatives as a
+complete case study. Its parameter domain has exactly four operator chambers, labelled by AND,
+the two projections, and XNOR. In the original magnitude coordinates, letmd be the minimum
+number of binary polynomial-sign tests of total degree at mostd needed for exact dispatch on
+the zero-free domain. We provem1 =∞, m2 =m3 = 3, andmd = 2 for d≥4; moreover, both
+polynomials in any two-test solution must have degree at least four. Reciprocal coordinates
+linearize the chamber boundaries, making the coordinate dependence explicit. Three truth-table
+coordinate probes remain necessary in the worst case, including for adaptive identification. We
+place these calculations in a zero-aware certification contract, distinguish fixed test selection
+from per-instance and adaptive costs, and prove directly that dispatch is unchanged by faithful
+correspondence-matrix and fixed-frame logical-matrix representations. The general sign quotient
+and minimum-test-set formulation are established machinery; the contribution is a self-contained
+worked analysis of how coordinates, permitted observations, and zero handling change exact
+dispatch.
+1 Introduction
+A continuous model can induce different Boolean operators as its parameters vary. For example,
+evaluate the real scorex +y at (a,b ), (a,−b), (−a,b ), (−a,−b) with a,b> 0, and declare positive
+output true and negative output false. Ifa>b , the resulting truth table is the first projection; if
+b>a , it is the second. Ata =b, two scores vanish and the strict binary interpretation is undefined.
+Thus even this elementary model requires both a parameter partition and a zero policy.
+The broad passage from continuous parameters to discrete logical data is not new. DSGRN
+constructs combinatorial parameter descriptions for switching regulatory networks and attaches
+dynamical information to them [12, 13, 15]. Logical bifurcation diagrams relate parameter variation
+in piecewise differential models to logical valuations and attractors [1]. Joint realizability and
+parameter adjacency of monotone Boolean functions are treated in [11], and recent work embeds
+monotone Boolean models into multilevel and DSGRN models [14]. These structured dynamical
+theories have substantially more application-specific content than a generic score-sign partition.
+Likewise, strict polynomial sign conditions and their connected components are standard real
+algebraic geometry [4, 5, 16]; collecting sign semantics belongs to abstract interpretation [9]; and
+selecting a minimum distinguishing test family is a classical optimization problem [17, 6]. Predicate
+minimization in verification is related but can optimize preservation of a property rather than
+exact recovery of every operator label [8]. We use these connections to specify the problem, not
+1
+
+===== PDF PAGE 2 =====
+to claim a new abstraction theory, a new hardness theorem, or a replacement for existing solvers.
+The minimum number of polynomial inequalities describing a set is also an established question [3].
+Here the optimization instead requires joint decoding of four labels on a promised domain, with a
+fixed degree bound and fixed original coordinates; the general polynomial-description literature is
+therefore relevant context, not a priority claim for the concrete calculation.
+Question and main result. The question is narrower:which observations must be available,
+and what must be proved about them, before a parameter value can be assigned its exact Boolean
+operator? For
+F (x,y ) =x +y +xy, (x,y ) = (ε1a,ε2b), a,b> 0,
+Sections 2–3 give a complete answer for three explicit contracts. Three truth-table coordinates
+distinguish the four realized operators. No finite library of affine tests in(a,b ) suffices. Among
+polynomial-sign libraries, three tests are optimal at degrees two and three, whereas two quartic tests
+are optimal once degree four is allowed. The last statement concernstwo polynomial observations,
+not two queries to the original truth-table-coordinate oracle.
+Scope. This is a mathematical methods note built around an exact example and its certification
+requirements. The degree tradeoff is proved by an elementary boundary-divisibility argument.
+The synthesis of these facts is not offered as theorem-level priority clearance for every constituent
+observation. In particular, the curved boundaries become straight lines under reciprocal coordinates,
+and fewer sign tests do not by themselves imply less arithmetic or faster execution. The accompanying
+implementation is an exact rational reference dispatcher and regression suite, not a general certified
+guard-synthesis system or an empirical performance study.
+Correspondence matrices (CMs) and logical matrices (LMs) provide optional output represen-
+tations. We follow the companion manuscript’s terminology [19], but prove every representation
+fact needed here. Readers interested only in dispatch may regard a CM simply as a reshaped truth
+table. Classical trajectory and Walsh calibrations are collected in the appendix rather than used as
+novelty claims.
+2 Score families and the nonlinear four-operator model
+2.1 Strict semantics and operator fibers
+Let Λ be a nonempty open subset ofRp, letn≥1, and suppose
+gα: Λ−→R, α ∈{0, 1}n,
+are continuous. They may arise by evaluating a continuous model at continuously varying repre-
+sentatives. For signed magnitudes, the representative forαis ε(α)⊙r, whereεi(α) = 2αi−1 and
+ri> 0.
+Define the partial thresholdq(t) = 1 for t> 0 and q(t) = 0 for t< 0; q(0) is undefined. Set
+∆ =
+⋃
+α∈{0,1}n
+g−1
+α(0), Λ◦= Λ\∆, Θλ(α) =q(gα(λ)) ( λ∈Λ◦).
+Thus ∆ is the union of all score-zero sets, not their intersection. It is closed relative toΛ. Neither
+nonemptiness nor density ofΛ◦is assumed. The numeric correspondence tensor is[Θ][α] = Θ(α), in
+true-first order on each axis; forn = 2 its entries are ordered(11, 10, 01, 00).
+2
+
+===== PDF PAGE 3 =====
+Proposition 2.1 (Elementary exact quotient). The nonempty fibers
+Ω Θ ={λ∈Λ◦: Θλ= Θ}=
+⋂
+Θ(α)=1
+{gα> 0}∩
+⋂
+Θ(α)=0
+{gα< 0}
+form the unique coarsest partition ofΛ◦into sets carrying constant operators. Each fiber is open in
+Λ and clopen inΛ◦. Its connected components are open and are precisely connected components of
+Λ◦.
+Proof. The displayed finite intersection is open by continuity. Its relative complement is the union of
+the other fibers and is open as well. Every set carrying a constant operator lies in the corresponding
+fiber, proving the partition claim. An open Euclidean set is locally path-connected, so its connected
+components are open. A connected set cannot meet two distinct clopen fibers, proving the component
+assertion.
+We call those componentsoperator chambers. There are finitely many operator fibers but, for
+merely continuous scores, possibly infinitely many chambers. For instance,g1(t) = sint andg0(t) = 1
+on R give two fibers and infinitely many interval chambers. IfΛ is open semialgebraic and the scores
+are polynomial, the fibers are strict sign-condition realizations and have finitely many semialgebraic
+connected components [4, 5, 16]. This is an application of established sign-condition theory.
+2.2 Exact classification and a convex normal form
+All arithmetic in the following model is ordinary real arithmetic, not arithmetic over a Boolean field.
+ForF(x,y ) =x +y +xy on signed magnitudes, the four scores are
+g11 =a +b +ab, h 1 :=g10 =a−b−ab,
+h2 :=g01 =−a +b−ab, h 3 :=g00 =−a−b +ab. (1)
+Here g11> 0 everywhere onΛ = R2
+>0, while
+h1 +h2 =−2ab< 0, h 1 +h3 =−2b< 0, h 2 +h3 =−2a< 0. (2)
+At most one of thehi can therefore be positive. If one is positive, both others are strictly negative;
+simultaneous zeros of two are impossible.
+Theorem 2.2 (The four chambers). The zero-free model realizes exactlyO⋆={AND,X,Y, XNOR}.
+Its fibers and rational interior witnesses are as follows.
+Region Truth vector (11, 10, 01, 00) Operator Witness (a,b )
+h1,h 2,h 3< 0 (1 , 0, 0, 0) AND (1/2, 1/2)
+h1> 0 (1 , 1, 0, 0) X (2, 1/2)
+h2> 0 (1 , 0, 1, 0) Y (1/2, 2)
+h3> 0 (1 , 0, 0, 1) XNOR (3, 3)
+Every fiber is connected. The three discriminant curves are pairwise disjoint in the positive quadrant
+and are
+C1 : b = a
+1 +a, C 2 : a = b
+1 +b, C 3 : b = a
+a−1 (a> 1). (3)
+Each separates AND from exactly one ofX,Y, XNOR, respectively, so regular chamber adjacency is
+a three-leaf star.
+3
+
+===== PDF PAGE 4 =====
+Proof. The sign restriction follows from(2), and direct evaluation at the witnesses proves that
+all four patterns occur. To prove connectedness without a gluing assumption, apply the smooth
+involution
+(a,b )↦−→(u,v ) = (1/a, 1/b). (4)
+Since ab> 0, dividing the scores byab preserves their signs and gives
+1
+ab(g11,h 1,h 2,h 3) = (u +v + 1, v−u−1, u−v−1, 1−u−v). (5)
+In the positive(u,v ) quadrant the four regions become
+X v >u + 1
+Y u>v + 1
+XNOR u +v <1
+AND |u−v|< 1, u+v >1.
+Each is a nonempty intersection of open half-planes, hence is convex and path-connected. Their
+inverse images under (4) are therefore path-connected. Solving the three score equations gives (3).
+Equation (2) excludes intersections of two curves in the domain. In reciprocal coordinates each
+curve is a line segment or ray with nonzero normal, with AND on one side and the corresponding
+leaf on the other. This also proves the claimed regular adjacency and that exactly one truth-table
+coordinate changes at each crossing.
+For example, (a,b ) = (2, 1/2) gives the scores(7/2, 1/2,−5/2,−3/2) and hence projectionX.
+The output CM is
+[X] =
+[
+1 1
+0 0
+]
+.
+This is a certified identification, not a conclusion extrapolated from a numerical plot: the witness
+identifies a region whose uniform signs were proved above.
+Remark 2.3 (Positive coefficient rescaling). The same conclusions hold forF(x,y ) =Ax +By +Cxy
+with fixedA,B,C > 0. Setx′= (C/B)x and y′= (C/A)y; then
+F (x,y ) = AB
+C (x′+y′+x′y′).
+The induced positive linear rescaling of magnitude coordinates preserves total polynomial degree,
+guard-library cardinality, and the operator labels. This extends the example to a positive-coefficient
+family by an elementary equivalence, not by a new classification argument. The caseC = 0 is
+different: the addition model has only the two projection chambers.
+3 The polynomial guard-degree tradeoff
+3.1 An explicit cost model
+A binary polynomial-sign testin the original coordinates is
+pH(a,b ) = 1{H(a,b)>0}, H ∈R[a,b ].
+4
+
+===== PDF PAGE 5 =====
+One test means one such polynomial, not an arbitrary Boolean formula built from several hidden
+tests. On the promised domainΛ◦, a finite libraryH1,...,Hk is exact when its binary signature
+determines the operator: there is a decoder
+d :{0, 1}k−→O⋆ such that d(pH1(a,b ),...,pHk(a,b )) = Θ (a,b)
+for every(a,b )∈Λ◦. Values ofd on unrealized signatures do not matter. Tests need not individually
+be constant on an operator fiber. Constant polynomials can be discarded without improving a
+minimum. Definemd to be the minimumk for tests of total degree at most the integerd≥1, and
+set md =∞when no finite library is exact.
+This cost counts fixed library size, not arithmetic operations, decision-tree depth, coefficient bit
+complexity, or the cost of proving that an input is zero-free. Strict-sign dispatch on an unpromised
+domain requires the additional treatment in Section 4.
+3.2 The boundary obstruction
+Lemma 3.1 (Boundary factors). The three quadraticsh1,h 2,h 3 in (1) are pairwise nonassociate
+irreducibles inR[a,b ]. If finitely many nonzero polynomial zero sets coverCi, at least one of their
+polynomials is divisible byhi. After constant tests are discarded, every exact finite polynomial-sign
+library has such a factor for each ofi = 1, 2, 3.
+Proof. Writehi =Ai(a)b +Bi(a). The coefficient pairs are
+(A1,B 1) = (−a−1,a ), (A2,B 2) = (1−a,−a), (A3,B 3) = (a−1,−a).
+In each pair the entries are coprime inR[a]. Thushi is primitive and is linear, hence irreducible,
+over the fraction fieldR(a). Gauss’s lemma gives irreducibility inR[a,b ]. Comparing coefficients
+shows that no two are scalar multiples.
+Parametrize the corresponding positive arc byb =−Bi(a)/Ai(a) on an open interval avoiding
+the pole. Substituting into any polynomialH(a,b ) gives a rational function ofa. Unless it vanishes
+identically, it has only finitely many zeros on that interval. A finite collection of such finite sets
+cannot cover the interval. Therefore someH vanishes identically after substitution. Division in
+R(a)[b], followed by primitivity, shows thathi divides H in R[a,b ].
+Finally, letz∈Ci. If every library polynomial were nonzero atz, all test values would be constant
+on a sufficiently small neighborhood ofz. That neighborhood contains zero-free points from the
+two different operator chambers adjoiningCi, contradicting exactness. Hence the library zero sets
+coverCi, and the preceding argument supplies the required factor. This reasoning uses points on
+the boundary only to compare nearby promised inputs; it does not assume that dispatch is defined
+on ∆ .
+Theorem 3.2 (Exact degree–cardinality tradeoff). For the four-operator model in the original
+magnitude coordinates,
+md =
+
+
+
+∞, d = 1,
+3, d = 2 or 3,
+2, d ≥4.
+(6)
+Furthermore, in any exact library consisting of two polynomial-sign tests,each defining polynomial
+has degree at least four.
+5
+
+===== PDF PAGE 6 =====
+Proof. A polynomial of degree at most one cannot contain any of the quadratic factors required by
+Lemma 3.1. Consequently no finite affine-sign library suffices. The same argument rules out any
+finite Boolean combination of affine inequalities as a description of the complete operator atlas: all
+such combinations over a finite library still depend only on its signature.
+A polynomial of degree at most three cannot contain two distincthi, since their product has
+degree four and they are relatively prime. Covering all three boundaries therefore requires at least
+three tests. The three tests1{hi>0}achieve this bound by Theorem 2.2.
+For degree four, take the two tests
+r1 = 1{h1h3<0}, r 2 = 1{h2h3<0}. (7)
+They have the requiredH >0 form withH =−h1h3 and H =−h2h3. Their signatures are
+Operator r1 r2
+AND 0 0
+X 1 0
+Y 0 1
+XNOR 1 1
+Thus two tests suffice. One binary test cannot distinguish four nonempty operator fibers, so two is
+optimal.
+For the stronger assertion, an exact two-test library has only four possible signatures. Since four
+operator labels occur and signatures cannot be shared by different labels, each operator must have
+exactly one signature and all four signatures are used. Relative to the AND signature, each of the
+two bits changes on exactly two of the other three signatures. The polynomial defining that bit must
+consequently vanish along the two corresponding AND/leaf boundaries. Applying the substitution
+argument in Lemma 3.1 to that polynomial gives two distinct quadratic factors, so its degree is at
+least four. The argument applies to both tests.
+The lower bound covers arbitrary real coefficients and arbitrary decoders; it does not merely
+check a small catalogue of candidate polynomials. The accompanying code checks the displayed
+factorizations and all four output signatures, but the universal minimum is the consequence of the
+proof, not of a numerical search.
+3.3 What the separation does not imply
+The affine obstruction is not invariant under arbitrary changes of coordinates. Equations(4)–(5) give
+an explicit smooth change under which the three original score signs are affine tests. Alternatively,
+introducing the featurez =ab makes them linear in(a,b,z ) on the feature surfacez =ab. Either
+transformation changes the permitted input features and therefore the observation contract.
+Nor does two-test quartic dispatch establish a runtime improvement. Computingh1h3 and
+h2h3 from the original scores uses those scores and two additional multiplications. The theorem
+compares sign-information channels under a degree constraint; feature construction, arithmetic
+sharing, numerical certification, and bit complexity must be charged separately in an implementation
+study.
+6
+
+===== PDF PAGE 7 =====
+4 Zero-aware certification and partial abstraction
+4.1 Nonempty guards and explicit coverage
+A strict sign certificate on a guardG⊆Λ proves eithergα> 0 throughout G or gα< 0 throughout
+G. It may be an analytic proof, an exact real-algebraic certificate, or another sound verification
+object. A sample point or a plot is not a certificate of a uniform sign.
+Proposition 4.1 (Nonempty-guard soundness). LetG be nonempty. If one strict sign of every
+gαis proved throughoutG, then G⊆Λ◦and G carries a unique exact Boolean operator and
+correspondence tensor. A collection of such guards is exact on a declared domainD0⊆Λ◦when it
+coversD0. Guards with the same operator may be merged by explicit union; overlapping nonempty
+guards with certified labels cannot disagree on their intersection.
+Proof. Strict signs exclude zeros and determine the truth value at every input. Choosing any point
+of G proves that this truth table is realized, and the uniform certificates make it the same at every
+point. Coverage and the assertions about unions and intersections follow pointwise.
+Empty guards must be discarded or marked infeasible. All strict inequalities are vacuously
+true there, so the operator is not uniquely determined by empty-guard semantics. This is why
+nonemptiness is part of the statement rather than an implicit implementation preference.
+Polynomial sign decomposition and quantifier elimination provide exact routes in principle [4, 16].
+Interval methods and solver-based methods may leave cells uncertified. Such an outcome reports a
+limit of the analysis; it is not evidence that both signs actually occur. The present note supplies no
+general solver for arbitrary continuous scores.
+4.2 Certified dictionaries and reduced observation
+A complete, already proved operator dictionary can justify inference of unobserved signs.
+Proposition 4.2 (Reduced certificate with an explicit promise). LetD0⊆Λ◦be a certified zero-free
+domain and let the finite setO contain every Θλfor λ∈D0. LetG⊆D0 be nonempty. Suppose
+strict signs on a selected setS⊆{0, 1}n are proved constant throughoutG, and exactly one member
+Θ ∈Ohas the corresponding restriction toS. Then every point ofG has operatorΘ, including the
+truth values at unobserved inputs.
+Proof. At any point ofG an induced total operator exists by the zero-free hypothesis, lies inO
+by dictionary completeness, and agrees with the certified restriction. Uniqueness of the dictionary
+match identifies it withΘ.
+Neither dictionary completeness nor the zero-free promise may be inferred from a sample. Without
+the latter, even an empty separating test set for a singleton dictionary can be unsafe: the scores1
+and t2 induce the constant-true operator for everyt̸= 0, but not att = 0.
+Boundary rejection in the nonlinear example. At (a,b ) = (1, 1/2),
+(g11,h 1,h 2,h 3) = (2, 0,−1,−1).
+All three binary predicateshi > 0 are false, exactly as in the AND chamber; so they cannot by
+themselves certify membership in Λ◦. A correct unpromised dispatcher uses exact trichotomy,
+7
+
+===== PDF PAGE 8 =====
+rejecting a zero rather than silently treating it as negative. The quartic method likewise checks
+whether either product in(7) is zero. Sinceg11 > 0, both products are nonzero exactly when all
+hi are nonzero. Thus twoternary product-sign observations suffice for classification together with
+boundary rejection, but this is a different outcome alphabet from the binary contract in Theorem 3.2.
+4.3 Collecting semantics for predicate cells
+Synthetic representatives supply one score per Boolean input. Predicate abstraction of a concrete
+state space need not do so. LetD be a state space,P :D→{0, 1}n a total predicate map, and
+F :D→R a total score. Define
+Sα={sgn0F(x) :x∈D, P(x) =α}⊆{−1, 0, +1},
+where sgn0 retains zero. The empty set means an unreachable cell. The singleton sets{−1}and
+{+1}mean exact false and true outputs. A set containing0 exhibits a tie, and a set containing both
+strict signs exhibits genuine two-sided variation. The last two properties can hold simultaneously.
+Proposition 4.3 (Exactness on predicate cells). On a reachable cell,q◦F is everywhere defined
+and constant exactly whenSαis one of{−1},{+1}. Under the declared full-cube convention, a
+canonical total Boolean operator is induced exactly when every cell is reachable and satisfies this
+singleton criterion. Otherwise one retains a reachability mask and exact/partial cell information,
+unless a separate completion policy is declared.
+Proof. The two singleton cases make the threshold defined and constant. Conversely, a defined
+constant strict threshold permits neither a zero nor both strict signs. Values on unreachable inputs
+are not fixed by the concrete model; adding them is a completion choice.
+This is a collecting-semantics contract, not a new abstract domain [9]. In particular, checking
+only existence of a positive score and existence of a negative score cannot distinguish an empty
+cell from a nonempty all-zero cell: both tests are false in both cases. Reachability, zeros, genuine
+variation, and a solver’sUNKNOWN response must remain separate.
+5 Test selection, coordinate probes, and faithful representations
+5.1 Finite predicate selection is a minimum-test-set problem
+Suppose a certified finite partition{A1,...,Am}of a zero-free domain has nonempty atoms labelled
+by operators Θi. Letp1,...,pr be admissible binary predicates, each constant on each atom, and
+let wj > 0 be selection costs. Put
+Dik ={j :pj(Ai)̸=pj(Ak)}(Θi̸= Θk).
+A minimum-cost exactfixed predicate basisis the binary optimization problem
+min
+r∑
+j=1
+wjzj,
+∑
+j∈Dik
+zj≥1 (Θ i̸= Θk), z j∈{0, 1}.
+(8)
+8
+
+===== PDF PAGE 9 =====
+Indeed, selected predicates yield exact labels if and only if they separate every differently labelled
+pair, which is exactly the set of displayed constraints. If any requiredDik is empty, no exact basis
+exists in that library. If predicates vary within an atom, the partition must first be refined and
+certified; testing only its representatives does not establish this premise.
+This is the classical pair-separation/hitting-set formulation [17, 6]. It does not optimize expected
+path length or adaptive worst-case depth. Its weights account for selected predicates only; costs of
+computing shared features are not automatically additive in these weights. Predicate abstraction
+with minimum predicates [8] is an important related precedent, but exact label recovery here is a
+different specification from preserving a chosen verification property.
+5.2 Fixed coordinates versus adaptive and target-specific information
+For a nonempty finite familyO of Boolean functions, define
+σCM(O) = min{|S|:S⊆{0, 1}n, Θ ↦→Θ|S is injective onO}.
+It is zero for a singleton. This is a fixed truth-table-coordinate test-set number, expressed in CM
+notation, not a new generic combinatorial invariant. Its exact formulation is(8) with one test per
+coordinate and unit cost; hence
+⌈log2|O|⌉≤σCM(O)≤2n.
+The lower bound counts binary signatures and the upper bound uses the complete table.
+It must not be confused with a target-specific specification or teaching set, whose chosen
+coordinates can depend on the particular function being specified, or with adaptive querying of an
+unknown function. Threshold-function specification numbers and their chamber-facet interpretation
+are developed in [2]; the global, fixed separating set above has different quantifiers.
+Proposition 5.1 (The coordinate-oracle costs of the four-operator family). ForO⋆, the unique
+minimum fixed coordinate set is{10, 01, 00}, soσCM(O⋆) = 3. Deterministic adaptive identification
+from truth-table-coordinate queries also has worst-case cost three. AND requires three coordinate
+values for a target-specific certificate, while each leaf operator has a one-coordinate certificate.
+Proof. Coordinate 11 is always1, and the other coordinates are
+10 01 00
+AND 0 0 0
+X 1 0 0
+Y 0 1 0
+XNOR 0 0 1 .
+Omitting a nonconstant coordinate leaves AND indistinguishable from the leaf differing only there.
+This proves the fixed minimum and its uniqueness. On the AND input, an adaptive algorithm
+receives zero at every nonconstant coordinate. Until all three have been queried, the leaf at an
+unqueried coordinate is still consistent with the transcript; the worst-case lower bound follows.
+Querying all three proves the upper bound. A positive value at the unique leaf coordinate identifies
+that leaf, whereas AND needs all three zeros.
+The adaptive lower bound is for an unknown operator accessible only through the listed coordinate
+oracle and a known dictionary. An algorithm given numerical(a,b ) and allowed arbitrary derived
+9
+
+===== PDF PAGE 10 =====
+predicates has a different contract, as the quartic construction illustrates. Within the coordinate
+oracle, an early-stop order has depths1, 2, 3, 3 for the four operators and expected cost9/4 under
+the uniform distribution. Thus “three probes are necessary” means a fixed-basis or worst-case claim,
+not a claim about every parameter point.
+5.3 The fixed-frame LM endpoint is self-contained
+LetX = (X1,...,Xn) be independent formal Boolean generators, and identify formulas up to
+Boolean equivalence. For a formulaA, setA⟨1⟩=A and A⟨0⟩=¬A. Extend a Boolean functionΘ
+by its disjoint minterms:
+˜Θ(A1,...,An) =
+⋁
+β∈{0,1}n
+(
+Θ(β)∧
+n⋀
+i=1
+A⟨βi⟩
+i
+)
+.
+The minterms are disjoint, so an iterated XOR, denoted⇕, would give the same function. Define
+the formula-valued lift
+LX (Θ)[α] = ˜Θ(X⟨α1⟩
+1 ,...,X⟨αn⟩
+n ). (9)
+The formal reference frame is not a collection of constrained physical predicates: all Boolean
+valuations, including the all-true valuation, are available.
+Proposition 5.2 (Faithfulness and representation-invariant dispatch). All-true valuation of(9)
+returns [Θ]. ConsequentlyLX is injective. For every Boolean connectiveH :{0, 1}k→{0, 1}, the
+lift preserves pointwise superposition:
+LX
+(
+H(Θ 1,..., Θk)
+)
+=H
+(
+LX (Θ 1),...,LX (Θk)
+)
+.
+Therefore
+Θλ= Θµ⇐⇒[Θλ] = [Θµ] ⇐⇒LX (Θλ) =LX (Θµ).
+Any fixed parameter-side observation contract and cost has the same exact-dispatch optimum for
+these three outputs, provided decoding or output-construction costs are not added differently.
+Proof. At Xi = 1, the literalX⟨αi⟩
+i has valueαi; the minterm extension therefore evaluates to
+Θ(α). Equal lifted tensors give equal truth tables under this valuation, proving injectivity. At every
+entry and every valuation of the formal frame, both sides of the superposition identity evaluate the
+same connectiveH on the same function values. Finally, injective representations induce the same
+equality relation on parameter space. The same observations consequently identify the same labels;
+only representational output costs could alter a total implementation cost.
+For the running point(2, 1/2), the complete output chain is
+(2, 1/2)↦−→X↦−→
+[
+1 1
+0 0
+]
+↦−→
+[
+X1 X1
+¬X1 ¬X1
+]
+.
+For comparison, the AND and XNOR lifts are
+[
+X1∧X2 X1∧¬X2
+¬X1∧X2 ¬X1∧¬X2
+]
+,
+[
+X1⇔X2 X1⇕X2
+X1⇕X2 X1⇔X2
+]
+.
+Continuous scores, numeric truth tensors, and formula-valued lifts are different types. A partial
+truth tensor from an unreachable or nonexact predicate cell does not determine a full lift without
+a completion policy. The elementary proof above removes any dependence on an unpublished
+companion theorem; the companion is a terminology reference only.
+10
+
+===== PDF PAGE 11 =====
+6 Reproducibility, limitations, and conclusion
+The companion archive contains the source of this note, a portable exact rational dispatcher, a
+deterministic verification script, machine-readable results, reproduction commands, and an audit
+crosswalk. Both coordinate and quartic dispatch modes return a separate boundary status; floating-
+point inputs are rejected by the reference implementation to avoid silently replacing exact rational
+semantics with approximate comparisons. The tests compare direct signed-input evaluation, the
+expanded scores, the reciprocal normal form, and both dispatch modes. They also check boundary
+points, the original recorded rational grid, dictionary separation, actual minterm evaluation, and
+the classical Walsh witnesses.
+These checks are bounded computations, not formal proof certificates for the topology or universal
+polynomial lower bound. The latter rest on the proofs in Theorems 2.2 and 3.2. The package
+documents exactly what was run; it does not claim solver benchmarks, a speedup over direct score
+evaluation, or a completed general guard-synthesis implementation.
+The example separates three issues that can otherwise be conflated. Geometry determines where
+each operator is realized. An observation contract determines which tests may be used and how
+they are counted. Certification determines when those observations justify a total Boolean output.
+In the original coordinates, the exact degree–cardinality tradeoff(6) and the three-coordinate lower
+bound make the contract dependence explicit. Reciprocal linearization prevents interpreting the
+result as a coordinate-free nonlinear obstruction. Faithful CM/LM representations preserve dispatch
+distinctions but do not strengthen the information available from the continuous model.
+The general quotient, collecting semantics, finite test selection, and Walsh arrangement remain
+classical or elementary components. A stronger algorithms or applications claim would require a
+motivated model family, an implemented certificate-producing backend, and an evaluation that
+charges feature construction and certification as well as sign queries. Those are not conclusions of
+this note.
+A Classical trajectory and Walsh calibrations
+A.1 Crossings, event counts, and endpoint-relative intervals
+Proposition A.1 (Single-entry crossing). Letγ: (−η,η)→Λ be continuous. Suppose one score
+has a fixed strict sign on(−δ,0) and the opposite fixed strict sign on(0,δ), while all other scores
+are nonzero on(−δ,δ). Then the two side operators differ at exactly that entry. If the composed
+scores are differentiable, a simple zero of one score and nonzero values of all the others at0 suffice
+after shrinkingδ.
+Proof. Every other composed score keeps its sign by continuity. The distinguished entry alone
+changes. A nonzero derivative at a zero gives opposite strict signs on sufficiently short punctured
+sides.
+A mere assertion that a continuous function “changes sign at zero” would not exclude oscillation.
+The fixed-side hypotheses are therefore part of the statement. One-input adjacency is already a
+feature of structured parameter graphs and threshold arrangements [11, 2].
+Proposition A.2 (Trajectory and polynomial event bound). For a continuous pathγ: [0,T ]→Λ,
+the setS =γ−1(∆) is closed and the induced operator is constant on each connected component
+of [0,T ]\S. If all points ofS are isolated relative to[0,T ], thenS is finite. The complementary
+11
+
+===== PDF PAGE 12 =====
+components arerelatively openintervals, possibly containing0 or T. Separately, if the scores on an
+interval are nonzero polynomials of degree at mostd, there are at most2nd discriminant values and
+at most 2nd + 1 complementary interval components.
+Proof. Relative closedness of∆ and continuity give closedness ofS. Connected complementary
+components map into one fiber by Proposition 2.1. An infinite closed subset of a compact interval
+has an accumulation point in the set, contrary to isolation. For the polynomial assertion, each
+nonzero polynomial has at mostd roots and the union bound gives the result. Even-multiplicity
+roots need not change the operator, so this counts possible zero events, not necessarily actual
+switches.
+These are elementary score-level observations, not a dynamics theorem or a substitute for logical
+bifurcation theory [1].
+A.2 A centered Walsh arrangement
+Let N = 2n and x∈{−1, +1}n. For nonemptyS⊆[n], putχS(x) = ∏
+i∈Sxi and letϕ(x) be the
+vector of theseN−1 characters. Standard Walsh orthogonality [18] gives
+ϕ(x)·ϕ(y) =
+{
+N−1, x =y,
+−1, x ̸=y,
+∑
+x
+ϕ(x) = 0.
+The coefficient familyFc(x) =c·ϕ(x) identifies RN−1 with the zero-sum subspace of score vectors
+in RN: the displayed Gram matrix isNI−J, which has rankN−1.
+Proposition A.3 (Classical Walsh calibration). For everyn≥1, precisely the2N−2 nonconstant
+strict Boolean sign patterns occur, each in one open convex cone. Forn≥2, regular facet adjacency
+is Hamming-distance-one adjacency on those truth tables, theN-cube with the two constant vertices
+deleted. Forn = 1 the two indexed zero hyperplanes coincide and ordinary geometric adjacency is
+not single-entry adjacency.
+Proof. For a positive setP of size 0<k<N , choosec = ∑
+y∈Pϕ(y). Then
+c·ϕ(x) =
+{
+N−k, x ∈P,
+−k, x / ∈P.
+This realizes every nonconstant pattern. The zero-sum identity excludes the two constant strict
+patterns. Every fiber is an intersection of open half-spaces, hence convex.
+Forn≥2, consider two realized sign vectors differing only at coordinatej. The common signs
+on the otherN−1 coordinates must include both signs; otherwise one of the two full patterns
+would be constant. Choose nonzero values with those signs whose sum is zero, and set coordinatej
+to zero. This is a point on the single indexed hyperplane, with no other coordinate zero. A small
+perturbation in the zero-sum subspace to either side realizes the two patterns, proving regular
+adjacency. Conversely, at a regular single-hyperplane crossing only that coordinate changes. For
+n = 1, the score vector has the form(t,−t); the two rays meet at a simultaneous two-coordinate
+zero, giving the exception.
+The count and tope graph are classical homogeneous-dichotomy and arrangement geometry [10, 7].
+This appendix supplies a directly checkable calibration of the interface, not an independent novelty
+claim for Walsh expansions or chamber counts.
+12
+
+===== PDF PAGE 13 =====
+References
+[1] W. Abou-Jaoudé and P. T. Monteiro, On logical bifurcation diagrams,Journal of Theoretical
+Biology 466 (2019), 39–63. doi:10.1016/j.jtbi.2019.01.008.
+[2] M. Anthony, Chamber geometry and specification numbers of Boolean threshold functions,
+arXiv:2606.29477 (2026). https://arxiv.org/abs/2606.29477.
+[3] G. Averkov and L. Bröcker, Minimal polynomial descriptions of polyhedra and special semial-
+gebraic sets, arXiv:1002.0921 (2010).https://arxiv.org/abs/1002.0921.
+[4] S. Basu, R. Pollack, and M.-F. Roy,Algorithms in Real Algebraic Geometry, 2nd ed., Springer,
+2006.
+[5] S. Basu, R. Pollack, and M.-F. Roy, An asymptotically tight bound on the number of semi-
+algebraically connected components of realizable sign conditions,Combinatorica 29 (2009),
+523–546. doi:10.1007/s00493-009-2357-x.
+[6] P. Berman, B. DasGupta, and M.-Y. Kao, Tight approximability results for test set prob-
+lems in bioinformatics, Journal of Computer and System Sciences71(2) (2005), 145–162.
+doi:10.1016/j.jcss.2005.02.001.
+[7] A. Björner, M. Las Vergnas, B. Sturmfels, N. White, and G. M. Ziegler,Oriented Matroids,
+2nd ed., Cambridge University Press, 1999.
+[8] S. Chaki, E. Clarke, A. Groce, and O. Strichman, Predicate abstraction with minimum
+predicates, inCHARME 2003, LNCS 2860, Springer, 2003, pp. 19–34. doi:10.1007/978-3-540-
+39724-3_5.
+[9] P. Cousot and R. Cousot, Abstract interpretation: a unified lattice model for static analysis
+of programs by construction or approximation of fixpoints, inPOPL 1977, pp. 238–252.
+doi:10.1145/512950.512973.
+[10] T. M. Cover, Geometrical and statistical properties of systems of linear inequalities with
+applications in pattern recognition,IEEE Transactions on Electronic ComputersEC-14(3)
+(1965), 326–334. doi:10.1109/PGEC.1965.264137.
+[11] P. Crawford-Kahrl, B. Cummins, and T. Gedeon, Joint realizability of monotone Boolean
+functions, Theoretical Computer Science922 (2022), 447–474. doi:10.1016/j.tcs.2022.04.045.
+[12] B. Cummins, T. Gedeon, S. Harker, K. Mischaikow, and K. Mok, Combinatorial representation
+of parameter space for switching networks,SIAM Journal on Applied Dynamical Systems15(4)
+(2016), 2176–2212. doi:10.1137/15M1052743.
+[13] B. Cummins, T. Gedeon, S. Harker, and K. Mischaikow, DSGRN: Examining the dynamics of
+families of logical models,Frontiers in Physiology9 (2018), 549. doi:10.3389/fphys.2018.00549.
+[14] B. Cummins, M. Gameiro, T. Gedeon, K. Mischaikow, and B. Rivas, Boolean models coarsely
+sample continuous dynamics of regulatory networks, arXiv:2606.14925 (2026).https://arxiv.
+org/abs/2606.14925.
+[15] T. Gedeon, Multi-parameter exploration of dynamics of regulatory networks,BioSystems 190
+(2020), 104113. doi:10.1016/j.biosystems.2020.104113.
+13
+
+===== PDF PAGE 14 =====
+[16] G. Jeronimo, D. Perrucci, and J. Sabia, On sign conditions over real multivariate polynomials,
+Discrete & Computational Geometry44 (2010), 195–222. doi:10.1007/s00454-009-9200-4.
+[17] B. M. E. Moret and H. D. Shapiro, On minimizing a set of tests,SIAM Journal on Scientific
+and Statistical Computing6(4) (1985), 983–1003. doi:10.1137/0906067.
+[18] R. O’Donnell,Analysis of Boolean Functions, Cambridge University Press, 2014.
+[19] B. Theory, Correspondence and Logical Matrices: A Boolean Operator Calculus, unpublished
+companion manuscript, 2026. Cited for terminology; no proof in this note depends on it.
+14

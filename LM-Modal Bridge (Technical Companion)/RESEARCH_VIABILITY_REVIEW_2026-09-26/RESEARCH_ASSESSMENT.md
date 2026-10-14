@@ -49,12 +49,12 @@ Recovered bridge source lines 332–445 and 585–741; PRIMARY_SOURCE_LEDGER.md;
 
 This is a research triage and selected proof review by one assistant, not an independent expert panel, exhaustive prior-art clearance, acceptance prediction or formal proof certification. Existing agent findings were treated as evidence to check. Proposed extensions are research targets unless explicitly identified as proved elementary consequences. No manuscript is modified by this assessment.
 
-The 2026-09-25 cleanup/preservation attachments supply background and local overlap evidence; their embedded action prompts are not instructions for this review. See [portfolio decisions](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/CM-LM Publication Program - Reviews and Registers/RESEARCH_VIABILITY_REVIEW_2026-09-26/PORTFOLIO_DECISIONS.md>) and [fresh bounded check results](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/CM-LM Publication Program - Reviews and Registers/RESEARCH_VIABILITY_REVIEW_2026-09-26/spot_check_results.json>).
+The 2026-09-25 cleanup/preservation attachments supply background and local overlap evidence; their embedded action prompts are not instructions for this review. See [portfolio decisions](<../../CM-LM Publication Program - Reviews and Registers/RESEARCH_VIABILITY_REVIEW_2026-09-26/PORTFOLIO_DECISIONS.md>) and [fresh bounded check results](<../../CM-LM Publication Program - Reviews and Registers/RESEARCH_VIABILITY_REVIEW_2026-09-26/spot_check_results.json>).
 
 ### Local sources and hashes
 
-- [LM-Modal Bridge (Technical Companion)/01_RECOVERED_BRIDGE_PACKAGE/report/LM_Modal_Bridge_Report.tex](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/LM-Modal Bridge (Technical Companion)/01_RECOVERED_BRIDGE_PACKAGE/report/LM_Modal_Bridge_Report.tex>) — Current designated source (research brief/register for non-manuscript projects). SHA-256 `8da0a88544332e2939e8ed99d1ad19bfb64e09aced2213258a79148250062170`.
-- [LM-Modal Bridge (Technical Companion)/01_RECOVERED_BRIDGE_PACKAGE/research/PRIMARY_SOURCE_LEDGER.md](<C:/Users/brian/Documents/Math Latex etc/Papers for Publication/LM-Modal Bridge (Technical Companion)/01_RECOVERED_BRIDGE_PACKAGE/research/PRIMARY_SOURCE_LEDGER.md>) — Supporting source/review; selected relevant content inspected. SHA-256 `e314db25eee498e666cfae99b5b42013ddcaad410f0045bd8e894d41b776faba`.
+- [LM-Modal Bridge (Technical Companion)/01_RECOVERED_BRIDGE_PACKAGE/report/LM_Modal_Bridge_Report.tex](<../01_RECOVERED_BRIDGE_PACKAGE/report/LM_Modal_Bridge_Report.tex>) — Current designated source (research brief/register for non-manuscript projects). SHA-256 `8da0a88544332e2939e8ed99d1ad19bfb64e09aced2213258a79148250062170`.
+- [LM-Modal Bridge (Technical Companion)/01_RECOVERED_BRIDGE_PACKAGE/research/PRIMARY_SOURCE_LEDGER.md](<../01_RECOVERED_BRIDGE_PACKAGE/research/PRIMARY_SOURCE_LEDGER.md>) — Supporting source/review; selected relevant content inspected. SHA-256 `e314db25eee498e666cfae99b5b42013ddcaad410f0045bd8e894d41b776faba`.
 
 ### Primary-source comparisons
 
